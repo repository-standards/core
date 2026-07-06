@@ -3,10 +3,23 @@
 All notable changes to the standards. Semver: MAJOR = removals/breaking policy
 changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
+## 0.2.0 - 2026-07-06
+
+Methodology layers added - the standard now carries shape, not just guardrails.
+
+- **Decision records** (`core/decision-records/`) - ADR + BDR + TDR system:
+  templates, index stubs, lifecycle, altitude hierarchy, governance.
+- **Repo docs** (`core/docs/`) - mandatory templates every repo fills: `PRODUCT`
+  (vision + current state), `ARCHITECTURE` (technical), `AGENTS` (entry point),
+  `PRINCIPLES`, docs hub.
+- **Process** (`core/spec-kit/`) - spec-driven development is core: install +
+  flow + a thin `constitution.template.md` governance bridge that defers to
+  AGENTS.md / ADR / standards instead of duplicating them.
+- README: documented the shape-vs-content distinction and the four core layers.
+
 ## 0.1.0 - 2026-07-06
 
-Initial core seed, extracted from the stayget / roomlink / console / propertycloud
-audit.
+Initial core seed, extracted from an internal engineering audit.
 
 - `core/claude/settings.baseline.json` - agent permission baseline (deny/ask) +
   two PreToolUse guards: remote-DB write guard and GitHub secrets/variables guard.

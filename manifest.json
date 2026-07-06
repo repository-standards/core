@@ -1,12 +1,26 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "files": {
     "core/CONTRIBUTING.md": "11d5acfd7a8ceeebbefb17093f4fc47ca91a8c32f33ec558a4efe1fef8a3f71d",
     "core/agents/conventions.md": "1e5dbaff97239f82ae70881f9bfc6ee5ef64b24081c87658a0a0832ec28b1ca8",
     "core/claude/settings.baseline.json": "da267b9617323f07cfaca178034fcab4702f4345429eb9d1ae98cfd0f1bc9008",
+    "core/decision-records/README.md": "3b122454b0a941d850b6b1dbca9096258110eeeaa3a29824588600dd61055b13",
+    "core/decision-records/adr/README.md": "0cba8e753f36618d2baf1554dd3166abe8f6029609cdfa4a82e97deb774bb81b",
+    "core/decision-records/adr/_template.md": "23f970137b16fc8fc147461fa1f395e4a088059c1116871615b7cbb3184091e6",
+    "core/decision-records/bdr/README.md": "0a6ed03f185551c3f216bdab644bfffacb183a8c3e1525d9dadc286ca2b33d17",
+    "core/decision-records/bdr/_template.md": "e90d3e7f5c87e2368d590c550adee409ee158f4b7470c6bfa881c8dcf61124a7",
+    "core/decision-records/tdr/README.md": "ca564d4322d3f5756ccaf79f310c129078bc738ddd40814c4569dd048537731d",
+    "core/decision-records/tdr/_template.md": "5ce76e85a489c84144724c8f7707be157c32b00c56dda874957819e691475c68",
+    "core/docs/AGENTS.template.md": "6095abf2a4989a9795e66ceef54c79ce405da442a013e4d2a9a0c6118b1c3f9d",
+    "core/docs/ARCHITECTURE.template.md": "f160b492244ca436a52724e23f92d95499772a4588fbd3d89fbb1fa191ab644e",
+    "core/docs/PRINCIPLES.template.md": "6d83da81d4de1ff41302cb3c30f91da54fdea2d0585495dd79065da422452480",
+    "core/docs/PRODUCT.template.md": "b07a22fc96b74f53f02e1a69e101a269b1583205137ce1a3e8efbf5a2f4c32be",
+    "core/docs/README.template.md": "a33cbe3f3ca20d0e2d487c4d338cee289e6c2253b09f5a8c3fad1ff13e8fbe72",
     "core/github/pull_request_template.md": "a97642bc98483520e4f6b0398a1d2338cec6359d125f110ddea53171477209d9",
     "core/github/workflows/gitleaks.yml": "ae31124886fe407da7030f06dca1fc904d611ef149b718295cd7c17a345a2a93",
     "core/gitleaks/.gitleaks.toml": "3c5d11e4d4e35c6196f218a1616549dd2b2f49f06b9c6e264551e7880bb12130",
-    "core/skills/pre-pr-review/SKILL.md": "cc6832f8ed6374ba6822cedd178b5e01a4538343ebb836e654b113fbdbae3445"
+    "core/skills/pre-pr-review/SKILL.md": "cc6832f8ed6374ba6822cedd178b5e01a4538343ebb836e654b113fbdbae3445",
+    "core/spec-kit/README.md": "9ac8649fedf4155bfab67d046fe021946162557c506123ec97ed5f6e6c3d4d8e",
+    "core/spec-kit/constitution.template.md": "3f569fbabe985f5fca7b57a2d5c9f096fa920dc4b255e4a2f04c69f674c2238c"
   }
 }

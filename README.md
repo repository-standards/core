@@ -6,12 +6,26 @@ is visible instead of silent.
 
 ## Model: core + opt-in modules
 
-- **`core/`** - repo-agnostic baseline every repo gets: agent permissions +
-  deterministic guards, secret scanning, PR template, commit conventions,
-  contributing guide, the pre-PR self-review skill.
+- **`core/`** - repo-agnostic baseline every repo gets, in layers:
+  1. **Guardrails** - agent permission + PreToolUse guards (`claude/`), secret
+     scanning (`gitleaks/` + `github/workflows/`), PR template (`github/`),
+     conventions (`agents/conventions.md`), `CONTRIBUTING.md`, the `pre-pr-review`
+     skill (`skills/`).
+  2. **Decision records** - the ADR / BDR / TDR system + altitude hierarchy
+     (`decision-records/`).
+  3. **Repo docs** - templates every repo fills: PRODUCT (vision + current state),
+     ARCHITECTURE (technical), AGENTS (entry point), PRINCIPLES, docs hub (`docs/`).
+  4. **Process** - spec-driven development via spec-kit + a governance bridge
+     (`spec-kit/`).
 - **`modules/`** (coming) - opt-in tech/domain packs, each extracted from the repo
   that learned it the hard way: `soap`, `payments`, `fly`, `nextjs`, `fastify`,
   `observability`, `postgres`. A repo declares which it uses and pulls only those.
+
+**Shape vs content.** The templates (`*.template.md`, `_template.md`) carry the
+*shape* - the structure, conventions, and methodology. Each repo fills the
+*content*: its own ADRs, its own product vision, its own architecture. The standard
+never holds a repo's actual decisions or docs. "Aligning a repo" means it has every
+layer in the standard's shape, not that it copies another repo's content.
 
 Company-specific values (tenant ids, tokens, vendor quirks, `.env` shapes) never
 live here - they are variables filled at apply time or kept in a private overlay.
@@ -73,5 +87,6 @@ Versioned with semver (`VERSION` + `CHANGELOG.md`).
 
 ## Status
 
-`v0.1.0` - initial core seed, extracted from the stayget / roomlink / console /
-propertycloud audit (2026-07). Modules and the full sync CLI come next.
+`v0.2.0` - core baseline plus the methodology layers (decision records, repo doc
+templates, spec-kit), derived from an internal engineering audit. Modules and the
+full sync CLI come next.
