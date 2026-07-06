@@ -3,6 +3,39 @@
 All notable changes to the standards. Semver: MAJOR = removals/breaking policy
 changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
+## 0.6.1 - 2026-07-07
+
+Housekeeping: reconcile drift between the source and `dist/` (no policy change).
+
+- Renamed the standards-layer references from `CODING_STANDARDS` to `conventions`
+  everywhere (the docs-hub link was dead), matching the actual `conventions.md`.
+- Finished removing the TDR stream (gone since 0.3.0): dropped the stale
+  `ADR / BDR / TDR` title and the "TDRs are living" line from the decision-records
+  README, plus the TDR mentions in the PRINCIPLES and PRODUCT templates. The
+  "there is no TDR stream" notes stay.
+- `enforcement.md`: dropped the phantom `bin/sync.sh` reference (removed in 0.6.0)
+  and fixed `capability-map.yml` -> `capability-map.json`.
+- `CONTRIBUTING.md`: reduced to a pointer into `AGENTS.md` instead of restating its
+  rules (single source of truth).
+- Known remaining: source and `dist/` still diverge in content (e.g. the
+  decision-records "Records vs working docs" section) - the planned source->dist
+  build step will resolve this systematically.
+
+## 0.6.0 - 2026-07-06
+
+Restructured as a framework: source organized by concern (loose at the repo root)
+plus `dist/` as the assembled result.
+
+- Promoted the former `core/` contents to the repo root as concern folders
+  (`agents/`, `claude/`, `decision-records/`, `docs/`, `github/`, `gitleaks/`,
+  `skills/`, `specs/`) - the maintained source.
+- Added `dist/` - the standard assembled as a real repo skeleton (the final product
+  to reflect); currently a committed snapshot, a build step will keep it in sync.
+- Completed the spec-first workflow in the source: `/spec-*` skills, Spec Kit setup,
+  constitution bridge, `align-to-standards` skill.
+- Removed the old copy mechanism (`bin/sync.sh`, `manifest.json`) - superseded by
+  agent comparison. README rewritten as the framework guide.
+
 ## 0.5.0 - 2026-07-06
 
 - **Records vs working docs** - `core/decision-records/README.md` now draws the line

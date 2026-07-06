@@ -1,0 +1,24 @@
+name: spec-guard
+
+on:
+  pull_request:
+
+jobs:
+  spec-guard:
+    # Blocks a PR that changes a mapped capability's code without updating its
+    # spec (specs/<capability>/). Dependency-free (node + git only), no install.
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: ".nvmrc"
+          # This job installs no package manager; do not try to restore its cache.
+          package-manager-cache: false
+      - name: Spec policy coupling guard
+        run: |
+          git fetch --no-tags --quiet origin "${{ github.base_ref }}"
+          node scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}" --block
