@@ -32,6 +32,8 @@ fi
 MAP="
 gitleaks/.gitleaks.toml|.gitleaks.toml
 github/workflows/gitleaks.yml|.github/workflows/gitleaks.yml
+github/workflows/spec-guard.yml|.github/workflows/spec-guard.yml
+specs/spec-guard.mjs|scripts/spec-guard.mjs
 github/pull_request_template.md|.github/pull_request_template.md
 CONTRIBUTING.md|CONTRIBUTING.md
 skills/pre-pr-review/SKILL.md|$SKILL_DIR/pre-pr-review/SKILL.md

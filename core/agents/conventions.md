@@ -17,3 +17,11 @@
 
 - ASCII hyphen `-` only, everywhere (prose, docs, UI copy, commits, PRs). Never
   the em dash `—` or en dash `–`.
+
+### Docs
+
+- Not every doc is a decision record. Research, screening, and workstream material
+  is a plain **working doc** under `docs/`, linked from the record it informs -
+  records ([ADR/BDR](../decision-records/README.md#records-vs-working-docs)) capture
+  only decisions. Organize working docs by lifecycle: phase-boxed exploration in a
+  discovery folder, standing workstreams/libraries in their own top-level folder.

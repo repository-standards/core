@@ -11,12 +11,15 @@ is visible instead of silent.
      scanning (`gitleaks/` + `github/workflows/`), PR template (`github/`),
      conventions (`agents/conventions.md`), `CONTRIBUTING.md`, the `pre-pr-review`
      skill (`skills/`).
-  2. **Decision records** - the ADR / BDR / TDR system + altitude hierarchy
-     (`decision-records/`).
-  3. **Repo docs** - templates every repo fills: PRODUCT (vision + current state),
-     ARCHITECTURE (technical), AGENTS (entry point), PRINCIPLES, docs hub (`docs/`).
-  4. **Process** - spec-driven development via spec-kit + a governance bridge
-     (`spec-kit/`).
+  2. **Decision records** - ADR + BDR, the *why* (decisions), kept lean; altitude
+     hierarchy (`decision-records/`). No TDR stream.
+  3. **Living specifications** - capability specs = the **behavioral source of
+     truth** ("what the system does now"), organized by domain not by ticket, with a
+     git-native change model, the Spec-Kit execution engine, and a spec-policy
+     enforcement guard (`specs/`).
+  4. **Repo docs** - templates every repo fills: PRODUCT (vision + future),
+     ARCHITECTURE (structure + boundaries), AGENTS (entry point), PRINCIPLES, docs
+     hub (`docs/`).
 - **`modules/`** (coming) - opt-in tech/domain packs, each extracted from the repo
   that learned it the hard way: `soap`, `payments`, `fly`, `nextjs`, `fastify`,
   `observability`, `postgres`. A repo declares which it uses and pulls only those.
@@ -87,6 +90,8 @@ Versioned with semver (`VERSION` + `CHANGELOG.md`).
 
 ## Status
 
-`v0.2.0` - core baseline plus the methodology layers (decision records, repo doc
-templates, spec-kit), derived from an internal engineering audit. Modules and the
-full sync CLI come next.
+`v0.3.0` - core baseline plus the methodology layers: lean decision records
+(ADR + BDR), living capability specs as the behavioral source of truth (with a
+git-native change model and a spec-policy enforcement guard), and the repo doc
+templates. Derived from an internal engineering audit. Modules, the `/spec-*`
+command implementations, and the full sync CLI come next.

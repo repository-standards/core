@@ -8,12 +8,14 @@ restate.
 ## Documentation hierarchy (altitude - highest wins)
 
 ```
-PRINCIPLES.md -> ADR / BDR (accepted) -> ARCHITECTURE.md / CODING_STANDARDS
-  -> .cursor/rules + skills -> code
+PRINCIPLES.md -> ADR / BDR (accepted decisions)
+  -> specs/<capability> (behavior) + ARCHITECTURE.md (structure) + CODING_STANDARDS
+    -> .cursor/rules + skills -> code
 ```
 
-See [docs/decision-records](docs/decision-records/README.md) for the ADR/BDR/TDR
-system.
+Behavioral source of truth = the [capability specs](docs/specs/README.md) (what the
+system does now). Decisions = [ADR / BDR](docs/decision-records/README.md) (why).
+Structure = ARCHITECTURE.md. There is no TDR stream.
 
 ## Project
 

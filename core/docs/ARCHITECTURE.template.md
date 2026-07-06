@@ -1,7 +1,9 @@
 # <Product> - architecture
 
-> The technical "how it is built" doc. Components, boundaries, data, integrations,
-> runtime. Kept current. Deep per-feature design lives in TDRs; decisions in ADRs.
+> The technical "how it is **built**" doc - **structure and boundaries**, not
+> behavior. Components, boundaries, data, integrations, runtime. Kept current.
+> How the system *behaves* lives in the [capability specs](specs/README.md);
+> decisions (why) live in [ADRs](decision-records/adr/README.md).
 
 ## Overview
 

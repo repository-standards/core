@@ -1,0 +1,11 @@
+{
+  "payments": [
+    "**/payment/**",
+    "**/payu/**",
+    "shared/**/payment*"
+  ],
+  "bookings": [
+    "**/booking/**",
+    "**/api/booking/**"
+  ]
+}
