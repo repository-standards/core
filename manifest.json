@@ -1,0 +1,12 @@
+{
+  "version": "0.1.0",
+  "files": {
+    "core/CONTRIBUTING.md": "11d5acfd7a8ceeebbefb17093f4fc47ca91a8c32f33ec558a4efe1fef8a3f71d",
+    "core/agents/conventions.md": "1e5dbaff97239f82ae70881f9bfc6ee5ef64b24081c87658a0a0832ec28b1ca8",
+    "core/claude/settings.baseline.json": "da267b9617323f07cfaca178034fcab4702f4345429eb9d1ae98cfd0f1bc9008",
+    "core/github/pull_request_template.md": "a97642bc98483520e4f6b0398a1d2338cec6359d125f110ddea53171477209d9",
+    "core/github/workflows/gitleaks.yml": "ae31124886fe407da7030f06dca1fc904d611ef149b718295cd7c17a345a2a93",
+    "core/gitleaks/.gitleaks.toml": "3c5d11e4d4e35c6196f218a1616549dd2b2f49f06b9c6e264551e7880bb12130",
+    "core/skills/pre-pr-review/SKILL.md": "cc6832f8ed6374ba6822cedd178b5e01a4538343ebb836e654b113fbdbae3445"
+  }
+}

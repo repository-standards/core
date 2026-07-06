@@ -1,0 +1,31 @@
+# gitleaks config (repository-standards baseline)
+# Scans staged commits (pre-commit hook) + PR/push range (CI).
+# Principle: secrets never live in the repo - secret manager + env vars only.
+
+title = "gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Paths and patterns allowed to contain secret-like strings."
+paths = [
+  '''(.*/)?\.env\.example$''',
+  '''(.*/)?\.env\.sample$''',
+  '''(.*/)?pnpm-lock\.yaml$''',
+  '''(.*/)?package-lock\.json$''',
+  '''(.*/)?yarn\.lock$''',
+  '''(?i)docs/.*\.md$''',
+]
+regexes = [
+  '''EXAMPLE''',
+  '''your-.*-here''',
+  '''<.*>''',
+]
+
+# Add repo-specific vendor-key rules below (optional), e.g.:
+# [[rules]]
+# id = "vendor-api-key"
+# description = "Vendor API key must live in the secret manager only."
+# regex = '''(?i)VENDOR_API_KEY\s*[:=]\s*['"][A-Za-z0-9\-_]{16,}['"]'''
+# tags = ["vendor", "secret"]
