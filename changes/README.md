@@ -1,0 +1,27 @@
+# changes/ - changelog fragments
+
+Instead of editing `CHANGELOG.md`, a PR drops one fragment here - so parallel PRs never
+collide on the changelog. At release the maintainer assembles them into two outputs: the
+complete **`CHANGELOG.md`** (mechanical) and the curated, written **`RELEASE-NOTES.md`**
+("what's new" for non-technical readers). See the
+[changelog process](../docs/changelog-process.md).
+
+## Add one per change
+
+`changes/<short-slug>.md`:
+
+```
+---
+audience: technical               # technical | stakeholder | both
+type: added                       # added | changed | fixed | removed
+headline: Self-serve CSV export   # OPTIONAL - only for stakeholder/both
+---
+- `path/to/thing` - new: one line, in the changelog's voice.
+```
+
+Only `stakeholder`/`both` reach the release notes; `headline` is the plain-language hook
+the maintainer weaves into that narrative. Do **not** edit `CHANGELOG.md`,
+`RELEASE-NOTES.md`, or `VERSION` in a PR - the maintainer assembles and cuts the release,
+then clears this folder.
+
+Everything except this `README.md` is a pending fragment awaiting the next release.

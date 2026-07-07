@@ -12,6 +12,10 @@ applies to humans and coding agents alike.
   hyphen only (no em/en dash). See the Conventions section in `AGENTS.md`.
 - **Before a PR:** run the repo's local checks and self-review your diff (the
   `pre-pr-review` skill). Fill in the PR template, including ADR impact.
+- **Changelog:** do not edit `CHANGELOG.md` or `VERSION` in a PR - add a
+  [`changes/`](./changes/) fragment instead (see the
+  [changelog process](./docs/changelog-process.md)). The maintainer assembles
+  fragments and cuts every release.
 - **Accepted ADRs are binding.** If your change contradicts one, propose a
   superseding ADR in the same change - do not silently diverge.
 - **Database:** reads OK, writes to any remote (dev/prod) never - hand a `.sql`

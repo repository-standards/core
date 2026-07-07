@@ -1,58 +1,100 @@
 # repository-standards
 
-The engineering + AI-agent standard, as a framework. Two parts:
+An opinionated, agents-first engineering standard that keeps documentation,
+specifications, and technical + business decisions **in the repo, versioned with the
+code** - and lets any repo **align to a version of the standard and prove it complies.**
 
-- **The repo itself, organized by concern** (`agents/`, `claude/`, `decision-records/`,
-  `docs/`, `github/`, `gitleaks/`, `skills/`, `specs/`) - the **source**. This is
-  where the standard is maintained and read, grouped so it is clear what it covers.
-- **[`dist/`](dist/)** - the **result**: the same standard assembled as a real repo
-  skeleton (root-level `.claude/`, `.github/`, `docs/`, `specs/`, `AGENTS.md`, ...).
-  This is the final product you reflect into a repo.
+It is both a **starter** for a new repo and a **reconciler** for a messy existing one -
+run by a coding agent that already reads `AGENTS.md`.
 
-## How to use it
+## Why it exists
 
-To standardize any repo (new or existing), an agent **reads the standard and the
-target repo, sees the difference, and applies it** - adapted to that repo's stack and
-language (see [`skills/align-to-standards`](skills/align-to-standards/SKILL.md)). No
-copy mechanism; the agent compares and reconciles. `dist/` is also a ready starting
-point for a brand new repo.
+Four failure modes it is built to kill:
 
-## What each concern is
+- **Decisions evaporate in chat.** The *why* lives in a thread or an agent session, then
+  it is gone - so the next person re-litigates a settled decision.
+- **Docs rot away from code.** A wiki elsewhere drifts the moment the code changes;
+  nobody trusts it, so nobody updates it.
+- **Specs describe, they don't build.** A spec you cannot rebuild or verify from means
+  the code is the only real truth, and the spec quietly lies.
+- **Drift goes unnoticed.** Code and intent diverge silently - found in an incident, not
+  a review.
 
-| Folder | What it is | Per repo |
-|--------|-----------|----------|
-| `agents/` | `conventions.md` - commit / hyphen / no-attribution (merges into AGENTS.md) | as-is |
-| `claude/` | `settings.baseline.json` - agent permissions + PreToolUse guards (remote-DB, secrets) | extend |
-| `skills/` | `pre-pr-review`, `/spec-*` (spec-first workflow), `align-to-standards` | as-is |
-| `github/` | PR template + CI workflows (`gitleaks`, `spec-guard`) | as-is |
-| `gitleaks/` | secret-scan config | as-is |
-| `decision-records/` | `adr/` (technical *why*) + `bdr/` (business *why*) + a README that explains them | fill |
-| `docs/` | templates: `PRODUCT` (vision), `ARCHITECTURE` (structure), `PRINCIPLES`, docs hub | fill |
-| `specs/` | living capability specs: methodology, template, `/spec-*` commands, enforcement, Spec Kit setup, constitution, the guard | fill specs; methodology as-is |
+## The keystone: a versioned, self-verifying standard
 
-## The model
+The standard ships **versions**. A repo pins the one it follows in `.standards-version`,
+and the same align mechanism runs at three moments:
 
-- **Behavior** = `specs/<capability>/` - living capability specs, "what the system
-  does now", by domain not ticket. Changed spec-first (change a spec -> impact ->
-  update -> plan -> tasks -> implement -> reconcile -> loop).
-- **Decisions** = `decision-records/adr` + `bdr` - the *why*, kept lean.
-- **Structure** = `docs/ARCHITECTURE`. **Vision** = `docs/PRODUCT`.
-- **Guardrails** = hooks (`claude/settings.baseline.json`), secret scan, spec-policy
-  guard, PR template, `pre-pr-review`.
-- **Altitude** (wins on conflict): `PRINCIPLES -> ADR/BDR -> specs + ARCHITECTURE ->
-  conventions/rules -> code`.
+| Moment | |
+|--------|--|
+| **Adopt** | point a repo at the standard; it is read, compared, and brought into line - adapted to its stack, never blind-copied ([`align-to-standards`](skills/align-to-standards/SKILL.md)). |
+| **Update** | already on `v0.7.1`? Apply just the **delta** to `v0.7.2` - like bumping a dependency, not a re-scaffold ([`update-to-version`](skills/update-to-version/SKILL.md)). |
+| **Verify** | prove it: `node scripts/self-verify.mjs` - version pin, skeleton, guards - a pass/fail your CI asserts ([`self-verify`](docs/self-verify.md)). |
 
-## dist is the result of the source
+## Who it's for
 
-`dist/` mirrors the source assembled at real-repo paths. Today it is a committed
-snapshot; because a manual snapshot drifts, the next step is a small build so `dist/`
-is always regenerated from the source (edit the concern folders, rebuild `dist/`).
+- **A new repo** - scaffold from the standard at a pinned version and go.
+- **An existing, undocumented repo** - `assess -> align -> onboard`: capabilities specced,
+  decisions recorded from the code, the rest queued as a backlog. Incremental, never a
+  big-bang dump ([`repo-assessment`](docs/repo-assessment.md), [`onboard-repo`](skills/onboard-repo/SKILL.md)).
+- **Building with an AI, three hats on** - PO turns vision into a behavioral spec that is
+  immediately codeable; an architect records the decisions; a dev and the AI implement
+  against it. One living spec, one backlog ([`ways-of-working`](docs/ways-of-working.md)).
+- **Keeping a fleet current** - cut a new version and every repo can update to it, each
+  self-verifying that it complies.
 
-## Shape vs content, and language
+## What's inside
 
-The standard carries the **shape** (structure, conventions, methodology). Each repo
-fills the **content** (its own specs, ADRs, product vision) - never another repo's.
-The standard is written in English so it is reusable; filled content in a repo
-follows that repo's language.
+- **Living capability specs** - behavior by **capability** (not ticket or page) and
+  **buildable** (rebuildable + verifiable from the spec alone), kept coupled to the code
+  by a guard. [`specs/`](specs/README.md)
+- **Decision records** - ADR (technical *why*) + BDR (business *why*) in MADR format,
+  plus a **decision catalog**: the forks every project hits, with an opinionated default
+  for each. [`decision-records/`](decision-records/README.md), [`catalog.md`](decision-records/catalog.md)
+- **A backlog that feeds itself** - items fall out of spec deltas, code<->spec drift, and
+  onboarding; they leave only when their definition of done is met.
+- **Guardrails as tooling** - dependency-free guards (spec-structure, spec coupling +
+  `--audit`, self-verify), secret scan, remote-DB write guard, hardened CI.
+- **A taxonomy map** - where each kind of knowledge lands, so "ADR or rule?" stops
+  recurring. [`docs/taxonomy.md`](docs/taxonomy.md)
+- **Agents-first** - one `AGENTS.md` at the root is the single entry point; the standard
+  is written to be *executed* by an agent, not just read.
 
-Versioned with semver (`VERSION` + `CHANGELOG.md`).
+**Altitude** (wins on conflict): `PRINCIPLES -> ADR/BDR -> specs + ARCHITECTURE ->
+conventions -> code`.
+
+## Two layers - adoptable independently
+
+- **Layer 1 - the standard (stack-agnostic):** everything above. Works for any repo, any
+  language.
+- **Layer 2 - Node/TypeScript setup:** a runnable scaffold on top, distilled from real
+  production repos (pnpm + Turbo, Biome, Fastify native DI, Next.js, Vitest/Playwright,
+  hardened Actions). Take Layer 1 alone, or 1 + 2.
+
+## Source, and `dist/`
+
+The repo is organized **by concern** (`agents/`, `claude/`, `decision-records/`, `docs/`,
+`github/`, `gitleaks/`, `skills/`, `specs/`) - the maintained **source**.
+[`dist/`](dist/) is the same standard **assembled at real-repo paths** (`AGENTS.md`,
+`.claude/`, `.github/`, `docs/`, `specs/`, ...) - the ready starting point. An agent
+reads the standard and your repo, sees the difference, and applies it - it does not blind-copy.
+
+## Versioning
+
+Semver (`VERSION` + `CHANGELOG.md`). A PR **adds a `changes/` fragment**, never edits the
+changelog or bumps the version; at release the maintainer assembles the complete technical
+**changelog** and writes the curated **release notes** (`docs/changelog-process.md`), then
+cuts the version.
+
+## Start
+
+```
+# 1 - point your agent at the standard (a new repo, or your messiest one)
+> align this repo to repository-standards@0.7.2
+
+# 2 - it scaffolds / assesses / aligns, then proves it
+$ node scripts/self-verify.mjs --version 0.7.2
+
+# 3 - when the standard moves, bump it like a dependency
+> update me to repository-standards@next
+```

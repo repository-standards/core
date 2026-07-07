@@ -23,8 +23,8 @@ The durable methodology; works for any repo, any stack, any language.
 - **Structure & vision:** `ARCHITECTURE`, `PRODUCT`, `PRINCIPLES`; docs organized by
   kind (Diataxis).
 - **Rules:** conventions (commits, writing), coding standards.
-- **Changelog:** two of them - technical + business/stakeholder - assembled from
-  per-PR fragments; the maintainer cuts releases.
+- **Changelog:** two outputs - a complete technical changelog + curated release notes -
+  from per-PR `changes/` fragments; the maintainer cuts releases.
 - **Guardrails (as templates):** spec-structure, secret-scan, remote-DB write guard,
   PR template.
 - **Agents-first:** `AGENTS.md` as the single entry; `align-to-standards` reconciles
@@ -56,19 +56,30 @@ A runnable scaffold on top of Layer 1, distilled from real production repos
   bumps.
 - Enforce with tooling, not prose.
 
-## Roadmap - open requirements
+## Roadmap
 
-Captured here so they stop living in chat. Not yet built.
+Tracked in the [`backlog`](backlog.md); the shape here.
 
-- [ ] **Taxonomy map** - one decisive doc: where each kind of knowledge lands (ends
-      the recurring "ADR or rule?" question).
-- [ ] **Two-changelog** system (technical + business) via changesets; maintainer-cut
-      releases.
-- [ ] **Backlog** layer - stories derived from spec deltas and code<->spec drift.
-- [ ] **Manifest + align-engine** - data-driven reconcile with versioned migrations.
+**Shipped**
+
+- [x] **Taxonomy map** - where each kind of knowledge lands (ends "ADR or rule?").
+- [x] **Decision catalog** - the forks every project should consciously decide.
+- [x] **Backlog layer** + `onboard-repo` - brownfield reconcile; items from spec deltas
+      and code<->spec drift (`add-to-backlog` / `backlog-from-specs`).
+- [x] **repo-assessment** + **ways-of-working** - the analysis before onboarding, and the
+      PO -> dev -> AI feature flow.
+- [x] **Versioned self-update (keystone)** - `.standards-version`, `update-to-version`,
+      `self-verify` (CI-gated).
+- [x] **Two changelogs** - per-PR fragments in `changes/`; complete technical changelog +
+      curated, written release notes; maintainer cuts releases.
+- [x] **Decision records** - ADR-001..004; ADR-005 (align-engine as a manifest) proposed.
+
+**Open**
+
+- [ ] **Align-engine (ENG-2)** - build the manifest + engine ADR-005 proposes.
 - [ ] **Layer 2** - `stacks/node-ts`, extracted from stayget / roomlink / console.
-- [ ] Pending ADRs: specs-by-capability-not-page, spec-depth-buildable,
-      align-engine-is-a-manifest.
+- [ ] **`source -> dist` build** - retire the hand-maintained `dist/` snapshot.
+- [ ] **Changelog assembler** - mechanize fragments -> the two outputs.
 
 ## Non-goals
 

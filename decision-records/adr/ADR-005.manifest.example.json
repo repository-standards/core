@@ -1,0 +1,66 @@
+{
+  "$comment": "ILLUSTRATIVE - a worked manifest for ADR-005 (Proposed). This is what Option B concretely looks like: the align/update/self-verify engine reads THIS instead of hardcoding checks in JS. Not wired in until ADR-005 is Accepted (ENG-2). It dogfoods repository-standards describing itself at the version below. Source-only, like the standard's own ADRs (ADR-004).",
+
+  "standard": "repository-standards",
+  "version": "0.7.2",
+  "layer": 1,
+
+  "adaptRules": {
+    "copy": "ship verbatim; the repo gets a byte-for-byte copy (guards, templates that carry no repo-specific content)",
+    "merge": "combine the standard's content with what the repo already has, keeping both (ignore files, CI that already has jobs)",
+    "fill-from-repo": "scaffold the shell from the standard, then author the body from THIS repo's reality - never blind-copy the example prose (ARCHITECTURE, PRODUCT, specs)",
+    "reference": "do not copy; link to the standard at the pinned version (ADR-004 - the standard's own decisions reach clients by reference)"
+  },
+
+  "files": [
+    { "path": "AGENTS.md", "purpose": "the single agent entry point", "adapt": "fill-from-repo", "required": true, "since": "0.1.0" },
+    { "path": ".standards-version", "purpose": "the version pin this whole mechanism turns on", "adapt": "copy", "required": true, "since": "0.4.0" },
+    { "path": "CLAUDE.md", "purpose": "thin pointer to AGENTS.md for Claude Code", "adapt": "copy", "required": false, "since": "0.1.0" },
+    { "path": "docs/decision-records", "purpose": "the ADR/BDR decision log", "adapt": "fill-from-repo", "required": true, "since": "0.1.0" },
+    { "path": "decision-records/catalog.md", "purpose": "the forks every repo should consciously decide", "adapt": "reference", "required": true, "since": "0.5.0" },
+    { "path": "specs", "purpose": "living capability specs", "adapt": "fill-from-repo", "required": true, "since": "0.1.0" },
+    { "path": "specs/capability-map.json", "purpose": "capability -> code globs, so the coupling guard can bind spec to code", "adapt": "fill-from-repo", "required": true, "since": "0.3.0" },
+    { "path": "backlog.md", "purpose": "the work ledger; items leave only when their DoD is met", "adapt": "fill-from-repo", "required": true, "since": "0.2.0", "altPaths": ["docs/backlog.md"] },
+    { "path": "docs/taxonomy.md", "purpose": "where each kind of knowledge lands (ends 'ADR or rule?')", "adapt": "reference", "required": true, "since": "0.5.0" },
+    { "path": "changes", "purpose": "per-PR changelog fragments (a PR never edits CHANGELOG or VERSION)", "adapt": "copy", "required": true, "since": "0.7.0" },
+    { "path": "scripts/self-verify.mjs", "purpose": "the verify step - checks the repo against THIS manifest", "adapt": "copy", "required": true, "since": "0.4.0" },
+    { "path": "scripts/spec-structure.mjs", "purpose": "spec layout guard", "adapt": "copy", "required": true, "since": "0.3.0" },
+    { "path": "scripts/spec-guard.mjs", "purpose": "code<->spec coupling guard (+ --audit)", "adapt": "copy", "required": true, "since": "0.3.0" }
+  ],
+
+  "sections": [
+    { "file": "AGENTS.md", "heading": "Altitude", "purpose": "the precedence order wins-on-conflict must be stated", "required": true, "since": "0.2.0" },
+    { "file": "specs/README.md", "heading": "Spec depth", "purpose": "the buildable-vs-behavioral tier decision, led by the rebuild-and-verify test", "required": true, "since": "0.6.0" },
+    { "file": "docs/decision-records/README.md", "heading": "When to record", "purpose": "the ADR test - a contestable, re-litigable decision", "required": true, "since": "0.2.0" }
+  ],
+
+  "guards": [
+    { "id": "self-verify", "run": "node scripts/self-verify.mjs", "blocks": true, "kind": "static", "purpose": "compliance with the pinned standard", "since": "0.4.0" },
+    { "id": "spec-structure", "run": "node scripts/spec-structure.mjs --block", "blocks": true, "kind": "static", "purpose": "spec files are where and shaped as the standard requires", "since": "0.3.0" },
+    { "id": "spec-guard", "run": "node scripts/spec-guard.mjs --block", "blocks": true, "kind": "diff", "purpose": "domain code changed without touching its spec fails CI", "since": "0.3.0" }
+  ],
+
+  "decisions": [
+    { "id": "repo-topology", "prompt": "Monorepo vs polyrepo?", "record": "ADR", "catalog": "foundation", "required": true, "since": "0.5.0" },
+    { "id": "domain-boundaries", "prompt": "Where are the module/domain seams? (slice by capability, not layer)", "record": "ADR", "catalog": "foundation", "required": true, "since": "0.5.0" },
+    { "id": "datastore", "prompt": "Primary datastore & persistence model?", "record": "ADR", "catalog": "data", "required": true, "since": "0.5.0" },
+    { "id": "api-contract", "prompt": "API / contract style & versioning?", "record": "ADR", "catalog": "interfaces", "required": true, "since": "0.5.0" },
+    { "id": "auth-model", "prompt": "Authn mechanism + authz model?", "record": "ADR", "catalog": "interfaces", "required": true, "since": "0.5.0" },
+    { "id": "testing-strategy", "prompt": "Test tiers and where each runs?", "record": "ADR", "catalog": "quality", "required": true, "since": "0.5.0" },
+    { "id": "security-baseline", "prompt": "The floor below which nothing ships?", "record": "ADR", "catalog": "quality", "required": true, "since": "0.5.0" },
+    { "id": "release-strategy", "prompt": "Branching & release strategy (who cuts releases)?", "record": "ADR", "catalog": "delivery", "required": true, "since": "0.5.0" }
+  ],
+
+  "specs": {
+    "tierDefault": "buildable",
+    "tierDecision": "Could an agent rebuild and verify this capability from the spec alone, without reading the code? If yes -> buildable; behavioral is an escape hatch that must be justified in-spec and stays rare.",
+    "everyCapabilityNeedsMapEntry": true
+  },
+
+  "exceptions": {
+    "$comment": "How a repo records a deliberate deviation so it survives an update (ADR-004). An update never silently overwrites an exception; it reports it and asks.",
+    "example": [
+      { "target": "guards/spec-guard.mjs", "reason": "monorepo runs coupling check per-package in Turbo, not this single script", "recordedIn": "docs/decision-records/adr/ADR-0xx-...md" }
+    ]
+  }
+}
