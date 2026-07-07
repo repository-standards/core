@@ -1,0 +1,90 @@
+# Ways of working - a feature, spec-driven, from intent to shipped
+
+How a new capability travels through the team: **PO writes the intent, a developer
+sharpens it into a buildable spec, an AI implements it, and the spec stays the truth.**
+The spec is the artifact that passes between roles - it starts as intent and gains
+precision at each hand-off. This is the ongoing flow once a repo is on the standard
+(greenfield from the start, or brownfield after `onboard-repo`).
+
+## Who owns what
+
+| Role | Owns | Produces |
+|---|---|---|
+| **PO / product** | the **what** and **why** - the behavior the product should have, the rules, what "done" means to a user | a **behavioral spec**: the capability's target behavior, business rules, acceptance criteria - in plain language, no implementation |
+| **Developer** | the **how** - turning intent into something buildable and correct | the **buildable spec** (adds data / interface / algorithm / state / config contracts), the **plan**, and any **decision** the change forces (ADR/BDR) |
+| **AI agent** | the **execution** - code and tests that satisfy the buildable spec | the implementation, tests, and a **reconciled** spec (spec == code == tests) |
+| **Reviewer (human + CI)** | the **gate** - is it correct, safe, and faithful to the spec and the ADRs | an approved, merged change |
+
+The altitude never inverts: the PO's behavior and the accepted decisions constrain
+everything below; the AI does not invent behavior or make an unrecorded decision.
+
+## The flow
+
+```
+backlog item / intent
+  -> PO:   behavioral spec  (what + why + acceptance)
+    -> Dev:  spec-impact (ripple) -> buildable spec + plan + ADR/BDR if the change needs one
+      -> AI:   implement -> tests -> spec-converge
+        -> reconcile: spec == code == tests  (spec-reconcile)
+          -> pre-pr-review -> PR -> reviewer gate -> merge
+```
+
+The spec on the branch is the **target**; `git diff` against the base is the **change
+delta**. After merge, the spec is current production truth - not a historical ticket.
+
+### Stage by stage (mapped to the skills)
+
+1. **Intent (PO).** Pull an item from the [`backlog`](backlog.md) (or capture a new
+   one). Write or extend the capability's [spec](../specs/README.md) at the
+   **behavioral** tier: what it should do, the rules, the acceptance criteria. No code,
+   no schema - just behavior and why.
+2. **Sharpen (Dev).** Run `spec-impact` to find the ripple (which other capabilities,
+   which ADRs, which code). Raise the spec to the **buildable** tier - the contracts a
+   change can be built and verified from. If the change forces a contestable decision,
+   write the **ADR/BDR** first (see the [decision catalog](decision-records/catalog.md)
+   for which forks warrant one). Run `spec-analyze` so the updated specs do not
+   contradict each other. Produce the plan.
+3. **Build (AI).** Implement against the buildable spec; write the tests the acceptance
+   criteria imply. Use `spec-converge` to close the gap between the spec and the branch
+   (missing implementation, missing tests).
+4. **Reconcile.** Run `spec-reconcile`: the spec, the code, and the tests must agree; if
+   the build revealed the spec was wrong, fix the spec (it is the truth, not a wish).
+   No knowingly-contradicting spec merges.
+5. **Review & merge.** `pre-pr-review` (a clean-context self-review), then open the PR
+   with honest ADR impact, then the human + CI gate.
+
+## Right-size the ceremony
+
+Not every change walks all four roles:
+
+- **A new capability or a behavior change** - the full flow: PO intent -> Dev buildable
+  -> AI build -> reconcile.
+- **A small fix within an existing spec** - Dev + AI; the behavioral intent is already
+  in the spec. Still reconcile.
+- **A pure refactor (no behavior change)** - no spec change; `spec-reconcile` confirms
+  behavior is unchanged. An ADR only if it changes a structural decision.
+
+The test is *substance, not paperwork*: a contestable decision earns an ADR, a real
+behavior change earns a spec edit - a rename does not.
+
+## How it connects
+
+- **Backlog** - intents and stories come from [`backlog`](backlog.md); spec deltas and
+  reconcile drift feed new items back into it.
+- **Specs** - the [capability specs](../specs/README.md) are the travelling artifact and
+  the post-merge source of truth.
+- **Decisions** - the [ADR/BDR](decision-records/README.md) stream holds the *why*; the
+  [decision catalog](decision-records/catalog.md) says which forks deserve a record.
+- **Onboarding** - a brownfield repo reaches this steady-state flow only after
+  `repo-assessment` -> `align-to-standards` -> `onboard-repo` have seeded the specs,
+  decisions and backlog.
+
+## Not this
+
+- **Not spec-after-code** - the spec is written/updated to the target *before* the
+  implementation, not reverse-engineered from a merged diff.
+- **Not PO-writes-implementation** - the PO owns behavior and acceptance, not schemas
+  and algorithms; the developer owns the buildable detail.
+- **Not AI-invents-behavior-or-decisions** - an unknown is a question back to the PO or
+  a backlog item, never a fabricated rule or an unrecorded decision.
+- **Not a forked spec** (`payments-v2`) - update the existing capability spec in place.

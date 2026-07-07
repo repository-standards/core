@@ -3,6 +3,23 @@
 All notable changes to the standards. Semver: MAJOR = removals/breaking policy
 changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
+## Unreleased
+
+Brownfield onboarding + the backlog layer - the "drop into a messy repo and bring it
+to maintainability" half of the product.
+
+- `skills/onboard-repo` - new: reads an existing codebase, derives its capabilities,
+  seeds specs and the decisions the code already implies, and turns the rest into a
+  prioritized backlog. Incremental, human-approved, never a big-bang dump.
+- `docs/backlog.template.md` - new: the ordered, agent-first, Backlog.md-compatible
+  backlog; defines what feeds it (onboarding, spec deltas, code<->spec drift, missing
+  decisions) and that an item leaves only when its definition of done is met.
+- `skills/align-to-standards` - hands off to `onboard-repo` for the content phase after
+  the skeleton is in place (structure vs content split made explicit).
+- `docs/AGENTS.template.md` - repo map gains `docs/backlog.md`; Workflows now name the
+  spec-driven flow and the brownfield onboarding flow.
+- Reflected into `dist/` (skills, `dist/docs/backlog.md`, `AGENTS.md`).
+
 ## 0.7.2 - 2026-07-07
 
 Spec methodology sharpened - combines the by-capability and spec-depth work.

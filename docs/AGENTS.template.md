@@ -26,6 +26,7 @@ One-liner. What/why: [PRODUCT.md](docs/PRODUCT.md). How: [ARCHITECTURE.md](docs/
 | Path | Purpose |
 |------|---------|
 | ... | ... |
+| `docs/backlog.md` | Ordered, agent-first backlog - the work the repo still owes itself (features + spec/decision/doc debt). |
 
 ## Commands
 
@@ -53,7 +54,13 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
 
 ## Workflows
 
-How to add a feature / migration / decision record (link the spec-kit flow).
+- **Add a feature / migration / decision record** - the spec-driven flow:
+  `spec-impact` -> `spec-update` -> `spec-analyze` -> implement -> `spec-reconcile`.
+  Work items come from and return to [`docs/backlog.md`](docs/backlog.md). Roles and
+  hand-offs (PO -> dev -> AI): [`docs/ways-of-working.md`](docs/ways-of-working.md).
+- **Bring this repo up to the standard (brownfield)** - `align-to-standards` (skeleton),
+  then `onboard-repo` (derive capabilities from the code, seed specs + the decisions the
+  code implies, and put the rest in the backlog). Incremental, never a big-bang dump.
 
 ## What you must not do
 

@@ -38,6 +38,15 @@ repo.
 6. **Open one focused PR.** Never push without the human's go. Never reference other
    repos.
 
+## Then, for an existing repo: hand off to `onboard-repo`
+
+This skill puts the **skeleton** in place (files, guards, structure). It does not fill
+`docs/` and `specs/` with the repo's real content. For an existing, undocumented repo,
+continue with `onboard-repo`: read the code, derive its capabilities, seed specs and
+the decisions the code already implies, and turn the rest into a prioritized backlog -
+incrementally, not in one dump. Greenfield repos skip this: their content is written as
+features land.
+
 ## Not this
 
 - Not a blind overwrite (that recreates divergence) - adapt to the stack.
