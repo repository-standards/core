@@ -22,6 +22,26 @@ permanent anchor.
 > ADR **lean**: context, the decision, options, consequences, revisit-when - not a
 > description of how the feature works.
 
+## What counts as a decision record here (glossary)
+
+Set by [ADR-001](adr/ADR-001-decision-record-policy.md).
+
+- **Format:** every record uses **MADR** (Markdown Any Decision Records) - see
+  [`adr/_template.md`](adr/_template.md), which carries a `Confirmation` field (how the
+  decision is verified in practice).
+- **ADR = an architecturally-significant _technical_ decision, read broadly:**
+  framework, library, tooling, infrastructure, data-model or protocol choices - not
+  enterprise-architecture-only. Choosing Tailwind over Bootstrap, or one library over
+  its alternatives, is an ADR. Sub-scope goes in the record's `Tags`
+  (`architecture` / `data` / `infra` / `security` / ...), never in the acronym.
+- **BDR = a business / product decision** - a separate stream, different stakeholders
+  and altitude. Business decisions do not enter the technical log.
+- **No TDR and no bespoke sub-type acronyms** (ATDR / AADR / ...): they draw arbitrary
+  lines and add jargon; `Tags` does the same job with a stable acronym. "Living
+  technical design" is behaviour (capability specs) + structure (`ARCHITECTURE.md`).
+- **Future non-technical kinds** (e.g. marketing) get their own stream when one
+  actually arises - same MADR format, not pre-built.
+
 ## Records vs working docs
 
 A record (ADR/BDR) captures a **decision**. The research, analysis, screening, or

@@ -5,8 +5,9 @@ on:
 
 jobs:
   spec-guard:
-    # Blocks a PR that changes a mapped capability's code without updating its
-    # spec (specs/<capability>/). Dependency-free (node + git only), no install.
+    # Two spec-policy gates (dependency-free, node + git only, no install):
+    #  - structure: no ticket-numbered spec paths (specs/<capability>/, not NNN-*)
+    #  - coupling: a mapped capability's code changed without touching its spec
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -18,6 +19,10 @@ jobs:
           node-version-file: ".nvmrc"
           # This job installs no package manager; do not try to restore its cache.
           package-manager-cache: false
+      - name: Spec structure guard
+        run: |
+          git fetch --no-tags --quiet origin "${{ github.base_ref }}"
+          node scripts/spec-structure.mjs --base "origin/${{ github.base_ref }}" --block
       - name: Spec policy coupling guard
         run: |
           git fetch --no-tags --quiet origin "${{ github.base_ref }}"

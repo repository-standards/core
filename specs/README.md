@@ -17,6 +17,46 @@ SPEC = current / target truth of a CAPABILITY
 SPEC = description of a ticket
 ```
 
+## Spec depth: buildable, not descriptive
+
+A capability spec is a **buildable technical specification**, not a general
+description. The bar:
+
+> An engineer or agent could IMPLEMENT and VERIFY the capability from the spec
+> alone (plus the repo's shared schemas and standards), without reverse-engineering
+> the code.
+
+Saying only *what* the system does is not enough. A buildable spec also carries the
+**contracts**:
+
+- **Data contracts** - exact schemas, types, constraints, enums, persisted shapes.
+- **Interface contracts** - every endpoint / function: inputs, outputs, and every
+  error (status + code + message).
+- **Algorithms & rules** - the computations and decisions as implementable steps.
+- **State machine** - states + a transition table (trigger, guard).
+- **Config & flags** - what changes behavior.
+- **Acceptance criteria** - Given / When / Then, concrete enough to become tests.
+  This is the verification half - it is what makes "buildable" *checkable*.
+
+**Verbatim rule.** Contracts quote real identifiers - field names, enums, error
+codes, endpoints - exactly. A paraphrased contract is not a contract.
+
+### Tiers
+
+Every spec declares its tier (`Spec tier:` at the top).
+
+- **buildable** (default) - all of the above. This is the bar for any capability
+  that carries money, security, data integrity, or an external contract - those
+  MUST be buildable.
+- **behavioral** - contracts, invariants, edge cases and boundaries in prose,
+  without full data / interface / acceptance detail. Allowed ONLY for thin or
+  peripheral capabilities, and the spec MUST declare `Spec tier: behavioral` so the
+  gap is explicit, not accidental.
+
+A spec starts wherever it must and is upgraded toward buildable as the capability
+matters more. What a buildable spec cannot yet pin down goes in **Open questions**,
+never glossed - honesty about gaps is what keeps the spec trustworthy.
+
 ## Structure - by capability, not by ticket
 
 ```
@@ -35,6 +75,15 @@ specs/bookings/{overview,lifecycle,modifications,cancellation}.md
 
 Never `specs/001-booking/`, `specs/017-booking-change/`. Create a new capability
 spec ONLY for a genuinely new domain - not because a new ticket or branch exists.
+
+And **not by page or route** either. Organize by capability (the domain concept),
+not by where it surfaces in the UI. A concept like *packages* shows up on the
+homepage, the PDP, and checkout - per-page specs (`pdp/`, `checkout/`) would
+duplicate that one concept across three places and drift. One capability = one
+canonical spec, wherever it appears.
+
+**Where a capability appears** (which pages / routes) is a cross-reference in the
+docs - a property of the doc, never a reason to split the spec.
 
 ## Source-of-truth rules
 

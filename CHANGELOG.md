@@ -3,6 +3,50 @@
 All notable changes to the standards. Semver: MAJOR = removals/breaking policy
 changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
+## 0.7.2 - 2026-07-07
+
+Spec methodology sharpened - combines the by-capability and spec-depth work.
+
+- `specs/README`: specs are organized by **capability/domain, not by page or route**
+  (UI-surface is a docs cross-reference). Plus **Spec depth: buildable, not
+  descriptive** - specs carry the contracts (data, interface, algorithms, state,
+  acceptance criteria), with a `buildable` / `behavioral` tier.
+- `capability-spec.template.md`: the buildable sections (Data / Interface contracts,
+  Algorithms, State machine, Config, Acceptance criteria) + a `Spec tier` line; the
+  depth rationale lives in `specs/README`, not restated in the template.
+- `decision-records/adr/ADR-002` (by capability) and `ADR-003` (buildable) - the two
+  decisions with their rejected forms (ticket/page numbering; descriptive-only).
+
+## 0.7.1 - 2026-07-07
+
+Dogfood the decision-record system and settle its policy (ADR-001).
+
+- `decision-records/adr/ADR-001-decision-record-policy.md` - the first real ADR:
+  records use MADR; ADR = a broad *technical* decision (framework / library / tooling /
+  infra / data), BDR = business (separate stream), sub-scope via `Tags`, no TDR and no
+  bespoke sub-type acronyms.
+- `decision-records/README.md` - added the "what counts as a record here" glossary,
+  the authoritative definition ADR-001 drives.
+- `decision-records/adr/_template.md` - added the MADR `Confirmation` field (the
+  decision -> enforcement bridge).
+
+Source-only; `dist/` syncs via the planned build step.
+
+## 0.7.0 - 2026-07-07
+
+Ship the spec-structure guard - the mechanical "no ticket-numbered spec paths" half
+of the spec policy that `enforcement.md` described but never shipped. Live gap it
+closes: a consumer's align produced `specs/cms/001-core/` - a Spec Kit
+`/speckit-specify` leak - and nothing caught it.
+
+- `spec-structure.mjs` (source `specs/`, dist `scripts/`) - dependency-free guard
+  that fails on `specs/**/NNN-*`. Modes: full-tree audit, `--staged`, `--base --block`.
+  Needs no capability-map, so it runs from day one.
+- Wired into the `spec-guard` CI workflow as a second gate (structure + coupling).
+- `commands.md`: explicit Spec Kit boundary - never `/speckit-specify`; capability
+  specs only via `/spec-update`.
+- `enforcement.md`: the structure lint is now shipped, not just described.
+
 ## 0.6.1 - 2026-07-07
 
 Housekeeping: reconcile drift between the source and `dist/` (no policy change).

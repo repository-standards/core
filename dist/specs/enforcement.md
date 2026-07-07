@@ -5,9 +5,11 @@ part of this is mechanical; the rest needs an AI pass.
 
 ## What is mechanically enforceable (hard gate)
 
-- **Structure / lint:** every `specs/<capability>/` file parses, has the required
-  sections, uses capability naming, contains no ticket-numbered folders
-  (`NNN-feature/`), and its links resolve.
+- **Structure lint (shipped):** no ticket-numbered spec paths - `specs/<capability>/`,
+  never `specs/NNN-feature/` or `specs/<cap>/NNN-*` (a common leak from Spec Kit's
+  native `/speckit-specify`). Shipped as `spec-structure.mjs`, runs standalone (no
+  capability-map). Parsing, required-sections and link-resolution stay a lighter
+  follow-on, not yet mechanical.
 - **Coupling guard (the key one):** if a PR changes code in a capability's domain
   but does **not** touch that capability's spec, block (or warn) - "you changed
   `<capability>` code without touching `specs/<capability>/`; update it or state
@@ -24,9 +26,10 @@ is spread across app / service / shared). Keep it at `specs/capability-map.json`
 }
 ```
 
-**Shipped, ready to use:** the guard
-[`../scripts/spec-guard.mjs`](../scripts/spec-guard.mjs) (dependency-free) and its CI
-job [`../.github/workflows/spec-guard.yml`](../.github/workflows/spec-guard.yml).
+**Shipped, ready to use:** the structure lint
+[`../scripts/spec-structure.mjs`](../scripts/spec-structure.mjs) and the coupling
+guard [`../scripts/spec-guard.mjs`](../scripts/spec-guard.mjs) (both dependency-free),
+run by the CI job [`../.github/workflows/spec-guard.yml`](../.github/workflows/spec-guard.yml).
 
 ## What is NOT mechanical (AI pass)
 

@@ -16,6 +16,12 @@ tasks, analyze, converge) instead of reimplementing it.
 
 ## Strong rules for the agent
 
+**Spec Kit boundary (the load-bearing one):** never run Spec Kit's native
+`/speckit-specify` - it creates `specs/NNN-feature/` folders, which this model
+forbids. Spec Kit is the *engine* (clarify, plan, tasks, analyze, converge);
+capability specs are authored and edited only via `/spec-update`. Enforced by
+`spec-structure.mjs`.
+
 1. Never create a new capability spec merely because a request exists - search existing capabilities first.
 2. A cross-capability change updates **every** affected canonical spec, not only the obvious one.
 3. Specs describe behavior (`MUST`/`MAY`/`MUST NOT`), not tickets.
