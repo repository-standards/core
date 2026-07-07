@@ -39,6 +39,9 @@ Common commands (install, dev, build, test, checks).
 
 - Conventional Commits, ticket after the colon; no AI/tool attribution; ASCII
   hyphen only; small focused PRs.
+- **Working language:** `<declare per artifact - default English>`. E.g. code +
+  commits in English, docs + specs in `<team language>`, user-facing copy in the
+  persona's language. Honor this everywhere; it is a config, not a constraint.
 
 ## Red flags - STOP and ask the human
 

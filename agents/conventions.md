@@ -4,6 +4,23 @@
 
 ## Conventions
 
+### Working language
+
+Language is a **configuration**, not a constraint - an AI reads whatever you choose, so
+decide per artifact and state it in `AGENTS.md`. Default: **English** (widest collaboration,
+best ecosystem fit), but any team may pick its own - a German team writing German docs and
+English commits is a first-class setup, not a workaround.
+
+| Artifact | Recommended | Note |
+|---|---|---|
+| Code identifiers (names, public APIs) | English | interop with libraries and tooling |
+| Code comments | repo's choice | |
+| Docs, specs, decision records | repo's choice | one language per artifact type |
+| Commit messages, PR text | English | recommended |
+| User-facing copy | the persona's language | driven by the audience, not the team |
+
+Pick once, record it in `AGENTS.md`, and keep it consistent within an artifact type.
+
 ### Commits and PRs
 
 - Conventional Commits: `type(scope): TICKET-123 imperative summary`. The ticket

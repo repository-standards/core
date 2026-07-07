@@ -44,6 +44,7 @@ default is stack-specific it is marked `-> stack layer`.
 | Repo topology | Monorepo vs polyrepo shapes tooling, releases, ownership | Monorepo when code shares a release cadence or types; split only on a real ownership/deploy boundary | ADR |
 | Domain / module boundaries | Bad seams make every later change cross-cutting | Slice by **capability/domain**, not by layer or page (mirrors [specs by capability](../../specs/README.md)) | ADR |
 | Language & type strictness | Strictness caught early is cheap; retrofitted late is not | Strict typing on from day one; no gradual-any escape hatch as default | ADR |
+| Working (natural) language | An AI reads any language, so this is a config, not a constraint; undecided means inconsistent artifacts | Default English; declare per-artifact in `AGENTS.md` (a non-English team is first-class); user-facing copy follows the persona | convention (AGENTS.md) |
 | Dependency & supply-chain policy | Every dep is attack surface and maintenance debt | A real bar to add a dependency (ADR for non-trivial ones); a supply-chain **cooldown** before adopting fresh releases `-> stack layer` | ADR |
 
 ## Runtime & data

@@ -64,6 +64,48 @@ the next agent should check each against the current standard before acting.
 | SD-6 | Land a behavior change and its spec update in the SAME PR | the coupling guard is per-PR and has no bypass - a fix that changes a capability's code while its spec update rides in a separate PR makes the guard block the fix PR (observed: a fix PR went red for exactly this). "Update specs before implementing" is the principle; "in the same PR" is the operational corollary that keeps the guard green | ways-of-working / enforcement note states behavior and spec land together; a change that touches a capability's code touches that capability's spec (or records why not) in the same PR | todo |
 | SD-7 | Reconcile a spec when a fix lands - flip its Open questions | specs drift in BOTH directions: a fix that resolves something the spec listed under "Open questions" must, in the same change, flip that item to resolved and update the affected Data / Interface / Acceptance sections - otherwise the spec keeps describing a bug that no longer exists (a fixed defect masquerading as a known gap) | the reconcile step names this explicitly: a fix updates the resolved Open questions plus the affected contract sections in the same change | todo |
 
+## Epic: Naming & positioning
+
+The current name `repository-standards` is clear but may undersell a living, versioned,
+agents-first framework. Decide the name before promoting widely (rename touches many files).
+
+| id | title | why | DoD | status |
+|----|-------|-----|-----|--------|
+| NAME-1 | Decide the project/repo name | want a recognized-default *category* name (like "coding standards"), possibly AI-flavored to signal agents-first | pick a candidate; verify npm scope + GitHub org + domain; rename README/PRODUCT/AGENTS/manifest/skills + the `align me to <name>@<ver>` phrasing; keep `.standards-version` filename (generic) | todo |
+
+Candidates to choose from (head noun stays **standards** - plural like "coding standards";
+internally still "**the standard**", singular + versioned):
+
+Current lean (owner): the top level reads as **repository** / **project**, not
+"engineering" - keep it broad and place-anchored. `project-standards` is a live candidate.
+An AI-flavoured variant is wanted to signal agents-first.
+
+- **By place / scope (leading):** `repository-standards` (current), `project-standards`.
+- **AI-flavoured** (signals agents-first): `ai-repository-standards`, `ai-project-standards`,
+  `ai-engineering-standards`, `agentic-engineering-standards`, `ai-native-engineering-standards`.
+- **By discipline (demoted per owner):** `engineering-standards`, `development-standards`.
+- Rejected: `documents-standards` (too narrow); evocative brand names (Plumbline/Cairn/etc -
+  do not read as a default standard).
+- Head noun stays **standards** (plural, like "coding standards"); internally still "**the
+  standard**" (singular, versioned). Ownability via npm scope / GitHub org (`@handle/…`),
+  not by mangling the name. Tagline is fixed regardless of name: *the reference your repo
+  trues up to - align -> verify -> drift as a number*.
+
+## Epic: Cross-discipline standards & polish
+
+Established standards worth folding in the same way personas were (catalog + ways-of-working
++ optional ADR, reflected to `dist/`). Scrum/SAFe are deliberately **out of scope** - the
+framework is spec-driven + trunk-based, not ceremony-based.
+
+| id | title | why | DoD | status |
+|----|-------|-----|-----|--------|
+| STD-C4 | Architecture diagrams via the **C4 model** | `ARCHITECTURE.md` has no diagram convention | C4 (Context/Container/Component) as the ARCHITECTURE convention; name our guards/self-verify "**fitness functions**"; reflected to `dist/` | todo |
+| STD-A11Y | Accessibility baseline: **WCAG 2.2 AA** | UX has no gate; Biome a11y already enforces part | WCAG 2.2 AA as a decision in the Quality catalog; note Biome a11y coverage; reflected to `dist/` | todo |
+| STD-PO | PO/PM quality: **INVEST + Definition of Ready + Impact/Story Mapping** | spec/backlog quality and greenfield discovery lacked named methods | INVEST + DoR added to spec/backlog quality; **Impact Mapping** + **Story Mapping** wired into `greenfield-start`/ways-of-working (goal -> persona -> module); reflected to `dist/` | todo |
+| STD-SEC | Security references: **OWASP ASVS + SLSA + Twelve-Factor** | we do the practices (secret scan, cooldown, env config) without naming the frameworks | reference ASVS + SLSA in the Security baseline and Twelve-Factor for services (Layer 2); reflected to `dist/` | todo |
+| LAND-1 | Landing messaging pass | current copy does not say who it is for (PO builds via spec), that greenfield+brownfield both apply, or mention personas | rewrite the landing hero + sections to the real positioning (see PR #31) | todo |
+| REFLECT-MAP-1 | Add new artifacts to `reflect.mjs` map | `personas` + `greenfield-start` (PR #32) and the changelog assembler are not yet in the source->dist map | on `reflect.mjs` (ENG-1, PR #28) merge, add the new copy/divergent entries so drift stays checkable | todo |
+
 ## Done (drop at next release)
 
 | id | title | landed |
