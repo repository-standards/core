@@ -21,13 +21,13 @@ and proves compliance. Deeper mechanization (a data-driven manifest) is ENG-2 be
 
 | id | title | why | DoD | status |
 |----|-------|-----|-----|--------|
-| REL-1 | Two-changelog system via changesets | one `CHANGELOG.md` edited per PR conflicts every time (just happened on #15 vs #16); and technical noise pollutes the stakeholder view | per-PR fragments (changesets); two assembled changelogs (technical + business, audience flag); maintainer cuts releases | todo |
+| REL-1 | Two-changelog system | one `CHANGELOG.md` edited per PR conflicts every time (just happened on #15 vs #16); and technical noise pollutes the stakeholder view | **done:** per-PR `changes/` fragments (audience + type + optional headline); `tools/changelog.mjs` assembles the complete technical `CHANGELOG.md` and a curated release-notes **draft** (`--check` validates fragments in CI); the maintainer cuts releases and writes the notes. Layer-2 repos may swap in `changesets`. | done |
 
 ## Epic: Layer 2 - Node/TS stack
 
 | id | title | why | DoD | status |
 |----|-------|-----|-----|--------|
-| L2-1 | `stacks/node-ts` | the promotable product needs the runnable Node/TS setup, evidence-based from stayget/roomlink/console | the paved-road setup (pnpm+Turbo, Biome, Fastify native DI, Next App Router, Vitest/Playwright, hardened Actions, supply-chain cooldown, gitleaks) with provenance; supplies the catalog's `-> stack layer` answers | todo |
+| L2-1 | `stacks/node-ts` | the promotable product needs the runnable Node/TS setup, evidence-based from stayget/roomlink/console | **done (this PR):** `stacks/node-ts` distilled from **stayget** (primary) + **propertycloud** - pnpm+Turbo, Biome (+Prettier for SCSS), strict TS, Fastify native-DI service template with Zod env, Next App Router config, hardened least-privilege CI, 7-day supply-chain cooldown. Every pick has pros/cons + 2026 community rec + provenance in [`DECISIONS.md`](stacks/node-ts/DECISIONS.md). Open increment: `roomlink`/`console` cross-check; a `gitleaks`/e2e template. | done |
 
 ## Epic: Reflection engine & self-consistency
 

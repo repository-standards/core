@@ -1,0 +1,26 @@
+# pnpm workspace - the paved-road monorepo shape.
+# Adjust the package globs to your repo; the policy below is the standard's default.
+
+packages:
+  - 'apps/*'
+  - 'services/*'
+  - 'packages/*'
+
+# Do not run arbitrary lifecycle scripts on install. Approve build scripts explicitly.
+enablePrePostScripts: false
+
+# Only these dependencies may run install/build scripts (pnpm's allow-list). Add a
+# package here consciously - an unreviewed postinstall is a supply-chain foothold.
+allowBuilds:
+  esbuild: true
+  '@prisma/engines': true
+  prisma: true
+  sharp: true
+
+# Supply-chain cooldown: never install a package version published less than 7 days ago
+# (10080 min). Fresh releases are the main vector for compromised packages and are
+# usually pulled within the week. Enforced for every install (local, CI, agents).
+# pnpm 11 ships this on by default at 1440 (1 day); the standard is more conservative.
+# For a critical security fix on a newer version, add a scoped minimumReleaseAgeExclude
+# entry rather than lowering this globally.
+minimumReleaseAge: 10080

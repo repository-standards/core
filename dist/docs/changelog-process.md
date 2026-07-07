@@ -66,3 +66,13 @@ or an agent can assemble it; a Node/TypeScript repo may mechanize it with the `c
 tool, Layer 2). The **release-notes half is deliberately human** - or an agent told to
 *write*, not assemble: the curation and the plain-language framing are the whole value,
 and they cannot be generated from commit lines.
+
+`tools/changelog.mjs` (dependency-free, Layer 1) does exactly this split:
+
+- `node tools/changelog.mjs --check` - validate every fragment's frontmatter (used in
+  CI so a malformed fragment fails the PR, not the release).
+- `node tools/changelog.mjs` - assemble: print the **complete** `CHANGELOG.md` block
+  (grouped by `type`, verbatim) plus a **draft scaffold** for the release notes from the
+  `stakeholder`/`both` headlines. It prints to stdout and never writes a version heading
+  or touches `VERSION` - the maintainer cuts the release and *writes* the notes from the
+  draft.
