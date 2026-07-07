@@ -43,15 +43,27 @@ codes, endpoints - exactly. A paraphrased contract is not a contract.
 
 ### Tiers
 
-Every spec declares its tier (`Spec tier:` at the top).
+Every spec declares its tier (`Spec tier:` at the top). To decide the tier, ask the
+one discriminator question:
 
-- **buildable** (default) - all of the above. This is the bar for any capability
-  that carries money, security, data integrity, or an external contract - those
-  MUST be buildable.
-- **behavioral** - contracts, invariants, edge cases and boundaries in prose,
-  without full data / interface / acceptance detail. Allowed ONLY for thin or
-  peripheral capabilities, and the spec MUST declare `Spec tier: behavioral` so the
-  gap is explicit, not accidental.
+> Could an agent **rebuild and verify** this capability from the spec alone, without
+> reading the code?
+
+If the answer has to be yes, the spec is **buildable**. Anything that carries money,
+security, data integrity, or an external contract always has to be - so those are
+always buildable; but the question, not the list, is the test (the list is just its
+most common answers).
+
+- **buildable** (default) - all the contracts above. **Default even for thin or
+  peripheral capabilities:** writing the contracts is exactly what surfaces the bugs,
+  so the small capabilities often benefit most. Do **not** pre-declare `behavioral`
+  to save effort - that only defers the pass that finds the problems, and it usually
+  has to be redone as `buildable` anyway.
+- **behavioral** - contracts, invariants, edge cases and boundaries in prose, without
+  full data / interface / acceptance detail. An **escape hatch, expected to be rare**:
+  the spec MUST declare `Spec tier: behavioral` **and** carry a one-line justification
+  for why buildable does not apply, so the gap is a conscious, visible choice - never
+  a default reached for to save work.
 
 A spec starts wherever it must and is upgraded toward buildable as the capability
 matters more. What a buildable spec cannot yet pin down goes in **Open questions**,
@@ -94,6 +106,11 @@ docs - a property of the doc, never a reason to split the spec.
    `payments-v2`. If it crosses domains, update **every** affected capability.
 3. Specs describe behavior (`MUST` / `MAY` / `MUST NOT`), never tickets ("this
    feature adds...", "in RL-123..."). A spec must be readable without git history.
+4. Every capability spec MUST have an entry in `specs/capability-map.json` - its
+   `<capability> -> code globs` mapping. This is not an enforcement detail; it is the
+   coupling anchor that keeps the spec alive. The guard uses it to catch code that
+   changes without its spec, so a capability spec with **no** map entry silently
+   rots - a spec without a mapping fails the check.
 
 ## Git-native change model (no separate change folders)
 

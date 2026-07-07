@@ -41,13 +41,17 @@ guards are green - not when every file has a paragraph.
    least-understood. This ordering **is** the backlog priority. You will not spec them
    all now.
 
-3. **Seed specs from the code - behavioral first, flag the buildable gaps.** For each
-   capability, write the spec at the tier the evidence supports. Start **behavioral**
-   (what it observably does, read from code + tests). Where the standard demands
-   **buildable** depth but the detail is missing or only in code - money, security,
-   data, external contracts (ADR-003) - do not block: record the gap as a backlog item
-   "raise `<capability>` spec to buildable". Never invent behavior the code does not
-   show; where the code is unclear, write the question, not a guess.
+3. **Seed specs from the code - extract verbatim, then synthesize.** For each
+   capability you spec this pass, work in two steps. First a **read-only extraction**:
+   pull the real contracts - schemas, endpoints, error codes, rules - out of the code
+   **verbatim, each with a `file:line` anchor**; the anchors make the spec auditable
+   and re-verifiable against the code later. Then **synthesize** the capability spec
+   from that extract. Write it **buildable** - do not drop to `behavioral` to save
+   effort (writing the contracts is exactly what surfaces the bugs, and peripheral
+   capabilities benefit most; ADR-003). Never invent behavior the code does not show; a
+   spec<->code discrepancy or an unclear branch goes in the spec's **Open questions**
+   (and becomes a tracked issue), not a guess. A capability you are **not** specing this
+   pass is a backlog item - not a behavioral placeholder written to look done.
 
 4. **Surface the decisions the code already made -> retroactive records.** The code
    embodies decisions: this datastore, this framework, this auth model, this money

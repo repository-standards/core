@@ -35,8 +35,15 @@ field means and its units. Name the idempotency / correlation keys.
 <!-- buildable: REQUIRED. Verbatim. -->
 Every endpoint or public function this capability exposes. For each: method + path
 (or signature), auth / gate, the request shape (fields, types, validation), the
-success response, and EVERY error path with its exact status + error code +
-message. Idempotency keys. Side effects (what state changes, what it calls).
+success response, idempotency keys, and side effects (what state changes, what it
+calls).
+
+Errors are a **required table**, one row per error path - listing them exhaustively
+is what forces reading every branch (it catches the errors prose glosses over):
+
+| Endpoint | Status | errorCode | Message / condition |
+|----------|--------|-----------|---------------------|
+| ...      | ...    | ...       | ...                 |
 
 ## Algorithms & rules
 
@@ -62,6 +69,9 @@ The states, and a transition table. Mark terminal states.
 - The system MUST NOT ...
 
 ## Invariants
+
+Each invariant MUST be covered by at least one Given/When/Then in Acceptance criteria
+(an invariant nothing tests is a wish, not an invariant).
 
 - <thing> MUST NOT exceed <thing> ...
 - A <x> MUST reference <y> ...
@@ -94,6 +104,9 @@ each state transition.
 
 ## Open questions
 
+<!-- REQUIRED section. If there are genuinely none, write "None known." - do not
+     delete the heading. -->
 Unresolved *current* questions and known gaps (not-yet-wired, unverified,
-undecided). Honesty here is what keeps a buildable spec trustworthy - do not gloss
-a gap as if it were settled.
+undecided). Retrofitting a spec from code, this is where the spec<->code
+discrepancies you find get recorded - each becomes a tracked issue, not a silent
+gloss. Honesty here is what keeps a buildable spec trustworthy.

@@ -15,6 +15,10 @@ part of this is mechanical; the rest needs an AI pass.
   `<capability>` code without touching `specs/<capability>/`; update it or state
   why not." This makes rule 7 (conscious spec review) mechanical. It cannot prove
   the spec is correct - it forces the author to touch the spec or acknowledge.
+- **Orphan-spec audit (same guard):** every capability spec MUST have a map entry
+  (source-of-truth rule 4). A `specs/<capability>/` with no key in the map has no
+  coupling and silently rots, so `spec-guard.mjs --audit` fails on it. Run it full-tree
+  in CI, not just on the diff.
 
 The coupling guard needs a **capability -> code globs** map (in a monorepo a domain
 is spread across app / service / shared). Keep it at `specs/capability-map.json`
