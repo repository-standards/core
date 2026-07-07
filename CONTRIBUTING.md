@@ -16,6 +16,11 @@ applies to humans and coding agents alike.
   [`changes/`](./changes/) fragment instead (see the
   [changelog process](./docs/changelog-process.md)). The maintainer assembles
   fragments and cuts every release.
+- **Source, not `dist/`:** edit the concern folders (the source), never `dist/`
+  files that are copies. Run `node tools/reflect.mjs --write` to sync the copy
+  class into `dist/`, and `node tools/reflect.mjs` (check) must be green before a
+  PR - it fails on drift, orphaned `dist/` files, or a source-only file leaking
+  into `dist/`. Intentional `dist/`-only divergences are declared in that map.
 - **Accepted ADRs are binding.** If your change contradicts one, propose a
   superseding ADR in the same change - do not silently diverge.
 - **Database:** reads OK, writes to any remote (dev/prod) never - hand a `.sql`

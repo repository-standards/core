@@ -44,9 +44,9 @@ the code. Personas gate ideas, specs, and the backlog.
 
 | id | title | why | DoD | status |
 |----|-------|-----|-----|--------|
-| ENG-1 | `source -> dist` build script | `dist/` is a hand-maintained snapshot that drifts (path rewrites, source-only ADRs done by hand each time); the repo's own README flags this | one local script regenerates `dist/` from the concern folders (path rewrites + source-only exclusions encoded once); not a GitHub Action | todo |
-| ENG-2 | Manifest + align-engine | `align-to-standards` is prose; a data-driven manifest with versioned migrations makes reconcile measurable and repeatable | a manifest describes what a repo must have; the engine diffs + applies; drift is a number | todo (design proposed in ADR-005) |
-| ENG-3 | ADR: "align-engine is a manifest" | the ENG-2 shape is a re-litigable decision worth recording | ADR drafted with rejected alternatives | proposed - ADR-005 (this PR), awaiting Accept |
+| ENG-1 | `source -> dist` build script | `dist/` is a hand-maintained snapshot that drifts (path rewrites, source-only ADRs done by hand each time); the repo's own README flags this | **done (this PR):** `tools/reflect.mjs` encodes the source->dist map in four classes (copy / divergent / authored-only / source-only); `--check` reports drift as a number + catches orphans and source-only leaks, `--write` syncs the copy class. Caught + fixed real drift on landing (spec-guard header, adr `_template` missing Confirmation). Open increment: mechanize the `divergent` transforms (template->real, link rewrites) so they are byte-checkable too. | done |
+| ENG-2 | Manifest + align-engine | `align-to-standards` is prose; a data-driven manifest makes reconcile measurable and repeatable | **done (this PR):** `standard.manifest.json` describes what an aligned repo must have (files/sections/guards/decisions + adapt rules); `self-verify.mjs` reads it and reports **drift as a number**; align/update skills read it. Open increment: a runner that computes the update plan from the manifest delta automatically (today the agent does it). | done |
+| ENG-3 | ADR: "align-engine is a manifest" | the ENG-2 shape is a re-litigable decision worth recording | ADR drafted with rejected alternatives; **Accepted** | done |
 
 ## Epic: Buildable spec depth - field lessons
 

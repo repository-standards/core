@@ -25,10 +25,11 @@ the result with `self-verify`.
    requested version (or the standard's latest). Equal? There is nothing to apply - skip
    to step 6 and self-verify.
 
-2. **Read the delta, not the whole standard.** The standard's `CHANGELOG.md` between the
-   two versions - and, where you have it, the diff of the standard itself across those
-   version tags - is the list of what changed: new or changed rules, guards, templates,
-   decisions, skills. Enumerate **only** what the update introduces, changes, or removes.
+2. **Read the delta, not the whole standard.** The precise delta is the diff of the two
+   versions' **`standard.manifest.json`** (ADR-005), keyed by kind + id/path: entries
+   added (their `since` equals the target or a version in between), changed, or removed
+   between current and target. The `CHANGELOG.md` between the two versions gives the prose
+   for each. Enumerate **only** what the update introduces, changes, or removes.
 
 3. **Apply the delta, adapted - never a blind re-scaffold.** For each changed item:
    - the repo has **not** diverged here -> apply it, adapted to this repo's stack and
@@ -38,14 +39,17 @@ the result with `self-verify`.
 
 4. **Preserve local deviations.** Where the repo deliberately deviates from a standard
    default (its own superseding ADR, per ADR-004 on link-not-copy), the update **must
-   not** clobber it. Detect the conflict, keep the repo's decision, and record what the
+   not** clobber it. Such deviations live as `exceptions` entries in the repo's manifest;
+   carry them forward. Detect the conflict, keep the repo's decision, and record what the
    new version would otherwise have changed so the human can reconcile it consciously.
 
-5. **Bump the pin.** Write the target version to `.standards-version`.
+5. **Bump the pin and the manifest.** Write the target version to `.standards-version`,
+   and replace `standard.manifest.json` with the target version's manifest (carrying the
+   repo's `exceptions` forward). The pin and the manifest move together.
 
 6. **Self-verify.** Run the compliance check - `node scripts/self-verify.mjs --version <target>`
-   (see `docs/self-verify.md`). It must pass: the version pin matches, the skeleton is
-   intact, the guards are green. Do not open the PR on a red self-verify.
+   (see `docs/self-verify.md`). It must pass: the pin matches the manifest, every required
+   entry is met, the guards are green - **drift 0**. Do not open the PR on a red self-verify.
 
 7. **One focused PR.** Title it with the version move (`update to repository-standards
    @<target>`); summarize what the delta changed and any preserved deviation. Never push

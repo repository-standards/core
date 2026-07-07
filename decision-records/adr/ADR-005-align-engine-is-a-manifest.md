@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Proposed |
+| **Status** | Accepted |
 | **Date** | 2026-07-07 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | methodology, align-engine, distribution |
@@ -50,10 +50,10 @@ Layer-1 simplicity, and client deviations that survive an update (ADR-004).
 
 ## Decision
 
-**Proposed:** adopt **Option B**. The align/update engine is driven by a **versioned,
-declarative manifest**; the agent applies it (adapting to the stack), and `self-verify`
-checks the repo against the pinned version's manifest. Drift becomes a measurable diff;
-a version update becomes a manifest-to-manifest delta.
+Adopt **Option B**. The align/update engine is driven by a **versioned, declarative
+manifest**; the agent applies it (adapting to the stack), and `self-verify` checks the
+repo against the pinned version's manifest. Drift becomes a measurable diff; a version
+update becomes a manifest-to-manifest delta.
 
 Reject **A** (the reliability and measurability gaps are the whole point) and **C** (too
 rigid for the adapt-to-stack, brownfield reality this standard targets). The manifest is
@@ -67,16 +67,18 @@ skills - it gives them a spine to read.
 - Negative / cost we accept: a manifest **schema** must be designed and versioned, and
   kept from drifting out of sync with the actual standard (mitigation: the skills read
   the manifest, so it cannot rot unused; `self-verify` asserts it).
-- Follow-ups: design the manifest schema (files/sections/guards/decisions + adapt rules);
-  teach `align-to-standards`, `update-to-version`, and `self-verify.mjs` to read it; emit
-  a drift score.
+- Follow-ups (now landed, ENG-2): the manifest schema exists as a real, shipped artifact
+  (`standard.manifest.json`); `self-verify.mjs` reads it and emits a drift score. Still
+  open: teaching `align-to-standards` / `update-to-version` to compute their plans from
+  the manifest delta (they now reference it; full mechanization is a later increment).
 
 ## Confirmation
 
-`self-verify` checks the repo against the pinned version's manifest (extends the existing
-mechanical checks); the update engine computes its plan from the manifest delta rather
-than from a human reading the changelog. Until the schema exists, this decision is
-**unconfirmed** - it is a direction, marked Proposed.
+Confirmed. `self-verify.mjs` reads the pinned version's `standard.manifest.json` and
+checks the repo against every entry (files, required sections, static guards), reporting
+**drift as a number**; a version/manifest mismatch fails. The schema now exists and is
+dogfooded (this repo ships its own manifest), so the decision is no longer a direction -
+it is in force.
 
 ## Revisit when
 
@@ -89,15 +91,15 @@ than from a human reading the changelog. Until the schema exists, this decision 
 
 Builds on ADR-004 (decisions reach clients by reference, not copy) and the versioned
 self-update mechanism (`.standards-version`, `update-to-version`, `self-verify`). Governs
-the future align-engine. Backlog: ENG-2 (build it) and this record (ENG-3).
+the align-engine. Backlog: ENG-2 (built - `self-verify` reads the manifest) and this
+record (ENG-3).
 
-## Appendix - a worked manifest (illustrative)
+## Appendix - the manifest
 
-So this decision is judged on substance, not a sketch, a worked manifest ships beside
-it: [`ADR-005.manifest.example.json`](ADR-005.manifest.example.json) - `repository-standards`
-describing **itself** at the current version. It is **illustrative only**: nothing reads
-it until ADR-005 is Accepted and ENG-2 builds the engine. It is source-only (like the
-standard's own ADRs, ADR-004).
+The manifest is a real, shipped artifact: [`standard.manifest.json`](../../standard.manifest.json)
+(reflected to `dist/standard.manifest.json`) - `repository-standards` describing **itself**
+at the current version. `self-verify.mjs` reads it; an aligned client repo carries a copy
+at its pinned version.
 
 **Shape.** Four lists plus two policy blocks, each entry carrying a `since` version and an
 `adapt` rule:

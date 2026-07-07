@@ -14,7 +14,7 @@
 //   node scripts/spec-guard.mjs --audit           # full-tree: every specs/<cap>/ has a map entry
 //   add --block to exit non-zero on a violation (default: warn, exit 0)
 //
-// No dependencies (Node built-ins only).
+// No dependencies (Node built-ins only). Place at scripts/spec-guard.mjs.
 
 import { execSync } from "node:child_process";
 import { readFileSync, existsSync } from "node:fs";

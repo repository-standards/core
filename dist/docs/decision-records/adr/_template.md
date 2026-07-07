@@ -29,6 +29,12 @@ The decision, stated plainly. "We will ..."
 - Negative / cost we accept: ...
 - Follow-ups: ...
 
+## Confirmation
+
+How compliance with this decision is verified in practice - a test, a guard / lint, a
+CI check, a review checklist, or the doc / spec it updates. If nothing confirms it yet,
+say so plainly (an unconfirmed decision is a red flag).
+
 ## Revisit when
 
 The concrete signal that would invalidate this decision and trigger a new ADR - a

@@ -19,18 +19,30 @@ node scripts/self-verify.mjs --version 0.7.2  # also assert the pinned version m
 node scripts/self-verify.mjs --warn           # report only (local, non-gating)
 ```
 
+It is **manifest-driven** (ADR-005). It reads [`standard.manifest.json`](../standard.manifest.json)
+- the standard describing itself at the pinned version - and checks the repo against every
+entry, reporting **drift** as a number (how many required entries are unmet; `drift 0` =
+compliant). Without a manifest it falls back to a built-in skeleton, so it still works on
+repos that predate ADR-005.
+
 It checks:
 
 - **Version pin** - `.standards-version` exists and is well-formed (`x.y.z`); with
   `--version <target>` it must equal that target (used right after an update to confirm
-  the bump landed).
-- **Skeleton** - the core artifacts exist: `AGENTS.md`, `specs/`, the
-  `decision-records`, and a backlog.
-- **Structure guard** - `scripts/spec-structure.mjs` passes (no ticket-numbered spec
-  paths), when installed.
+  the bump landed); and it must equal the manifest's `version` (a repo pinned to X carries
+  manifest X).
+- **Files** - every `required` manifest file (or one of its `altPaths`) exists.
+- **Sections** - every required section heading is present in its file (e.g. `AGENTS.md`
+  must state `Altitude`).
+- **Static guards** - each manifest guard with `kind: static` passes (e.g.
+  `scripts/spec-structure.mjs`); `self-verify` skips itself to avoid recursion.
 
-The code<->spec **coupling** guard (`scripts/spec-guard.mjs`) is diff-based, so it runs
-in CI on the PR diff rather than in this static check - but it is part of the same gate.
+The code<->spec **coupling** guard (`scripts/spec-guard.mjs`, `kind: diff`) runs in CI on
+the PR diff rather than in this static check - but it is part of the same gate.
+
+**Drift as a number.** Because the check is one entry per manifest line, `drift N` is a
+measurable distance from the pinned version - a fleet owner can sort repos by it, and an
+update's job is to drive it back to `0`.
 
 ## Judgment tier - confirmed at review
 

@@ -33,14 +33,18 @@ repo.
 4. **Watch repo gotchas** (e.g. a broad `settings.json` `.gitignore` rule swallowing
    `.claude/settings.json` - add a `!` negation).
 
-5. **Pin the aligned version.** Write the standard's version to `.standards-version` -
-   this is what makes the repo *updatable*: later, `update-to-version` reads it to apply
-   only the delta to a newer version. Without the pin there is no measurable drift and no
-   clean update path.
+5. **Pin the aligned version, carry the manifest.** Write the standard's version to
+   `.standards-version`, and copy that version's `standard.manifest.json` into the repo
+   (ADR-005) - it is the checklist the align was measured against, and what `self-verify`
+   reads. Use the manifest's `files` / `sections` / `guards` / `decisions` as the coverage
+   list, and each entry's `adapt` rule (copy / merge / fill-from-repo / reference) to
+   decide *how* it lands - never blind-copy a `fill-from-repo` artifact. Record any
+   deliberate deviation as a manifest `exceptions` entry so a later update does not
+   silently overwrite it.
 
 6. **Self-verify.** Run `node scripts/self-verify.mjs --version <aligned>` (see
-   `docs/self-verify.md`): the pin matches, the skeleton is intact, the guards are green.
-   Do not open the PR on a red self-verify.
+   `docs/self-verify.md`): the pin matches the manifest, every required entry is met, the
+   guards are green - **drift 0**. Do not open the PR on a red self-verify.
 
 7. **Open one focused PR.** Never push without the human's go. Never reference other
    repos.
