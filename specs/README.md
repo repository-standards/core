@@ -17,6 +17,15 @@ SPEC = current / target truth of a CAPABILITY
 SPEC = description of a ticket
 ```
 
+## For whom - name the persona
+
+Every capability spec names the **persona(s)** it serves (from
+[`personas.md`](../docs/personas.md)) and, in a line, how it advances their job. Behavior
+is verified against the code (buildable, below) *and* against a user - a spec that serves
+no persona is a candidate for deletion, not merge ([ADR-006](../decision-records/adr/ADR-006-personas-are-a-validation-gate.md)).
+Where a rule helps one persona and hurts another, the resolution is a recorded **BDR**,
+cited from the spec.
+
 ## Spec depth: buildable, not descriptive
 
 A capability spec is a **buildable technical specification**, not a general

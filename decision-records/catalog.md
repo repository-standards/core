@@ -89,6 +89,7 @@ technical log.
 
 | Decision | Why it matters | Record |
 |---|---|---|
+| Target personas | Who the product is for - the gate every spec, idea, and backlog item validates against ([ADR-006](adr/ADR-006-personas-are-a-validation-gate.md)); the primary persona wins ties | BDR (in `personas.md`) |
 | Pricing / monetization model | Shapes the whole product and much of the data model | BDR |
 | Data retention & compliance (GDPR, etc.) | Legal exposure; drives deletion and audit design | BDR |
 | SLAs & support commitments | What you promise sets the engineering bar | BDR |

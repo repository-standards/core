@@ -12,6 +12,7 @@
 | what the system does now | **behavior** | `specs/<capability>/` (buildable) |
 | how the system is built | **structure** | `ARCHITECTURE.md` |
 | what the product is and where it is going | **vision** | `PRODUCT.md` |
+| who we build for (and validate against) | **personas** | `docs/personas.md` - a gate above specs + backlog (ADR-006) |
 | research / analysis that fed a decision | **working doc** | `docs/` (archivable once it has fed its decision) |
 | the story / the narrative rationale | **narrative** | a blog or working doc - not a record |
 

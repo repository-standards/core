@@ -17,6 +17,17 @@ and proves compliance. Deeper mechanization (a data-driven manifest) is ENG-2 be
 |----|-------|-----|-----|--------|
 | SU-1 | Versioned update + self-verify | "update me to vX" and a machine-checkable "does it comply?" are the keystone the whole product turns on | `update-to-version` skill (delta not re-scaffold, preserves client deviations), `self-verify.mjs` (version pin + skeleton + structure guard, CI-gated) + `docs/self-verify.md`, `.standards-version` pin, wired into `align-to-standards` + `AGENTS` + the CI workflow; reflected to `dist/` | done (this PR) |
 
+## Epic: Product-discovery layer (personas + greenfield)
+
+The product-side mirror of buildable specs: behavior validated against a **user**, not just
+the code. Personas gate ideas, specs, and the backlog.
+
+| id | title | why | DoD | status |
+|----|-------|-----|-----|--------|
+| PERS-1 | Personas as a validation gate | "for whom?" had no home; a capability could be buildable and useless | `personas.template.md` + `dist/docs/personas.md`; ADR-006 (Accepted); wired into taxonomy, ways-of-working (PO stage), `specs/README` (spec names its persona), backlog template (persona column), decision catalog (target personas = BDR); reflected to `dist/` | done |
+| GF-1 | `greenfield-start` guided flow | new projects needed a for-whom -> what -> how conversation, not a blank scaffold | `greenfield-start` skill: elicit product + personas, choose the stack (Layer 2 default), record foundational ADRs, break into modules, write persona-anchored specs + business requirements, seed the backlog, self-verify; reflected to `dist/` | done |
+| PERS-2 | Mechanical persona check in the spec guard | a spec with no persona should fail like one with no error table | extend `spec-structure.mjs`: every capability spec references a persona in the roster; reflected to `dist/` | todo |
+
 ## Epic: Release & change tracking
 
 | id | title | why | DoD | status |

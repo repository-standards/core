@@ -31,15 +31,17 @@ under epics; keep the ordering honest (if it is not really next, it is not at th
 ## Format
 
 One item per row. `id` is stable (`CAP-3`, `ADR-auth`), `cap` links the capability,
+`persona` names who it serves (from `personas.md` - an item that serves no
+persona is parked, not queued; ADR-006),
 `why` is one line, `DoD` is the observable finish line.
 
 ### Epic: <name>
 
-| id | title | cap | why | DoD | status |
-|----|-------|-----|-----|-----|--------|
-| SPEC-1 | Spec `pricing` to buildable | pricing | money path, behavioral-only today | pricing spec has data + algorithm contracts, cited from code | todo |
-| ADR-1 | Record datastore choice | - | re-litigated in review, decision only in code | ADR Accepted, states rejected options | todo |
-| DRIFT-1 | Reconcile refund flow | refunds | README says X, code does Y | spec matches real behavior; guard green | todo |
+| id | title | cap | persona | why | DoD | status |
+|----|-------|-----|---------|-----|-----|--------|
+| SPEC-1 | Spec `pricing` to buildable | pricing | Owner-operator Olga | money path, behavioral-only today | pricing spec has data + algorithm contracts, cited from code | todo |
+| ADR-1 | Record datastore choice | - | (infra) | re-litigated in review, decision only in code | ADR Accepted, states rejected options | todo |
+| DRIFT-1 | Reconcile refund flow | refunds | Owner-operator Olga | README says X, code does Y | spec matches real behavior; guard green | todo |
 
 Statuses: `todo` / `doing` / `blocked` / `done` (drop `done` rows on release, or let the
 Backlog.md tool archive them).

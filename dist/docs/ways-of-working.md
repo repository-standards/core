@@ -35,9 +35,12 @@ delta**. After merge, the spec is current production truth - not a historical ti
 ### Stage by stage (mapped to the skills)
 
 1. **Intent (PO).** Pull an item from the [`backlog`](backlog.md) (or capture a new
-   one). Write or extend the capability's [spec](../specs/README.md) at the
-   **behavioral** tier: what it should do, the rules, the acceptance criteria. No code,
-   no schema - just behavior and why.
+   one). **Name the persona** it serves (from [`personas.md`](personas.md)) and how it
+   advances their job - an item that serves no persona is parked, not built (ADR-006).
+   Then write or extend the capability's [spec](../specs/README.md) at the **behavioral**
+   tier: what it should do, the rules, the acceptance criteria, for whom. No code, no
+   schema - just behavior and why. If two personas conflict, resolve it with a **BDR**,
+   not in your head.
 2. **Sharpen (Dev).** Run `spec-impact` to find the ripple (which other capabilities,
    which ADRs, which code). Raise the spec to the **buildable** tier - the contracts a
    change can be built and verified from. If the change forces a contestable decision,
