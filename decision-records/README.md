@@ -4,6 +4,11 @@ Every decision that shapes the product or the system gets a record. If a decisio
 has no record, it does not exist - reviewers and agents treat undocumented
 divergence as a red flag.
 
+> **Which decisions should a project even have?** See the
+> [decision catalog](catalog.md) - the menu of forks a project keeps hitting
+> (datastore, auth, API shape, release strategy, ...) with the standard's paved-road
+> default for each. It drives greenfield scaffolding and the `onboard-repo` sweep.
+
 Two streams, two questions - **decisions only**:
 
 | Stream | Question | Folder | Lifecycle |

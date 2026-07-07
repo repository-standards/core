@@ -18,7 +18,43 @@ to maintainability" half of the product.
   the skeleton is in place (structure vs content split made explicit).
 - `docs/AGENTS.template.md` - repo map gains `docs/backlog.md`; Workflows now name the
   spec-driven flow and the brownfield onboarding flow.
-- Reflected into `dist/` (skills, `dist/docs/backlog.md`, `AGENTS.md`).
+- `decision-records/catalog.md` - new: the **decision catalog**, the opinionated menu
+  of forks a project should consciously decide (foundation, data, interfaces, quality,
+  delivery, plus a business/BDR group), each with the paved-road default and record
+  type. Drives greenfield scaffolding, the `onboard-repo` sweep, and backlog items for
+  undecided areas. `decision-records/README` points to it.
+- Reflected into `dist/` (skills, `dist/docs/backlog.md`, `AGENTS.md`, and the catalog -
+  source-only ADR link de-linked, specs path adjusted for the assembled layout).
+- `docs/repo-assessment.md` - new: the analysis an agent runs before it changes anything
+  (eight passes - skeleton/docs, decisions-in-code, capabilities/specs, quality gates,
+  CI/CD, security/supply-chain, deps/stack, drift); routes findings to align / onboard /
+  backlog; names the red-flag stops. Wired into `onboard-repo` as its precursor.
+- `docs/ways-of-working.md` - new: the spec-driven feature flow across roles (PO writes
+  the behavioral spec -> dev sharpens to buildable + records the decision -> AI builds ->
+  reconcile), mapped onto the `spec-*` skills; linked from `AGENTS.template` Workflows.
+
+Versioned self-update - the keystone: a repo pins to a standard version and can update to
+newer ones by delta, then prove it complies.
+
+- `skills/update-to-version` - new: brings an already-aligned repo to a newer standard
+  version by applying the **delta** (not a re-scaffold), preserving client deviations,
+  then self-verifying. Complements `align-to-standards` (first adoption).
+- `specs/self-verify.mjs` (ships to `scripts/`) - new: dependency-free compliance check -
+  `.standards-version` pin (`--version` asserts a target), core skeleton, structure guard;
+  exits non-zero on failure so CI gates on it. `docs/self-verify.md` documents the
+  mechanical vs judgment tiers.
+- `.standards-version` - the version pin, formalized: `align-to-standards` writes it,
+  `update-to-version` bumps it, `self-verify` asserts it.
+- Wired into `align-to-standards` (pin + verify), `AGENTS.template` Workflows (a "stay
+  current" flow), and the `spec-guard` CI workflow (a self-verify gate).
+
+Backlog tooling - the backlog feeds itself instead of being hand-assembled.
+
+- `skills/add-to-backlog` - new: capture a work item mid-flow in one step, enforcing the
+  backlog's rules (a real source, a definition of done, no duplicates, risk-ordered).
+- `skills/backlog-from-specs` - new: derive items from the two spec signals - a spec
+  delta (`spec-update`) and a drift finding (`spec-reconcile`) - so the backlog falls out
+  of the spec workflow automatically.
 
 ## 0.7.2 - 2026-07-07
 

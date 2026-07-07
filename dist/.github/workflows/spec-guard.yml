@@ -19,6 +19,9 @@ jobs:
           node-version-file: ".nvmrc"
           # This job installs no package manager; do not try to restore its cache.
           package-manager-cache: false
+      - name: Self-verify (standard compliance)
+        # .standards-version pin + core skeleton + structure guard (static, whole-repo).
+        run: node scripts/self-verify.mjs
       - name: Spec structure guard
         run: |
           git fetch --no-tags --quiet origin "${{ github.base_ref }}"

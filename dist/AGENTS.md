@@ -61,6 +61,10 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
 - **Bring this repo up to the standard (brownfield)** - `align-to-standards` (skeleton),
   then `onboard-repo` (derive capabilities from the code, seed specs + the decisions the
   code implies, and put the rest in the backlog). Incremental, never a big-bang dump.
+- **Stay current with the standard** - this repo is pinned to a version in
+  `.standards-version`. `update-to-version` applies the delta to a newer version (not a
+  re-scaffold), then `self-verify` proves it complies: `node scripts/self-verify.mjs`
+  (see [`docs/self-verify.md`](docs/self-verify.md)). The self-verify gate runs in CI.
 
 ## What you must not do
 

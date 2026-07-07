@@ -33,9 +33,16 @@ repo.
 4. **Watch repo gotchas** (e.g. a broad `settings.json` `.gitignore` rule swallowing
    `.claude/settings.json` - add a `!` negation).
 
-5. **Record the aligned version** (e.g. `.standards-version`) so drift is measurable.
+5. **Pin the aligned version.** Write the standard's version to `.standards-version` -
+   this is what makes the repo *updatable*: later, `update-to-version` reads it to apply
+   only the delta to a newer version. Without the pin there is no measurable drift and no
+   clean update path.
 
-6. **Open one focused PR.** Never push without the human's go. Never reference other
+6. **Self-verify.** Run `node scripts/self-verify.mjs --version <aligned>` (see
+   `docs/self-verify.md`): the pin matches, the skeleton is intact, the guards are green.
+   Do not open the PR on a red self-verify.
+
+7. **Open one focused PR.** Never push without the human's go. Never reference other
    repos.
 
 ## Then, for an existing repo: hand off to `onboard-repo`
