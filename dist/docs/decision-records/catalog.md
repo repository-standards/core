@@ -71,7 +71,8 @@ default is stack-specific it is marked `-> stack layer`.
 |---|---|---|---|
 | Testing strategy | "How much testing" argued per-PR forever otherwise | Named test tiers and where each runs; money/security/contract paths are non-negotiable (mirrors buildable specs) `-> stack layer` | ADR |
 | Observability | You cannot fix what you cannot see | Structured logging + the metrics/traces that matter, decided as a baseline, not bolted on after an incident | ADR |
-| Security baseline | The floor below which nothing ships | Secret scanning, dependency audit, least-privilege CI, no plaintext secrets - a stated minimum | ADR |
+| Security baseline | The floor below which nothing ships | Secret scanning, dependency audit, least-privilege CI, no plaintext secrets - a stated minimum; reference OWASP ASVS + SLSA `-> stack layer` | ADR |
+| Accessibility baseline | "We'll do a11y later" means never; retrofitting it is dear | **WCAG 2.2 AA** as the floor for any user-facing surface; enforce what tooling can (e.g. Biome a11y rules) `-> stack layer` | ADR |
 | Performance & scaling budget | Un-budgeted perf becomes an emergency | A stated budget only where it matters (hot paths, SLAs); do not pre-optimize the rest | ADR |
 
 ## Delivery

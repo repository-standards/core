@@ -28,6 +28,12 @@ the code. Personas gate ideas, specs, and the backlog.
 | GF-1 | `greenfield-start` guided flow | new projects needed a for-whom -> what -> how conversation, not a blank scaffold | `greenfield-start` skill: elicit product + personas, choose the stack (Layer 2 default), record foundational ADRs, break into modules, write persona-anchored specs + business requirements, seed the backlog, self-verify; reflected to `dist/` | done |
 | PERS-2 | Mechanical persona check in the spec guard | a spec with no persona should fail like one with no error table | extend `spec-structure.mjs`: every capability spec references a persona in the roster; reflected to `dist/` | todo |
 
+## Epic: Modernization (bring an old repo current)
+
+| id | title | why | DoD | status |
+|----|-------|-----|-----|--------|
+| MOD-1 | `modernize` skill + plan-then-refactor | a common entry point is a repo that has fallen behind; bumping before understanding loses behavior and records nothing | `modernize` skill (audit -> target -> record decisions -> sequenced migration backlog -> maintenance strategy), the "recommendation/future" step; ADR-007 (knowledge first, refactor last, Accepted); a Modernize phase in `docs/adoption.md`; reflected to `dist/` | done |
+
 ## Epic: Release & change tracking
 
 | id | title | why | DoD | status |

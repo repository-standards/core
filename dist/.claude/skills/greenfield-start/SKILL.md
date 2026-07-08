@@ -35,9 +35,15 @@ The order is deliberate: **for whom -> what -> how**. Personas gate everything d
    and the stack as **ADRs** (from the decision catalog `decision-records/catalog.md`:
    repo topology, domain boundaries, datastore, API style, auth).
 
-5. **Break into modules/capabilities (with the user).** Slice the product into capabilities
-   by domain, not by page (mirrors the spec rule). For each, note the persona(s) it serves.
-   This module map becomes the `specs/` layout and the first epics.
+5. **Break into modules/capabilities (with the user).** Two lightweight techniques close the
+   loop with the personas:
+   - **Impact Mapping** - goal -> persona -> impact (the behaviour change we want in them)
+     -> deliverable (the capability). This keeps every capability traceable to a goal *and*
+     a persona, and kills features that map to neither.
+   - **Story Mapping** - lay the primary persona's journey left-to-right; slice the first
+     release as the thinnest vertical that still gets them through it.
+   Slice by domain, not by page (mirrors the spec rule); note the persona(s) each capability
+   serves. This map becomes the `specs/` layout and the first epics.
 
 6. **Write the first specs + business requirements.** For the initial capabilities, write
    specs (`specs/README.md`) at the **behavioral** tier (raise money/security/data paths

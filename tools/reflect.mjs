@@ -72,6 +72,7 @@ const DIVERGENT = [
   { src: "docs/AGENTS.template.md", dist: "dist/AGENTS.md", reason: "template -> the real entry point (placeholders resolved, .template dropped)" },
   { src: "docs/ARCHITECTURE.template.md", dist: "dist/docs/ARCHITECTURE.md", reason: "template -> a filled example for a real repo" },
   { src: "docs/README.template.md", dist: "dist/docs/README.md", reason: "template -> the shipped docs index" },
+  { src: "docs/personas.template.md", dist: "dist/docs/personas.md", reason: "template -> a filled personas roster for a real repo" },
   { src: "CONTRIBUTING.md", dist: "dist/CONTRIBUTING.md", reason: "the repo's own CONTRIBUTING vs the shipped template" },
   { src: "specs/README.md", dist: "dist/specs/README.md", reason: "dist adds a 'Where the pieces are' orientation section for a real repo" },
   { src: "specs/commands.md", dist: "dist/specs/commands.md", reason: "dist points at the shipped ../.claude/skills/ implementations" },

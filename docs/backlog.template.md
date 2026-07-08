@@ -46,9 +46,16 @@ persona is parked, not queued; ADR-006),
 Statuses: `todo` / `doing` / `blocked` / `done` (drop `done` rows on release, or let the
 Backlog.md tool archive them).
 
+## Definition of Ready (before an item is pulled)
+
+An item is **ready** when it is **INVEST**-shaped and has: a named `persona`, a linked `cap`
+(or `-`), a one-line `why`, and an observable **DoD**. INVEST = Independent, Negotiable,
+Valuable (to that persona), Estimable, Small (fits one flow), Testable. An item that fails
+this is refined or split first - the PO stage does not start on a vague item.
+
 ## Not this
 
-- Not a dumping ground for vague wishes - every item has a source and a DoD.
+- Not a dumping ground for vague wishes - every item has a source, a persona, and a DoD.
 - Not a second issue tracker to keep in sync by hand - this is the in-repo, agent-first
   view; mirror to an external tracker only if the team already lives there.
 - Not a place to pre-decide - "write an ADR for X" is a backlog item; the decision
