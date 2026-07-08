@@ -6,7 +6,10 @@ applies to humans and coding agents alike.
 
 ## Quick rules
 
-- **Branch:** short-lived, off an up-to-date `main`.
+- **Branch:** short-lived, off an up-to-date `main`. **Base every PR on `main`, not
+  on another feature branch.** A PR whose base is a feature branch strands its commits
+  when the base is rebase-merged (only the base's own commits reach `main`) - if you must
+  stack, merge the parent PR first (which retargets the child to `main`) before the child.
 - **Commits:** Conventional Commits, ticket key after the colon
   (`type(scope): TICKET-123 summary`). No AI/tool attribution trailers. ASCII
   hyphen only (no em/en dash). See the Conventions section in `AGENTS.md`.

@@ -46,6 +46,7 @@ const COPY = [
   ["docs/PRODUCT.template.md", "dist/docs/PRODUCT.md"],
   ["docs/backlog.template.md", "dist/docs/backlog.md"],
   ["docs/changelog-process.md", "dist/docs/changelog-process.md"],
+  ["docs/adoption.md", "dist/docs/adoption.md"],
   ["docs/repo-assessment.md", "dist/docs/repo-assessment.md"],
   ["docs/self-verify.md", "dist/docs/self-verify.md"],
   ["docs/taxonomy.md", "dist/docs/taxonomy.md"],

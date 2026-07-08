@@ -188,6 +188,33 @@
   .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease, transform .6s ease}
   .reveal.in{opacity:1;transform:none}
   @media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+  /* human-language story */
+  #lang .lstage{position:relative;max-width:720px;margin:26px auto 0;height:430px}
+  #lang #langcanvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+  #lang .person{position:absolute;top:0;width:31%;display:flex;flex-direction:column;align-items:center;gap:9px;z-index:2}
+  #lang .p0{left:0}#lang .p1{left:34.5%}#lang .p2{left:69%}
+  #lang .speech{background:var(--surface);border:1px solid var(--line);border-radius:13px;border-bottom-left-radius:3px;padding:10px 12px;font-size:12px;font-style:italic;color:var(--tx);line-height:1.45;text-align:center;min-height:52px;display:flex;align-items:center;animation:lfloat 4s ease-in-out infinite}
+  #lang .p1 .speech{animation-delay:-1.3s}#lang .p2 .speech{animation-delay:-2.6s}
+  @keyframes lfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  #lang .figure{display:flex;align-items:center;gap:5px}
+  #lang .figure .av{font-size:34px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
+  #lang .figure .flag{font-size:19px}
+  #lang .prole{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mid)}
+  #lang .hub2{position:absolute;left:50%;top:188px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:3}
+  #lang .hub2 .core{width:68px;height:68px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(180deg,#191c22,#111318);display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--add);transition:box-shadow .25s ease,border-color .25s ease}
+  #lang .hub2 .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid)}
+  #lang .doc{position:absolute;left:50%;top:300px;transform:translateX(-50%);width:min(400px,96%);border:1px solid var(--line);border-radius:13px;background:linear-gradient(180deg,#17191f,#131519);padding:13px 16px;box-shadow:0 12px 40px rgba(0,0,0,.35);z-index:2}
+  #lang .dhead{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--mid);margin-bottom:10px}
+  #lang .dhead .dt{color:var(--tx)}
+  #lang .dhead .chip{margin-left:auto;font-size:10px;border:1px solid rgba(78,201,166,.4);border-radius:20px;padding:2px 10px;color:var(--add);white-space:nowrap}
+  #lang .dbody{display:flex;flex-direction:column;gap:8px;transition:opacity .28s ease}
+  #lang .dbody.swap{opacity:0}
+  #lang .dl{font-size:13px;color:var(--tx);line-height:1.4}
+  #lang .dl b{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);display:inline-block;min-width:74px}
+  #lang .dfoot{margin-top:11px;padding-top:10px;border-top:1px solid var(--line);font-size:11.5px;color:var(--mid);line-height:1.5}
+  #lang .dfoot b{color:var(--add)}
+  @media(max-width:600px){#lang .lstage{height:490px}#lang .speech{font-size:11px;min-height:60px}}
 </style>
 
 <header>
@@ -407,6 +434,45 @@
     </div>
   </section>
 
+  <!-- LANGUAGE -->
+  <section id="lang">
+    <div class="wrap">
+      <div class="shead reveal">
+        <span class="eyebrow">Human-language agnostic</span>
+        <h2>Everyone writes in their own language. One spec comes out.</h2>
+        <p>Non-technical contributors talk in their native tongue - the framework gathers every language into one source and writes it down consistently, in the repo's language, native or default English. Language stops being the thing that blocks people from contributing.</p>
+      </div>
+      <div class="lstage reveal" id="stage">
+        <canvas id="langcanvas"></canvas>
+        <div class="person p0" id="pr0">
+          <div class="speech">"Gosc moze zmienic date rezerwacji w niecala minute."</div>
+          <div class="figure"><span class="av">&#129489;</span><span class="flag">&#127477;&#127473;</span></div>
+          <div class="prole">PO &middot; Polski</div>
+        </div>
+        <div class="person p1" id="pr1">
+          <div class="speech">"PATCH /bookings/:id - Idempotenz-Key erforderlich."</div>
+          <div class="figure"><span class="av">&#128104;</span><span class="flag">&#127465;&#127466;</span></div>
+          <div class="prole">Dev &middot; Deutsch</div>
+        </div>
+        <div class="person p2" id="pr2">
+          <div class="speech">"El flujo debe caber en una sola pantalla movil."</div>
+          <div class="figure"><span class="av">&#128105;</span><span class="flag">&#127466;&#127480;</span></div>
+          <div class="prole">Design &middot; Espanol</div>
+        </div>
+        <div class="hub2" id="hub"><div class="core">&#9881;</div><div class="lbl">framework</div></div>
+        <div class="doc" id="doc">
+          <div class="dhead"><span class="di">&#128196;</span><span class="dt">booking spec</span><span class="chip" id="chip">English &middot; default</span></div>
+          <div class="dbody" id="dbody">
+            <div class="dl"><b>Capability</b> <span data-k="cap"></span></div>
+            <div class="dl"><b>Rule</b> <span data-k="rule"></span></div>
+            <div class="dl"><b>Done</b> <span data-k="done"></span></div>
+          </div>
+          <div class="dfoot">One final language, decided per repo: <b>English by default</b> - or the team's native (e.g. Polski), if that's the recorded choice.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- LAYERS -->
   <section id="layers">
     <div class="wrap">
@@ -615,5 +681,68 @@
   function frame(now){ if(last==null) last=now; var dt=(now-last)/1000; last=now; for(var i=0;i<tokens.length;i++){ tokens[i].t=(tokens[i].t+SPEED*dt)%1; } draw(); requestAnimationFrame(frame); }
   if(reduce){ tokens=nodes.map(function(nd){ return {t:((nd.deg+90)/360+1)%1}; }); draw(); }
   else { requestAnimationFrame(frame); }
+})();
+</script>
+
+<script>
+/* Human-language story: native-language streams flow into the framework, which writes one
+   consistent spec - toggling English (default) <-> the repo's native language. */
+(function(){
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var stage=document.getElementById("stage"), cv=document.getElementById("langcanvas");
+  var hub=document.getElementById("hub"), chip=document.getElementById("chip"), dbody=document.getElementById("dbody");
+  if(!stage||!cv||!hub) return;
+  var ctx=cv.getContext("2d"), DPR=Math.max(1,Math.min(2.5,window.devicePixelRatio||1));
+  var CONTENT={
+    en:{chip:"English · default", cap:"change booking dates", rule:"allowed up to 24h before check-in", done:"guest sees the new dates instantly"},
+    pl:{chip:"Polski · native", cap:"zmiana dat rezerwacji", rule:"dozwolone do 24h przed zameldowaniem", done:"gosc od razu widzi nowe daty"}
+  };
+  function setLang(k){ dbody.classList.add("swap");
+    setTimeout(function(){ var c=CONTENT[k]; chip.textContent=c.chip;
+      dbody.querySelector('[data-k="cap"]').textContent=c.cap;
+      dbody.querySelector('[data-k="rule"]').textContent=c.rule;
+      dbody.querySelector('[data-k="done"]').textContent=c.done;
+      dbody.classList.remove("swap"); },300);
+  }
+  setLang("en");
+  var srcEls=[document.getElementById("pr0"),document.getElementById("pr1"),document.getElementById("pr2")];
+  var COLORS=[[255,180,84],[236,237,239],[78,201,166]];
+  var srcs=[], target={x:0,y:0}, W=0, H=0;
+  function anchors(){ var s=stage.getBoundingClientRect(); W=s.width; H=s.height;
+    cv.width=W*DPR; cv.height=H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);
+    srcs=srcEls.map(function(el){ var f=el.querySelector(".figure").getBoundingClientRect();
+      return {x:f.left+f.width/2-s.left, y:f.top+f.height/2-s.top}; });
+    var h=hub.querySelector(".core").getBoundingClientRect();
+    target={x:h.left+h.width/2-s.left, y:h.top+h.height/2-s.top};
+  }
+  anchors(); window.addEventListener("resize", anchors); setTimeout(anchors, 700);
+  var rgb=function(c,a){return "rgba("+c[0]+","+c[1]+","+c[2]+","+a+")";};
+  var ease=function(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;};
+  var parts=[], charge=0;
+  function spawn(){ for(var i=0;i<srcs.length;i++){ if(Math.random()<0.5) parts.push({i:i,t:0,life:1.5+Math.random()*0.7,off:(Math.random()-0.5)*22}); } }
+  function draw(dt){ ctx.clearRect(0,0,W,H);
+    for(var i=0;i<srcs.length;i++){ var s=srcs[i]; ctx.strokeStyle=rgb(COLORS[i],0.10); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(s.x,s.y); var cx=(s.x+target.x)/2, cy=Math.min(s.y,target.y)-10;
+      ctx.quadraticCurveTo(cx,cy,target.x,target.y); ctx.stroke(); }
+    for(var p=parts.length-1;p>=0;p--){ var pt=parts[p]; pt.t+=dt/pt.life;
+      if(pt.t>=1){ charge=Math.min(1,charge+0.5); parts.splice(p,1); continue; }
+      var s=srcs[pt.i], e=ease(pt.t); var cx=(s.x+target.x)/2+pt.off, cy=Math.min(s.y,target.y)-10;
+      var mx=(1-e)*(1-e)*s.x+2*(1-e)*e*cx+e*e*target.x, my=(1-e)*(1-e)*s.y+2*(1-e)*e*cy+e*e*target.y;
+      var c=COLORS[pt.i], a=Math.sin(Math.min(1,pt.t)*Math.PI)*0.9+0.1;
+      var gr=ctx.createRadialGradient(mx,my,0,mx,my,9); gr.addColorStop(0,rgb(c,a)); gr.addColorStop(1,rgb(c,0));
+      ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(mx,my,9,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=rgb(c,Math.min(1,a+0.2)); ctx.beginPath(); ctx.arc(mx,my,2.1,0,Math.PI*2); ctx.fill();
+    }
+    charge=Math.max(0,charge-dt*1.4); var core=hub.querySelector(".core");
+    core.style.boxShadow="0 0 0 "+(4+charge*10).toFixed(1)+"px rgba(78,201,166,"+(0.05+charge*0.16).toFixed(3)+")";
+    core.style.borderColor="rgba(78,201,166,"+(0.25+charge*0.5).toFixed(3)+")";
+  }
+  if(reduce){ anchors(); return; }
+  var last=null, acc=0;
+  function frame(now){ if(last==null)last=now; var dt=Math.min(0.05,(now-last)/1000); last=now;
+    acc+=dt; if(acc>0.16){ spawn(); acc=0; }
+    draw(dt); requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 })();
 </script>

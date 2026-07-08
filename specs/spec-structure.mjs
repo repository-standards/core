@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 // Spec-structure guard.
 //
-// Fails when a spec path uses the forbidden ticket-numbered folder/file pattern
-// (`specs/<NNN-feature>/` or `specs/<cap>/<NNN-...>`) - e.g. a leaked GitHub Spec
-// Kit `specs/001-core/` folder. Capability specs live at `specs/<capability>/spec.md`
-// (or named sub-specs `specs/<capability>/<name>.md`) - domain names, never numbers.
+// Two mechanical structure checks on capability specs:
+//   1. No ticket-numbered spec paths (`specs/<NNN-feature>/`, `specs/<cap>/<NNN-...>`) -
+//      e.g. a leaked GitHub Spec Kit `specs/001-core/` folder. Capability specs live at
+//      `specs/<capability>/spec.md` (or named sub-specs `specs/<capability>/<name>.md`) -
+//      domain names, never numbers.
+//   2. Every capability spec names a **persona** it serves (ADR-006), when the repo has a
+//      `docs/personas.md` roster - a spec that serves no one is incomplete. Checked by a
+//      `**Serves:** \`<persona>\`` field, a roster-name mention, or a personas.md reference.
 //
 // This is the "structure lint" half of specs/enforcement.md, made mechanical - the
 // complement to the coupling guard (spec-guard.mjs).
@@ -18,6 +22,7 @@
 // No dependencies (Node built-ins only).
 
 import { execSync } from "node:child_process";
+import { readFileSync, existsSync } from "node:fs";
 
 const args = process.argv.slice(2);
 const staged = args.includes("--staged");
@@ -33,26 +38,62 @@ else if (base) raw = sh(`git diff --name-only --diff-filter=ACMR ${base}...HEAD 
 else raw = sh("git ls-files specs");
 const files = raw.split("\n").filter(Boolean).filter((f) => f.startsWith("specs/"));
 
+// --- check 1: no ticket-numbered spec paths ------------------------------------
 // A ticket-numbered segment: two or more leading digits then - or _ (Spec Kit's
 // NNN-feature). Catches specs/001-booking/, specs/cms/001-core, specs/x/017-change.md.
 const NUMBERED = /^\d{2,}[-_]/;
-
-const violations = [];
+const numbered = [];
 for (const f of files) {
   const segment = f.split("/").slice(1).find((s) => NUMBERED.test(s));
-  if (segment) violations.push({ file: f, segment });
+  if (segment) numbered.push({ file: f, segment });
 }
 
-if (violations.length === 0) {
-  console.log(`spec-structure: OK (${files.length} spec paths)`);
+// --- check 2: every capability spec names a persona (ADR-006) ------------------
+// A capability spec is specs/<capability>/<file>.md (depth >= 3), not a template or README.
+const isCapSpec = (f) =>
+  f.split("/").length >= 3 && f.endsWith(".md") && !f.includes(".template.") && !/\/readme\.md$/i.test(f);
+
+const personaless = [];
+const personasPath = ["docs/personas.md", "personas.md"].find((p) => existsSync(p));
+if (personasPath) {
+  const roster = new Set();
+  for (const line of readFileSync(personasPath, "utf8").split("\n")) {
+    const m = line.match(/^\|\s*`([^`]+)`\s*\|/); // roster rows: | `Name` | ...
+    if (m && !m[1].includes("<")) roster.add(m[1].toLowerCase());
+  }
+  for (const f of files.filter(isCapSpec)) {
+    let body;
+    try { body = readFileSync(f, "utf8"); } catch { continue; }
+    const low = body.toLowerCase();
+    const serves = body.match(/\*\*serves:\*\*\s*`([^`]+)`/i); // Serves: `Name`, not placeholder
+    const hasServes = serves && !serves[1].includes("<");
+    const namesRoster = [...roster].some((n) => low.includes(n));
+    const refsPersonas = low.includes("personas.md") || /for whom/i.test(body);
+    if (!hasServes && !namesRoster && !refsPersonas) personaless.push(f);
+  }
+}
+
+// --- report --------------------------------------------------------------------
+if (numbered.length === 0 && personaless.length === 0) {
+  const note = personasPath ? "" : " (persona check skipped - no personas.md)";
+  console.log(`spec-structure: OK (${files.length} spec paths)${note}`);
   process.exit(0);
 }
 
-console.error("\nspec-structure: ticket-numbered spec paths are forbidden - use capability names:");
-for (const v of violations) {
-  console.error(`  - ${v.file}   ('${v.segment}' -> a capability name, e.g. specs/<capability>/spec.md)`);
+if (numbered.length) {
+  console.error("\nspec-structure: ticket-numbered spec paths are forbidden - use capability names:");
+  for (const v of numbered) {
+    console.error(`  - ${v.file}   ('${v.segment}' -> a capability name, e.g. specs/<capability>/spec.md)`);
+  }
+  console.error("\nCapability specs are organized by domain, not by ticket/feature number.");
+  console.error("A leaked 'NNN-' folder usually means Spec Kit's native /speckit-specify created it;");
+  console.error("create or edit capability specs with /spec-update instead.");
 }
-console.error("\nCapability specs are organized by domain, not by ticket/feature number.");
-console.error("A leaked 'NNN-' folder usually means Spec Kit's native /speckit-specify created it;");
-console.error("create or edit capability specs with /spec-update instead.\n");
+
+if (personaless.length) {
+  console.error("\nspec-structure: capability specs with no persona named (ADR-006 - a spec serves someone):");
+  for (const f of personaless) console.error(`  - ${f}`);
+  console.error('\nAdd a `**Serves:** `<persona>`` field (from docs/personas.md) - or name the persona in the spec.');
+}
+console.error("");
 process.exit(block ? 1 : 0);

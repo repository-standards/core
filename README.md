@@ -1,11 +1,14 @@
 # repository-standards
 
-An opinionated, agents-first engineering standard that keeps documentation,
-specifications, and technical + business decisions **in the repo, versioned with the
-code** - and lets any repo **align to a version of the standard and prove it complies.**
+> A **living, versioned, self-verifying** engineering standard - the reference your repo
+> trues up to. Point a repo at a version; it **aligns**, **guides the build**, and
+> **proves it**: `align -> verify -> drift as a number`.
 
-It is both a **starter** for a new repo and a **reconciler** for a messy existing one -
-run by a coding agent that already reads `AGENTS.md`.
+An opinionated, agents-first standard that keeps documentation, specifications, and
+technical + business decisions **in the repo, versioned with the code**. It is both a
+**guided start** for a new repo and a **reconciler** for a messy existing one - run by a
+coding agent that already reads `AGENTS.md` - and at every point it makes compliance
+**measurable, not a matter of opinion**.
 
 ## Why it exists
 

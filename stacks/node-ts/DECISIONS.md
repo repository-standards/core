@@ -82,6 +82,10 @@ your repo if you deviate (ADR-004).
   native wiring, and record it as an ADR.
 - Layering (stayget): `src/{lib,middleware,routes}` - `lib/` external clients, `middleware/`
   the `onRequest -> onSend -> onResponse` chain + error handler, `routes/` route files.
+- **Twelve-Factor** for services (the reference behind the above): config from the
+  environment (validated once, at boot), backing services as attached resources, stateless
+  processes, logs to stdout. The Zod env schema + stateless Fastify plugins are Twelve-Factor
+  III/VI/XI in practice; name it so a reviewer has the standard to point at.
 
 ## 6. Next.js - App Router, standalone, security headers in a typed config
 

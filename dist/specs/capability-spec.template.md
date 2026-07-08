@@ -6,6 +6,7 @@
      Drop sections that genuinely do not apply. -->
 
 **Spec tier:** buildable | behavioral   <!-- declare one -->
+**Serves:** `<persona from docs/personas.md>`   <!-- who this capability is for; required (ADR-006) -->
 
 ## Purpose
 

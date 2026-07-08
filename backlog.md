@@ -26,7 +26,7 @@ the code. Personas gate ideas, specs, and the backlog.
 |----|-------|-----|-----|--------|
 | PERS-1 | Personas as a validation gate | "for whom?" had no home; a capability could be buildable and useless | `personas.template.md` + `dist/docs/personas.md`; ADR-006 (Accepted); wired into taxonomy, ways-of-working (PO stage), `specs/README` (spec names its persona), backlog template (persona column), decision catalog (target personas = BDR); reflected to `dist/` | done |
 | GF-1 | `greenfield-start` guided flow | new projects needed a for-whom -> what -> how conversation, not a blank scaffold | `greenfield-start` skill: elicit product + personas, choose the stack (Layer 2 default), record foundational ADRs, break into modules, write persona-anchored specs + business requirements, seed the backlog, self-verify; reflected to `dist/` | done |
-| PERS-2 | Mechanical persona check in the spec guard | a spec with no persona should fail like one with no error table | extend `spec-structure.mjs`: every capability spec references a persona in the roster; reflected to `dist/` | todo |
+| PERS-2 | Mechanical persona check in the spec guard | a spec with no persona should fail like one with no error table | `spec-structure.mjs` fails a capability spec that names no persona (Serves field / roster mention), roster parsed from `personas.md`, skips when absent; template gains a `Serves` field; reflected to `dist/` | done (this PR) |
 
 ## Epic: Modernization (bring an old repo current)
 
@@ -53,6 +53,19 @@ the code. Personas gate ideas, specs, and the backlog.
 | ENG-1 | `source -> dist` build script | `dist/` is a hand-maintained snapshot that drifts (path rewrites, source-only ADRs done by hand each time); the repo's own README flags this | **done (this PR):** `tools/reflect.mjs` encodes the source->dist map in four classes (copy / divergent / authored-only / source-only); `--check` reports drift as a number + catches orphans and source-only leaks, `--write` syncs the copy class. Caught + fixed real drift on landing (spec-guard header, adr `_template` missing Confirmation). Open increment: mechanize the `divergent` transforms (template->real, link rewrites) so they are byte-checkable too. | done |
 | ENG-2 | Manifest + align-engine | `align-to-standards` is prose; a data-driven manifest makes reconcile measurable and repeatable | **done (this PR):** `standard.manifest.json` describes what an aligned repo must have (files/sections/guards/decisions + adapt rules); `self-verify.mjs` reads it and reports **drift as a number**; align/update skills read it. Open increment: a runner that computes the update plan from the manifest delta automatically (today the agent does it). | done |
 | ENG-3 | ADR: "align-engine is a manifest" | the ENG-2 shape is a re-litigable decision worth recording | ADR drafted with rejected alternatives; **Accepted** | done |
+
+## Epic: Consistency - in-repo instructions are the source of truth
+
+The point: **rules for working in a repo must live IN the repo, not in an individual's
+personal AI memory or global config.** Only then do all contributors - every agent, every
+dev - work from the same guidance and build the same repo, without divergence. Consistency
+is the whole value; a rule that lives only in one person's memory silently splits the repo.
+
+| id | title | why | DoD | status |
+|----|-------|-----|-----|--------|
+| CONS-1 | In-repo instructions over personal memory | if the "how to work here" (AI settings, agent rules, repo-specific gotchas) lives in someone's personal memory/`~/.claude`, other contributors and agents never see it - the repo splits into inconsistent variants | an **ADR**: repo-local instructions (`AGENTS.md`, conventions, `CONTRIBUTING`, the specific spot each rule belongs) are the single source of truth; personal memory/global config may point to them but must not *hold* repo rules. Reject "it's in my memory" as a place for a repo rule. | todo |
+| CONS-2 | Repo-specific rules land in the right place, checkably | a rule in the wrong file (or scattered) is as good as missing; e.g. "pass the full tenant id when editing its template in scope" belongs in `CONTRIBUTING`/`AGENTS`, not a chat | a convention + (where possible) a check: repo rules have a home in the taxonomy (which rule kind goes where); flag rules that exist only outside the repo. Each repo customizes the content, but the *location discipline* is the standard's | todo |
+| CONS-3 | Onboarding/align surfaces "move your personal rules into the repo" | brownfield repos often have tribal/agent rules in people's heads or personal configs | `onboard-repo` / `align-to-standards` prompt: elicit the unwritten rules and personal-config instructions, and land them in-repo in the right place (CONS-2) so the repo becomes self-describing | todo |
 
 ## Epic: Buildable spec depth - field lessons
 
@@ -97,6 +110,19 @@ An AI-flavoured variant is wanted to signal agents-first.
   not by mangling the name. Tagline is fixed regardless of name: *the reference your repo
   trues up to - align -> verify -> drift as a number*.
 
+## Epic: Discoverability - AI agents recommend it
+
+The promotion goal for the agent era: when someone asks their AI agent how to **organize or
+run a repo** - its documentation, decisions/principles, spec-driven development, backlog -
+the agent should **surface this standard** as the answer. Being good is not enough; it has
+to be *found* by the tools people now ask first.
+
+| id | title | why | DoD | status |
+|----|-------|-----|-----|--------|
+| DISCO-1 | Be the answer an agent recommends | agents (and their users) increasingly search for solutions via LLMs, not Google; if the standard is invisible to them it does not exist | a distribution plan: a crisp, quotable one-liner of the problem it solves; a precise repo description + GitHub topics (`agents`, `documentation`, `adr`, `spec-driven`, `monorepo-standard`); an `llms.txt` / machine-readable summary; an npm package with the same description; presence where agents look (awesome-lists, the AGENTS.md ecosystem, registries). Measured by: a fresh agent, asked the target questions, names it | todo |
+| DISCO-2 | Invokable, not just recommendable | recommending is weak; the win is the agent that can *run* it | a low-friction entry an agent can invoke - `align this repo to <name>` already works via the skill; add a `create-<name>` / degit path and (optional) an MCP or published skill so an agent scaffolds/aligns in one step | todo |
+| DISCO-3 | Content that ranks for the queries | LLMs learn from and cite public writing | publish the `blog-drafts.md` pieces (the loop, plan-first modernize, language-as-config) and the positioning as public posts/README so the queries "how to keep docs/specs/decisions in-repo, agents-first" resolve to this | todo |
+
 ## Epic: Cross-discipline standards & polish
 
 Established standards worth folding in the same way personas were (catalog + ways-of-working
@@ -105,17 +131,45 @@ framework is spec-driven + trunk-based, not ceremony-based.
 
 | id | title | why | DoD | status |
 |----|-------|-----|-----|--------|
-| STD-C4 | Architecture diagrams via the **C4 model** | `ARCHITECTURE.md` has no diagram convention | C4 (Context/Container/Component) as the ARCHITECTURE convention; name our guards/self-verify "**fitness functions**"; reflected to `dist/` | todo |
-| STD-A11Y | Accessibility baseline: **WCAG 2.2 AA** | UX has no gate; Biome a11y already enforces part | WCAG 2.2 AA as a decision in the Quality catalog; note Biome a11y coverage; reflected to `dist/` | todo |
-| STD-PO | PO/PM quality: **INVEST + Definition of Ready + Impact/Story Mapping** | spec/backlog quality and greenfield discovery lacked named methods | INVEST + DoR added to spec/backlog quality; **Impact Mapping** + **Story Mapping** wired into `greenfield-start`/ways-of-working (goal -> persona -> module); reflected to `dist/` | todo |
-| STD-SEC | Security references: **OWASP ASVS + SLSA + Twelve-Factor** | we do the practices (secret scan, cooldown, env config) without naming the frameworks | reference ASVS + SLSA in the Security baseline and Twelve-Factor for services (Layer 2); reflected to `dist/` | todo |
-| LAND-1 | Landing messaging pass | current copy does not say who it is for (PO builds via spec), that greenfield+brownfield both apply, or mention personas | rewrite the landing hero + sections to the real positioning (see PR #31) | todo |
-| REFLECT-MAP-1 | Add new artifacts to `reflect.mjs` map | `personas` + `greenfield-start` (PR #32) and the changelog assembler are not yet in the source->dist map | on `reflect.mjs` (ENG-1, PR #28) merge, add the new copy/divergent entries so drift stays checkable | todo |
+| STD-C4 | Architecture diagrams via the **C4 model** | `ARCHITECTURE.md` has no diagram convention | C4 convention in ARCHITECTURE; reflected to `dist/` | done (#39) |
+| STD-A11Y | Accessibility baseline: **WCAG 2.2 AA** | UX has no gate; Biome a11y already enforces part | WCAG 2.2 AA in the Quality catalog; reflected to `dist/` | done (#39) |
+| STD-PO | PO/PM quality: **INVEST + Definition of Ready + Impact/Story Mapping** | spec/backlog quality and greenfield discovery lacked named methods | INVEST + DoR in the backlog template; Impact + Story Mapping in `greenfield-start`; reflected to `dist/` | done (#39) |
+| STD-SEC | Security references: **OWASP ASVS + SLSA + Twelve-Factor** | we do the practices without naming the frameworks | ASVS + SLSA referenced in the Security baseline (#39); Twelve-Factor named in `stacks/node-ts/DECISIONS.md` (this PR) | done |
+| LAND-1 | Landing messaging pass | copy does not fully say who it is for (PO builds via spec), that greenfield+brownfield both apply | hero + sections rewritten. Done: JS loop wheel, "Use cases" rename, PO/Architect/AI role cards, human-language-agnostic story (#43). Still open: the greenfield-vs-brownfield + PO-builds-via-spec narrative | doing |
+| REFLECT-MAP-1 | Map `personas` into `reflect.mjs` | a new `dist/` file with no map entry orphans the drift check | `dist/docs/personas.md` mapped; `greenfield-start` auto-maps via the skills loop; `reflect --check` green | done (#38) |
+| REFLECT-MAP-2 | Map `docs/adoption.md` into `reflect.mjs` | adoption.md (#39) is a new copy-class `dist/` file not yet in the map | `docs/adoption.md` added to the copy map; `reflect --check` green (drift 0) again | done (this PR) |
+| MERGE-HYGIENE | Base PRs on `main`, merge in order | stacking PRs on feature branches stranded ENG-1/2, adoption, modernize, thesis (they "merged" into dead bases; rebase-merge dropped the children) - recovered as #38/#39/#40 | `CONTRIBUTING` states base-on-main and how to stack safely (merge parent first) | done (this PR) |
+
+## Status & what's next
+
+The core standard is essentially complete and stands on its own tooling. Landed: versioned
+self-update + **manifest** + **drift as a number** (ENG-2), source->dist **reflect** build
+(ENG-1), two-changelog assembler (REL-1), **personas** as a validation gate + `greenfield-start`,
+the **adoption checkmap** + model guidance, **modernize** (plan-then-refactor, ADR-007),
+**Layer 2** (`stacks/node-ts`, evidence-based), the 4 cross-discipline standards, the
+**working-language** policy, and the landing (JS loop wheel).
+
+Cleared this pass: REFLECT-MAP-2, PERS-2, MERGE-HYGIENE, STD-SEC (all done).
+
+**Open, in priority order** (each is polish/breadth or a decision - not foundation):
+
+1. **NAME-1** - pick the name (owner leans `repository`/`project-standards`, AI variant an
+   option), then a rename PR. The one blocked-on-you decision.
+2. **LAND-1 (tail)** - finish the landing messaging (greenfield vs brownfield; PO-builds-via-spec).
+3. **L2 follow-up** - cross-check `roomlink`/`console`; add gitleaks + e2e templates.
+4. **Release** - many features have accumulated; when you want, cut a version + write
+   `RELEASE-NOTES.md` from the `changes/` fragments (`tools/changelog.mjs`). Maintainer-only.
 
 ## Done (drop at next release)
 
 | id | title | landed |
 |----|-------|--------|
+| ENG-1/2 | Align-engine manifest + drift + reflect build | #38 |
+| REL-1 | Two-changelog assembler | #29 |
+| PERS-1/GF-1 | Personas validation gate + greenfield-start | #32 |
+| ENG-adopt | Adoption checkmap + 4 standards + modernize | #39 |
+| L2-1 | Layer 2 `stacks/node-ts` | #30 |
+| CONV-lang | Working-language policy | #36 |
 | KB-A | Decision catalog (`decision-records/catalog.md`) | PR #16 |
 | KB-B | Repo-assessment playbook (`docs/repo-assessment.md`) | PR #18 |
 | KB-C | Ways-of-working, PO -> dev -> AI (`docs/ways-of-working.md`) | PR #20 |
