@@ -1,0 +1,21 @@
+{
+  "$comment": "Lighthouse CI - perf + a11y budget for the web app. ADVISORY by default (DECISIONS.md #9): every assertion is 'warn', so it reports on every PR and blocks nothing. Promote a metric to 'error' on the ONE surface that has an SLA - a flaky perf number should not red-wall unrelated PRs. Run via `pnpm test:perf` after `pnpm build`.",
+  "ci": {
+    "collect": {
+      "numberOfRuns": 3,
+      "startServerCommand": "pnpm --filter web start",
+      "url": ["http://127.0.0.1:3000/"]
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["warn", { "minScore": 0.9 }],
+        "categories:accessibility": ["warn", { "minScore": 0.95 }],
+        "categories:best-practices": ["warn", { "minScore": 0.9 }],
+        "categories:seo": ["warn", { "minScore": 0.9 }]
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

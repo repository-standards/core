@@ -1,0 +1,6 @@
+---
+audience: both
+type: added
+headline: A tiered testing paved road for Node/TS - unit, integration, e2e, and perf budgets
+---
+- `stacks/node-ts` - new: the Layer 2 testing story, expanded from a one-line "Vitest + Playwright" into a full tiered setup ([`DECISIONS.md` #9](stacks/node-ts/DECISIONS.md)). Four tiers, each with a home: **unit + integration** co-located per package (`*.test.ts` / `*.integration.test.ts`, split by Vitest project), **e2e** in a top-level `e2e/` workspace package (Playwright, root config), **perf/a11y** via advisory Lighthouse CI. Integration and e2e run against **real** dependencies from an ephemeral **Docker test-stack** (`docker-compose.test.yml`, non-default ports, tmpfs, healthchecks) - not mocks. Runnable templates ship: `vitest.config.ts`, `playwright.config.ts`, `lighthouserc.json`, the `e2e/` package, root scripts (`test:unit` / `test:integration` / `test:e2e` / `test:all` / `bootstrap:test-stack`), and a hardened `e2e.yml` CI workflow. The `DECISIONS.md` section also states the maintenance rules the tool names leave open: flake quarantine over retry-forever, coverage as a floor on the paths that matter, tests tracking their spec, and keeping the unit tier I/O-free.

@@ -45,3 +45,24 @@ beats clever.
   altitude).
 - Sub-scope goes in the record's `Tags`, never in the acronym. Full policy:
   [`decision-records/`](decision-records/README.md) (ADR-001).
+
+## Ideas / discovery before a decision (endorsed; being refined)
+
+Not everything worth writing down is a decision, a rule, or a behavior - some of it is a
+**speculative idea that may never ship**. That is first-class here, not a lesser draft: an
+idea can be explored end-to-end - including its **provisional technical and business shape** -
+in one discovery/idea artifact under `docs/` (e.g. `docs/discovery/`), and it is worth keeping
+in the repo even while it is only a maybe.
+
+The rule that keeps the decision log honest:
+
+- **Do not mint an ADR/BDR/spec for an un-approved idea.** `Proposed` in a record means "a
+  decision awaiting ratification", not "an idea we might pursue" - dressing speculation as a
+  record implies a fork was taken when none was.
+- **Records and specs are created when the idea is approved for realization** and enters the
+  [ways-of-working](ways-of-working.md) flow (idea -> backlog intent -> behavioral spec ->
+  buildable spec + ADR/BDR). Until then the whole idea, technical shape included, lives in its
+  discovery doc.
+
+The exact shape of this division (folder, lifecycle/status, graduation step, guard) is being
+designed - see `IDEA-1` in the backlog.

@@ -5,6 +5,7 @@ packages:
   - 'apps/*'
   - 'services/*'
   - 'packages/*'
+  - 'e2e' # cross-app end-to-end journeys (Playwright) - its own package, not co-located
 
 # Do not run arbitrary lifecycle scripts on install. Approve build scripts explicitly.
 enablePrePostScripts: false

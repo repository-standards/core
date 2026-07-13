@@ -126,15 +126,109 @@ your repo if you deviate (ADR-004).
   frozen lockfile, **and add the explicit `permissions: contents: read` block stayget's
   `ci.yml` was missing.** SHA-pinning of third-party actions is the further hardening step.
 
-## 9. Testing - Vitest + Playwright, orchestrated from the root
+## 9. Testing - Vitest + Playwright, tiered, orchestrated from the root
 
 - **Both:** Vitest (unit) + Playwright (e2e), traces/screenshots on failure, 1 worker on
   CI. stayget orchestrates from the **root** (`pnpm test:all`, layer-filtered);
   propertycloud is per-package.
 - **Community (2026):** Vitest is the default unit runner for TS; Playwright the default
-  e2e.
-- **Pick:** Vitest + Playwright, **root-level orchestration** (stayget) so the commands are
-  discoverable and Turbo-cacheable.
+  e2e; Lighthouse CI the default web perf/a11y budget.
+- **Pick:** Vitest + Playwright + Lighthouse CI, **root-level orchestration** (stayget) so
+  the commands are discoverable and Turbo-cacheable. The rest of this section is the *where*
+  and *how-maintained* that the bare tool names leave open.
+
+### The tiers - what each proves, and where it runs
+
+| Tier | Runner | Proves | Backing services | Runs in |
+|---|---|---|---|---|
+| **Unit** | Vitest | one module's logic in isolation - pure, fast, no I/O | none (mock the edges) | every push, pre-commit |
+| **Integration** | Vitest | a unit against a **real** dependency (DB, cache, HTTP) | the Docker test-stack | every push (test-stack up) |
+| **E2E** | Playwright | a user journey through the running app | test-stack + booted app | CI, and before a release |
+| **Perf / a11y** | Lighthouse CI | a web surface stays inside its budget | booted web app | CI (advisory) |
+
+The tier is the same call as the spec tier: **unit** covers a module's rules; **integration**
+covers the contract with a backing service (the thing a mock quietly lies about);
+**e2e** covers the acceptance criteria a persona's journey implies. Money / security /
+external-contract paths are non-negotiable at the integration tier and above (mirrors the
+buildable-spec floor in Layer 1's [testing-strategy catalog entry](../../decision-records/catalog.md)).
+
+### Where the tests live
+
+- **Unit + integration - co-located** with the code, inside each package: `*.test.ts`
+  next to the source (unit), `*.integration.test.ts` for the ones that need the test-stack.
+  They move, review, and version with the code they cover; a package's whole quality gate
+  is readable in one directory. Run from the root, filtered by Vitest **project** (the
+  file-name split): `pnpm test:unit` vs `pnpm test:integration`.
+- **E2E - one top-level `e2e/` workspace package**, *not* co-located. A journey crosses app
+  and service boundaries, so it belongs to no single package. `e2e/tests/*.spec.ts`, with the
+  Playwright config at the **repo root** (`playwright.config.ts`) so `pnpm test:e2e` is one
+  discoverable command.
+- **Shared test config at the root** - `vitest.config.ts` (coverage, env, the
+  unit/integration project split), `docker-compose.test.yml` (the test-stack),
+  `lighthouserc.json` (budgets). Root-level = one place to find them, one input Turbo hashes.
+
+```
+<repo root>
+  vitest.config.ts            # unit + integration projects, coverage, jsdom/node env
+  playwright.config.ts        # e2e: testDir ./e2e, traces/screenshots on failure, webServer
+  docker-compose.test.yml     # ephemeral Postgres/Redis for integration + e2e
+  lighthouserc.json           # advisory perf + a11y budgets
+  e2e/                        # its own workspace package - cross-app journeys
+    package.json
+    tests/*.spec.ts
+  services|apps|packages/*/
+    src/**/*.test.ts             # unit  - co-located, no I/O
+    src/**/*.integration.test.ts # integration - needs the test-stack
+```
+
+### The Docker test-stack - real dependencies, ephemeral
+
+Integration and e2e run against **real** Postgres/Redis in Docker, not mocks - a mock of a
+datastore is a second implementation that drifts from the real one and hides the bugs that
+only the real engine has (constraint violations, isolation levels, JSON operators).
+
+- `docker-compose.test.yml` defines the backing services on **non-default ports** (so a
+  test run never collides with a dev DB), **`tmpfs`-backed** (data is disposable, startup is
+  fast), with **healthchecks** so tests wait for *ready*, not just *started*.
+- `pnpm bootstrap:test-stack` brings it up and waits healthy; `pnpm teardown:test-stack`
+  drops it. The same compose file runs locally and in CI - no "works on my machine" gap.
+- **Never** point integration tests at a shared dev/staging DB. The stack is per-run and
+  disposable; that is what keeps the tests order-independent and parallel-safe.
+
+### E2E (Playwright) conventions
+
+- Config at the root; `webServer` boots the built web app so `pnpm test:e2e` is
+  self-contained (CI and local run the identical path). `baseURL` from env for staging smoke.
+- **On failure: trace + screenshot + video retained**, nothing on success (both repos) - a
+  red CI run is debuggable from the artifact without a local repro.
+- **`workers: 1` and `retries` on CI**, parallel locally - deterministic ordering where it
+  matters, fast feedback where it doesn't.
+- Select by **role / accessible name**, not brittle CSS - the selector doubles as an a11y
+  assertion and survives restyling.
+
+### Lighthouse CI - budgets, advisory by default
+
+- `lighthouserc.json` runs against the built web app and asserts a **perf + a11y budget**.
+  Default posture is **advisory** (`warn`): it reports on every PR and blocks only on the
+  surfaces that opt a metric up to `error`. This mirrors Layer 1's *"a budget only where it
+  matters"* ([performance](../../decision-records/catalog.md)) and *"enforce what tooling
+  can"* ([accessibility](../../decision-records/catalog.md)) - a flaky perf number should not
+  red-wall every unrelated PR. Promote a metric to blocking on the surface that has an SLA.
+- It complements, not replaces, Biome's static a11y rules and Playwright's role-based
+  selectors: static lint at author time, Lighthouse on the rendered page, e2e in the journey.
+
+### Keeping tests maintained (not just written)
+
+- **Coverage is a floor on the paths that matter, not a vanity percentage.** Enforce it on
+  money/security/contract code; do not chase 100% on glue. A test that asserts nothing but
+  coverage is debt.
+- **Flake policy: quarantine, don't retry-forever.** A test that flakes is tagged and pulled
+  from the blocking set with an owner and a ticket - it never silently gets `retry: 5` until
+  green. An un-owned quarantined test is deleted, not left rotting.
+- **A test tracks its spec.** When the acceptance criteria change, the test changes in the
+  same PR - the spec-coupling discipline (Layer 1) applies to tests as much as to specs.
+- **Speed is a feature.** Unit tier stays milliseconds (no I/O); push slow setup down into
+  integration/e2e so the fast loop stays fast. If the unit suite needs Docker, it's mis-tiered.
 
 ---
 
@@ -151,7 +245,7 @@ your repo if you deviate (ADR-004).
 | Next.js | App Router, standalone, typed config + headers | stayget |
 | Supply chain | 7-day `minimumReleaseAge` + allowBuilds | stayget |
 | CI | least-privilege + cache + frozen lockfile (+ explicit permissions) | stayget, hardened |
-| Testing | Vitest + Playwright, root-orchestrated | stayget |
+| Testing | Vitest (unit + integration) + Playwright (e2e) + Lighthouse CI, tiered, root-orchestrated, real deps via a Docker test-stack | stayget |
 
 Provenance: `stayget` and `propertycloud` (private). Community checkpoints are cited in the
 PR that introduced this file.

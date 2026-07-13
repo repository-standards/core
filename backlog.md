@@ -28,6 +28,19 @@ the code. Personas gate ideas, specs, and the backlog.
 | GF-1 | `greenfield-start` guided flow | new projects needed a for-whom -> what -> how conversation, not a blank scaffold | `greenfield-start` skill: elicit product + personas, choose the stack (Layer 2 default), record foundational ADRs, break into modules, write persona-anchored specs + business requirements, seed the backlog, self-verify; reflected to `dist/` | done |
 | PERS-2 | Mechanical persona check in the spec guard | a spec with no persona should fail like one with no error table | `spec-structure.mjs` fails a capability spec that names no persona (Serves field / roster mention), roster parsed from `personas.md`, skips when absent; template gains a `Serves` field; reflected to `dist/` | done (this PR) |
 
+## Epic: Ideas / discovery incubator (pre-decision)
+
+Before an intent is even backlog-ready there is a space the standard does not yet bless: a
+**speculative idea that may never ship**, explored end-to-end - including its provisional
+technical and business shape - without minting any record. Today the taxonomy sends "research
+that fed a decision" to a working doc, but frames discovery as *input to a decision already in
+motion*. It has no first-class home for an idea still being weighed, and no rule against
+prematurely dressing an idea as an ADR/BDR/spec.
+
+| id | title | why | DoD | status |
+|----|-------|-----|-----|--------|
+| IDEA-1 | First-class ideas/discovery space + graduation rule | Real trigger: in my-brand a whole go-to-market direction (how selling works, a template-marketplace, a membership module) got written up as `Proposed` ADR/BDR - but there was **no decision**, only a maybe. `Proposed` in MADR means "a decision awaiting ratification", not "an idea we might pursue"; using it for speculation pollutes the decision log and implies a fork was taken when none was. The whole idea (incl. its provisional technical shape) belongs in one discovery/idea artifact; ADR/BDR/specs are minted **only when the idea is approved for realization** and enters the ways-of-working flow. | Design the division: name + folder (e.g. `docs/discovery/` or `docs/ideas/`), a lifecycle/status (`idea` -> `exploring` -> `approved` / `parked` / `dropped`), how an idea holds provisional technical/business shape without records, the **graduation** step (approved idea -> backlog intent -> spec/ADR/BDR), and a guard/convention that no record/spec is created for an un-approved idea. Endorse it positively in `taxonomy.md` (done, note) + `ways-of-working.md` (a pre-intent stage) + `decision-records/README` ("not a record until approved"). Reflect to `dist/`. | todo |
+
 ## Epic: Modernization (bring an old repo current)
 
 | id | title | why | DoD | status |
@@ -44,7 +57,7 @@ the code. Personas gate ideas, specs, and the backlog.
 
 | id | title | why | DoD | status |
 |----|-------|-----|-----|--------|
-| L2-1 | `stacks/node-ts` | the promotable product needs the runnable Node/TS setup, evidence-based from stayget/roomlink/console | **done (this PR):** `stacks/node-ts` distilled from **stayget** (primary) + **propertycloud** - pnpm+Turbo, Biome (+Prettier for SCSS), strict TS, Fastify native-DI service template with Zod env, Next App Router config, hardened least-privilege CI, 7-day supply-chain cooldown. Every pick has pros/cons + 2026 community rec + provenance in [`DECISIONS.md`](stacks/node-ts/DECISIONS.md). Open increment: `roomlink`/`console` cross-check; a `gitleaks`/e2e template. | done |
+| L2-1 | `stacks/node-ts` | the promotable product needs the runnable Node/TS setup, evidence-based from stayget/roomlink/console | **done (this PR):** `stacks/node-ts` distilled from **stayget** (primary) + **propertycloud** - pnpm+Turbo, Biome (+Prettier for SCSS), strict TS, Fastify native-DI service template with Zod env, Next App Router config, hardened least-privilege CI, 7-day supply-chain cooldown. Every pick has pros/cons + 2026 community rec + provenance in [`DECISIONS.md`](stacks/node-ts/DECISIONS.md). **e2e/testing increment done:** DECISIONS.md #9 expanded to tiers + directory layout + maintenance; runnable Vitest (unit/integration projects) + Playwright + Docker test-stack + advisory Lighthouse CI templates + `e2e.yml`. Open increment: `roomlink`/`console` cross-check; a stack `gitleaks` template. | done |
 
 ## Epic: Reflection engine & self-consistency
 
@@ -156,7 +169,8 @@ Cleared this pass: REFLECT-MAP-2, PERS-2, MERGE-HYGIENE, STD-SEC (all done).
 1. **NAME-1** - pick the name (owner leans `repository`/`project-standards`, AI variant an
    option), then a rename PR. The one blocked-on-you decision.
 2. **LAND-1 (tail)** - finish the landing messaging (greenfield vs brownfield; PO-builds-via-spec).
-3. **L2 follow-up** - cross-check `roomlink`/`console`; add gitleaks + e2e templates.
+3. **L2 follow-up** - cross-check `roomlink`/`console`; add a stack `gitleaks` template
+   (the e2e / testing template is done - Vitest tiers + Playwright + test-stack + Lighthouse).
 4. **Release** - many features have accumulated; when you want, cut a version + write
    `RELEASE-NOTES.md` from the `changes/` fragments (`tools/changelog.mjs`). Maintainer-only.
 

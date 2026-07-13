@@ -16,7 +16,8 @@ is in [`DECISIONS.md`](DECISIONS.md). This README is the map.
   stratified by layer.
 - **Fastify** with **native plugin DI, no container**, and a **Zod-validated env** at boot.
 - **Next.js** App Router, `output: standalone`, security headers in a typed config.
-- **Vitest** + **Playwright**, orchestrated from the root.
+- **Vitest** (unit + integration) + **Playwright** (e2e) + **Lighthouse CI** (advisory
+  perf/a11y), tiered and orchestrated from the root; real dependencies via a Docker test-stack.
 - Supply-chain **7-day cooldown** (`minimumReleaseAge`), `allowBuilds` allow-list.
 - **Hardened GitHub Actions**: least-privilege `permissions`, pnpm cache, frozen lockfile.
 
@@ -32,11 +33,21 @@ stacks/node-ts/
   biome.json              # lint + format config
   .prettierrc.json        # SCSS-only formatting
   .nvmrc                  # Node 24
-  .github/workflows/ci.yml   # least-privilege quality gate (format + types + lint)
+  vitest.config.ts        # unit + integration projects (the tier = the file-name split)
+  playwright.config.ts    # e2e: traces/screenshots on failure, boots the app
+  docker-compose.test.yml # ephemeral Postgres/Redis for integration + e2e
+  lighthouserc.json       # advisory perf + a11y budgets
+  .github/workflows/
+    ci.yml                # least-privilege quality gate (format + types + lint)
+    e2e.yml               # slower tier: test-stack + integration + e2e + advisory Lighthouse
+  e2e/                    # cross-app journeys (Playwright) - its own workspace package
   templates/
     service/              # a Fastify service: native DI + Zod env + health route
     web/                  # Next.js config (App Router, standalone, security headers)
 ```
+
+The **why** and the full tiering / directory / maintenance rules are in
+[`DECISIONS.md` #9](DECISIONS.md).
 
 ## Adopt
 
@@ -44,7 +55,12 @@ stacks/node-ts/
 2. Put services under `services/` (or `apps/`) from `templates/service`, web apps from
    `templates/web`. Each leaf `tsconfig.json` extends `../../tsconfig.base.json`.
 3. `pnpm install` (the 7-day cooldown applies), then `pnpm check:all`.
-4. Wire `ci.yml` and the standard's `self-verify` into your pipeline.
+4. Put unit/integration tests co-located in each package (`*.test.ts` /
+   `*.integration.test.ts`); put cross-app journeys in `e2e/`. Run:
+   `pnpm test:unit`, `pnpm bootstrap:test-stack && pnpm test:integration`,
+   `pnpm test:e2e` (or `pnpm test:all`).
+5. Wire `ci.yml` (fast gate) and `e2e.yml` (slower tier), plus the standard's
+   `self-verify`, into your pipeline.
 
 Deviating from a pick? Record a superseding ADR in your repo (ADR-004) - the paved road is
 a default, not a cage.
