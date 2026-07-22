@@ -1,0 +1,25 @@
+# pnpm workspace - the paved-road monorepo shape (see ../pnpm-workspace.yaml for the
+# annotated original; policy is identical).
+
+packages:
+  - 'apps/*'
+  - 'services/*'
+  - 'packages/*'
+  - 'e2e' # cross-app end-to-end journeys (Playwright) - its own package, not co-located
+
+# Do not run arbitrary lifecycle scripts on install. Approve build scripts explicitly.
+enablePrePostScripts: false
+
+# Only these dependencies may run install/build scripts (pnpm's allow-list). Add a
+# package here consciously - an unreviewed postinstall is a supply-chain foothold.
+# (esbuild and sharp still work when their postinstall is skipped - the platform binary
+# ships as an optional dependency - but allow them so the fast path is used.)
+allowBuilds:
+  '@parcel/watcher': false # prebuilt platform binary ships as an optional dep; the script is a fallback build
+  esbuild: true
+  sharp: true
+
+# Supply-chain cooldown: never install a package version published less than 7 days ago
+# (10080 min). Fresh releases are the main vector for compromised packages and are
+# usually pulled within the week. All versions pinned in this starter respect it.
+minimumReleaseAge: 10080

@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Specs - repository-standards docs</title>
+<style>
+/* Dark by default, matching the landing page's palette (apps/landing-page/index.html
+   :root vars: ink/surface/line/tx/mid/amber) - the docs and the landing read as one
+   product, nextjs.org-style. Light stays as an explicit user-preference override. */
+:root {
+  --bg: #0D0E11;
+  --bg-sidebar: #101216;
+  --fg: #ECEDEF;
+  --muted: #9BA1AB;
+  --border: #242832;
+  --link: #FFB454;
+  --link-visited: #e79b3e;
+  --code-bg: #16181D;
+  --active-bg: #1b1e24;
+  --active-fg: #FFB454;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "JetBrains Mono", "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --bg-sidebar: #f7f7f8;
+    --fg: #1a1a1a;
+    --muted: #5f6368;
+    --border: #e3e3e6;
+    --link: #b06400;
+    --link-visited: #8a4d00;
+    --code-bg: #f0f1f3;
+    --active-bg: #fdeeda;
+    --active-fg: #8a4d00;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.65;
+}
+a { color: var(--link); text-decoration-thickness: from-font; }
+a:visited { color: var(--link-visited); }
+a:hover { text-decoration: none; }
+.layout { display: flex; align-items: flex-start; min-height: 100vh; }
+.sidebar {
+  flex: 0 0 260px;
+  width: 260px;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1.25rem 1rem 2rem;
+}
+.brand {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--fg);
+  text-decoration: none;
+  padding: 0.25rem 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.75rem;
+}
+.brand:visited { color: var(--fg); }
+.nav-group-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding: 0.9rem 0.6rem 0.3rem;
+}
+.nav-link {
+  display: block;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  color: var(--fg);
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+.nav-link:visited { color: var(--fg); }
+.nav-link:hover { background: var(--active-bg); }
+.nav-link.active { background: var(--active-bg); color: var(--active-fg); font-weight: 600; }
+.content {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 2.5rem clamp(1.25rem, 4vw, 3.5rem) 5rem;
+}
+.content > :first-child { margin-top: 0; }
+.prose { max-width: 76ch; }
+h1, h2, h3, h4, h5, h6 { line-height: 1.3; scroll-margin-top: 1rem; }
+h1 { font-size: 1.9rem; margin: 0 0 1.25rem; }
+h2 { font-size: 1.4rem; margin: 2.25rem 0 1rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+.prose > h2:first-of-type { border-top: none; padding-top: 0; }
+h3 { font-size: 1.15rem; margin: 1.75rem 0 0.75rem; }
+h4 { font-size: 1rem; margin: 1.5rem 0 0.5rem; }
+p { margin: 0 0 1rem; }
+ul, ol { margin: 0 0 1rem; padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li > ul, li > ol { margin: 0.35rem 0 0.25rem; }
+blockquote {
+  margin: 0 0 1rem;
+  padding: 0.1rem 1rem;
+  border-left: 3px solid var(--border);
+  color: var(--muted);
+}
+blockquote p { margin: 0.5rem 0; }
+hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+code {
+  font-family: var(--font-mono);
+  font-size: 0.87em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--code-bg);
+  padding: 1rem 1.1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0 0 1.25rem;
+  max-width: 76ch;
+}
+pre code { background: none; padding: 0; border-radius: 0; font-size: 0.85em; }
+.table-wrap { overflow-x: auto; margin: 0 0 1.25rem; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; vertical-align: top; }
+th { background: var(--bg-sidebar); font-weight: 600; }
+.page-footer {
+  max-width: 76ch;
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+@media (max-width: 768px) {
+  /* align-items: flex-start (desktop) means "don't stretch" on the CROSS axis; in row
+     mode that's vertical (intentional, so the two columns don't force each other's
+     height), but flex-direction:column below makes the cross axis horizontal - so it
+     must switch to stretch here or .sidebar/.content shrink to their content's width
+     instead of filling the viewport, overflowing it. */
+  .layout { flex-direction: column; align-items: stretch; }
+  .sidebar {
+    position: static;
+    width: auto;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-links { display: flex; flex-wrap: wrap; gap: 0.25rem 0.5rem; }
+  .nav-group-title { flex-basis: 100%; padding-top: 0.6rem; }
+  .content { padding: 1.5rem 1.25rem 3rem; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" aria-label="Documentation">
+<a class="brand" href="index.html">repository-standards</a>
+<div class="nav-links">
+<a class="nav-link" href="index.html">Home</a>
+<a class="nav-link" href="why.html">Why</a>
+<a class="nav-link" href="adopt.html">Adopt (start here)</a>
+<div class="nav-group-title">Concepts</div>
+<a class="nav-link" href="taxonomy.html">Taxonomy</a>
+<a class="nav-link" href="ways-of-working.html">Ways of working</a>
+<a class="nav-link active" href="specs.html" aria-current="page">Specs</a>
+<div class="nav-group-title">Guides</div>
+<a class="nav-link" href="spec-kit-setup.html">Spec Kit setup</a>
+<a class="nav-link" href="self-verify.html">Self-verify</a>
+<div class="nav-group-title">Reference</div>
+<a class="nav-link" href="checklist.html">Decision checklist</a>
+<a class="nav-link" href="decision-records.html">Decision records</a>
+<a class="nav-link" href="faq.html">FAQ</a>
+<a class="nav-link" href="open-questions.html">Open questions</a>
+<a class="nav-link" href="case-studies.html">Case studies</a>
+</div>
+</nav>
+<main class="content">
+<div class="prose">
+<h1 id="living-specifications-capability-specs">Living specifications (capability specs)</h1>
+<p>The functional source of truth for <strong>what the system does now</strong>. Organized by product capability, not by ticket or feature branch. A capability spec answers: "how does this part of the system behave today - or, on a branch, once the branch merges?"</p>
+<p>Spec Kit stays as the execution engine (clarify -&gt; plan -&gt; tasks -&gt; implement -&gt; converge). This layer changes only the <strong>spec model</strong>: from disposable ticket-specs to long-lived capability specs.</p>
+<h2 id="the-one-rule">The one rule</h2>
+<pre><code>SPEC = current / target truth of a CAPABILITY
+  not
+SPEC = description of a ticket</code></pre>
+<h2 id="for-whom-name-the-persona">For whom - name the persona</h2>
+<p>Every capability spec names the <strong>persona(s)</strong> it serves (from <a href="https://github.com/bodurkalukasz/repository-standards/blob/main/standard/docs/personas.md" target="<em>blank" rel="noopener noreferrer"><code>personas.md</code></a>) and, in a line, how it advances their job. Behavior is verified against the code (buildable, below) <em>and</em> against a user - a spec that serves no persona is a candidate for deletion, not merge (<a href="https://github.com/bodurkalukasz/repository-standards/blob/main/standard/decision-records/adr/ADR-006-personas-are-a-validation-gate.md" target="</em>blank" rel="noopener noreferrer">ADR-006</a>). Where a rule helps one persona and hurts another, the resolution is a recorded <strong>BDR</strong>, cited from the spec.</p>
+<h2 id="spec-depth-buildable-not-descriptive">Spec depth: buildable, not descriptive</h2>
+<p>A capability spec is a <strong>buildable technical specification</strong>, not a general description. The bar:</p>
+<blockquote><p>An engineer or agent could IMPLEMENT and VERIFY the capability from the spec alone (plus the repo's shared schemas and standards), without reverse-engineering the code.</p></blockquote>
+<p>Saying only <em>what</em> the system does is not enough. A buildable spec also carries the <strong>contracts</strong>:</p>
+<ul>
+<li><strong>Data contracts</strong> - exact schemas, types, constraints, enums, persisted shapes.</li>
+<li><strong>Interface contracts</strong> - every endpoint / function: inputs, outputs, and every error (status + code + message).</li>
+<li><strong>Algorithms &amp; rules</strong> - the computations and decisions as implementable steps.</li>
+<li><strong>State machine</strong> - states + a transition table (trigger, guard).</li>
+<li><strong>Config &amp; flags</strong> - what changes behavior.</li>
+<li><strong>Acceptance criteria</strong> - Given / When / Then, concrete enough to become tests. This is the verification half - it is what makes "buildable" <em>checkable</em>.</li>
+</ul>
+<p><strong>Verbatim rule.</strong> Contracts quote real identifiers - field names, enums, error codes, endpoints - exactly. A paraphrased contract is not a contract.</p>
+<h3 id="tiers">Tiers</h3>
+<p>Every spec declares its tier (<code>Spec tier:</code> at the top). To decide the tier, ask the one discriminator question:</p>
+<blockquote><p>Could an agent <strong>rebuild and verify</strong> this capability from the spec alone, without reading the code?</p></blockquote>
+<p>If the answer has to be yes, the spec is <strong>buildable</strong>. Anything that carries money, security, data integrity, or an external contract always has to be - so those are always buildable; but the question, not the list, is the test (the list is just its most common answers).</p>
+<ul>
+<li><strong>buildable</strong> (default) - all the contracts above. <strong>Default even for thin or peripheral capabilities:</strong> writing the contracts is exactly what surfaces the bugs, so the small capabilities often benefit most. Do <strong>not</strong> pre-declare <code>behavioral</code> to save effort - that only defers the pass that finds the problems, and it usually has to be redone as <code>buildable</code> anyway.</li>
+<li><strong>behavioral</strong> - contracts, invariants, edge cases and boundaries in prose, without full data / interface / acceptance detail. An <strong>escape hatch, expected to be rare</strong>: the spec MUST declare <code>Spec tier: behavioral</code> <strong>and</strong> carry a one-line justification for why buildable does not apply, so the gap is a conscious, visible choice - never a default reached for to save work.</li>
+</ul>
+<p>A spec starts wherever it must and is upgraded toward buildable as the capability matters more. What a buildable spec cannot yet pin down goes in <strong>Open questions</strong>, never glossed - honesty about gaps is what keeps the spec trustworthy.</p>
+<h2 id="structure-by-capability-not-by-ticket">Structure - by capability, not by ticket</h2>
+<pre><code>specs/
+  bookings/spec.md
+  payments/spec.md
+  availability/spec.md
+  pricing/spec.md</code></pre>
+<p>Large capabilities may decompose (still one domain):</p>
+<pre><code>specs/bookings/{overview,lifecycle,modifications,cancellation}.md</code></pre>
+<p>Never <code>specs/001-booking/</code>, <code>specs/017-booking-change/</code>. Create a new capability spec ONLY for a genuinely new domain - not because a new ticket or branch exists.</p>
+<p>And <strong>not by page or route</strong> either. Organize by capability (the domain concept), not by where it surfaces in the UI. A concept like <em>packages</em> shows up on the homepage, the PDP, and checkout - per-page specs (<code>pdp/</code>, <code>checkout/</code>) would duplicate that one concept across three places and drift. One capability = one canonical spec, wherever it appears.</p>
+<p><strong>Where a capability appears</strong> (which pages / routes) is a cross-reference in the docs - a property of the doc, never a reason to split the spec.</p>
+<h2 id="source-of-truth-rules">Source-of-truth rules</h2>
+<ol>
+<li>Files under <code>specs/&lt;capability&gt;/</code> are canonical: behavior, business rules, invariants, lifecycle and state transitions, edge cases, forbidden scenarios, cross-domain effects. Not implementation history.</li>
+<li>A change updates the existing capability specs <strong>in place</strong>. Do not fork <code>payments-v2</code>. If it crosses domains, update <strong>every</strong> affected capability.</li>
+<li>Specs describe behavior (<code>MUST</code> / <code>MAY</code> / <code>MUST NOT</code>), never tickets ("this feature adds...", "in RL-123..."). A spec must be readable without git history.</li>
+<li>Every capability spec MUST have an entry in <code>specs/capability-map.json</code> - its <code>&lt;capability&gt; -&gt; code globs</code> mapping. This is not an enforcement detail; it is the coupling anchor that keeps the spec alive. The guard uses it to catch code that changes without its spec, so a capability spec with <strong>no</strong> map entry silently rots - a spec without a mapping fails the check.</li>
+<li><strong>A behavior change and its spec update land in the SAME PR (SD-6).</strong> The coupling guard is per-PR and has no bypass: a fix whose spec update rides in a separate PR makes the guard block the fix. "Update specs before implementing" is the principle; "in the same PR" is the operational corollary that keeps the guard green.</li>
+</ol>
+<h2 id="git-native-change-model-no-separate-change-folders">Git-native change model (no separate change folders)</h2>
+<pre><code>main branch spec    = current production truth
+feature branch spec = target truth after merge
+git diff            = the change delta</code></pre>
+<p>Git IS the change mechanism. Plans and tasks are disposable execution aids - they never compete with specs as product truth. Do not keep obsolete behavior in a spec "for history"; git holds the evolution.</p>
+<h2 id="workflow-spec-kit-engine-capability-spec-model">Workflow (Spec Kit engine, capability-spec model)</h2>
+<pre><code>request -&gt; understand -&gt; spec-impact (which capabilities?) -&gt; clarify
+  -&gt; UPDATE canonical specs to target state -&gt; cross-spec consistency
+  -&gt; plan -&gt; tasks -&gt; implement -&gt; converge -&gt; reconcile(spec/code/tests) -&gt; merge</code></pre>
+<p>Mandatory gates: update affected specs to the target state <strong>before</strong> implementing; reconcile spec vs code vs tests <strong>before</strong> completion. No silent drift.</p>
+<h2 id="where-the-pieces-are">Where the pieces are</h2>
+<ul>
+<li>Format: <a href="https://github.com/bodurkalukasz/repository-standards/blob/main/standard/specs/capability-spec.template.md" target="_blank" rel="noopener noreferrer"><code>capability-spec.template.md</code></a></li>
+<li>Commands / skills: <a href="https://github.com/bodurkalukasz/repository-standards/blob/main/standard/specs/commands.md" target="_blank" rel="noopener noreferrer"><code>commands.md</code></a></li>
+<li>Enforcement (pre-commit + CI): <a href="https://github.com/bodurkalukasz/repository-standards/blob/main/standard/specs/enforcement.md" target="_blank" rel="noopener noreferrer"><code>enforcement.md</code></a></li>
+</ul>
+<h2 id="altitude-and-governance">Altitude and governance</h2>
+<p>Accepted ADR / BDR (decisions) constrain specs; a spec must not contradict an Accepted decision. Specs hold <em>behavior</em>; ARCHITECTURE holds <em>structure</em>; ADR/BDR hold <em>why</em>. Spec Kit's constitution check defers to ADR + standards + these specs - it does not restate them.</p>
+
+<p class="page-footer">Generated from <a href="https://github.com/bodurkalukasz/repository-standards/blob/main/standard/specs/README.md" target="_blank" rel="noopener noreferrer"><code>standard/specs/README.md</code></a> by <code>tools/docsite.mjs</code> - edit the source there, not this HTML.</p>
+</div>
+</main>
+</div>
+</body>
+</html>

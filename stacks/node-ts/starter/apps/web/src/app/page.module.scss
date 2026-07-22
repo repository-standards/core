@@ -1,0 +1,59 @@
+// Co-located CSS Module (DECISIONS.md #10) and the worked example of token tier 3:
+// component-scoped custom properties that reference only SEMANTIC tokens (tier 2 in
+// globals.scss), never primitives. Restyling the app means retargeting tier 2 - no
+// component file changes. SCSS gives us variables and nesting at compile time.
+
+$card-max-width: 30rem;
+
+.main {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: var(--space-6);
+}
+
+.card {
+  // tier 3: this component's own contract, wired to tier 2
+  --card-bg: var(--color-surface);
+  --card-border: var(--color-border);
+  --card-radius: var(--radius-md);
+
+  width: 100%;
+  max-width: $card-max-width;
+  padding: var(--space-6);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+
+  h1 {
+    margin-top: 0;
+  }
+
+  p {
+    color: var(--color-text-muted);
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+
+  a {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+
+    &:first-child {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: var(--color-on-accent);
+
+      &:hover {
+        background: var(--color-accent-hover);
+      }
+    }
+  }
+}

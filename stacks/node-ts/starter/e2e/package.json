@@ -1,0 +1,14 @@
+{
+  "name": "e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Cross-app end-to-end journeys (Playwright). Not co-located: a journey crosses app and service boundaries, so it belongs to no single package. Config is at the repo root (../playwright.config.ts).",
+  "scripts": {
+    "test:e2e": "playwright test --config ../playwright.config.ts",
+    "test:e2e:ui": "playwright test --config ../playwright.config.ts --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.0"
+  }
+}

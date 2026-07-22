@@ -224,9 +224,9 @@
     <nav class="links">
       <a href="#why">Why</a>
       <a href="#keystone">Mechanism</a>
-      <a href="#paths">Who it's for</a>
+      <a href="#paths">Two paths in</a>
       <a href="#inside">What's inside</a>
-      <a href="#flow">How you work</a>
+      <a href="#flow">Who it's for</a>
       <a href="#start">Start</a>
     </nav>
     <a class="ghbtn" href="https://github.com/bodurkalukasz/repository-standards">GitHub &#8599;</a>
@@ -241,6 +241,7 @@
         <span class="eyebrow">Versioned &middot; Agents-first &middot; In-code</span>
         <h1>Align your repo to a <span class="hl">versioned</span> standard - and prove it did.</h1>
         <p class="lede">Documentation, specs, and technical &amp; business decisions live <b>in the code</b>, versioned together. Point any repo - brand new or years deep - at a version of the standard; an AI agent brings it into line and <b>self-verifies</b>. Update to the next version like you'd bump a dependency.</p>
+        <p class="lede"><b>Others give you a workflow or a scaffold. This gives your repo a reference to true up to - and walks it there.</b></p>
         <div class="cta">
           <a class="btn primary" href="https://github.com/bodurkalukasz/repository-standards">Get started</a>
           <a class="btn ghost" href="#keystone">See how it works</a>
@@ -331,29 +332,31 @@
   <section id="paths">
     <div class="wrap">
       <div class="shead reveal">
-        <span class="eyebrow">Use cases &middot; what it solves</span>
-        <h2>Four ways in. Same standard underneath.</h2>
-        <p>Whether you're starting clean, rescuing a mess, shipping features with an agent, or keeping a fleet current - you're using one versioned standard.</p>
+        <span class="eyebrow">Two paths in</span>
+        <h2>Greenfield or brownfield. Same standard underneath.</h2>
+        <p>Where you start doesn't change where you end up. Two more cards show how you build day to day, and how a fleet stays current.</p>
       </div>
       <div class="paths">
         <div class="card reveal">
           <div class="idx">01</div>
-          <h3>Start a new repo</h3>
-          <p>Scaffold from the standard at a pinned version and go - specs, decisions, guards and agent guide already wired in.</p>
+          <span class="who">Greenfield</span>
+          <h3>Start clean</h3>
+          <p>Scaffold from the standard at a pinned version and go - specs, decisions, guards and the agent guide are wired in from commit one.</p>
           <div class="cmd"><span class="p">$</span> scaffold from repository-standards<span class="v">@0.7.2</span></div>
         </div>
         <div class="card reveal">
           <div class="idx">02</div>
-          <h3>Rescue an existing one</h3>
-          <p>Point it at the standard: it's assessed, aligned, then onboarded - capabilities specced, decisions recorded from the code, the rest queued as a backlog. Incrementally, never a big-bang dump.</p>
+          <span class="who">Brownfield</span>
+          <h3>Rescue a messy repo</h3>
+          <p>Assess, align, onboard - in prioritized waves, not a big-bang rewrite. Re-enter the loop wave after wave until drift hits zero. A years-old, messy repo is a first-class citizen here, not a lost cause.</p>
           <div class="cmd"><span class="p">$</span> assess &rarr; align &rarr; onboard</div>
         </div>
         <div class="card reveal feat">
           <div class="idx">03</div>
           <span class="who">PO &middot; Architect &middot; Dev</span>
-          <h3>Build with an AI, three hats on</h3>
-          <p>A <b style="color:var(--tx)">PO</b> turns vision into a behavioral spec that's immediately codeable; an <b style="color:var(--tx)">architect</b> records the decisions; a <b style="color:var(--tx)">dev</b> and the AI implement against it. One living spec, one backlog.</p>
-          <div class="cmd"><span class="p">intent</span> &rarr; spec &rarr; build &rarr; reconcile</div>
+          <h3>The PO writes the story</h3>
+          <p>A PO writes a story in plain language - no code required. The loop walks them through clarifying questions; technical ones can be explicitly deferred. The spec reaches <b style="color:var(--tx)">ready-to-develop</b> only through that gate, so developers and the AI build from a contract, not from vibes.</p>
+          <div class="cmd"><span class="p">story</span> &rarr; clarify &rarr; ready-to-develop &rarr; build</div>
         </div>
         <div class="card reveal feat">
           <div class="idx">04</div>
@@ -427,7 +430,7 @@
         <div class="stage">
           <div class="role">AI agent</div>
           <h4>Build</h4>
-          <p>Turns the spec into a plan - asking the PO, architect and devs where it is unclear - then writes the tasks, builds and tests.</p>
+          <p>Turns the spec into a plan - asking clarifying questions until it's ready to develop - then writes the tasks, builds and tests.</p>
           <ul><li>Plan + ask questions</li><li>Tasks, build &amp; test</li><li>Grow &amp; update the backlog</li></ul>
         </div>
       </div>

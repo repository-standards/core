@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home - repository-standards docs</title>
+<style>
+/* Dark by default, matching the landing page's palette (apps/landing-page/index.html
+   :root vars: ink/surface/line/tx/mid/amber) - the docs and the landing read as one
+   product, nextjs.org-style. Light stays as an explicit user-preference override. */
+:root {
+  --bg: #0D0E11;
+  --bg-sidebar: #101216;
+  --fg: #ECEDEF;
+  --muted: #9BA1AB;
+  --border: #242832;
+  --link: #FFB454;
+  --link-visited: #e79b3e;
+  --code-bg: #16181D;
+  --active-bg: #1b1e24;
+  --active-fg: #FFB454;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "JetBrains Mono", "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --bg-sidebar: #f7f7f8;
+    --fg: #1a1a1a;
+    --muted: #5f6368;
+    --border: #e3e3e6;
+    --link: #b06400;
+    --link-visited: #8a4d00;
+    --code-bg: #f0f1f3;
+    --active-bg: #fdeeda;
+    --active-fg: #8a4d00;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.65;
+}
+a { color: var(--link); text-decoration-thickness: from-font; }
+a:visited { color: var(--link-visited); }
+a:hover { text-decoration: none; }
+.layout { display: flex; align-items: flex-start; min-height: 100vh; }
+.sidebar {
+  flex: 0 0 260px;
+  width: 260px;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1.25rem 1rem 2rem;
+}
+.brand {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--fg);
+  text-decoration: none;
+  padding: 0.25rem 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.75rem;
+}
+.brand:visited { color: var(--fg); }
+.nav-group-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding: 0.9rem 0.6rem 0.3rem;
+}
+.nav-link {
+  display: block;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  color: var(--fg);
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+.nav-link:visited { color: var(--fg); }
+.nav-link:hover { background: var(--active-bg); }
+.nav-link.active { background: var(--active-bg); color: var(--active-fg); font-weight: 600; }
+.content {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 2.5rem clamp(1.25rem, 4vw, 3.5rem) 5rem;
+}
+.content > :first-child { margin-top: 0; }
+.prose { max-width: 76ch; }
+h1, h2, h3, h4, h5, h6 { line-height: 1.3; scroll-margin-top: 1rem; }
+h1 { font-size: 1.9rem; margin: 0 0 1.25rem; }
+h2 { font-size: 1.4rem; margin: 2.25rem 0 1rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+.prose > h2:first-of-type { border-top: none; padding-top: 0; }
+h3 { font-size: 1.15rem; margin: 1.75rem 0 0.75rem; }
+h4 { font-size: 1rem; margin: 1.5rem 0 0.5rem; }
+p { margin: 0 0 1rem; }
+ul, ol { margin: 0 0 1rem; padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li > ul, li > ol { margin: 0.35rem 0 0.25rem; }
+blockquote {
+  margin: 0 0 1rem;
+  padding: 0.1rem 1rem;
+  border-left: 3px solid var(--border);
+  color: var(--muted);
+}
+blockquote p { margin: 0.5rem 0; }
+hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+code {
+  font-family: var(--font-mono);
+  font-size: 0.87em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--code-bg);
+  padding: 1rem 1.1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0 0 1.25rem;
+  max-width: 76ch;
+}
+pre code { background: none; padding: 0; border-radius: 0; font-size: 0.85em; }
+.table-wrap { overflow-x: auto; margin: 0 0 1.25rem; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; vertical-align: top; }
+th { background: var(--bg-sidebar); font-weight: 600; }
+.page-footer {
+  max-width: 76ch;
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+@media (max-width: 768px) {
+  /* align-items: flex-start (desktop) means "don't stretch" on the CROSS axis; in row
+     mode that's vertical (intentional, so the two columns don't force each other's
+     height), but flex-direction:column below makes the cross axis horizontal - so it
+     must switch to stretch here or .sidebar/.content shrink to their content's width
+     instead of filling the viewport, overflowing it. */
+  .layout { flex-direction: column; align-items: stretch; }
+  .sidebar {
+    position: static;
+    width: auto;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-links { display: flex; flex-wrap: wrap; gap: 0.25rem 0.5rem; }
+  .nav-group-title { flex-basis: 100%; padding-top: 0.6rem; }
+  .content { padding: 1.5rem 1.25rem 3rem; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" aria-label="Documentation">
+<a class="brand" href="index.html">repository-standards</a>
+<div class="nav-links">
+<a class="nav-link active" href="index.html" aria-current="page">Home</a>
+<a class="nav-link" href="why.html">Why</a>
+<a class="nav-link" href="adopt.html">Adopt (start here)</a>
+<div class="nav-group-title">Concepts</div>
+<a class="nav-link" href="taxonomy.html">Taxonomy</a>
+<a class="nav-link" href="ways-of-working.html">Ways of working</a>
+<a class="nav-link" href="specs.html">Specs</a>
+<div class="nav-group-title">Guides</div>
+<a class="nav-link" href="spec-kit-setup.html">Spec Kit setup</a>
+<a class="nav-link" href="self-verify.html">Self-verify</a>
+<div class="nav-group-title">Reference</div>
+<a class="nav-link" href="checklist.html">Decision checklist</a>
+<a class="nav-link" href="decision-records.html">Decision records</a>
+<a class="nav-link" href="faq.html">FAQ</a>
+<a class="nav-link" href="open-questions.html">Open questions</a>
+<a class="nav-link" href="case-studies.html">Case studies</a>
+</div>
+</nav>
+<main class="content">
+<div class="prose">
+<h1 id="repository-standards">repository-standards</h1>
+<blockquote><p>The reference your repository trues up to. A <strong>living, versioned, self-verifying</strong> engineering standard: point a repo at a version and it <strong>aligns</strong>, <strong>guides the build</strong>, and <strong>proves compliance</strong> - <code>align -&gt; verify -&gt; drift as a number</code>.</p></blockquote>
+<p>Most teams have standards the way they have new-year resolutions: written once, drifting ever since. This one is <strong>executable</strong>. It keeps documentation, specifications, and technical + business decisions in the repo, versioned with the code - written to be <em>run</em> by a coding agent, not framed on a wall. It starts new repos right and walks messy ones back to health, one guided wave at a time; at every step, compliance is a number, not an opinion.</p>
+<p>Others give you a workflow or a scaffold. This gives your repo a reference to true up to - <strong>and walks it there</strong>.</p>
+<h2 id="why-it-exists">Why it exists</h2>
+<p>Built to kill the four failure modes every team recognizes:</p>
+<ul>
+<li><strong>Decisions evaporate in chat.</strong> The <em>why</em> lives in a thread or an agent session, then it is gone - so the next person re-litigates a settled decision.</li>
+<li><strong>Docs rot away from code.</strong> A wiki elsewhere drifts the moment the code changes; nobody trusts it, so nobody updates it.</li>
+<li><strong>Specs describe, they don't build.</strong> A spec you cannot rebuild or verify from means the code is the only real truth, and the spec quietly lies.</li>
+<li><strong>Drift goes unnoticed.</strong> Code and intent diverge silently - found in an incident, not a review.</li>
+</ul>
+<h2 id="the-keystone-a-versioned-self-verifying-standard">The keystone: a versioned, self-verifying standard</h2>
+<p>The standard ships <strong>versions</strong>. A repo pins the one it follows in <code>.standards-version</code>, and the same align mechanism runs at three moments:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr><th>Moment</th><th></th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Adopt</strong></td><td>point a repo at the standard; it is read, compared, and brought into line - adapted to its stack, never blind-copied (<a href="https://github.com/bodurkalukasz/repository-standards/blob/main/standard/skills/align-to-standards/SKILL.md" target="_blank" rel="noopener noreferrer"><code>align-to-standards</code></a>).</td></tr>
+<tr><td><strong>Update</strong></td><td>already on <code>v0.7.1</code>? Apply just the <strong>delta</strong> to <code>v0.7.2</code> - like bumping a dependency, not a re-scaffold (<a href="https://github.com/bodurkalukasz/repository-standards/blob/main/standard/skills/update-to-version/SKILL.md" target="_blank" rel="noopener noreferrer"><code>update-to-version</code></a>).</td></tr>
+<tr><td><strong>Verify</strong></td><td>prove it: <code>node scripts/self-verify.mjs</code> - version pin, skeleton, guards - a pass/fail your CI asserts (<a href="self-verify.html"><code>self-verify</code></a>).</td></tr>
+</tbody>
+</table></div>
+<h2 id="who-it-s-for">Who it's for</h2>
+<p>Three roles get daily value from the same repo: the <strong>PO</strong> writes stories the loop sharpens into buildable specs (and can always ask for the plain-language version); the <strong>developer</strong> gets contracts instead of archaeology; the <strong>project</strong> keeps documentation that is actually true. All of it doubles as the context an AI agent can act on.</p>
+<ul>
+<li><strong>A new repo</strong> - scaffold from the standard at a pinned version and go.</li>
+<li><strong>An existing, undocumented repo</strong> - <code>assess -&gt; align -&gt; onboard</code>: capabilities specced, decisions recorded from the code, the rest queued as a backlog. Incremental, never a big-bang dump (<a href="https://github.com/bodurkalukasz/repository-standards/blob/main/standard/docs/repo-assessment.md" target="<em>blank" rel="noopener noreferrer"><code>repo-assessment</code></a>, <a href="https://github.com/bodurkalukasz/repository-standards/blob/main/standard/skills/onboard-repo/SKILL.md" target="</em>blank" rel="noopener noreferrer"><code>onboard-repo</code></a>).</li>
+<li><strong>Building with an AI, three hats on</strong> - PO turns vision into a behavioral spec that is immediately codeable; an architect records the decisions; a dev and the AI implement against it. One living spec, one backlog (<a href="ways-of-working.html"><code>ways-of-working</code></a>).</li>
+<li><strong>Keeping a fleet current</strong> - cut a new version and every repo can update to it, each self-verifying that it complies.</li>
+</ul>
+<h2 id="what-s-inside">What's inside</h2>
+<ul>
+<li><strong>Living capability specs</strong> - behavior by <strong>capability</strong> (not ticket or page) and <strong>buildable</strong> (rebuildable + verifiable from the spec alone), kept coupled to the code by a guard. <a href="specs.html"><code>specs/</code></a></li>
+<li><strong>Decision records</strong> - ADR (technical <em>why</em>) + BDR (business <em>why</em>) in MADR format, plus a <strong>decision checklist</strong>: the forks every project hits, with an opinionated default for each. <a href="decision-records.html"><code>decision-records/</code></a>, <a href="checklist.html"><code>checklist.md</code></a></li>
+<li><strong>A backlog that feeds itself</strong> - items fall out of spec deltas, code&lt;-&gt;spec drift, and onboarding; they leave only when their definition of done is met.</li>
+<li><strong>Guardrails as tooling</strong> - dependency-free guards (spec-structure, spec coupling + <code>--audit</code>, self-verify), secret scan, remote-DB write guard, hardened CI.</li>
+<li><strong>A taxonomy map</strong> - where each kind of knowledge lands, so "ADR or rule?" stops recurring. <a href="taxonomy.html"><code>docs/taxonomy.md</code></a></li>
+<li><strong>Agents-first</strong> - one <code>AGENTS.md</code> at the root is the single entry point; the standard is written to be <em>executed</em> by an agent, not just read.</li>
+</ul>
+<p><strong>Altitude</strong> (wins on conflict): <code>PRINCIPLES -&gt; ADR/BDR -&gt; specs + ARCHITECTURE -&gt; conventions -&gt; code</code>.</p>
+<h2 id="two-layers-adoptable-independently">Two layers - adoptable independently</h2>
+<ul>
+<li><strong>Layer 1 - the standard (stack-agnostic):</strong> everything above. Works for any repo, any language.</li>
+<li><strong>Layer 2 - Node/TypeScript setup:</strong> a runnable scaffold on top, distilled from real production repos (pnpm + Turbo, Biome, Fastify native DI, Next.js, Vitest/Playwright, hardened Actions). Take Layer 1 alone, or 1 + 2.</li>
+</ul>
+<h2 id="source-and-dist">Source, and <code>dist/</code></h2>
+<p>The maintained <strong>source</strong> lives under <a href="https://github.com/bodurkalukasz/repository-standards/tree/main/standard" target="<em>blank" rel="noopener noreferrer"><code>standard/</code></a> - the concern folders (<code>agents/</code>, <code>claude/</code>, <code>decision-records/</code>, <code>docs/</code>, <code>github/</code>, <code>gitleaks/</code>, <code>skills/</code>, <code>specs/</code>) plus the manifest (ADR-008's zone 2). <a href="https://github.com/bodurkalukasz/repository-standards/tree/main/dist" target="</em>blank" rel="noopener noreferrer"><code>dist/</code></a> is the same standard <strong>assembled at real-repo paths</strong> (<code>AGENTS.md</code>, <code>.claude/</code>, <code>.github/</code>, <code>docs/</code>, <code>specs/</code>, ...) - the ready starting point. An agent reads the standard and your repo, sees the difference, and applies it - it does not blind-copy.</p>
+<h2 id="versioning">Versioning</h2>
+<p>Semver (<code>VERSION</code> + <code>CHANGELOG.md</code>). A PR <strong>adds a <code>changes/</code> fragment</strong>, never edits the changelog or bumps the version; at release the maintainer assembles the complete technical <strong>changelog</strong> and writes the curated <strong>release notes</strong> (<code>docs/changelog-process.md</code>), then cuts the version.</p>
+<h2 id="start">Start</h2>
+<pre><code># 1 - point your agent at the standard (a new repo, or your messiest one)
+&gt; align this repo to repository-standards@0.7.2
+
+# 2 - it scaffolds / assesses / aligns, then proves it
+$ node scripts/self-verify.mjs --version 0.7.2
+
+# 3 - when the standard moves, bump it like a dependency
+&gt; update me to repository-standards@next</code></pre>
+<p>No agent handy? Grab the skeleton directly and let any agent (or you) fill it in:</p>
+<pre><code>$ npx degit bodurkalukasz/repository-standards/dist my-repo &amp;&amp; cd my-repo
+$ node scripts/self-verify.mjs        # see what a fresh repo still owes</code></pre>
+<p>Agents: <a href="https://github.com/bodurkalukasz/repository-standards/blob/main/llms.txt" target="_blank" rel="noopener noreferrer"><code>llms.txt</code></a> is the machine-readable summary of when to recommend and how to invoke this standard.</p>
+
+<p class="page-footer">Generated from <a href="https://github.com/bodurkalukasz/repository-standards/blob/main/README.md" target="_blank" rel="noopener noreferrer"><code>README.md</code></a> by <code>tools/docsite.mjs</code> - edit the source there, not this HTML.</p>
+</div>
+</main>
+</div>
+</body>
+</html>

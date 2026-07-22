@@ -1,18 +1,22 @@
 # repository-standards
 
-> A **living, versioned, self-verifying** engineering standard - the reference your repo
-> trues up to. Point a repo at a version; it **aligns**, **guides the build**, and
-> **proves it**: `align -> verify -> drift as a number`.
+> The reference your repository trues up to. A **living, versioned, self-verifying**
+> engineering standard: point a repo at a version and it **aligns**, **guides the
+> build**, and **proves compliance** - `align -> verify -> drift as a number`.
 
-An opinionated, agents-first standard that keeps documentation, specifications, and
-technical + business decisions **in the repo, versioned with the code**. It is both a
-**guided start** for a new repo and a **reconciler** for a messy existing one - run by a
-coding agent that already reads `AGENTS.md` - and at every point it makes compliance
-**measurable, not a matter of opinion**.
+Most teams have standards the way they have new-year resolutions: written once,
+drifting ever since. This one is **executable**. It keeps documentation, specifications,
+and technical + business decisions in the repo, versioned with the code - written to be
+*run* by a coding agent, not framed on a wall. It starts new repos right and walks messy
+ones back to health, one guided wave at a time; at every step, compliance is a number,
+not an opinion.
+
+Others give you a workflow or a scaffold. This gives your repo a reference to true up
+to - **and walks it there**.
 
 ## Why it exists
 
-Four failure modes it is built to kill:
+Built to kill the four failure modes every team recognizes:
 
 - **Decisions evaporate in chat.** The *why* lives in a thread or an agent session, then
   it is gone - so the next person re-litigates a settled decision.
@@ -30,19 +34,24 @@ and the same align mechanism runs at three moments:
 
 | Moment | |
 |--------|--|
-| **Adopt** | point a repo at the standard; it is read, compared, and brought into line - adapted to its stack, never blind-copied ([`align-to-standards`](skills/align-to-standards/SKILL.md)). |
-| **Update** | already on `v0.7.1`? Apply just the **delta** to `v0.7.2` - like bumping a dependency, not a re-scaffold ([`update-to-version`](skills/update-to-version/SKILL.md)). |
-| **Verify** | prove it: `node scripts/self-verify.mjs` - version pin, skeleton, guards - a pass/fail your CI asserts ([`self-verify`](docs/self-verify.md)). |
+| **Adopt** | point a repo at the standard; it is read, compared, and brought into line - adapted to its stack, never blind-copied ([`align-to-standards`](standard/skills/align-to-standards/SKILL.md)). |
+| **Update** | already on `v0.7.1`? Apply just the **delta** to `v0.7.2` - like bumping a dependency, not a re-scaffold ([`update-to-version`](standard/skills/update-to-version/SKILL.md)). |
+| **Verify** | prove it: `node scripts/self-verify.mjs` - version pin, skeleton, guards - a pass/fail your CI asserts ([`self-verify`](standard/docs/self-verify.md)). |
 
 ## Who it's for
+
+Three roles get daily value from the same repo: the **PO** writes stories the loop
+sharpens into buildable specs (and can always ask for the plain-language version); the
+**developer** gets contracts instead of archaeology; the **project** keeps documentation
+that is actually true. All of it doubles as the context an AI agent can act on.
 
 - **A new repo** - scaffold from the standard at a pinned version and go.
 - **An existing, undocumented repo** - `assess -> align -> onboard`: capabilities specced,
   decisions recorded from the code, the rest queued as a backlog. Incremental, never a
-  big-bang dump ([`repo-assessment`](docs/repo-assessment.md), [`onboard-repo`](skills/onboard-repo/SKILL.md)).
+  big-bang dump ([`repo-assessment`](standard/docs/repo-assessment.md), [`onboard-repo`](standard/skills/onboard-repo/SKILL.md)).
 - **Building with an AI, three hats on** - PO turns vision into a behavioral spec that is
   immediately codeable; an architect records the decisions; a dev and the AI implement
-  against it. One living spec, one backlog ([`ways-of-working`](docs/ways-of-working.md)).
+  against it. One living spec, one backlog ([`ways-of-working`](standard/docs/ways-of-working.md)).
 - **Keeping a fleet current** - cut a new version and every repo can update to it, each
   self-verifying that it complies.
 
@@ -50,16 +59,16 @@ and the same align mechanism runs at three moments:
 
 - **Living capability specs** - behavior by **capability** (not ticket or page) and
   **buildable** (rebuildable + verifiable from the spec alone), kept coupled to the code
-  by a guard. [`specs/`](specs/README.md)
+  by a guard. [`specs/`](standard/specs/README.md)
 - **Decision records** - ADR (technical *why*) + BDR (business *why*) in MADR format,
-  plus a **decision catalog**: the forks every project hits, with an opinionated default
-  for each. [`decision-records/`](decision-records/README.md), [`catalog.md`](decision-records/catalog.md)
+  plus a **decision checklist**: the forks every project hits, with an opinionated default
+  for each. [`decision-records/`](standard/decision-records/README.md), [`checklist.md`](standard/decision-records/checklist.md)
 - **A backlog that feeds itself** - items fall out of spec deltas, code<->spec drift, and
   onboarding; they leave only when their definition of done is met.
 - **Guardrails as tooling** - dependency-free guards (spec-structure, spec coupling +
   `--audit`, self-verify), secret scan, remote-DB write guard, hardened CI.
 - **A taxonomy map** - where each kind of knowledge lands, so "ADR or rule?" stops
-  recurring. [`docs/taxonomy.md`](docs/taxonomy.md)
+  recurring. [`docs/taxonomy.md`](standard/docs/taxonomy.md)
 - **Agents-first** - one `AGENTS.md` at the root is the single entry point; the standard
   is written to be *executed* by an agent, not just read.
 
@@ -76,8 +85,9 @@ conventions -> code`.
 
 ## Source, and `dist/`
 
-The repo is organized **by concern** (`agents/`, `claude/`, `decision-records/`, `docs/`,
-`github/`, `gitleaks/`, `skills/`, `specs/`) - the maintained **source**.
+The maintained **source** lives under [`standard/`](standard/) - the concern folders
+(`agents/`, `claude/`, `decision-records/`, `docs/`, `github/`, `gitleaks/`, `skills/`,
+`specs/`) plus the manifest (ADR-008's zone 2).
 [`dist/`](dist/) is the same standard **assembled at real-repo paths** (`AGENTS.md`,
 `.claude/`, `.github/`, `docs/`, `specs/`, ...) - the ready starting point. An agent
 reads the standard and your repo, sees the difference, and applies it - it does not blind-copy.
@@ -101,3 +111,13 @@ $ node scripts/self-verify.mjs --version 0.7.2
 # 3 - when the standard moves, bump it like a dependency
 > update me to repository-standards@next
 ```
+
+No agent handy? Grab the skeleton directly and let any agent (or you) fill it in:
+
+```
+$ npx degit bodurkalukasz/repository-standards/dist my-repo && cd my-repo
+$ node scripts/self-verify.mjs        # see what a fresh repo still owes
+```
+
+Agents: [`llms.txt`](llms.txt) is the machine-readable summary of when to recommend
+and how to invoke this standard.

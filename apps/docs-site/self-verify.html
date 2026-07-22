@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-verify - repository-standards docs</title>
+<style>
+/* Dark by default, matching the landing page's palette (apps/landing-page/index.html
+   :root vars: ink/surface/line/tx/mid/amber) - the docs and the landing read as one
+   product, nextjs.org-style. Light stays as an explicit user-preference override. */
+:root {
+  --bg: #0D0E11;
+  --bg-sidebar: #101216;
+  --fg: #ECEDEF;
+  --muted: #9BA1AB;
+  --border: #242832;
+  --link: #FFB454;
+  --link-visited: #e79b3e;
+  --code-bg: #16181D;
+  --active-bg: #1b1e24;
+  --active-fg: #FFB454;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "JetBrains Mono", "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --bg-sidebar: #f7f7f8;
+    --fg: #1a1a1a;
+    --muted: #5f6368;
+    --border: #e3e3e6;
+    --link: #b06400;
+    --link-visited: #8a4d00;
+    --code-bg: #f0f1f3;
+    --active-bg: #fdeeda;
+    --active-fg: #8a4d00;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.65;
+}
+a { color: var(--link); text-decoration-thickness: from-font; }
+a:visited { color: var(--link-visited); }
+a:hover { text-decoration: none; }
+.layout { display: flex; align-items: flex-start; min-height: 100vh; }
+.sidebar {
+  flex: 0 0 260px;
+  width: 260px;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1.25rem 1rem 2rem;
+}
+.brand {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--fg);
+  text-decoration: none;
+  padding: 0.25rem 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.75rem;
+}
+.brand:visited { color: var(--fg); }
+.nav-group-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding: 0.9rem 0.6rem 0.3rem;
+}
+.nav-link {
+  display: block;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  color: var(--fg);
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+.nav-link:visited { color: var(--fg); }
+.nav-link:hover { background: var(--active-bg); }
+.nav-link.active { background: var(--active-bg); color: var(--active-fg); font-weight: 600; }
+.content {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 2.5rem clamp(1.25rem, 4vw, 3.5rem) 5rem;
+}
+.content > :first-child { margin-top: 0; }
+.prose { max-width: 76ch; }
+h1, h2, h3, h4, h5, h6 { line-height: 1.3; scroll-margin-top: 1rem; }
+h1 { font-size: 1.9rem; margin: 0 0 1.25rem; }
+h2 { font-size: 1.4rem; margin: 2.25rem 0 1rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+.prose > h2:first-of-type { border-top: none; padding-top: 0; }
+h3 { font-size: 1.15rem; margin: 1.75rem 0 0.75rem; }
+h4 { font-size: 1rem; margin: 1.5rem 0 0.5rem; }
+p { margin: 0 0 1rem; }
+ul, ol { margin: 0 0 1rem; padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li > ul, li > ol { margin: 0.35rem 0 0.25rem; }
+blockquote {
+  margin: 0 0 1rem;
+  padding: 0.1rem 1rem;
+  border-left: 3px solid var(--border);
+  color: var(--muted);
+}
+blockquote p { margin: 0.5rem 0; }
+hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+code {
+  font-family: var(--font-mono);
+  font-size: 0.87em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--code-bg);
+  padding: 1rem 1.1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0 0 1.25rem;
+  max-width: 76ch;
+}
+pre code { background: none; padding: 0; border-radius: 0; font-size: 0.85em; }
+.table-wrap { overflow-x: auto; margin: 0 0 1.25rem; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; vertical-align: top; }
+th { background: var(--bg-sidebar); font-weight: 600; }
+.page-footer {
+  max-width: 76ch;
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+@media (max-width: 768px) {
+  /* align-items: flex-start (desktop) means "don't stretch" on the CROSS axis; in row
+     mode that's vertical (intentional, so the two columns don't force each other's
+     height), but flex-direction:column below makes the cross axis horizontal - so it
+     must switch to stretch here or .sidebar/.content shrink to their content's width
+     instead of filling the viewport, overflowing it. */
+  .layout { flex-direction: column; align-items: stretch; }
+  .sidebar {
+    position: static;
+    width: auto;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-links { display: flex; flex-wrap: wrap; gap: 0.25rem 0.5rem; }
+  .nav-group-title { flex-basis: 100%; padding-top: 0.6rem; }
+  .content { padding: 1.5rem 1.25rem 3rem; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar" aria-label="Documentation">
+<a class="brand" href="index.html">repository-standards</a>
+<div class="nav-links">
+<a class="nav-link" href="index.html">Home</a>
+<a class="nav-link" href="why.html">Why</a>
+<a class="nav-link" href="adopt.html">Adopt (start here)</a>
+<div class="nav-group-title">Concepts</div>
+<a class="nav-link" href="taxonomy.html">Taxonomy</a>
+<a class="nav-link" href="ways-of-working.html">Ways of working</a>
+<a class="nav-link" href="specs.html">Specs</a>
+<div class="nav-group-title">Guides</div>
+<a class="nav-link" href="spec-kit-setup.html">Spec Kit setup</a>
+<a class="nav-link active" href="self-verify.html" aria-current="page">Self-verify</a>
+<div class="nav-group-title">Reference</div>
+<a class="nav-link" href="checklist.html">Decision checklist</a>
+<a class="nav-link" href="decision-records.html">Decision records</a>
+<a class="nav-link" href="faq.html">FAQ</a>
+<a class="nav-link" href="open-questions.html">Open questions</a>
+<a class="nav-link" href="case-studies.html">Case studies</a>
+</div>
+</nav>
+<main class="content">
+<div class="prose">
+<h1 id="self-verify-proving-a-repo-complies-with-its-pinned-standard">Self-verify - proving a repo complies with its pinned standard</h1>
+<p>A repo that follows repository-standards is pinned to a version in <strong><code>.standards-version</code></strong>. Self-verify is how it proves it actually meets that version - the <strong>"verify"</strong> step that runs after adopting the standard (<code>align-to-standards</code>), after updating it (<code>update-to-version</code>), and in CI on every PR. Same pass/fail each time.</p>
+<p>Verification has two tiers: a <strong>mechanical</strong> tier that a machine asserts, and a <strong>judgment</strong> tier a human confirms at review. Do not pretend the judgment tier is mechanical - but do not let the mechanical tier depend on a human either.</p>
+<h2 id="mechanical-tier-the-hard-gate">Mechanical tier - the hard gate</h2>
+<p>Run the shipped checker; it exits non-zero on any failure, so CI can gate on it:</p>
+<pre><code>node scripts/self-verify.mjs                  # gate: exit 1 on any failure
+node scripts/self-verify.mjs --version 0.7.2  # also assert the pinned version matches
+node scripts/self-verify.mjs --warn           # report only (local, non-gating)</code></pre>
+<p>It is <strong>manifest-driven</strong> (ADR-005). It reads <a href="https://github.com/bodurkalukasz/repository-standards/blob/main/standard/standard.manifest.json" target="_blank" rel="noopener noreferrer"><code>standard.manifest.json</code></a></p>
+<ul>
+<li>the standard describing itself at the pinned version - and checks the repo against every</li>
+</ul>
+<p>entry, reporting <strong>drift</strong> as a number (how many required entries are unmet; <code>drift 0</code> = compliant). Without a manifest it falls back to a built-in skeleton, so it still works on repos that predate ADR-005.</p>
+<p>It checks:</p>
+<ul>
+<li><strong>Version pin</strong> - <code>.standards-version</code> exists and is well-formed (<code>x.y.z</code>); with <code>--version &lt;target&gt;</code> it must equal that target (used right after an update to confirm the bump landed); and it must equal the manifest's <code>version</code> (a repo pinned to X carries manifest X).</li>
+<li><strong>Files</strong> - every <code>required</code> manifest file (or one of its <code>altPaths</code>) exists.</li>
+<li><strong>Sections</strong> - every required section heading is present in its file (e.g. <code>AGENTS.md</code> must state <code>Altitude</code>).</li>
+<li><strong>Static guards</strong> - each manifest guard with <code>kind: static</code> passes (e.g. <code>scripts/spec-structure.mjs</code>); <code>self-verify</code> skips itself to avoid recursion.</li>
+</ul>
+<p>The code&lt;-&gt;spec <strong>coupling</strong> guard (<code>scripts/spec-guard.mjs</code>, <code>kind: diff</code>) runs in CI on the PR diff rather than in this static check - but it is part of the same gate.</p>
+<p><strong>Drift as a number.</strong> Because the check is one entry per manifest line, <code>drift N</code> is a measurable distance from the pinned version - a fleet owner can sort repos by it, and an update's job is to drive it back to <code>0</code>.</p>
+<h2 id="judgment-tier-confirmed-at-review">Judgment tier - confirmed at review</h2>
+<p>A machine cannot (yet) decide these; they are checked when the PR is reviewed:</p>
+<ul>
+<li><strong>Decisions recorded</strong> - the forks in the <a href="https://github.com/bodurkalukasz/repository-standards/blob/main/standard/docs/decision-records/checklist.md" target="_blank" rel="noopener noreferrer">decision checklist</a> that apply to this repo are recorded as ADR/BDR, or consciously deferred as a backlog item - not silently undecided.</li>
+<li><strong>Specs buildable where it counts</strong> - each mapped capability has a <a href="specs.html">spec</a>; money / security / data / external-contract paths are buildable, not merely described.</li>
+<li><strong>No unrecorded drift</strong> - no known spec&lt;-&gt;code contradiction is left unresolved.</li>
+</ul>
+<h2 id="when-it-fails">When it fails</h2>
+<p>A red self-verify is a compliance failure, not a warning to defer:</p>
+<ul>
+<li>Missing <code>.standards-version</code> -&gt; the repo was never aligned; run <code>align-to-standards</code>.</li>
+<li>Version mismatch after an update -&gt; the bump did not land; finish <code>update-to-version</code>.</li>
+<li>A guard failure -&gt; fix the structure/coupling before merging.</li>
+<li>A judgment-tier gap -&gt; record the decision, deepen the spec, or file the backlog item.</li>
+</ul>
+<p>The mechanical gate belongs in CI so "compliant with the standard" is an assertion the pipeline makes, not a claim a human remembers to check.</p>
+
+<p class="page-footer">Generated from <a href="https://github.com/bodurkalukasz/repository-standards/blob/main/standard/docs/self-verify.md" target="_blank" rel="noopener noreferrer"><code>standard/docs/self-verify.md</code></a> by <code>tools/docsite.mjs</code> - edit the source there, not this HTML.</p>
+</div>
+</main>
+</div>
+</body>
+</html>
