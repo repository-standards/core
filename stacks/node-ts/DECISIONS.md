@@ -150,7 +150,7 @@ The tier is the same call as the spec tier: **unit** covers a module's rules; **
 covers the contract with a backing service (the thing a mock quietly lies about);
 **e2e** covers the acceptance criteria a persona's journey implies. Money / security /
 external-contract paths are non-negotiable at the integration tier and above (mirrors the
-buildable-spec floor in Layer 1's [testing-strategy catalog entry](../../decision-records/catalog.md)).
+buildable-spec floor in Layer 1's [testing-strategy catalog entry](../../decision-records/checklist.md)).
 
 ### Where the tests live
 
@@ -211,8 +211,8 @@ only the real engine has (constraint violations, isolation levels, JSON operator
 - `lighthouserc.json` runs against the built web app and asserts a **perf + a11y budget**.
   Default posture is **advisory** (`warn`): it reports on every PR and blocks only on the
   surfaces that opt a metric up to `error`. This mirrors Layer 1's *"a budget only where it
-  matters"* ([performance](../../decision-records/catalog.md)) and *"enforce what tooling
-  can"* ([accessibility](../../decision-records/catalog.md)) - a flaky perf number should not
+  matters"* ([performance](../../decision-records/checklist.md)) and *"enforce what tooling
+  can"* ([accessibility](../../decision-records/checklist.md)) - a flaky perf number should not
   red-wall every unrelated PR. Promote a metric to blocking on the surface that has an SLA.
 - It complements, not replaces, Biome's static a11y rules and Playwright's role-based
   selectors: static lint at author time, Lighthouse on the rendered page, e2e in the journey.
@@ -230,6 +230,34 @@ only the real engine has (constraint violations, isolation levels, JSON operator
 - **Speed is a feature.** Unit tier stays milliseconds (no I/O); push slow setup down into
   integration/e2e so the fast loop stays fast. If the unit suite needs Docker, it's mis-tiered.
 
+## 10. App shell - auth, proxy, styling (the greenfield starter picks)
+
+The "put up a repo and it runs" starter (STARTER-1) needs the last three picks the
+templates left open. Decided here so the starter assembles, not debates:
+
+- **Auth - Better Auth** for product auth (sessions in your Postgres, MFA/rate-limit
+  built in, plugin ecosystem). It is the 2026 default for new TS apps and now maintains
+  Auth.js/NextAuth - which is no longer the pick for new projects. **Enterprise OIDC SSO**
+  (Entra & co.) instead uses **`openid-client` in one framework-agnostic shared module** -
+  a call validated in a private production repo (Auth.js rejected there as Next-coupled): the same module serves
+  Next's auth routes today and a standalone Fastify tomorrow. Sessions: DB-backed and
+  revocable, short-lived + silent server-side refresh with an absolute cap.
+- **Proxy / gate - Next 16 `proxy.ts`** (the `middleware.ts` replacement, Node runtime -
+  it may query the DB, so the session gate can be revocable, not JWT-blind). App-to-API
+  wiring in dev and single-origin deploys: Next `rewrites` -> the Fastify service;
+  service-to-service stays direct. Auth gates live in **both** the proxy and the service
+  (default-deny) - the proxy is UX, the service is the boundary.
+- **Styling - CSS Modules + SCSS** (the Prettier-for-SCSS pick in #3 already assumed it):
+  co-located `*.module.scss`, no CSS-in-JS runtime; design values come from **DTCG
+  three-tier tokens** (see the Layer 1 catalog fork) so the visual language has one
+  source. Tailwind is the recorded escape hatch for teams that already live in it
+  (supersede locally per ADR-004).
+
+**Starter composition (STARTER-1, own PR, boot-verified):** `starter/` assembles
+`templates/web` + `templates/service` + `e2e/` + the test-stack into a runnable monorepo -
+`pnpm i && pnpm dev` boots web+api wired through the proxy with Better Auth in place,
+`pnpm test:all` green. Ships only after it actually boots (no pretend-runnable code).
+
 ---
 
 ## Summary - the paved road
@@ -246,6 +274,9 @@ only the real engine has (constraint violations, isolation levels, JSON operator
 | Supply chain | 7-day `minimumReleaseAge` + allowBuilds | stayget |
 | CI | least-privilege + cache + frozen lockfile (+ explicit permissions) | stayget, hardened |
 | Testing | Vitest (unit + integration) + Playwright (e2e) + Lighthouse CI, tiered, root-orchestrated, real deps via a Docker test-stack | stayget |
+| Auth | Better Auth (product) / `openid-client` shared module (enterprise SSO); DB-backed revocable sessions | 2026 community + field |
+| Proxy | Next 16 `proxy.ts` (Node runtime) + rewrites -> Fastify; default-deny at both gates | field |
+| Styling | CSS Modules + SCSS, DTCG three-tier tokens; no CSS-in-JS runtime | stayget + DTCG |
 
 Provenance: `stayget` and `propertycloud` (private). Community checkpoints are cited in the
 PR that introduced this file.
