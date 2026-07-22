@@ -35,6 +35,7 @@ const write = process.argv.includes("--write");
 
 // copy: [source, dist] - dist must be byte-identical to source.
 const COPY = [
+  ["standard/SPEC.md", "dist/SPEC.md"],
   ["standard/specs/self-verify.mjs", "dist/scripts/self-verify.mjs"],
   ["standard/specs/spec-structure.mjs", "dist/scripts/spec-structure.mjs"],
   ["standard/specs/spec-guard.mjs", "dist/scripts/spec-guard.mjs"],
@@ -68,6 +69,11 @@ const COPY = [
   ["standard/decision-records/adr/_template.md", "dist/docs/decision-records/adr/_template.md"],
   ["standard/decision-records/bdr/README.md", "dist/docs/decision-records/bdr/README.md"],
   ["standard/decision-records/bdr/_template.md", "dist/docs/decision-records/bdr/_template.md"],
+  ["standard/spec-kit/LICENSE", "dist/.specify/LICENSE"],
+  ["standard/spec-kit/scripts/bash/check-spec-clarified.sh", "dist/.specify/scripts/bash/check-spec-clarified.sh"],
+  ["standard/spec-kit/scripts/bash/common.sh", "dist/.specify/scripts/bash/common.sh"],
+  ["standard/spec-kit/scripts/bash/create-new-feature.sh", "dist/.specify/scripts/bash/create-new-feature.sh"],
+  ["standard/spec-kit/scripts/bash/setup-plan.sh", "dist/.specify/scripts/bash/setup-plan.sh"],
 ];
 // skills: lifecycle skills ship (copy); transition skills NEVER ship (ADR-009) - they are
 // the standard repo's own utility, run by the agent pointing at this repo (greenfield-start
@@ -93,6 +99,21 @@ const DIVERGENT = [
   { src: "standard/decision-records/README.md", dist: "dist/docs/decision-records/README.md", reason: "links rewritten for the dist layout" },
   { src: "standard/decision-records/checklist.md", dist: "dist/docs/decision-records/checklist.md", reason: "links rewritten (../specs -> ../../specs) and the source-only ADR link de-linked" },
   { src: "standard/decision-records/adr/README.md", dist: "dist/docs/decision-records/adr/README.md", reason: "source lists this repo's own records; dist ships the empty index for a consuming repo" },
+  { src: "standard/spec-kit/scripts/bash/check-prerequisites.sh", dist: "dist/.specify/scripts/bash/check-prerequisites.sh", reason: "render bakes /speckit.* command names (upstream installer parity)" },
+  { src: "standard/spec-kit/scripts/bash/setup-tasks.sh", dist: "dist/.specify/scripts/bash/setup-tasks.sh", reason: "render bakes /speckit.* command names (upstream installer parity)" },
+  { src: "standard/spec-kit/templates/plan-template.md", dist: "dist/.specify/templates/plan-template.md", reason: "render resolves upstream tokens" },
+  { src: "standard/spec-kit/templates/tasks-template.md", dist: "dist/.specify/templates/tasks-template.md", reason: "render resolves upstream tokens" },
+  { src: "standard/spec-kit/templates/checklist-template.md", dist: "dist/.specify/templates/checklist-template.md", reason: "render resolves upstream tokens" },
+  { src: "standard/spec-kit/commands/specify.md", dist: "dist/.claude/skills/speckit-specify/SKILL.md", reason: "vendored engine command rendered as a skill (frontmatter + provenance note)" },
+  { src: "standard/spec-kit/commands/clarify.md", dist: "dist/.claude/skills/speckit-clarify/SKILL.md", reason: "vendored engine command rendered as a skill (frontmatter + provenance note)" },
+  { src: "standard/spec-kit/commands/plan.md", dist: "dist/.claude/skills/speckit-plan/SKILL.md", reason: "vendored engine command rendered as a skill (frontmatter + provenance note)" },
+  { src: "standard/spec-kit/commands/tasks.md", dist: "dist/.claude/skills/speckit-tasks/SKILL.md", reason: "vendored engine command rendered as a skill (frontmatter + provenance note)" },
+  { src: "standard/spec-kit/commands/analyze.md", dist: "dist/.claude/skills/speckit-analyze/SKILL.md", reason: "vendored engine command rendered as a skill (frontmatter + provenance note)" },
+  { src: "standard/spec-kit/commands/checklist.md", dist: "dist/.claude/skills/speckit-checklist/SKILL.md", reason: "vendored engine command rendered as a skill (frontmatter + provenance note)" },
+  { src: "standard/spec-kit/commands/constitution.md", dist: "dist/.claude/skills/speckit-constitution/SKILL.md", reason: "vendored engine command rendered as a skill (frontmatter + provenance note)" },
+  { src: "standard/spec-kit/commands/converge.md", dist: "dist/.claude/skills/speckit-converge/SKILL.md", reason: "vendored engine command rendered as a skill (frontmatter + provenance note)" },
+  { src: "standard/spec-kit/commands/implement.md", dist: "dist/.claude/skills/speckit-implement/SKILL.md", reason: "vendored engine command rendered as a skill (frontmatter + provenance note)" },
+  { src: "standard/spec-kit/commands/taskstoissues.md", dist: "dist/.claude/skills/speckit-taskstoissues/SKILL.md", reason: "vendored engine command rendered as a skill (frontmatter + provenance note)" },
 ];
 
 // authored-only: dist files with no source.
@@ -100,6 +121,7 @@ const AUTHORED_ONLY = [
   { dist: "dist/CLAUDE.md", reason: "thin Claude pointer to AGENTS.md, dist-only" },
   { dist: "dist/.nvmrc", reason: "stack version pin, a dist-only placeholder" },
   { dist: "dist/README.md", reason: "the shipped repo's own README (the source-root README is the product front-door, a different document)" },
+  { dist: "dist/.specify/README.md", reason: "generated pointer for the engine's shared runtime" },
 ];
 
 // source-only: never shipped. dist must NOT contain the reflected path.
@@ -119,6 +141,7 @@ const SOURCE_ONLY = [
   { src: "standard/skills/onboard-repo/SKILL.md", dist: "dist/.claude/skills/onboard-repo/SKILL.md" },
   { src: "standard/skills/modernize/SKILL.md", dist: "dist/.claude/skills/modernize/SKILL.md" },
   { src: "standard/skills/greenfield-start/SKILL.md", dist: "dist/.claude/skills/greenfield-start/SKILL.md" },
+  { src: "standard/spec-kit/README.md", dist: "dist/.specify/README-source.md" },
   { src: "standard/decision-records/adr/ADR-012-in-repo-instructions-are-the-source-of-truth.md", dist: "dist/docs/decision-records/adr/ADR-012-in-repo-instructions-are-the-source-of-truth.md" },
   { src: "standard/decision-records/adr/ADR-013-spec-kit-is-an-engine-by-reference.md", dist: "dist/docs/decision-records/adr/ADR-013-spec-kit-is-an-engine-by-reference.md" },
 ];

@@ -14,6 +14,9 @@ not an opinion.
 Others give you a workflow or a scaffold. This gives your repo a reference to true up
 to - **and walks it there**.
 
+The whole normative core fits one page: [`standard/SPEC.md`](standard/SPEC.md) -
+twenty numbered rules. Everything else here explains or enforces them.
+
 ## Why it exists
 
 Built to kill the four failure modes every team recognizes:

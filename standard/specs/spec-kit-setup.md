@@ -53,10 +53,12 @@ patched for this standard** (ADR-013, owner-amended 2026-07-22). What that means
   Kit is essentially prompt files + scripts, so the standard carries its own copy,
   **patched**: capability paths instead of `NNN-` dirs (ADR-002), the clarify gate
   pre-wired as mandatory hooks, spec `Status` integration (ADR-010).
-- **Until `ENG-5` lands the vendored copy**, install upstream directly (tested with
-  **0.10 - 0.13.x**, checked 2026-07; hooks need >= 0.10) and apply the patches per
-  this doc. After `ENG-5`, `dist/` ships the working engine and **no upstream CLI is
-  needed at all**.
+- **The vendored copy ships now** (ENG-5, 2026-07-22): `dist/.claude/skills/speckit-*`
+  (ten skills, each carrying a provenance note) plus the shared runtime in
+  `dist/.specify/` (scripts incl. the clarify gate, the three ephemeral-artifact
+  templates, the MIT LICENSE). **No upstream CLI is needed** - align lays the engine
+  down with everything else, patched and tested (capability paths, the gate wired into
+  plan/tasks, specs instantiated from the standard's own templates).
 - **Sync cadence:** upstream is re-checked only when the standard cuts a release -
   each sync records "based on github/spec-kit vX.Y" + the patch list. Upstream's
   breaking changes (e.g. v0.10.0 dropping the `--ai` flags) get absorbed here once;

@@ -14,6 +14,7 @@ then `node scripts/self-verify.mjs` proves compliance.
 
 ## Docs
 
+- [Spec](standard/SPEC.md): the normative core - twenty numbered MUST/SHOULD rules (R1-R20)
 - [README](README.md): what it is, the keystone (versioned align/update/verify), quick start
 - [Manifesto](docs/manifesto.md): the idea - one repo, everything coherent, agents-first
 - [Adoption](standard/docs/adoption.md): brownfield gates, profiles (solo vs team), model guidance

@@ -76,10 +76,12 @@ Option **D**. Concretely:
 
 ## Confirmation
 
-`ENG-5` lands the vendored, patched engine in zone 2 + `dist/` with a "based on
-github/spec-kit vX.Y" notice and the MIT license; `spec-kit-setup.md` stops requiring
-upstream's CLI; a consuming repo passes the clarify gate using only what `dist/`
-shipped.
+Landed 2026-07-22 (ENG-5): `standard/spec-kit/` (v0.13.2, 4 marked patches) renders to
+`dist/.claude/skills/speckit-*` - **the skills layout, per the owner's simplification
+call** (one distribution mechanism beside the standard's own skills; upstream v0.13.2
+itself installs skills) - plus the shared runtime in `dist/.specify/` with the MIT
+license and per-file provenance notes. `spec-kit-setup.md` no longer requires the
+upstream CLI; the gate and capability-path behavior are verified by scripted tests.
 
 ## Revisit when
 

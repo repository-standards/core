@@ -30,6 +30,7 @@ const GITHUB_REPO_URL = "https://github.com/bodurkalukasz/repository-standards";
 // first time it is seen (consecutive pages sharing a group nest under one heading).
 const PAGES = [
   { src: "README.md", out: "index.html", nav: "Home", group: null },
+  { src: "standard/SPEC.md", out: "spec.html", nav: "The spec", group: null },
   { src: "docs/manifesto.md", out: "why.html", nav: "Why", group: null },
   { src: "standard/docs/adoption.md", out: "adopt.html", nav: "Adopt (start here)", group: null },
   { src: "standard/docs/taxonomy.md", out: "taxonomy.html", nav: "Taxonomy", group: "Concepts" },

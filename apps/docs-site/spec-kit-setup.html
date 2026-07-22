@@ -169,6 +169,7 @@ th { background: var(--bg-sidebar); font-weight: 600; }
 <a class="brand" href="index.html">repository-standards</a>
 <div class="nav-links">
 <a class="nav-link" href="index.html">Home</a>
+<a class="nav-link" href="spec.html">The spec</a>
 <a class="nav-link" href="why.html">Why</a>
 <a class="nav-link" href="adopt.html">Adopt (start here)</a>
 <div class="nav-group-title">Concepts</div>
@@ -214,7 +215,7 @@ th { background: var(--bg-sidebar); font-weight: 600; }
 <p>The spec engine is <strong>based on GitHub Spec Kit, vendored at a pinned version and patched for this standard</strong> (ADR-013, owner-amended 2026-07-22). What that means:</p>
 <ul>
 <li><strong>The surface</strong>: the <code>speckit.*</code> command prompts (<code>specify</code> / <code>clarify</code> / <code>plan</code> / <code>tasks</code>), the helper scripts, and the constitution template - on the agent side Spec Kit is essentially prompt files + scripts, so the standard carries its own copy, <strong>patched</strong>: capability paths instead of <code>NNN-</code> dirs (ADR-002), the clarify gate pre-wired as mandatory hooks, spec <code>Status</code> integration (ADR-010).</li>
-<li><strong>Until <code>ENG-5</code> lands the vendored copy</strong>, install upstream directly (tested with <strong>0.10 - 0.13.x</strong>, checked 2026-07; hooks need &gt;= 0.10) and apply the patches per this doc. After <code>ENG-5</code>, <code>dist/</code> ships the working engine and <strong>no upstream CLI is needed at all</strong>.</li>
+<li><strong>The vendored copy ships now</strong> (ENG-5, 2026-07-22): <code>dist/.claude/skills/speckit-*</code> (ten skills, each carrying a provenance note) plus the shared runtime in <code>dist/.specify/</code> (scripts incl. the clarify gate, the three ephemeral-artifact templates, the MIT LICENSE). <strong>No upstream CLI is needed</strong> - align lays the engine down with everything else, patched and tested (capability paths, the gate wired into plan/tasks, specs instantiated from the standard's own templates).</li>
 <li><strong>Sync cadence:</strong> upstream is re-checked only when the standard cuts a release - each sync records "based on github/spec-kit vX.Y" + the patch list. Upstream's breaking changes (e.g. v0.10.0 dropping the <code>--ai</code> flags) get absorbed here once; consumers only ever see an <code>update-to-version</code> delta.</li>
 <li><strong>Naming:</strong> the <code>spec-*</code> skills are the standard's own layer; the vendored files keep upstream's <code>speckit.*</code> names - attribution honest in both directions (MIT notice ships with the copy).</li>
 <li><strong>Exit:</strong> the gate, statuses, and <code>spec-*</code> skills survive an engine swap; a vendored copy even survives upstream vanishing.</li>
