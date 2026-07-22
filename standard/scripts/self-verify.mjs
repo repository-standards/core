@@ -67,6 +67,20 @@ if (existsSync("standard.manifest.json")) {
   }
 }
 
+// 0b. a repo that adopted a stack carries the stack's manifest too (ADR-016):
+// same schema, second file - the engine eats both and drift is one number.
+if (manifest && existsSync("stack.manifest.json")) {
+  try {
+    const stack = JSON.parse(readFileSync("stack.manifest.json", "utf8"));
+    note("stack", `stack manifest present: ${stack.technology || "unnamed"} (declares standards ${stack.standards || "?"})`);
+    for (const k of ["files", "sections", "guards"]) {
+      manifest[k] = [...(manifest[k] || []), ...(stack[k] || [])];
+    }
+  } catch (e) {
+    fail("stack", `stack.manifest.json is present but unparseable: ${e.message}`);
+  }
+}
+
 // 1. version pin ----------------------------------------------------------------
 let pinned = null;
 if (skeleton) {

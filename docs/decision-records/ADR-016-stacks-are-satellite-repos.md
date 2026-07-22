@@ -36,7 +36,7 @@ Option **C**. Concretely:
 1. One repo per technology, named `repository-standards-<technology>`; first:
    [repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node).
    Inside it: `DECISIONS.md`, the runnable `starter/`, its own CI, and
-   `stack.json` - the stack contract.
+   `stack.manifest.json` - the stack contract and manifest.
 2. **The registry is the officialdom** (`stacks.json` in this repo): the align
    router reads only it; a stack not listed is not official, wherever it lives
    and whatever it is named. Copycat repos elsewhere are expected and harmless -
@@ -48,12 +48,22 @@ Option **C**. Concretely:
    official stack keeps a named owner and a live boot CI or is delisted (the
    Create React App lesson).
 4. **Compatibility is one line, owned by the satellite:** the stack repo's
-   `stack.json` declares `standards: ">=X <Y"` - the spec range it implements.
+   `stack.manifest.json` declares `standards: ">=X <Y"` - the spec range it implements.
    The registry carries no versions; the core moves and satellites chase, never
    the reverse. Adopters degit stacks at tags.
 5. The align router detects the target repo's technology (lockfiles, manifests)
    and offers the matching best practices; greenfield asks, then degits the
    stack's starter.
+
+**Alignment mechanics (added 2026-07-22, same change):** a stack ships
+`stack.manifest.json` - the same schema as the core manifest (ADR-005), plus
+`technology` and its `standards` range. The core's align machinery is reused
+whole: the router classifies a brownfield repo against the stack manifest's
+entries and walks it there in waves; an adopting repo carries the stack
+manifest beside the core one, and `self-verify` merges both into one drift
+number. Greenfield gets the same file copied in at scaffold time. The stack's
+update story (a versioned manifest delta, like `update-to-version`) is future
+work, noted here so it is not mistaken for done.
 
 ## Consequences
 
@@ -68,7 +78,7 @@ Option **C**. Concretely:
 ## Confirmation
 
 `stacks.json` exists and lists node; `stacks/` is gone from this repo; the align
-router's technology step reads the registry; the stack repo's `stack.json`
+router's technology step reads the registry; the stack repo's `stack.manifest.json`
 declares its standards range and points back here.
 
 ## Revisit when
@@ -81,4 +91,4 @@ cleanly.
 
 - ADR-008 (zones - its stacks-beside-core overlay clause is superseded by this),
   ADR-014 (one tree), ADR-011 (core|scale - the profile axis stacks reuse),
-  R20 in [`standard/SPEC.md`](../standard/SPEC.md).
+  R20 in [`standard/SPEC.md`](../../standard/SPEC.md).

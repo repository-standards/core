@@ -76,4 +76,4 @@ monorepo layout (`apps/`) proves overweight for what stays a docs-first repo.
 
 - ADR-005 (align-engine is a manifest) - the manifest stays the *client* layout,
   unaffected by zone-2 grouping.
-- `STRUCT-1` in [`backlog.md`](../backlog.md); the 2026-07-21 re-review notes.
+- `STRUCT-1` in [`backlog.md`](../../backlog.md); the 2026-07-21 re-review notes.

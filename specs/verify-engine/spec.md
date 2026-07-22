@@ -72,6 +72,18 @@ Output: header `self-verify - compliance with manifest <version>` (or `the pinne
 - **Stray skill.** GIVEN `.claude/skills/align-to-standards/` exists WHEN run THEN a WARN names it and drift is unchanged.
 - **Failing guard.** GIVEN a static guard exits non-zero WHEN run THEN its captured output prints indented under the FAIL and exit is 1.
 
+### Stack manifest merge
+
+When `stack.manifest.json` exists beside `standard.manifest.json` (a repo that
+adopted a registered stack - ADR-016), self-verify notes it (`stack` row naming
+the technology and its declared standards range) and concatenates its `files`,
+`sections` and `guards` entries into the core manifest's before checking - one
+drift number across both layers. An unparseable stack manifest is a FAIL, like
+the core one. Absent, nothing changes.
+
+- GIVEN `stack.manifest.json` declares a required file the repo lacks WHEN self-verify runs THEN the miss counts in the same drift number as core entries.
+- GIVEN no `stack.manifest.json` WHEN self-verify runs THEN output is identical to the pre-stack behavior.
+
 ## Open questions
 
 None known.

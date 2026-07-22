@@ -83,9 +83,16 @@ After routing, always run the stack step - detection first, question second:
 2. **Look it up** in the registry - `stacks.json` in this checkout. The registry
    is the only source of official stacks; never offer an unlisted repo.
 3. **Offer, never impose:** "This repo is <technology>. Add the <technology>
-   best practices from <repo>?" Greenfield: degit the stack's `starter/`.
-   Brownfield: adopt the picks from its DECISIONS and copy only the configs the
-   repo needs - subtractive adoption, never a second scaffold beside the code.
+   best practices from <repo>?" Greenfield: degit the stack's `starter/`, then
+   copy `stack.manifest.json` from the stack checkout into the new repo.
+   Brownfield: the same machinery as Layer 1, on the stack's own data - read
+   `stack.manifest.json` from a checkout of the stack repo, classify the target
+   against every entry (missing / drifted / ok; `merge`-class configs diff
+   against the starter's reference copy), propose payoff-ordered waves, apply
+   adapted - never a second scaffold beside the code. Close by copying the
+   stack manifest into the repo: from then on `self-verify` counts one drift
+   across both layers. The DECISIONS file is the why behind every entry -
+   quote it when the user asks.
 4. **No match in the registry:** say so plainly, then offer the fallback: a
    researched best-practices document for the detected technology, shaped like
    the node stack's DECISIONS (summary table first; per axis the pick, a short

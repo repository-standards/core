@@ -63,6 +63,6 @@ Agent platforms ship portable, repo-scoped memory that is itself versioned in th
 
 ## Related
 
-- The CONS-1..3 epic in [`backlog.md`](../backlog.md); ADR-004 (decisions by
+- The CONS-1..3 epic in [`backlog.md`](../../backlog.md); ADR-004 (decisions by
   reference); the coding-agent persona's pains in
-  [`docs/personas.md`](../docs/personas.md).
+  [`docs/personas.md`](../personas.md).

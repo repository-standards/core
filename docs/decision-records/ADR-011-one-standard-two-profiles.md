@@ -82,4 +82,4 @@ the two-profile granularity is too coarse.
 
 - ADR-005 (the manifest is the align-engine - this extends its schema),
   ADR-008/009/010 (zones, skill classes, lifecycle), `PROF-1` in
-  [`backlog.md`](../backlog.md).
+  [`backlog.md`](../../backlog.md).

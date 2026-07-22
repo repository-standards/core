@@ -34,7 +34,7 @@ const walk = (dir, acc = []) => {
 const files = walk(TREE);
 
 const LEAK_PATTERNS = [
-  [/\/ADR-\d{3}-/, "a numbered ADR (this repo's own decisions live in decision-records/, clients get them by reference - ADR-004)"],
+  [/\/ADR-\d{3}-/, "a numbered ADR (this repo's own decisions live in docs/decision-records/, clients get them by reference - ADR-004)"],
   [/\.specify\//, "the retired .specify engine layout (ADR-015 extracted the engine)"],
   [/spec-kit\//, "a vendored spec-kit area (ADR-015 extracted the engine)"],
   [/skills\/(align-to-standards|onboard-repo|modernize|greenfield-start|speckit-)/, "a transition or speckit skill (never shipped - ADR-009/ADR-015)"],

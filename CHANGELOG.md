@@ -107,7 +107,7 @@ align engine, Layer 2 and the product spine.
   technology (`repository-standards-<tech>`), discovered via the `stacks.json`
   registry - the only source of officialdom. First satellite:
   repository-standards-node (DECISIONS + the boot-verified starter + its own
-  weekly boot CI + `stack.json` declaring `standards: ">=0.8 <1"`). The align
+  weekly boot CI + `stack.manifest.json` declaring `standards: ">=0.8 <1"`). The align
   router detects the target repo's technology and offers the matching practices;
   greenfield degits the stack's starter. One stack per technology by policy -
   variation is a profile or an adoption mode, never a sibling repo.

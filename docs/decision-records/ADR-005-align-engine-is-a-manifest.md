@@ -96,7 +96,7 @@ record (ENG-3).
 
 ## Appendix - the manifest
 
-The manifest is a real, shipped artifact: [`standard.manifest.json`](../standard/standard.manifest.json)
+The manifest is a real, shipped artifact: [`standard.manifest.json`](../../standard/standard.manifest.json)
 (reflected to `dist/standard.manifest.json`) - `repository-standards` describing **itself**
 at the current version. `self-verify.mjs` reads it; an aligned client repo carries a copy
 at its pinned version.

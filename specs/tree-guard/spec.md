@@ -29,7 +29,7 @@ Verifying an adopted repo ([verify-engine](../verify-engine/spec.md)); checking 
 `node tools/tree-check.mjs` - run from the repo root, no flags, no dependencies. Four checks, all always run:
 
 1. **Leaks.** Walk every file under `standard/`. A path matching any of these patterns fails:
-   - `/\/ADR-\d{3}-/` - a numbered ADR (this repo's decisions live in `decision-records/`, clients get them by reference - ADR-004)
+   - `/\/ADR-\d{3}-/` - a numbered ADR (this repo's decisions live in `docs/decision-records/`, clients get them by reference - ADR-004)
    - `/\.specify\//` - the retired `.specify` engine layout (ADR-015)
    - `/spec-kit\//` - a vendored spec-kit area (ADR-015)
    - `/skills\/(align-to-standards|onboard-repo|modernize|greenfield-start|speckit-)/` - a transition or speckit skill, never shipped (ADR-009/ADR-015)

@@ -44,7 +44,7 @@ Option **D**. Concretely:
 2. `dist/` and the old by-concern source are gone. Template-vs-real pairs resolve
    to the one shipped form (placeholders where a client authors content).
 3. Repo-own material lives outside the tree: this repo's ADRs in
-   `decision-records/`, the transition router in `skills/`, gate tooling in
+   `docs/decision-records/` (the same layout R5 prescribes to clients), the transition router in `skills/`, gate tooling in
    `tools/`, the web surface in `site/`, product docs in `docs/`.
 4. `tools/reflect.mjs` is replaced by `tools/tree-check.mjs`: a leak guard (no
    repo-own material inside the tree), a promise check (every manifest entry that

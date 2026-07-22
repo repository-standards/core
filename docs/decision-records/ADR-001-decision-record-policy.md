@@ -82,7 +82,7 @@ Compliance with this ADR is confirmed by:
   record here"), which defines ADR scope (broad technical), BDR (business), the MADR
   format and `Tags`-as-scope - the authoritative statement this record drives (in
   place);
-- every record using the MADR **[`_template.md`](../standard/docs/decision-records/adr/_template.md)**, which now carries a
+- every record using the MADR **[`_template.md`](../../standard/docs/decision-records/adr/_template.md)**, which now carries a
   `Confirmation` field (in place);
 - **[not yet built]** a lightweight record-format check in CI, analogous to
   `spec-structure.mjs`.

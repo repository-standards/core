@@ -81,4 +81,4 @@ Skills gain a plugin/marketplace distribution (then *nothing* may need shipping 
 
 - ADR-008 (three zones - this is the zones rule applied to skills), ADR-010 (lifecycle;
   its ephemeral class covers plan/tasks and idea docs - transition skills are simply
-  never in the target at all), `SKILL-1` in [`backlog.md`](../backlog.md).
+  never in the target at all), `SKILL-1` in [`backlog.md`](../../backlog.md).

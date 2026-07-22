@@ -185,6 +185,37 @@
   .foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
   .foot a:hover{color:var(--tx)}
 
+  /* ---- why band (slim) ---- */
+  section.slim{padding:40px 0}
+  .bandhead{display:flex;align-items:baseline;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:18px}
+  .bandhead p{margin:0;font-family:var(--mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid)}
+  .whyband{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:13px;overflow:hidden;background:linear-gradient(180deg,var(--surface),transparent 140%)}
+  .whyband>div{padding:16px 18px}
+  .whyband>div+div{border-left:1px solid var(--line)}
+  .whyband b{display:block;font-family:var(--mono);font-size:13px;color:var(--tx);font-weight:600;margin-bottom:3px}
+  .whyband p{margin:0;font-size:13px;color:var(--dim);line-height:1.5}
+  @media(max-width:860px){.whyband{grid-template-columns:1fr 1fr}.whyband>div+div{border-left:none}.whyband>div:nth-child(even){border-left:1px solid var(--line)}.whyband>div:nth-child(n+3){border-top:1px solid var(--line)}}
+  @media(max-width:520px){.whyband{grid-template-columns:1fr}.whyband>div:nth-child(even){border-left:none}.whyband>div+div{border-top:1px solid var(--line)}}
+
+  /* ---- the spec section ---- */
+  .specwrap{display:grid;grid-template-columns:auto 1fr;gap:52px;align-items:center;border:1px solid rgba(255,180,84,.3);border-radius:16px;padding:42px 46px;
+    background:linear-gradient(135deg,rgba(255,180,84,.06),transparent 55%)}
+  .bignum{font-family:var(--mono);font-weight:700;font-size:clamp(84px,11vw,148px);line-height:.9;color:var(--amber);letter-spacing:-.04em;text-align:center}
+  .bignum small{display:block;font-size:12px;letter-spacing:.18em;color:var(--mid);text-transform:uppercase;margin-top:12px;font-weight:500}
+  .speccopy h2{font-family:var(--mono);font-weight:700;font-size:clamp(22px,2.7vw,30px);letter-spacing:-.015em;margin:0 0 12px;color:#fff;text-wrap:balance}
+  .speccopy>p{margin:0;color:var(--mid);font-size:16px;max-width:58ch}
+  .rulepeek{margin:20px 0 0;display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:13px;color:var(--mid)}
+  .rulepeek span b{color:var(--amber);font-weight:600;margin-right:10px}
+  @media(max-width:820px){.specwrap{grid-template-columns:1fr;gap:26px;padding:30px 26px}.bignum{text-align:left}}
+
+  /* ---- section funnel link ---- */
+  .secmore{margin-top:36px}
+  .doclink{font-family:var(--mono);font-size:13px;color:var(--amber);display:inline-flex;align-items:center;gap:9px;
+    border:1px solid rgba(255,180,84,.28);border-radius:8px;padding:8px 14px;transition:background .15s,border-color .15s}
+  .doclink:hover{background:rgba(255,180,84,.07);border-color:var(--amber)}
+  .doclink::after{content:"\2192"}
+  .doclink i{font-style:normal;color:var(--mid)}
+
   .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease, transform .6s ease}
   .reveal.in{opacity:1;transform:none}
   @media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none;transition:none}}
@@ -223,11 +254,11 @@
     <span class="tag mono">v0.7.2</span>
     <nav class="links">
       <a href="docs/">Docs</a>
-      <a href="#why">Why</a>
+      <a href="#spec">The spec</a>
       <a href="#keystone">Mechanism</a>
       <a href="#paths">Two paths in</a>
-      <a href="#inside">What's inside</a>
-      <a href="#flow">Who it's for</a>
+      <a href="#inside">Inside</a>
+      <a href="#layers">Layers</a>
       <a href="#start">Start</a>
     </nav>
     <a class="ghbtn" href="https://github.com/bodurkalukasz/repository-standards">GitHub &#8599;</a>
@@ -244,13 +275,14 @@
         <p class="lede">Documentation, specs, and technical &amp; business decisions live <b>in the code</b>, versioned together. Point any repo - brand new or years deep - at a version of the standard; an AI agent brings it into line and <b>self-verifies</b>. Update to the next version like you'd bump a dependency.</p>
         <p class="lede"><b>Others give you a workflow or a scaffold. This gives your repo a reference to true up to - and walks it there.</b></p>
         <div class="cta">
-          <a class="btn primary" href="https://github.com/bodurkalukasz/repository-standards">Get started</a>
-          <a class="btn ghost" href="#keystone">See how it works</a>
+          <a class="btn primary" href="docs/spec.html">Read the spec - 3 minutes</a>
+          <a class="btn ghost" href="#start">Start in 3 lines</a>
         </div>
         <div class="microfacts">
-          <span><i class="dot"></i><b>No build step</b></span>
+          <span><i class="dot"></i><b>20 rules, one page</b></span>
+          <span><i class="dot"></i><b>drift 0 or CI fails</b></span>
           <span><i class="dot"></i><b>Any stack, any language</b></span>
-          <span><i class="dot"></i><b>MIT licensed</b></span>
+          <span><i class="dot"></i><b>MIT, no build step</b></span>
         </div>
       </div>
 
@@ -263,39 +295,40 @@
     </div>
   </div>
 
-  <!-- PROBLEM -->
-  <section id="why">
+  <!-- PROBLEM (slim band) -->
+  <section id="why" class="slim">
     <div class="wrap">
-      <div class="shead reveal">
-        <span class="eyebrow">Why it exists</span>
-        <h2>Knowledge never lives where the work happens.</h2>
-        <p>Four failure modes, each one you have watched happen. The standard exists to
-          kill them - by keeping the knowledge in the repo, versioned with the code.</p>
+      <div class="bandhead reveal">
+        <p>Built to kill four failure modes every team recognizes</p>
+        <a class="doclink" href="docs/why.html">the full argument</a>
       </div>
-      <div class="paths">
-        <div class="card reveal">
-          <div class="idx">01</div>
-          <h3>Decisions evaporate in chat</h3>
-          <p>The <em>why</em> behind a choice lives in a Slack thread or an agent session,
-            then it is gone - so the next person re-litigates a decision that was already made.</p>
-        </div>
-        <div class="card reveal">
-          <div class="idx">02</div>
-          <h3>Docs rot away from code</h3>
-          <p>A wiki that lives elsewhere drifts the moment the code changes. Nobody trusts
-            it, so nobody updates it, so it drifts further.</p>
-        </div>
-        <div class="card reveal">
-          <div class="idx">03</div>
-          <h3>Specs describe, they don't build</h3>
-          <p>A spec you cannot rebuild or verify from means the code is the only real truth -
-            and the spec quietly starts to lie.</p>
-        </div>
-        <div class="card reveal">
-          <div class="idx">04</div>
-          <h3>Drift goes unnoticed</h3>
-          <p>Code and intent diverge silently. You find out in an incident, not in a review -
-            when it is expensive instead of cheap.</p>
+      <div class="whyband reveal">
+        <div><b>Decisions evaporate in chat</b><p>The <em>why</em> dies in a thread; the next person re-litigates it.</p></div>
+        <div><b>Docs rot away from code</b><p>A wiki elsewhere drifts on the first commit; nobody trusts it.</p></div>
+        <div><b>Specs describe, they don't build</b><p>If you can't rebuild from the spec, the code is the only truth.</p></div>
+        <div><b>Drift goes unnoticed</b><p>Code and intent diverge silently - found in an incident, not a review.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE SPEC -->
+  <section id="spec">
+    <div class="wrap">
+      <div class="specwrap reveal">
+        <div class="bignum">20<small>rules &middot; one page</small></div>
+        <div class="speccopy">
+          <span class="eyebrow">The spec</span>
+          <h2 style="margin-top:14px">The whole standard is one page. Read it in three minutes.</h2>
+          <p><span class="mono" style="color:var(--tx)">standard/SPEC.md</span> is the entire normative core: twenty numbered rules, R1 to R20, numbers stable - the tooling cites them. The manifest is the spec's machine-readable projection; <span class="mono" style="color:var(--tx)">self-verify</span> scores your repo against it. No hundred-page handbook to interpret.</p>
+          <div class="rulepeek">
+            <span><b>R3</b>Knowledge lives in the repo, versioned with the code.</span>
+            <span><b>R8</b>Behavior is specified by capability - never by ticket or page.</span>
+            <span><b>R12</b>No planning until the clarify gate passes: zero open questions.</span>
+            <span><b>R16</b>Compliance is tooling, not prose: drift 0 or the build fails.</span>
+          </div>
+          <div class="cta" style="margin-top:26px">
+            <a class="btn primary" href="docs/spec.html">Read all twenty rules</a>
+          </div>
         </div>
       </div>
     </div>
@@ -326,6 +359,9 @@
           <p>The version ships a <b style="color:var(--tx)">manifest</b>; <code>self-verify</code> checks the repo against every entry and reports <b style="color:var(--tx)">drift</b> - <code>drift 0</code> or the build fails. A number your CI asserts and a fleet owner can sort on.</p>
         </div>
       </div>
+      <div class="secmore reveal">
+        <a class="doclink" href="docs/self-verify.html">every check self-verify asserts</a>
+      </div>
     </div>
   </section>
 
@@ -335,7 +371,7 @@
       <div class="shead reveal">
         <span class="eyebrow">Two paths in</span>
         <h2>Greenfield or brownfield. Same standard underneath.</h2>
-        <p>Where you start doesn't change where you end up. Two more cards show how you build day to day, and how a fleet stays current.</p>
+        <p>Where you start doesn't change where you end up. And you don't stop at the method: the align router detects your technology and offers the registered best practices for it - stack repos, official when listed in the registry.</p>
       </div>
       <div class="paths">
         <div class="card reveal">
@@ -367,6 +403,9 @@
           <div class="cmd"><span class="p">$</span> update me to repository-standards<span class="v">@next</span></div>
         </div>
       </div>
+      <div class="secmore reveal">
+        <a class="doclink" href="docs/adopt.html">the adoption guide - greenfield, brownfield, waves</a>
+      </div>
     </div>
   </section>
 
@@ -375,29 +414,37 @@
     <div class="wrap inside">
       <div class="reveal">
         <div class="shead" style="margin-bottom:24px">
-          <span class="eyebrow">What's inside</span>
+          <span class="eyebrow">What lands in your repo</span>
           <h2>Knowledge that lives next to the code.</h2>
-          <p>Not a wiki that rots. Everything the standard installs is a file in the repo, read by humans and agents alike.</p>
+          <p>Not a wiki that rots. Everything the standard installs is a file in the repo, read by humans and agents alike - and <span class="mono" style="color:var(--tx)">AGENTS.md</span> at the root is the entry an agent executes: it reads, loads the skills and guards, aligns, specs, records, verifies.</p>
         </div>
         <div class="tree" aria-hidden="true">
 <span class="ln"><span class="d">AGENTS.md</span> <span class="c"># single entry point, agents-first</span></span>
+<span class="ln"><span class="f">SPEC.md</span> <span class="c"># the whole standard - 20 rules, one page</span></span>
+<span class="ln"><span class="f">.standards-version</span> <span class="c"># the pin</span></span>
+<span class="ln"><span class="f">standard.manifest.json</span> <span class="c"># what compliant means, as data</span></span>
 <span class="ln"><span class="d">specs/</span> <span class="c"># living capability specs</span></span>
 <span class="ln in"><span class="f">README.md</span> <span class="c"># by capability, buildable</span></span>
-<span class="ln in"><span class="f">capability-map.json</span></span>
-<span class="ln"><span class="d">decision-records/</span></span>
+<span class="ln in"><span class="f">capability-map.json</span> <span class="c"># spec &lt;-&gt; code coupling</span></span>
+<span class="ln"><span class="d">docs/decision-records/</span></span>
 <span class="ln in"><span class="d">adr/</span> <span class="c"># technical decisions (MADR)</span></span>
 <span class="ln in"><span class="d">bdr/</span> <span class="c"># business decisions</span></span>
 <span class="ln in"><span class="f">checklist.md</span> <span class="c"># which decisions to make</span></span>
-<span class="ln"><span class="f">backlog.md</span> <span class="c"># the work, agent-first</span></span>
-<span class="ln"><span class="d">.claude/skills/</span> <span class="c"># the spec loop, backlog, update</span></span>
+<span class="ln"><span class="f">docs/backlog.md</span> <span class="c"># the work, agent-first</span></span>
+<span class="ln"><span class="d">.claude/skills/</span> <span class="c"># 11 skills - the loop, executable</span></span>
 <span class="ln"><span class="d">scripts/</span> <span class="c"># self-verify, guards, the spec engine</span></span>
         </div>
       </div>
       <div class="ilist reveal">
         <div class="irow"><span class="badge">specs/</span><div><h4>Living capability specs</h4><p>Behavior organized by capability, not by ticket or page - and buildable, not just described. The spec stays the source of truth after merge; a guard keeps it coupled to the code.</p></div></div>
-        <div class="irow"><span class="badge">adr &middot; bdr</span><div><h4>Decision records + a catalog</h4><p>Technical (ADR) and business (BDR) decisions in MADR format - plus a catalog of the forks every project hits, with an opinionated default for each.</p></div></div>
+        <div class="irow"><span class="badge">adr &middot; bdr</span><div><h4>Decision records + the checklist</h4><p>Technical (ADR) and business (BDR) decisions in MADR format - plus a checklist of the forks every project hits, with an opinionated default for each.</p></div></div>
         <div class="irow"><span class="badge">backlog.md</span><div><h4>A backlog that feeds itself</h4><p>Items arrive from spec deltas, code&harr;spec drift, and onboarding - and leave only when their definition of done is met.</p></div></div>
         <div class="irow"><span class="badge">scripts/</span><div><h4>Enforcement, not prose</h4><p>Dependency-free, zero-install checks: <code>self-verify</code> scores drift against the version's manifest; a structure guard keeps specs shaped and owned; a coupling guard binds each spec to its code; secrets are scanned. The &ldquo;verify&rdquo; step, mechanized.</p></div></div>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="secmore reveal">
+        <a class="doclink" href="docs/taxonomy.html">where each kind of knowledge lands - the taxonomy</a>
       </div>
     </div>
   </section>
@@ -434,6 +481,9 @@
           <p>Turns the spec into a plan - asking clarifying questions until it's ready to develop - then writes the tasks, builds and tests.</p>
           <ul><li>Plan + ask questions</li><li>Tasks, build &amp; test</li><li>Grow &amp; update the backlog</li></ul>
         </div>
+      </div>
+      <div class="secmore reveal">
+        <a class="doclink" href="docs/ways-of-working.html">the loop in full - roles, gates, hand-offs</a>
       </div>
     </div>
   </section>
@@ -474,6 +524,9 @@
           <div class="dfoot">One final language, decided per repo: <b>English by default</b> - or the team's native (e.g. Polski), if that's the recorded choice.</div>
         </div>
       </div>
+      <div class="secmore reveal">
+        <a class="doclink" href="docs/specs.html">how a capability spec is written</a>
+      </div>
     </div>
   </section>
 
@@ -483,7 +536,7 @@
       <div class="shead reveal">
         <span class="eyebrow">Two layers</span>
         <h2>Take the method. Add the stack when you want it.</h2>
-        <p>The standard is stack-agnostic. A Node/TypeScript setup sits on top - adopt one, or both.</p>
+        <p>The standard is stack-agnostic. Technology best practices live in satellite repos - one per technology, listed in the core registry. Adopt the method alone, or add your stack.</p>
       </div>
       <div class="layers">
         <div class="layer reveal">
@@ -491,39 +544,28 @@
           <h3>Stack-agnostic method</h3>
           <p>The durable part - works for any repo, any language.</p>
           <div class="chips">
-            <span class="chip">Decision records</span><span class="chip">Capability specs</span><span class="chip">Decision catalog</span>
+            <span class="chip">Decision records</span><span class="chip">Capability specs</span><span class="chip">Decision checklist</span>
             <span class="chip">Backlog</span><span class="chip">Guards-as-templates</span><span class="chip">AGENTS.md</span>
           </div>
         </div>
         <div class="layer reveal">
           <span class="lb">Layer 2 &middot; Node / TypeScript &middot; <span style="opacity:.75">in progress</span></span>
           <h3>A runnable setup</h3>
-          <p>Being distilled from real production repos, not blog posts.</p>
+          <p>Node/TypeScript first: <a href="https://github.com/bodurkalukasz/repository-standards-node">repository-standards-node</a> - picks distilled from production repos, a boot-verified starter, its own weekly boot CI. One stack per technology, by policy - variation is a profile, never a sibling repo.</p>
           <div class="chips">
             <span class="chip">pnpm + Turbo</span><span class="chip">Biome</span><span class="chip">Fastify</span>
             <span class="chip">Next.js</span><span class="chip">Vitest / Playwright</span><span class="chip">Hardened CI</span>
           </div>
         </div>
       </div>
+      <div class="secmore reveal">
+        <a class="doclink" href="docs/faq.html">solo or fleet, Layer 1 alone or with a stack - the FAQ</a>
+      </div>
     </div>
   </section>
 
   <!-- AGENTS -->
-  <section id="agents">
-    <div class="wrap">
-      <div class="agents reveal">
-        <div>
-          <h3>Your coding agent already reads it.</h3>
-          <p>One <span class="mono" style="color:var(--tx)">AGENTS.md</span> at the root is the single entry point - the standard is written to be executed by an agent, not just read by a human.</p>
-        </div>
-        <div class="rd">
-          <div><b>&rarr;</b> reads AGENTS.md</div>
-          <div><b>&rarr;</b> loads the skills &amp; guards</div>
-          <div><b>&rarr;</b> aligns, specs, records, verifies</div>
-        </div>
-      </div>
-    </div>
-  </section>
+
 
   <!-- QUICKSTART -->
   <section id="start">
@@ -542,11 +584,16 @@
           <span class="ln">&nbsp;</span>
           <span class="ln"><span class="cmuted"># 2 &middot; it scaffolds / assesses / aligns - then proves it against the manifest</span></span>
           <span class="ln"><span class="cprompt">$</span> <span class="ccmd">node scripts/self-verify.mjs --version <span class="v">0.7.2</span></span></span>
-          <span class="ln">  <span class="cok">self-verify: OK - drift 0 - 21 checks, compliant with the standard</span></span>
+          <span class="ln">  <span class="cok">self-verify: OK - drift 0 - 25 checks, compliant with the standard</span></span>
           <span class="ln">&nbsp;</span>
           <span class="ln"><span class="cmuted"># 3 &middot; when the standard moves, bump it like a dependency</span></span>
           <span class="ln"><span class="cprompt">&rsaquo;</span> <span class="ccmd">update me to repository-standards@<span class="v">next</span></span></span>
+          <span class="ln">&nbsp;</span>
+          <span class="ln"><span class="cmuted"># no agent? grab the tree: npx degit bodurkalukasz/repository-standards/standard my-repo</span></span>
         </div>
+      </div>
+      <div class="secmore reveal">
+        <a class="doclink" href="docs/checklist.html">aligned? the eight foundation decisions come next</a>
       </div>
     </div>
   </section>
@@ -556,9 +603,11 @@
     <div class="wrap box reveal">
       <span class="eyebrow">Get started</span>
       <h2>Pin your repo to a standard. <span class="hl">Update</span> when it moves. <span class="hl">Verify</span> it stuck.</h2>
-      <p>Open source, MIT, no build step. Bring a fresh repo or your messiest one.</p>
+      <p>Open source, MIT, no build step. Bring a fresh repo or your messiest one.
+        Pre-1.0 (the 0.7.x line), mechanics field-run on the author's production repos -
+        adopt the mechanism, not a promise.</p>
       <div class="cta" style="justify-content:center">
-        <a class="btn primary" href="https://github.com/bodurkalukasz/repository-standards">Read the docs</a>
+        <a class="btn primary" href="docs/">Read the docs</a>
         <a class="btn ghost" href="https://github.com/bodurkalukasz/repository-standards">Star on GitHub</a>
       </div>
     </div>

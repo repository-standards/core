@@ -100,7 +100,9 @@ binds every repo, a solo one included.
   in per-technology stack repos, official only when listed in the core registry
   (`stacks.json`) - and one standard with two profiles: core keeps knowledge
   alive in every repo, scale adds the coordination artifacts teams need. Solo
-  repos meet core alone and are compliant.
+  repos meet core alone and are compliant. A stack declares what adopting it
+  means in its own manifest (`stack.manifest.json`, the core schema); a repo
+  that adopted one carries it, and `self-verify` counts one drift across both.
 
 ## What this standard does not do
 

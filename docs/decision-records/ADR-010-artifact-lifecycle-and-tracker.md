@@ -91,5 +91,5 @@ a reversal); or the tracker default stops being free.
 
 - ADR-008 (no records for un-approved ideas), ADR-009 (transition skills are ephemeral),
   the clarify gate (field-proven, 2026-07), `LIFE-1/2`, `SKILL-1`, `IDEA-1` in
-  [`backlog.md`](../backlog.md); tracker research: owner's private notes, 2026-07
+  [`backlog.md`](../../backlog.md); tracker research: owner's private notes, 2026-07
   (free tiers verified: GH Issues unlimited, Jira <=10 users, Linear 250 active issues).

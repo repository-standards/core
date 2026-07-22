@@ -18,7 +18,8 @@ The whole normative core fits one page: [`standard/SPEC.md`](standard/SPEC.md) -
 twenty numbered rules. Everything else here explains or enforces them. One
 orientation rule for this repo: the root is this project's own life; `standard/`
 is the standard you adopt - the two share names (docs, specs, skills) but never
-content.
+content. The eleven daily skills ship inside the tree (`standard/.claude/skills/`);
+the root `skills/` holds only the transition router that brings a repo in.
 
 Status: pre-1.0 (the 0.7.x line), mechanics field-run on the author's production
 repos. The pin makes updates deltas, and a degit'd tree keeps working offline
