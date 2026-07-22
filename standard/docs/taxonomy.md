@@ -18,6 +18,9 @@
 | a product event the code emits | **tracking-plan entry** | `docs/analytics.md` - listed before it ships; same-PR coupled to the code (PDLC-3) |
 | what a study taught us | **research insight** | `docs/research/<study>.md` - anonymized; must name what it changes (PDLC-4) |
 | how a persona travels the product | **journey** | `docs/journeys/<persona>.md` - stages -> capabilities, coupled to specs (PDLC-5) |
+| how to run, diagnose, or undo a service in production | **runbook** | `docs/runbooks/<service>.md` |
+| what an incident taught us | **postmortem** | `docs/runbooks/postmortems/<date>-<slug>.md` - blameless; every action item becomes a backlog item |
+| a deploy / rollback decision pre-made | **decision** | the release-strategy fork in the [decision checklist](decision-records/checklist.md) - rollback triggers decided before the first deploy, not during the incident |
 | research / analysis that fed a decision | **working doc** | `docs/` (archivable once it has fed its decision) |
 | the story / the narrative rationale | **narrative** | a blog or working doc - not a record |
 | a judgment call in force, openly seeking a better option | **open question** | `docs/open-questions.md` - decided provisionally; a winning challenge supersedes the rule/record and resolves the entry |

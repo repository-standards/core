@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // site-check - the e2e-of-our-own-surfaces gate (landing + docs site), dependency-free.
 //
-// This repo's CI templates never run here, but its own tools do (like reflect). This
+// This repo's CI templates never run here, but its own tools do. This
 // check asserts the two human surfaces are shippable:
 //   landing  - tags balanced, the positioning one-liner quoted VERBATIM (PDLC-1's
 //              "surfaces quote it, never re-phrase" rule, enforced mechanically),
@@ -11,7 +11,7 @@
 //              present (the landing's ink), no em/en dashes.
 //
 // Usage: node tools/site-check.mjs        # exit 1 on any failure
-// Source-only - not shipped to dist/.
+// Zone 1 tooling - never shipped.
 
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 
@@ -56,7 +56,7 @@ function checkTagBalance(path, html) {
 
 // --- landing ----------------------------------------------------------------------
 
-const LANDING = "apps/landing-page/index.html";
+const LANDING = "site/index.html";
 const POSITIONING = "docs/positioning.md";
 
 const landing = readFileSync(LANDING, "utf8");
@@ -91,7 +91,7 @@ if (![...hosts].some((h) => h !== "github.com" && !h.endsWith(".github.com"))) o
 
 // --- docsite ----------------------------------------------------------------------
 
-const SITE = "apps/docs-site";
+const SITE = "site/docs";
 const pages = readdirSync(SITE).filter((f) => f.endsWith(".html"));
 if (pages.length < 10) fail(`${SITE}: expected the full page set, found ${pages.length} html files`);
 else ok(`${SITE}: ${pages.length} pages present`);

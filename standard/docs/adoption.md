@@ -27,9 +27,10 @@ Every gate produces a **document and/or tasks**. The path ends with a **counted 
 | 5 | **Backlog - count the work** | Turn unspecced capabilities + known work into items | Turn every missing spec, unrecorded decision, and known drift into items | `backlog.md` with a **task count** ("N to full alignment") | The scope is a number, honestly stated |
 | 6 | **Verify** | - | - | `.standards-version` + manifest carried; `self-verify` green | `drift 0`; PRs opened |
 
-Greenfield runs this via the `greenfield-start` skill; brownfield via `assess -> align ->
-onboard` (`repo-assessment`, `align-to-standards`, `onboard-repo`). The checkmap is the
-spine; those skills are how each gate gets filled.
+Both directions run through the `align-to-standards` skill (in a checkout of
+repository-standards): its greenfield phase for a new repo, its assessment-first
+brownfield phase (`repo-assessment` passes, then align, then derive from code) for an
+existing one. The checkmap is the spine; the phases are how each gate gets filled.
 
 ## Rigid vs. the agent's discretion
 
@@ -66,17 +67,20 @@ migration safe.
 
 **The hard rule: understand -> record the decisions -> then refactor.** Never bump first and
 chase the breakages - that loses behavior nobody remembered was load-bearing, and records
-nothing. Instead the `modernize` skill:
+nothing. Modernizing an undocumented repo is guessing - if the gates have not run, run
+them first.
 
-1. **Audits** the stack (current vs. latest-stable, EOL/security), cross-referenced to the
+### Modernize: the plan-then-refactor pass
+
+1. **Audit** the stack (current vs. latest-stable, EOL/security), cross-referenced to the
    specs and ADRs that rely on each piece.
-2. **Derives the target** and the *kind* of each move - bump / breaking migration / replace -
+2. **Derive the target** and the *kind* of each move - bump / breaking migration / replace -
    grounded in a reason and the affected specs, not fashion.
-3. **Records the direction as ADR/BDR** *before any code moves* - what, why, rejected
+3. **Record the direction as ADR/BDR** *before any code moves* - what, why, rejected
    alternatives, which specs it touches.
-4. **Sequences** small, reversible, green steps (specs + tests are the net) and emits a
+4. **Sequence** small, reversible, green steps (specs + tests are the net) and emit a
    **counted migration backlog** ("N steps to current").
-5. States a **maintenance strategy** - the supply-chain cooldown, an update rhythm, and
+5. State a **maintenance strategy** - the supply-chain cooldown, an update rhythm, and
    `update-to-version` for the standard - so the repo stays current instead of rotting back.
 
 This is distinct from `update-to-version` (which bumps the *standard's* version); modernize
@@ -119,19 +123,20 @@ concrete models and wire the orchestration.
 
 ## Pick your profile: core vs scale (ADR-011)
 
-One standard, two postures - declared next to your version pin, verified per profile:
+One standard, two postures - declared next to your version pin, verified per profile
+(previously written solo/team):
 
-- **`solo` (core only)** - a one-person or small project. You carry what keeps knowledge
-  alive: `AGENTS.md`, taxonomy, living specs, decision records, backlog, ideas,
-  self-verify. Guards run locally/pre-commit; one persona is enough; no tracker bridge,
-  no release-notes curation.
-- **`team` (core + scale)** - the full posture: CI-enforced gates, tracker bridge and
-  statuses mirrored out, curated release notes, full persona roster, UX cadence,
-  C4/token discipline.
+- **`core`** - solo repos adopt core: a one-person or small project carries what keeps
+  knowledge alive - `AGENTS.md`, taxonomy, living specs, decision records, backlog,
+  ideas, self-verify. Guards run locally/pre-commit; one persona is enough; no tracker
+  bridge, no release-notes curation.
+- **`scale`** - teams carry core + scale, the full posture: CI-enforced gates, tracker
+  bridge and statuses mirrored out, curated release notes, full persona roster, UX
+  cadence, C4/token discipline.
 
 The principle when in doubt: **core keeps knowledge alive; scale coordinates people.**
-Start `solo`, flip to `team` when the second regular contributor arrives - the flip is a
-manifest flag plus the measured delta, not a re-adoption.
+Start `core`, flip to `scale` when the second regular contributor arrives - the flip is
+a manifest flag plus the measured delta, not a re-adoption.
 
 ## Not this
 
@@ -142,3 +147,14 @@ manifest flag plus the measured delta, not a re-adoption.
   reason), never dropped.
 - **Not persona-free or decision-free.** Gates 1 and 3 are load-bearing; downstream work
   validates against them.
+
+## Adopting without a repository-standards checkout
+
+A degit of the tree alone is enough - the align skill is convenience, not a
+requirement. The manual path: write `.standards-version` with the manifest's own
+version, verbatim (`jq -r .version standard.manifest.json > .standards-version`);
+fill the shells (`AGENTS.md`, `docs/PRODUCT.md`, `docs/personas.md`, the backlog);
+write your first capability spec from `specs/capability-spec.template.md` and bind
+it in `specs/capability-map.json`; run `node scripts/self-verify.mjs` until drift
+is 0. Filled shells, not copied ones, are the point - self-verify warns on
+surviving placeholders.

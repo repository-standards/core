@@ -95,6 +95,12 @@ Each invariant MUST be covered by at least one Given/When/Then in Acceptance cri
 
 - <case> ...
 
+## Trust boundaries
+
+<!-- OPTIONAL - REQUIRED for money / auth / personal-data capabilities. -->
+Who can call this, with what proof. What crosses a trust boundary and where it is
+validated. Abuse cases considered.
+
 ## Cross-capability interactions
 
 ### <Other capability>

@@ -32,7 +32,7 @@ already have is a first-class citizen.
    same-PR coupling, the taxonomy.)
 3. **It walks you there.** Greenfield scaffolds and goes; brownfield is guided in
    prioritized waves, re-entered until drift 0 - hand-holding is the product. (Proof:
-   re-entrant align, the guided loop, statuses with the clarify gate.)
+   the re-entrant align loop with the clarify gate, statuses.)
 
 ## Target scenarios (who hears which pillar first)
 

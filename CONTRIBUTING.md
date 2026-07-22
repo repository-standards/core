@@ -1,8 +1,8 @@
 # Contributing
 
-The canonical guide for how to work in this repo - layout, commands,
-architecture, and conventions - is [`AGENTS.md`](./AGENTS.md). Read it first. It
-applies to humans and coding agents alike.
+The canonical guide for how to work in this repo - zones, commands, conventions -
+is [`AGENTS.md`](./AGENTS.md). Read it first. It applies to humans and coding
+agents alike.
 
 **Want to help but don't know where?** Start with
 [`docs/open-questions.md`](./docs/open-questions.md) - the owner's provisional calls,
@@ -13,25 +13,21 @@ contribution this repo takes.
 
 - **Branch:** short-lived, off an up-to-date `main`. **Base every PR on `main`, not
   on another feature branch.** A PR whose base is a feature branch strands its commits
-  when the base is rebase-merged (only the base's own commits reach `main`) - if you must
-  stack, merge the parent PR first (which retargets the child to `main`) before the child.
-- **Commits:** Conventional Commits, ticket key after the colon
-  (`type(scope): TICKET-123 summary`). No AI/tool attribution trailers. ASCII
-  hyphen only (no em/en dash). See the Conventions section in `AGENTS.md`.
-- **Before a PR:** run the repo's local checks and self-review your diff (the
-  `pre-pr-review` skill). Fill in the PR template, including ADR impact.
-- **Changelog:** do not edit `CHANGELOG.md` or `VERSION` in a PR - add a
-  [`changes/`](./changes/) fragment instead (see the
-  [changelog process](./docs/changelog-process.md)). The maintainer assembles
-  fragments and cuts every release.
-- **Source, not `dist/`:** edit the concern folders under `standard/` (the source), never `dist/`
-  files that are copies. Run `node tools/reflect.mjs --write` to sync the copy
-  class into `dist/`, and `node tools/reflect.mjs` (check) must be green before a
-  PR - it fails on drift, orphaned `dist/` files, or a source-only file leaking
-  into `dist/`. Intentional `dist/`-only divergences are declared in that map.
-- **Accepted ADRs are binding.** If your change contradicts one, propose a
-  superseding ADR in the same change - do not silently diverge.
-- **Database:** reads OK, writes to any remote (dev/prod) never - hand a `.sql`
-  file to a developer instead. Enforced by `.claude/settings.json` guards.
+  when the base is rebase-merged - if you must stack, merge the parent PR first.
+- **Commits:** Conventional Commits. No AI/tool attribution trailers. ASCII
+  hyphen only (no em/en dash).
+- **Before a PR:** run the gate set from `AGENTS.md` (tree-check, link-check,
+  docsite + site-check) and self-review your diff (the `pre-pr-review` skill).
+- **Changelog:** describe your change under `CHANGELOG.md`'s `## Unreleased`
+  heading; never add a version heading and never touch `VERSION` - the maintainer
+  cuts every release (see
+  [`standard/docs/changelog-process.md`](./standard/docs/changelog-process.md) for
+  the fragments mechanism team repos get).
+- **One tree:** the standard is authored directly in `standard/` at client-repo
+  paths (ADR-014). There is nothing to sync; `tree-check` fails if repo-own
+  material leaks in or a manifest promise goes missing.
+- **The spec wins:** [`standard/SPEC.md`](./standard/SPEC.md) is the normative
+  text; a change that contradicts a rule amends the spec in the same PR or does
+  not land. Accepted ADRs are binding - contradict one only via a superseding ADR.
 - **Secrets never live in the repo.** Secret manager + env vars only; gitleaks
   gates on this.

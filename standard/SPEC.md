@@ -10,7 +10,8 @@ a requirement, this page wins. Rules are numbered R1-R20 and the numbers are sta
 tooling cites them. `standard.manifest.json` is this spec's machine-readable
 projection (each manifest entry names the rule it enforces), and
 `scripts/self-verify.mjs` reports unmet rules as a drift count. Rules the manifest
-cannot check mechanically are judgment-tier: verified at review, not by script.
+cannot check mechanically are verified at review or by the shipped guards the
+skills invoke (the clarify gate checks R12 by script, outside the manifest).
 Rules marked *(scale)* bind team repos; everything else is the core profile and
 binds every repo, a solo one included.
 
@@ -22,7 +23,9 @@ binds every repo, a solo one included.
   ARCHITECTURE -> conventions -> code` - which wins on conflict. `CLAUDE.md` SHOULD
   exist as a thin pointer to it.
 - **R2.** A repo MUST pin the standard's version in `.standards-version` and MUST
-  carry its copy of `standard.manifest.json` at that version.
+  carry its copy of `standard.manifest.json` at that version. It SHOULD carry the
+  spec page (`SPEC.md`) the manifest projects, so the rules it is checked against
+  are readable in place.
 - **R3.** Project knowledge - documentation, specs, decisions, conventions - MUST
   live in the repo, versioned with the code. A rule that exists only in chat, a
   wiki or someone's personal agent config does not exist.
@@ -82,8 +85,10 @@ binds every repo, a solo one included.
 
 ## Releases and hygiene
 
-- **R18.** A PR MUST NOT edit the changelog or bump a version; the maintainer cuts
-  every release. *(scale)* Each PR records its change as a fragment in `changes/`.
+- **R18.** A PR MUST NOT add a version heading to the changelog and MUST NOT bump
+  a version; the maintainer cuts every release. A PR describes its change under
+  the changelog's Unreleased heading. *(scale)* Teams record per-PR fragments in
+  `changes/` instead, assembled at release.
 - **R19.** Secrets MUST NOT enter the repo - environment and a secret manager only.
   The shipped secret scan SHOULD gate CI, and agent access to remote databases
   SHOULD be write-blocked by the shipped settings baseline.

@@ -1,282 +1,129 @@
 # Layer 2 - Node/TypeScript paved road: the decisions
 
-Evidence-based, not blog-based. Every pick below was extracted from two real production
-monorepos - **stayget** (pnpm + Turbo + Biome; the primary reference, it wins ties) and
-**propertycloud** (pnpm workspaces + ESLint) - and cross-checked against current
-(2025-2026) community consensus. Where the two repos disagree, stayget wins unless
-propertycloud is clearly better *and* the community backs it; those exceptions are called
-out.
-
-This file is the *why*. The runnable files sit next to it. Record a superseding ADR in
-your repo if you deviate (ADR-004).
-
----
-
-## 1. Package manager - pnpm
-
-- **stayget:** `pnpm@11.1.2`, `node >=24`. **propertycloud:** `pnpm@10.17.1`. Agreement.
-- **Pros:** content-addressed store (fast, disk-cheap), strict by default (no phantom
-  deps), first-class workspaces, and - decisively - the strongest supply-chain story of
-  the three managers (see #7).
-- **Cons:** stricter resolution occasionally trips packages that rely on hoisting; the
-  fix is an explicit dependency, which is the point.
-- **Community (2026):** pnpm is the default recommendation for new monorepos.
-- **Pick:** **pnpm**, pinned via `packageManager` + `engines`, Node pinned via `.nvmrc`.
-
-## 2. Monorepo task runner - Turborepo
-
-- **stayget:** Turbo 2.10 with `globalDependencies` cache-busting on config files.
-  **propertycloud:** no runner - `pnpm -r --parallel`, everything re-runs every time.
-- **Pros (Turbo):** content-hash caching, `dependsOn` task graph, near-zero config,
-  `pnpm`-native. **Cons:** no project-graph enforcement or code-gen (that is Nx's turf).
-- **Community (2026):** "start with Turborepo, graduate to Nx when coordination is the
-  bottleneck" is the standing advice; pnpm workspaces + Turbo is the common default, Nx
-  earns its complexity at 10+ packages / multiple teams / enforced boundaries.
-- **Pick:** **Turborepo** (stayget). Nx is a documented escape hatch, not the default.
-
-## 3. Lint + format - Biome (with Prettier only for what Biome can't do)
-
-- **stayget:** **Biome 2.5** as the one linter+formatter; Prettier kept *only* for
-  `**/*.scss`. **propertycloud:** ESLint (flat config) + Prettier.
-- **Pros (Biome):** one tool, one config, 10-50x faster than ESLint in CI, type-aware-ish
-  rules without the TS service, a11y preset. **Cons:** ~80% of ESLint rule coverage - no
-  type-aware rules needing the TS language service, and framework plugins
-  (`eslint-plugin-react-hooks`, `eslint-plugin-next`) have no Biome equivalent yet.
-- **Community (2026):** for **new** projects, start with Biome; keep ESLint only where you
-  depend on a plugin Biome can't replace (the "hybrid" pattern). Adopters include the
-  Node.js project, Vercel, Discord, Astro.
-- **Pick (stayget wins the disagreement):** **Biome** as the default; Prettier scoped to
-  SCSS (Biome doesn't format SCSS). If you truly need `react-hooks` lint, add a *minimal*
-  ESLint alongside - do not make it the primary.
-
-## 4. TypeScript - strict, with target stratified by layer
-
-- **Both repos:** `strict: true`, `noUncheckedIndexedAccess: true`, `noUnusedLocals`,
-  `noUnusedParameters`, `noImplicitReturns`, `noFallthroughCasesInSwitch`. Base
-  `target: ES2022`.
-- **Difference:** stayget stratifies target by layer (ES2022 services / ES2017 web);
-  propertycloud adds `noImplicitOverride: true`.
-- **Community (2026):** strict-from-day-one, `noUncheckedIndexedAccess` on, ESM
-  (`module`/`moduleResolution` bundler for apps). `verbatimModuleSyntax` is contested -
-  neither repo uses it; Biome's `useImportType`/`useExportType` already enforce type-only
-  imports, so the value is lower.
-- **Pick:** stayget's base, **plus** propertycloud's `noImplicitOverride: true` (cheap,
-  strictly better). Leaf `tsconfig` per app sets `module`/`jsx`/`moduleResolution`.
-
-## 5. Fastify service - native plugin DI, no container (the contested one)
-
-- **The community blogs** lean toward `@fastify/awilix` for "real" DI. **But both
-  production repos disagree:** stayget and propertycloud each use **Fastify-native** DI -
-  plugins + `decorate`/hooks + `setErrorHandler`, **no container** (no awilix/tsyringe in
-  either `package.json`).
-- **Pros (native):** no IoC framework to learn, encapsulation is Fastify's plugin scope,
-  request-scoped state via `decorateRequest` + hooks, one fewer dependency. **Cons:**
-  constructor-injection ergonomics are manual; very large graphs get wiring-heavy (where
-  awilix would help).
-- **The one thing propertycloud does better:** a **Zod-validated env schema** at boot
-  (60+ vars, defaults, transforms). stayget reads `process.env` raw - the weakest spot in
-  an otherwise stronger repo.
-- **Pick:** **native plugin DI, no container** (both repos agree, so the standard's stance
-  holds against the blogs) - **plus propertycloud's Zod env config** as the paved-road
-  bootstrap. Reach for `@fastify/awilix` only if a service's graph genuinely outgrows
-  native wiring, and record it as an ADR.
-- Layering (stayget): `src/{lib,middleware,routes}` - `lib/` external clients, `middleware/`
-  the `onRequest -> onSend -> onResponse` chain + error handler, `routes/` route files.
-- **Twelve-Factor** for services (the reference behind the above): config from the
-  environment (validated once, at boot), backing services as attached resources, stateless
-  processes, logs to stdout. The Zod env schema + stateless Fastify plugins are Twelve-Factor
-  III/VI/XI in practice; name it so a reviewer has the standard to point at.
-
-## 6. Next.js - App Router, standalone, security headers in a typed config
-
-- **Both:** App Router, `output: "standalone"`, Turbopack monorepo `root`. stayget React
-  18-class, propertycloud React 19.1.
-- **stayget** writes `next.config.ts` (typed) with a real CSP/security-header strategy and
-  a documented enforcement roadmap; propertycloud's `next.config.mjs` carries React-Native
-  transpile (specialized) and `typescript.ignoreBuildErrors: true` (an anti-pattern to
-  avoid).
-- **Community (2026):** App Router + React 19 for new apps; ship security headers; never
-  `ignoreBuildErrors`.
-- **Pick:** stayget's typed `next.config.ts` shape with security headers + standalone;
-  React 19 for greenfield.
-
-## 7. Supply-chain cooldown - the standout, adopt it loudly
-
-- **stayget** sets `minimumReleaseAge: 10080` (7 days) in `pnpm-workspace.yaml`, plus an
-  explicit `allowBuilds` allow-list and `enablePrePostScripts: false`. propertycloud does
-  not.
-- **Community (2026):** this is now mainstream. **pnpm 11 ships `minimumReleaseAge` on by
-  default at 1440 (1 day)**; Yarn Berry ships a 3-day gate. Real incidents (Shai-Hulud
-  ~12h, the chalk/debug compromise ~2.5h) were inside a 1-day window - a cooldown would
-  have blocked them.
-- **Pick:** **7-day cooldown** (stayget, more conservative than the pnpm default) +
-  `allowBuilds` + no pre/post scripts. Critical security bumps use a scoped exclude, not a
-  global lower.
-
-## 8. CI - least-privilege, pinned, cached (and one place the standard beats both repos)
-
-- **stayget:** `concurrency` cancel-in-progress, `actions/setup-node` with `cache: pnpm`,
-  Turbo `.turbo` cache, `pnpm install --frozen-lockfile`, gitleaks job with an explicit
-  `permissions: contents: read` and a URL-pinned binary. **But `ci.yml` itself has no
-  explicit top-level `permissions:` block** (defaults to read-write).
-- **propertycloud:** AWS-first, community actions, no explicit permissions, no dep cache.
-- **Community (2026):** least-privilege `permissions:` on every workflow; pin actions
-  (ideally by SHA); cache the pnpm store; `--frozen-lockfile`.
-- **Pick (the standard improves on the evidence):** stayget's caching + concurrency +
-  frozen lockfile, **and add the explicit `permissions: contents: read` block stayget's
-  `ci.yml` was missing.** SHA-pinning of third-party actions is the further hardening step.
-
-## 9. Testing - Vitest + Playwright, tiered, orchestrated from the root
-
-- **Both:** Vitest (unit) + Playwright (e2e), traces/screenshots on failure, 1 worker on
-  CI. stayget orchestrates from the **root** (`pnpm test:all`, layer-filtered);
-  propertycloud is per-package.
-- **Community (2026):** Vitest is the default unit runner for TS; Playwright the default
-  e2e; Lighthouse CI the default web perf/a11y budget.
-- **Pick:** Vitest + Playwright + Lighthouse CI, **root-level orchestration** (stayget) so
-  the commands are discoverable and Turbo-cacheable. The rest of this section is the *where*
-  and *how-maintained* that the bare tool names leave open.
-
-### The tiers - what each proves, and where it runs
-
-| Tier | Runner | Proves | Backing services | Runs in |
-|---|---|---|---|---|
-| **Unit** | Vitest | one module's logic in isolation - pure, fast, no I/O | none (mock the edges) | every push, pre-commit |
-| **Integration** | Vitest | a unit against a **real** dependency (DB, cache, HTTP) | the Docker test-stack | every push (test-stack up) |
-| **E2E** | Playwright | a user journey through the running app | test-stack + booted app | CI, and before a release |
-| **Perf / a11y** | Lighthouse CI | a web surface stays inside its budget | booted web app | CI (advisory) |
-
-The tier is the same call as the spec tier: **unit** covers a module's rules; **integration**
-covers the contract with a backing service (the thing a mock quietly lies about);
-**e2e** covers the acceptance criteria a persona's journey implies. Money / security /
-external-contract paths are non-negotiable at the integration tier and above (mirrors the
-buildable-spec floor in Layer 1's [testing-strategy catalog entry](../../decision-records/checklist.md)).
-
-### Where the tests live
-
-- **Unit + integration - co-located** with the code, inside each package: `*.test.ts`
-  next to the source (unit), `*.integration.test.ts` for the ones that need the test-stack.
-  They move, review, and version with the code they cover; a package's whole quality gate
-  is readable in one directory. Run from the root, filtered by Vitest **project** (the
-  file-name split): `pnpm test:unit` vs `pnpm test:integration`.
-- **E2E - one top-level `e2e/` workspace package**, *not* co-located. A journey crosses app
-  and service boundaries, so it belongs to no single package. `e2e/tests/*.spec.ts`, with the
-  Playwright config at the **repo root** (`playwright.config.ts`) so `pnpm test:e2e` is one
-  discoverable command.
-- **Shared test config at the root** - `vitest.config.ts` (coverage, env, the
-  unit/integration project split), `docker-compose.test.yml` (the test-stack),
-  `lighthouserc.json` (budgets). Root-level = one place to find them, one input Turbo hashes.
-
-```
-<repo root>
-  vitest.config.ts            # unit + integration projects, coverage, jsdom/node env
-  playwright.config.ts        # e2e: testDir ./e2e, traces/screenshots on failure, webServer
-  docker-compose.test.yml     # ephemeral Postgres/Redis for integration + e2e
-  lighthouserc.json           # advisory perf + a11y budgets
-  e2e/                        # its own workspace package - cross-app journeys
-    package.json
-    tests/*.spec.ts
-  services|apps|packages/*/
-    src/**/*.test.ts             # unit  - co-located, no I/O
-    src/**/*.integration.test.ts # integration - needs the test-stack
-```
-
-### The Docker test-stack - real dependencies, ephemeral
-
-Integration and e2e run against **real** Postgres/Redis in Docker, not mocks - a mock of a
-datastore is a second implementation that drifts from the real one and hides the bugs that
-only the real engine has (constraint violations, isolation levels, JSON operators).
-
-- `docker-compose.test.yml` defines the backing services on **non-default ports** (so a
-  test run never collides with a dev DB), **`tmpfs`-backed** (data is disposable, startup is
-  fast), with **healthchecks** so tests wait for *ready*, not just *started*.
-- `pnpm bootstrap:test-stack` brings it up and waits healthy; `pnpm teardown:test-stack`
-  drops it. The same compose file runs locally and in CI - no "works on my machine" gap.
-- **Never** point integration tests at a shared dev/staging DB. The stack is per-run and
-  disposable; that is what keeps the tests order-independent and parallel-safe.
-
-### E2E (Playwright) conventions
-
-- Config at the root; `webServer` boots the built web app so `pnpm test:e2e` is
-  self-contained (CI and local run the identical path). `baseURL` from env for staging smoke.
-- **On failure: trace + screenshot + video retained**, nothing on success (both repos) - a
-  red CI run is debuggable from the artifact without a local repro.
-- **`workers: 1` and `retries` on CI**, parallel locally - deterministic ordering where it
-  matters, fast feedback where it doesn't.
-- Select by **role / accessible name**, not brittle CSS - the selector doubles as an a11y
-  assertion and survives restyling.
-
-### Lighthouse CI - budgets, advisory by default
-
-- `lighthouserc.json` runs against the built web app and asserts a **perf + a11y budget**.
-  Default posture is **advisory** (`warn`): it reports on every PR and blocks only on the
-  surfaces that opt a metric up to `error`. This mirrors Layer 1's *"a budget only where it
-  matters"* ([performance](../../decision-records/checklist.md)) and *"enforce what tooling
-  can"* ([accessibility](../../decision-records/checklist.md)) - a flaky perf number should not
-  red-wall every unrelated PR. Promote a metric to blocking on the surface that has an SLA.
-- It complements, not replaces, Biome's static a11y rules and Playwright's role-based
-  selectors: static lint at author time, Lighthouse on the rendered page, e2e in the journey.
-
-### Keeping tests maintained (not just written)
-
-- **Coverage is a floor on the paths that matter, not a vanity percentage.** Enforce it on
-  money/security/contract code; do not chase 100% on glue. A test that asserts nothing but
-  coverage is debt.
-- **Flake policy: quarantine, don't retry-forever.** A test that flakes is tagged and pulled
-  from the blocking set with an owner and a ticket - it never silently gets `retry: 5` until
-  green. An un-owned quarantined test is deleted, not left rotting.
-- **A test tracks its spec.** When the acceptance criteria change, the test changes in the
-  same PR - the spec-coupling discipline (Layer 1) applies to tests as much as to specs.
-- **Speed is a feature.** Unit tier stays milliseconds (no I/O); push slow setup down into
-  integration/e2e so the fast loop stays fast. If the unit suite needs Docker, it's mis-tiered.
-
-## 10. App shell - auth, proxy, styling (the greenfield starter picks)
-
-The "put up a repo and it runs" starter (STARTER-1) needs the last three picks the
-templates left open. Decided here so the starter assembles, not debates:
-
-- **Auth - Better Auth** for product auth (sessions in your Postgres, MFA/rate-limit
-  built in, plugin ecosystem). It is the 2026 default for new TS apps and now maintains
-  Auth.js/NextAuth - which is no longer the pick for new projects. **Enterprise OIDC SSO**
-  (Entra & co.) instead uses **`openid-client` in one framework-agnostic shared module** -
-  a call validated in a private production repo (Auth.js rejected there as Next-coupled): the same module serves
-  Next's auth routes today and a standalone Fastify tomorrow. Sessions: DB-backed and
-  revocable, short-lived + silent server-side refresh with an absolute cap.
-- **Proxy / gate - Next 16 `proxy.ts`** (the `middleware.ts` replacement, Node runtime -
-  it may query the DB, so the session gate can be revocable, not JWT-blind). App-to-API
-  wiring in dev and single-origin deploys: Next `rewrites` -> the Fastify service;
-  service-to-service stays direct. Auth gates live in **both** the proxy and the service
-  (default-deny) - the proxy is UX, the service is the boundary.
-- **Styling - CSS Modules + SCSS** (the Prettier-for-SCSS pick in #3 already assumed it):
-  co-located `*.module.scss`, no CSS-in-JS runtime; design values come from **DTCG
-  three-tier tokens** (see the Layer 1 catalog fork) so the visual language has one
-  source. Tailwind is the recorded escape hatch for teams that already live in it
-  (supersede locally per ADR-004).
-
-**Starter composition (STARTER-1, own PR, boot-verified):** `starter/` assembles
-`templates/web` + `templates/service` + `e2e/` + the test-stack into a runnable monorepo -
-`pnpm i && pnpm dev` boots web+api wired through the proxy with Better Auth in place,
-`pnpm test:all` green. Ships only after it actually boots (no pretend-runnable code).
-
----
+Evidence-based, not blog-based. Every pick below was distilled from two production
+monorepos (call them repo A and repo B) and cross-checked against 2026 community
+consensus. Where the repos disagreed, the pick went to the side the community backs.
+This file is the *why*; the runnable truth is [`starter/`](starter/). Deviating from a
+pick? Record a superseding ADR in your repo (ADR-004) - the paved road is a default,
+not a cage.
 
 ## Summary - the paved road
 
-| Axis | Pick | Source |
+| Axis | Pick | Escape hatch |
 |---|---|---|
-| Package manager | pnpm, Node 24 pinned | both |
-| Task runner | Turborepo (Nx = escape hatch) | stayget |
-| Lint + format | Biome (+ Prettier for SCSS only) | stayget |
-| TypeScript | strict base + `noImplicitOverride`, target by layer | stayget + pc |
-| Fastify DI | native plugins, **no container** | both (beats the blogs) |
-| Env config | Zod-validated schema at boot | propertycloud |
-| Next.js | App Router, standalone, typed config + headers | stayget |
-| Supply chain | 7-day `minimumReleaseAge` + allowBuilds | stayget |
-| CI | least-privilege + cache + frozen lockfile (+ explicit permissions) | stayget, hardened |
-| Testing | Vitest (unit + integration) + Playwright (e2e) + Lighthouse CI, tiered, root-orchestrated, real deps via a Docker test-stack | stayget |
-| Auth | Better Auth (product) / `openid-client` shared module (enterprise SSO); DB-backed revocable sessions | 2026 community + field |
-| Proxy | Next 16 `proxy.ts` (Node runtime) + rewrites -> Fastify; default-deny at both gates | field |
-| Styling | CSS Modules + SCSS, DTCG three-tier tokens; no CSS-in-JS runtime | stayget + DTCG |
+| Package manager | pnpm, Node 24 pinned | - |
+| Task runner | Turborepo | Nx at 10+ packages / enforced boundaries |
+| Lint + format | Biome (+ Prettier for SCSS only) | minimal ESLint for a plugin Biome lacks |
+| TypeScript | strict base + `noUncheckedIndexedAccess` + `noImplicitOverride` | leaf tsconfig per app |
+| Fastify DI | native plugins, no container | `@fastify/awilix` when the graph outgrows wiring |
+| Env config | Zod-validated schema at boot | - |
+| Next.js | App Router, standalone, typed config + security headers | - |
+| Supply chain | 7-day `minimumReleaseAge` + `allowBuilds` | scoped exclude for critical security bumps |
+| CI | least-privilege permissions + pnpm cache + frozen lockfile | - |
+| Testing | Vitest + Playwright + Lighthouse CI, tiered, root-orchestrated | - |
+| Auth | Better Auth (product) / `openid-client` module (enterprise SSO) | - |
+| Proxy | Next `proxy.ts` (Node runtime) + rewrites -> Fastify | - |
+| Styling | CSS Modules + SCSS, DTCG three-tier tokens | Tailwind, superseded locally per ADR-004 |
 
-Provenance: `stayget` and `propertycloud` (private). Community checkpoints are cited in the
-PR that introduced this file.
+## 1. Package manager - pnpm
+
+**Pick:** pnpm, pinned via `packageManager` + `engines`, Node 24 pinned via `.nvmrc`.
+Content-addressed store, strict resolution (no phantom deps), first-class workspaces,
+and the strongest supply-chain story of the three managers (see #8). Both reference
+repos agree; so does the 2026 default recommendation for new monorepos.
+Stricter resolution occasionally trips a hoisting-reliant package - the fix is an
+explicit dependency, which is the point.
+
+## 2. Task runner - Turborepo
+
+**Pick:** Turborepo - content-hash caching, `dependsOn` task graph, near-zero config,
+pnpm-native. The standing advice holds: start with Turbo, graduate to Nx when
+coordination is the bottleneck (10+ packages, multiple teams, enforced project
+boundaries). Nx is the documented escape hatch, not the default.
+
+## 3. Lint + format - Biome
+
+**Pick:** Biome as the one linter+formatter; Prettier scoped to `*.scss` only (Biome
+does not format SCSS). One tool, one config, 10-50x faster than ESLint in CI, a11y
+preset included. The gap: no type-aware rules needing the TS language service, and some
+framework plugins have no Biome equivalent. If you truly need one of those, add a
+minimal ESLint alongside - never as the primary.
+
+## 4. TypeScript - strict, target stratified by layer
+
+**Pick:** `strict: true` plus `noUncheckedIndexedAccess`, `noImplicitOverride`,
+`noUnusedLocals`, `noUnusedParameters`, `noImplicitReturns`,
+`noFallthroughCasesInSwitch`; base `target: ES2022`. Strict-from-day-one is the settled
+consensus, and `noUncheckedIndexedAccess` catches the real index bugs. Leaf `tsconfig`
+per app sets `module`/`jsx`/`moduleResolution`. `verbatimModuleSyntax` is skipped:
+Biome's `useImportType`/`useExportType` already enforce type-only imports.
+
+## 5. Fastify - native plugin DI, no container
+
+**Pick:** Fastify-native DI - plugins + `decorate`/hooks + `setErrorHandler`, no IoC
+container. Blogs lean toward `@fastify/awilix`; both production repos independently
+shipped without a container, and encapsulation via plugin scope plus request-scoped
+`decorateRequest` covers the need with one fewer framework. Reach for awilix only when
+a service's graph genuinely outgrows native wiring, and record it as an ADR.
+Layering: `src/{lib,middleware,routes}` - external clients, the hook chain + error
+handler, route files. Twelve-Factor applies: config from the environment (validated
+once, at boot), stateless processes, logs to stdout.
+
+## 6. Env config - Zod-validated schema at boot
+
+**Pick:** a Zod schema validates every env var at boot - defaults, transforms, fail
+fast with a readable error. Raw `process.env` reads scattered through a service are the
+weakest spot in otherwise strong repos; one schema is the fix and the Twelve-Factor
+config story in practice.
+
+## 7. Next.js - App Router, standalone, typed config
+
+**Pick:** App Router, `output: "standalone"`, a typed `next.config.ts` carrying real
+CSP/security headers, React 19 for greenfield. Never `typescript.ignoreBuildErrors` -
+it is an anti-pattern observed in the wild, not a config option.
+
+## 8. Supply-chain cooldown - 7 days
+
+**Pick:** `minimumReleaseAge: 10080` (7 days) in `pnpm-workspace.yaml`, plus an
+explicit `allowBuilds` allow-list and `enablePrePostScripts: false`. pnpm 11 ships a
+1-day cooldown by default; real incidents (Shai-Hulud ~12h, the chalk/debug compromise
+~2.5h) sat inside that window, so the paved road is more conservative. Critical
+security bumps use a scoped exclude, never a global lower.
+
+## 9. Testing - Vitest + Playwright + Lighthouse CI, tiered
+
+**Pick:** Vitest (unit + integration) + Playwright (e2e) + Lighthouse CI (advisory
+perf/a11y budgets), orchestrated from the repo root so the commands are discoverable
+and Turbo-cacheable. The tiers: unit proves one module's logic (no I/O, milliseconds);
+integration proves the contract with a real backing service via an ephemeral Docker
+test-stack (`docker-compose.test.yml`, non-default ports, tmpfs, healthchecks - never a
+shared dev DB); e2e proves a user journey through the booted app. Unit and integration
+tests are co-located (`*.test.ts` / `*.integration.test.ts`, split by Vitest project);
+journeys live in a top-level `e2e/` workspace package because they cross app
+boundaries. Money / security / external-contract paths are non-negotiable at the
+integration tier and above (mirrors the
+[testing-strategy catalog entry](../../standard/docs/decision-records/checklist.md)).
+Maintenance rules: coverage is a floor on paths that matter, not a vanity percentage;
+flaky tests are quarantined with an owner, never retried-forever; a test changes in the
+same PR as its spec; if the unit suite needs Docker, it is mis-tiered.
+
+## 10. App shell - auth, proxy, styling
+
+**Pick (auth):** Better Auth for product auth - sessions in your Postgres, MFA and
+rate-limiting built in; it is the 2026 default for new TS apps and now maintains
+Auth.js/NextAuth, which is no longer the pick for new projects. Enterprise OIDC SSO
+uses `openid-client` in one framework-agnostic shared module, so the same code serves
+Next's auth routes today and a standalone Fastify tomorrow. Sessions: DB-backed and
+revocable, short-lived with silent server-side refresh and an absolute cap.
+
+**Pick (proxy):** Next `proxy.ts` on the Node runtime (it may query the DB, so the
+session gate is revocable, not JWT-blind); Next `rewrites` route app-to-API traffic to
+the Fastify service in dev and single-origin deploys. Auth gates live in both the proxy
+and the service (default-deny) - the proxy is UX, the service is the boundary.
+
+**Pick (styling):** CSS Modules + SCSS - co-located `*.module.scss`, no CSS-in-JS
+runtime; design values come from DTCG three-tier tokens so the visual language has one
+source. Tailwind is the recorded escape hatch for teams already living in it.
+
+All three are assembled and boot-verified in [`starter/`](starter/): `pnpm i && pnpm dev`
+boots web + api wired through the proxy with Better Auth in place.

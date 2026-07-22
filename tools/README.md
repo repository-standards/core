@@ -1,19 +1,28 @@
-# tools/ - this repo's own build tooling (zone 1, never shipped)
+# tools/ - this repo's own gate tooling (zone 1, never shipped)
 
 Maintainer machinery for the standard repo itself; a consuming repo gets `scripts/`
-(self-verify + guards) instead.
+(self-verify + guards + changelog assembler) inside the shipped tree instead.
 
 ## Contents
 
 | Tool | What it does |
 |---|---|
-| [reflect.mjs](reflect.mjs) | keeps `dist/` in sync with the source (copy / divergent / authored / source-only classes); `--check` reports drift as a number, `--write` syncs the copy class |
-| [changelog.mjs](changelog.mjs) | assembles `changes/` fragments into the technical changelog + release-notes draft; `--check` validates fragments in CI |
-| [docsite.mjs](docsite.mjs) | renders the docs site (apps/docs-site) from the repo's own md - one source, two surfaces |
-| [site-check.mjs](site-check.mjs) | the e2e gate for our own surfaces: landing tags balanced + quotes the positioning one-liner verbatim (PDLC-1) + GitHub-only hosts; docsite pages complete, internal links resolve, no md leaks, dark-first palette |
+| [tree-check.mjs](tree-check.mjs) | guards the single shipped tree (`standard/`): no repo-own leaks, every manifest promise present, and the tree passes its own `self-verify --skeleton` |
+| [link-check.mjs](link-check.mjs) | every relative markdown link in the repo resolves; template placeholder lines are skipped |
+| [docsite.mjs](docsite.mjs) | renders the docs site (`site/docs/`, gitignored) from the repo's own md - one source, two surfaces |
+| [site-check.mjs](site-check.mjs) | the e2e gate for our own surfaces: landing tags balanced + quotes the positioning one-liner verbatim + GitHub-only hosts; generated docs pages complete, internal links resolve, no md leaks |
 
 ## Why this shape, and how to use it
 
-Dependency-free (Node built-ins only), source-only. Run both `--check`s before any PR;
-`reflect --write` after editing any zone-2 source that ships. If a new dist file appears
-without a map entry, `reflect --check` fails on the orphan - that is the point.
+Dependency-free (Node built-ins only), zone 1 only. The four checks run in this
+repo's own CI (`.github/workflows/checks.yml`) and before any PR:
+
+```
+node tools/tree-check.mjs
+node tools/link-check.mjs
+node tools/docsite.mjs && node tools/site-check.mjs
+```
+
+There is no build step and nothing to sync: the standard is authored directly in
+`standard/` (ADR-014), so the old reflect machinery is gone - tree-check only
+proves nothing leaked and nothing promised is missing.

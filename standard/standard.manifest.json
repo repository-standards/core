@@ -1,5 +1,5 @@
 {
-  "$about": "The align-engine manifest (ADR-005). The align/update/self-verify skills read THIS to know what an aligned repo must have at a given version - instead of hardcoding it in prose or JS. Paths are the assembled/client layout (an aligned repo), not this source repo's concern folders. An aligned repo carries a copy of this file at its pinned version; `scripts/self-verify.mjs` checks the repo against it and reports drift as a number. The normative source is SPEC.md; each entry cites the rule it enforces (`rule`).",
+  "$about": "The align-engine manifest (ADR-005). The align/update/self-verify skills read THIS to know what an aligned repo must have at a given version - instead of hardcoding it in prose or JS. Paths are the client layout - identical to the standard/ tree in this repo. since names the release that first shipped an entry; unreleased rides the next cut. An aligned repo carries a copy of this file at its pinned version; `scripts/self-verify.mjs` checks the repo against it and reports drift as a number. The normative source is SPEC.md; each entry cites the rule it enforces (`rule`).",
 
   "standard": "repository-standards",
   "version": "0.7.2",
@@ -14,20 +14,28 @@
 
   "files": [
     { "path": "AGENTS.md", "purpose": "the single agent entry point", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.1.0", "rule": "R1" },
-    { "path": ".standards-version", "purpose": "the version pin this whole mechanism turns on", "adapt": "copy", "required": true, "profile": "core", "since": "0.4.0", "rule": "R2" },
-    { "path": "standard.manifest.json", "purpose": "this manifest, at the pinned version - what self-verify checks against", "adapt": "copy", "required": true, "profile": "core", "since": "0.7.2", "rule": "R2" },
+    { "path": ".standards-version", "purpose": "the version pin this whole mechanism turns on - written by align-to-standards / update-to-version", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "unreleased", "rule": "R2" },
+    { "path": "standard.manifest.json", "purpose": "this manifest, at the pinned version - what self-verify checks against", "adapt": "copy", "required": true, "profile": "core", "since": "unreleased", "rule": "R2" },
+    { "path": "SPEC.md", "purpose": "the normative core this manifest projects - R1-R20, readable in place", "adapt": "copy", "required": false, "profile": "core", "since": "unreleased", "rule": "R2" },
     { "path": "CLAUDE.md", "purpose": "thin pointer to AGENTS.md for Claude Code", "adapt": "copy", "required": false, "profile": "core", "since": "0.1.0", "rule": "R1" },
     { "path": "docs/decision-records", "purpose": "the ADR/BDR decision log", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.1.0", "rule": "R5" },
     { "path": "docs/ideas", "purpose": "pre-decision ideas - status-driven, graduate into records/specs on approval (ADR-010)", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "0.7.2", "rule": "R14" },
-    { "path": "decision-records/checklist.md", "purpose": "the forks every repo should consciously decide", "adapt": "reference", "required": true, "profile": "core", "since": "0.5.0", "altPaths": ["docs/decision-records/checklist.md"], "rule": "R7" },
+    { "path": "docs/decision-records/checklist.md", "purpose": "the forks every repo should consciously decide", "adapt": "reference", "required": true, "profile": "core", "since": "0.5.0", "altPaths": ["decision-records/checklist.md"], "rule": "R7" },
     { "path": "specs", "purpose": "living capability specs", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.1.0", "rule": "R8" },
     { "path": "specs/capability-map.json", "purpose": "capability -> code globs, so the coupling guard can bind spec to code", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.3.0", "rule": "R11" },
     { "path": "backlog.md", "purpose": "the work ledger; items leave only when their DoD is met", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.2.0", "altPaths": ["docs/backlog.md"], "rule": "R15" },
     { "path": "docs/taxonomy.md", "purpose": "where each kind of knowledge lands (ends 'ADR or rule?')", "adapt": "reference", "required": true, "profile": "core", "since": "0.5.0", "rule": "R5" },
-    { "path": "changes", "purpose": "per-PR changelog fragments (a PR never edits CHANGELOG or VERSION)", "adapt": "copy", "required": true, "profile": "scale", "since": "0.7.0", "rule": "R18" },
-    { "path": "scripts/self-verify.mjs", "purpose": "the verify step - checks the repo against this manifest", "adapt": "copy", "required": true, "profile": "core", "since": "0.4.0", "rule": "R16" },
+    { "path": "changes", "purpose": "per-PR changelog fragments (a PR never edits CHANGELOG or VERSION)", "adapt": "copy", "required": true, "profile": "scale", "since": "unreleased", "rule": "R18" },
+    { "path": "scripts/self-verify.mjs", "purpose": "the verify step - checks the repo against this manifest", "adapt": "copy", "required": true, "profile": "core", "since": "unreleased", "rule": "R16" },
     { "path": "scripts/spec-structure.mjs", "purpose": "spec layout guard", "adapt": "copy", "required": true, "profile": "core", "since": "0.3.0", "rule": "R16" },
-    { "path": "scripts/spec-guard.mjs", "purpose": "code<->spec coupling guard (+ --audit)", "adapt": "copy", "required": true, "profile": "core", "since": "0.3.0", "rule": "R11" }
+    { "path": ".claude/skills", "purpose": "the lifecycle skills - the standard as executable procedures", "adapt": "copy", "required": true, "profile": "core", "since": "unreleased", "rule": "R16" },
+    { "path": "scripts/spec", "purpose": "the spec engine runtime the skills invoke (gate, setup, templates, MIT licence)", "adapt": "copy", "required": true, "profile": "core", "since": "unreleased", "rule": "R12" },
+    { "path": ".gitleaks.toml", "purpose": "secret-scan config (the shipped scan SHOULD gate CI)", "adapt": "copy", "required": false, "profile": "core", "since": "unreleased", "rule": "R19" },
+    { "path": ".github/workflows/gitleaks.yml", "purpose": "the secret-scan workflow template", "adapt": "merge", "required": false, "profile": "core", "since": "unreleased", "rule": "R19" },
+    { "path": ".claude/settings.json", "purpose": "agent settings baseline incl. the remote-DB write block", "adapt": "merge", "required": false, "profile": "core", "since": "unreleased", "rule": "R19" },
+    { "path": "docs/PRINCIPLES.md", "purpose": "the altitude apex R1 names - optional but expected", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "unreleased", "rule": "R1" },
+    { "path": "scripts/changelog.mjs", "purpose": "assembles changes/ fragments into changelog + release-notes draft", "adapt": "copy", "required": false, "profile": "scale", "since": "unreleased", "rule": "R18" },
+    { "path": "scripts/spec-guard.mjs", "purpose": "code<->spec coupling guard (+ --audit) - the tool ships at core, the blocking CI gate is scale (R11)", "adapt": "copy", "required": true, "profile": "core", "since": "0.3.0", "rule": "R11" }
   ],
 
   "sections": [

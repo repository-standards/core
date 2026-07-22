@@ -1,8 +1,8 @@
 # Ideas - speculative, pre-decision, first-class
 
 A home for an idea that **may never ship**, explored end-to-end - business and technical
-shape included - without minting any record (see the taxonomy and ADR-008: `Proposed` is
-for decisions awaiting ratification, not for maybes; ADR-010 sets the lifecycle).
+shape included - without minting any record (see the taxonomy and ADR-010: `Proposed` is
+for decisions awaiting ratification, not for maybes; no ADR/BDR/spec until approved).
 
 ## Rules
 

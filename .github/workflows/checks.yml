@@ -1,0 +1,27 @@
+# This repo's OWN gate - the one workflow that really runs here.
+# (Everything under standard/.github/ is a TEMPLATE shipped to client repos and is
+# never enabled in this repository.)
+name: checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: tree-check (one tree, no leaks, skeleton verifies)
+        run: node tools/tree-check.mjs
+      - name: link-check (every relative md link resolves)
+        run: node tools/link-check.mjs
+      - name: spec-structure (the repo's own specs stay shaped and owned)
+        run: node standard/scripts/spec-structure.mjs
+      - name: site (generate + check landing and docs)
+        run: |
+          node tools/docsite.mjs
+          node tools/site-check.mjs

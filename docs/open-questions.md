@@ -4,8 +4,8 @@ Every entry here is a call the owner made **on judgment, at the simplicity-vs-
 universality boundary** - good enough to ship, honestly held, and **actively open to a
 better answer**. This is not indecision: each has a decision in force (linked). It is
 an invitation: if you can argue a better option, open an issue or PR referencing the
-entry. A winning challenge lands as a superseding record or rule change, and the entry
-flips to *resolved*.
+entry. A winning challenge lands as a superseding record or rule change, and a
+resolved entry is deleted - the resolution lives in the record that settled it.
 
 How this differs from the neighbors: an **ADR** records a fork taken; an **idea** is a
 feature that may never ship; an open question is a **standing "I chose X, convince me
@@ -29,19 +29,47 @@ separating audience concerns - without introducing a second file that can drift.
 carries a paved-road default; `forks.md`, `decide.md` were alternatives. *Better:* a
 name that says "choices you must consciously make, defaults included" in one word.
 
-**`dist/` as the name of the shipped skeleton. [RESOLVED 2026-07-22 - keep `dist/`]**
-*Resolution (owner):* this structure IS the repo's output and `reflect` literally
-builds it; `dist/` universally reads "generated - do not edit by hand", which is the
-behavior we want. `skeleton/`/`template/` rejected - they invite hand-editing.
+**One tree at real-repo paths (ADR-014).**
+*Decided:* a single authored `standard/` tree, shipped as-is at the paths a real repo
+uses - no source/dist split, no build step. *Doubt:* template shells and hand-authored
+docs now mix in one tree, distinguished only by the manifest's `adapt` field; a reader
+browsing the tree cannot tell "fill this in" from "read this as-is" without it.
+*Better:* evidence from the first real adoption that the mix confuses nobody.
 
-**Zone-2 regroup under one directory. [RESOLVED 2026-07-22 - executed as `standard/`]**
-*Resolution (owner directive):* the regroup shipped in the same PR as everything else;
-`standard/` won over `src/` (self-describing beats generic; inside repository-standards
-it reads as "the standard itself lives here", which is exactly true).
+**Twenty rules (R1-R20).**
+*Decided:* the whole normative core is one page - twenty numbered MUST/SHOULD rules in
+[`SPEC.md`](../standard/SPEC.md); the manifest cites them. *Why:* every standard that
+won stays this small - semver has 11 rules, Conventional Commits 16. *Doubt:* twenty
+sits at the top of that range, several rules bundle more than one MUST, and the
+judgment-tier rules cannot be script-checked. *Better:* the first adoptions showing
+which rules never bite - those are candidates to merge, or to demote to guidance.
 
-**The project name itself (NAME-1). [RESOLVED 2026-07-22 - `repository-standards` stays]**
-*Resolution (owner):* the clear category name wins; both matching domains already
-owned; no rename churn anywhere. Deploy/npm/listings unblocked.
+## The engine and the skills
+
+**Upstream improvements are cherry-picked by hand (ADR-015).**
+*Decided:* the five engine prompts are extracted as the standard's own skills; there is
+no byte-diffability with github/spec-kit, and sync means reading upstream's prompt
+changes at release time. *Why:* the vendored area cost a third of the repo's markdown
+for a surface the loop half-used. *Doubt:* upstream ships roughly ten releases in eight
+days; without a mechanical diff, the five prompts could quietly fall behind the state
+of the art. *Better:* a few release cycles proving the cherry-pick check stays cheap -
+or evidence that it does not, which reopens vendoring with better tooling.
+
+**Eleven lifecycle skills ship into every adopted repo.**
+*Decided:* one family - the five engine steps plus impact/update/reconcile, backlog
+capture, pre-pr-review and update-to-version; each skill's name and description ride in
+the agent's context every turn. *Doubt:* respected skill collections treat eight to ten
+committed skills as the ceiling, and the five engine steps might collapse into fewer
+without losing the loop. *Better:* field evidence on trigger reliability and context
+cost from real adopted repos - or a merge that keeps every verb reachable with fewer
+slots.
+
+**The repo specs its own tooling (four capability specs).**
+*Decided:* `specs/` carries tree-guard, verify-engine, web-surface and spec-engine -
+the buildable method dogfooded on the repo's own scripts. *Doubt:* specs for scripts of
+a few hundred readable lines risk becoming documentation theatre. *Better:* the first
+tooling change that lands spec-first and catches a real contradiction - or proves the
+specs dead weight, which retires them as an honest negative result in the case studies.
 
 ## Lifecycle & tracking
 
@@ -84,10 +112,12 @@ the split.
 
 **Personas stay a hard gate even solo (one persona minimum).**
 *Decided:* in the profiles split, the gate is core, the full roster is scale. *Doubt:*
-for a one-person tool the ceremony may still exceed the value. *Better:* a solo case
+for a one-person tool the ceremony may still exceed the value - and for repos with no
+product surface at all (an internal service, a library) a persona gate may deserve a
+separate product profile rather than core. *Better:* a solo case
 study showing the one-persona gate caught (or never caught) a real mistake.
 
-**The docs funnel: one source, two surfaces (DISCO-4).**
+**The docs funnel: one source, two surfaces.**
 *Decided:* the human docs site renders from the same md agents read; no separately
 authored documentation, ever. *Doubt:* folder READMEs written for in-place reading may
 not sequence into a nextjs.org/docs-style learning path without glue. *Better:* an IA
@@ -104,8 +134,8 @@ two-rule test a contributor can apply without asking.
 **Better Auth as the product-auth default.**
 *Decided:* DECISIONS #10 - the 2026 community default (and it now maintains Auth.js);
 `openid-client` for enterprise SSO is field-proven, Better Auth here is not yet.
-*Better:* the STARTER-1 boot-verified starter either confirms it or replaces it -
-evidence over consensus.
+*Better:* the boot-verified starter now runs it - the open question is field evidence
+beyond one boot. Evidence over consensus.
 
 **CSS Modules + SCSS over Tailwind.**
 *Decided:* DECISIONS #10 - matches the evidence repos; Tailwind is the recorded escape

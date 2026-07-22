@@ -5,7 +5,7 @@
 > A BRIDGE, not a second rulebook. It does not restate conventions - it points the
 > Spec Kit Constitution Check at the real sources and hard-stops on conflict.
 
-## The check (runs at /speckit-plan, and at /spec-update)
+## The check (runs at /spec-plan, and at /spec-update)
 
 A change passes only if it is consistent with, in altitude order:
 

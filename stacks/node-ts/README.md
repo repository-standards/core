@@ -1,66 +1,31 @@
 # Layer 2 - Node / TypeScript paved road
 
-A runnable setup that sits on top of the stack-agnostic standard (Layer 1). **Distilled
-from real production monorepos** (stayget, propertycloud), cross-checked against current
-community consensus - not assembled from blog posts. Adopt it whole, or take Layer 1 alone
-and cherry-pick.
+A runnable stack that sits on top of the stack-agnostic standard (Layer 1): pnpm +
+Turborepo, Biome, strict TypeScript, Fastify with native plugin DI, Next.js App Router,
+Vitest + Playwright + Lighthouse CI, a 7-day supply-chain cooldown. Every pick is
+distilled from two production monorepos and cross-checked against 2026 community
+consensus - the *why* per axis, with escape hatches, is in [`DECISIONS.md`](DECISIONS.md).
 
-The **why** for every choice - with pros/cons, the community position, and the tie-breaks -
-is in [`DECISIONS.md`](DECISIONS.md). This README is the map.
+## Greenfield
 
-## The stack
+```
+npx degit bodurkalukasz/repository-standards/stacks/node-ts/starter my-app
+```
 
-- **pnpm** workspaces + **Turborepo**, **Node 24** (pinned in `.nvmrc`, `engines`).
-- **Biome** for lint + format; **Prettier** only for `*.scss` (Biome doesn't format SCSS).
-- **TypeScript** strict (`noUncheckedIndexedAccess`, `noImplicitOverride`, ...), target
-  stratified by layer.
-- **Fastify** with **native plugin DI, no container**, and a **Zod-validated env** at boot.
-- **Next.js** App Router, `output: standalone`, security headers in a typed config.
-- **Vitest** (unit + integration) + **Playwright** (e2e) + **Lighthouse CI** (advisory
-  perf/a11y), tiered and orchestrated from the root; real dependencies via a Docker test-stack.
-- Supply-chain **7-day cooldown** (`minimumReleaseAge`), `allowBuilds` allow-list.
-- **Hardened GitHub Actions**: least-privilege `permissions`, pnpm cache, frozen lockfile.
+The starter is boot-verified: `pnpm install && pnpm dev` boots Next + Fastify through
+one proxy with Better Auth in place - sign-up to dashboard proven, `pnpm test:all` green.
 
-## What's here
+## Brownfield
+
+Adopt the picks from [`DECISIONS.md`](DECISIONS.md) and copy the configs you need from
+[`starter/`](starter/): `biome.json`, `tsconfig.base.json`, `vitest.config.ts`,
+`playwright.config.ts`, `pnpm-workspace.yaml` (the cooldown + `allowBuilds` policy),
+`docker-compose.test.yml`, `.github/workflows/`. Deviating from a pick? Record a
+superseding ADR in your repo (ADR-004).
 
 ```
 stacks/node-ts/
-  DECISIONS.md            # the why: per-axis pros/cons, community rec, the pick
-  package.json            # root scripts (check:all, build, test, format)
-  pnpm-workspace.yaml     # workspace globs + supply-chain cooldown + allowBuilds
-  turbo.json              # task graph + caching
-  tsconfig.base.json      # strict TS base every package extends
-  biome.json              # lint + format config
-  .prettierrc.json        # SCSS-only formatting
-  .nvmrc                  # Node 24
-  vitest.config.ts        # unit + integration projects (the tier = the file-name split)
-  playwright.config.ts    # e2e: traces/screenshots on failure, boots the app
-  docker-compose.test.yml # ephemeral Postgres/Redis for integration + e2e
-  lighthouserc.json       # advisory perf + a11y budgets
-  .github/workflows/
-    ci.yml                # least-privilege quality gate (format + types + lint)
-    e2e.yml               # slower tier: test-stack + integration + e2e + advisory Lighthouse
-  e2e/                    # cross-app journeys (Playwright) - its own workspace package
-  templates/
-    service/              # a Fastify service: native DI + Zod env + health route
-    web/                  # Next.js config (App Router, standalone, security headers)
+  DECISIONS.md   # the why: per-axis pick, rationale, escape hatch
+  README.md      # this router
+  starter/       # the boot-verified greenfield monorepo - degit and run
 ```
-
-The **why** and the full tiering / directory / maintenance rules are in
-[`DECISIONS.md` #9](DECISIONS.md).
-
-## Adopt
-
-1. Copy `stacks/node-ts/*` to your repo root (adjust `pnpm-workspace.yaml` globs).
-2. Put services under `services/` (or `apps/`) from `templates/service`, web apps from
-   `templates/web`. Each leaf `tsconfig.json` extends `../../tsconfig.base.json`.
-3. `pnpm install` (the 7-day cooldown applies), then `pnpm check:all`.
-4. Put unit/integration tests co-located in each package (`*.test.ts` /
-   `*.integration.test.ts`); put cross-app journeys in `e2e/`. Run:
-   `pnpm test:unit`, `pnpm bootstrap:test-stack && pnpm test:integration`,
-   `pnpm test:e2e` (or `pnpm test:all`).
-5. Wire `ci.yml` (fast gate) and `e2e.yml` (slower tier), plus the standard's
-   `self-verify`, into your pipeline.
-
-Deviating from a pick? Record a superseding ADR in your repo (ADR-004) - the paved road is
-a default, not a cage.

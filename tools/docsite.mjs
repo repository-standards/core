@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // docsite - render a curated set of the repo's Markdown files into a static HTML
-// site at apps/docs-site/ (DISCO-4). Dependency-free (Node built-ins only), like the
-// sibling tools/reflect.mjs.
+// site at site/docs/ (DISCO-4). Dependency-free (Node built-ins only).
+
 //
-// apps/docs-site/ is GENERATED. Never hand-edit the HTML there - edit the PAGE MAP or
+// site/docs/ is GENERATED (and gitignored). Never hand-edit the HTML there - edit the PAGE MAP or
 // the renderer below and re-run:
 //   node tools/docsite.mjs
 //
@@ -16,13 +16,13 @@
 // Guides / Reference / FAQ / Open questions / Case studies), one page per source file.
 //
 // Usage:
-//   node tools/docsite.mjs   # (re)generates every page in apps/docs-site/, exit 0
+//   node tools/docsite.mjs   # (re)generates every page in site/docs/, exit 0
 //
-// No dependencies. Source-only - not shipped to dist/.
+// No dependencies. Zone 1 tooling - never shipped.
 
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from "node:fs";
 
-const OUT_DIR = "apps/docs-site";
+const OUT_DIR = "site/docs";
 const GITHUB_REPO_URL = "https://github.com/bodurkalukasz/repository-standards";
 
 // --- the page map (nav order) -----------------------------------------------------
@@ -36,10 +36,9 @@ const PAGES = [
   { src: "standard/docs/taxonomy.md", out: "taxonomy.html", nav: "Taxonomy", group: "Concepts" },
   { src: "standard/docs/ways-of-working.md", out: "ways-of-working.html", nav: "Ways of working", group: "Concepts" },
   { src: "standard/specs/README.md", out: "specs.html", nav: "Specs", group: "Concepts" },
-  { src: "standard/specs/spec-kit-setup.md", out: "spec-kit-setup.html", nav: "Spec Kit setup", group: "Guides" },
   { src: "standard/docs/self-verify.md", out: "self-verify.html", nav: "Self-verify", group: "Guides" },
-  { src: "standard/decision-records/checklist.md", out: "checklist.html", nav: "Decision checklist", group: "Reference" },
-  { src: "standard/decision-records/README.md", out: "decision-records.html", nav: "Decision records", group: "Reference" },
+  { src: "standard/docs/decision-records/checklist.md", out: "checklist.html", nav: "Decision checklist", group: "Reference" },
+  { src: "standard/docs/decision-records/README.md", out: "decision-records.html", nav: "Decision records", group: "Reference" },
   { src: "docs/faq.md", out: "faq.html", nav: "FAQ", group: null },
   { src: "docs/open-questions.md", out: "open-questions.html", nav: "Open questions", group: null },
   { src: "docs/case-studies/README.md", out: "case-studies.html", nav: "Case studies", group: null },
@@ -345,7 +344,7 @@ function mdToHtml(markdown, ctx) {
 // --- HTML shell (CSS + sidebar nav) --------------------------------------------------
 
 const CSS = `
-/* Dark by default, matching the landing page's palette (apps/landing-page/index.html
+/* Dark by default, matching the landing page's palette (site/index.html
    :root vars: ink/surface/line/tx/mid/amber) - the docs and the landing read as one
    product, nextjs.org-style. Light stays as an explicit user-preference override. */
 :root {
@@ -559,7 +558,7 @@ ${contentHtml}
 `;
 }
 
-const SITE_README = `# apps/docs-site - generated docs site (DISCO-4)
+const SITE_README = `# site/docs - generated docs site (DISCO-4)
 
 This folder is **generated**. Every file in it is produced by
 [\`tools/docsite.mjs\`](../../tools/docsite.mjs) from the repo's own Markdown - never

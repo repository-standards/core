@@ -25,6 +25,10 @@ add a line under `## Unreleased` and collide. The fix: each PR drops its **own**
 nothing shares a line and the conflict is gone by construction. A PR adds a fragment; it
 does **not** edit `CHANGELOG.md` / `RELEASE-NOTES.md` and does **not** bump `VERSION`.
 
+The fragments mechanism is **scale profile** - it exists to stop parallel PRs from
+colliding. A solo repo has no parallel PRs and writes the `## Unreleased` section of
+`CHANGELOG.md` directly.
+
 ## The fragment
 
 `changes/<short-slug>.md`:
@@ -67,11 +71,12 @@ tool, Layer 2). The **release-notes half is deliberately human** - or an agent t
 *write*, not assemble: the curation and the plain-language framing are the whole value,
 and they cannot be generated from commit lines.
 
-`tools/changelog.mjs` (dependency-free, Layer 1) does exactly this split:
+`scripts/changelog.mjs` (dependency-free, Layer 1) ships with the tree and does
+exactly this split:
 
-- `node tools/changelog.mjs --check` - validate every fragment's frontmatter (used in
-  CI so a malformed fragment fails the PR, not the release).
-- `node tools/changelog.mjs` - assemble: print the **complete** `CHANGELOG.md` block
+- `node scripts/changelog.mjs --check` - validate every fragment's frontmatter; wire
+  it into the repo's CI so a malformed fragment fails the PR, not the release.
+- `node scripts/changelog.mjs` - assemble: print the **complete** `CHANGELOG.md` block
   (grouped by `type`, verbatim) plus a **draft scaffold** for the release notes from the
   `stakeholder`/`both` headlines. It prints to stdout and never writes a version heading
   or touches `VERSION` - the maintainer cuts the release and *writes* the notes from the

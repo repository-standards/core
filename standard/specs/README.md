@@ -5,9 +5,10 @@ product capability, not by ticket or feature branch. A capability spec answers:
 "how does this part of the system behave today - or, on a branch, once the branch
 merges?"
 
-Spec Kit stays as the execution engine (clarify -> plan -> tasks -> implement ->
-converge). This layer changes only the **spec model**: from disposable
-ticket-specs to long-lived capability specs.
+The spec engine (five extracted skills - see [The engine](#the-engine)) runs
+execution: specify -> clarify -> plan -> tasks -> implement. This layer changes
+only the **spec model**: from disposable ticket-specs to long-lived capability
+specs.
 
 ## The one rule
 
@@ -22,9 +23,9 @@ SPEC = description of a ticket
 Every capability spec names the **persona(s)** it serves (from
 [`personas.md`](../docs/personas.md)) and, in a line, how it advances their job. Behavior
 is verified against the code (buildable, below) *and* against a user - a spec that serves
-no persona is a candidate for deletion, not merge ([ADR-006](../decision-records/adr/ADR-006-personas-are-a-validation-gate.md)).
-Where a rule helps one persona and hurts another, the resolution is a recorded **BDR**,
-cited from the spec.
+no persona is a candidate for deletion, not merge (personas are a validation gate; the
+standard's ADR-006). Where a rule helps one persona and hurts another, the resolution is a
+recorded **BDR**, cited from the spec.
 
 ## Spec depth: buildable, not descriptive
 
@@ -137,12 +138,12 @@ Git IS the change mechanism. Plans and tasks are disposable execution aids - the
 never compete with specs as product truth. Do not keep obsolete behavior in a spec
 "for history"; git holds the evolution.
 
-## Workflow (Spec Kit engine, capability-spec model)
+## Workflow (spec engine, capability-spec model)
 
 ```
 request -> understand -> spec-impact (which capabilities?) -> clarify
   -> UPDATE canonical specs to target state -> cross-spec consistency
-  -> plan -> tasks -> implement -> converge -> reconcile(spec/code/tests) -> merge
+  -> plan -> tasks -> implement -> reconcile(spec/code/tests) -> merge
 ```
 
 Mandatory gates: update affected specs to the target state **before** implementing;
@@ -151,12 +152,49 @@ reconcile spec vs code vs tests **before** completion. No silent drift.
 ## Where the pieces are
 
 - Format: [`capability-spec.template.md`](capability-spec.template.md)
-- Commands / skills: [`commands.md`](commands.md)
-- Enforcement (pre-commit + CI): [`enforcement.md`](enforcement.md)
+- Runnable skills: the `/spec-*` skills in [`../.claude/skills/`](../.claude/skills/)
+  (spec-specify, spec-clarify, spec-impact, spec-update, spec-plan, spec-tasks,
+  spec-implement, spec-reconcile)
+- Engine scripts + templates: [`../scripts/spec/`](../scripts/spec/)
+- Governance bridge: [`constitution.template.md`](constitution.template.md)
+- Enforcement (pre-commit + CI): [`enforcement.md`](enforcement.md) +
+  [`../scripts/spec-guard.mjs`](../scripts/spec-guard.mjs)
 
 ## Altitude and governance
 
 Accepted ADR / BDR (decisions) constrain specs; a spec must not contradict an
 Accepted decision. Specs hold *behavior*; ARCHITECTURE holds *structure*; ADR/BDR
-hold *why*. Spec Kit's constitution check defers to ADR + standards + these specs -
+hold *why*. The engine's constitution check defers to ADR + standards + these specs -
 it does not restate them.
+
+## The engine
+
+The spec flow runs on five skills extracted from
+[github/spec-kit](https://github.com/github/spec-kit) v0.13.2 (MIT - the licence
+ships at [`../scripts/spec/LICENSE`](../scripts/spec/LICENSE); every extracted file
+carries a provenance marker naming its upstream source). Their shared scripts and
+templates live in [`../scripts/spec/`](../scripts/spec/).
+
+```
+spec-specify -> spec-clarify (gate) -> spec-plan -> spec-tasks -> spec-implement
+  -> spec-reconcile (spec == code == tests, and the specs still agree)
+```
+
+The clarify gate is mechanical, not advisory: `scripts/spec/check-spec-clarified.sh`
+is baked into the plan and tasks prechecks, so `/spec-plan` and `/spec-tasks` refuse
+a spec that has not passed clarification.
+
+Wherever engine text says *feature*, read *capability* - there is one spec system.
+
+**Never install or run upstream spec-kit's own `specify` in this repo.** It mints
+`specs/NNN-feature/` dirs that violate the capability layout above. The shipped,
+patched skills are the sanctioned form of the engine.
+
+Engine state and authority, in three sentences: `specs/feature.json` holds the
+current feature's directory (`feature_directory`) - every engine script resolves
+paths through it, and it is committed like any other working state until the
+close step removes the scaffolding (ADR-010). `setup-plan.sh` scaffolds `plan.md`
+from the template; `setup-tasks.sh` only resolves the template - `/spec-tasks`
+writes `tasks.md` itself. The clarify gate script is the authority on
+readiness; the spec's `Status:` line is the human-readable mirror the skills
+flip, never the other way round.

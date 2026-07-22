@@ -1,6 +1,6 @@
 # Personas - who repository-standards is built for
 
-> The standard's own roster, dogfooding [`personas.template.md`](../standard/docs/personas.template.md)
+> The standard's own roster, dogfooding [`standard/docs/personas.md`](../standard/docs/personas.md)
 > and ADR-006: every epic, skill, and doc in this repo must name which of these it
 > serves. Source-only (a consuming repo writes its own product's roster).
 

@@ -4,7 +4,7 @@ When you are handed a repo - to bring it up to the standard, or as a periodic he
 check - you run this assessment **first**. It is **analysis, not change** (like
 `spec-impact`): you read the repo, detect what is there and what is missing, and produce
 a picture plus concrete recommendations. The fixing happens afterwards - the skeleton
-via `align-to-standards`, the content via `onboard-repo` - drained from the backlog this
+via the align router, the content via its brownfield onboarding phase - drained from the backlog this
 assessment seeds.
 
 ## When to run
@@ -18,7 +18,7 @@ assessment seeds.
    and the top risks.
 2. **Recommendations**: what to **suggest** and what to **set up** (the paved road).
 3. A **seeded backlog**: every gap becomes an item in [`backlog`](backlog.md) with a
-   definition of done, feeding `onboard-repo`.
+   definition of done, feeding the onboarding phase.
 
 Do **not** modify code during the assessment. Detect and record; fix later, in priority
 order. The exception is a **red-flag stop** (below), which halts and asks the human now.
@@ -44,7 +44,7 @@ Each pass: what to **detect**, what **good** looks like (the paved road), and wh
 The assessment does not fix - it **routes**:
 
 - Missing **skeleton or gates** -> `align-to-standards`.
-- **Capabilities to spec** and **decisions to record** -> `onboard-repo`.
+- **Capabilities to spec** and **decisions to record** -> the onboarding phase.
 - Everything not done in the first pass -> the **backlog**, ordered by risk x leverage
   (money, security, external contracts, data integrity first; then churn).
 - **Red-flag stops** - halt and ask the human, do not proceed silently:

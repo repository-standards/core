@@ -1,0 +1,19 @@
+{
+  "tree-guard": [
+    "tools/tree-check.mjs",
+    "tools/link-check.mjs"
+  ],
+  "verify-engine": [
+    "standard/scripts/self-verify.mjs",
+    "standard/standard.manifest.json"
+  ],
+  "web-surface": [
+    "tools/docsite.mjs",
+    "tools/site-check.mjs",
+    "site/**"
+  ],
+  "spec-engine": [
+    "standard/scripts/spec/**",
+    "standard/.claude/skills/spec-*/**"
+  ]
+}

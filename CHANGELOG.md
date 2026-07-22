@@ -5,56 +5,123 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
-Brownfield onboarding + the backlog layer - the "drop into a messy repo and bring it
-to maintainability" half of the product.
+The simplification wave - the standard put on one page, in one tree, with one
+engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
+align engine, Layer 2 and the product spine.
 
-- `skills/onboard-repo` - new: reads an existing codebase, derives its capabilities,
-  seeds specs and the decisions the code already implies, and turns the rest into a
-  prioritized backlog. Incremental, human-approved, never a big-bang dump.
-- `docs/backlog.template.md` - new: the ordered, agent-first, Backlog.md-compatible
-  backlog; defines what feeds it (onboarding, spec deltas, code<->spec drift, missing
-  decisions) and that an item leaves only when its definition of done is met.
-- `skills/align-to-standards` - hands off to `onboard-repo` for the content phase after
-  the skeleton is in place (structure vs content split made explicit).
-- `docs/AGENTS.template.md` - repo map gains `docs/backlog.md`; Workflows now name the
-  spec-driven flow and the brownfield onboarding flow.
-- `decision-records/catalog.md` - new: the **decision catalog**, the opinionated menu
-  of forks a project should consciously decide (foundation, data, interfaces, quality,
-  delivery, plus a business/BDR group), each with the paved-road default and record
-  type. Drives greenfield scaffolding, the `onboard-repo` sweep, and backlog items for
-  undecided areas. `decision-records/README` points to it.
-- Reflected into `dist/` (skills, `dist/docs/backlog.md`, `AGENTS.md`, and the catalog -
-  source-only ADR link de-linked, specs path adjusted for the assembled layout).
-- `docs/repo-assessment.md` - new: the analysis an agent runs before it changes anything
-  (eight passes - skeleton/docs, decisions-in-code, capabilities/specs, quality gates,
-  CI/CD, security/supply-chain, deps/stack, drift); routes findings to align / onboard /
-  backlog; names the red-flag stops. Wired into `onboard-repo` as its precursor.
-- `docs/ways-of-working.md` - new: the spec-driven feature flow across roles (PO writes
-  the behavioral spec -> dev sharpens to buildable + records the decision -> AI builds ->
-  reconcile), mapped onto the `spec-*` skills; linked from `AGENTS.template` Workflows.
+### The spec, the tree, the engine (2026-07-22)
 
-Versioned self-update - the keystone: a repo pins to a standard version and can update to
-newer ones by delta, then prove it complies.
+- `standard/SPEC.md` - new: the whole normative core on one page - twenty numbered
+  MUST/SHOULD rules (R1-R20, RFC 2119), versioned with the standard. Where any other
+  document appears to add a requirement, the spec wins. The manifest is its
+  machine-readable projection: every entry cites the rule it enforces (`rule: "R#"`).
+- **One authored tree (ADR-014)** - `standard/` is now the single committed,
+  consumable form at real-repo paths; the old source/dist pair and `tools/reflect.mjs`
+  are gone (the reflect build and its four mapping classes were introduced and
+  retired within this unreleased span). `tools/tree-check.mjs` guards the tree
+  instead: no repo-own leaks, every manifest promise present, and the pristine tree
+  passes its own `self-verify --skeleton` (new flag). Adoption is one line:
+  `npx degit bodurkalukasz/repository-standards/standard`.
+- **Spec engine extracted (ADR-015, supersedes ADR-013)** - the five load-bearing
+  Spec Kit prompts are now the standard's own skills (`spec-specify`, `spec-clarify`,
+  `spec-plan`, `spec-tasks`, `spec-implement`; provenance: github/spec-kit v0.13.2,
+  MIT, `scripts/spec/LICENSE`), their runtime at `scripts/spec/`. Deleted: the
+  vendored area, `.specify/`, the ten `speckit-*` skills, the dead
+  `create-new-feature.sh` and ~600 lines of extension-hook boilerplate.
+- **Skills consolidated** - one family, eleven shipped: `backlog-from-specs` merged
+  into `add-to-backlog` (two automatic triggers), the `spec-analyze`/`spec-converge`
+  stubs folded into `spec-reconcile`'s new cross-spec consistency step; transition
+  flows collapsed into one router (`skills/align-to-standards/` with greenfield and
+  brownfield phase files; `modernize` now lives as adoption's plan-then-refactor
+  pass, ADR-007 unchanged); `disable-model-invocation` now matches what `AGENTS.md`
+  orders (impact/reconcile/backlog self-fire, update stays gated).
+- **The repo gates itself** - first own CI (`.github/workflows/checks.yml`):
+  tree-check, link-check (every relative md link must resolve), docsite build +
+  site-check. The web surface moved to `site/` (landing committed, `site/docs/`
+  generated and gitignored); `apps/` and the wheel experiments are gone.
+- `changes/` retired for this repo - fragments folded here; the maintainer edits
+  `## Unreleased` directly. Team repos keep the fragments mechanism as a
+  scale-profile prescription (`standard/docs/changelog-process.md`, the assembler
+  now ships as `scripts/changelog.mjs`).
 
-- `skills/update-to-version` - new: brings an already-aligned repo to a newer standard
-  version by applying the **delta** (not a re-scaffold), preserving client deviations,
-  then self-verifying. Complements `align-to-standards` (first adoption).
-- `specs/self-verify.mjs` (ships to `scripts/`) - new: dependency-free compliance check -
-  `.standards-version` pin (`--version` asserts a target), core skeleton, structure guard;
-  exits non-zero on failure so CI gates on it. `docs/self-verify.md` documents the
-  mechanical vs judgment tiers.
-- `.standards-version` - the version pin, formalized: `align-to-standards` writes it,
-  `update-to-version` bumps it, `self-verify` asserts it.
-- Wired into `align-to-standards` (pin + verify), `AGENTS.template` Workflows (a "stay
-  current" flow), and the `spec-guard` CI workflow (a self-verify gate).
+### Lifecycle and the guided loop (wave 2)
 
-Backlog tooling - the backlog feeds itself instead of being hand-assembled.
+- **Artifact lifecycle (ADR-010, Accepted)** - one arc for every artifact: ideas live
+  in `docs/ideas/` (status-driven, no records until approved, graduation on
+  approval); specs/records/docs are permanent and living; plan/tasks are ephemeral
+  and removed at close; enabling work (tokens, access) goes front-matter -> tracker
+  as blocking stories, never spec prose. Tracker posture: GitHub Issues default,
+  Jira and Linear as adapters behind a one-way bridge with key write-back.
+- **Statuses + the clarify gate** - a capability spec carries
+  `Status: in-refinement -> ready-to-develop -> in-development -> live`;
+  `ready-to-develop` is earned mechanically (a `## Clarifications` section, zero
+  open markers). The loop runs itself: agents start the clarify loop unprompted,
+  record deferrals as answers, and refuse to plan past a failing gate.
+- **Guided align** - `align-to-standards` is re-entrant: resume from measurement,
+  payoff-ordered waves, repeat to drift 0.
+- **Ideas/discovery** - speculative ideas are a first-class pre-decision kind:
+  explored end-to-end in one doc, no ADR/BDR/spec until approved; `Proposed` means a
+  decision awaiting ratification, never a maybe.
+- **Living documents + folder READMEs** - docs change by editing the same file in
+  place (the current version is the truth, git is the history); every folder
+  explains itself with a three-section README.
+- **Structure dogfood (ADR-008, revised by ADR-014)** - root `AGENTS.md` maps the
+  zones; strays rehomed; working notes live outside the repo by rule.
+- **Personas as a validation gate (ADR-006)** + the standard's own roster; the
+  structure guard fails a spec that serves nobody; UX forks catalogued (NN/g review
+  lens, JTBD, W3C DTCG tokens). Plain-language explain mode for the PO.
 
-- `skills/add-to-backlog` - new: capture a work item mid-flow in one step, enforcing the
-  backlog's rules (a real source, a definition of done, no duplicates, risk-ordered).
-- `skills/backlog-from-specs` - new: derive items from the two spec signals - a spec
-  delta (`spec-update`) and a drift finding (`spec-reconcile`) - so the backlog falls out
-  of the spec workflow automatically.
+### The align engine
+
+- `standard.manifest.json` (ADR-005, Accepted) - the standard describes itself as
+  data: files, sections, guards and decisions an aligned repo must have, each with
+  an `adapt` rule and a profile (`core`/`scale`, ADR-011 - one standard, two
+  verified profiles).
+- `scripts/self-verify.mjs` - manifest-driven compliance: reports **drift as a
+  number**, asserts the `.standards-version` pin, `--profile` filters, warns on
+  hand-copied transition skills (ADR-009), and `--skeleton` verifies the shipped
+  tree itself.
+- `update-to-version` applies the manifest-to-manifest delta and carries
+  `exceptions` forward; in-repo instructions are the source of truth (ADR-012) -
+  personal memory may point at rules, never hold them.
+
+### Adoption, brownfield, and cross-discipline standards
+
+- `docs/adoption.md` - the adoption checkmap: ordered gates from unaligned to
+  aligned + self-verifying, each producing an artifact; ends in a counted backlog
+  and a green self-verify; includes model guidance and the plan-then-refactor
+  modernize pass (ADR-007).
+- Brownfield: `onboard-repo`'s derive flow (capabilities, decisions the code
+  implies, the rest as backlog) and the eight-pass repo assessment now live inside
+  the align router's brownfield phase.
+- Backlog layer: the ordered, agent-first backlog template (INVEST + DoR); capture
+  via `add-to-backlog` incl. automatic items from spec deltas and drift findings.
+- Cross-discipline standards folded in: C4 (architecture diagrams), WCAG 2.2 AA
+  (accessibility floor), Impact + Story Mapping (greenfield discovery), OWASP ASVS +
+  SLSA (security baseline references), working-language policy (natural language is
+  a per-artifact config; default English).
+
+### Layer 2 - Node/TS
+
+- `stacks/node-ts` - the evidence-based paved road: pnpm + Turborepo, Node 24,
+  Biome (+ Prettier for SCSS), strict TS, Fastify native-DI service template with
+  Zod env, Next App Router config, hardened least-privilege Actions, 7-day
+  supply-chain cooldown; every pick with pros/cons and provenance in DECISIONS.md.
+- Tiered testing: unit + integration co-located (Vitest projects), e2e workspace
+  (Playwright), advisory Lighthouse CI, ephemeral Docker test-stack - real
+  dependencies, not mocks; maintenance rules stated (flake quarantine, coverage as
+  a floor on paths that matter).
+- App shell (DECISIONS #10): Better Auth + `openid-client` for enterprise SSO,
+  Next proxy -> Fastify with default-deny at both gates, CSS Modules + SCSS + DTCG
+  tokens; the boot-verified `starter/` - install, dev, sign-up -> dashboard proven
+  by curl and a Playwright journey.
+
+### Release machinery
+
+- Two-changelog process for team repos: per-PR fragments assembled by
+  `scripts/changelog.mjs` (`--check` validates frontmatter) into the technical
+  changelog and a curated release-notes draft; the maintainer cuts every release.
+  This repo itself edits `## Unreleased` directly (solo, core profile).
 
 ## 0.7.2 - 2026-07-07
 

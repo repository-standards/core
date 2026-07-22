@@ -4,7 +4,7 @@ How a new capability travels through the team: **PO writes the intent, a develop
 sharpens it into a buildable spec, an AI implements it, and the spec stays the truth.**
 The spec is the artifact that passes between roles - it starts as intent and gains
 precision at each hand-off. This is the ongoing flow once a repo is on the standard
-(greenfield from the start, or brownfield after `onboard-repo`).
+(greenfield from the start, or brownfield after the align router's onboarding phase).
 
 ## Who owns what
 
@@ -24,7 +24,7 @@ everything below; the AI does not invent behavior or make an unrecorded decision
 backlog item / intent
   -> PO:   behavioral spec  (what + why + acceptance)
     -> Dev:  spec-impact (ripple) -> buildable spec + plan + ADR/BDR if the change needs one
-      -> AI:   implement -> tests -> spec-converge
+      -> AI:   /spec-plan -> /spec-tasks -> /spec-implement -> tests
         -> reconcile: spec == code == tests  (spec-reconcile)
           -> pre-pr-review -> PR -> reviewer gate -> merge
 ```
@@ -47,10 +47,10 @@ delta**. After merge, the spec is current production truth - not a historical ti
    which ADRs, which code). Raise the spec to the **buildable** tier - the contracts a
    change can be built and verified from. If the change forces a contestable decision,
    write the **ADR/BDR** first (see the [decision checklist](decision-records/checklist.md)
-   for which forks warrant one). Run `spec-analyze` so the updated specs do not
+   for which forks warrant one). Run `spec-reconcile`'s cross-spec consistency step so the updated specs do not
    contradict each other. Produce the plan.
 3. **Build (AI).** Implement against the buildable spec; write the tests the acceptance
-   criteria imply. Use `spec-converge` to close the gap between the spec and the branch
+   criteria imply. Use `spec-reconcile` to close the gap between the spec and the branch
    (missing implementation, missing tests).
 4. **Reconcile.** Run `spec-reconcile`: the spec, the code, and the tests must agree; if
    the build revealed the spec was wrong, fix the spec (it is the truth, not a wish).
@@ -103,7 +103,7 @@ especially for the PO, whose view this is:
 - **Decisions** - the [ADR/BDR](decision-records/README.md) stream holds the *why*; the
   [decision checklist](decision-records/checklist.md) says which forks deserve a record.
 - **Onboarding** - a brownfield repo reaches this steady-state flow only after
-  `repo-assessment` -> `align-to-standards` -> `onboard-repo` have seeded the specs,
+  the align router (assess -> align -> onboard) has seeded the specs,
   decisions and backlog.
 
 ## Not this
