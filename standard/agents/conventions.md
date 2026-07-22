@@ -44,3 +44,11 @@ decisions in records. Personal memory, `~/.claude`-style global configs, and cha
 *point* at repo rules - they must never *hold* them. A rule that exists only outside
 the repo is treated as **missing**; finding one is a defect, fixed by landing the rule
 at its home. "It's in my memory" is not a location.
+
+### Docs
+
+- Not every doc is a decision record. Research, screening, and workstream material
+  is a plain **working doc** under `docs/`, linked from the record it informs -
+  records ([ADR/BDR](../decision-records/README.md#records-vs-working-docs)) capture
+  only decisions. Organize working docs by lifecycle: phase-boxed exploration in a
+  discovery folder, standing workstreams/libraries in their own top-level folder.

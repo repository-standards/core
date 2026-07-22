@@ -36,10 +36,17 @@ is spread across app / service / shared). Keep it at `specs/capability-map.json`
 }
 ```
 
-**Shipped, ready to use:** the structure lint
-[`../scripts/spec-structure.mjs`](../scripts/spec-structure.mjs) and the coupling
-guard [`../scripts/spec-guard.mjs`](../scripts/spec-guard.mjs) (both dependency-free),
-run by the CI job [`../.github/workflows/spec-guard.yml`](../.github/workflows/spec-guard.yml).
+**Shipped, ready to drop in:**
+
+- [`spec-structure.mjs`](spec-structure.mjs) - the structure lint, dependency-free.
+  Place it at `scripts/spec-structure.mjs`. Modes: full-tree audit (no args),
+  `--staged` (pre-commit, warn), `--base <ref> [--block]` (CI). No capability-map needed.
+- [`spec-guard.mjs`](spec-guard.mjs) - the coupling guard, dependency-free (Node + git
+  only). Place it at `scripts/spec-guard.mjs`. Modes: `--staged` (pre-commit, warn),
+  `--base <ref> [--block]` (CI), `--audit` (full-tree: every `specs/<capability>/` has a
+  map entry; `--block` to fail on an orphan).
+- [`../github/workflows/spec-guard.yml`](../github/workflows/spec-guard.yml) - the CI
+  job (blocks on PR). The `align-to-standards` skill drops both into a target repo.
 
 ## What is NOT mechanical (AI pass)
 

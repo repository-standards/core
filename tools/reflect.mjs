@@ -2,8 +2,8 @@
 // reflect - keep dist/ (the assembled real-repo skeleton) in sync with the source
 // concern folders, and prove it has not drifted (ENG-1).
 //
-// The repo is maintained BY CONCERN (agents/ claude/ decision-records/ docs/ github/
-// gitleaks/ skills/ specs/ + a few root files). dist/ is the SAME standard assembled at
+// The repo is maintained BY CONCERN under standard/ (agents/ claude/ decision-records/
+// docs/ github/ gitleaks/ skills/ specs/ + the manifest) - zone 2 of ADR-008. dist/ is the SAME standard assembled at
 // real-repo paths (AGENTS.md, .claude/, .github/, docs/, specs/, scripts/, ...). That
 // reflection used to be done by hand - and hand-maintained snapshots drift. This encodes
 // the mapping once, so drift becomes a checkable number, not a surprise.
@@ -35,52 +35,64 @@ const write = process.argv.includes("--write");
 
 // copy: [source, dist] - dist must be byte-identical to source.
 const COPY = [
-  ["specs/self-verify.mjs", "dist/scripts/self-verify.mjs"],
-  ["specs/spec-structure.mjs", "dist/scripts/spec-structure.mjs"],
-  ["specs/spec-guard.mjs", "dist/scripts/spec-guard.mjs"],
-  ["specs/capability-map.example.json", "dist/specs/capability-map.example.json"],
-  ["specs/capability-spec.template.md", "dist/specs/capability-spec.template.md"],
-  ["specs/constitution.template.md", "dist/specs/constitution.template.md"],
-  ["specs/spec-kit-setup.md", "dist/specs/spec-kit-setup.md"],
-  ["docs/PRINCIPLES.template.md", "dist/docs/PRINCIPLES.md"],
-  ["docs/PRODUCT.template.md", "dist/docs/PRODUCT.md"],
-  ["docs/backlog.template.md", "dist/docs/backlog.md"],
-  ["docs/changelog-process.md", "dist/docs/changelog-process.md"],
-  ["docs/adoption.md", "dist/docs/adoption.md"],
-  ["docs/repo-assessment.md", "dist/docs/repo-assessment.md"],
-  ["docs/self-verify.md", "dist/docs/self-verify.md"],
-  ["docs/taxonomy.md", "dist/docs/taxonomy.md"],
-  ["docs/ways-of-working.md", "dist/docs/ways-of-working.md"],
-  ["claude/settings.baseline.json", "dist/.claude/settings.json"],
-  ["github/pull_request_template.md", "dist/.github/pull_request_template.md"],
-  ["github/workflows/gitleaks.yml", "dist/.github/workflows/gitleaks.yml"],
-  ["github/workflows/spec-guard.yml", "dist/.github/workflows/spec-guard.yml"],
-  ["gitleaks/.gitleaks.toml", "dist/.gitleaks.toml"],
-  ["standard.manifest.json", "dist/standard.manifest.json"],
+  ["standard/specs/self-verify.mjs", "dist/scripts/self-verify.mjs"],
+  ["standard/specs/spec-structure.mjs", "dist/scripts/spec-structure.mjs"],
+  ["standard/specs/spec-guard.mjs", "dist/scripts/spec-guard.mjs"],
+  ["standard/specs/capability-map.example.json", "dist/specs/capability-map.example.json"],
+  ["standard/specs/capability-spec.template.md", "dist/specs/capability-spec.template.md"],
+  ["standard/specs/constitution.template.md", "dist/specs/constitution.template.md"],
+  ["standard/specs/spec-kit-setup.md", "dist/specs/spec-kit-setup.md"],
+  ["standard/docs/PRINCIPLES.template.md", "dist/docs/PRINCIPLES.md"],
+  ["standard/docs/PRODUCT.template.md", "dist/docs/PRODUCT.md"],
+  ["standard/docs/backlog.template.md", "dist/docs/backlog.md"],
+  ["standard/docs/changelog-process.md", "dist/docs/changelog-process.md"],
+  ["standard/docs/adoption.md", "dist/docs/adoption.md"],
+  ["standard/docs/ideas/README.md", "dist/docs/ideas/README.md"],
+  ["standard/docs/ideas/_template.md", "dist/docs/ideas/_template.md"],
+  ["standard/docs/analytics.template.md", "dist/docs/analytics.template.md"],
+  ["standard/docs/research/README.md", "dist/docs/research/README.md"],
+  ["standard/docs/research/_template.md", "dist/docs/research/_template.md"],
+  ["standard/docs/journeys/README.md", "dist/docs/journeys/README.md"],
+  ["standard/docs/journeys/_template.md", "dist/docs/journeys/_template.md"],
+  ["standard/docs/repo-assessment.md", "dist/docs/repo-assessment.md"],
+  ["standard/docs/self-verify.md", "dist/docs/self-verify.md"],
+  ["standard/docs/taxonomy.md", "dist/docs/taxonomy.md"],
+  ["standard/docs/ways-of-working.md", "dist/docs/ways-of-working.md"],
+  ["standard/claude/settings.baseline.json", "dist/.claude/settings.json"],
+  ["standard/github/pull_request_template.md", "dist/.github/pull_request_template.md"],
+  ["standard/github/workflows/gitleaks.yml", "dist/.github/workflows/gitleaks.yml"],
+  ["standard/github/workflows/spec-guard.yml", "dist/.github/workflows/spec-guard.yml"],
+  ["standard/gitleaks/.gitleaks.toml", "dist/.gitleaks.toml"],
+  ["standard/standard.manifest.json", "dist/standard.manifest.json"],
   ["changes/README.md", "dist/changes/README.md"],
-  ["decision-records/adr/README.md", "dist/docs/decision-records/adr/README.md"],
-  ["decision-records/adr/_template.md", "dist/docs/decision-records/adr/_template.md"],
-  ["decision-records/bdr/README.md", "dist/docs/decision-records/bdr/README.md"],
-  ["decision-records/bdr/_template.md", "dist/docs/decision-records/bdr/_template.md"],
+  ["standard/decision-records/adr/_template.md", "dist/docs/decision-records/adr/_template.md"],
+  ["standard/decision-records/bdr/README.md", "dist/docs/decision-records/bdr/README.md"],
+  ["standard/decision-records/bdr/_template.md", "dist/docs/decision-records/bdr/_template.md"],
 ];
-// skills: every skills/<name>/SKILL.md -> dist/.claude/skills/<name>/SKILL.md (copy)
-for (const name of readdirSync("skills")) {
-  if (existsSync(`skills/${name}/SKILL.md`)) COPY.push([`skills/${name}/SKILL.md`, `dist/.claude/skills/${name}/SKILL.md`]);
+// skills: lifecycle skills ship (copy); transition skills NEVER ship (ADR-009) - they are
+// the standard repo's own utility, run by the agent pointing at this repo (greenfield-start
+// even runs before the target repo exists). Guarded as source-only below.
+const TRANSITION_SKILLS = new Set(["align-to-standards", "onboard-repo", "modernize", "greenfield-start"]);
+for (const name of readdirSync("standard/skills")) {
+  if (!existsSync(`standard/skills/${name}/SKILL.md`)) continue;
+  if (TRANSITION_SKILLS.has(name)) continue;
+  COPY.push([`standard/skills/${name}/SKILL.md`, `dist/.claude/skills/${name}/SKILL.md`]);
 }
 
 // divergent: dist differs on purpose. {src, dist, reason}
 const DIVERGENT = [
-  { src: "docs/AGENTS.template.md", dist: "dist/AGENTS.md", reason: "template -> the real entry point (placeholders resolved, .template dropped)" },
-  { src: "docs/ARCHITECTURE.template.md", dist: "dist/docs/ARCHITECTURE.md", reason: "template -> a filled example for a real repo" },
-  { src: "docs/README.template.md", dist: "dist/docs/README.md", reason: "template -> the shipped docs index" },
-  { src: "docs/personas.template.md", dist: "dist/docs/personas.md", reason: "template -> a filled personas roster for a real repo" },
+  { src: "standard/docs/AGENTS.template.md", dist: "dist/AGENTS.md", reason: "template -> the real entry point (placeholders resolved, .template dropped)" },
+  { src: "standard/docs/ARCHITECTURE.template.md", dist: "dist/docs/ARCHITECTURE.md", reason: "template -> a filled example for a real repo" },
+  { src: "standard/docs/README.template.md", dist: "dist/docs/README.md", reason: "template -> the shipped docs index" },
+  { src: "standard/docs/personas.template.md", dist: "dist/docs/personas.md", reason: "template -> a filled personas roster for a real repo" },
   { src: "CONTRIBUTING.md", dist: "dist/CONTRIBUTING.md", reason: "the repo's own CONTRIBUTING vs the shipped template" },
-  { src: "specs/README.md", dist: "dist/specs/README.md", reason: "dist adds a 'Where the pieces are' orientation section for a real repo" },
-  { src: "specs/commands.md", dist: "dist/specs/commands.md", reason: "dist points at the shipped ../.claude/skills/ implementations" },
-  { src: "specs/enforcement.md", dist: "dist/specs/enforcement.md", reason: "dist adds a 'Shipped' section listing the installed guards" },
-  { src: "agents/conventions.md", dist: "dist/docs/conventions.md", reason: "links rewritten for the dist layout; dist trails source on the new Docs section (sync pending)" },
-  { src: "decision-records/README.md", dist: "dist/docs/decision-records/README.md", reason: "links rewritten for the dist layout" },
-  { src: "decision-records/catalog.md", dist: "dist/docs/decision-records/catalog.md", reason: "links rewritten (../specs -> ../../specs) and the source-only ADR link de-linked" },
+  { src: "standard/specs/README.md", dist: "dist/specs/README.md", reason: "dist adds a 'Where the pieces are' orientation section for a real repo" },
+  { src: "standard/specs/commands.md", dist: "dist/specs/commands.md", reason: "dist points at the shipped ../.claude/skills/ implementations" },
+  { src: "standard/specs/enforcement.md", dist: "dist/specs/enforcement.md", reason: "dist adds a 'Shipped' section listing the installed guards" },
+  { src: "standard/agents/conventions.md", dist: "dist/docs/conventions.md", reason: "links rewritten for the dist layout; dist trails source on the new Docs section (sync pending)" },
+  { src: "standard/decision-records/README.md", dist: "dist/docs/decision-records/README.md", reason: "links rewritten for the dist layout" },
+  { src: "standard/decision-records/checklist.md", dist: "dist/docs/decision-records/checklist.md", reason: "links rewritten (../specs -> ../../specs) and the source-only ADR link de-linked" },
+  { src: "standard/decision-records/adr/README.md", dist: "dist/docs/decision-records/adr/README.md", reason: "source lists this repo's own records; dist ships the empty index for a consuming repo" },
 ];
 
 // authored-only: dist files with no source.
@@ -92,11 +104,23 @@ const AUTHORED_ONLY = [
 
 // source-only: never shipped. dist must NOT contain the reflected path.
 const SOURCE_ONLY = [
-  { src: "decision-records/adr/ADR-001-decision-record-policy.md", dist: "dist/docs/decision-records/adr/ADR-001-decision-record-policy.md" },
-  { src: "decision-records/adr/ADR-002-specs-by-capability.md", dist: "dist/docs/decision-records/adr/ADR-002-specs-by-capability.md" },
-  { src: "decision-records/adr/ADR-003-specs-buildable-not-descriptive.md", dist: "dist/docs/decision-records/adr/ADR-003-specs-buildable-not-descriptive.md" },
-  { src: "decision-records/adr/ADR-004-standard-decisions-by-reference.md", dist: "dist/docs/decision-records/adr/ADR-004-standard-decisions-by-reference.md" },
-  { src: "decision-records/adr/ADR-005-align-engine-is-a-manifest.md", dist: "dist/docs/decision-records/adr/ADR-005-align-engine-is-a-manifest.md" },
+  { src: "standard/decision-records/adr/ADR-001-decision-record-policy.md", dist: "dist/docs/decision-records/adr/ADR-001-decision-record-policy.md" },
+  { src: "standard/decision-records/adr/ADR-002-specs-by-capability.md", dist: "dist/docs/decision-records/adr/ADR-002-specs-by-capability.md" },
+  { src: "standard/decision-records/adr/ADR-003-specs-buildable-not-descriptive.md", dist: "dist/docs/decision-records/adr/ADR-003-specs-buildable-not-descriptive.md" },
+  { src: "standard/decision-records/adr/ADR-004-standard-decisions-by-reference.md", dist: "dist/docs/decision-records/adr/ADR-004-standard-decisions-by-reference.md" },
+  { src: "standard/decision-records/adr/ADR-005-align-engine-is-a-manifest.md", dist: "dist/docs/decision-records/adr/ADR-005-align-engine-is-a-manifest.md" },
+  { src: "standard/decision-records/adr/ADR-006-personas-are-a-validation-gate.md", dist: "dist/docs/decision-records/adr/ADR-006-personas-are-a-validation-gate.md" },
+  { src: "standard/decision-records/adr/ADR-007-modernize-is-plan-then-refactor.md", dist: "dist/docs/decision-records/adr/ADR-007-modernize-is-plan-then-refactor.md" },
+  { src: "standard/decision-records/adr/ADR-008-standard-repo-three-zones.md", dist: "dist/docs/decision-records/adr/ADR-008-standard-repo-three-zones.md" },
+  { src: "standard/decision-records/adr/ADR-009-skills-lifecycle-vs-transition.md", dist: "dist/docs/decision-records/adr/ADR-009-skills-lifecycle-vs-transition.md" },
+  { src: "standard/decision-records/adr/ADR-010-artifact-lifecycle-and-tracker.md", dist: "dist/docs/decision-records/adr/ADR-010-artifact-lifecycle-and-tracker.md" },
+  { src: "standard/decision-records/adr/ADR-011-one-standard-two-profiles.md", dist: "dist/docs/decision-records/adr/ADR-011-one-standard-two-profiles.md" },
+  { src: "standard/skills/align-to-standards/SKILL.md", dist: "dist/.claude/skills/align-to-standards/SKILL.md" },
+  { src: "standard/skills/onboard-repo/SKILL.md", dist: "dist/.claude/skills/onboard-repo/SKILL.md" },
+  { src: "standard/skills/modernize/SKILL.md", dist: "dist/.claude/skills/modernize/SKILL.md" },
+  { src: "standard/skills/greenfield-start/SKILL.md", dist: "dist/.claude/skills/greenfield-start/SKILL.md" },
+  { src: "standard/decision-records/adr/ADR-012-in-repo-instructions-are-the-source-of-truth.md", dist: "dist/docs/decision-records/adr/ADR-012-in-repo-instructions-are-the-source-of-truth.md" },
+  { src: "standard/decision-records/adr/ADR-013-spec-kit-is-an-engine-by-reference.md", dist: "dist/docs/decision-records/adr/ADR-013-spec-kit-is-an-engine-by-reference.md" },
 ];
 
 // --- walk dist for the orphan check ----------------------------------------------

@@ -5,7 +5,7 @@ has no record, it does not exist - reviewers and agents treat undocumented
 divergence as a red flag.
 
 > **Which decisions should a project even have?** See the
-> [decision catalog](catalog.md) - the menu of forks a project keeps hitting
+> [decision checklist](checklist.md) - the menu of forks a project keeps hitting
 > (datastore, auth, API shape, release strategy, ...) with the standard's paved-road
 > default for each. It drives greenfield scaffolding and the `onboard-repo` sweep.
 
@@ -33,6 +33,10 @@ permanent anchor.
 
 Never edit an Accepted ADR/BDR to change the decision - write a new one that
 supersedes it.
+
+**Not a record until approved** (ADR-010): a speculative idea gets no ADR/BDR/spec -
+`Proposed` means a decision awaiting ratification, not a maybe. Ideas live in
+`docs/ideas/` with their own statuses and graduate into records only when approved.
 
 ## Altitude hierarchy (which wins on conflict)
 

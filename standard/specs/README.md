@@ -22,9 +22,9 @@ SPEC = description of a ticket
 Every capability spec names the **persona(s)** it serves (from
 [`personas.md`](../docs/personas.md)) and, in a line, how it advances their job. Behavior
 is verified against the code (buildable, below) *and* against a user - a spec that serves
-no persona is a candidate for deletion, not merge (personas are a validation gate; the
-standard's ADR-006). Where a rule helps one persona and hurts another, the resolution is a
-recorded **BDR**, cited from the spec.
+no persona is a candidate for deletion, not merge ([ADR-006](../decision-records/adr/ADR-006-personas-are-a-validation-gate.md)).
+Where a rule helps one persona and hurts another, the resolution is a recorded **BDR**,
+cited from the spec.
 
 ## Spec depth: buildable, not descriptive
 
@@ -150,14 +150,9 @@ reconcile spec vs code vs tests **before** completion. No silent drift.
 
 ## Where the pieces are
 
-- Setup (install Spec Kit + wire the loop): [`spec-kit-setup.md`](spec-kit-setup.md)
 - Format: [`capability-spec.template.md`](capability-spec.template.md)
-- Commands + runnable skills: [`commands.md`](commands.md), the `/spec-*` skills in
-  [`../.claude/skills/`](../.claude/skills/) (spec-impact, spec-update, spec-reconcile,
-  spec-analyze, spec-converge)
-- Governance bridge: [`constitution.template.md`](constitution.template.md)
-- Enforcement (pre-commit + CI): [`enforcement.md`](enforcement.md) +
-  [`../scripts/spec-guard.mjs`](../scripts/spec-guard.mjs)
+- Commands / skills: [`commands.md`](commands.md)
+- Enforcement (pre-commit + CI): [`enforcement.md`](enforcement.md)
 
 ## Altitude and governance
 

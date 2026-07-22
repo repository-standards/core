@@ -4,6 +4,11 @@ The canonical guide for how to work in this repo - layout, commands,
 architecture, and conventions - is [`AGENTS.md`](./AGENTS.md). Read it first. It
 applies to humans and coding agents alike.
 
+**Want to help but don't know where?** Start with
+[`docs/open-questions.md`](./docs/open-questions.md) - the owner's provisional calls,
+each openly looking for a better answer. Winning a challenge there is the most valuable
+contribution this repo takes.
+
 ## Quick rules
 
 - **Branch:** short-lived, off an up-to-date `main`. **Base every PR on `main`, not
@@ -19,7 +24,7 @@ applies to humans and coding agents alike.
   [`changes/`](./changes/) fragment instead (see the
   [changelog process](./docs/changelog-process.md)). The maintainer assembles
   fragments and cuts every release.
-- **Source, not `dist/`:** edit the concern folders (the source), never `dist/`
+- **Source, not `dist/`:** edit the concern folders under `standard/` (the source), never `dist/`
   files that are copies. Run `node tools/reflect.mjs --write` to sync the copy
   class into `dist/`, and `node tools/reflect.mjs` (check) must be green before a
   PR - it fails on drift, orphaned `dist/` files, or a source-only file leaking

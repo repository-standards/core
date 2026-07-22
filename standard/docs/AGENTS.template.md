@@ -13,7 +13,7 @@ PRINCIPLES.md -> ADR / BDR (accepted decisions)
     -> .cursor/rules + skills -> code
 ```
 
-Behavioral source of truth = the [capability specs](specs/README.md) (what the
+Behavioral source of truth = the [capability specs](docs/specs/README.md) (what the
 system does now). Decisions = [ADR / BDR](docs/decision-records/README.md) (why).
 Structure = ARCHITECTURE.md. There is no TDR stream.
 
@@ -34,8 +34,8 @@ Common commands (install, dev, build, test, checks).
 
 ## Conventions
 
-<!-- Merged from docs/conventions.md. Keep it here, do not duplicate into CLAUDE.md
-     or .cursor/rules. -->
+<!-- Merged from docs/conventions.md. Keep it here,
+     do not duplicate into CLAUDE.md or .cursor/rules. -->
 
 - Conventional Commits, ticket after the colon; no AI/tool attribution; ASCII
   hyphen only; small focused PRs.
