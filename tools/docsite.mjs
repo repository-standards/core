@@ -22,16 +22,27 @@
 
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from "node:fs";
 
-const OUT_DIR = "site/docs";
-const GITHUB_REPO_URL = "https://github.com/bodurkalukasz/repository-standards";
+// Form is the core's, content is the repo's: any repo in the ecosystem can carry
+// a site.config.json (brand, repo URL, topbar, page map) and run THIS generator
+// against its own markdown - one form, many sites, zero copied generators.
+const CONFIG = existsSync("site.config.json") ? JSON.parse(readFileSync("site.config.json", "utf8")) : {};
+const OUT_DIR = CONFIG.out_dir || "site/docs";
+const GITHUB_REPO_URL = CONFIG.repo_url || "https://github.com/bodurkalukasz/repository-standards";
+const BRAND = CONFIG.brand || "repository-standards";
+const TOPBAR = CONFIG.topbar || [
+  { label: "Landing", href: "../index.html" },
+  { label: "Docs", href: "index.html", on: true },
+  { label: "Node stack \u2197", href: "https://github.com/bodurkalukasz/repository-standards-node", external: true },
+];
 
 // --- the page map (nav order) -----------------------------------------------------
 // group: null renders as a flat top-level link; a string renders a group heading the
 // first time it is seen (consecutive pages sharing a group nest under one heading).
-const PAGES = [
+const PAGES = CONFIG.pages || [
   { src: "README.md", out: "index.html", nav: "Home", group: null },
   { src: "standard/SPEC.md", out: "spec.html", nav: "The spec", group: null },
   { src: "docs/manifesto.md", out: "why.html", nav: "Why", group: null },
+  { src: "docs/ecosystem.md", out: "ecosystem.html", nav: "How it fits together", group: null },
   { src: "standard/docs/adoption.md", out: "adopt.html", nav: "Adopt (start here)", group: null },
   { src: "standard/docs/taxonomy.md", out: "taxonomy.html", nav: "Taxonomy", group: "Concepts" },
   { src: "standard/docs/ways-of-working.md", out: "ways-of-working.html", nav: "Ways of working", group: "Concepts" },
@@ -344,6 +355,13 @@ function mdToHtml(markdown, ctx) {
 // --- HTML shell (CSS + sidebar nav) --------------------------------------------------
 
 const CSS = `
+.topbar{position:sticky;top:0;z-index:50;background:rgba(13,14,17,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.07)}
+.topbar-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:10px 20px}
+.tb-brand{font-weight:700;text-decoration:none}
+.tb-links{margin-left:auto;display:flex;gap:16px;font-size:14px}
+.tb-links a{text-decoration:none;opacity:.75}
+.tb-links a:hover,.tb-links a.tb-on{opacity:1}
+
 /* Dark by default, matching the landing page's palette (site/index.html
    :root vars: ink/surface/line/tx/mid/amber) - the docs and the landing read as one
    product, nextjs.org-style. Light stays as an explicit user-preference override. */
@@ -540,9 +558,10 @@ function renderPage(page, contentHtml) {
 <style>${CSS}</style>
 </head>
 <body>
+<div class="topbar"><div class="topbar-in"><a class="tb-brand" href="${escapeAttr(TOPBAR[0]?.href || "../index.html")}">${escapeHtml(BRAND)}</a><span class="tb-links">${TOPBAR.map((l) => `<a href="${escapeAttr(l.href)}"${l.on ? ' class="tb-on"' : ""}${l.external ? ' target="_blank" rel="noopener noreferrer"' : ""}>${escapeHtml(l.label)}</a>`).join("")}</span></div></div>
 <div class="layout">
 <nav class="sidebar" aria-label="Documentation">
-<a class="brand" href="index.html">repository-standards</a>
+<a class="brand" href="index.html">${escapeHtml(BRAND)}</a>
 <div class="nav-links">
 ${renderNav(page.out)}</div>
 <div class="nav-links" style="margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,.07)">

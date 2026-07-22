@@ -1,0 +1,32 @@
+# Deploys site/ (landing + generated docs) to GitHub Pages.
+# Needs Pages enabled: Settings -> Pages -> Source: GitHub Actions
+# (on a Free plan the repo must be public for Pages).
+name: pages
+# DISABLED for now (owner call): manual trigger only. To go live, restore the
+# push trigger below and enable Pages (Settings -> Pages -> Source: GitHub Actions).
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node tools/docsite.mjs && node tools/site-check.mjs
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -246,14 +246,41 @@
   #lang .dfoot{margin-top:11px;padding-top:10px;border-top:1px solid var(--line);font-size:11.5px;color:var(--mid);line-height:1.5}
   #lang .dfoot b{color:var(--add)}
   @media(max-width:600px){#lang .lstage{height:490px}#lang .speech{font-size:11px;min-height:60px}}
+
+  .ecoswitch{position:relative;margin:0 auto}
+  .ecoswitch>button{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line2);color:var(--tx);font:600 14px/1 var(--sans);padding:9px 14px;border-radius:10px;cursor:pointer}
+  .ecoswitch>button:hover{background:var(--surface2)}
+  .ecaret{font-size:10px;color:var(--dim);transition:transform .15s}
+  .ecoswitch[data-open] .ecaret{transform:rotate(180deg)}
+  .ecomenu{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);min-width:320px;background:var(--ink2);border:1px solid var(--line2);border-radius:14px;padding:8px;box-shadow:0 18px 50px rgba(0,0,0,.5);display:none;text-align:left}
+  .ecoswitch[data-open] .ecomenu{display:block}
+  .egrp{font:600 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:10px 12px 6px}
+  .ecomenu a{display:flex;flex-direction:column;gap:2px;text-decoration:none;padding:10px 12px;border-radius:9px}
+  .ecomenu a:hover{background:var(--surface)}
+  .ecomenu a b{font-size:14px}
+  .ecomenu a span{font-size:12px;color:var(--dim)}
+  .ecomenu a[aria-current] b::after{content:"  \2713";color:var(--add)}
+  .ecomenu hr{border:0;border-top:1px solid var(--line);margin:6px 4px}
+  @media(max-width:860px){.ecoswitch{display:none}}
 </style>
 
 <header>
   <div class="wrap bar">
     <span class="brand">repository<b>-</b>standards</span>
     <span class="tag mono">v0.7.2</span>
+    <div class="ecoswitch" id="ecoswitch">
+      <button type="button" aria-haspopup="true" aria-expanded="false" id="ecobtn">Repository Standards <span class="ecaret">&#9662;</span></button>
+      <div class="ecomenu" role="menu" aria-label="Ecosystem">
+        <div class="egrp">Core</div>
+        <a role="menuitem" href="index.html" aria-current="page"><b>Repository Standards</b><span>the standard - one page of rules, align, verify, drift 0</span></a>
+        <hr>
+        <div class="egrp">Best practices</div>
+        <a role="menuitem" href="https://github.com/bodurkalukasz/repository-standards-node"><b>Node</b><span>Next.js + Fastify - starter, decisions, adapting guide</span></a>
+      </div>
+    </div>
     <nav class="links">
       <a href="docs/">Docs</a>
+      <a href="https://github.com/bodurkalukasz/repository-standards-node">Node stack</a>
       <a href="#spec">The spec</a>
       <a href="#keystone">Mechanism</a>
       <a href="#paths">Two paths in</a>
@@ -679,6 +706,11 @@
     }, 900);
   }
 })();
+
+  var eco=document.getElementById("ecoswitch"),ecb=document.getElementById("ecobtn");
+  if(eco&&ecb){ecb.addEventListener("click",function(){var o=eco.hasAttribute("data-open");eco.toggleAttribute("data-open");ecb.setAttribute("aria-expanded",String(!o));});
+  document.addEventListener("click",function(e){if(!eco.contains(e.target)){eco.removeAttribute("data-open");ecb.setAttribute("aria-expanded","false");}});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"){eco.removeAttribute("data-open");ecb.setAttribute("aria-expanded","false");}});}
 </script>
 
 <script>

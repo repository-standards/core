@@ -7,6 +7,7 @@ not here.
 | File | What it is |
 |---|---|
 | [manifesto.md](manifesto.md) | the founder's why - the itch, the idea, the non-negotiables |
+| [ecosystem.md](ecosystem.md) | how the repos fit together - the engine, the map packs, and how a stack plugs in |
 | [positioning.md](positioning.md) | the one statement and pillars every surface quotes verbatim |
 | [personas.md](personas.md) | who this product serves - the roster the specs and backlog cite |
 | [faq.md](faq.md) | short canonical answers to recurring adopter questions |
