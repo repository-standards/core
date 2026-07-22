@@ -72,6 +72,34 @@ npx degit bodurkalukasz/repository-standards/standard
 7. **Open one focused PR.** Never push without the human's go. Never reference other
    repos.
 
+## Technology best practices (Layer 2)
+
+After routing, always run the stack step - detection first, question second:
+
+1. **Detect** the target repo's technology from its own evidence: `package.json`
+   (Node), `pyproject.toml`/`requirements.txt` (Python), `go.mod` (Go),
+   `Cargo.toml` (Rust), `*.csproj` (.NET). Greenfield repos have none - ask
+   instead.
+2. **Look it up** in the registry - `stacks.json` in this checkout. The registry
+   is the only source of official stacks; never offer an unlisted repo.
+3. **Offer, never impose:** "This repo is <technology>. Add the <technology>
+   best practices from <repo>?" Greenfield: degit the stack's `starter/`.
+   Brownfield: adopt the picks from its DECISIONS and copy only the configs the
+   repo needs - subtractive adoption, never a second scaffold beside the code.
+4. **No match in the registry:** say so plainly, then offer the fallback: a
+   researched best-practices document for the detected technology, shaped like
+   the node stack's DECISIONS (summary table first; per axis the pick, a short
+   why, an escape hatch; provenance = current community consensus with linked
+   sources, clearly dated). It lands in the target repo as
+   `docs/stack-decisions.md` - the repo's own record, not an official stack -
+   and the offer notes that a real `repository-standards-<technology>` can grow
+   from it later. Either way Layer 1 continues unchanged - the methodology is
+   stack-agnostic by design.
+
+The user may also name the stack up front ("align this repo, with the node
+stack" / "greenfield with node"): skip detection, verify the registry entry,
+and weave the stack step into the phase flow so one conversation carries both.
+
 ## Re-entrant: this is a process, not a pass
 
 For a brownfield repo one PR never reaches drift 0 - and it should not try. Align is a

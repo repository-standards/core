@@ -11,8 +11,8 @@ Statuses: `todo` / `doing` / `blocked` / `done`. Drop `done` rows when a release
 
 | id | title | why | DoD | status |
 |----|-------|-----|-----|--------|
-| TMPL-1 | Starter template debt | boot-verifying the starter exposed stack-level defects; the `templates/` dir that held most of them was deleted in the restructure - what survives applies to `stacks/node-ts/starter/` itself | re-verify the starter still boots (`pnpm install` clean, `pnpm dev` boots web+api through the proxy, auth journey green); modernize the copied `biome.json` (`rules.recommended` -> `preset`, clearing the Biome 2.5 deprecation) | todo |
-| STACKS-2 | Second technology proves the core/stack split | the standard reads Node-flavored today; the layout promises a universal core + `stacks/<technology>/` overlays - only a second stack proves nothing leaks | a minimal `stacks/python-uv/` (or the era's default): DECISIONS with evidence, the same tiered-testing shape; the core untouched by the addition. Evidence scan (2026-07-22): no Python production repo exists locally. Stays gated on evidence: name a repo to distill from, or the first Python adoption becomes the evidence | todo |
+| TMPL-1 | Starter debt (moved) | starter maintenance now lives in repository-standards-node - its CI, its backlog | tracked there; row kept one release for the pointer | done (moved 2026-07-22) |
+| STACKS-2 | Second stack repo proves the registry model | one technology in stacks.json proves nothing about the seam; a second (Python, evidence-gated) must land as one new repo + one registry line with the core untouched | new repo repository-standards-python + registry entry; core diff = 1 line; still gated on a real evidence repo | todo |
 
 ## Epic: Discoverability - AI agents recommend it
 

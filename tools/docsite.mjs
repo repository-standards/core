@@ -40,7 +40,7 @@ const PAGES = [
   { src: "standard/docs/decision-records/checklist.md", out: "checklist.html", nav: "Decision checklist", group: "Reference" },
   { src: "standard/docs/decision-records/README.md", out: "decision-records.html", nav: "Decision records", group: "Reference" },
   { src: "docs/faq.md", out: "faq.html", nav: "FAQ", group: null },
-  { src: "docs/open-questions.md", out: "open-questions.html", nav: "Open questions", group: null },
+  { src: "docs/open-questions/README.md", out: "open-questions.html", nav: "Open questions", group: null },
   { src: "docs/case-studies/README.md", out: "case-studies.html", nav: "Case studies", group: null },
 ];
 const PAGES_BY_SRC = new Map(PAGES.map((p) => [p.src, p]));
@@ -545,6 +545,10 @@ function renderPage(page, contentHtml) {
 <a class="brand" href="index.html">repository-standards</a>
 <div class="nav-links">
 ${renderNav(page.out)}</div>
+<div class="nav-links" style="margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,.07)">
+<a href="../index.html">&larr; Landing</a>
+<a href="https://github.com/bodurkalukasz/repository-standards-node" target="_blank" rel="noopener noreferrer">Node stack (Layer 2) &nearr;</a>
+</div>
 </nav>
 <main class="content">
 <div class="prose">

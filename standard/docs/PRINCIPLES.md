@@ -7,7 +7,7 @@ them except an explicit change to this file.
   or a new pattern needs an ADR.
 - **Small, focused PRs.** One logical change; reviewable in minutes.
 - **Supply-chain cooldown.** Never install a package version published less than 7
-  days ago (enforced via pnpm `minimumReleaseAge: 10080`). A critical security fix
+  days ago (enforced via the package manager's release-age cooldown - the mechanism per stack lives in your stack's DECISIONS). A critical security fix
   gets a temporary exclude, not a global lowering.
 - **Single source of truth.** Every rule and every fact lives in exactly one place.
   No duplicated conventions across files; no invented data where a real source

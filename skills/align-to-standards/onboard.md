@@ -104,7 +104,10 @@ guards are green - not when every file has a paragraph.
    drift is caught from now on. This is what keeps the repo maintainable *after* you
    leave, and what makes the backlog shrink instead of grow.
 
-8. **Then drain the backlog incrementally.** Take items in priority order, each a small
+8. **Offer the stack layer.** Run the router's technology step (detect ->
+   registry -> offer): a brownfield Node repo gets the Node best practices
+   offered as picks to adopt, never as a re-scaffold.
+9. **Then drain the backlog incrementally.** Take items in priority order, each a small
    PR through the normal flow: `spec-impact` -> `spec-update` -> `spec-plan`/`spec-tasks`/`spec-implement` ->
    `spec-reconcile`. The backlog feeds itself: spec deltas and code<->spec
    drift found along the way append new items. Re-run the assessment periodically to

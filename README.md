@@ -89,9 +89,10 @@ conventions -> code`.
 
 - **Layer 1 - the standard (stack-agnostic):** everything above. Works for any repo, any
   language.
-- **Layer 2 - Node/TypeScript setup:** a runnable scaffold on top, distilled from real
-  production repos (pnpm + Turbo, Biome, Fastify native DI, Next.js, Vitest/Playwright,
-  hardened Actions). Take Layer 1 alone, or 1 + 2.
+- **Layer 2 - technology best practices:** one satellite repo per technology,
+  official when listed in [`stacks.json`](stacks.json). First:
+  [repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node)
+  (Next.js + Fastify starter, boot-verified). Take Layer 1 alone, or 1 + 2.
 
 ## One tree
 

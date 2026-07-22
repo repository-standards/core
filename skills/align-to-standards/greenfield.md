@@ -27,11 +27,14 @@ The order is deliberate: **for whom -> what -> how**. Personas gate everything d
    signals, anti-goals. Mark the **primary** persona (wins ties). Record "target personas"
    as a **BDR**. Nothing downstream is written without a persona to point at.
 
-4. **Choose the stack (ask; default the paved road).** Propose the Layer 2 default -
-   **Fastify** (services) + **Next.js** (web), pnpm + Turbo + Biome, Node 24
-   (`stacks/node-ts`) - and confirm or adapt per the user's context. When Layer 2 is
-   chosen, scaffold from the boot-verified `stacks/node-ts/starter/` (auth/proxy/styling
-   picks per the stack's DECISIONS). Record the topology and the stack as **ADRs** (from
+4. **Choose the stack (ask; default the paved road).** Read the registry
+   (`stacks.json` in this checkout) and propose the registered stack for the
+   user's technology; the picks and their rationale live in that stack repo's
+   DECISIONS - never hardcode them here. When a stack is chosen, scaffold from
+   its boot-verified starter (Node:
+   `npx degit bodurkalukasz/repository-standards-node/starter my-app`). The user
+   may name the stack up front ("greenfield with node") - then this step asks
+   nothing and just guides. Record the topology and the stack as **ADRs** (from
    the decision checklist `docs/decision-records/checklist.md`: repo topology, domain
    boundaries, datastore, API style, auth).
 
@@ -69,4 +72,4 @@ The order is deliberate: **for whom -> what -> how**. Personas gate everything d
 
 Pairs with the [brownfield phase](onboard.md) (reconstruct personas + specs from existing
 code). Uses `personas.md` (ADR-006), the decision checklist, the spec model, and the
-Layer 2 stack (`stacks/node-ts`).
+Layer 2 stack from the registry (`stacks.json`).

@@ -64,7 +64,7 @@
 - **Pains / frictions.** Descriptive specs that cannot be rebuilt from; scaffolding
   debris from shipped features; docs that lie about the current system.
 - **Decisions they influence.** ADR-002/003 (specs by capability, buildable), SD-1..7,
-  the coupling guard, stack picks in `stacks/node-ts`.
+  the coupling guard, stack picks in the registered stack repos (`stacks.json`).
 - **Success signals.** A capability rebuilt from its spec alone passes its tests; the
   coupling guard blocks a drifting PR before review does.
 - **Anti-goals.** Process for its own sake; being the human linter.

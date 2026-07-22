@@ -5,7 +5,7 @@ is [`AGENTS.md`](./AGENTS.md). Read it first. It applies to humans and coding
 agents alike.
 
 **Want to help but don't know where?** Start with
-[`docs/open-questions.md`](./docs/open-questions.md) - the owner's provisional calls,
+[`docs/open-questions/README.md`](./docs/open-questions/README.md) - the owner's provisional calls,
 each openly looking for a better answer. Winning a challenge there is the most valuable
 contribution this repo takes.
 

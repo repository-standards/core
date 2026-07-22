@@ -28,5 +28,5 @@ and update). `node scripts/self-verify.mjs` proves compliance afterwards.
 ## Optional
 
 - [Positioning](docs/positioning.md): the one-liner and pillars every surface quotes
-- [Layer 2 Node/TS stack](stacks/node-ts/README.md): the evidence-based paved road
+- [Stack registry](stacks.json): official technology best practices (Layer 2) - first: repository-standards-node
 - [The shipped tree](standard/): what an aligned repo receives - degit it: npx degit bodurkalukasz/repository-standards/standard

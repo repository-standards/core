@@ -33,13 +33,7 @@ Record the trade-off, not the obvious. One record per decision; at most ~3 optio
 
 The **areas** below are stack-agnostic - every project decides them. The concrete
 paved-road **answers** for a given stack live in that stack's layer (Node/TS: the
-`stacks/node-ts` setup - pnpm + Turbo monorepo, Biome, Fastify native plugin DI, Next
-App Router, Vitest/Playwright, hardened GitHub Actions, supply-chain cooldown). Where a
-default is stack-specific it is marked `-> stack layer`.
-
----
-
-## Foundation & structure
+the registered stack for your technology (`stacks.json` in the standard repo; Node: repository-standards-node - picks and rationale live in its DECISIONS) 
 
 | Decision | Why it matters | Default direction (paved road) | Record |
 |---|---|---|---|

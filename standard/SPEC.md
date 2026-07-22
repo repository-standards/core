@@ -96,9 +96,11 @@ binds every repo, a solo one included.
 ## Layers and profiles
 
 - **R20.** The standard is two layers, adoptable independently - Layer 1, this
-  methodology, for any stack; Layer 2, an optional stack setup - and one standard
-  with two profiles: core keeps knowledge alive in every repo, scale adds the
-  coordination artifacts teams need. Solo repos meet core alone and are compliant.
+  methodology, for any stack; Layer 2, optional technology best practices living
+  in per-technology stack repos, official only when listed in the core registry
+  (`stacks.json`) - and one standard with two profiles: core keeps knowledge
+  alive in every repo, scale adds the coordination artifacts teams need. Solo
+  repos meet core alone and are compliant.
 
 ## What this standard does not do
 
