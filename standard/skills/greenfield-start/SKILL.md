@@ -31,8 +31,10 @@ The order is deliberate: **for whom -> what -> how**. Personas gate everything d
 
 4. **Choose the stack (ask; default the paved road).** Propose the Layer 2 default -
    **Fastify** (services) + **Next.js** (web), pnpm + Turbo + Biome, Node 24
-   (`stacks/node-ts`) - and confirm or adapt per the user's context. Record the topology
-   and the stack as **ADRs** (from the decision catalog `decision-records/catalog.md`:
+   (`stacks/node-ts`) - and confirm or adapt per the user's context. When Layer 2 is
+   chosen, scaffold from `stacks/node-ts` (templates; the boot-verified `starter/` once
+   STARTER-1 lands - auth/proxy/styling picks per DECISIONS #10). Record the topology
+   and the stack as **ADRs** (from the decision checklist `decision-records/checklist.md`:
    repo topology, domain boundaries, datastore, API style, auth).
 
 5. **Break into modules/capabilities (with the user).** Two lightweight techniques close the
@@ -69,4 +71,4 @@ The order is deliberate: **for whom -> what -> how**. Personas gate everything d
 
 Pairs with `onboard-repo` (brownfield: reconstruct personas + specs from existing code) and
 `align-to-standards` (adopt the standard into any repo). Uses `personas.md` (ADR-006), the
-decision catalog, the spec model, and the Layer 2 stack (`stacks/node-ts`).
+decision checklist, the spec model, and the Layer 2 stack (`stacks/node-ts`).

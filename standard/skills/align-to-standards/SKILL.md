@@ -33,6 +33,12 @@ repo.
 4. **Watch repo gotchas** (e.g. a broad `settings.json` `.gitignore` rule swallowing
    `.claude/settings.json` - add a `!` negation).
 
+   Also **elicit the unwritten rules (ADR-012 / CONS-3):** ask the user for the tribal
+   knowledge - rules living in heads, personal configs (`~/.claude`, dotfiles), agent
+   memories, or pinned chats - and land each at its taxonomy home (`AGENTS.md`,
+   conventions, `CONTRIBUTING`, a spec, a record). A repo rule that stays outside the
+   repo is missing, not stored.
+
 5. **Pin the aligned version, carry the manifest.** Write the standard's version to
    `.standards-version`, and copy that version's `standard.manifest.json` into the repo
    (ADR-005) - it is the checklist the align was measured against, and what `self-verify`
@@ -48,6 +54,25 @@ repo.
 
 7. **Open one focused PR.** Never push without the human's go. Never reference other
    repos.
+
+## Re-entrant: this is a process, not a pass (GUIDE-1)
+
+For a brownfield repo one PR never reaches drift 0 - and it should not try. Align is a
+process the user **re-enters until the repo is compliant**, and every entry is guided:
+
+- **Resume from measurement, not memory.** Each run starts by re-reading
+  `.standards-version` + `standard.manifest.json` and running `self-verify`: what is
+  already done stays done; the open delta is the work list. Never re-propose what exists.
+- **Propose the next wave, ordered by payoff.** From the open delta, pick the few items
+  with the biggest win first - typically: the agent entry point + taxonomy, then missing
+  foundational decisions (ADRs), then folder structure, then product descriptions
+  (PRODUCT/personas), then guards. Say *why this wave, why now*, sized to land in one PR.
+- **Hand-hold, do not dump.** For each wave item, guide the user through it (elicit,
+  propose, record) rather than emitting a pile of TODOs. Deferrals are recorded, not
+  dropped.
+- **Repeat until drift 0.** Close each wave with `self-verify`; the number falling is the
+  progress bar. A multi-year brownfield may take many waves - that is the designed shape,
+  not a failure.
 
 ## Then, for an existing repo: hand off to `onboard-repo`
 

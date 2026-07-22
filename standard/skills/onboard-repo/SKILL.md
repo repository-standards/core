@@ -67,6 +67,11 @@ guards are green - not when every file has a paragraph.
    legacy docs). Each contradiction is a backlog item, resolved by making the record
    match real behavior - or by a fix, if the behavior itself is the bug.
 
+   Also **elicit the unwritten rules (ADR-012):** ask the team for tribal knowledge -
+   gotchas, "always do X before Y", rules in personal configs or agent memories - and
+   land each at its taxonomy home. A brownfield repo is not onboarded while its most
+   important rules live outside it.
+
 6. **Build the backlog.** Everything from steps 2-5 that you did not finish now becomes
    ordered work items in `docs/backlog.md` (see that file for the format). Group into
    epics ("Spec the domain", "Record foundational decisions", "Wire the guards"). Each
