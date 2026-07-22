@@ -18,7 +18,7 @@ outgrew itself - as its own meta entry predicted it would.)
 | Topic | Decided | The doubt, in one line |
 |---|---|---|
 | [One authored tree](one-tree.md) | ADR-014: single `standard/` tree, no source/dist split | template shells and read-as-is docs mix in one tree |
-| [Twenty rules](twenty-rules.md) | SPEC.md, R1-R20 on one page | 20 is the top of the winners' range; some rules bundle several MUSTs |
+| [Twenty rules](twenty-rules.md) | SPEC.md, R1-R21 on one page | 21 is past the top of the winners' range; some rules bundle several MUSTs |
 | [Stacks as satellite repos](stacks-satellite.md) | ADR-016: one repo per technology + registry | two repos to run; registry is a solo-merge gate |
 | [Genesis history for the org move](genesis-history.md) | clean-slate, curated commit sequence, honest dates | narrative order vs the record of what really happened |
 | [Engine cherry-pick](engine-cherry-pick.md) | ADR-015: prompts are ours; upstream read at release | five prompts could quietly fall behind upstream |

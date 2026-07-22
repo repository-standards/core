@@ -16,7 +16,7 @@
     { "path": "AGENTS.md", "purpose": "the single agent entry point", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.1.0", "rule": "R1" },
     { "path": ".standards-version", "purpose": "the version pin this whole mechanism turns on - written by align-to-standards / update-to-version", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "unreleased", "rule": "R2" },
     { "path": "standard.manifest.json", "purpose": "this manifest, at the pinned version - what self-verify checks against", "adapt": "copy", "required": true, "profile": "core", "since": "unreleased", "rule": "R2" },
-    { "path": "SPEC.md", "purpose": "the normative core this manifest projects - R1-R20, readable in place", "adapt": "copy", "required": false, "profile": "core", "since": "unreleased", "rule": "R2" },
+    { "path": "SPEC.md", "purpose": "the normative core this manifest projects - R1-R21, readable in place", "adapt": "copy", "required": false, "profile": "core", "since": "unreleased", "rule": "R2" },
     { "path": "CLAUDE.md", "purpose": "thin pointer to AGENTS.md for Claude Code", "adapt": "copy", "required": false, "profile": "core", "since": "0.1.0", "rule": "R1" },
     { "path": "docs/decision-records", "purpose": "the ADR/BDR decision log", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.1.0", "rule": "R5" },
     { "path": "docs/ideas", "purpose": "pre-decision ideas - status-driven, graduate into records/specs on approval (ADR-010)", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "0.7.2", "rule": "R14" },

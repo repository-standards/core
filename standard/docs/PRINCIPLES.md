@@ -6,6 +6,10 @@ them except an explicit change to this file.
 - **Boring, proven tech.** Prefer the dull, well-understood option. A new library
   or a new pattern needs an ADR.
 - **Small, focused PRs.** One logical change; reviewable in minutes.
+- **Exact versions, everywhere.** Dependencies, overrides, container images, CI
+  runners and actions are pinned exact - no ranges, no `latest`, no floating tags;
+  a committed lockfile seals the graph. Nothing a repo consumes moves without a
+  reviewed diff (R21, ADR-017).
 - **Supply-chain cooldown.** Never install a package version published less than 7
   days ago (enforced via the package manager's release-age cooldown - the mechanism per stack lives in your stack's DECISIONS). A critical security fix
   gets a temporary exclude, not a global lowering.

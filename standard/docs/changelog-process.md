@@ -18,6 +18,15 @@ The release notes are **not the changelog with the boring lines deleted** - they
 short written narrative. Smaller on purpose: most changes (a refactor, a CSS fix, a
 dependency bump) never appear in them. Never per-commit.
 
+## The only home of history
+
+Change history accumulates here and nowhere else. A living document - a spec,
+ARCHITECTURE, a runbook - describes the present and never grows its own
+`## Change log` / `## History` section (R4, ADR-018): git holds every past state,
+and this process holds the curated record for both audiences. When a change
+alters behavior, the spec's *content* changes and the changelog records the
+event - three competing histories (in-document, git, changelog) only drift.
+
 ## Why fragments
 
 One `CHANGELOG.md` edited by every PR conflicts on every parallel PR - two branches both

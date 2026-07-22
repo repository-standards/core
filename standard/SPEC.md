@@ -6,7 +6,7 @@ SHOULD and MAY are to be read as in RFC 2119.
 
 This page is the whole normative core. Everything else in the standard explains,
 templates or enforces what is written here; where any other document appears to add
-a requirement, this page wins. Rules are numbered R1-R20 and the numbers are stable -
+a requirement, this page wins. Rules are numbered R1-R21 and the numbers are stable -
 tooling cites them. `standard.manifest.json` is this spec's machine-readable
 projection (each manifest entry names the rule it enforces), and
 `scripts/self-verify.mjs` reports unmet rules as a drift count. Rules the manifest
@@ -31,7 +31,9 @@ binds every repo, a solo one included.
   wiki or someone's personal agent config does not exist.
 - **R4.** Documents are living: they MUST be updated in place. The current version
   is the truth; git is the history. When a change reverses something a future
-  reader will need, the document SHOULD say so in one line.
+  reader will need, the document SHOULD say so in one line. History MUST NOT
+  accumulate inside a living document - a spec or doc carries no change-log
+  section; git and the changelog (R18) hold the past (ADR-018).
 
 ## Decisions
 
@@ -103,6 +105,17 @@ binds every repo, a solo one included.
   repos meet core alone and are compliant. A stack declares what adopting it
   means in its own manifest (`stack.manifest.json`, the core schema); a repo
   that adopted one carries it, and `self-verify` counts one drift across both.
+
+## Supply chain
+
+- **R21.** Everything a repo consumes MUST be pinned exact and move only by an
+  explicit, reviewed diff: dependency manifests and overrides carry exact versions
+  (no ranges), sealed by a committed lockfile; container images, CI runners and
+  actions name an exact version or digest - never `latest`, never a floating tag.
+  A new version SHOULD clear a release-age cooldown (the paved road is seven days)
+  before adoption; a critical security fix MAY bypass the cooldown through a
+  recorded, temporary exclusion. Per-stack mechanics live in the stack repos
+  (ADR-017).
 
 ## What this standard does not do
 

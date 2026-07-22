@@ -26,6 +26,8 @@ one settled.
 | [014](ADR-014-one-authored-tree.md) | One authored tree | `standard/` is the single committed, consumable tree at real-repo paths; no second source, no reflect; repo-own material lives outside it | Accepted |
 | [015](ADR-015-spec-engine-extracted.md) | Spec engine extracted | five engine prompts become the standard's own `spec-*` skills + `scripts/spec/`; no `.specify/`, no speckit namespace; upstream improvements are cherry-picked | Accepted |
 | [016](ADR-016-stacks-are-satellite-repos.md) | Stacks are satellite repos | one repo per technology (`repository-standards-<tech>`), official only via the `stacks.json` registry; variation = profiles/adoption modes, never sibling repos; the stack declares its `standards` range, core never chases | Accepted |
+| [017](ADR-017-consumed-versions-pinned-exact.md) | Consumed versions pinned exact | dependencies, overrides, images, runners and actions name exact versions or digests - nothing floats, upgrades are reviewed diffs; cooldown before adoption (R21) | Accepted |
+| [018](ADR-018-history-lives-in-the-changelog.md) | History lives in the changelog | living documents carry no change-log sections; git + the changelog process are the only history; capability globs skip manifests/lockfiles (R4) | Accepted |
 
 Add one row per record; the template ships in the tree
 (`standard/docs/decision-records/adr/_template.md`). Numbers are gapless and never

@@ -134,6 +134,22 @@ align engine, Layer 2 and the product spine.
   changelog and a curated release-notes draft; the maintainer cuts every release.
   This repo itself edits `## Unreleased` directly (solo, core profile).
 
+### Supply chain and one home for history (2026-07-29)
+
+- **R21 + ADR-017: everything a repo consumes is pinned exact** - dependency
+  manifests, overrides and lockfiles carry exact versions (no ranges), container
+  images, CI runners and actions name an exact version or digest (never `latest`,
+  never a floating tag); upgrades are explicit, reviewed diffs, behind the
+  release-age cooldown. New "Exact versions, everywhere" principle in the shipped
+  `PRINCIPLES.md`; per-stack mechanics stay in the stack repos.
+- **R4 sharpened + ADR-018: history lives in the changelog, never inside living
+  documents** - a spec or doc carries no `## Change log` section; git and the
+  changelog process are the only history. The spec template says so; the
+  changelog process gains "The only home of history"; the coupling-guard docs
+  gain map hygiene (capability globs skip dependency manifests/lockfiles, and a
+  guard hit on a behavior-free change means reconcile the spec or narrow the
+  map, never append a history note).
+
 ## 0.7.2 - 2026-07-07
 
 Spec methodology sharpened - combines the by-capability and spec-depth work.

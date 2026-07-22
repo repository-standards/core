@@ -36,6 +36,14 @@ is spread across app / service / shared). Keep it at `specs/capability-map.json`
 }
 ```
 
+**Map hygiene:** globs bind **behavior-bearing source**. Dependency manifests and
+lockfiles (`package.json`, `pnpm-lock.yaml`, `go.mod`, ...) SHOULD stay out of
+capability globs - a version bump is not a behavior change; it is reviewed as a
+dependency diff (R21) and recorded in the changelog. When the guard still fires
+on a genuinely behavior-free change, the answer is to reconcile the spec's
+content or narrow the map - never to append a history note to the spec (R4,
+ADR-018: specs carry no change-log sections).
+
 **Shipped, ready to use:** the structure lint
 [`../scripts/spec-structure.mjs`](../scripts/spec-structure.mjs) and the coupling
 guard [`../scripts/spec-guard.mjs`](../scripts/spec-guard.mjs) (both dependency-free),

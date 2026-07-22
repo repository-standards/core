@@ -3,7 +3,9 @@
 <!-- A capability spec is a BUILDABLE technical spec, not a description - see
      specs/README.md "Spec depth". Declare the tier below. Contracts are quoted
      VERBATIM (real field names, enums, error codes, endpoints), never paraphrased.
-     Drop sections that genuinely do not apply. -->
+     Drop sections that genuinely do not apply. No change-log section (R4,
+     ADR-018): the spec describes the present; git and the changelog process
+     (docs/changelog-process.md) hold the past. -->
 
 **Spec tier:** buildable | behavioral   <!-- declare one -->
 **Serves:** `<persona from docs/personas.md>`   <!-- who this capability is for; required (ADR-006) -->

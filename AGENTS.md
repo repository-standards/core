@@ -35,7 +35,7 @@ clients get them by reference (ADR-004), never as copies.
   release. (The fragments mechanism ships to team repos as a scale-profile
   prescription; this solo repo does not use it on itself.)
 - **The spec wins:** where any document appears to add a requirement,
-  [`standard/SPEC.md`](standard/SPEC.md) is the normative text (R1-R20); the
+  [`standard/SPEC.md`](standard/SPEC.md) is the normative text (R1-R21); the
   manifest cites the rule each entry enforces.
 - **Workflow files under `standard/.github/` are templates** - they must never run
   in this repository. The only live workflow is the root `checks.yml`.
