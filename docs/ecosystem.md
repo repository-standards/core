@@ -42,7 +42,7 @@ Everything starts from the core - one entry point, always:
 A stack repo is four data files and a heartbeat - no procedures, no engine:
 
 1. `stack.manifest.json` - the core manifest's schema plus `technology` and the
-   `standards` range it implements (the only compatibility metadata anywhere).
+   core it belongs to (`registry` pointer) - the linkage is discovery metadata, never a version requirement (ADR-022).
 2. `DECISIONS.md` - per axis: the pick, a short why, the escape hatch.
 3. `starter/` - a working, boot-verified reference; its CI keeps the claim a
    pulse, not a plaque.

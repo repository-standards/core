@@ -25,9 +25,11 @@ one settled.
 | [013](ADR-013-spec-kit-is-an-engine-by-reference.md) | Spec Kit vendored as a pinned engine | superseded: the engine is extracted, not vendored | Superseded by 015 |
 | [014](ADR-014-one-authored-tree.md) | One authored tree | `standard/` is the single committed, consumable tree at real-repo paths; no second source, no reflect; repo-own material lives outside it | Accepted |
 | [015](ADR-015-spec-engine-extracted.md) | Spec engine extracted | five engine prompts become the standard's own `spec-*` skills + `scripts/spec/`; no `.specify/`, no speckit namespace; upstream improvements are cherry-picked | Accepted |
-| [016](ADR-016-stacks-are-satellite-repos.md) | Stacks are satellite repos | one repo per technology (`repository-standards-<tech>`), official only via the `stacks.json` registry; variation = profiles/adoption modes, never sibling repos; the stack declares its `standards` range, core never chases | Accepted |
+| [016](ADR-016-stacks-are-satellite-repos.md) | Stacks are satellite repos | one repo per technology (`repository-standards-<tech>`), official only via the `stacks.json` registry; variation = profiles/adoption modes, never sibling repos; the stack points back at the registry (range clause revised by ADR-022), core never chases | Accepted |
 | [017](ADR-017-consumed-versions-pinned-exact.md) | Consumed versions pinned exact | dependencies, overrides, images, runners and actions name exact versions or digests - nothing floats, upgrades are reviewed diffs; cooldown before adoption (R21) | Accepted |
 | [018](ADR-018-history-lives-in-the-changelog.md) | History lives in the changelog | living documents carry no change-log sections; git + the changelog process are the only history; capability globs skip manifests/lockfiles (R4) | Accepted |
+| [019](ADR-019-lifecycle-procedures-are-agent-portable.md) | Lifecycle procedures are agent-portable | the procedures are normative (R22); `.claude/skills` is the reference form; a non-Claude repo ports them strictly to its agent's mechanism - a partial port is drift | Accepted |
+| [022](ADR-022-stacks-linked-not-version-locked.md) | Stacks linked, not version-locked | a stack declares it belongs to the ecosystem (registry pointer), never a core version range; self-verify notes the layer, checks nothing version-shaped | Accepted |
 
 Add one row per record; the template ships in the tree
 (`standard/docs/decision-records/adr/_template.md`). Numbers are gapless and never

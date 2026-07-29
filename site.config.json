@@ -6,5 +6,9 @@
     { "label": "Landing", "href": "../index.html" },
     { "label": "Docs", "href": "index.html", "on": true },
     { "label": "Node stack ↗", "href": "https://github.com/bodurkalukasz/repository-standards-node", "external": true }
+  ],
+  "sidebar_links": [
+    { "label": "← Landing", "href": "../index.html" },
+    { "label": "Node stack (Layer 2) ↗", "href": "https://github.com/bodurkalukasz/repository-standards-node", "external": true }
   ]
 }

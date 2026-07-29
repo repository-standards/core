@@ -81,7 +81,9 @@ const isCapSpec = (f) =>
   f.split("/").length >= 3 && f.endsWith(".md") && !f.includes(".template.") && !/\/readme\.md$/i.test(f) && !ENGINE_ARTIFACTS.test(f);
 
 const personaless = [];
+let rosterMissing = false; // capability specs exist but no roster - the R10 gate has nothing to hold
 const personasPath = ["docs/personas.md", "personas.md"].find((p) => existsSync(p));
+if (!personasPath && files.some(isCapSpec)) rosterMissing = true;
 if (personasPath) {
   const roster = new Set();
   for (const line of readFileSync(personasPath, "utf8").split("\n")) {
@@ -100,8 +102,18 @@ if (personasPath) {
   }
 }
 
+// --- check 3 (warn only): committed engine scaffolding - ephemeral by rule -------
+// plan.md/tasks.md are working scaffolds the engine writes and the close removes.
+// Full-tree mode only (mid-work diffs legitimately carry them); never a violation.
+const staleScaffolding = !staged && !base ? files.filter((f) => ENGINE_ARTIFACTS.test(f)) : [];
+
 // --- report --------------------------------------------------------------------
-if (numbered.length === 0 && personaless.length === 0) {
+if (staleScaffolding.length) {
+  console.error("\nspec-structure: WARN - engine scaffolding is committed (ephemeral - remove when the work closes):");
+  for (const f of staleScaffolding) console.error(`  - ${f}`);
+  console.error("");
+}
+if (numbered.length === 0 && personaless.length === 0 && !rosterMissing) {
   const note = personasPath ? "" : " (persona check skipped - no personas.md)";
   console.log(`spec-structure: OK (${files.length} spec paths)${note}`);
   process.exit(0);
@@ -121,6 +133,12 @@ if (personaless.length) {
   console.error("\nspec-structure: capability specs with no persona named (ADR-006 - a spec serves someone):");
   for (const f of personaless) console.error(`  - ${f}`);
   console.error('\nAdd a `**Serves:** `<persona>`` field (from docs/personas.md) - or name the persona in the spec.');
+}
+
+if (rosterMissing) {
+  console.error("\nspec-structure: capability specs exist but there is no docs/personas.md roster -");
+  console.error("the persona gate (ADR-006) has nothing to check against. Write the roster first;");
+  console.error("a spec that serves nobody is incomplete, and without the roster none can prove otherwise.");
 }
 console.error("");
 process.exit(block ? 1 : 0);

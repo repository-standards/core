@@ -6,7 +6,7 @@ SHOULD and MAY are to be read as in RFC 2119.
 
 This page is the whole normative core. Everything else in the standard explains,
 templates or enforces what is written here; where any other document appears to add
-a requirement, this page wins. Rules are numbered R1-R21 and the numbers are stable -
+a requirement, this page wins. Rules are numbered R1-R22 and the numbers are stable -
 tooling cites them. `standard.manifest.json` is this spec's machine-readable
 projection (each manifest entry names the rule it enforces), and
 `scripts/self-verify.mjs` reports unmet rules as a drift count. Rules the manifest
@@ -116,6 +116,17 @@ binds every repo, a solo one included.
   before adoption; a critical security fix MAY bypass the cooldown through a
   recorded, temporary exclusion. Per-stack mechanics live in the stack repos
   (ADR-017).
+
+## Agent executability
+
+- **R22.** The lifecycle procedures - the spec loop, backlog capture, pre-PR
+  review, version updates - MUST ship in the repo in a form the repo's coding
+  agent can execute. The standard ships them as Claude-format skills
+  (`.claude/skills/`) with their engine in `scripts/spec/` - the reference
+  implementation. A repo whose agent tooling is not Claude MUST port them to its
+  agent's own instruction mechanism (e.g. `.agents/skills`) - strictly and
+  completely, before claiming compliance; `self-verify` accepts the ported
+  location. A partial port is drift, not a variant (ADR-019).
 
 ## What this standard does not do
 

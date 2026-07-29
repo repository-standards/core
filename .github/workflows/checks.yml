@@ -9,18 +9,29 @@ on:
 
 jobs:
   gates:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:
-          node-version: 24
+          fetch-depth: 0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: "24.18.0"
       - name: tree-check (one tree, no leaks, skeleton verifies)
         run: node tools/tree-check.mjs
       - name: link-check (every relative md link resolves)
         run: node tools/link-check.mjs
       - name: spec-structure (the repo's own specs stay shaped and owned)
         run: node standard/scripts/spec-structure.mjs
+      - name: spec coupling (diff-gated on PRs, audited in full on every run)
+        # The full audit is the PR gate, not a release ritual - a change that
+        # breaks spec<->code coupling fails here, never in a later sweep.
+        run: |
+          if [ -n "${{ github.base_ref }}" ]; then
+            git fetch --no-tags --quiet origin "${{ github.base_ref }}"
+            node standard/scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}" --block
+          fi
+          node standard/scripts/spec-guard.mjs --audit --block
       - name: site (generate + check landing and docs)
         run: |
           node tools/docsite.mjs

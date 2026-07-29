@@ -8,13 +8,13 @@ jobs:
     # Two spec-policy gates (dependency-free, node + git only, no install):
     #  - structure: no ticket-numbered spec paths (specs/<capability>/, not NNN-*)
     #  - coupling: a mapped capability's code changed without touching its spec
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version-file: ".nvmrc"
           # This job installs no package manager; do not try to restore its cache.
@@ -26,7 +26,17 @@ jobs:
         run: |
           git fetch --no-tags --quiet origin "${{ github.base_ref }}"
           node scripts/spec-structure.mjs --base "origin/${{ github.base_ref }}" --block
-      - name: Spec policy coupling guard
+      - name: Spec policy coupling guard (blocks at scale, advises at core)
+        # The repo's manifest copy declares its profile (ADR-011); the blocking
+        # coupling gate is a scale-profile prescription (R11).
         run: |
           git fetch --no-tags --quiet origin "${{ github.base_ref }}"
-          node scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}" --block
+          PROFILE=$(node -p "try { JSON.parse(require('fs').readFileSync('standard.manifest.json','utf8')).profile || 'scale' } catch { 'scale' }")
+          if [ "$PROFILE" = "core" ]; then
+            node scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}"
+          else
+            node scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}" --block
+          fi
+      - name: Spec coupling audit (full tree, every PR)
+        # Orphan specs and unmapped capabilities do not wait for a release ritual.
+        run: node scripts/spec-guard.mjs --audit --block

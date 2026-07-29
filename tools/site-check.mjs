@@ -80,6 +80,11 @@ else {
   else fail(`${LANDING}: positioning one-liner not found verbatim ("${oneLiner.slice(0, 50)}...")`);
 }
 
+// The landing must advertise the released version - VERSION is the source.
+const version = readFileSync("VERSION", "utf8").trim();
+if (landing.includes(`v${version}`)) ok(`${LANDING}: advertises v${version} (matches VERSION)`);
+else fail(`${LANDING}: does not advertise v${version} - VERSION moved and the landing did not`);
+
 // External hosts allowlist: only GitHub links may leave the page.
 const hosts = new Set(
   [...landing.matchAll(/https?:\/\/([^/"'\s)]+)/g)].map((m) => m[1].toLowerCase()),
@@ -93,8 +98,18 @@ if (![...hosts].some((h) => h !== "github.com" && !h.endsWith(".github.com"))) o
 
 const SITE = "site/docs";
 const pages = readdirSync(SITE).filter((f) => f.endsWith(".html"));
-if (pages.length < 10) fail(`${SITE}: expected the full page set, found ${pages.length} html files`);
-else ok(`${SITE}: ${pages.length} pages present`);
+// The expected count is derived from the same source the generator reads - config
+// first, else the default PAGE MAP in tools/docsite.mjs. Never hand-written here.
+const cfg = existsSync("site.config.json") ? JSON.parse(readFileSync("site.config.json", "utf8")) : {};
+let expectedPages;
+if (cfg.pages) expectedPages = cfg.pages.length;
+else {
+  const gen = readFileSync("tools/docsite.mjs", "utf8");
+  const block = gen.split("const PAGES = CONFIG.pages || [")[1].split("];")[0];
+  expectedPages = (block.match(/\{\s*src:/g) || []).length;
+}
+if (pages.length !== expectedPages) fail(`${SITE}: ${pages.length} html pages but the PAGE MAP defines ${expectedPages}`);
+else ok(`${SITE}: ${pages.length} pages present (matches the PAGE MAP)`);
 
 for (const page of pages) {
   const path = `${SITE}/${page}`;

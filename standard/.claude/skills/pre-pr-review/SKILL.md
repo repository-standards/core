@@ -21,6 +21,10 @@ tightening the loop early, not being the gate. (The gate is CI + human review.)
 
 2. **Run the repo's local checks** (whatever this repo defines - do not invent):
    format, lint, typecheck, and the unit tests the repo expects before a PR.
+   That includes the repo's **full audits**, not only diff-scoped checks - in a
+   repo on the standard: `node scripts/self-verify.mjs` and
+   `node scripts/spec-guard.mjs --audit`. The PR gate runs the full audit too;
+   a diff-only local loop just moves the failure to CI.
    Fix anything red before continuing. Do not open a PR with red local checks.
 
 3. **Independent diff review (the important part).** Review the diff as if a

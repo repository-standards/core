@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Accepted (2026-07-22) |
+| **Status** | Accepted (2026-07-22); standards-range clause revised by ADR-022 - stacks are linked, not version-locked |
 | **Date** | 2026-07-22 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | structure, layer-2, distribution, governance |

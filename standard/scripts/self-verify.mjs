@@ -32,7 +32,10 @@
 //   node scripts/self-verify.mjs                  # gate: exit 1 on any failure
 //   node scripts/self-verify.mjs --version 0.7.2  # also assert the pinned version
 //   node scripts/self-verify.mjs --warn           # report only, always exit 0
-//   node scripts/self-verify.mjs --profile core   # core-profile entries only (ADR-011)
+//   node scripts/self-verify.mjs --profile core   # core-profile entries only (ADR-011);
+//                                                 # without the flag, the repo's manifest
+//                                                 # copy's top-level "profile" field is the
+//                                                 # default, then scale (= everything)
 //   node scripts/self-verify.mjs --skeleton       # verify the shipped tree itself: skip the
 //                                                 # version pin, guards, and fill-from-repo
 //                                                 # files a client authors at adoption
@@ -47,8 +50,7 @@ const warn = args.includes("--warn");
 const vIdx = args.indexOf("--version");
 const wantVersion = vIdx >= 0 ? args[vIdx + 1] : null;
 const pIdx = args.indexOf("--profile");
-const profileArg = pIdx >= 0 ? args[pIdx + 1] : "scale"; // scale (or no flag) = everything
-const coreOnly = profileArg === "core" || profileArg === "solo"; // solo/team: deprecated aliases for core/scale
+const profileFlag = pIdx >= 0 ? args[pIdx + 1] : null; // resolved after the manifest loads
 const skeleton = args.includes("--skeleton"); // verifying the shipped tree, not an adopted repo
 
 const results = [];
@@ -72,13 +74,22 @@ if (existsSync("standard.manifest.json")) {
 if (manifest && existsSync("stack.manifest.json")) {
   try {
     const stack = JSON.parse(readFileSync("stack.manifest.json", "utf8"));
-    note("stack", `stack manifest present: ${stack.technology || "unnamed"} (declares standards ${stack.standards || "?"})`);
+    note("stack", `stack manifest present: ${stack.technology || "unnamed"} - technology layer counted in the same drift number (ADR-016/022)`);
     for (const k of ["files", "sections", "guards"]) {
       manifest[k] = [...(manifest[k] || []), ...(stack[k] || [])];
     }
   } catch (e) {
     fail("stack", `stack.manifest.json is present but unparseable: ${e.message}`);
   }
+}
+
+// 0c. profile resolution (ADR-011): the CLI flag wins; else the repo's carried
+// manifest copy may declare its chosen profile (written at align time); else
+// scale = check everything. solo/team are accepted as deprecated aliases.
+const profileArg = profileFlag || (manifest && manifest.profile) || "scale";
+const coreOnly = profileArg === "core" || profileArg === "solo";
+if (!profileFlag && manifest && manifest.profile) {
+  note("profile", `profile "${manifest.profile}" declared in the manifest copy - used as the default`);
 }
 
 // 1. version pin ----------------------------------------------------------------

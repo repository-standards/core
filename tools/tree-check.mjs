@@ -63,6 +63,27 @@ for (const s of manifest.sections || []) {
 }
 if (!missing) ok(`every manifest promise is present in the tree`);
 
+// --- 2b. every shipped file is a manifest entry (or an explicit exemption) -------------
+// The manifest is the tree's machine projection; a shipped-but-unlisted file is
+// invisible to self-verify and to update-to-version's delta - it would never reach
+// an already-adopted repo. Directory entries cover their contents.
+const EXEMPT = new Set([
+  // add a path here only with a recorded reason - nothing is exempt today
+]);
+const entryPaths = new Set();
+for (const f of manifest.files || []) { entryPaths.add(f.path); for (const a of f.altPaths || []) entryPaths.add(a); }
+const dirEntries = (manifest.files || [])
+  .map((f) => f.path)
+  .filter((p) => existsSync(`${TREE}/${p}`) && statSync(`${TREE}/${p}`).isDirectory());
+let unmanifested = 0;
+for (const f of files) {
+  const rel = f.slice(TREE.length + 1);
+  if (EXEMPT.has(rel)) continue;
+  const covered = entryPaths.has(rel) || dirEntries.some((d) => rel.startsWith(`${d}/`));
+  if (!covered) { fail(`${f} ships but no manifest entry covers it - add an entry or an explicit exemption`); unmanifested++; }
+}
+if (!unmanifested) ok("every shipped file is covered by a manifest entry (tree -> manifest)");
+
 // --- 3. the tree verifies itself -------------------------------------------------------
 try {
   execSync("node scripts/self-verify.mjs --skeleton", { cwd: TREE, stdio: "pipe" });
@@ -82,6 +103,51 @@ let vFails = 0;
 if (!spec.includes(`Version ${version}`)) { fail(`${TREE}/SPEC.md header does not say "Version ${version}" (VERSION file is ${version})`); vFails++; }
 if (!readme.includes(`@${version}`)) { fail(`README.md quick start does not pin @${version} (VERSION file is ${version})`); vFails++; }
 if (!vFails) ok(`SPEC.md and README agree with VERSION (${version})`);
+
+// --- 4b. derived facts are never hand-written on surfaces --------------------------------
+// A fact derivable from a source (the rule count, a rule range) must not be restated
+// by hand where it can drift - surfaces say "the numbered rules" or derive the number.
+const FACT_SURFACES = ["README.md", "llms.txt", "AGENTS.md", "docs/ecosystem.md", "site/index.html"];
+const FACT_PATTERNS = [
+  [/R1-R\d+/, "a hand-written rule range (say 'the numbered rules' or derive it from SPEC.md)"],
+  [/\b(?:twenty(?:-\w+)?|nineteen|eighteen|\d{1,3})\s+(?:numbered\s+)?(?:MUST\/SHOULD\s+)?rules\b/i, "a hand-written rule count (it drifts on every added rule)"],
+];
+let factFails = 0;
+for (const s of FACT_SURFACES) {
+  if (!existsSync(s)) continue;
+  const body = readFileSync(s, "utf8");
+  for (const [re, why] of FACT_PATTERNS) {
+    const m = body.match(re);
+    if (m) { fail(`${s} hardcodes "${m[0]}" - ${why}`); factFails++; }
+  }
+}
+if (!factFails) ok("no hand-written derived facts on the checked surfaces (rule counts/ranges)");
+
+// --- 5. workflow pins are exact (R21 / ADR-017) -----------------------------------------
+// Both this repo's own workflows and the shipped templates: actions pinned by
+// 40-hex SHA, no `-latest` runner labels, no bare-major node versions or .nvmrc.
+const ymlFiles = [];
+for (const dir of [".github/workflows", `${TREE}/.github/workflows`]) {
+  if (existsSync(dir)) for (const e of readdirSync(dir)) if (/\.ya?ml$/.test(e)) ymlFiles.push(`${dir}/${e}`);
+}
+let pinFails = 0;
+for (const f of ymlFiles) {
+  const lines = readFileSync(f, "utf8").split("\n");
+  lines.forEach((line, i) => {
+    const at = `${f}:${i + 1}`;
+    const uses = line.match(/uses:\s*(\S+)/);
+    if (uses && !uses[1].startsWith("./") && !/@[0-9a-f]{40}$/.test(uses[1].split(" ")[0])) {
+      fail(`${at} action not pinned by full SHA: "${uses[1]}"`); pinFails++;
+    }
+    if (/runs-on:.*-latest/.test(line)) { fail(`${at} floating runner label (use an exact image, e.g. ubuntu-24.04)`); pinFails++; }
+    if (/node-version:\s*["']?\d+["']?\s*$/.test(line)) { fail(`${at} bare-major node version (pin exact x.y.z)`); pinFails++; }
+  });
+}
+const nvmrcPath = `${TREE}/.nvmrc`;
+if (existsSync(nvmrcPath) && !/^\d+\.\d+\.\d+\s*$/.test(readFileSync(nvmrcPath, "utf8"))) {
+  fail(`${nvmrcPath} is not an exact x.y.z version`); pinFails++;
+}
+if (!pinFails) ok(`workflow pins are exact - SHAs, fixed runners, full node versions (${ymlFiles.length} workflows)`);
 
 // --- verdict ---------------------------------------------------------------------------
 if (failures) {

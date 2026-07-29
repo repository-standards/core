@@ -55,6 +55,12 @@ const PAGES = CONFIG.pages || [
   { src: "docs/case-studies/README.md", out: "case-studies.html", nav: "Case studies", group: null },
 ];
 const PAGES_BY_SRC = new Map(PAGES.map((p) => [p.src, p]));
+// Sidebar footer links - a site's own chrome, not the generator's (config first;
+// the default is the core repo's pair).
+const SIDEBAR_LINKS = CONFIG.sidebar_links || [
+  { label: "← Landing", href: "../index.html" },
+  { label: "Node stack (Layer 2) ↗", href: "https://github.com/bodurkalukasz/repository-standards-node", external: true },
+];
 
 // --- path helpers (repo-relative, forward-slash, independent of host OS) ----------
 
@@ -554,7 +560,7 @@ function renderPage(page, contentHtml) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${title} - repository-standards docs</title>
+<title>${title} - ${escapeHtml(BRAND)} docs</title>
 <style>${CSS}</style>
 </head>
 <body>
@@ -565,8 +571,7 @@ function renderPage(page, contentHtml) {
 <div class="nav-links">
 ${renderNav(page.out)}</div>
 <div class="nav-links" style="margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,.07)">
-<a href="../index.html">&larr; Landing</a>
-<a href="https://github.com/bodurkalukasz/repository-standards-node" target="_blank" rel="noopener noreferrer">Node stack (Layer 2) &nearr;</a>
+${SIDEBAR_LINKS.map((l) => `<a href="${escapeAttr(l.href)}"${l.external ? ' target="_blank" rel="noopener noreferrer"' : ""}>${escapeHtml(l.label)}</a>`).join("\n")}
 </div>
 </nav>
 <main class="content">
@@ -583,9 +588,11 @@ ${contentHtml}
 
 const SITE_README = `# site/docs - generated docs site (DISCO-4)
 
-This folder is **generated**. Every file in it is produced by
-[\`tools/docsite.mjs\`](../../tools/docsite.mjs) from the repo's own Markdown - never
-hand-edit the HTML here; it will be overwritten the next time the script runs.
+This folder is **generated**. Every file in it is produced by the ecosystem's shared
+generator - \`tools/docsite.mjs\` in
+[repository-standards](https://github.com/bodurkalukasz/repository-standards) - from
+this repo's own Markdown; never hand-edit the HTML here, it will be overwritten the
+next time the script runs.
 
 ## Contents
 
