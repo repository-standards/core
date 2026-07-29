@@ -15,8 +15,8 @@
 // docs/changelog-process.md.
 //
 // Usage:
-//   node tools/changelog.mjs             # assemble: print CHANGELOG block + notes draft
-//   node tools/changelog.mjs --check     # validate fragments only; exit 1 if any invalid
+//   node scripts/changelog.mjs             # assemble: print CHANGELOG block + notes draft
+//   node scripts/changelog.mjs --check     # validate fragments only; exit 1 if any invalid
 //
 // No dependencies (Node built-ins only). Source-only - a maintainer tool.
 

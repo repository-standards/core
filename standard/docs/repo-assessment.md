@@ -3,9 +3,9 @@
 When you are handed a repo - to bring it up to the standard, or as a periodic health
 check - you run this assessment **first**. It is **analysis, not change** (like
 `spec-impact`): you read the repo, detect what is there and what is missing, and produce
-a picture plus concrete recommendations. The fixing happens afterwards - the skeleton
-via the align router, the content via its brownfield onboarding phase - drained from the backlog this
-assessment seeds.
+a picture plus concrete recommendations. The fixing happens afterwards: the skeleton
+lands via the align router, the content via its brownfield onboarding phase, and both
+drain the backlog this assessment seeds.
 
 ## When to run
 

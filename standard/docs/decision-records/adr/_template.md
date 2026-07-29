@@ -4,7 +4,7 @@
 | --- | --- |
 | **Status** | Proposed |
 | **Date** | YYYY-MM-DD |
-| **Author** | Łukasz Bodurka |
+| **Author** | {{AUTHOR}} |
 | **Tags** | <area> |
 
 ## Context

@@ -1,6 +1,6 @@
 # Positioning & messaging - the one source every surface quotes
 
-> PDLC-1, dogfooded. The rule: the landing, the README, a deck, a pitch - they **quote**
+> Dogfooded messaging discipline. The rule: the landing, the README, a deck, a pitch - they **quote**
 > these lines, they never re-phrase them. If a surface needs different words, this file
 > changes first (that change is a BDR-grade call). One source; the market hears one
 > voice.
@@ -48,4 +48,4 @@ already have is a first-class citizen.
 
 A surface (landing, README, docs site, deck, post) may **shorten** a pillar, never
 **reword** it. New claims start here, not on the surface. The landing and README are
-checked against this file at every messaging pass (LAND-1 and successors).
+checked against this file at every messaging pass.

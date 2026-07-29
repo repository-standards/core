@@ -49,10 +49,11 @@ feeds none of these gets removed.
 - **Layer 1 - The Standard (stack-agnostic):** decisions as ADR/BDR, living capability
   specs, the taxonomy map ([`standard/docs/taxonomy.md`](standard/docs/taxonomy.md)),
   conventions and guardrails, `AGENTS.md` as the single agent entry.
-- **Layer 2 - Stack Setup (Node/TS):** a runnable scaffold on top - pnpm + Turbo,
-  Next.js + Fastify, Biome, Vitest + Playwright, hardened CI - distilled from real
-  production repos, with a boot-verified starter. The fuller list lives in the
-  [README](README.md).
+- **Layer 2 - Technology best practices:** one satellite repo per technology,
+  official when listed in the registry ([`stacks.json`](stacks.json)) - the picks and
+  their rationale live in each stack repo's DECISIONS. First:
+  [repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node)
+  (Next.js + Fastify, boot-verified starter).
 
 ## Adoption modes
 

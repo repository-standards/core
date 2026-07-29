@@ -28,7 +28,7 @@
 - **Pains / frictions.** Big-bang alignments that stall; standards that are prose, not
   checks; tooling that assumes greenfield; paid trackers on hobby projects.
 - **Decisions they influence.** ADR-005 (manifest), ADR-008/009 (zones, skill classes),
-  ADR-010 (lifecycle + tracker), NAME-1.
+  ADR-010 (lifecycle + tracker), the project's naming.
 - **Success signals.** A repo he has not touched in months passes `self-verify` after one
   `update-to-version` run; a new client repo reaches drift 0 in planned waves.
 - **Anti-goals.** An IDE lock-in, a SaaS dependency, or a ceremony layer (Scrum-for-AI).
@@ -47,7 +47,7 @@
 - **Pains / frictions.** Specs that go to build half-baked; jargon walls; her deferrals
   getting lost; tools that require her to run commands she does not know exist.
 - **Decisions they influence.** ADR-006 (personas gate), the clarify gate (ADR-010),
-  EXPLAIN-1, backlog/status conventions.
+  the plain-language explainers, backlog/status conventions.
 - **Success signals.** Zero specs reaching a developer with open clarifications; Paula
   answers or defers every clarify question without leaving the flow.
 - **Anti-goals.** Writing YAML, choosing libraries, or learning git internals.
@@ -63,8 +63,8 @@
   re-litigated never.
 - **Pains / frictions.** Descriptive specs that cannot be rebuilt from; scaffolding
   debris from shipped features; docs that lie about the current system.
-- **Decisions they influence.** ADR-002/003 (specs by capability, buildable), SD-1..7,
-  the coupling guard, stack picks in the registered stack repos (`stacks.json`).
+- **Decisions they influence.** ADR-002/003 (specs by capability, buildable), the spec-first
+  loop and its gates, the coupling guard, stack picks in the registered stack repos (`stacks.json`).
 - **Success signals.** A capability rebuilt from its spec alone passes its tests; the
   coupling guard blocks a drifting PR before review does.
 - **Anti-goals.** Process for its own sake; being the human linter.
@@ -86,7 +86,7 @@
   me, it's clean" as the only quality signal; discovering at the worst moment that the
   docs lied; paying enterprise prices for process a five-person company cannot carry.
 - **Decisions they influence.** ADR-011 (the scale profile is his shape of the product;
-  core keeps his solo projects cheap), NAME-1 + DISCO (his trust story only works if the
+  core keeps his solo projects cheap), naming and discovery (his trust story only works if the
   standard is publicly credible and community-reviewed), the going-public bar (nothing
   in the repo the community should not see).
 - **Success signals.** He can ask any repo "are you compliant, and to which version?"
@@ -111,8 +111,8 @@ persona, it is a variant of `Spec-first PO Paula`, not of Olek.
 - **Goals.** Deterministic navigation (taxonomy, indexes); mechanical gates it can obey
   (clarify gate, coupling guard, self-verify).
 - **Pains / frictions.** Stale docs, dead scaffolding, rules living in someone's head or
-  personal config (CONS-1).
-- **Decisions they influence.** AGENTS.md-as-entry, DOCIDX-1, LIVING-1, the enforcement
+  personal config (ADR-012 exists against exactly this).
+- **Decisions they influence.** AGENTS.md-as-entry, honest folder indexes, living docs (R4), the enforcement
   stack.
 - **Success signals.** An agent fresh in the repo executes the loop correctly with no
   human prompting beyond the feature description.

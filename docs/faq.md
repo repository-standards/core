@@ -38,7 +38,9 @@ default, not a cage.
 **How is this different from Spec Kit, OpenSpec, BMAD, or Backstage?**
 Those give you a *workflow* or a *scaffold*. This gives your repo a **versioned
 reference to true up to** - align, verify, drift as a number - plus a guided brownfield
-transition. It builds *on* Spec Kit for the spec flow rather than replacing it.
+transition. The spec flow began as Spec Kit (MIT, provenance kept) and is now the
+standard's own extracted engine - upstream improvements are cherry-picked at release
+(ADR-015).
 
 **How do I know it worked?**
 `node scripts/self-verify.mjs` - compliance is a number, asserted in CI, against the

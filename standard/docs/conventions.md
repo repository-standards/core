@@ -1,7 +1,7 @@
-<!-- Single source of truth for conventions. Merge this block into the repo's
-     AGENTS.md. Do NOT restate it in CLAUDE.md or .cursor/rules - point to it from
-> This file is canonical; `AGENTS.md` carries only a digest. Edit here first.
-     there. Restating a rule in two files is drift waiting to happen. -->
+<!-- Canonical conventions block. At adoption, merge it into the repo's AGENTS.md -
+     that file is the single living home. Do NOT restate rules in CLAUDE.md or
+     .cursor/rules - point at AGENTS.md from there. Restating a rule in two files
+     is drift waiting to happen. -->
 
 ## Conventions
 

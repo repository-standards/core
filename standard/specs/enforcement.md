@@ -6,14 +6,14 @@ part of this is mechanical; the rest needs an AI pass.
 ## What is mechanically enforceable (hard gate)
 
 - **Structure lint (shipped):** no ticket-numbered spec paths - `specs/<capability>/`,
-  never `specs/NNN-feature/` or `specs/<cap>/NNN-*` (a common leak from Spec Kit's
-  upstream Spec Kit's native specify). Shipped as `spec-structure.mjs`, runs standalone (no
+  never `specs/NNN-feature/` or `specs/<cap>/NNN-*` (a common leak from upstream
+  Spec Kit's native specify). Shipped as `spec-structure.mjs`, runs standalone (no
   capability-map). Parsing, required-sections and link-resolution stay a lighter
   follow-on, not yet mechanical.
 - **Coupling guard (the key one):** if a PR changes code in a capability's domain
   but does **not** touch that capability's spec, block (or warn) - "you changed
   `<capability>` code without touching `specs/<capability>/`; update it or state
-  why not." This makes rule 7 (conscious spec review) mechanical. It cannot prove
+  why not." This makes source-of-truth rule 5 (same-PR spec coupling) mechanical. It cannot prove
   the spec is correct - it forces the author to touch the spec or acknowledge.
 - **Orphan-spec audit (same guard):** every capability spec MUST have a map entry
   (source-of-truth rule 4). A `specs/<capability>/` with no key in the map has no

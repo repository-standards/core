@@ -2,9 +2,9 @@
 // Spec-policy coupling guard.
 //
 // Flags when code in a capability's domain changed without touching that
-// capability's spec - the mechanical half of the spec policy ("conscious spec
-// review", rule 7). It cannot prove the spec is correct; it forces the author to
-// touch the spec or consciously decide not to.
+// capability's spec - the mechanical half of the spec policy (same-PR spec
+// coupling, source-of-truth rule 5). It cannot prove the spec is correct; it
+// forces the author to touch the spec or consciously decide not to.
 //
 // Reads specs/capability-map.json:  { "<capability>": ["<glob>", ...], ... }
 //

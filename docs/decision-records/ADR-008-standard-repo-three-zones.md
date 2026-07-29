@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Accepted (2026-07-22); zone mechanics revised by ADR-014 - zones 2 and 3 merged into the single `standard/` tree |
+| **Status** | Accepted (2026-07-22); zone mechanics revised by ADR-014 - zones 2 and 3 merged into the single `standard/` tree; stacks clause revised by ADR-016 - per-technology overlays became satellite repos |
 | **Date** | 2026-07-21 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | structure, repo-layout, dogfood |

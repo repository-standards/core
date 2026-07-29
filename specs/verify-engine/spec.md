@@ -32,7 +32,7 @@ Guarding this repo's own shipped tree ([tree-guard](../tree-guard/spec.md)); aut
 3. **Files.** A `files[]` entry passes when `path` or any `altPaths` entry exists. Required and absent -> FAIL; optional and absent -> note. Under `--skeleton`, an absent entry with `adapt: "fill-from-repo"` is a note: authored at adoption, absent from the skeleton by design.
 4. **Sections.** A `sections[]` entry passes when its `file` contains a heading matching `new RegExp("^#{1,6}\\s+.*" + escapeRe(heading), "mi")` - any heading level, any prefix before the heading text, case-insensitive. A missing `file` with `required` is a FAIL ("cannot be checked").
 5. **Guards.** Each `guards[]` entry runs via `execSync(g.run)` with output captured. Skips: `id === "self-verify"` (never recurse into itself); `kind === "diff"` -> note (runs in CI on the PR diff, not here); a `scripts/<name>.mjs` path extracted from `run` that does not exist -> note (not installed - skipped); under `--skeleton` all guards are skipped with a single note. A non-zero guard FAILs with its output indented.
-6. **Profiles.** `--profile solo` checks core entries only across files/sections/guards and notes how many scale-only entries were skipped; `--profile team` (or no flag) checks everything.
+6. **Profiles.** `--profile core` checks core entries only across files/sections/guards and notes how many scale-only entries were skipped; `--profile scale` (or no flag) checks everything. `solo`/`team` are accepted as deprecated aliases.
 7. **Stray transition skills.** `align-to-standards`, `onboard-repo`, `modernize`, `greenfield-start` found under `.claude/skills/` each produce a WARN (a hand-copy mistake, delete it - ADR-009), never drift.
 8. **Decisions.** A non-empty `decisions[]` produces one note (judgment tier, confirmed recorded at review) - never checked mechanically.
 
@@ -67,7 +67,7 @@ Output: header `self-verify - compliance with manifest <version>` (or `the pinne
 - **Manifest/pin split.** GIVEN manifest `version: 0.8.0` and pin `0.7.2` WHEN run THEN a FAIL says the manifest must match the pin.
 - **Warn mode.** GIVEN drift 3 WHEN run with `--warn` THEN the drift line still prints and exit is 0.
 - **Skeleton.** GIVEN the pristine shipped tree WHEN run with `--skeleton` THEN the pin is a note, fill-from-repo files are notes, no guard executes, and exit is 0.
-- **Solo profile.** GIVEN a manifest with scale-only entries WHEN run with `--profile solo` THEN those entries are skipped and their count appears as a note.
+- **Core profile.** GIVEN a manifest with scale-only entries WHEN run with `--profile core` THEN those entries are skipped and their count appears as a note.
 - **Recursion guard.** GIVEN the manifest lists guard `id: "self-verify"` WHEN guards run THEN that entry is skipped.
 - **Stray skill.** GIVEN `.claude/skills/align-to-standards/` exists WHEN run THEN a WARN names it and drift is unchanged.
 - **Failing guard.** GIVEN a static guard exits non-zero WHEN run THEN its captured output prints indented under the FAIL and exit is 1.

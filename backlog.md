@@ -39,8 +39,8 @@ later - both demand-driven, neither blocking a release.
 
 The restructure landed: one authored tree at `standard/`, the spec engine extracted as
 the standard's own skills, the starter boot-verified, the discovery front door in
-place. What remains is gated or external, in priority order: **TMPL-1** (re-verify the
-starter boot, biome preset), the **DISCO-1** deploy tail + **DISCO-3** (deploy, npm,
+place; starter maintenance moved to repository-standards-node. What remains is gated
+or external, in priority order: the **DISCO-1** deploy tail + **DISCO-3** (deploy, npm,
 listings; the owner publishes the posts), **STACKS-2** (waits for an evidence repo),
 and the deferred pair **OPS-1** / **UPSTREAM-1** (adopter-driven operate depth; the
 upstream scan rides with each release). Releases stay maintainer-only: versions are

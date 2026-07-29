@@ -11,8 +11,8 @@ align engine, Layer 2 and the product spine.
 
 ### The spec, the tree, the engine (2026-07-22)
 
-- `standard/SPEC.md` - new: the whole normative core on one page - twenty numbered
-  MUST/SHOULD rules (R1-R20, RFC 2119), versioned with the standard. Where any other
+- `standard/SPEC.md` - new: the whole normative core on one page - numbered
+  MUST/SHOULD rules (RFC 2119), versioned with the standard. Where any other
   document appears to add a requirement, the spec wins. The manifest is its
   machine-readable projection: every entry cites the rule it enforces (`rule: "R#"`).
 - **One authored tree (ADR-014)** - `standard/` is now the single committed,
