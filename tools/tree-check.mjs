@@ -107,7 +107,7 @@ if (!vFails) ok(`SPEC.md and README agree with VERSION (${version})`);
 // --- 4b. derived facts are never hand-written on surfaces --------------------------------
 // A fact derivable from a source (the rule count, a rule range) must not be restated
 // by hand where it can drift - surfaces say "the numbered rules" or derive the number.
-const FACT_SURFACES = ["README.md", "llms.txt", "AGENTS.md", "docs/ecosystem.md", "site/index.html"];
+const FACT_SURFACES = ["README.md", "llms.txt", "AGENTS.md", "docs/ecosystem.md", "site/index.html", "standard/README.md"];
 const FACT_PATTERNS = [
   [/R1-R\d+/, "a hand-written rule range (say 'the numbered rules' or derive it from SPEC.md)"],
   [/\b(?:twenty(?:-\w+)?|nineteen|eighteen|\d{1,3})\s+(?:numbered\s+)?(?:MUST\/SHOULD\s+)?rules\b/i, "a hand-written rule count (it drifts on every added rule)"],
@@ -134,13 +134,15 @@ let pinFails = 0;
 for (const f of ymlFiles) {
   const lines = readFileSync(f, "utf8").split("\n");
   lines.forEach((line, i) => {
+    if (/^\s*#/.test(line)) return; // comment-only lines are not configuration
     const at = `${f}:${i + 1}`;
     const uses = line.match(/uses:\s*(\S+)/);
     if (uses && !uses[1].startsWith("./") && !/@[0-9a-f]{40}$/.test(uses[1].split(" ")[0])) {
       fail(`${at} action not pinned by full SHA: "${uses[1]}"`); pinFails++;
     }
     if (/runs-on:.*-latest/.test(line)) { fail(`${at} floating runner label (use an exact image, e.g. ubuntu-24.04)`); pinFails++; }
-    if (/node-version:\s*["']?\d+["']?\s*$/.test(line)) { fail(`${at} bare-major node version (pin exact x.y.z)`); pinFails++; }
+    const nv = line.match(/node-version:\s*["']?([^"'\s]+)["']?\s*$/);
+    if (nv && !/^\d+\.\d+\.\d+$/.test(nv[1])) { fail(`${at} node version "${nv[1]}" is not an exact x.y.z pin`); pinFails++; }
   });
 }
 const nvmrcPath = `${TREE}/.nvmrc`;

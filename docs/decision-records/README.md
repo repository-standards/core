@@ -29,6 +29,8 @@ one settled.
 | [017](ADR-017-consumed-versions-pinned-exact.md) | Consumed versions pinned exact | dependencies, overrides, images, runners and actions name exact versions or digests - nothing floats, upgrades are reviewed diffs; cooldown before adoption (R21) | Accepted |
 | [018](ADR-018-history-lives-in-the-changelog.md) | History lives in the changelog | living documents carry no change-log sections; git + the changelog process are the only history; capability globs skip manifests/lockfiles (R4) | Accepted |
 | [019](ADR-019-lifecycle-procedures-are-agent-portable.md) | Lifecycle procedures are agent-portable | the procedures are normative (R22); `.claude/skills` is the reference form; a non-Claude repo ports them strictly to its agent's mechanism - a partial port is drift | Accepted |
+| [020](ADR-020-intake-first-adoption.md) | Intake-first adoption | align opens with step 0 - measure, then one question round (intent, technology + Layer 2 consent, appetite, plan-only vs execute); per-direction gate order; assessment-only is a named outcome; plan items name an owner role | Accepted |
+| [021](ADR-021-adoption-feeds-the-standard.md) | Adoption feeds the standard | align/update runs offer consent-gated upstream issues - stack requests on registry misses, friction reports on rough runs; templates give the signal one shape | Accepted |
 | [022](ADR-022-stacks-linked-not-version-locked.md) | Stacks linked, not version-locked | a stack declares it belongs to the ecosystem (registry pointer), never a core version range; self-verify notes the layer, checks nothing version-shaped | Accepted |
 
 Add one row per record; the template ships in the tree

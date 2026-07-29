@@ -40,6 +40,20 @@ It checks:
 The code<->spec **coupling** guard (`scripts/spec-guard.mjs`, `kind: diff`) runs in CI on
 the PR diff rather than in this static check - but it is part of the same gate.
 
+**Layer 2 - the stack manifest.** If a `stack.manifest.json` sits beside the core
+manifest, the repo also carries a technology layer: `self-verify` merges the stack's
+entries in and counts **one drift number across both layers**. The stack file links the
+repo to its stack by the registry pointer - never by a core version (ADR-022 in the
+standard repo); the picks' rationale lives in the stack repo's DECISIONS.
+
+**Which rules the number covers.** The drift number is exactly the manifest: file
+presence, required sections, static guards, plus the structure guard's checks (spec
+layout, personas named, no committed scaffolding warned). Rules about *conduct* - the
+same-PR spec coupling outside CI, plan/tasks removal at close, buildable substance,
+supersede-not-edit, cooldown discipline - are review-verified: honestly outside the
+number, listed in the judgment tier below. A repo can be drift 0 and still sloppy at
+review; the number is the floor, not the ceiling.
+
 **Drift as a number.** Because the check is one entry per manifest line, `drift N` is a
 measurable distance from the pinned version - a fleet owner can sort repos by it, and an
 update's job is to drive it back to `0`.

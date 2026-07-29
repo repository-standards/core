@@ -20,6 +20,13 @@ drain the backlog this assessment seeds.
 3. A **seeded backlog**: every gap becomes an item in [`backlog`](backlog.md) with a
    definition of done, feeding the onboarding phase.
 
+**Who must act.** The health report groups its findings by the **owner role** that must
+act - the same split the backlog items carry: **product/business** (the vision in
+`PRODUCT.md`, BDRs, confirming personas), **architect** (ADRs, boundaries), **dev**
+(specs, code, guards), **agent** (mechanical work it can run alone). Maintainers then
+see which gaps are *theirs* - "the business must write the vision; the architects must
+record the datastore decision" - not one undifferentiated pile.
+
 Do **not** modify code during the assessment. Detect and record; fix later, in priority
 order. The exception is a **red-flag stop** (below), which halts and asks the human now.
 

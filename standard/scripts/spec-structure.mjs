@@ -56,9 +56,10 @@ try {
     if (!raw) raw = fsWalk("specs").join("\n"); // brand-new repo, nothing there yet
   }
   files = raw.split("\n").filter(Boolean).filter((f) => f.startsWith("specs/"));
-} catch {
+} catch (e) {
   if (staged || base) {
-    console.error("spec-structure: not a git repository - the --staged/--base modes need git.");
+    const why = (e.stderr?.toString() || e.message || "").trim().split("\n")[0];
+    console.error(`spec-structure: git failed in --staged/--base mode${why ? ` (${why})` : ""} - these modes need a git repo and a resolvable base ref.`);
     process.exit(1);
   }
   files = fsWalk("specs").filter((f) => f.startsWith("specs/"));

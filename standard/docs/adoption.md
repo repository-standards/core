@@ -19,12 +19,12 @@ Every gate produces a **document and/or tasks**. The path ends with a **counted 
 
 | # | Gate | Greenfield (interview) | Brownfield (read code) | Output | Exit criterion |
 |---|------|------------------------|------------------------|--------|----------------|
-| 0 | **Intake & description** | Ask: what is this, in one sentence? Problem, why now? | Scan the repo; write what it *appears* to be and do | `PRODUCT.md` draft (a description the agent can reason from) | The agent can state what the product is |
+| 0 | **Intake & description** | Ask: what is this, in one sentence? Problem, why now? Plus the intake round: **intent** (new / align / assessment-only / update the pin), **technology + Layer 2 consent** (asked outright), **appetite** (one PR vs waves), **plan-only vs execute** | Scan the repo; write what it *appears* to be and do. Same intake round - technology **detected** from the repo's evidence, then confirmed, with the Layer 2 consent gathered here | `PRODUCT.md` draft (a description the agent can reason from) + the intake answers | The agent can state what the product is and what the user wants done |
 | 1 | **Personas - who** | Name 3-6 user types with the user | Infer users from the code, auth roles, UI; confirm | `personas.md` (primary marked) + target-personas BDR | Every later gate has a persona to point at |
 | 2 | **Vision / Assessment** | Goals, non-goals, success in 3 months | Run the 8-pass `repo-assessment`: what exists, what's missing, where code and intent drift | `PRODUCT.md` goals **or** an assessment report | The gap between now and aligned is written down |
 | 3 | **Decisions** | Pick topology/stack/boundaries from the catalog | Detect what the code **already chose**; record it retroactively | Foundational **ADRs/BDRs**; the rest queued | No load-bearing fork is silently undecided |
 | 4 | **Capabilities & specs** | Slice into capabilities (by domain, not page); write the first specs | Map existing capabilities; extract verbatim contracts (`file:line`), then synthesize specs | `specs/<capability>/` - persona-anchored, buildable where it counts | Money/security/data paths are buildable + specced |
-| 5 | **Backlog - count the work** | Turn unspecced capabilities + known work into items | Turn every missing spec, unrecorded decision, and known drift into items | `backlog.md` with a **task count** ("N to full alignment") | The scope is a number, honestly stated |
+| 5 | **Backlog - count the work** | Turn unspecced capabilities + known work into items | Turn every missing spec, unrecorded decision, and known drift into items | `backlog.md` with a **task count** ("N to full alignment"), every item naming its **owner role** | The scope is a number, honestly stated - and each task says whose it is |
 | 6 | **Verify** | - | - | `.standards-version` + manifest carried; `self-verify` green | `drift 0`; PRs opened |
 
 Both directions run through the `align-to-standards` skill (in a checkout of
@@ -32,10 +32,25 @@ repository-standards): its greenfield phase for a new repo, its assessment-first
 brownfield phase (`repo-assessment` passes, then align, then derive from code) for an
 existing one. The checkmap is the spine; the phases are how each gate gets filled.
 
+The spine is shared and so is the walk: both directions close the gates
+**0 -> 2 -> 1 -> 3 -> 4 -> 5 -> 6** - Gate 2 first because personas need evidence to
+point at, Gate 1 right after because personas gate everything downstream. What differs
+is Gate 2's evidence: greenfield **interviews** (the vision questions ride the Gate 0
+conversation), brownfield **assesses** - and the personas are then named from that
+evidence (greenfield: with the user; brownfield: **reconstructed** from auth roles, UI
+surfaces, API consumers, then confirmed with the user). The order is the
+order gates *close*; work inside a pass may interleave. **Assessment-only is a legal
+stop:** when the intake's intent is "tell me where I stand and give me the plan", the
+run ends after Gate 2 plus the counted plan - the health report and the number, no
+changes made.
+
 ## Rigid vs. the agent's discretion
 
-- **Rigid (the framework enforces):** the gate order, that each gate produces its artifact,
-  and the exit criteria. You do not write specs (Gate 4) before you have personas (Gate 1).
+- **Rigid (the framework enforces):** the per-direction gate order, that each gate
+  produces its artifact, and the exit criteria. Plainly: **no specs before confirmed
+  personas** (Gate 4 waits on Gate 1 - in both directions), **no recorded decisions
+  before intake + assessment** (Gate 3 waits on Gates 0 and 2), and **every gate
+  produces its artifact**.
 - **The agent's call (during adaptation):** *which* ADRs a repo needs, *which* capabilities
   to spec now vs. queue, what to **skip** (with a one-line recorded reason) and what to
   **add** beyond the defaults. Skipping is allowed; skipping *silently* is not.
@@ -57,6 +72,12 @@ Alignment scope for <repo> -> standard@<version>
 
 That number is the go/no-go signal and the roadmap. The repo can adopt a **slice** (the
 money paths first) and leave the rest queued - the count makes that trade explicit.
+
+Every item in the count also names its **owner role** - the role that must act:
+**product/business** (`PRODUCT.md`, BDRs, personas confirmation), **architect** (ADRs,
+boundaries), **dev** (specs, code, guards), **agent** (mechanical work it can do
+alone) - see the [backlog format](backlog.md). The count then says not just how much
+work, but **whose**.
 
 ## After alignment: modernize (bring the tech current)
 

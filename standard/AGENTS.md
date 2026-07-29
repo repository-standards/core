@@ -22,6 +22,11 @@ Structure = ARCHITECTURE.md. There is no TDR stream.
 
 One-liner. What/why: [PRODUCT.md](docs/PRODUCT.md). How: [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
+This repo follows repository-standards at the version pinned in
+`.standards-version`. If a `stack.manifest.json` is present, it also carries a
+technology layer (Layer 2): `self-verify` counts one drift number across both,
+and the rationale behind every stack entry lives in that stack repo's DECISIONS.
+
 ## Repo map
 
 | Path | Purpose |

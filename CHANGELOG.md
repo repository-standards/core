@@ -9,6 +9,67 @@ The simplification wave - the standard put on one page, in one tree, with one
 engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
 align engine, Layer 2 and the product spine.
 
+### The wizard, the feedback loop, the honest gates (2026-07-29)
+
+- **Intake-first adoption (ADR-020)** - `align-to-standards` opens with step 0:
+  measure the repo's state, then one question round - intent, technology (with
+  the Layer 2 consent gathered up front), appetite, plan-only vs execute.
+  Assessment-only becomes a legal, named outcome. Both phases walk one gate
+  spine (`adoption.md`); brownfield reconstructs personas from the assessment's
+  evidence and gets the stack offer right after the assessment, not at the end;
+  greenfield gains an explicit starter-composition rule (degit into the root
+  first, Layer 1 lays over it, collisions per adapt class). A pinned repo that
+  wants a stack later has its own route. Every assessment finding and backlog
+  item names the **owner role** that must act (product/business, architect,
+  dev, agent).
+- **Adoption feeds the standard (ADR-021)** - align and update runs close with
+  a consent-gated upstream offer: a registry miss becomes a **stack request**
+  issue, friction becomes an **adoption friction** report, a doc fix becomes a
+  PR. New `.github/ISSUE_TEMPLATE/` forms (stack-request, adoption-friction,
+  bug) give the signal one shape; CONTRIBUTING gains "Feedback from adopters";
+  `llms.txt` tells agents the channel exists.
+- **Lifecycle procedures are normative and agent-portable (ADR-019, new R22)** -
+  the spec loop, backlog capture, pre-PR review and version updates MUST ship
+  agent-executable; `.claude/skills/` + `scripts/spec/` is the reference form; a
+  non-Claude repo ports them strictly to its own mechanism (the manifest accepts
+  `.agents/skills`). The manifest entries now cite the rule that actually
+  demands them.
+- **Stacks linked, not version-locked (ADR-022, revises ADR-016)** - the stack
+  manifest's `standards` version range is gone; the registry back-pointer is the
+  linkage. Nothing version-shaped is checked or warned about; a core
+  manifest-contract break is an explicit, recorded migration stacks chase on
+  their own clock.
+- **Everything consumed pinned exact, enforced (ADR-017 discharged)** - both
+  this repo's workflows and the shipped templates pin actions by full SHA, run
+  on fixed runner images and name exact node versions; `tree-check` gains a pin
+  lint so a floating tag cannot return.
+- **The manifest covers the whole tree** - the shipped-but-unlisted class is
+  gone: `spec-guard.yml`, `docs/personas.md`, SECURITY, the PR template, the
+  process docs, journeys/research/runbooks all have entries (with adapt classes
+  and profiles); `tree-check` verifies the reverse direction (every shipped file
+  is an entry or an explicit exemption). The intake asks core-vs-scale, align writes
+  the answer into the manifest copy's **profile** field, and `self-verify` uses it
+  as the default - a solo repo is no longer red out of the box; the shipped `spec-guard.yml`
+  blocks on coupling only at scale and runs the full `--audit` on every PR.
+- **Derived facts stop being hand-written** - rule counts and ranges left every
+  surface (say "the numbered rules"; the number lives in SPEC.md); `tree-check`
+  fails a surface that hardcodes one; `site-check` derives the docsite page
+  count from the PAGE MAP and asserts the landing advertises `VERSION`. The
+  persona gate cannot silently evaporate (specs without a roster now fail the
+  structure guard; the roster is a required manifest entry) and committed
+  plan/tasks scaffolding is warned about (R13).
+- **The generator serves any repo** - page titles, sidebar footer links and the
+  generated README come from `site.config.json` / repo-agnostic text instead of
+  hardcoded core chrome ("one form, many sites" made true).
+- **Repo hygiene** - own CODE_OF_CONDUCT, own SECURITY.md (the shipped one is
+  the template), own PR template; `update-to-version` states where the two
+  manifests come from and updates the stack layer too; `docs/self-verify.md`
+  says plainly which rules the drift number covers and which stay
+  review-verified; FAQ and PRODUCT catch up with the extracted engine and
+  satellite stacks; the garbled shipped texts (checklist, enforcement,
+  conventions) read clean; the ADR/BDR templates no longer hardcode the
+  author's name.
+
 ### The spec, the tree, the engine (2026-07-22)
 
 - `standard/SPEC.md` - new: the whole normative core on one page - numbered

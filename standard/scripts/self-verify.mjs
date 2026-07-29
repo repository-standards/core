@@ -20,8 +20,9 @@
 //   2. Manifest (or fallback skeleton): required files/altPaths exist; required sections
 //      are present in their files; static guards pass. Each entry may carry a profile
 //      (core|scale, ADR-011) - core is whatever keeps knowledge alive, scale is whatever
-//      coordinates people. --profile core checks core only; --profile scale (default, and
-//      no flag) checks everything. solo/team are accepted silently as deprecated aliases
+//      coordinates people. --profile core checks core only; --profile scale checks everything;
+//      no flag = the manifest copy's "profile" field, then scale. solo/team are
+//      accepted silently as deprecated aliases
 //      (solo -> core, team -> scale). An entry with no profile counts as core, so
 //      manifests from before ADR-011 still check in full either way.
 //   3. Stray transition skills (ADR-009): align-to-standards, onboard-repo, modernize,
@@ -89,7 +90,11 @@ if (manifest && existsSync("stack.manifest.json")) {
 const profileArg = profileFlag || (manifest && manifest.profile) || "scale";
 const coreOnly = profileArg === "core" || profileArg === "solo";
 if (!profileFlag && manifest && manifest.profile) {
-  note("profile", `profile "${manifest.profile}" declared in the manifest copy - used as the default`);
+  if (["core", "scale", "solo", "team"].includes(manifest.profile)) {
+    note("profile", `profile "${manifest.profile}" declared in the manifest copy - used as the default`);
+  } else {
+    warning("profile", `manifest declares unknown profile "${manifest.profile}" - treated as scale (valid: core, scale)`);
+  }
 }
 
 // 1. version pin ----------------------------------------------------------------

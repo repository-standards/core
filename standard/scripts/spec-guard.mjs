@@ -17,7 +17,7 @@
 // No dependencies (Node built-ins only). Place at scripts/spec-guard.mjs.
 
 import { execSync } from "node:child_process";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 
 const args = process.argv.slice(2);
 const staged = args.includes("--staged");
@@ -38,7 +38,24 @@ const map = JSON.parse(readFileSync(MAP, "utf8"));
 // --audit: every capability spec (a specs/<cap>/ directory) must have a map entry.
 // A spec with no coupling entry silently rots (source-of-truth rule 4).
 if (audit) {
-  const specFiles = sh("git ls-files specs").split("\n").filter(Boolean);
+  // A fresh degit has no .git yet - fall back to walking the filesystem, like
+  // spec-structure does. A shipped guard never dumps a stack trace.
+  const fsWalk = (dir, acc = []) => {
+    if (!existsSync(dir)) return acc;
+    for (const e of readdirSync(dir)) {
+      const p = `${dir}/${e}`;
+      if (statSync(p).isDirectory()) fsWalk(p, acc);
+      else acc.push(p);
+    }
+    return acc;
+  };
+  let specFiles;
+  try {
+    specFiles = sh("git ls-files specs").split("\n").filter(Boolean);
+    if (specFiles.length === 0) specFiles = fsWalk("specs");
+  } catch {
+    specFiles = fsWalk("specs");
+  }
   const capDirs = new Set();
   for (const f of specFiles) {
     const parts = f.split("/"); // specs/<cap>/<file> -> a capability directory

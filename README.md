@@ -22,7 +22,9 @@ content. The eleven daily skills ship inside the tree (`standard/.claude/skills/
 the root `skills/` holds only the transition router that brings a repo in.
 
 Status: pre-1.0 (the 0.7.x line), mechanics field-run on the author's production
-repos. The pin makes updates deltas, and a degit'd tree keeps working offline
+repos. No release tags exist yet - a degit today resolves to the default branch,
+and the pin labels the state you adopted; tags make it exact when the maintainer
+cuts them. The pin makes updates deltas, and a degit'd tree keeps working offline
 even if this repo goes quiet - adopt the mechanism, not a promise.
 
 ## Why it exists

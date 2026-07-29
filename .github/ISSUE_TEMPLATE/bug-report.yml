@@ -1,0 +1,21 @@
+name: Bug report
+description: Something in the standard is wrong - a guard misfires, a doc contradicts the spec, a shipped file is broken.
+title: "Bug: <one line>"
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What is wrong
+      description: The file/rule/guard and the concrete defect - quote both sides if two places contradict each other.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to see it
+      description: The command or the reading path that shows the problem.
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit

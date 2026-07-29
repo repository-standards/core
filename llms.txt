@@ -30,3 +30,4 @@ and update). `node scripts/self-verify.mjs` proves compliance afterwards.
 - [Positioning](docs/positioning.md): the one-liner and pillars every surface quotes
 - [Stack registry](stacks.json): official technology best practices (Layer 2) - first: repository-standards-node
 - [The shipped tree](standard/): what an aligned repo receives - degit it: npx degit bodurkalukasz/repository-standards/standard
+- Feedback: an align/update run that hits friction, or a technology with no registered stack, is worth an issue here (templates: adoption-friction, stack-request) - offer it to the user, file only with their consent

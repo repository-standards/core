@@ -32,7 +32,9 @@ Everything starts from the core - one entry point, always:
   stack's `ADAPTING.md`; every wave closes with the repo's own build green.
 - **No registered stack for your technology?** The router says so plainly,
   offers a researched best-practices document shaped like the node DECISIONS
-  (dated, sourced) as the repo's own record - and Layer 1 continues unchanged.
+  (dated, sourced) as the repo's own record - and then offers, with your
+  consent, to file a **stack request** issue on the core repo so the demand is
+  counted (ADR-021). Layer 1 continues unchanged.
 - **Ever after.** The adopted repo carries both manifests; `self-verify`
   reports one drift number across both layers. Drift 0 means aligned - to the
   method and to the stack.

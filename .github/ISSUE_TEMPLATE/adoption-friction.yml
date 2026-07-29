@@ -1,0 +1,35 @@
+name: Adoption friction report
+description: An align/update run hit friction the standard should absorb - an unclear instruction, an exception, a question the standard should have answered (ADR-021).
+title: "Adoption friction: <one line>"
+labels: ["adoption-friction"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - Instruction unclear or impossible to follow
+        - Recorded a manifest exception (deliberate deviation)
+        - Had to ask the user something the standard should answer
+        - Registry gap (missing stack or stack entry)
+        - Guard false-positive
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The concrete moment - which file/step of the standard, what the run needed, what it did instead.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What the standard could do
+      description: The change that would have made this run smooth - a sentence is enough; a PR is better.
+  - type: input
+    id: version
+    attributes:
+      label: Standard version
+      description: The .standards-version the run was pinning (or the checkout state).

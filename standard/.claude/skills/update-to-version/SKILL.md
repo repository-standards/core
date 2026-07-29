@@ -31,6 +31,17 @@ the result with `self-verify`.
    between current and target. The `CHANGELOG.md` between the two versions gives the prose
    for each. Enumerate **only** what the update introduces, changes, or removes.
 
+   **Where the two manifests come from:** the current version's manifest is the copy this
+   repo already carries (its aligned snapshot); the target's comes from the standard's
+   checkout at that version - a release tag once tags exist, else the checkout you were
+   pointed at. If the older manifest is unavailable, diff the repo's carried copy against
+   the target - that is exactly the delta this repo owes.
+
+   **The stack layer updates too:** if the repo carries a `stack.manifest.json`, re-read
+   it from the stack repo's checkout and apply its entry deltas the same way - the stack
+   is linked by the registry pointer, never by a core version (ADR-022), so its update
+   rides on its own clock.
+
 3. **Apply the delta, adapted - never a blind re-scaffold.** For each changed item:
    - the repo has **not** diverged here -> apply it, adapted to this repo's stack and
      language (same rule as `align-to-standards`: reconcile, do not blind-copy);
@@ -65,3 +76,11 @@ the result with `self-verify`.
   versions, stop and say so rather than re-applying blindly.
 - **Not merged on a red self-verify** - the update is complete only when the repo proves
   it complies with the target version.
+
+## Close the loop upstream
+
+If the update hit friction - a delta entry that could not be applied as written, a
+deviation the new version silently collides with, a question the changelog should
+have answered - **offer** the user (per item, never automatically) to file it as an
+`adoption-friction` issue on `bodurkalukasz/repository-standards`, or a PR when the
+fix is a concrete doc change. The standard absorbs what its updates teach.

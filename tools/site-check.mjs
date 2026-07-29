@@ -82,7 +82,8 @@ else {
 
 // The landing must advertise the released version - VERSION is the source.
 const version = readFileSync("VERSION", "utf8").trim();
-if (landing.includes(`v${version}`)) ok(`${LANDING}: advertises v${version} (matches VERSION)`);
+const vRe = new RegExp(`v${version.replace(/\./g, "\\.")}(?![0-9.])`);
+if (vRe.test(landing)) ok(`${LANDING}: advertises v${version} (matches VERSION)`);
 else fail(`${LANDING}: does not advertise v${version} - VERSION moved and the landing did not`);
 
 // External hosts allowlist: only GitHub links may leave the page.
@@ -104,9 +105,14 @@ const cfg = existsSync("site.config.json") ? JSON.parse(readFileSync("site.confi
 let expectedPages;
 if (cfg.pages) expectedPages = cfg.pages.length;
 else {
-  const gen = readFileSync("tools/docsite.mjs", "utf8");
-  const block = gen.split("const PAGES = CONFIG.pages || [")[1].split("];")[0];
-  expectedPages = (block.match(/\{\s*src:/g) || []).length;
+  try {
+    const gen = readFileSync("tools/docsite.mjs", "utf8");
+    const block = gen.split("const PAGES = CONFIG.pages || [")[1].split("];")[0];
+    expectedPages = (block.match(/\{\s*src:/g) || []).length;
+  } catch {
+    fail("tools/docsite.mjs: could not locate the default PAGE MAP marker ('const PAGES = CONFIG.pages || [') - the marker moved; update site-check's parse");
+    expectedPages = pages.length; // avoid a second, misleading count failure
+  }
 }
 if (pages.length !== expectedPages) fail(`${SITE}: ${pages.length} html pages but the PAGE MAP defines ${expectedPages}`);
 else ok(`${SITE}: ${pages.length} pages present (matches the PAGE MAP)`);

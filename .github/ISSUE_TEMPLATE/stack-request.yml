@@ -1,0 +1,29 @@
+name: Stack request
+description: A technology has no official stack in the registry - request one (agents file these with the user's consent; ADR-021).
+title: "Stack request: <technology>"
+labels: ["stack-request"]
+body:
+  - type: input
+    id: technology
+    attributes:
+      label: Technology
+      description: The language/runtime the registry has no stack for (e.g. python, go, rust).
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Detection evidence
+      description: What identified the technology (manifest files found, repo shape). One repo is a data point; name it if it can be public.
+    validations:
+      required: true
+  - type: textarea
+    id: seed
+    attributes:
+      label: Seed material
+      description: If the align run generated a researched docs/stack-decisions.md, paste it (or its summary table) here - it is the seed a real repository-standards-<technology> grows from.
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Greenfield or brownfield? What would the stack have been used for? Anything the paved road must decide for this technology.

@@ -32,11 +32,13 @@ jobs:
         run: |
           git fetch --no-tags --quiet origin "${{ github.base_ref }}"
           PROFILE=$(node -p "try { JSON.parse(require('fs').readFileSync('standard.manifest.json','utf8')).profile || 'scale' } catch { 'scale' }")
-          if [ "$PROFILE" = "core" ]; then
+          if [ "$PROFILE" = "core" ] || [ "$PROFILE" = "solo" ]; then
             node scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}"
           else
             node scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}" --block
           fi
       - name: Spec coupling audit (full tree, every PR)
         # Orphan specs and unmapped capabilities do not wait for a release ritual.
+        # Deliberately blocking at every profile: the audit checks structure, not
+        # conduct - a spec with no map entry is broken at core too.
         run: node scripts/spec-guard.mjs --audit --block
