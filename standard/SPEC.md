@@ -40,7 +40,8 @@ binds every repo, a solo one included.
 - **R5.** A contestable, re-litigable choice MUST be recorded as a decision record
   in `docs/decision-records/` - ADR for technical, BDR for business, MADR form. A
   settled way of doing a recurring thing MUST be written as a rule where the next
-  person will look; `docs/taxonomy.md` is the map of where each kind lands.
+  person will look; the standard's taxonomy (adopted by reference at the pinned
+  version) is the map of where each kind lands.
 - **R6.** An accepted record MUST NOT be edited into a different decision. It is
   superseded by a new record: status flip plus link.
 - **R7.** The eight foundation forks MUST each be consciously decided and recorded:

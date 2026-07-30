@@ -69,7 +69,9 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
   `/spec-plan` -> `/spec-tasks` -> `/spec-implement` build it; `/spec-reconcile`
   closes spec == code == tests and checks the specs still agree with each other.
   Work items come from and return to [`docs/backlog.md`](docs/backlog.md). Roles and
-  hand-offs (PO -> dev -> AI): [`docs/ways-of-working.md`](docs/ways-of-working.md).
+  hand-offs (PO -> dev -> AI): the standard's
+  [ways of working](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/ways-of-working.md),
+  adopted by reference at your pinned version.
 - **Bring this repo up to the standard (brownfield)** - alignment + onboarding: derive
   capabilities from the code, seed specs + the decisions the code implies, and put the
   rest in the backlog (run from a checkout of repository-standards:

@@ -62,9 +62,10 @@ update's job is to drive it back to `0`.
 
 A machine cannot (yet) decide these; they are checked when the PR is reviewed:
 
-- **Decisions recorded** - the forks in the [decision checklist](decision-records/checklist.md)
-  that apply to this repo are recorded as ADR/BDR, or consciously deferred as a backlog
-  item - not silently undecided.
+- **Decisions recorded** - the forks in the standard's
+  [decision checklist](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/checklist.md)
+  (adopted by reference at your pinned version) that apply to this repo are recorded as
+  ADR/BDR, or consciously deferred as a backlog item - not silently undecided.
 - **Specs buildable where it counts** - each mapped capability has a
   [spec](../specs/README.md); money / security / data / external-contract paths are
   buildable, not merely described.

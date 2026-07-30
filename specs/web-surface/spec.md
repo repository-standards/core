@@ -13,6 +13,8 @@ One source, two surfaces: [`tools/docsite.mjs`](../../tools/docsite.mjs) renders
 
 The docsite generator, the site-check gate, and the `site/` directory they operate on. Repo-own tooling - never shipped.
 
+The landing's hero is an animated agent-session window (the ask typed, the align played out, looped; rendered statically under `prefers-reduced-motion`). `site/previous.html` is a frozen snapshot of the prior landing, kept while the final landing template is being chosen - deployed as-is and deliberately outside site-check's landing checks, which gate `site/index.html` only.
+
 ## Out of scope
 
 The prose of the rendered pages (owned by their source files); markdown link integrity repo-wide ([tree-guard](../tree-guard/spec.md)).
@@ -60,7 +62,7 @@ The prose of the rendered pages (owned by their source files); markdown link int
 
 ## Acceptance criteria
 
-- **Page-map link.** GIVEN `standard/docs/adoption.md` links `../SPEC.md` and `standard/SPEC.md` is in the PAGE MAP WHEN docsite renders THEN the href becomes `spec.html`.
+- **Page-map link.** GIVEN `docs/method/taxonomy.md` links `checklist.md` and `docs/method/checklist.md` is in the PAGE MAP WHEN docsite renders THEN the href becomes `checklist.html`.
 - **GitHub fallback.** GIVEN a page links `../scripts/self-verify.mjs` (not in the PAGE MAP) WHEN rendered THEN the href becomes the GitHub `blob/main` URL for the resolved path; a `dir/` target gets `tree/main`.
 - **Broken internal link.** GIVEN a generated page hrefs `nope.html` and `site/docs/nope.html` does not exist WHEN site-check runs THEN it FAILs naming page and target, exit 1.
 - **Re-phrased one-liner.** GIVEN the landing paraphrases the one-liner WHEN site-check runs THEN the verbatim check FAILs and exits 1.

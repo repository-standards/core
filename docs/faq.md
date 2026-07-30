@@ -6,7 +6,7 @@ the landing page hooks, the FAQ unblocks, the docs teach.
 **Which model should drive the transition?**
 The strongest you have, at the highest thinking setting - fewer iterations, fewer
 errors. The judgment gates (decisions, spec-depth calls) are where model quality shows.
-Details: [adoption - which model](../standard/docs/adoption.md).
+Details: [adoption - which model](method/adoption.md).
 
 **I only have a weaker model. Can it do this?**
 Yes. The process is **re-runnable and lossless**: align resumes from measurement
@@ -17,7 +17,7 @@ finishes the job. The falling drift number is your progress bar.
 **My repo is years old and messy. Is it too late?**
 No - brownfield is a first-class path: `assess -> align -> onboard`, in prioritized
 waves, re-entered as many times as needed. A multi-year repo is not aligned in one PR
-*by design*. Start: [adoption](../standard/docs/adoption.md).
+*by design*. Start: [adoption](method/adoption.md).
 
 **Do I need Jira or a paid tracker?**
 No. The default posture is **GitHub Issues** (free, unlimited). Jira (free up to 10
@@ -28,7 +28,7 @@ The repo holds intents; the tracker holds execution state (ADR-010).
 Adopt the **core profile**: what keeps knowledge alive (specs, records, backlog,
 self-verify) without what coordinates people (bridges, curated release notes, CI
 gates). Flip to the scale profile when the second regular contributor arrives -
-a flag plus the measured delta (ADR-011): [adoption - profiles](../standard/docs/adoption.md).
+a flag plus the measured delta (ADR-011): [adoption - profiles](method/adoption.md).
 
 **What if I disagree with one of the standard's picks?**
 Deviate deliberately: record a local superseding decision (ADR-004) and note the

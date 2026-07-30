@@ -39,9 +39,11 @@ Pick once, record it in `AGENTS.md`, and keep it consistent within an artifact t
 ### Where rules live (ADR-012)
 
 **In-repo instructions are the source of truth.** Every rule about working in this
-repo lives in the repo, at its taxonomy home: conventions here / `AGENTS.md`, process
-in `ways-of-working`, contribution mechanics in `CONTRIBUTING`, behavior in specs,
-decisions in records. Personal memory, `~/.claude`-style global configs, and chat may
+repo lives in the repo, at its taxonomy home: conventions here / `AGENTS.md`,
+contribution mechanics in `CONTRIBUTING`, behavior in specs, decisions in records
+(the process itself is the standard's
+[ways of working](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/ways-of-working.md),
+adopted by reference at your pinned version). Personal memory, `~/.claude`-style global configs, and chat may
 *point* at repo rules - they must never *hold* them. A rule that exists only outside
 the repo is treated as **missing**; finding one is a defect, fixed by landing the rule
 at its home. "It's in my memory" is not a location.

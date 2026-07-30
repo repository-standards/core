@@ -76,7 +76,7 @@ money paths first) and leave the rest queued - the count makes that trade explic
 Every item in the count also names its **owner role** - the role that must act:
 **product/business** (`PRODUCT.md`, BDRs, personas confirmation), **architect** (ADRs,
 boundaries), **dev** (specs, code, guards), **agent** (mechanical work it can do
-alone) - see the [backlog format](backlog.md). The count then says not just how much
+alone) - see the [backlog format](../../standard/docs/backlog.md). The count then says not just how much
 work, but **whose**.
 
 ## After alignment: modernize (bring the tech current)

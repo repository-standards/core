@@ -6,7 +6,7 @@ This checklist names them, says why each matters, and gives the standard's **opi
 default direction** (the paved road) so a team decides deliberately instead of drifting
 into a choice by accident.
 
-The decision itself becomes a record in this repo ([ADR / BDR](README.md)) - the
+The decision itself becomes a record in this repo ([ADR / BDR](../../standard/docs/decision-records/README.md)) - the
 checklist only tells you *which decisions to expect* and *where the paved road runs*.
 (The index of records that already exist - the library-catalog sense - lives in each
 stream's README: `adr/README.md`, `bdr/README.md`.)
@@ -24,7 +24,7 @@ stream's README: `adr/README.md`, `bdr/README.md`.)
 
 ## Not every area is an ADR
 
-Apply the record test (see [`README`](README.md)): a record is for a
+Apply the record test (see the [record policy](../../standard/docs/decision-records/README.md)): a record is for a
 **contestable, re-litigable** choice - one a future engineer will argue about again. An
 area with one obviously-right answer for your context is a **convention**, not an ADR.
 Record the trade-off, not the obvious. One record per decision; at most ~3 options.
@@ -39,7 +39,7 @@ picks and rationale live in its DECISIONS).
 | Decision | Why it matters | Default direction (paved road) | Record |
 |---|---|---|---|
 | Repo topology | Monorepo vs polyrepo shapes tooling, releases, ownership | Monorepo when code shares a release cadence or types; split only on a real ownership/deploy boundary | ADR |
-| Domain / module boundaries | Bad seams make every later change cross-cutting | Slice by **capability/domain**, not by layer or page (mirrors [specs by capability](../../specs/README.md)) | ADR |
+| Domain / module boundaries | Bad seams make every later change cross-cutting | Slice by **capability/domain**, not by layer or page (mirrors [specs by capability](../../standard/specs/README.md)) | ADR |
 | Language & type strictness | Strictness caught early is cheap; retrofitted late is not | Strict typing on from day one; no gradual-any escape hatch as default | ADR |
 | Working (natural) language | An AI reads any language, so this is a config, not a constraint; undecided means inconsistent artifacts | Default English; declare per-artifact in `AGENTS.md` (a non-English team is first-class); user-facing copy follows the persona | convention (AGENTS.md) |
 | Dependency & supply-chain policy | Every dep is attack surface and maintenance debt | A real bar to add a dependency (ADR for non-trivial ones); a supply-chain **cooldown** before adopting fresh releases `-> stack layer` | ADR |
@@ -85,7 +85,7 @@ picks and rationale live in its DECISIONS).
 
 ## Product & business (BDR stream)
 
-These are **business** decisions - they go in the [BDR](bdr/README.md) stream, not the
+These are **business** decisions - they go in the [BDR](../../standard/docs/decision-records/bdr/README.md) stream, not the
 technical log.
 
 | Decision | Why it matters | Record |

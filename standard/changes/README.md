@@ -3,8 +3,9 @@
 Instead of editing `CHANGELOG.md`, a PR drops one fragment here - so parallel PRs never
 collide on the changelog. At release the maintainer assembles them into two outputs: the
 complete **`CHANGELOG.md`** (mechanical) and the curated, written **`RELEASE-NOTES.md`**
-("what's new" for non-technical readers). See the
-[changelog process](../docs/changelog-process.md). Fragments are **scale profile** -
+("what's new" for non-technical readers). See the standard's
+[changelog process](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/changelog-process.md)
+(adopted by reference at your pinned version). Fragments are **scale profile** -
 they stop parallel PRs from colliding; a solo repo writes the `## Unreleased` section
 of `CHANGELOG.md` directly.
 

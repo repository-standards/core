@@ -19,10 +19,10 @@ and update). `node scripts/self-verify.mjs` proves compliance afterwards.
 - [Spec](standard/SPEC.md): the normative core - the numbered MUST/SHOULD rules, on one page
 - [README](README.md): what it is, the keystone (versioned align/update/verify), quick start
 - [Manifesto](docs/manifesto.md): the idea - one repo, everything coherent, agents-first
-- [Adoption](standard/docs/adoption.md): brownfield gates, profiles (solo vs team), model guidance
-- [Taxonomy](standard/docs/taxonomy.md): where each kind of knowledge lands
-- [Ways of working](standard/docs/ways-of-working.md): PO -> Dev -> AI loop, statuses, clarify gate
-- [Decision checklist](standard/docs/decision-records/checklist.md): the forks every repo consciously decides
+- [Adoption](docs/method/adoption.md): brownfield gates, profiles (core vs scale), model guidance
+- [Taxonomy](docs/method/taxonomy.md): where each kind of knowledge lands
+- [Ways of working](docs/method/ways-of-working.md): PO -> Dev -> AI loop, statuses, clarify gate
+- [Decision checklist](docs/method/checklist.md): the forks every repo consciously decides
 - [FAQ](docs/faq.md): models, messy repos, free trackers, solo vs team
 
 ## Optional

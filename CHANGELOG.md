@@ -58,6 +58,14 @@ align engine, Layer 2 and the product spine.
   persona gate cannot silently evaporate (specs without a roster now fail the
   structure guard; the roster is a required manifest entry) and committed
   plan/tasks scaffolding is warned about (R13).
+- **Method docs live beside the tree (ADR-023, extends ADR-004)** - the
+  adoption checkmap, repo assessment, taxonomy, decision checklist, ways of
+  working and changelog process moved to `docs/method/`; the shipped tree is
+  now literally the client repo at day zero. Clients adopt the method **by
+  reference at the pinned version**: the manifest carries a `references`
+  section, `self-verify` notes it and never file-checks it (the old
+  reference-entries-with-required-file contradiction is gone), and
+  `tree-check` fails a dead reference.
 - **The generator serves any repo** - page titles, sidebar footer links and the
   generated README come from `site.config.json` / repo-agnostic text instead of
   hardcoded core chrome ("one form, many sites" made true).

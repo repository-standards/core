@@ -1,7 +1,7 @@
 # Folder self-description = README.md per folder
 
 **Decided:** the three-section README convention
-([taxonomy](../../standard/docs/taxonomy.md)); `catalog.md` rejected as the
+([taxonomy](../method/taxonomy.md)); `catalog.md` rejected as the
 describer name.
 
 **Why:** GitHub renders README.md right where the reader lands - zero clicks;

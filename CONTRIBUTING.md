@@ -21,7 +21,7 @@ contribution this repo takes.
 - **Changelog:** describe your change under `CHANGELOG.md`'s `## Unreleased`
   heading; never add a version heading and never touch `VERSION` - the maintainer
   cuts every release (see
-  [`standard/docs/changelog-process.md`](./standard/docs/changelog-process.md) for
+  [`docs/method/changelog-process.md`](./docs/method/changelog-process.md) for
   the fragments mechanism team repos get).
 - **One tree:** the standard is authored directly in `standard/` at client-repo
   paths (ADR-014). There is nothing to sync; `tree-check` fails if repo-own

@@ -53,8 +53,8 @@ after personas and product.
      class (`merge`-class files diff against the starter's reference copy).
    - Copy `stack.manifest.json` from the stack checkout into the new repo, beside the
      core manifest.
-   Record the topology and the stack as **ADRs** (from
-   the decision checklist `docs/decision-records/checklist.md`: repo topology, domain
+   Record the topology and the stack as **ADRs** (from the
+   [decision checklist](../../docs/method/checklist.md): repo topology, domain
    boundaries, datastore, API style, auth).
 
 5. **Break into modules/capabilities (with the user).** Two lightweight techniques close the

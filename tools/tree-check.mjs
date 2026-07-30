@@ -62,6 +62,13 @@ for (const s of manifest.sections || []) {
   if (!existsSync(`${TREE}/${s.file}`)) { fail(`${TREE}/${s.file} missing, so the required "${s.heading}" section cannot ship`); missing++; }
 }
 if (!missing) ok(`every manifest promise is present in the tree`);
+// references (ADR-023): method docs adopted by reference must resolve at this
+// repo's root - a dead reference is a broken promise to every pinned client.
+let refMissing = 0;
+for (const r of manifest.references || []) {
+  if (!existsSync(r.path)) { fail(`${r.path} referenced by the manifest (id: ${r.id}) but missing in this repo`); refMissing++; }
+}
+if ((manifest.references || []).length && !refMissing) ok(`every manifest reference resolves (${manifest.references.length} method docs)`);
 
 // --- 2b. every shipped file is a manifest entry (or an explicit exemption) -------------
 // The manifest is the tree's machine projection; a shipped-but-unlisted file is

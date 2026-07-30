@@ -1,11 +1,12 @@
 # docs/ - about this product (zone 1)
 
-What the repository-standards project says about itself. The standard's own method
-docs and templates live in the shipped tree - [`standard/docs/`](../standard/docs/) -
-not here.
+What the repository-standards project says about itself, plus the standard's method
+manual. The client-authored templates and tool manuals live in the shipped tree -
+[`standard/docs/`](../standard/docs/) - not here.
 
 | File | What it is |
 |---|---|
+| [method/](method/README.md) | the standard's method manual - adoption, assessment, taxonomy, decision checklist, ways of working, changelog process; clients adopt it by reference at their pinned version (ADR-023) |
 | [manifesto.md](manifesto.md) | the founder's why - the itch, the idea, the non-negotiables |
 | [ecosystem.md](ecosystem.md) | how the repos fit together - the engine, the map packs, and how a stack plugs in |
 | [positioning.md](positioning.md) | the one statement and pillars every surface quotes verbatim |

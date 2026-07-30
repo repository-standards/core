@@ -20,7 +20,7 @@
 | how a persona travels the product | **journey** | `docs/journeys/<persona>.md` - stages -> capabilities, coupled to specs (PDLC-5) |
 | how to run, diagnose, or undo a service in production | **runbook** | `docs/runbooks/<service>.md` |
 | what an incident taught us | **postmortem** | `docs/runbooks/postmortems/<date>-<slug>.md` - blameless; every action item becomes a backlog item |
-| a deploy / rollback decision pre-made | **decision** | the release-strategy fork in the [decision checklist](decision-records/checklist.md) - rollback triggers decided before the first deploy, not during the incident |
+| a deploy / rollback decision pre-made | **decision** | the release-strategy fork in the [decision checklist](checklist.md) - rollback triggers decided before the first deploy, not during the incident |
 | research / analysis that fed a decision | **working doc** | `docs/` (archivable once it has fed its decision) |
 | the story / the narrative rationale | **narrative** | a blog or working doc - not a record |
 | a judgment call in force, openly seeking a better option | **open question** | `docs/open-questions.md` - decided provisionally; a winning challenge supersedes the rule/record and resolves the entry |
@@ -53,14 +53,14 @@ beats clever.
 - **BDR** - a business / product decision; a separate stream (different stakeholders,
   altitude).
 - Sub-scope goes in the record's `Tags`, never in the acronym. Full policy:
-  [`decision-records/`](decision-records/README.md) (ADR-001).
+  [`decision-records/`](../../standard/docs/decision-records/README.md) (ADR-001).
 
 ## Ideas / discovery before a decision
 
 Not everything worth writing down is a decision, a rule, or a behavior - some of it is a
 **speculative idea that may never ship**. That is first-class here, not a lesser draft: an
 idea is explored end-to-end - including its **provisional technical and business shape** -
-in one file under [`docs/ideas/`](ideas/README.md), and it is worth keeping in the repo
+in one file under [`docs/ideas/`](../../standard/docs/ideas/README.md), and it is worth keeping in the repo
 even while it is only a maybe.
 
 The rule that keeps the decision log honest:
@@ -114,5 +114,5 @@ in that PR.
 
 Naming rule: `README.md` **describes a folder**; `catalog.md` is reserved for a
 **curated list of items of one kind** (like the
-[decision checklist](decision-records/checklist.md)) - the two are different genres and
+[decision checklist](checklist.md)) - the two are different genres and
 must not be mixed.

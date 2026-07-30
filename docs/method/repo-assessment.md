@@ -17,7 +17,7 @@ drain the backlog this assessment seeds.
 1. A short **health report**: for each area below, maturity (absent / partial / solid)
    and the top risks.
 2. **Recommendations**: what to **suggest** and what to **set up** (the paved road).
-3. A **seeded backlog**: every gap becomes an item in [`backlog`](backlog.md) with a
+3. A **seeded backlog**: every gap becomes an item in [`backlog`](../../standard/docs/backlog.md) with a
    definition of done, feeding the onboarding phase.
 
 **Who must act.** The health report groups its findings by the **owner role** that must
@@ -38,8 +38,8 @@ Each pass: what to **detect**, what **good** looks like (the paved road), and wh
 | Pass | Detect | Good looks like | Suggest & set up |
 |---|---|---|---|
 | **1. Skeleton & docs** | Is there `AGENTS.md`, `PRODUCT`, `ARCHITECTURE`, `specs/`, `decision-records/`, a backlog? | The standard skeleton present and pointed-to from `AGENTS.md` | Run `align-to-standards` to seed the missing skeleton (structure only) |
-| **2. Decisions in code** | Walk the [decision checklist](decision-records/checklist.md): which forks are decided / undecided / decided **inconsistently** | Every contestable fork has an ADR/BDR; the rest are conscious conventions | Retroactive ADR/BDR for decided-but-unrecorded; backlog item for each undecided fork |
-| **3. Capabilities & specs** | Domains present in the code; any specs; a `capability-map.json`? | Specs [by capability, buildable](../specs/README.md); code mapped | Seed `capability-map.json`; backlog items to spec the risky capabilities first |
+| **2. Decisions in code** | Walk the [decision checklist](checklist.md): which forks are decided / undecided / decided **inconsistently** | Every contestable fork has an ADR/BDR; the rest are conscious conventions | Retroactive ADR/BDR for decided-but-unrecorded; backlog item for each undecided fork |
+| **3. Capabilities & specs** | Domains present in the code; any specs; a `capability-map.json`? | Specs [by capability, buildable](../../standard/specs/README.md); code mapped | Seed `capability-map.json`; backlog items to spec the risky capabilities first |
 | **4. Quality gates** | Tests (present? tiers? which paths?), typecheck strictness, lint/format | Named test tiers, strict types, one formatter/linter | Set up the missing gate; backlog coverage for money/security/contract paths |
 | **5. CI/CD** | Is there a pipeline? Least-privilege permissions? Actions pinned? Reproducible build? | Hardened, pinned, least-privilege CI/CD | Add or harden the pipeline; pin actions; scope permissions down |
 | **6. Security & supply chain** | Secret scanning, secrets committed, dependency audit, lockfile, release cooldown | Secret scan + audit in CI; no committed secrets; supply-chain cooldown | Set up scanning + audit; **committed secret = red-flag stop** |

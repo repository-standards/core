@@ -19,7 +19,7 @@ Guarding this repo's own shipped tree ([tree-guard](../tree-guard/spec.md)); aut
 
 ## Core concepts
 
-- **Manifest** - `standard.manifest.json` in cwd, the single source of truth (ADR-005): `version`, `files[]`, `sections[]`, `guards[]`, `decisions[]`.
+- **Manifest** - `standard.manifest.json` in cwd, the single source of truth (ADR-005): `version`, `files[]`, `sections[]`, `guards[]`, `decisions[]`, `references[]` (method docs adopted by reference, ADR-023).
 - **Drift** - the count of FAIL results; one unmet required entry = one point. Notes and warnings never count.
 - **Profile** - `core` or `scale` per entry (ADR-011); an entry with no profile counts as core, so pre-ADR-011 manifests check in full under either profile.
 
@@ -35,6 +35,7 @@ Guarding this repo's own shipped tree ([tree-guard](../tree-guard/spec.md)); aut
 6. **Profiles.** `--profile core` checks core entries only across files/sections/guards and notes how many scale-only entries were skipped; `--profile scale` checks everything. With no flag, the repo's manifest copy's top-level `profile` field (written at align time, ADR-011) is the default - a note names it - and absent that, `scale`. `solo`/`team` are accepted as deprecated aliases.
 7. **Stray transition skills.** `align-to-standards`, `onboard-repo`, `modernize`, `greenfield-start` found under `.claude/skills/` each produce a WARN (a hand-copy mistake, delete it - ADR-009), never drift.
 8. **Decisions.** A non-empty `decisions[]` produces one note (judgment tier, confirmed recorded at review) - never checked mechanically.
+9. **References.** A non-empty `references[]` produces one note naming the count (method docs read in the standards repo at the pin, ADR-023) - never a file check; a `files[]` entry with `adapt: "reference"` is likewise noted and skipped, never existence-checked.
 
 Output: header `self-verify - compliance with manifest <version>` (or `the pinned standard`), one `PASS | FAIL | WARN | ....` row per result (`<tag>  <name padded to 9>  <msg>`), then the verdict.
 
@@ -71,6 +72,7 @@ Output: header `self-verify - compliance with manifest <version>` (or `the pinne
 - **Persisted profile.** GIVEN the manifest copy carries `"profile": "core"` WHEN run with no flag THEN core is the applied profile (a note says so); a CLI `--profile` flag overrides it.
 - **Recursion guard.** GIVEN the manifest lists guard `id: "self-verify"` WHEN guards run THEN that entry is skipped.
 - **Stray skill.** GIVEN `.claude/skills/align-to-standards/` exists WHEN run THEN a WARN names it and drift is unchanged.
+- **References are not files.** GIVEN the manifest carries `references[]` and none of the referenced paths exist in the repo WHEN run THEN drift is unchanged (one note, zero file checks).
 - **Failing guard.** GIVEN a static guard exits non-zero WHEN run THEN its captured output prints indented under the FAIL and exit is 1.
 
 ### Stack manifest merge

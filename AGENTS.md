@@ -41,5 +41,5 @@ clients get them by reference (ADR-004), never as copies.
   in this repository. The only live workflow is the root `checks.yml`.
 - **Working language:** English for every artifact in this repo. Drafts and notes
   cook in the owner's private space, in any language.
-- The map of what knowledge goes where: [`standard/docs/taxonomy.md`](standard/docs/taxonomy.md).
+- The map of what knowledge goes where: [`docs/method/taxonomy.md`](docs/method/taxonomy.md).
   The plan: [`backlog.md`](backlog.md). The process: [`CONTRIBUTING.md`](CONTRIBUTING.md).

@@ -47,7 +47,7 @@ feeds none of these gets removed.
 ## Two layers - adoptable independently
 
 - **Layer 1 - The Standard (stack-agnostic):** decisions as ADR/BDR, living capability
-  specs, the taxonomy map ([`standard/docs/taxonomy.md`](standard/docs/taxonomy.md)),
+  specs, the taxonomy map ([`docs/method/taxonomy.md`](docs/method/taxonomy.md)),
   conventions and guardrails, `AGENTS.md` as the single agent entry.
 - **Layer 2 - Technology best practices:** one satellite repo per technology,
   official when listed in the registry ([`stacks.json`](stacks.json)) - the picks and

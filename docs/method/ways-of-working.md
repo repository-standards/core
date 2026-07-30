@@ -34,10 +34,10 @@ delta**. After merge, the spec is current production truth - not a historical ti
 
 ### Stage by stage (mapped to the skills)
 
-1. **Intent (PO).** Pull an item from the [`backlog`](backlog.md) (or capture a new
-   one). **Name the persona** it serves (from [`personas.md`](personas.md)) and how it
+1. **Intent (PO).** Pull an item from the [`backlog`](../../standard/docs/backlog.md) (or capture a new
+   one). **Name the persona** it serves (from [`personas.md`](../../standard/docs/personas.md)) and how it
    advances their job - an item that serves no persona is parked, not built (ADR-006).
-   Then write or extend the capability's [spec](../specs/README.md) at the **behavioral**
+   Then write or extend the capability's [spec](../../standard/specs/README.md) at the **behavioral**
    tier: what it should do, the rules, the acceptance criteria, for whom. No code, no
    schema - just behavior and why. If two personas conflict, resolve it with a **BDR**,
    not in your head. The PO never has to gate blind: **ask the agent to explain any
@@ -46,7 +46,7 @@ delta**. After merge, the spec is current production truth - not a historical ti
 2. **Sharpen (Dev).** Run `spec-impact` to find the ripple (which other capabilities,
    which ADRs, which code). Raise the spec to the **buildable** tier - the contracts a
    change can be built and verified from. If the change forces a contestable decision,
-   write the **ADR/BDR** first (see the [decision checklist](decision-records/checklist.md)
+   write the **ADR/BDR** first (see the [decision checklist](checklist.md)
    for which forks warrant one). Run `spec-reconcile`'s cross-spec consistency step so the updated specs do not
    contradict each other. Produce the plan.
 3. **Build (AI).** Implement against the buildable spec; write the tests the acceptance
@@ -96,12 +96,12 @@ especially for the PO, whose view this is:
 
 ## How it connects
 
-- **Backlog** - intents and stories come from [`backlog`](backlog.md); spec deltas and
+- **Backlog** - intents and stories come from [`backlog`](../../standard/docs/backlog.md); spec deltas and
   reconcile drift feed new items back into it.
-- **Specs** - the [capability specs](../specs/README.md) are the travelling artifact and
+- **Specs** - the [capability specs](../../standard/specs/README.md) are the travelling artifact and
   the post-merge source of truth.
-- **Decisions** - the [ADR/BDR](decision-records/README.md) stream holds the *why*; the
-  [decision checklist](decision-records/checklist.md) says which forks deserve a record.
+- **Decisions** - the [ADR/BDR](../../standard/docs/decision-records/README.md) stream holds the *why*; the
+  [decision checklist](checklist.md) says which forks deserve a record.
 - **Onboarding** - a brownfield repo reaches this steady-state flow only after
   the align router (assess -> align -> onboard) has seeded the specs,
   decisions and backlog.

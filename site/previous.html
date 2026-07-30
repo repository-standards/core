@@ -1,4 +1,4 @@
-<title>repository-standards</title>
+<title>repository-standards - previous landing</title>
 <style>
   :root{
     --mono: ui-monospace, "JetBrains Mono", "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
@@ -90,26 +90,6 @@
   .caret{display:inline-block;width:8px;height:15px;background:var(--amber);vertical-align:-2px;margin-left:2px;animation:bl 1.05s step-end infinite}
   @keyframes bl{50%{opacity:0}}
   @media (prefers-reduced-motion: reduce){.caret{animation:none}}
-
-  /* ---- hero B: the live Claude Code window ---- */
-  .herob{padding:64px 0 56px;border-bottom:1px solid var(--line)}
-  .herob-head{text-align:center;max-width:780px;margin:0 auto}
-  .herob-head .lede{margin-left:auto;margin-right:auto}
-  .cc{max-width:860px;margin:40px auto 0;background:linear-gradient(180deg,var(--surface),var(--ink2));
-    border:1px solid var(--line2);border-radius:13px;overflow:hidden;
-    box-shadow:0 40px 90px -40px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.02) inset}
-  .cc-body{padding:20px 22px 24px;font-family:var(--mono);font-size:13.5px;line-height:1.78;
-    min-height:460px;overflow-x:auto;transition:opacity .4s ease}
-  .cc-body.fade{opacity:0}
-  .cc-body .ln{white-space:pre;display:block}
-  .cc-user{white-space:pre;color:var(--tx);font-weight:600}
-  .cc-user::before{content:"> ";color:var(--amber);font-weight:700}
-  .cc-caret{display:inline-block;width:8px;height:15px;background:var(--amber);vertical-align:-2px;animation:bl 1.05s step-end infinite}
-  @media (prefers-reduced-motion: reduce){.cc-caret{animation:none}}
-  .cb{color:var(--amber)}
-  .cv{color:var(--amber)}
-  .cw{color:#fff;font-weight:700}
-  @media(max-width:600px){.cc-body{font-size:12px;min-height:420px}}
 
   /* ---- generic section ---- */
   section{padding:74px 0;border-bottom:1px solid var(--line)}
@@ -313,34 +293,31 @@
 </header>
 
 <main>
-  <!-- HERO: the live Claude Code window -->
-  <div class="hero herob">
-    <div class="wrap">
-      <div class="herob-head reveal">
-        <span class="eyebrow">One sentence in &middot; a plan out</span>
-        <h1>Say it to your agent: <span class="hl">&ldquo;align my project&rdquo;</span></h1>
-        <p class="lede">No framework to learn, nothing to install. Open your coding agent in any repo -
-          brand new or years deep - point it at the standard and ask. It measures the repo, reports
-          <b>drift as a number</b>, and walks it back to health - <b>with your consent at every step</b>.</p>
+  <!-- HERO -->
+  <div class="hero">
+    <div class="wrap hero-grid">
+      <div class="reveal">
+        <span class="eyebrow">Versioned &middot; Agents-first &middot; In-code</span>
+        <h1>Align your repo to a <span class="hl">versioned</span> standard - and prove it did.</h1>
+        <p class="lede">Documentation, specs, and technical &amp; business decisions live <b>in the code</b>, versioned together. Point any repo - brand new or years deep - at a version of the standard; an AI agent brings it into line and <b>self-verifies</b>. Update to the next version like you'd bump a dependency.</p>
         <p class="lede"><b>Others give you a workflow or a scaffold. This gives your repo a reference to true up to - and walks it there.</b></p>
-      </div>
-
-      <div class="cc reveal" aria-label="A coding-agent session aligning my-project to repository-standards">
-        <div class="term-top"><i></i><i></i><i></i><span class="fname">my-project &nbsp;-&nbsp; Claude Code</span></div>
-        <div class="cc-body" id="ccbody">
-          <span class="cc-user" id="ccuser"></span><span class="cc-caret" id="cccaret"></span>
+        <div class="cta">
+          <a class="btn primary" href="docs/spec.html">Read the spec - 3 minutes</a>
+          <a class="btn ghost" href="#start">Start in 3 lines</a>
+        </div>
+        <div class="microfacts">
+          <span><i class="dot"></i><b>The rules fit one page</b></span>
+          <span><i class="dot"></i><b>drift 0 or CI fails</b></span>
+          <span><i class="dot"></i><b>Any stack, any language</b></span>
+          <span><i class="dot"></i><b>MIT, no build step</b></span>
         </div>
       </div>
 
-      <div class="cta reveal" style="justify-content:center">
-        <a class="btn primary" href="docs/spec.html">Read the spec - 3 minutes</a>
-        <a class="btn ghost" href="#start">Start in 3 lines</a>
-      </div>
-      <div class="microfacts reveal" style="justify-content:center">
-        <span><i class="dot"></i><b>The rules fit one page</b></span>
-        <span><i class="dot"></i><b>drift 0 or CI fails</b></span>
-        <span><i class="dot"></i><b>Any stack, any language</b></span>
-        <span><i class="dot"></i><b>MIT, no build step</b></span>
+      <div class="term reveal" aria-label="Terminal example: aligning a repo to the standard">
+        <div class="term-top"><i></i><i></i><i></i><span class="fname">~/my-service &nbsp;-&nbsp; agent</span></div>
+        <div class="term-body" id="term">
+          <span class="ln"><span class="cprompt">$</span> <span class="ccmd">align me to repository-standards@<span class="v">0.7.2</span></span><span class="caret" id="caret"></span></span>
+        </div>
       </div>
     </div>
   </div>
@@ -686,93 +663,46 @@
     els.forEach(function(e){io.observe(e)});
   }
 
-  // hero: the agent session - type the ask, then play the align out live
-  var ccbody = document.getElementById("ccbody");
-  var ccuser = document.getElementById("ccuser");
-  var cccaret = document.getElementById("cccaret");
-  var CMD = "align my project to repository-standards";
-  var SCRIPT = [
-    {sp:1, d:340},
-    {h:'<span class="cb">&#9210;</span> Reading the standard&hellip; <span class="cv">repository-standards@0.7.2</span> <span class="cmuted">- the rules fit one page</span>', d:640},
-    {h:'<span class="cb">&#9210;</span> Scanning <span class="cw">my-project</span> <span class="cmuted">- 214 files</span>', d:520},
-    {h:'  <span class="cmuted">&#9151;</span>  12 capabilities detected &middot; 0 specs &middot; the decisions live in chat history', d:720},
-    {h:'<span class="cb">&#9210;</span> Comparing the tree against the manifest&hellip;', d:700},
-    {h:'  <span class="cmuted">&#9151;</span>  <span class="cdel"><span id="cccount">0</span> divergences</span> found', d:1000, count:67},
-    {sp:1, d:280},
-    {h:'<span class="cb">&#9210;</span> Building the fit report + adoption plan&hellip;', d:840},
-    {sp:1, d:260},
-    {h:'  <span class="cw">Adoption plan</span> <span class="cmuted">my-project -&gt; repository-standards@0.7.2</span>', d:360},
-    {h:'  &#9500; 7 ADRs to record           <span class="cmuted">the why that today lives only in chat</span>', d:300},
-    {h:'  &#9500; 1 BDR                      <span class="cmuted">the pricing rule that exists only in code</span>', d:300},
-    {h:'  &#9500; PRODUCT.md                 <span class="cmuted">what this app is, and for whom</span>', d:300},
-    {h:'  &#9500; specs/ for 3 capabilities  <span class="cmuted">money paths first - buildable, not prose</span>', d:300},
-    {h:'  &#9500; AGENTS.md + guards         <span class="cmuted">hardened CI, self-verify gate</span>', d:300},
-    {h:'  &#9492; backlog.md                 <span class="cmuted">12 items queued - never a big-bang</span>', d:460},
-    {sp:1, d:320},
-    {h:'  <span class="cok">plan ready - drift 67 -&gt; 0, one guided wave at a time</span>', d:460},
-    {h:'<span class="cmuted">nothing changed yet &middot;</span> Proceed with wave 1? <span class="cmuted">(y/n)</span>', d:0}
+  // hero terminal: reveal the diff + verify after the command
+  var term = document.getElementById("term");
+  var caret = document.getElementById("caret");
+  var lines = [
+    ['cmuted','  reading  ~/my-service against repository-standards@0.7.2 ...'],
+    ['spacer',''],
+    ['cadd','+ AGENTS.md                     single entry point'],
+    ['cadd','+ specs/README.md               capability specs (buildable)'],
+    ['cadd','+ docs/decision-records/       8 decisions to record'],
+    ['cdel','- docs/architecture.txt         superseded by ARCHITECTURE.md'],
+    ['cfile','~ .github/workflows/ci.yml      hardened, actions pinned'],
+    ['spacer',''],
+    ['cmuted','  writing backlog.md ... 9 items queued'],
+    ['verify','  self-verify: drift 0 - 21 checks, compliant'],
+    ['cmuted','  now pinned to repository-standards@0.7.2'],
   ];
-  function ccline(item){
+  function addLine(cls, text){
     var span = document.createElement("span");
     span.className = "ln";
-    if(item.sp){ span.innerHTML = "&nbsp;"; } else { span.innerHTML = item.h; }
-    ccbody.appendChild(span);
+    if(cls==='spacer'){ span.innerHTML='&nbsp;'; term.appendChild(span); return; }
+    if(cls==='verify'){ span.innerHTML = '  <span class="cok">'+text.trim()+'</span>'; term.appendChild(span); return; }
+    span.className = "ln "+cls; span.textContent = text; term.appendChild(span);
   }
-  function countUp(target, ms){
-    var el = document.getElementById("cccount");
-    if(!el) return;
-    var t0 = null;
-    function tick(now){
-      if(t0===null) t0 = now;
-      var p = Math.min(1, (now-t0)/ms);
-      el.textContent = Math.round(target * (1-Math.pow(1-p,3)));
-      if(p<1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
-  function playLines(done){
-    var i = 0;
+  function run(){
+    var i=0;
     (function next(){
-      if(i>=SCRIPT.length){ if(done) done(); return; }
-      var item = SCRIPT[i];
-      ccline(item);
-      if(item.count) countUp(item.count, 700);
-      i++;
-      ccbody.scrollTop = ccbody.scrollHeight;
-      setTimeout(next, item.d);
+      if(i>=lines.length){ return; }
+      addLine(lines[i][0], lines[i][1]); i++;
+      term.scrollTop = term.scrollHeight;
+      setTimeout(next, 230 + Math.random()*160);
     })();
-  }
-  function typeCmd(done){
-    var i = 0;
-    (function tick(){
-      if(i>=CMD.length){ setTimeout(done, 420); return; }
-      ccuser.textContent += CMD.charAt(i); i++;
-      setTimeout(tick, 34 + Math.random()*46);
-    })();
-  }
-  function resetCC(){
-    ccbody.innerHTML = '<span class="cc-user" id="ccuser"></span><span class="cc-caret" id="cccaret"></span>';
-    ccuser = document.getElementById("ccuser");
-    cccaret = document.getElementById("cccaret");
-  }
-  function loop(){
-    typeCmd(function(){
-      if(cccaret) cccaret.remove();
-      playLines(function(){
-        setTimeout(function(){
-          ccbody.classList.add("fade");
-          setTimeout(function(){ resetCC(); ccbody.classList.remove("fade"); setTimeout(loop, 500); }, 450);
-        }, 5600);
-      });
-    });
   }
   if(reduce){
-    if(cccaret) cccaret.style.display = "none";
-    ccuser.textContent = CMD;
-    SCRIPT.forEach(function(item){ ccline(item); });
-    var el = document.getElementById("cccount"); if(el) el.textContent = "67";
+    if(caret) caret.style.display="none";
+    lines.forEach(function(l){ addLine(l[0], l[1]); });
   } else {
-    setTimeout(loop, 800);
+    setTimeout(function(){
+      if(caret) caret.remove();
+      run();
+    }, 900);
   }
 })();
 

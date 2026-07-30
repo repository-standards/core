@@ -32,6 +32,7 @@ one settled.
 | [020](ADR-020-intake-first-adoption.md) | Intake-first adoption | align opens with step 0 - measure, then one question round (intent, technology + Layer 2 consent, appetite, plan-only vs execute); per-direction gate order; assessment-only is a named outcome; plan items name an owner role | Accepted |
 | [021](ADR-021-adoption-feeds-the-standard.md) | Adoption feeds the standard | align/update runs offer consent-gated upstream issues - stack requests on registry misses, friction reports on rough runs; templates give the signal one shape | Accepted |
 | [022](ADR-022-stacks-linked-not-version-locked.md) | Stacks linked, not version-locked | a stack declares it belongs to the ecosystem (registry pointer), never a core version range; self-verify notes the layer, checks nothing version-shaped | Accepted |
+| [023](ADR-023-method-docs-live-beside-the-tree.md) | Method docs live beside the tree | the method manual moves to `docs/method/`; the tree is literally the client repo at day zero; clients adopt the method by reference (manifest `references`), never as copies | Accepted |
 
 Add one row per record; the template ships in the tree
 (`standard/docs/decision-records/adr/_template.md`). Numbers are gapless and never

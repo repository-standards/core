@@ -1,5 +1,5 @@
 {
-  "$about": "The align-engine manifest (ADR-005). The align/update/self-verify skills read THIS to know what an aligned repo must have at a given version - instead of hardcoding it in prose or JS. Paths are the client layout - identical to the standard/ tree in this repo. since names the release that first shipped an entry; unreleased rides the next cut. An aligned repo carries a copy of this file at its pinned version; `scripts/self-verify.mjs` checks the repo against it and reports drift as a number. The repo's copy MAY carry a top-level `profile` field (core|scale, ADR-011) written at align time - self-verify uses it as the default profile. The normative source is SPEC.md; each entry cites the rule it enforces (`rule`).",
+  "$about": "The align-engine manifest (ADR-005). The align/update/self-verify skills read THIS to know what an aligned repo must have at a given version - instead of hardcoding it in prose or JS. Paths are the client layout - identical to the standard/ tree in this repo. since names the release that first shipped an entry; unreleased rides the next cut. An aligned repo carries a copy of this file at its pinned version; `scripts/self-verify.mjs` checks the repo against it and reports drift as a number. Method docs are adopted BY REFERENCE, never copied: the `references` section names them at their home in the standards repo (ADR-004/023) - self-verify notes them, checks no files. The repo's copy MAY carry a top-level `profile` field (core|scale, ADR-011) written at align time - self-verify uses it as the default profile. The normative source is SPEC.md; each entry cites the rule it enforces (`rule`).",
 
   "standard": "repository-standards",
   "version": "0.7.2",
@@ -20,11 +20,9 @@
     { "path": "CLAUDE.md", "purpose": "thin pointer to AGENTS.md for Claude Code", "adapt": "copy", "required": false, "profile": "core", "since": "0.1.0", "rule": "R1" },
     { "path": "docs/decision-records", "purpose": "the ADR/BDR decision log", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.1.0", "rule": "R5" },
     { "path": "docs/ideas", "purpose": "pre-decision ideas - status-driven, graduate into records/specs on approval (ADR-010)", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "0.7.2", "rule": "R14" },
-    { "path": "docs/decision-records/checklist.md", "purpose": "the forks every repo should consciously decide", "adapt": "reference", "required": true, "profile": "core", "since": "0.5.0", "altPaths": ["decision-records/checklist.md"], "rule": "R7" },
     { "path": "specs", "purpose": "living capability specs", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.1.0", "rule": "R8" },
     { "path": "specs/capability-map.json", "purpose": "capability -> code globs, so the coupling guard can bind spec to code", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.3.0", "rule": "R11" },
     { "path": "backlog.md", "purpose": "the work ledger; items leave only when their DoD is met", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.2.0", "altPaths": ["docs/backlog.md"], "rule": "R15" },
-    { "path": "docs/taxonomy.md", "purpose": "where each kind of knowledge lands (ends 'ADR or rule?')", "adapt": "reference", "required": true, "profile": "core", "since": "0.5.0", "rule": "R5" },
     { "path": "changes", "purpose": "per-PR changelog fragments (a PR never edits CHANGELOG or VERSION)", "adapt": "copy", "required": true, "profile": "scale", "since": "unreleased", "rule": "R18" },
     { "path": "scripts/self-verify.mjs", "purpose": "the verify step - checks the repo against this manifest", "adapt": "copy", "required": true, "profile": "core", "since": "unreleased", "rule": "R16" },
     { "path": "scripts/spec-structure.mjs", "purpose": "spec layout guard", "adapt": "copy", "required": true, "profile": "core", "since": "0.3.0", "rule": "R16" },
@@ -46,16 +44,21 @@
     { "path": "docs/README.md", "purpose": "the docs hub table", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "unreleased", "rule": "R3" },
     { "path": "docs/ARCHITECTURE.md", "purpose": "how it is built - the altitude names it (filled from this repo)", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "unreleased", "rule": "R1" },
     { "path": "docs/PRODUCT.md", "purpose": "what it is and where it is going (filled from this repo)", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "unreleased", "rule": "R3" },
-    { "path": "docs/adoption.md", "purpose": "the gated adoption checkmap - how a repo reaches the standard", "adapt": "copy", "required": false, "profile": "core", "since": "unreleased", "rule": "R17" },
-    { "path": "docs/repo-assessment.md", "purpose": "the read-only assessment an agent runs on first contact", "adapt": "copy", "required": false, "profile": "core", "since": "unreleased", "rule": "R17" },
     { "path": "docs/self-verify.md", "purpose": "the two verification tiers - what the drift number covers and what stays judgment", "adapt": "copy", "required": false, "profile": "core", "since": "unreleased", "rule": "R16" },
-    { "path": "docs/ways-of-working.md", "purpose": "how work flows around the spec (PO -> dev -> AI)", "adapt": "fill-from-repo", "required": false, "profile": "scale", "since": "unreleased", "rule": "R3" },
     { "path": "docs/conventions.md", "purpose": "canonical conventions block - merged into AGENTS.md at adoption", "adapt": "merge", "required": false, "profile": "core", "since": "unreleased", "rule": "R1" },
-    { "path": "docs/changelog-process.md", "purpose": "the two-outputs changelog model teams follow", "adapt": "copy", "required": false, "profile": "scale", "since": "unreleased", "rule": "R18" },
     { "path": "docs/analytics.template.md", "purpose": "event-taxonomy tracking plan template", "adapt": "fill-from-repo", "required": false, "profile": "scale", "since": "unreleased", "rule": "R3" },
     { "path": "docs/journeys", "purpose": "per-persona journey maps coupled to capabilities", "adapt": "fill-from-repo", "required": false, "profile": "scale", "since": "unreleased", "rule": "R3" },
     { "path": "docs/research", "purpose": "anonymized research studies feeding personas, ideas and specs", "adapt": "fill-from-repo", "required": false, "profile": "scale", "since": "unreleased", "rule": "R3" },
     { "path": "docs/runbooks", "purpose": "operational runbooks + postmortems - agent-followable at 3 a.m.", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "unreleased", "rule": "R3" }
+  ],
+
+  "references": [
+    { "id": "taxonomy", "path": "docs/method/taxonomy.md", "purpose": "where each kind of knowledge lands (ends 'ADR or rule?')", "since": "unreleased", "rule": "R5" },
+    { "id": "decision-checklist", "path": "docs/method/checklist.md", "purpose": "the forks every repo consciously decides, with paved-road defaults", "since": "unreleased", "rule": "R7" },
+    { "id": "adoption-checkmap", "path": "docs/method/adoption.md", "purpose": "the gated path from unaligned to aligned + the modernize pass", "since": "unreleased", "rule": "R17" },
+    { "id": "repo-assessment", "path": "docs/method/repo-assessment.md", "purpose": "the read-only assessment the transition agent runs, and the periodic health check", "since": "unreleased", "rule": "R17" },
+    { "id": "ways-of-working", "path": "docs/method/ways-of-working.md", "purpose": "how work flows around the spec (PO -> dev -> AI)", "since": "unreleased", "rule": "R3" },
+    { "id": "changelog-process", "path": "docs/method/changelog-process.md", "purpose": "the two-outputs changelog model teams follow", "since": "unreleased", "rule": "R18" }
   ],
 
   "sections": [

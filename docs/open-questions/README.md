@@ -25,7 +25,7 @@ outgrew itself - as its own meta entry predicted it would.)
 | [Eleven shipped skills](eleven-skills.md) | one family, 11 skills in every adopted repo | ecosystem ceiling is 8-10; engine steps might merge |
 | [The repo specs its own tooling](own-specs.md) | four buildable capability specs in `specs/` | specs for small scripts risk documentation theatre |
 | [Folder self-description](folder-readmes.md) | three-section `README.md` per folder | READMEs may bloat; one file serves two audiences |
-| [`checklist.md` as the name](checklist-name.md) | `docs/decision-records/checklist.md` | "checklist" undersells the paved-road defaults |
+| [`checklist.md` as the name](checklist-name.md) | `docs/method/checklist.md` | "checklist" undersells the paved-road defaults |
 | [Work history in the tracker](tracker-history.md) | ADR-010: repo holds intents, tracker holds history | kills in-repo who-did-what; regulated shops may object |
 | [GitHub Issues as default tracker](default-tracker.md) | ADR-010: free wins; Jira/Linear adapters | weakest PO experience of the three |
 | [Spec Status in front matter](status-frontmatter.md) | the clarify gate flips it mechanically | status exists in two places once a tracker mirrors |

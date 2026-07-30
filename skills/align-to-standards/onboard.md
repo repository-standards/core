@@ -8,7 +8,7 @@ specs, decisions in records, drift caught by guards.
 The intake (step 0 in `SKILL.md`) has already run: intent, technology + Layer 2
 consent, appetite, and plan-only vs execute are known, and its repo scan seeds Gate 0's
 description draft. Each step below names the gate it fills in the
-[adoption checkmap](../../standard/docs/adoption.md); brownfield walks the gates
+[adoption checkmap](../../docs/method/adoption.md); brownfield walks the gates
 **0 -> 2 -> 1 -> 3 -> 4 -> 5 -> 6** - the assessment first, the personas reconstructed
 from its evidence.
 
@@ -22,13 +22,14 @@ draining the backlog the assessment produced.
 
 Before touching anything, run the assessment: read the repo, detect what is there and
 what is missing, and seed the backlog. Do **not** modify code during it. The full pass
-detail lives in `docs/repo-assessment.md` (in the shipped tree); the eight passes:
+detail lives in the standards checkout at
+[`docs/method/repo-assessment.md`](../../docs/method/repo-assessment.md); the eight passes:
 
 1. **Skeleton & docs** - `AGENTS.md`, `PRODUCT`, `ARCHITECTURE`, `specs/`, decision
    records, a backlog: present or missing?
-2. **Decisions in code** - walk the decision checklist
-   (`docs/decision-records/checklist.md`): which forks are decided / undecided /
-   decided **inconsistently**?
+2. **Decisions in code** - walk the
+   [decision checklist](../../docs/method/checklist.md): which forks are decided /
+   undecided / decided **inconsistently**?
 3. **Capabilities & specs** - domains in the code; any specs; a `capability-map.json`?
 4. **Quality gates** - tests (tiers? which paths?), typecheck strictness, lint/format.
 5. **CI/CD** - pipeline present, least-privilege permissions, pinned actions,
@@ -41,7 +42,7 @@ detail lives in `docs/repo-assessment.md` (in the shipped tree); the eight passe
    churn hotspots.
 
 Output: a short health report (maturity per pass: absent / partial / solid, top risks,
-findings grouped by the **owner role** that must act - see `docs/repo-assessment.md`)
+findings grouped by the **owner role** that must act - see `docs/method/repo-assessment.md`)
 and a **seeded backlog** - every gap becomes an item with a definition of done, ordered
 by risk x leverage. **Red-flag stops** halt and ask the human now, not later: a secret
 committed to the repo; anything that would write to a remote database (deliver a

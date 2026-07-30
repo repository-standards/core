@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Accepted |
+| **Status** | Accepted; mechanism extended to method docs by ADR-023 |
 | **Date** | 2026-07-07 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | methodology, distribution, decision-records |

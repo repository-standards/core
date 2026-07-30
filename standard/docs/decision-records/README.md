@@ -4,8 +4,9 @@ Every decision that shapes the product or the system gets a record. If a decisio
 has no record, it does not exist - reviewers and agents treat undocumented
 divergence as a red flag.
 
-> **Which decisions should a project even have?** See the
-> [decision checklist](checklist.md) - the menu of forks a project keeps hitting
+> **Which decisions should a project even have?** See the standard's
+> [decision checklist](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/checklist.md)
+> (adopted by reference at your pinned version) - the menu of forks a project keeps hitting
 > (datastore, auth, API shape, release strategy, ...) with the standard's paved-road
 > default for each. It drives greenfield scaffolding and the brownfield onboarding sweep.
 
@@ -33,8 +34,9 @@ The ADR test: a **contestable, re-litigable trade-off** gets a record - someone
 could reasonably have chosen otherwise, and without the record the debate reopens.
 A settled way of doing things is not a decision; it is a **rule** in the relevant
 methodology doc. A significant decision usually produces **both**: the record holds
-the why, the rule holds the resulting practice - see the
-[taxonomy](../taxonomy.md) for which knowledge lands where.
+the why, the rule holds the resulting practice - see the standard's
+[taxonomy](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/taxonomy.md)
+(adopted by reference at your pinned version) for which knowledge lands where.
 
 ## Status lifecycle (ADR / BDR)
 

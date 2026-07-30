@@ -4,8 +4,10 @@
      specs/README.md "Spec depth". Declare the tier below. Contracts are quoted
      VERBATIM (real field names, enums, error codes, endpoints), never paraphrased.
      Drop sections that genuinely do not apply. No change-log section (R4,
-     ADR-018): the spec describes the present; git and the changelog process
-     (docs/changelog-process.md) hold the past. -->
+     ADR-018): the spec describes the present; git and the standard's changelog
+     process (adopted by reference at your pinned version:
+     https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/changelog-process.md)
+     hold the past. -->
 
 **Spec tier:** buildable | behavioral   <!-- declare one -->
 **Serves:** `<persona from docs/personas.md>`   <!-- who this capability is for; required (ADR-006) -->

@@ -27,6 +27,29 @@ and the pin labels the state you adopted; tags make it exact when the maintainer
 cuts them. The pin makes updates deltas, and a degit'd tree keeps working offline
 even if this repo goes quiet - adopt the mechanism, not a promise.
 
+## Say it to your agent
+
+This repo is made to be **used, not read**: hand it to your coding agent and ask in
+one sentence. These are the real asks it serves - and every one starts with the same
+short intake (what is this repo, what technology, how much do you want done) before
+anything is touched ([ADR-020](docs/decision-records/ADR-020-intake-first-adoption.md)):
+
+| You say | You get |
+|---|---|
+| "Take the repository-standards repo and **align my project** to it." | Brownfield: state assessed first, then one guided wave - specs seeded, decisions recorded from the code, the rest queued in a backlog. |
+| "Take the repository-standards repo and **start a new project** on it." | Greenfield: a short interview, then a scaffold at a pinned version - `PRODUCT.md`, the first decisions, the first capability specs. |
+| "Take the repository-standards repo and **analyse how my project fits** it." | Plan-only: a fit report + adoption plan (what diverges, what it would take) - nothing changed yet. |
+| "**Update** my repo to the next standard version." | The delta between your pin and the target, applied like a dependency bump - never a re-scaffold. |
+| "**Verify** this repo still complies with its pinned standard." | `node scripts/self-verify.mjs` - drift as a number, the same pass/fail your CI asserts. |
+| "We are a **Node team** - adopt the standard **with the Node stack**." | Layer 1 + Layer 2 together: the standard plus the Node best practices, one drift number across both. |
+| "My stack is **Python** - does the standard cover it?" | An honest registry check - and on a miss, the agent offers to file a stack request here, so the gap becomes an issue, not a dead end. |
+| "**Explain** this repo's decisions and specs in plain language." | The PO view: any ADR/BDR/spec retold against the personas - no jargon, with examples. |
+
+Entry point for all of them: [`skills/align-to-standards`](skills/align-to-standards/SKILL.md)
+(updates: [`update-to-version`](standard/.claude/skills/update-to-version/SKILL.md)). If your
+agent is not Claude Code, port the skills first - the standard requires a strict port, not
+an approximation (rule R22 in [the spec](standard/SPEC.md)).
+
 ## Why it exists
 
 Built to kill the four failure modes every team recognizes:
@@ -64,7 +87,7 @@ that is actually true. All of it doubles as the context an AI agent can act on.
   big-bang dump ([`align-to-standards`](skills/align-to-standards/SKILL.md), brownfield phase).
 - **Building with an AI, three hats on** - PO turns vision into a behavioral spec that is
   immediately codeable; an architect records the decisions; a dev and the AI implement
-  against it. One living spec, one backlog ([`ways-of-working`](standard/docs/ways-of-working.md)).
+  against it. One living spec, one backlog ([`ways-of-working`](docs/method/ways-of-working.md)).
 - **Keeping a fleet current** - cut a new version and every repo can update to it, each
   self-verifying that it complies.
 
@@ -75,13 +98,13 @@ that is actually true. All of it doubles as the context an AI agent can act on.
   by a guard. [`specs/`](standard/specs/README.md)
 - **Decision records** - ADR (technical *why*) + BDR (business *why*) in MADR format,
   plus a **decision checklist**: the forks every project hits, with an opinionated default
-  for each. [`decision-records/`](standard/docs/decision-records/README.md), [`checklist.md`](standard/docs/decision-records/checklist.md)
+  for each. [`decision-records/`](standard/docs/decision-records/README.md), [`checklist.md`](docs/method/checklist.md)
 - **A backlog that feeds itself** - items fall out of spec deltas, code<->spec drift, and
   onboarding; they leave only when their definition of done is met.
 - **Guardrails as tooling** - dependency-free guards (spec-structure, spec coupling +
   `--audit`, self-verify), secret scan, remote-DB write guard, hardened CI.
 - **A taxonomy map** - where each kind of knowledge lands, so "ADR or rule?" stops
-  recurring. [`docs/taxonomy.md`](standard/docs/taxonomy.md)
+  recurring. [`docs/method/taxonomy.md`](docs/method/taxonomy.md)
 - **Agents-first** - one `AGENTS.md` at the root is the single entry point; the standard
   is written to be *executed* by an agent, not just read.
 
@@ -110,7 +133,7 @@ and your repo, sees the difference, and applies it - it does not blind-copy.
 Semver (`VERSION` + `CHANGELOG.md`). A PR describes its change under the changelog's
 `## Unreleased` heading and never bumps a version; the maintainer cuts every release
 and writes the release notes. (Team repos get the heavier fragments mechanism as a
-scale-profile prescription - `standard/docs/changelog-process.md`.)
+scale-profile prescription - `docs/method/changelog-process.md`.)
 
 ## Start
 

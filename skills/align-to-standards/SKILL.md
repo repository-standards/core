@@ -38,7 +38,7 @@ Before any phase runs, one intake pass:
    - **Plan-only or execute?**
 3. **Assessment-only is a legal, named outcome** - not a failure to proceed:
    deliver the health report and the counted plan (Gate 2 plus the Gate 5 count
-   of the [adoption checkmap](../../standard/docs/adoption.md)), then stop.
+   of the [adoption checkmap](../../docs/method/adoption.md)), then stop.
 
 ## Route by target state
 
@@ -66,8 +66,10 @@ npx degit bodurkalukasz/repository-standards/standard
 
 1. **Read the shipped tree** (`standard/` in this checkout): `AGENTS.md`, `CLAUDE.md`,
    `.claude/` (settings + skills), `.github/`, `.gitleaks.toml`, `scripts/`, `docs/`
-   (PRINCIPLES, ARCHITECTURE, adoption, conventions, decision-records), `specs/`,
-   `SPEC.md`. Note the checkout's `VERSION`.
+   (PRINCIPLES, ARCHITECTURE, conventions, decision-records), `specs/`,
+   `SPEC.md`. Note the checkout's `VERSION`. The method docs (adoption, taxonomy,
+   the decision checklist, ...) live beside it in this checkout's
+   [`docs/method/`](../../docs/method/README.md) - read, never copied.
 
 2. **Read the target repo.** For each part of the shipped tree, classify: missing /
    present-but-drifted / up to date (by content).
