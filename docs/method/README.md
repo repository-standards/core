@@ -13,6 +13,8 @@ produces; the method itself lives here, one home, one history.
 | [taxonomy.md](taxonomy.md) | where each kind of knowledge lands - ends the "ADR or rule?" question |
 | [checklist.md](checklist.md) | the decision checklist - the forks every repo consciously decides, with the paved road |
 | [ways-of-working.md](ways-of-working.md) | the PO -> Dev -> AI loop - roles, statuses, the clarify gate |
+| [working-with-specs.md](working-with-specs.md) | real situations -> the exact prompt -> what the standard does; specs day to day |
+| [discovery.md](discovery.md) | from a meeting to a spec, with provenance - one worked example, dossiers, typed blockers |
 | [changelog-process.md](changelog-process.md) | two outputs, one source, one cut - the changelog + release-notes model |
 
 ## Why this shape, and how to use it

@@ -5,7 +5,7 @@ description: Produce the implementation plan for a clarified spec; refuses a spe
 
 <!-- Based on github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED hunks are marked inline. -->
 <!-- PATCHED(repository-standards): ADR-010 clarify gate - mandatory precheck before planning -->
-**MANDATORY PRECHECK - the clarify gate.** Before anything else in this command, run `scripts/spec/check-spec-clarified.sh <FEATURE_SPEC>` from the repo root (resolve `FEATURE_SPEC` via `scripts/spec/check-prerequisites.sh --json --paths-only`). If it exits non-zero, STOP and run the clarify loop (`/spec-clarify`) - do not plan a spec that is not ready-to-develop (a spec is ready only when it has a `## Clarifications` section and zero open `[NEEDS CLARIFICATION` markers).
+**MANDATORY PRECHECK - the clarify gate.** Before anything else in this command, run `scripts/spec/check-spec-clarified.sh <FEATURE_SPEC>` from the repo root (resolve `FEATURE_SPEC` via `scripts/spec/check-prerequisites.sh --json --paths-only`). If it exits non-zero, STOP - the gate's output is the spec's gap list (open markers of the `[NEEDS ...` family: questions, missing ADR/BDR decisions, missing inputs like a UX design, missing assets like credentials - each with its owner). Report that list to the user; run the clarify loop (`/spec-clarify`) for the questions, and do not plan a spec that is not ready-to-develop. Also glance at `docs/discovery/` (ADR-024): if the topic's dossier has entries newer than its `Last reconciled:` stamp, route them through `/spec-clarify` first - planning on a spec that ignores fresh discovery builds the wrong thing correctly.
 
 ## User Input
 

@@ -20,6 +20,7 @@
     { "path": "CLAUDE.md", "purpose": "thin pointer to AGENTS.md for Claude Code", "adapt": "copy", "required": false, "profile": "core", "since": "0.1.0", "rule": "R1" },
     { "path": "docs/decision-records", "purpose": "the ADR/BDR decision log", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.1.0", "rule": "R5" },
     { "path": "docs/ideas", "purpose": "pre-decision ideas - status-driven, graduate into records/specs on approval (ADR-010)", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "0.7.2", "rule": "R14" },
+    { "path": "docs/discovery", "purpose": "discovery dossiers - provenance-stamped extracts per topic, never normative (ADR-024)", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "unreleased", "rule": "R5" },
     { "path": "specs", "purpose": "living capability specs", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.1.0", "rule": "R8" },
     { "path": "specs/capability-map.json", "purpose": "capability -> code globs, so the coupling guard can bind spec to code", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.3.0", "rule": "R11" },
     { "path": "backlog.md", "purpose": "the work ledger; items leave only when their DoD is met", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.2.0", "altPaths": ["docs/backlog.md"], "rule": "R15" },
@@ -58,7 +59,9 @@
     { "id": "adoption-checkmap", "path": "docs/method/adoption.md", "purpose": "the gated path from unaligned to aligned + the modernize pass", "since": "unreleased", "rule": "R17" },
     { "id": "repo-assessment", "path": "docs/method/repo-assessment.md", "purpose": "the read-only assessment the transition agent runs, and the periodic health check", "since": "unreleased", "rule": "R17" },
     { "id": "ways-of-working", "path": "docs/method/ways-of-working.md", "purpose": "how work flows around the spec (PO -> dev -> AI)", "since": "unreleased", "rule": "R3" },
-    { "id": "changelog-process", "path": "docs/method/changelog-process.md", "purpose": "the two-outputs changelog model teams follow", "since": "unreleased", "rule": "R18" }
+    { "id": "changelog-process", "path": "docs/method/changelog-process.md", "purpose": "the two-outputs changelog model teams follow", "since": "unreleased", "rule": "R18" },
+    { "id": "working-with-specs", "path": "docs/method/working-with-specs.md", "purpose": "real situations -> the prompt -> what the standard does (specs day to day)", "since": "unreleased", "rule": "R3" },
+    { "id": "discovery", "path": "docs/method/discovery.md", "purpose": "discovery dossiers: from a meeting to a spec with provenance (ADR-024)", "since": "unreleased", "rule": "R5" }
   ],
 
   "sections": [

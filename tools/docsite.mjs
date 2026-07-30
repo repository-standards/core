@@ -46,6 +46,8 @@ const PAGES = CONFIG.pages || [
   { src: "docs/method/adoption.md", out: "adopt.html", nav: "Adopt (start here)", group: null },
   { src: "docs/method/taxonomy.md", out: "taxonomy.html", nav: "Taxonomy", group: "Concepts" },
   { src: "docs/method/ways-of-working.md", out: "ways-of-working.html", nav: "Ways of working", group: "Concepts" },
+  { src: "docs/method/working-with-specs.md", out: "working-with-specs.html", nav: "Working with specs", group: "Concepts" },
+  { src: "docs/method/discovery.md", out: "discovery.html", nav: "Discovery", group: "Concepts" },
   { src: "standard/specs/README.md", out: "specs.html", nav: "Specs", group: "Concepts" },
   { src: "standard/docs/self-verify.md", out: "self-verify.html", nav: "Self-verify", group: "Guides" },
   { src: "docs/method/checklist.md", out: "checklist.html", nav: "Decision checklist", group: "Reference" },

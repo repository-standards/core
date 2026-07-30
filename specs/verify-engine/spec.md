@@ -19,7 +19,7 @@ Guarding this repo's own shipped tree ([tree-guard](../tree-guard/spec.md)); aut
 
 ## Core concepts
 
-- **Manifest** - `standard.manifest.json` in cwd, the single source of truth (ADR-005): `version`, `files[]`, `sections[]`, `guards[]`, `decisions[]`, `references[]` (method docs adopted by reference, ADR-023).
+- **Manifest** - `standard.manifest.json` in cwd, the single source of truth (ADR-005): `version`, `files[]`, `sections[]`, `guards[]`, `decisions[]`, `references[]` (method docs adopted by reference, ADR-023). Entry sets grow by version - a new optional home (e.g. `docs/discovery`, ADR-024) or a new reference arrives as manifest data, never as an engine change.
 - **Drift** - the count of FAIL results; one unmet required entry = one point. Notes and warnings never count.
 - **Profile** - `core` or `scale` per entry (ADR-011); an entry with no profile counts as core, so pre-ADR-011 manifests check in full under either profile.
 

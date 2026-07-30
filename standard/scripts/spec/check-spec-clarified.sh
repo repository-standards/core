@@ -4,7 +4,10 @@
 #
 # Blocks plan/tasks on a spec that is not ready-to-develop. A spec passes when:
 #   1. it contains a "## Clarifications" section, and
-#   2. it contains zero open "[NEEDS CLARIFICATION" markers.
+#   2. it contains zero open markers of the "[NEEDS ..." family (ADR-024):
+#      CLARIFICATION (a question), DECISION (a missing ADR/BDR), INPUT (e.g. a
+#      UX design), ASSET (e.g. credentials) - each names what is missing and
+#      who brings it, so the open markers double as the spec's gap list.
 # Passing this gate is what earns the spec "Status: ready-to-develop".
 #
 # Usage: check-spec-clarified.sh <path-to-spec.md>
@@ -32,16 +35,16 @@ if ! grep -q '^## Clarifications' "$SPEC_FILE"; then
     exit 1
 fi
 
-OPEN_MARKERS=$(grep -cF '[NEEDS CLARIFICATION' "$SPEC_FILE") || true
+OPEN_MARKERS=$(grep -cF '[NEEDS ' "$SPEC_FILE") || true
 OPEN_MARKERS=${OPEN_MARKERS:-0}
 
 if [ "$OPEN_MARKERS" -gt 0 ]; then
-    echo "clarify gate: FAIL - $SPEC_FILE still has $OPEN_MARKERS open [NEEDS CLARIFICATION ...] marker(s):" >&2
-    grep -nF '[NEEDS CLARIFICATION' "$SPEC_FILE" >&2
-    echo "clarify gate: resolve each marker via the clarify loop (/spec-clarify) - answer it or record an explicit deferral under '## Clarifications'." >&2
+    echo "clarify gate: FAIL - $SPEC_FILE still has $OPEN_MARKERS open [NEEDS ...] marker(s) (the gap list - what is missing and who brings it):" >&2
+    grep -nF '[NEEDS ' "$SPEC_FILE" >&2
+    echo "clarify gate: resolve each marker - answer it (/spec-clarify), land the missing decision/input/asset, or record an explicit deferral under '## Clarifications'." >&2
     echo "clarify gate: do not plan or generate tasks for a spec that is not ready-to-develop." >&2
     exit 1
 fi
 
-echo "clarify gate: PASS - $SPEC_FILE has a '## Clarifications' section and no open [NEEDS CLARIFICATION] markers (ready-to-develop)."
+echo "clarify gate: PASS - $SPEC_FILE has a '## Clarifications' section and no open [NEEDS ...] markers (ready-to-develop)."
 exit 0

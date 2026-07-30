@@ -11,10 +11,14 @@
 
 **Spec tier:** buildable | behavioral   <!-- declare one -->
 **Serves:** `<persona from docs/personas.md>`   <!-- who this capability is for; required (ADR-006) -->
-**Status:** in-refinement | ready-to-develop | in-development | live
+**Status:** in-refinement | ready-to-develop | in-development | live   <!-- in-refinement is the draft state -->
 **Success metric:** `<the KPI from PRODUCT's KPI tree this capability moves>`   <!-- PDLC-2; "n/a" needs a why -->
 <!-- ADR-010: ready-to-develop requires the clarify gate - a "## Clarifications" section
-     and zero open clarification markers. Enabling work (tokens, access, agreements) goes
+     and zero open markers of the NEEDS family. Drafting early (during discovery, ADR-024)
+     is encouraged: hold each gap as a typed open marker naming what is missing and who
+     brings it - CLARIFICATION (a question), DECISION (a missing ADR/BDR), INPUT (e.g. a
+     UX design), ASSET (e.g. credentials). The gate blocks the whole family, so the open
+     markers ARE the gap list. Enabling work (tokens, access, agreements) goes
      in front-matter keys (needs_decision_records-style) mirrored to the tracker as
      blocking Stories - never in spec prose. At live+reconciled, cleanup removes
      plan/tasks scaffolding; the spec stays. -->

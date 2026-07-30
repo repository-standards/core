@@ -33,6 +33,7 @@ one settled.
 | [021](ADR-021-adoption-feeds-the-standard.md) | Adoption feeds the standard | align/update runs offer consent-gated upstream issues - stack requests on registry misses, friction reports on rough runs; templates give the signal one shape | Accepted |
 | [022](ADR-022-stacks-linked-not-version-locked.md) | Stacks linked, not version-locked | a stack declares it belongs to the ecosystem (registry pointer), never a core version range; self-verify notes the layer, checks nothing version-shaped | Accepted |
 | [023](ADR-023-method-docs-live-beside-the-tree.md) | Method docs live beside the tree | the method manual moves to `docs/method/`; the tree is literally the client repo at day zero; clients adopt the method by reference (manifest `references`), never as copies | Accepted |
+| [024](ADR-024-discovery-dossiers-beside-the-specs.md) | Discovery dossiers beside the specs | `docs/discovery/<topic>/` holds provenance-stamped extracts, never normative; the `Last reconciled:` stamp ends re-asking; typed open markers let a spec draft early and gate honestly | Accepted |
 
 Add one row per record; the template ships in the tree
 (`standard/docs/decision-records/adr/_template.md`). Numbers are gapless and never

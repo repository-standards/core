@@ -9,6 +9,36 @@ The simplification wave - the standard put on one page, in one tree, with one
 engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
 align engine, Layer 2 and the product spine.
 
+### Discovery has a home, specs draft early, the front door leads with usage (2026-07-30)
+
+- **Discovery dossiers (ADR-024)** - `docs/discovery/<topic>/` holds
+  provenance-stamped extracts of meetings and mails (raw transcripts stay
+  out); a dossier is **never normative** - where it differs from a spec or
+  record, the spec has already won, so nothing gets re-litigated. The
+  `Last reconciled:` stamp in the dossier README makes "explain it once"
+  mechanical: agents ask only about entries newer than the stamp. Entries
+  live as `new -> folded-into-spec | superseded-by-record | open`.
+- **Typed open markers** - a spec can draft on day one of discovery
+  (`in-refinement`, the draft state) holding each gap as a marker naming what
+  is missing and who brings it: a question, a missing ADR/BDR, a missing
+  input (UX design), a missing asset (credentials). The clarify gate now
+  blocks the whole `[NEEDS ...` family, so the open markers ARE the gap
+  list and the gate output reads as "what is left, and whose it is".
+- **`discovery-digest`** - a new lifecycle skill, the dossier's curator:
+  ingests notes/mails, writes the essence with provenance, flags
+  contradictions between entries, reports when a topic is ripe for
+  `/spec-specify`. It never writes specs; the spec skills never curate the
+  dossier. `spec-specify`/`spec-clarify`/`spec-plan` read the dossier first
+  and move the stamp when they consume it.
+- **Docs lead with usage** - the README opens with the real asks you say to
+  your agent (one sentence each); two new method docs are written as worked
+  examples, not theory: `working-with-specs.md` (real situations -> the exact
+  prompt -> what happens, corner cases included) and `discovery.md` (one
+  feature walked from kickoff meeting to ready-to-develop). The landing's
+  hero becomes a live agent session - the ask typed, the align played out to
+  a plan; the prior landing stays at `site/previous.html` while the final
+  template is chosen.
+
 ### The wizard, the feedback loop, the honest gates (2026-07-29)
 
 - **Intake-first adoption (ADR-020)** - `align-to-standards` opens with step 0:

@@ -5,7 +5,15 @@ description: Create or update a capability spec from a natural-language descript
 
 <!-- Vendored from github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED(repository-standards) hunks are marked inline. -->
 <!-- PATCHED(repository-standards): ADR-010 - clarify chains automatically after specify -->
-**Clarify chains automatically after specify.** When this command completes, immediately continue into the clarify loop (`/spec-clarify`) in the same session - do not stop and wait to be asked. The loop is AI-led: propose answers, ask the user only what genuinely needs their call, and record every deferral ("leaving this to the technical side") in the spec's `## Clarifications` section instead of dropping it. Plan and tasks are gated: they refuse a spec that has no `## Clarifications` section or still contains open `[NEEDS CLARIFICATION` markers (that gate is what earns `Status: ready-to-develop`).
+**Clarify chains automatically after specify.** When this command completes, immediately continue into the clarify loop (`/spec-clarify`) in the same session - do not stop and wait to be asked. The loop is AI-led: propose answers, ask the user only what genuinely needs their call, and record every deferral ("leaving this to the technical side") in the spec's `## Clarifications` section instead of dropping it. Plan and tasks are gated: they refuse a spec that has no `## Clarifications` section or still contains open markers of the `[NEEDS ...` family (that gate is what earns `Status: ready-to-develop`).
+
+<!-- PATCHED(repository-standards): ADR-024 - discovery dossiers feed specify -->
+**Discovery intake (before drafting).** Check `docs/discovery/` for a dossier related to this feature's topic. If one plausibly matches but you are not sure, ask the user which (never guess between dossiers). If a dossier exists:
+
+- Read only what the stamp allows: entries **newer** than the dossier README's `Last reconciled:` stamp, plus any entry still marked `new`/`open`. Entries marked `folded-into-spec` or `superseded-by:` are history - never re-ask about them.
+- **A dossier is never normative.** Where an entry differs from an existing spec or an accepted record, the spec/record has already won - do not surface it as a conflict; only genuinely new material enters the draft.
+- What the dossier settles goes straight into the spec's sections. What it leaves open becomes a **typed open marker** naming what is missing and who brings it: `NEEDS CLARIFICATION` (a question), `NEEDS DECISION` (a missing ADR/BDR + topic + owner), `NEEDS INPUT` (e.g. a UX design + owner), `NEEDS ASSET` (e.g. credentials + owner). The clarify-marker limit below applies to CLARIFICATION questions only - DECISION/INPUT/ASSET markers are the honest gap list and are not capped.
+- After writing the spec, close the loop in the dossier: mark the consumed entries `folded-into-spec`, and update the README stamp to `Last reconciled: <today> (specs/<capability> @ <commit>)`.
 
 ## User Input
 

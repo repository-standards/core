@@ -18,7 +18,7 @@ One-line description of the product. Entry point for agents + humans:
 | [`standard.manifest.json`](standard.manifest.json) | Machine-readable projection of SPEC.md - what `self-verify` checks | as-is |
 | `.standards-version` | The version pin - written at adoption, advanced by `update-to-version` | write at adoption |
 | [`.claude/settings.json`](.claude/settings.json) | Agent permission baseline + PreToolUse guards | extend |
-| [`.claude/skills/`](.claude/skills/) | 11 skills: the spec family (`spec-specify`, `spec-clarify`, `spec-impact`, `spec-update`, `spec-plan`, `spec-tasks`, `spec-implement`, `spec-reconcile`) + `pre-pr-review`, `add-to-backlog`, `update-to-version` | as-is |
+| [`.claude/skills/`](.claude/skills/) | the lifecycle skills: the spec family (`spec-specify`, `spec-clarify`, `spec-impact`, `spec-update`, `spec-plan`, `spec-tasks`, `spec-implement`, `spec-reconcile`) + `discovery-digest`, `pre-pr-review`, `add-to-backlog`, `update-to-version` | as-is |
 | [`.github/workflows/`](.github/workflows/) | CI templates to enable per repo: `gitleaks` (secret scan), `spec-guard` (spec policy) | enable |
 | [`.github/pull_request_template.md`](.github/pull_request_template.md) | PR template with ADR impact | as-is |
 | [`.gitleaks.toml`](.gitleaks.toml) | Secret-scan config | as-is |

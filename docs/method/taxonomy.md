@@ -14,6 +14,7 @@
 | what the product is and where it is going | **vision** | `PRODUCT.md` |
 | who we build for (and validate against) | **personas** | `docs/personas.md` - a gate above specs + backlog (ADR-006) |
 | a speculative idea that may never ship | **idea** | `docs/ideas/<slug>.md` - status-driven, no records until approved (ADR-010) |
+| materials from active discovery - a meeting extract, a mail, a finding whose *source* matters | **discovery entry** | `docs/discovery/<topic>/` - a dossier per topic, provenance-stamped; never normative, the spec always wins (ADR-024, [discovery.md](discovery.md)) |
 | what we tell the market (statement, pillars, one-liner) | **positioning** | `docs/positioning.md` - every surface quotes it, never re-phrases (PDLC-1) |
 | a product event the code emits | **tracking-plan entry** | `docs/analytics.md` - listed before it ships; same-PR coupled to the code (PDLC-3) |
 | what a study taught us | **research insight** | `docs/research/<study>.md` - anonymized; must name what it changes (PDLC-4) |
@@ -73,6 +74,11 @@ The rule that keeps the decision log honest:
   (backlog intent -> behavioral spec -> buildable spec + ADR/BDR) and the idea doc flips to
   `graduated` with links. Until then the whole idea, technical shape included, lives in its
   idea doc - and `parked`/`dropped` docs stay as cheap memory of why not.
+- **An idea is not a dossier.** The moment a topic is actively pursued and accumulating
+  materials (meetings, mails) whose provenance matters, it is **discovery**, not an idea:
+  it gets a dossier under `docs/discovery/<topic>/` and can draft its spec early, gaps held
+  as typed open markers. The full model - entries, the `Last reconciled:` stamp, precedence -
+  is [discovery.md](discovery.md) (ADR-024).
 
 ## Living documents - updated in place
 

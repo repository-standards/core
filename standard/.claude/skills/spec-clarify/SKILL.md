@@ -4,6 +4,9 @@ description: Run the clarify loop on a spec: propose answers, record deferrals i
 ---
 
 <!-- Vendored from github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED(repository-standards) hunks are marked inline. -->
+<!-- PATCHED(repository-standards): ADR-024 - the dossier answers before the user does -->
+**Discovery first, the user second.** Before asking the user anything, check `docs/discovery/` for the topic's dossier. Answers may already be there: use entries **newer** than the dossier README's `Last reconciled:` stamp (plus entries still `new`/`open`) as an answer source, and record their provenance in `## Clarifications` ("per discovery/<topic>/<entry>"). Never re-ask what an entry marked `folded-into-spec` or `superseded-by:` already settled, and never treat a dossier-vs-spec difference as a question - a dossier is not normative; the spec has already won. The marker family is wider than questions: `NEEDS DECISION` / `NEEDS INPUT` / `NEEDS ASSET` markers are not clarify questions - report them as the outstanding gap list (what is missing, who brings it) and leave them open until the decision/input/asset lands. When this loop folds dossier material into the spec, mark those entries and update the stamp.
+
 ## User Input
 
 ```text

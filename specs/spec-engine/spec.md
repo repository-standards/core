@@ -22,6 +22,8 @@ The spec model itself - capability specs, tiers, personas (`standard/specs/READM
 - **The loop** - `spec-specify -> spec-clarify (gate) -> spec-plan -> spec-tasks -> spec-implement -> spec-reconcile`. Clarify chains automatically after specify, in the same session; reconcile ends a change by making spec == code == tests.
 - **Capability directory** - `specs/<short-name>/`, prefix-free (ADR-002): never `NNN-slug` or timestamp prefixes; an existing directory means the same capability - update in place.
 - **Ready-to-develop** - a spec that passes the clarify gate; plan and tasks refuse anything less (ADR-010).
+- **The open-marker family** (ADR-024) - `[NEEDS ...` markers are the spec's gap list, typed by what is missing: CLARIFICATION (a question), DECISION (a missing ADR/BDR), INPUT (e.g. a UX design), ASSET (e.g. credentials) - each naming an owner. The gate counts the whole family; specify caps only CLARIFICATION questions (max 3), never the others.
+- **Discovery intake** (ADR-024) - specify/clarify/plan read the topic's dossier under `docs/discovery/` before asking the user: only entries newer than the dossier's `Last reconciled:` stamp are questions; a dossier is never normative (the spec has already won), and consuming a dossier marks its entries `folded-into-spec` and moves the stamp. The dossier itself is curated by the separate `discovery-digest` skill, which never writes specs.
 
 ## Data contracts
 
@@ -29,7 +31,7 @@ The spec model itself - capability specs, tiers, personas (`standard/specs/READM
 
 ## Interface contracts
 
-`scripts/spec/check-spec-clarified.sh <path-to-spec.md>` - the mechanical clarify gate (standard-authored, not upstream). PASS requires both: a line matching `^## Clarifications`, and zero occurrences of the literal `[NEEDS CLARIFICATION`. Baked as a MANDATORY PRECHECK into `/spec-plan` and `/spec-tasks`: they run it first and STOP on non-zero.
+`scripts/spec/check-spec-clarified.sh <path-to-spec.md>` - the mechanical clarify gate (standard-authored, not upstream). PASS requires both: a line matching `^## Clarifications`, and zero occurrences of the literal `[NEEDS ` (the whole marker family, ADR-024 - a fail lists every open marker with its line number, so the output doubles as the gap list). Baked as a MANDATORY PRECHECK into `/spec-plan` and `/spec-tasks`: they run it first and STOP on non-zero.
 
 `scripts/spec/setup-plan.sh [--json]` - resolves feature paths via `common.sh`, `mkdir -p` the feature directory, and copies the plan template to `plan.md` unless it already exists (then: skip note). Prints/emits `FEATURE_SPEC`, `IMPL_PLAN`, `SPECS_DIR`, `BRANCH`.
 
@@ -42,7 +44,7 @@ Template copies source `scripts/spec/*.md` through the `resolve_template` stack:
 | Script | Exit | Condition |
 |---|---|---|
 | check-spec-clarified.sh | 0 | `## Clarifications` present and zero open markers (PASS line on stdout) |
-| check-spec-clarified.sh | 1 | no argument; spec file not found; no `## Clarifications`; or >0 open `[NEEDS CLARIFICATION` markers (each listed with line numbers, stderr) |
+| check-spec-clarified.sh | 1 | no argument; spec file not found; no `## Clarifications`; or >0 open `[NEEDS ` family markers (each listed with line numbers, stderr) |
 | setup-plan.sh | 1 | feature paths unresolvable (no env var and no usable feature.json) |
 | setup-tasks.sh | 1 | paths unresolvable; `plan.md` missing (run /spec-plan first); `spec.md` missing; tasks template unresolvable through the stack |
 
@@ -64,6 +66,8 @@ Template copies source `scripts/spec/*.md` through the `resolve_template` stack:
 
 - **Gate pass.** GIVEN a spec with `## Clarifications` and no open markers WHEN the gate runs THEN it prints the PASS line and exits 0.
 - **Gate fail: markers.** GIVEN a spec with 2 `[NEEDS CLARIFICATION` markers WHEN the gate runs THEN both are listed with line numbers on stderr and exit is 1.
+- **Gate fail: typed family.** GIVEN a spec with one `[NEEDS DECISION: BDR - repricing; owner: business]` marker and no CLARIFICATION markers WHEN the gate runs THEN the marker is listed and exit is 1 - a missing decision blocks ready-to-develop exactly like an open question (ADR-024).
+- **Dossier precedence.** GIVEN a dossier entry marked `folded-into-spec` that differs from the spec WHEN `/spec-clarify` runs THEN no question is asked about it - a dossier is never normative.
 - **Gate wired in.** GIVEN a spec failing the gate WHEN `/spec-plan` or `/spec-tasks` starts THEN the precheck exits non-zero and the skill stops, directing to `/spec-clarify`.
 - **State file.** GIVEN `/spec-specify user-auth` completes WHEN `specs/feature.json` is read THEN `feature_directory` is `specs/user-auth` (no numeric or timestamp prefix).
 - **Existing capability.** GIVEN `specs/user-auth/` already exists WHEN specify runs for the same capability THEN the existing spec is updated in place, no sibling directory is minted.

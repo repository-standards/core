@@ -63,7 +63,10 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
 
 ## Workflows
 
-- **Add a feature / migration / decision record** - the spec-driven flow. New or
+- **Add a feature / migration / decision record** - the spec-driven flow. Raw
+  discovery (meeting extracts, mails) lands via `discovery-digest` in
+  `docs/discovery/<topic>/` and feeds the loop - never re-asking what a spec
+  already settled (ADR-024). New or
   changed behavior enters through `/spec-specify` + `/spec-clarify` (one capability);
   `/spec-impact` finds the ripple; `/spec-update` edits every affected spec;
   `/spec-plan` -> `/spec-tasks` -> `/spec-implement` build it; `/spec-reconcile`
@@ -92,6 +95,12 @@ Do not wait to be asked. The standard's loop is **AI-led** (ADR-010; the clarify
 - **The user changes code** -> run `spec-impact` on your own; if the change touches a
   capability's behavior, update its spec in the same PR (the coupling guard will block
   otherwise).
+- **The user drops meeting notes, a transcript, or a mail** -> run `discovery-digest`:
+  extract the essence (with provenance) into the topic's dossier under
+  `docs/discovery/`, flag contradictions, and say whether the topic is ripe for
+  `/spec-specify`. If a spec already exists, route only entries newer than the
+  dossier's `Last reconciled:` stamp through `/spec-clarify` - a dossier is never
+  normative and nothing the spec settled gets re-asked (ADR-024).
 - **Never take a spec to plan / tasks / the tracker** unless it passes the clarify gate
   (`Status: ready-to-develop`). If the user asks you to skip ahead, show what is open
   instead.
