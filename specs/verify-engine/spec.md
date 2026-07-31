@@ -35,7 +35,7 @@ Guarding this repo's own shipped tree ([tree-guard](../tree-guard/spec.md)); aut
 6. **Profiles.** `--profile core` checks core entries only across files/sections/guards and notes how many scale-only entries were skipped; `--profile scale` checks everything. With no flag, the repo's manifest copy's top-level `profile` field (written at align time, ADR-011) is the default - a note names it - and absent that, `scale`. `solo`/`team` are accepted as deprecated aliases.
 7. **Stray transition skills.** `align-to-standards`, `onboard-repo`, `modernize`, `greenfield-start` found under `.claude/skills/` each produce a WARN (a hand-copy mistake, delete it - ADR-009), never drift.
 8. **Decisions.** A non-empty `decisions[]` produces one note (judgment tier, confirmed recorded at review) - never checked mechanically.
-9. **References.** A non-empty `references[]` produces one note naming the count (method docs read in the standards repo at the pin, ADR-023) - never a file check; a `files[]` entry with `adapt: "reference"` is likewise noted and skipped, never existence-checked.
+9. **References.** A non-empty `references[]` produces one note naming the count (method docs read in the standards repo at latest - the living standard, ADR-023/025) - never a file check; a `files[]` entry with `adapt: "reference"` is likewise noted and skipped, never existence-checked.
 
 Output: header `self-verify - compliance with manifest <version>` (or `the pinned standard`), one `PASS | FAIL | WARN | ....` row per result (`<tag>  <name padded to 9>  <msg>`), then the verdict.
 

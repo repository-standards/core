@@ -5,7 +5,7 @@
      VERBATIM (real field names, enums, error codes, endpoints), never paraphrased.
      Drop sections that genuinely do not apply. No change-log section (R4,
      ADR-018): the spec describes the present; git and the standard's changelog
-     process (adopted by reference at your pinned version:
+     process (adopted by reference from the living standard - always latest:
      https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/changelog-process.md)
      hold the past. -->
 

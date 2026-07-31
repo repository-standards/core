@@ -13,8 +13,7 @@ Hub for this repo's docs. Start where you need:
 | [conventions](conventions.md) | day-to-day conventions |
 
 The standard's **method manual** (taxonomy, adoption, working with specs, discovery,
-the decision checklist, ways of working, changelog process) is adopted by reference
-at your pinned version:
+the decision checklist, ways of working, changelog process) is adopted by reference from the living standard - always latest:
 [docs/method/](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/README.md).
 
 Agents: the entry point is the repo-root `AGENTS.md`.

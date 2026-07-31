@@ -1,12 +1,14 @@
 # The repository-standards spec
 
 Version 0.7.2 - the spec is versioned with the standard (`VERSION`); a repo complies
-at the version pinned in its own `.standards-version`. The key words MUST, MUST NOT,
+at the version pinned in its own `.standards-version`. The standard is living: the
+target of every align and update is always the latest - the pin records the state
+last aligned to, never a version to stay at (ADR-025). The key words MUST, MUST NOT,
 SHOULD and MAY are to be read as in RFC 2119.
 
 This page is the whole normative core. Everything else in the standard explains,
 templates or enforces what is written here; where any other document appears to add
-a requirement, this page wins. Rules are numbered R1-R22 and the numbers are stable -
+a requirement, this page wins. Rules are numbered R1-R23 and the numbers are stable -
 tooling cites them. `standard.manifest.json` is this spec's machine-readable
 projection (each manifest entry names the rule it enforces), and
 `scripts/self-verify.mjs` reports unmet rules as a drift count. Rules the manifest
@@ -40,8 +42,7 @@ binds every repo, a solo one included.
 - **R5.** A contestable, re-litigable choice MUST be recorded as a decision record
   in `docs/decision-records/` - ADR for technical, BDR for business, MADR form. A
   settled way of doing a recurring thing MUST be written as a rule where the next
-  person will look; the standard's taxonomy (adopted by reference at the pinned
-  version) is the map of where each kind lands.
+  person will look; the standard's taxonomy (adopted by reference from the living standard - always latest) is the map of where each kind lands.
 - **R6.** An accepted record MUST NOT be edited into a different decision. It is
   superseded by a new record: status flip plus link.
 - **R7.** The eight foundation forks MUST each be consciously decided and recorded:
@@ -82,9 +83,9 @@ binds every repo, a solo one included.
   (against the pinned manifest) and `spec-structure` MUST gate CI; *(scale)*
   `spec-guard` too. Aligned means self-verify reports drift 0.
 - **R17.** Adoption and updates MUST adapt, never blind-copy: align reconciles a
-  repo to the standard at a pinned version; an update applies the delta between
-  versions and preserves the repo's recorded deviations (the manifest's
-  `exceptions`).
+  repo to the standard - always the latest; the pin then records the state
+  aligned to, and an update applies the delta between the pin and latest,
+  preserving the repo's recorded deviations (the manifest's `exceptions`).
 
 ## Releases and hygiene
 
@@ -128,6 +129,19 @@ binds every repo, a solo one included.
   agent's own instruction mechanism (e.g. `.agents/skills`) - strictly and
   completely, before claiming compliance; `self-verify` accepts the ported
   location. A partial port is drift, not a variant (ADR-019).
+
+## Integration and history
+
+- **R23.** The mainline's history MUST read as one finished unit of work per PR.
+  A branch is brought up to date by **rebasing onto its base**; the base MUST NOT
+  be merged back into the branch. Every PR MUST be based on the mainline, never
+  on another open PR's branch. A PR MUST land by **rebase-merge** (the paved
+  road) or squash-merge - decided once and recorded with the branching decision
+  (R7); the platform's linear-history protection SHOULD enforce it. Rebase-merge
+  publishes every commit, so it MUST NOT be chosen unless each commit is a
+  complete, buildable, reviewed change; a repo that will not hold that bar
+  squashes instead. A branch MAY be rewritten while it is the author's alone;
+  once another person or branch builds on it, it MUST NOT be (ADR-026).
 
 ## What this standard does not do
 

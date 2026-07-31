@@ -19,7 +19,17 @@ tightening the loop early, not being the gate. (The gate is CI + human review.)
 1. **Scope the change.** `git fetch origin` then look at the full diff against the
    base branch: `git diff origin/main...HEAD`. Know exactly what you are shipping.
 
-2. **Run the repo's local checks** (whatever this repo defines - do not invent):
+2. **Check the branch shape (R23).** Three things, all from
+   `git log --oneline origin/main..HEAD`:
+   - it sits on current `main` - `git merge-base --is-ancestor origin/main HEAD`
+     exits 0; if not, rebase (never merge `main` in);
+   - no merge commit rode in - `git log --merges origin/main..HEAD` is empty;
+   - every commit listed belongs to *this* PR and stands on its own. Another PR's
+     commits in that range means you are stacked on its branch: rebase onto
+     `main`, or land the parent first. Squash the wip/fixup noise now
+     (`git rebase -i origin/main`), before review, not after.
+
+3. **Run the repo's local checks** (whatever this repo defines - do not invent):
    format, lint, typecheck, and the unit tests the repo expects before a PR.
    That includes the repo's **full audits**, not only diff-scoped checks - in a
    repo on the standard: `node scripts/self-verify.mjs` and
@@ -27,7 +37,7 @@ tightening the loop early, not being the gate. (The gate is CI + human review.)
    a diff-only local loop just moves the failure to CI.
    Fix anything red before continuing. Do not open a PR with red local checks.
 
-3. **Independent diff review (the important part).** Review the diff as if a
+4. **Independent diff review (the important part).** Review the diff as if a
    stranger wrote it - read *what the code does*, not *what you meant it to do*.
    Prefer a clean context: run `/code-review` (which reviews the diff in a fresh
    sub-agent) rather than eyeballing it in the same session that wrote it. For a
@@ -36,9 +46,9 @@ tightening the loop early, not being the gate. (The gate is CI + human review.)
    issues (injection, secrets, authz), violations of this repo's ADRs and coding
    standards, and missing/stale tests.
 
-4. **Fix findings, then re-run step 2.** Loop until clean.
+5. **Fix findings, then re-run step 3.** Loop until clean.
 
-5. **Only then open the PR.** Fill the PR template honestly, including ADR impact.
+6. **Only then open the PR.** Fill the PR template honestly, including ADR impact.
 
 ## What this is not
 

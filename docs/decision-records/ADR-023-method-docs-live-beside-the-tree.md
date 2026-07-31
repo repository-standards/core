@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Accepted |
+| **Status** | Accepted; reference semantics revised by ADR-025 - the manual is read at latest (`main`), the pin records the state a repo last aligned to |
 | **Date** | 2026-07-29 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | structure, repo-layout, distribution, reference |

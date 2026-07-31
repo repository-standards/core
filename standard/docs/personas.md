@@ -71,7 +71,7 @@ Copy this block per persona.
 
 - **Reviewed at the PO stage** of every capability (see the standard's
   [ways of working](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/ways-of-working.md),
-  adopted by reference at your pinned version) - the spec
+  adopted by reference from the living standard - always latest) - the spec
   states the persona and how it serves them.
 - **Referenced in the backlog** - an item names the persona whose job it advances.
 - **Revisited when the market moves** - personas are living; a wrong persona misleads every

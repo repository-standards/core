@@ -79,6 +79,7 @@ picks and rationale live in its DECISIONS).
 | Decision | Why it matters | Default direction (paved road) | Record |
 |---|---|---|---|
 | Branching & release strategy | Ad-hoc branching stalls teams and hides work | Trunk-based with short-lived branches; small focused PRs; the **maintainer cuts releases**; decide the rollback triggers and the undo path before the first deploy (they belong in the runbook) | ADR |
+| Integration method & history shape | Rebase-vs-merge is re-argued every PR until it is decided once; the wrong pick strands work or makes `main` unreadable | **Rebase-merge onto a linear `main`**, branches updated by rebase and never back-merged, no PR based on another PR's branch; **squash-merge** where per-commit hygiene is not held - both are compliant, drifting between them is not (R23, ADR-026) | ADR (with branching, above) |
 | CI/CD & environments | Manual deploys drift and break | Pipeline-driven, reproducible; least-privilege permissions; actions pinned `-> stack layer` | ADR |
 | Feature-flagging & rollout | Big-bang releases are high-risk | A decided rollout mechanism (flags / staged) for risky change, not deploy-and-pray | ADR |
 | Changelog & release notes | Undocumented releases erode trust | Per-PR changelog fragments assembled at release; separate technical vs stakeholder audiences | ADR |

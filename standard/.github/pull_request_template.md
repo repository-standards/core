@@ -26,3 +26,5 @@
 - [ ] Ran the repo's local checks (format / lint / typecheck / tests as applicable)
 - [ ] Self-reviewed the diff (see the `pre-pr-review` skill)
 - [ ] No secrets in the diff
+- [ ] Based on `main` and rebased onto it - no merge commits from `main`, no
+      stacking on another PR's branch; every commit stands on its own (R23)

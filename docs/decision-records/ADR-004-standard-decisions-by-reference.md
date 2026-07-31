@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Accepted; mechanism extended to method docs by ADR-023 |
+| **Status** | Accepted; mechanism extended to method docs by ADR-023; reading semantics set latest-first by ADR-025 (references resolve at `main` - the living standard) |
 | **Date** | 2026-07-07 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | methodology, distribution, decision-records |

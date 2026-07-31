@@ -8,6 +8,9 @@ applies to humans and coding agents alike.
 
 - **Conventions** - branches, Conventional Commits, no AI/tool attribution, ASCII
   hyphen: the Conventions section of `AGENTS.md`.
+- **Branch and history** - base every PR on `main`, update by rebase (never merge
+  `main` in), land by rebase-merge with commits that stand alone: the same
+  section, under Branch and history (R23).
 - **Before a PR** - run the repo's local checks and self-review with the
   `pre-pr-review` skill; fill in the PR template, including decision-record impact.
 - **Hard stops** - remote-database writes, contradicting an Accepted ADR, secrets

@@ -126,12 +126,12 @@ let scaleSkipped = 0; // entries skipped by --profile core, across files/section
 if (manifest) {
   // method docs adopted by reference (ADR-004/023): named, never file-checked
   if ((manifest.references || []).length) {
-    note("reference", `${manifest.references.length} method docs adopted by reference at the pin (ADR-023) - read them in the standards repo, never copy them here`);
+    note("reference", `${manifest.references.length} method docs adopted by reference from the living standard - always latest (ADR-023/025); read them in the standards repo, never copy them here`);
   }
   // files
   for (const f of manifest.files || []) {
     if (coreOnly && !isCore(f)) { scaleSkipped++; continue; }
-    if (f.adapt === "reference") { note("file", `${f.path} is reference-class - adopted by link at the pin, no file expected here`); continue; }
+    if (f.adapt === "reference") { note("file", `${f.path} is reference-class - adopted by link to the living standard, no file expected here`); continue; }
     if (hasFile(f.path, f.altPaths)) pass("file", `${f.path} (${f.purpose})`);
     else if (skeleton && f.adapt === "fill-from-repo") note("file", `${f.path} is authored at adoption - absent from the skeleton by design`);
     else if (f.required) fail("file", `${f.path} missing - ${f.purpose}`);

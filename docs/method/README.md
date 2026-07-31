@@ -1,8 +1,7 @@
 # docs/method/ - the standard's method manual
 
 How a repo gets ON the standard and how the method runs day to day. These docs are
-the standard's own teaching material - versioned with the standard, **adopted by
-reference at your pinned version, never as copies** (the same mechanism as the
+the standard's own teaching material - versioned with the standard, **adopted by reference from the living standard - always latest, never as copies** (the same mechanism as the
 decision records: ADR-004, ADR-023). A client repo carries the artifacts the method
 produces; the method itself lives here, one home, one history.
 
@@ -22,7 +21,8 @@ produces; the method itself lives here, one home, one history.
 The shipped tree ([`standard/`](../../standard/)) is strictly the client repo at day
 zero: client-authored artifacts plus the operating manuals for the tools it ships.
 The method - how to get there and how to run - would only drift if copied into every
-repo, so it stays here and is read at the version your `.standards-version` pins
-(`https://github.com/bodurkalukasz/repository-standards/blob/<version>/docs/method/`).
+repo, so it stays here and is read at latest - `main` IS the living standard
+(`https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/`);
+your `.standards-version` records the state your repo last aligned to (ADR-025).
 An agent aligning a repo reads these from its standards checkout; a client repo links
 them, never vendors them.

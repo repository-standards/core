@@ -45,6 +45,10 @@ Common commands (install, dev, build, test, checks).
 
 - Conventional Commits, ticket after the colon; no AI/tool attribution; ASCII
   hyphen only; small focused PRs.
+- **Branch and history (R23):** branch off `main` and base every PR on `main`;
+  update by rebase, never merge `main` into your branch; land by rebase-merge
+  with commits that each stand alone. Never rewrite a branch someone else builds
+  on.
 - **Working language:** `<declare per artifact - default English>`. E.g. code +
   commits in English, docs + specs in `<team language>`, user-facing copy in the
   persona's language. Honor this everywhere; it is a config, not a constraint.
@@ -59,7 +63,8 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
 4. A breaking schema / contract change.
 5. Hardcoded secrets.
 6. Shipping without the decision record the change implies.
-7. <repo-specific>...
+7. Force-pushing a branch someone else has pulled or based work on.
+8. <repo-specific>...
 
 ## Workflows
 
@@ -74,7 +79,7 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
   Work items come from and return to [`docs/backlog.md`](docs/backlog.md). Roles and
   hand-offs (PO -> dev -> AI): the standard's
   [ways of working](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/ways-of-working.md),
-  adopted by reference at your pinned version.
+  adopted by reference from the living standard - always latest.
 - **Bring this repo up to the standard (brownfield)** - alignment + onboarding: derive
   capabilities from the code, seed specs + the decisions the code implies, and put the
   rest in the backlog (run from a checkout of repository-standards:

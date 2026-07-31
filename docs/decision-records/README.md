@@ -1,7 +1,7 @@
 # decision-records/ - this repo's own decision log (zone 1)
 
 The repository-standards project's own ADRs, flat in this folder. Clients never
-receive copies - they adopt these decisions by reference at a pinned version
+receive copies - they adopt these decisions by reference from the living standard - always latest
 (ADR-004); the shipped tree carries only the empty log skeleton
 (`standard/docs/decision-records/`) for a client's own records.
 
@@ -34,6 +34,8 @@ one settled.
 | [022](ADR-022-stacks-linked-not-version-locked.md) | Stacks linked, not version-locked | a stack declares it belongs to the ecosystem (registry pointer), never a core version range; self-verify notes the layer, checks nothing version-shaped | Accepted |
 | [023](ADR-023-method-docs-live-beside-the-tree.md) | Method docs live beside the tree | the method manual moves to `docs/method/`; the tree is literally the client repo at day zero; clients adopt the method by reference (manifest `references`), never as copies | Accepted |
 | [024](ADR-024-discovery-dossiers-beside-the-specs.md) | Discovery dossiers beside the specs | `docs/discovery/<topic>/` holds provenance-stamped extracts, never normative; the `Last reconciled:` stamp ends re-asking; typed open markers let a spec draft early and gate honestly | Accepted |
+| [025](ADR-025-the-standard-is-living-latest-is-the-target.md) | The standard is living - latest is the only target | no version ranges or requirements anywhere, ever; every align/update targets latest; `.standards-version` is a bookmark of the last aligned state, never a constraint; references resolve at `main` deliberately | Accepted |
+| [026](ADR-026-rebase-merge-onto-a-linear-main.md) | Rebase-merge onto a linear `main` | branches update by rebase and never back-merge; every PR is based on the mainline; a PR lands as one readable unit - rebase-merge on the paved road, squash where per-commit hygiene is not held (R23) | Accepted |
 
 Add one row per record; the template ships in the tree
 (`standard/docs/decision-records/adr/_template.md`). Numbers are gapless and never

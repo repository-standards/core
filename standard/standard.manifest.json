@@ -9,7 +9,7 @@
     "copy": "ship verbatim; the repo gets a byte-for-byte copy (guards, templates that carry no repo-specific content)",
     "merge": "combine the standard's content with what the repo already has, keeping both (ignore files, CI that already has jobs)",
     "fill-from-repo": "scaffold the shell from the standard, then author the body from THIS repo's reality - never blind-copy the example prose (ARCHITECTURE, PRODUCT, specs)",
-    "reference": "do not copy; link to the standard at the pinned version (ADR-004 - the standard's own decisions reach clients by reference)"
+    "reference": "do not copy; link to the living standard - always latest (ADR-004/025 - the standard's own decisions reach clients by reference)"
   },
 
   "files": [

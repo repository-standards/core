@@ -46,5 +46,5 @@ each with an owner). The spec stays `in-refinement` (the draft state) until
 the clarify gate counts zero open markers. The full worked example, the entry
 lifecycle and the precedence rules: the standard's
 [discovery method doc](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/discovery.md)
-(adopted by reference at your pinned version); the decision behind this home
+(adopted by reference from the living standard - always latest); the decision behind this home
 is its ADR-024.

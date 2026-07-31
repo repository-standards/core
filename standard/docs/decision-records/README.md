@@ -6,7 +6,7 @@ divergence as a red flag.
 
 > **Which decisions should a project even have?** See the standard's
 > [decision checklist](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/checklist.md)
-> (adopted by reference at your pinned version) - the menu of forks a project keeps hitting
+> (adopted by reference from the living standard - always latest) - the menu of forks a project keeps hitting
 > (datastore, auth, API shape, release strategy, ...) with the standard's paved-road
 > default for each. It drives greenfield scaffolding and the brownfield onboarding sweep.
 
@@ -36,7 +36,7 @@ A settled way of doing things is not a decision; it is a **rule** in the relevan
 methodology doc. A significant decision usually produces **both**: the record holds
 the why, the rule holds the resulting practice - see the standard's
 [taxonomy](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/taxonomy.md)
-(adopted by reference at your pinned version) for which knowledge lands where.
+(adopted by reference from the living standard - always latest) for which knowledge lands where.
 
 ## Status lifecycle (ADR / BDR)
 

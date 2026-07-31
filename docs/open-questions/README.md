@@ -18,7 +18,7 @@ outgrew itself - as its own meta entry predicted it would.)
 | Topic | Decided | The doubt, in one line |
 |---|---|---|
 | [One authored tree](one-tree.md) | ADR-014: single `standard/` tree, no source/dist split | template shells and read-as-is docs mix in one tree |
-| [Twenty rules](twenty-rules.md) | SPEC.md, R1-R21 on one page | 21 is past the top of the winners' range; some rules bundle several MUSTs |
+| [Twenty rules](twenty-rules.md) | SPEC.md, the numbered rules on one page | the count is past the top of the winners' range and only grew; some rules bundle several MUSTs |
 | [Stacks as satellite repos](stacks-satellite.md) | ADR-016: one repo per technology + registry | two repos to run; registry is a solo-merge gate |
 | [Genesis history for the org move](genesis-history.md) | clean-slate, curated commit sequence, honest dates | narrative order vs the record of what really happened |
 | [Engine cherry-pick](engine-cherry-pick.md) | ADR-015: prompts are ours; upstream read at release | five prompts could quietly fall behind upstream |
@@ -34,6 +34,7 @@ outgrew itself - as its own meta entry predicted it would.)
 | [Personas as a hard gate](personas-gate.md) | gate is core, roster is scale | ceremony for solo tools and no-product repos |
 | [One source, two surfaces](docs-funnel.md) | docs site renders the same md agents read | in-place READMEs may not sequence into a learning path |
 | [Case-study anonymization](case-anonymization.md) | describe the situation, never the company | the identifiability line is unwritten judgment |
+| [Rebase-merge as the paved road](rebase-merge.md) | ADR-026: linear `main`, rebase-merge, squash as the alternative | squash asks less and delivers most of it; the option that wins on merits is missing from GitHub |
 
 Stack-pick doubts (Better Auth, CSS Modules vs Tailwind) moved with Layer 2 to
 [repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node)'s

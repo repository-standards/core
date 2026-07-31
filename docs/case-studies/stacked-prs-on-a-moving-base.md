@@ -14,10 +14,14 @@ recovered by hand into fresh PRs.
 rewritten (rebase- or squash-merged) instead of on `main`. It looks efficient exactly
 until the parent lands.
 
-**What the standard does about it.** A hard contributing rule: **base every PR on
-`main`**. When work genuinely must build on unmerged work, merge the parent first, or
-carry the whole sequence in one PR as ordered commits (the owner's preferred shape) -
-never a chain of open PRs on each other's branches.
+**What the standard does about it.** A normative rule: **base every PR on `main`**.
+When work genuinely must build on unmerged work, land the parent first, or carry the
+whole sequence in one PR as ordered commits (the owner's preferred shape) - never a
+chain of open PRs on each other's branches.
 
-**Where it lives now.** `CONTRIBUTING.md` (base-on-main + how to sequence safely);
-this repo's own history is the receipt.
+**Where it lives now.** R23 in [`standard/SPEC.md`](../../standard/SPEC.md), with the
+mechanics in [`standard/docs/conventions.md`](../../standard/docs/conventions.md)
+(Branch and history) and the reasoning in
+[ADR-026](../decision-records/ADR-026-rebase-merge-onto-a-linear-main.md) - so an
+adopting repo receives it, which it did not while the rule sat in this repo's own
+`CONTRIBUTING.md`. This repo's own history is the receipt.

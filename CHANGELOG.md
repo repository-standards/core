@@ -9,6 +9,48 @@ The simplification wave - the standard put on one page, in one tree, with one
 engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
 align engine, Layer 2 and the product spine.
 
+### The mainline gets a shape (2026-07-31)
+
+- **Branch and history is normative now (ADR-026, new R23)** - the standard had
+  nothing to say about how work actually reaches `main`, so the rule this repo
+  learned the hard way (three PRs' commits stranded on a rewritten base) lived
+  only in its own `CONTRIBUTING.md` and never shipped to anyone. R23 fixes that:
+  a branch is updated by **rebasing onto its base** and the base is never merged
+  back into it; every PR is based on the mainline, never on another open PR's
+  branch; a PR lands as **one readable unit**; and a branch may be rewritten only
+  while it is the author's alone.
+- **Rebase-merge is the paved road, squash is the sanctioned alternative** - not
+  a ban on merge commits. A merge commit at integration time is a legitimate
+  shape; the braid produced by back-merges is what breaks history. Rebase-merge
+  publishes every commit, so it comes with the bar that makes it honest: each
+  commit complete, buildable, reviewed on its own. A repo that will not hold that
+  bar squashes and records it in its branching ADR - both comply, drifting
+  between them does not. The rejected options (merge commits by default,
+  squash-everything, semi-linear where GitHub cannot offer it) are in the record
+  together with the costs we accept (new SHAs, no signature survival, commits CI
+  never tested in that exact form), so the argument is not re-run every PR.
+- **It reaches adopters where they read** - the mechanics land in
+  `docs/conventions.md` (merged into every repo's `AGENTS.md` at adoption), the
+  shipped PR template gains the rebased-on-`main` check, force-pushing a branch
+  others build on joins the red flags, and the decision checklist grows the
+  integration-method row. Held open as an [open
+  question](docs/open-questions/rebase-merge.md): squash asks less of a small
+  team and delivers most of the benefit, and the option that wins on merits
+  (semi-linear) is missing from GitHub, not from the reasoning.
+
+### The standard declares itself living - latest is the only target (2026-07-30)
+
+- **Latest-first (ADR-025)** - no version ranges or requirements anywhere,
+  ever; every align and update targets the latest standard. The pin
+  (`.standards-version`) is a bookmark of the last aligned state - what makes
+  updates deltas and self-verify meaningful - never a constraint. References
+  resolve at `main` deliberately: the canonical phrase on every live surface
+  becomes "adopted by reference from the living standard - always latest"
+  (ADR-004/023 keep their original text with revision notes). Staying current
+  is a notification proposing a pin bump (a watch workflow and a Renovate rule
+  on the pin file - recorded in the backlog until the first tag makes them
+  provable).
+
 ### Discovery has a home, specs draft early, the front door leads with usage (2026-07-30)
 
 - **Discovery dossiers (ADR-024)** - `docs/discovery/<topic>/` holds
