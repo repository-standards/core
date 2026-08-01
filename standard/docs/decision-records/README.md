@@ -10,6 +10,42 @@ divergence as a red flag.
 > (datastore, auth, API shape, release strategy, ...) with the standard's paved-road
 > default for each. It drives greenfield scaffolding and the brownfield onboarding sweep.
 
+## You have this case - say this
+
+**You are about to pick something.** Before the code, not after:
+
+```
+> we need a queue for the export jobs - record the decision first
+```
+
+The agent drafts the record with the options it can find, their trade-offs and a
+recommendation, and asks you only what it cannot decide. You approve, it flips to
+`Accepted`.
+
+**The decision already happened in a call.** The most common way a repo ends up
+undocumented - say it while you still remember:
+
+```
+> we agreed on Postgres over Mongo yesterday, mainly for the reporting joins - write it up
+```
+
+**An Accepted record is now wrong.** Never edit it into a new opinion:
+
+```
+> ADR-014 says one tree; we are splitting it - supersede it
+```
+
+A new record supersedes the old one, the old one keeps its text and gains a
+`Superseded by` line. The history of what you believed is the point.
+
+**Corner case - is this a decision or just how we do things?** If reversing it would
+cost a rewrite, it is a decision. If it would cost a search-and-replace, it is a
+convention and belongs in `AGENTS.md`.
+
+**Corner case - business or technical?** Ask who would overrule it. A product owner
+overruling it means BDR; an architect means ADR. When both would, write the BDR and
+let the ADR reference it.
+
 Two streams, two questions - **decisions only**:
 
 | Stream | Question | Folder | Lifecycle |

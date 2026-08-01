@@ -18,6 +18,32 @@ The release notes are **not the changelog with the boring lines deleted** - they
 short written narrative. Smaller on purpose: most changes (a refactor, a CSS fix, a
 dependency bump) never appear in them. Never per-commit.
 
+## You have this case - say this
+
+**You are opening a PR.** One line, and the entry writes itself in the right voice:
+
+```
+> describe this change for the changelog
+```
+
+**It is release day and you are the maintainer.** The cut is a deliberate act, never a
+side effect of merging:
+
+```
+> cut 0.8.0 from what is under Unreleased, and draft the stakeholder release notes from the same source
+```
+
+**A stakeholder asks what changed.** They are not asking for the changelog - they are
+asking for the other output:
+
+```
+> what did the last release actually change for a host? plain language, no internals
+```
+
+**Corner case - a contributor bumped the version.** Revert that part. Versions are cut
+by the maintainer, from `Unreleased`, once; a PR that adds a version heading has
+decided a release happened.
+
 ## The only home of history
 
 Change history accumulates here and nowhere else. A living document - a spec,

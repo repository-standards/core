@@ -17,6 +17,23 @@ produces; the method itself lives here, one home, one history.
 | [discovery.md](discovery.md) | from a meeting to a spec, with provenance - one worked example, dossiers, typed blockers |
 | [changelog-process.md](changelog-process.md) | two outputs, one source, one cut - the changelog + release-notes model |
 
+## Find your case, skip the theory
+
+Every doc here opens with the situations it handles and the exact line you say. If you
+are in a hurry, start from the situation rather than the table:
+
+| You are... | Start here |
+|---|---|
+| holding a repo you did not write | [repo-assessment](repo-assessment.md) - read it before changing anything |
+| putting a repo on the standard | [adoption](adoption.md) - greenfield interview or brownfield reconstruction |
+| unsure where something you wrote down belongs | [taxonomy](taxonomy.md) - one map, one answer |
+| about to pick a technology | [checklist](checklist.md) - the forks, with the paved road for each |
+| building a feature and wondering who does what | [ways-of-working](ways-of-working.md) - PO -> Dev -> AI |
+| writing or changing behavior | [working with specs](working-with-specs.md) - the prompt per situation |
+| holding meeting notes, mails, half-decisions | [discovery](discovery.md) - raw material, with provenance |
+| driving the agent itself | [working with AI](working-with-ai/README.md) - what holds up, with the evidence |
+| shipping a release | [changelog process](changelog-process.md) - two outputs, one cut |
+
 ## Why this shape, and how to use it
 
 The shipped tree ([`standard/`](../../standard/)) is strictly the client repo at day

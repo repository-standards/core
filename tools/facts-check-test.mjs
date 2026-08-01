@@ -14,7 +14,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 
-const CHECK = join(process.cwd(), "tools/facts-check.mjs");
+const CHECK = join(process.cwd(), "standard/scripts/facts-check.mjs");
 
 const FACTS = [
   {
@@ -38,9 +38,9 @@ const BASE = {
   "docs/adopt.md": "run npx degit owner/repo to start\n",
 };
 
-const run = (dir) => {
+const run = (dir, args = ["--facts", "facts.json"]) => {
   try {
-    return { code: 0, out: execFileSync("node", [CHECK, "--facts", "facts.json"], { cwd: dir, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }) };
+    return { code: 0, out: execFileSync("node", [CHECK, ...args], { cwd: dir, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }) };
   } catch (e) {
     return { code: e.status ?? 1, out: `${e.stdout ?? ""}${e.stderr ?? ""}` };
   }
@@ -53,6 +53,9 @@ const CASES = [
   { name: "a reworded surface fails instead of going quiet", fails: true, says: "matches nothing", files: { "docs/adopt.md": "clone it from GitHub to start\n" } },
   { name: "a claim pointing at a file that is gone fails", fails: true, says: "does not exist", files: {}, drop: ["docs/adopt.md"] },
   { name: "a home pattern that matches nothing fails", fails: true, says: "matches nothing", files: { "README.md": "the 2 shipped skills\n" } },
+  // A repo that declares no facts is not a repo with drift - the shipped guard runs
+  // in every adopting repo and must stay quiet where nothing was declared.
+  { name: "a repo with no declared facts passes", fails: false, says: "skipping", files: {}, args: [] },
 ];
 
 let failures = 0;
@@ -66,7 +69,7 @@ for (const c of CASES) {
     writeFileSync(join(dir, rel), body);
   }
 
-  const { code, out } = run(dir);
+  const { code, out } = run(dir, c.args);
   const want = c.fails ? 1 : 0;
   if (code !== want) {
     failures++;

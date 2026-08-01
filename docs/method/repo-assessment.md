@@ -7,6 +7,36 @@ a picture plus concrete recommendations. The fixing happens afterwards: the skel
 lands via the align router, the content via its brownfield onboarding phase, and both
 drain the backlog this assessment seeds.
 
+## You have this case - say this
+
+**Someone handed you a repo and you have no idea what you are holding.** Start with the
+picture, not with fixes:
+
+```
+> assess this repo against the standard - what is here, what is missing, what is risky. Do not change anything yet
+```
+
+You get the picture plus concrete recommendations, and nothing is edited. That
+separation is the point: the first PR against an unfamiliar repo should never be a
+sweep.
+
+**You are deciding whether to take the work at all.** The same pass answers it:
+
+```
+> is this repo worth onboarding, or is the honest answer a rewrite? show me what that judgement rests on
+```
+
+**You already ran the assessment and want the work to exist.** Findings that never
+became items are just an opinion:
+
+```
+> turn the assessment findings into backlog items, ordered by risk
+```
+
+**Corner case - the repo is huge.** Assess by capability boundary rather than by
+directory, and say which parts you did not look at. An assessment that silently skipped
+half the repo reads as a clean bill of health.
+
 ## When to run
 
 - **First contact** with a repo you are about to onboard.

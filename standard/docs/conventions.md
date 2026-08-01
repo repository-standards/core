@@ -88,6 +88,11 @@ adopted by reference from the living standard - always latest.
 
 - ASCII hyphen `-` only, everywhere (prose, docs, UI copy, commits, PRs). Never
   the em dash `—` or en dash `–`.
+- **A fact has one home (R4).** A count, a version, a path or a command belongs in
+  one file; everywhere else links to it. If it genuinely has to be restated, declare
+  the restatement in `docs/facts.json` (shape: [`facts.example.json`](facts.example.json)) - source and claim - and
+  `node scripts/facts-check.mjs` fails when they disagree. Undeclared restatements
+  rot: "twenty rules" outlived the twenty-first by weeks.
 
 ### Where rules live (ADR-012)
 

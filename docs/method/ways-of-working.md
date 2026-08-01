@@ -6,6 +6,37 @@ The spec is the artifact that passes between roles - it starts as intent and gai
 precision at each hand-off. This is the ongoing flow once a repo is on the standard
 (greenfield from the start, or brownfield after the align router's onboarding phase).
 
+## You have this case - say this
+
+The full flow is below; these are the three entry points people actually use. Each
+names the role it belongs to, because the same sentence means different work depending
+on who says it.
+
+**You are the PO and you want something to exist** - describe the behavior, not the
+implementation:
+
+```
+> guests should be able to change their booking dates themselves
+```
+
+**You are the developer and the intent is not buildable yet** - the gap is the point,
+and naming it is the job:
+
+```
+> sharpen the booking-changes spec into something I could build from - what is still missing?
+```
+
+**The code shipped and you are not sure the spec still matches** - ask before the next
+change is built on the drift:
+
+```
+> reconcile the booking-changes spec against what we actually merged
+```
+
+The exact prompts per situation - including "is this a new spec or an update", and
+what the agent does underneath - live in
+[working with specs](working-with-specs.md).
+
 ## Who owns what
 
 | Role | Owns | Produces |

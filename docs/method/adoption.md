@@ -15,6 +15,41 @@ Every gate produces a **document and/or tasks**. The path ends with a **counted 
 (how many tasks to full alignment) and a **green `self-verify` (drift 0)**. Nothing is
 "done" on a hand-wave; each gate has an artifact you can point at.
 
+## You have this case - say this
+
+**A brand-new repo, nothing in it yet.** The agent interviews you through the gates
+rather than scaffolding blind:
+
+```
+> take this new repo onto the standard - interview me for what you need
+```
+
+**An existing repo with years of history.** Same path, opposite direction: the agent
+reads the code and reconstructs what the repo already chose, then names what is
+missing:
+
+```
+> bring this repo onto the standard - read what is here first, and show me the plan before you change anything
+```
+
+**You want the number before you commit to the work.** The path ends in a counted
+backlog for exactly this reason:
+
+```
+> how far is this repo from drift 0? count the work, do not do it
+```
+
+**A gate does not fit your repo.** Deviations are legitimate and recorded, never
+silent:
+
+```
+> we have no separate ops repo, so the runbooks gate lands differently here - record the deviation
+```
+
+**Corner case - already adopted, the standard moved.** That is an update, not an
+adoption: it applies the delta between your pin and latest and preserves your recorded
+deviations.
+
 ## The gates (in order)
 
 | # | Gate | Greenfield (interview) | Brownfield (read code) | Output | Exit criterion |

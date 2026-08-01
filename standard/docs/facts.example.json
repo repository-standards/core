@@ -1,0 +1,17 @@
+[
+  {
+    "id": "supported-node",
+    "what": "the Node version this repo builds and runs on",
+    "home": { "match": { "file": ".nvmrc", "pattern": "^(\\d+\\.\\d+\\.\\d+)" } },
+    "claims": [
+      { "file": "README.md", "pattern": "requires Node (\\d+\\.\\d+\\.\\d+)" },
+      { "file": "docs/onboarding.md", "pattern": "install Node (\\d+\\.\\d+\\.\\d+)" }
+    ]
+  },
+  {
+    "id": "shipped-services",
+    "what": "how many services this monorepo deploys",
+    "home": { "count": "services/*/service.json" },
+    "claims": [{ "file": "ARCHITECTURE.md", "pattern": "(\\d+) deployable services" }]
+  }
+]

@@ -38,7 +38,7 @@ jobs:
         run: node tools/schema-pair-test.mjs
       - name: facts-check (a restated fact agrees with its source) + its test
         run: |
-          node tools/facts-check.mjs
+          node standard/scripts/facts-check.mjs
           node tools/facts-check-test.mjs
       - name: site (generate + check landing and docs)
         run: |

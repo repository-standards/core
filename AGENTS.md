@@ -33,9 +33,9 @@ clients get them by reference (ADR-004), never as copies.
   `node standard/scripts/spec-guard.mjs --audit --block` (code and its capability
   spec move together; every capability spec is mapped),
   `node tools/spec-guard-test.mjs` and `node tools/schema-pair-test.mjs` (those
-  guards still fire where they must), `node tools/facts-check.mjs` +
+  guards still fire where they must), `node standard/scripts/facts-check.mjs` +
   `node tools/facts-check-test.mjs` (a fact restated in prose still agrees with
-  its source - see [`tools/facts.json`](tools/facts.json)),
+  its source - the declarations live in [`docs/facts.json`](docs/facts.json)),
   `node tools/docsite.mjs && node tools/site-check.mjs`. The list is the set CI
   runs - if a check is in `checks.yml` and not here, this line is the bug.
 - **Changelog:** a PR describes its change under `CHANGELOG.md`'s `## Unreleased`

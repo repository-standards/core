@@ -6,6 +6,37 @@
 > an agent can read, append and re-order it. Compatible with the [Backlog.md](https://github.com/MrLesk/Backlog.md)
 > tool if the team wants a CLI/board on top - do not build a custom backlog engine.
 
+## You have this case - say this
+
+**Something surfaced mid-work and it is not this PR.** The most common case, and the
+one that decides whether the backlog is real or theatre:
+
+```
+> the booking export has no retry and dies on a timeout - park it, we are not fixing it here
+```
+
+The agent runs `/add-to-backlog`: one row, with why it matters and what done looks
+like, ordered against what is already there. It does not stop what you were doing.
+
+**You do not know whether it is a backlog item at all.** Say the thing and let the
+agent place it - a decision belongs in a record, raw material in discovery, behavior
+in a spec, and only work belongs here:
+
+```
+> where does this go: we keep arguing about whether refunds are partial or full
+```
+
+**An item is finished.** Say so and it leaves; a row that lingers after its
+definition of done is met teaches everyone the list is stale:
+
+```
+> the retry work is merged - close its backlog item
+```
+
+**Corner case - the item is really three items.** If the done condition needs an
+"and", split it. An item that cannot be finished in one move is an epic, and an epic
+that never splits is a wish.
+
 ## What feeds this backlog
 
 Items arrive from four places - never invent work that has no source:

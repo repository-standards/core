@@ -53,7 +53,8 @@ Template copies source `scripts/spec/*.md` through the `resolve_template` stack:
 - Scripts MUST be plain bash with graceful fallbacks (jq -> python3 -> grep/sed/awk); the gate itself uses only bash and grep.
 - `/spec-specify` MUST mint prefix-free capability directories and persist `specs/feature.json`.
 - The clarify loop MUST be AI-led: propose answers, ask the user only what needs their call, and record every deferral under `## Clarifications` instead of dropping it.
-- **Provenance duty.** The upstream MIT licence MUST ship at `scripts/spec/LICENSE` (Copyright GitHub, Inc.); every extracted file MUST carry a provenance line naming github/spec-kit v0.13.2, with standard-authored hunks and files marked `PATCHED(repository-standards)`.
+- **A question MUST be a question.** Each asked item leads with a full interrogative that can be answered as written, never a topic label, section heading or requirement id (an id MAY trail the question), and carries one plain-language line on what changes depending on the answer. A label is a subject; answering it means guessing what was meant, which is how a clarify round returns nothing usable.
+- **Provenance duty.** The upstream MIT licence MUST ship at `scripts/spec/LICENSE` (Copyright GitHub, Inc.); every extracted file MUST carry a provenance line naming github/spec-kit v0.13.2, with standard-authored hunks and files marked `PATCHED(repository-standards)`. A hunk taken from upstream **after** the extraction point MUST be marked `CHERRY-PICKED` with the upstream commit it came from - the baseline stays v0.13.2, and every deviation from it is readable in place.
 - **Never run upstream specify.** Never install or run upstream spec-kit's own `specify` here - it mints `specs/NNN-feature/` directories that violate the capability layout. The shipped, patched skills are the sanctioned form of the engine.
 
 ## Invariants
@@ -68,6 +69,7 @@ Template copies source `scripts/spec/*.md` through the `resolve_template` stack:
 - **Gate fail: markers.** GIVEN a spec with 2 `[NEEDS CLARIFICATION` markers WHEN the gate runs THEN both are listed with line numbers on stderr and exit is 1.
 - **Gate fail: typed family.** GIVEN a spec with one `[NEEDS DECISION: BDR - repricing; owner: business]` marker and no CLARIFICATION markers WHEN the gate runs THEN the marker is listed and exit is 1 - a missing decision blocks ready-to-develop exactly like an open question (ADR-024).
 - **Dossier precedence.** GIVEN a dossier entry marked `folded-into-spec` that differs from the spec WHEN `/spec-clarify` runs THEN no question is asked about it - a dossier is never normative.
+- **A question, not a label.** GIVEN the retention rules in `FR-023` are unclear WHEN `/spec-clarify` asks about them THEN the asked item reads as an interrogative ending in `?` with the id trailing it, not as `Retention policy` or `FR-023`, and one plain line says what the answer changes.
 - **Gate wired in.** GIVEN a spec failing the gate WHEN `/spec-plan` or `/spec-tasks` starts THEN the precheck exits non-zero and the skill stops, directing to `/spec-clarify`.
 - **State file.** GIVEN `/spec-specify user-auth` completes WHEN `specs/feature.json` is read THEN `feature_directory` is `specs/user-auth` (no numeric or timestamp prefix).
 - **Existing capability.** GIVEN `specs/user-auth/` already exists WHEN specify runs for the same capability THEN the existing spec is updated in place, no sibling directory is minted.

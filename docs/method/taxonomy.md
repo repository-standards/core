@@ -3,6 +3,29 @@
 > The one map for "I have something to write down - where does it go?" It ends the
 > recurring "is this an ADR or just a rule?" question. Boring and decisive on purpose.
 
+## You have this case - say this
+
+**You do not want to read a map.** You want the thing filed. Say what you have and let
+the agent place it:
+
+```
+> where does this go: we decided to stop supporting IE11
+> where does this go: guests should see the cancellation fee before confirming
+> where does this go: never call the payment API from the scheduler
+```
+
+Three sentences, three homes - a decision record, a spec, a convention. The agent
+answers with the destination and writes it there; if it is wrong, correcting the
+destination is one line, and cheaper than filing it nowhere.
+
+**Corner case - it is two things at once.** "We decided guests see the fee" is a
+decision *and* a behavior. Both land: the record holds why the fork went that way, the
+spec holds what the product does. Neither restates the other.
+
+**Corner case - it might not belong in the repo at all.** Meeting notes and raw
+material go to `docs/discovery/`, not into a spec. A spec that quotes a meeting has
+already started rotting.
+
 ## The map
 
 | You have... | It is a... | Home |

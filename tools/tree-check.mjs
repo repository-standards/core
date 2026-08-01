@@ -51,7 +51,7 @@ if (!leaks) ok(`no repo-own material leaked into ${TREE}/ (${files.length} files
 const manifest = JSON.parse(readFileSync(`${TREE}/standard.manifest.json`, "utf8"));
 // fill-from-repo entries ship as shells the client fills - they must still exist in
 // the tree, except the two a client authors from nothing:
-const CLIENT_ONLY = new Set([".standards-version", "specs/capability-map.json"]);
+const CLIENT_ONLY = new Set([".standards-version", "specs/capability-map.json", "docs/facts.json"]);
 let missing = 0;
 for (const f of manifest.files || []) {
   if (CLIENT_ONLY.has(f.path)) continue;

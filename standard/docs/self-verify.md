@@ -73,6 +73,46 @@ A machine cannot (yet) decide these; they are checked when the PR is reviewed:
   buildable, not merely described.
 - **No unrecorded drift** - no known spec<->code contradiction is left unresolved.
 
+## Staying current - the pin is a bookmark, not a lock
+
+The pin records the state this repo last aligned to. The target of every update is
+**latest** (ADR-025), so a repo does not need to be told which version it may use - it
+needs to be told that a newer one exists. Two ways to get that signal, both
+notifications, neither of them a gate:
+
+**The shipped watch workflow.** Enable
+[`.github/workflows/standards-update-watch.yml`](../.github/workflows/standards-update-watch.yml).
+Weekly, it compares `.standards-version` against the standard's newest release and
+opens **one issue per target version** - not one per week - saying what to say to take
+the update. Before the standard publishes its first release the job says so and exits
+green; a watch installed early is not an error. It never edits the pin: an alignment
+that happens while nobody is looking is not an alignment.
+
+**Renovate, if the repo already runs it.** A custom manager treats the pin like any
+other dependency, so the proposal arrives in the same place as every other bump:
+
+```json
+{
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.standards-version$/"],
+      "matchStrings": ["^(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
+      "depNameTemplate": "bodurkalukasz/repository-standards",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
+    }
+  ]
+}
+```
+
+(Older Renovate calls `managerFilePatterns` `fileMatch`.)
+
+Know what that PR is: **a proposal, and only half the work.** Merging a pin bump on its
+own leaves the repo red on purpose - self-verify requires the manifest copy to match
+the pin, and the manifest arrives with the update. Take the PR as the reminder, run
+`update-to-version`, and let the same PR carry the delta.
+
 ## When it fails
 
 A red self-verify is a compliance failure, not a warning to defer:

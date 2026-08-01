@@ -36,6 +36,12 @@ binds every repo, a solo one included.
   reader will need, the document SHOULD say so in one line. History MUST NOT
   accumulate inside a living document - a spec or doc carries no change-log
   section; git and the changelog (R18) hold the past (ADR-018).
+  A **fact has one home**: a count, a version, a path or a command restated in
+  another document MUST either link to its home or be a **declared** restatement -
+  listed in `docs/facts.json` with its source, so `scripts/facts-check.mjs` fails
+  when the two disagree. A restatement nobody declared is drift waiting for a
+  reader to notice, and a surface reworded past its own declaration fails the same
+  way: silence there is indistinguishable from agreement.
 
 ## Decisions
 

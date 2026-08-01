@@ -11,6 +11,35 @@ checklist only tells you *which decisions to expect* and *where the paved road r
 (The index of records that already exist - the library-catalog sense - lives in each
 stream's README: `adr/README.md`, `bdr/README.md`.)
 
+## You have this case - say this
+
+**Starting something new and you do not know what you are supposed to decide.** That is
+what a menu is for:
+
+```
+> walk me through the decisions this project should make consciously - propose the paved road for each
+```
+
+The agent proposes a default per fork, you argue with the ones that matter, and each
+answer becomes a record. Silence on a fork is also an answer - it just becomes an
+accidental one later.
+
+**You inherited a repo and nobody knows why anything is the way it is.** Reverse the
+checklist: find the decisions already taken and never written down:
+
+```
+> which of these forks does this repo already have an answer to, in the code but not in a record?
+```
+
+**One fork is genuinely undecided.** Say so and leave the marker instead of pretending:
+
+```
+> we cannot pick the auth model until legal answers - record the fork as open, with who unblocks it
+```
+
+**Corner case - the paved road is a default, not a rule.** Choosing against it is fine
+and expected; choosing against it *silently* is what the record exists to prevent.
+
 ## How to use it
 
 - **Greenfield scaffold:** draft the paved-road ADRs up front for the areas you are

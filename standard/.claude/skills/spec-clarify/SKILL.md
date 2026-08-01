@@ -3,7 +3,7 @@ name: spec-clarify
 description: Run the clarify loop on a spec: propose answers, record deferrals in ## Clarifications, drive to zero open markers (based on github/spec-kit v0.13.2, MIT - scripts/spec/LICENSE)
 ---
 
-<!-- Vendored from github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED(repository-standards) hunks are marked inline. -->
+<!-- Vendored from github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED(repository-standards) hunks are marked inline; CHERRY-PICKED hunks name the upstream commit they came from. -->
 <!-- PATCHED(repository-standards): ADR-024 - the dossier answers before the user does -->
 **Discovery first, the user second.** Before asking the user anything, check `docs/discovery/` for the topic's dossier. Answers may already be there: use entries **newer** than the dossier README's `Last reconciled:` stamp (plus entries still `new`/`open`) as an answer source, and record their provenance in `## Clarifications` ("per discovery/<topic>/<entry>"). Never re-ask what an entry marked `folded-into-spec` or `superseded-by:` already settled, and never treat a dossier-vs-spec difference as a question - a dossier is not normative; the spec has already won. The marker family is wider than questions: `NEEDS DECISION` / `NEEDS INPUT` / `NEEDS ASSET` markers are not clarify questions - report them as the outstanding gap list (what is missing, who brings it) and leave them open until the decision/input/asset lands. When this loop folds dossier material into the spec, mark those entries and update the stamp.
 
@@ -101,6 +101,9 @@ Execution steps:
 
 5. Sequential questioning loop (interactive):
     - Present EXACTLY ONE question at a time.
+    <!-- CHERRY-PICKED(github/spec-kit 39f2ac3, after v0.13.2): ask a real question, not a label -->
+    - Lead with `**Question:** <full interrogative>?` - something answerable as written. NEVER use a topic label, a section heading or a requirement id as the question itself: "Retention policy" and "FR-023" are subjects, not questions. An id may trail the question: `**Question:** How long are booking records kept after cancellation? (FR-023)`.
+    - Under it, one plain-language sentence on why it matters - what changes depending on the answer. Everyday wording; introduce a term only if the same sentence defines it.
     - For multiple‑choice questions:
        - **Analyze all options** and determine the **most suitable option** based on:
           - Best practices for the project type

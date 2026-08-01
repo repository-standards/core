@@ -4,6 +4,31 @@
      ad-hoc in code make every dashboard a lie. This file is the single source for
      event names; the same-PR rule below is what keeps it true. -->
 
+## You have this case - say this
+
+**You are about to emit a new event.** Name it here first, then in the code:
+
+```
+> we need to track when a host approves a repeat guest - add the event to the tracking plan
+```
+
+**A dashboard disagrees with reality.** Nine times out of ten the event was renamed in
+code and nowhere else:
+
+```
+> the approvals dashboard dropped to zero last week - check the emitted names against the plan
+```
+
+**Someone asks for "just one more event".** The plan's answer is a question:
+
+```
+> which KPI reads it? if none, we are not collecting it
+```
+
+**Corner case - a rename is a migration, not an edit.** Keep the old row with a
+migration note; dashboards and warehouses live downstream of this file and do not
+learn about silent swaps.
+
 ## The rules
 
 1. **Every product event the code emits is listed here first.** An event not in this

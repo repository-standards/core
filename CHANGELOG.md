@@ -9,6 +9,90 @@ The simplification wave - the standard put on one page, in one tree, with one
 engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
 align engine, Layer 2 and the product spine.
 
+### Adopters get the derived-facts check, and R4 says why (2026-08-01)
+
+- **`scripts/facts-check.mjs` ships** - the check that caught this repo's own stale
+  skill count is no longer repo-own tooling. A repo declares what it restates in
+  `docs/facts.json` (shape in `docs/facts.example.json`), `self-verify` runs it as a
+  manifest guard, and a stale restatement becomes drift with a number. A repo that
+  declares nothing passes quietly - the guard runs everywhere, so it must stay silent
+  where there is nothing to check.
+- **R4 gains the hook it was missing** - "documents are living, the current version is
+  the truth" said nothing about the same fact living in five files. It does now: a fact
+  has one home, and a restatement either links to it or is **declared** and verified.
+  A rule that says this without a check is the kind of sentence everybody agrees with
+  and nobody obeys.
+- **One implementation, dogfooded** - this repo deleted its private copy and runs the
+  shipped script on itself, the same way it runs the shipped `spec-guard.mjs`. Two
+  copies of a drift-checker would have been an unusually pointed source of drift.
+- **`docs/facts.json` joins the author-it-yourself set** - like the version pin and the
+  capability map, shipping an example would seed a repo with another repo's facts. The
+  tree-guard spec now says why that set exists rather than just listing it.
+
+### The upstream scan runs, and the postmortem gets its template (2026-08-01)
+
+- **Upstream reviewed: github/spec-kit v0.13.2 -> v0.15.1** - the extracted engine's
+  first scan since the extraction. Most of what moved upstream is CLI, presets,
+  extensions and packaging, which this standard does not consume. One change to the
+  command templates was worth taking and was taken; the rest were read and rejected
+  with a reason, which is the point of recording the range rather than the verdict.
+- **The clarify loop now asks a question, not a label** - cherry-picked from upstream
+  commit `39f2ac3`: lead with a full interrogative that someone can answer as written,
+  never a topic label or a requirement id ("Retention policy" and "FR-023" are
+  subjects), and follow it with one plain sentence on what changes depending on the
+  answer. The hunk carries a `CHERRY-PICKED` marker naming its upstream commit, beside
+  the existing `PATCHED` ones - provenance stays readable in place.
+- **Read and not taken** - the duplicate step numbering fix does not apply (the
+  extracted specify prompt has none), the constitution-command fixes touch a command
+  this standard does not ship, and the port of the setup scripts to Python is
+  deliberately not followed: the shipped scripts are bash with graceful fallbacks.
+- **Postmortems get the template every other folder already had** - the runbooks README
+  has been prescribing blameless postmortems in a fixed order, with actions that become
+  backlog items in the same PR, while shipping nothing to write them into. The template
+  carries the two sections people skip and later need: the actions that were rejected
+  and why, and what is deliberately not being changed.
+
+### A repo can find out the standard moved (2026-08-01)
+
+- **`standards-update-watch.yml` ships as a template** - weekly, it compares
+  `.standards-version` against the standard's newest release and opens **one issue per
+  target version**, with the line to say to take the update. ADR-025 said staying
+  current is a notification and never a lock; until now there was no channel, so
+  "always align to latest" depended on somebody remembering to look.
+- **It never edits the pin** - an alignment that happens while nobody is looking is not
+  an alignment. The issue proposes; a human runs `update-to-version`, which applies the
+  delta and preserves the repo's recorded deviations.
+- **Installed before the first release, it says so and passes** - no releases yet is a
+  normal state for an adopter who wired the watch early, not a red run. A weekly cron
+  also must not mint a weekly issue, so an open issue for the same target version ends
+  the job.
+- **Renovate gets the same job where a repo already runs it** - a documented custom
+  manager treats the pin as a dependency, and the doc says plainly what that PR is: a
+  proposal and half the work. Merging a bare pin bump leaves the repo red by design,
+  because the manifest copy arrives with the update.
+- **Still waiting on the first tag** - the channel cannot be proven end to end until a
+  release exists, and releases are the maintainer's call. The backlog row says exactly
+  that rather than claiming the item is finished.
+
+### Every doc opens with your case, not with the concept (2026-08-01)
+
+- **"You have this case - say this"** - the pattern `working-with-specs.md` and
+  `discovery.md` set is now the opening of all nine method docs and of the shipped
+  folder READMEs: backlog, decision-records, ideas, runbooks, journeys, analytics and
+  research. Each one starts with the situations people are actually in, the exact line
+  to say, and where the result lands.
+- **Written for the reader who did not come here to learn the method** - somebody with
+  a repo they did not write, an idea they do not want to lose, a service on fire, or a
+  question about whether something is a decision or just a convention. The concept
+  sections stayed where they were; they are no longer the front door.
+- **Corner cases are part of the answer, not an appendix** - update versus new spec,
+  business versus technical record, an idea that is really a decision waiting, a rename
+  that is a migration, an assessment that quietly skipped half a repo. These are the
+  forks where a busy reader guesses wrong, so each opener names its own.
+- **The method index leads with situations too** - a table keyed by what you are
+  holding rather than by document name, so the entry point matches how somebody
+  arrives.
+
 ### A fact restated in prose now has to agree with its source (2026-08-01)
 
 - **The coupling idea, one level down** - `specs/capability-map.json` made "these move
