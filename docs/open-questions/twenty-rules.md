@@ -5,7 +5,7 @@
 projection, each entry citing the rule it enforces. Started at twenty; each
 later rule joined when a real normative gap surfaced in the field - supply-chain
 pinning (ADR-017), agent-portable procedures (ADR-019), branch and history
-(ADR-026).
+(ADR-026), the database schema and its typed twin (ADR-027).
 
 **Why:** every standard that won stays this small - semver has 11 rules,
 Conventional Commits 16, Keep a Changelog 7 principles. The cautionary tale is

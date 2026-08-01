@@ -61,6 +61,29 @@ shape, what it costs, and when squash or a merge commit is the better pick:
 [ADR-026](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/decision-records/ADR-026-rebase-merge-onto-a-linear-main.md),
 adopted by reference from the living standard - always latest.
 
+### Database schema (R24)
+
+If this repo owns a database, its schema lives here twice and the two copies are
+one pair:
+
+- **`database/schema/` holds executable DDL** - enough to rebuild the database
+  from a checkout alone. That is the disaster-recovery copy and the thing a
+  reviewer reads. Migrations are the delta, not the current state.
+- **A typed, documented definition in this stack's idiom** (Zod, Pydantic, ...) is
+  what every read and write path goes through. Do not restate row shapes inline.
+- **They are 1:1, and it is checked.** Every table, column, constraint and enum in
+  one is in the other, and a change to either lands in the same PR as the change to
+  the other. Each file names its counterpart in a `pair: <path>` comment;
+  `node scripts/schema-pair.mjs` resolves that edge both ways and fails when a name
+  the DDL defines is missing from the twin (`self-verify` runs it). Either side may
+  be generated where the generator does not quietly drop what DDL can express.
+- **An agent never applies a schema change to a remote database.** Prepare the
+  reviewed `.sql` file and hand it to a human (R19).
+
+Why two copies rather than one generated source:
+[ADR-027](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/decision-records/ADR-027-the-database-schema-lives-in-the-repo-with-a-typed-twin.md),
+adopted by reference from the living standard - always latest.
+
 ### Writing
 
 - ASCII hyphen `-` only, everywhere (prose, docs, UI copy, commits, PRs). Never

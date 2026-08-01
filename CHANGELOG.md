@@ -9,6 +9,80 @@ The simplification wave - the standard put on one page, in one tree, with one
 engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
 align engine, Layer 2 and the product spine.
 
+### A fact restated in prose now has to agree with its source (2026-08-01)
+
+- **The coupling idea, one level down** - `specs/capability-map.json` made "these move
+  together" a declared edge for code and specs. Prose was left out, and prose is where
+  a number rots quietly: this repo shipped "twenty rules" while `SPEC.md` had 21, and
+  said "11 lifecycle skills" while the tree held 12. Both were found by a person, late.
+- **`tools/facts-check.mjs` + `tools/facts.json`** - a fact has one home (a file to
+  read, a glob to count, a pattern in a designated source) and every restatement is
+  declared. Three are wired to start: how many skills ship, the GitHub path a client
+  degits, and the version the standard advertises across `SPEC.md` and the landing page.
+- **A surface that stops matching its own claim fails** - a reworded sentence whose
+  pattern finds nothing is a failure, not a pass. Silence there would look exactly like
+  agreement, which is how a check rots into decoration.
+- **It found the 12th skill on its first run** - `discovery-digest` had been shipping
+  for a while and no surface counted it. Fixed in the same change, including the open
+  question whose *filename* carried the stale number (`eleven-skills.md` is now
+  `shipped-skills.md`, and its doubt about the eight-to-ten ceiling got sharper, not
+  weaker). Covered by `tools/facts-check-test.mjs`, 6 cases.
+- **Adopters do not get it yet** - it is repo-own tooling until the shipping question is
+  answered properly: a home in the tree, a manifest entry, and a normative hook that is
+  recorded rather than implied. That sits on the backlog with the evidence it already
+  earned here.
+
+### The schema pair stops being a promise (2026-08-01)
+
+- **`scripts/schema-pair.mjs` ships, and `self-verify` runs it** - R24 said the DDL and
+  its typed twin are 1:1 and nothing proved it, which is the shape of rule that decays
+  quietly: a pair held by review drifts one column at a time. The check is a manifest
+  guard now, so a broken pair is drift with a number, and a repo with no
+  `database/schema/` reports that and passes.
+- **The pair is a declared edge, not a convention** - each file names its counterpart in
+  a `pair: <path>` comment and the check resolves it both ways. A schema file naming
+  nothing, naming a file that does not exist, or naming a twin that does not name it
+  back are three distinct failures with three distinct messages.
+- **What it proves, said plainly** - every name the DDL defines (table, column, enum
+  type, enum label) appears in the twin, compared case- and separator-insensitively so
+  a camelCase twin of a snake_case column matches. Type agreement is not checked:
+  reading a Zod or Pydantic module structurally means knowing the language, so that is
+  a stack-repo concern. Nor is a twin field with no column behind it drift - the
+  database is the source of what exists, and a typed module carries input shapes and
+  derived fields too.
+- **Its own test found a hole in it** - `tools/schema-pair-test.mjs` drives the guard
+  over fixtures, 9 cases, most asserting it fails. One case exposed a false negative
+  that review would not have: the `pair:` line names a path, a path carries words, and
+  `bookings.sql` was vouching for a table called `bookings`. The declarations are
+  stripped before the twin is read.
+
+### The database schema becomes something the repo holds (2026-08-01)
+
+- **A new rule, R24** - a repo that owns a database carries that schema as executable
+  DDL under `database/schema/`, complete enough to rebuild the database from a
+  checkout alone. The standard already assumed the file existed: the shipped guard
+  denies remote writes and tells the agent to leave a reviewed `.sql` there for a
+  human to apply. Nothing had ever required it, so the schema lived in the running
+  database and in a chain of migrations - a fold nobody performs by reading, with no
+  floor under it when the database is gone.
+- **And it exists twice, on purpose** - the same schema is also a typed, documented
+  definition in the stack's idiom (Zod in TypeScript, Pydantic in Python), and every
+  path that reads or writes the database goes through it instead of restating row
+  shapes inline. The two are a declared **1:1** pair: every table, column, constraint
+  and enum in one is in the other, each side names its counterpart, and a change to
+  either lands in the same PR as the change to the other. Either side may be generated
+  where the stack has a generator that does not quietly drop what DDL can express.
+- **Why twice rather than one generated source** - the alternatives were considered
+  and rejected in writing (ADR-027): migrations are the delta and not a readable
+  state; an ORM model binds the most durable asset in the repo to a library's
+  lifetime and to what that library can express; a `pg_dump` artifact is machine
+  output whose diff nobody reviews. It is a fine check against the authored DDL,
+  which is where it belongs.
+- **Held by review for now, and that is on the backlog** - no manifest entry can
+  prove a per-repo, conditional path, so `self-verify` does not see R24 yet. The
+  mechanical pair check is a gate-health item rather than an assumption, because a
+  pair held by review drifts one column at a time.
+
 ### The agent guards stop being walkable, and the coupling gate stops firing on data (2026-08-01)
 
 - **Two bypasses in the shipped `PreToolUse` guards, both reproducible** - the
@@ -29,14 +103,16 @@ align engine, Layer 2 and the product spine.
   failure mode a consuming repo hit, where two unrelated apostrophes paired up and
   swallowed the `--force` between them.
 - **They only speak when they deny, so they now have a test** -
-  `scripts/verifyAgentGuards.sh` drives all three with 33 real commands, every known
+  `scripts/verifyAgentGuards.sh` drives all three with 32 real commands, every known
   bypass among them as a regression case: a write to a remote host denied, a SELECT
   against the same host allowed, a write against localhost allowed, a plain push
   allowed, seven spellings of force-push denied. A broken guard is otherwise silent -
-  it stops guarding and nothing says so. Writing the cases found one more hole: git
+  it stops guarding and nothing says so. Writing the cases found two more holes: git
   accepts any unambiguous abbreviation of a long option, so `git push --force-with-l`
-  is a real force-push that the first version of the guard let through. It now denies
-  on the `--force` prefix, which every accepted abbreviation carries.
+  is a real force-push that the first version of the guard let through - it now denies
+  on the `--force` prefix, which every accepted abbreviation carries. And the database
+  guard matched the host flag case-insensitively, so curl's `-H` read as psql's `-h`
+  and a local write whose argument came from a curl call was denied as remote.
 - **The coupling gate stopped demanding a spec update for data** - the capability map
   pointed `standard.manifest.json` at the verify engine, so registering those guard
   files - pure manifest data - failed CI with nothing legitimate to write, the exact

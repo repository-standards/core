@@ -27,6 +27,7 @@
     { "path": "changes", "purpose": "per-PR changelog fragments (a PR never edits CHANGELOG or VERSION)", "adapt": "copy", "required": true, "profile": "scale", "since": "unreleased", "rule": "R18" },
     { "path": "scripts/self-verify.mjs", "purpose": "the verify step - checks the repo against this manifest", "adapt": "copy", "required": true, "profile": "core", "since": "unreleased", "rule": "R16" },
     { "path": "scripts/spec-structure.mjs", "purpose": "spec layout guard", "adapt": "copy", "required": true, "profile": "core", "since": "0.3.0", "rule": "R16" },
+    { "path": "scripts/schema-pair.mjs", "purpose": "the DDL under database/schema/ and its typed twin stay 1:1 - the declared edge resolves and every name is covered", "adapt": "copy", "required": false, "profile": "core", "since": "unreleased", "rule": "R24" },
     { "path": ".claude/skills", "purpose": "the lifecycle skills - the standard as executable procedures (Claude reference form; a non-Claude repo ports them to its agent's own mechanism)", "adapt": "copy", "required": true, "profile": "core", "since": "unreleased", "altPaths": [".agents/skills"], "rule": "R22" },
     { "path": "scripts/spec", "purpose": "the spec engine runtime the skills invoke (gate, setup, templates, MIT licence)", "adapt": "copy", "required": true, "profile": "core", "since": "unreleased", "rule": "R22" },
     { "path": ".gitleaks.toml", "purpose": "secret-scan config (the shipped scan SHOULD gate CI)", "adapt": "copy", "required": false, "profile": "core", "since": "unreleased", "rule": "R19" },
@@ -76,6 +77,7 @@
   "guards": [
     { "id": "self-verify", "run": "node scripts/self-verify.mjs", "kind": "static", "blocks": true, "purpose": "compliance with the pinned standard", "profile": "core", "since": "0.4.0", "rule": "R16" },
     { "id": "spec-structure", "run": "node scripts/spec-structure.mjs --block", "kind": "static", "blocks": true, "purpose": "spec files are where and shaped as the standard requires", "profile": "core", "since": "0.3.0", "rule": "R10" },
+    { "id": "schema-pair", "run": "node scripts/schema-pair.mjs --block", "kind": "static", "blocks": true, "purpose": "the schema and its typed twin have not drifted (skips itself where there is no database)", "profile": "core", "since": "unreleased", "rule": "R24" },
     { "id": "spec-guard", "run": "node scripts/spec-guard.mjs --block", "kind": "diff", "blocks": true, "purpose": "domain code changed without touching its spec fails CI", "profile": "scale", "since": "0.3.0", "rule": "R11" }
   ],
 

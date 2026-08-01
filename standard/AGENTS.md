@@ -49,6 +49,11 @@ Common commands (install, dev, build, test, checks).
   update by rebase, never merge `main` into your branch; land by rebase-merge
   with commits that each stand alone. Never rewrite a branch someone else builds
   on.
+- **Database schema (R24):** the executable DDL under `database/schema/` rebuilds
+  this database from a checkout; the typed definition (Zod, Pydantic, ...) is what
+  every read and write path goes through. They are 1:1, each names the other in a
+  `pair: <path>` comment, and `scripts/schema-pair.mjs` checks it. Never apply a
+  schema change to a remote database - prepare the reviewed `.sql`.
 - **Working language:** `<declare per artifact - default English>`. E.g. code +
   commits in English, docs + specs in `<team language>`, user-facing copy in the
   persona's language. Honor this everywhere; it is a config, not a constraint.

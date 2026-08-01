@@ -22,7 +22,7 @@ outgrew itself - as its own meta entry predicted it would.)
 | [Stacks as satellite repos](stacks-satellite.md) | ADR-016: one repo per technology + registry | two repos to run; registry is a solo-merge gate |
 | [Genesis history for the org move](genesis-history.md) | clean-slate, curated commit sequence, honest dates | narrative order vs the record of what really happened |
 | [Engine cherry-pick](engine-cherry-pick.md) | ADR-015: prompts are ours; upstream read at release | five prompts could quietly fall behind upstream |
-| [Eleven shipped skills](eleven-skills.md) | one family, 11 skills in every adopted repo | ecosystem ceiling is 8-10; engine steps might merge |
+| [Shipped skills](shipped-skills.md) | one family, 12 skills in every adopted repo | ecosystem ceiling is 8-10; engine steps might merge |
 | [The repo specs its own tooling](own-specs.md) | four buildable capability specs in `specs/` | specs for small scripts risk documentation theatre |
 | [Folder self-description](folder-readmes.md) | three-section `README.md` per folder | READMEs may bloat; one file serves two audiences |
 | [`checklist.md` as the name](checklist-name.md) | `docs/method/checklist.md` | "checklist" undersells the paved-road defaults |

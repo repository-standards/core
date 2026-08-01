@@ -1,0 +1,37 @@
+[
+  {
+    "id": "shipped-skills",
+    "what": "how many lifecycle skills ship in the tree",
+    "home": { "count": "standard/.claude/skills/*/SKILL.md" },
+    "claims": [
+      { "file": "AGENTS.md", "pattern": "`\\.claude/skills/` \\((\\d+) lifecycle skills\\)" },
+      { "file": "AGENTS.md", "pattern": "the (\\d+) under `standard/\\.claude/skills/`" },
+      { "file": "docs/open-questions/README.md", "pattern": "one family, (\\d+) skills" },
+      { "file": "docs/open-questions/shipped-skills.md", "pattern": "ship into every adopted repo, currently (\\d+)" }
+    ]
+  },
+  {
+    "id": "repo-slug",
+    "what": "the GitHub path a client degits the tree from",
+    "home": { "match": { "file": "README.md", "pattern": "npx degit (\\S+?)(?:/standard)? " } },
+    "claims": [
+      { "file": "README.md", "pattern": "npx degit (\\S+?)(?:/standard)? " },
+      { "file": "llms.txt", "pattern": "npx degit (\\S+?)(?:/standard)?[ `\\n]" },
+      { "file": "AGENTS.md", "pattern": "npx degit\\n(\\S+?)(?:/standard)?`" },
+      { "file": "site/index.html", "pattern": "npx degit (\\S+?)(?:/standard)? " }
+    ]
+  },
+  {
+    "id": "standard-version",
+    "what": "the version the standard currently ships",
+    "home": { "read": "VERSION" },
+    "claims": [
+      { "file": "standard/SPEC.md", "pattern": "^Version (\\d+\\.\\d+\\.\\d+)" },
+      { "file": "site/index.html", "pattern": "class=\"tag mono\">v(\\d+\\.\\d+\\.\\d+)" },
+      { "file": "site/index.html", "pattern": "Read the delta to <code>v(\\d+\\.\\d+\\.\\d+)</code>" },
+      { "file": "site/index.html", "pattern": "scaffold from repository-standards<span class=\"v\">@(\\d+\\.\\d+\\.\\d+)" },
+      { "file": "site/index.html", "pattern": "repository-standards@<span class=\"v\">(\\d+\\.\\d+\\.\\d+)" },
+      { "file": "site/index.html", "pattern": "--version <span class=\"v\">(\\d+\\.\\d+\\.\\d+)" }
+    ]
+  }
+]

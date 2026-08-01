@@ -8,7 +8,7 @@ SHOULD and MAY are to be read as in RFC 2119.
 
 This page is the whole normative core. Everything else in the standard explains,
 templates or enforces what is written here; where any other document appears to add
-a requirement, this page wins. Rules are numbered R1-R23 and the numbers are stable -
+a requirement, this page wins. Rules are numbered R1-R24 and the numbers are stable -
 tooling cites them. `standard.manifest.json` is this spec's machine-readable
 projection (each manifest entry names the rule it enforces), and
 `scripts/self-verify.mjs` reports unmet rules as a drift count. Rules the manifest
@@ -142,6 +142,27 @@ binds every repo, a solo one included.
   complete, buildable, reviewed change; a repo that will not hold that bar
   squashes instead. A branch MAY be rewritten while it is the author's alone;
   once another person or branch builds on it, it MUST NOT be (ADR-026).
+
+## Data and schema
+
+- **R24.** A repo that owns a database MUST carry that schema as executable DDL
+  under `database/schema/`, complete enough to rebuild the database from a
+  checkout alone - the disaster-recovery copy, and the artifact a schema change
+  ships as (R19: an agent prepares the reviewed file, a human applies it).
+  Migrations stay how a change reaches a database; they are the delta, never the
+  readable current state. The same schema MUST also exist as a **typed,
+  documented** definition in the stack's idiom (Zod in TypeScript, Pydantic in
+  Python), and every path that reads or writes the database MUST go through it
+  rather than restating row shapes inline. The two are **1:1**: every table,
+  column, constraint and enum present in one is present in the other, each side
+  names its counterpart, and a change to either MUST land in the same PR as the
+  change to the other. Each side MUST name its counterpart in the file itself, so
+  the pair is a declared edge rather than a convention: the shipped
+  `scripts/schema-pair.mjs` resolves it both ways and fails when a name the DDL
+  defines is absent from the twin. Either side MAY be generated from the other
+  where the stack has a generator that does not silently drop what DDL can
+  express; type agreement and generation are per-stack mechanics and live in the
+  stack repos (ADR-027).
 
 ## What this standard does not do
 

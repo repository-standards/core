@@ -35,7 +35,9 @@ It checks:
 - **Sections** - every required section heading is present in its file (e.g. `AGENTS.md`
   must state `Altitude`).
 - **Static guards** - each manifest guard with `kind: static` passes (e.g.
-  `scripts/spec-structure.mjs`); `self-verify` skips itself to avoid recursion.
+  `scripts/spec-structure.mjs`, `scripts/schema-pair.mjs`); `self-verify` skips itself
+  to avoid recursion. A guard whose subject is absent - no `database/schema/`, say -
+  reports that and passes; R24 binds repos that own a database.
 
 The code<->spec **coupling** guard (`scripts/spec-guard.mjs`, `kind: diff`) runs in CI on
 the PR diff rather than in this static check - but it is part of the same gate.

@@ -34,6 +34,12 @@ jobs:
           node standard/scripts/spec-guard.mjs --audit --block
       - name: spec-guard test (the coupling guard still fires where it must)
         run: node tools/spec-guard-test.mjs
+      - name: schema-pair test (the R24 pair check catches a drifted twin)
+        run: node tools/schema-pair-test.mjs
+      - name: facts-check (a restated fact agrees with its source) + its test
+        run: |
+          node tools/facts-check.mjs
+          node tools/facts-check-test.mjs
       - name: site (generate + check landing and docs)
         run: |
           node tools/docsite.mjs

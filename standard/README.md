@@ -22,7 +22,7 @@ One-line description of the product. Entry point for agents + humans:
 | [`.github/workflows/`](.github/workflows/) | CI templates to enable per repo: `gitleaks` (secret scan), `spec-guard` (spec policy) | enable |
 | [`.github/pull_request_template.md`](.github/pull_request_template.md) | PR template with ADR impact | as-is |
 | [`.gitleaks.toml`](.gitleaks.toml) | Secret-scan config | as-is |
-| [`scripts/`](scripts/) | Guards + tooling: `self-verify.mjs`, `spec-guard.mjs`, `spec-structure.mjs`, `changelog.mjs`; [`scripts/spec/`](scripts/spec/) holds the spec engine's shared scripts + templates (MIT, `scripts/spec/LICENSE`) | as-is |
+| [`scripts/`](scripts/) | Guards + tooling: `self-verify.mjs`, `spec-guard.mjs`, `spec-structure.mjs`, `schema-pair.mjs`, `changelog.mjs`; [`scripts/spec/`](scripts/spec/) holds the spec engine's shared scripts + templates (MIT, `scripts/spec/LICENSE`) | as-is |
 | [`specs/`](specs/) | Living capability specs: methodology, template, enforcement, constitution | fill specs; methodology as-is |
 | [`docs/`](docs/) | PRINCIPLES, ARCHITECTURE + PRODUCT (templates), `decision-records/` (ADR/BDR), `ideas/`, process docs | fill / mostly as-is |
 | [`docs/runbooks/`](docs/runbooks/) | One runbook per service + `postmortems/` - operational knowledge, agent-followable | fill |
