@@ -9,6 +9,61 @@ The simplification wave - the standard put on one page, in one tree, with one
 engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
 align engine, Layer 2 and the product spine.
 
+### The agent guards stop being walkable, and the coupling gate stops firing on data (2026-08-01)
+
+- **Two bypasses in the shipped `PreToolUse` guards, both reproducible** - the
+  remote-database guard decided "is this remote?" by grepping the whole command
+  string, so `psql -h localhost -c 'select 1' && psql -h prod-db... -c 'DROP TABLE
+  users'` vouched for itself; and its localhost match was unanchored, so
+  `localhost.evil.example.com` - a resolvable name that is not loopback - read as
+  local. Since the tree is copied into consuming repos, every repo that adopted the
+  baseline inherited both.
+- **A force-push guard that was never there** - the deny list blocks the literal
+  spellings, and a permission pattern does not see
+  `git commit -m "..." ; git push --force origin main`.
+- **The guards are scripts now, not one-liners inside JSON** - 900 characters of
+  shell in a JSON string is why both bugs survived review: nobody reads a line in
+  that shape, and neither bug is visible without reformatting it. Each guard splits
+  the command on `;`, `&&`, `||` and `|` and judges the segments separately, anchors
+  the end of the hostname, and strips no quotes at all - which removed a third
+  failure mode a consuming repo hit, where two unrelated apostrophes paired up and
+  swallowed the `--force` between them.
+- **They only speak when they deny, so they now have a test** -
+  `scripts/verifyAgentGuards.sh` drives all three with 33 real commands, every known
+  bypass among them as a regression case: a write to a remote host denied, a SELECT
+  against the same host allowed, a write against localhost allowed, a plain push
+  allowed, seven spellings of force-push denied. A broken guard is otherwise silent -
+  it stops guarding and nothing says so. Writing the cases found one more hole: git
+  accepts any unambiguous abbreviation of a long option, so `git push --force-with-l`
+  is a real force-push that the first version of the guard let through. It now denies
+  on the `--force` prefix, which every accepted abbreviation carries.
+- **The coupling gate stopped demanding a spec update for data** - the capability map
+  pointed `standard.manifest.json` at the verify engine, so registering those guard
+  files - pure manifest data - failed CI with nothing legitimate to write, the exact
+  erosion the gate-health epic was opened for. A map entry may now be
+  `{ "glob": "<glob>", "couples": "shape" }`: the file's **key shape** is the
+  contract, so an added entry or an edited value passes, while a key path that
+  appears or disappears still demands the spec. Anything the guard cannot compare -
+  no earlier version, unparseable JSON on either side - couples, so the quiet
+  direction stays the guarded one.
+- **The coupling guard sees files that are not added yet** - locally it read tracked
+  changes only, so a new file in a capability's domain coupled in CI but not on the
+  machine where it was written. The same hole as the entry below, in a second gate.
+- **And it has its own test** - `tools/spec-guard-test.mjs` runs the shipped guard
+  against real diffs in a throwaway git repo, 11 cases, most of them asserting that
+  it still fires. A false positive is loud, a false negative is silent: a shape
+  comparison that stops noticing a schema change looks exactly like a green run.
+
+### The local link gate stops under-checking (2026-08-01)
+
+- **Untracked markdown is in scope** - `link-check` read only `git ls-files`, so a
+  brand-new document was invisible to it until `git add`. The gate passed, reported a
+  file count that excluded the very files being written, and the dead link surfaced in
+  CI, where everything is committed. It now scans untracked, non-ignored markdown too
+  and names the untracked count in its verdict; the tree-guard spec describes the wider
+  scope. Found by walking the repo's stale branches: the fix had been written and never
+  merged, and the same hole bit the folder-authoring work that preceded this release.
+
 ### Working with AI gets an evidence layer (2026-08-01)
 
 - **A new method folder: `docs/method/working-with-ai/`** - the method manual said
@@ -79,7 +134,11 @@ align engine, Layer 2 and the product spine.
   wiring touched moved with it: the web-surface spec stops hand-writing the page-map
   length (it was already stale, and the count is derived at check time anyway), and the
   verify-engine spec gains the criterion that manifest **data** growing is not an engine
-  change - only a change in how an entry is interpreted is.
+  change - only a change in how an entry is interpreted is. The false positive behind that
+  last one is captured in the backlog under a new gate-health epic: the coupling map cannot
+  currently tell a file's schema from its data, so every future data-only manifest edit will
+  fail the same way, and the cheapest escape is a cosmetic spec edit - which is how a good
+  gate rots into ritual.
 
 ### The mainline gets a shape (2026-07-31)
 

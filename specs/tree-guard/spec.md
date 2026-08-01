@@ -43,13 +43,13 @@ Verifying an adopted repo ([verify-engine](../verify-engine/spec.md)); checking 
 
 Output: one `  FAIL  <message>` line per problem, `  ok    <message>` per clean check, then the verdict: `tree-check: OK - one tree, shippable` or `tree-check: FAIL - <n> problem(s)`.
 
-`node tools/link-check.mjs` - checks every file from `git ls-files '*.md'` (paths deleted mid-change are skipped). Each markdown link target matched by `\]\(([^)#\s]+?)(?:#[^)]*)?\)` must exist when resolved against the linking file's directory. Skip rules:
+`node tools/link-check.mjs` - checks every tracked file from `git ls-files '*.md'` plus every untracked one from `git ls-files --others --exclude-standard '*.md'` (paths deleted mid-change are skipped). Untracked files are in scope so a fresh doc fails locally before `git add`, not only in CI where everything is tracked. Each markdown link target matched by `\]\(([^)#\s]+?)(?:#[^)]*)?\)` must exist when resolved against the linking file's directory. Skip rules:
 
 - any line containing `{{` (template placeholder lines describe the client repo, not this one),
 - targets starting with `https?:`, `mailto:`, or `#` (absolute, mail, pure anchor),
 - anything inside backticks - inline code is neutralized before matching (prose about a link is never a checked link).
 
-Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-check: FAIL - <n> dead relative link(s)`; clean run prints `link-check: OK - all relative links resolve (<n> md files)`.
+Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-check: FAIL - <n> dead relative link(s)`; clean run prints `link-check: OK - all relative links resolve (<n> md files)`, with `, <u> untracked` appended when untracked files were scanned.
 
 ### Exit codes
 
@@ -81,6 +81,7 @@ Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-c
 - **Dead link.** GIVEN `docs/a.md` line 7 links a relative target `missing.md` and `docs/missing.md` does not exist WHEN link-check runs THEN it prints `docs/a.md:7 -> missing.md` and exits 1. (The literal pattern is not reproduced here - it would fail this very check.)
 - **Placeholder skip.** GIVEN a line contains `{{project}}` and a dead relative link WHEN link-check runs THEN the line is skipped and does not fail.
 - **Anchor skip.** GIVEN a link target `#section` or `mailto:x@y.z` WHEN link-check runs THEN it is ignored.
+- **Untracked dead link.** GIVEN a freshly created, not yet `git add`-ed md file links a relative target that does not exist WHEN link-check runs THEN it FAILs exactly as for a tracked file, exit 1.
 
 - **Version mismatch.** GIVEN `VERSION` is `9.9.9` and SPEC.md says `Version 0.7.2` WHEN tree-check runs THEN both the SPEC and README mismatches are reported and exit is 1.
 - **Unmanifested file.** GIVEN `standard/docs/stray.md` exists and no manifest entry or `EXEMPT` row covers it WHEN tree-check runs THEN a FAIL names it and exit is 1.

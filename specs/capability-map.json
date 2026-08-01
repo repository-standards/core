@@ -5,7 +5,7 @@
   ],
   "verify-engine": [
     "standard/scripts/self-verify.mjs",
-    "standard/standard.manifest.json"
+    { "glob": "standard/standard.manifest.json", "couples": "shape" }
   ],
   "web-surface": [
     "tools/docsite.mjs",

@@ -32,6 +32,7 @@ clients get them by reference (ADR-004), never as copies.
   `node standard/scripts/spec-guard.mjs --base origin/main --block` **and**
   `node standard/scripts/spec-guard.mjs --audit --block` (code and its capability
   spec move together; every capability spec is mapped),
+  `node tools/spec-guard-test.mjs` (that guard still fires where it must),
   `node tools/docsite.mjs && node tools/site-check.mjs`. The list is the set CI
   runs - if a check is in `checks.yml` and not here, this line is the bug.
 - **Changelog:** a PR describes its change under `CHANGELOG.md`'s `## Unreleased`

@@ -6,6 +6,7 @@
   ],
   "bookings": [
     "**/booking/**",
-    "**/api/booking/**"
+    "**/api/booking/**",
+    { "glob": "config/booking-rules.json", "couples": "shape" }
   ]
 }

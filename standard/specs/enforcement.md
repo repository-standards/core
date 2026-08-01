@@ -32,7 +32,8 @@ is spread across app / service / shared). Keep it at `specs/capability-map.json`
 
 ```json
 {
-  "payments": ["**/payment/**", "**/payu/**", "shared/**/payment*"]
+  "payments": ["**/payment/**", "**/payu/**", "shared/**/payment*"],
+  "pricing": ["src/pricing/**", { "glob": "config/tariffs.json", "couples": "shape" }]
 }
 ```
 
@@ -43,6 +44,19 @@ dependency diff (R21) and recorded in the changelog. When the guard still fires
 on a genuinely behavior-free change, the answer is to reconcile the spec's
 content or narrow the map - never to append a history note to the spec (R4,
 ADR-018: specs carry no change-log sections).
+
+**Data a capability reads** - a rules table, a tariff file, a manifest - belongs in
+the map, but its *content* is not its behavior. Declare it
+`{ "glob": "<glob>", "couples": "shape" }` and the guard couples on the file's **key
+shape** instead: adding an entry or editing a value is data and passes, a key path
+that appears or disappears is a change in how the file is interpreted and demands
+the spec. Anything it cannot compare - a file with no earlier version, unparseable
+JSON on either side - couples, so the quiet direction is the guarded one. A plain
+glob string is unchanged: every edit couples.
+
+The distinction is not a convenience. A gate that fires when nothing is wrong gets
+satisfied with a cosmetic spec edit, and once that is the habit the gate is
+decoration.
 
 **Shipped, ready to use:** the structure lint
 [`../scripts/spec-structure.mjs`](../scripts/spec-structure.mjs) and the coupling

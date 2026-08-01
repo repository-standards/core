@@ -120,14 +120,18 @@
         "hooks": [
           {
             "type": "command",
-            "if": "Bash(gh *)",
-            "command": "CMD=$(jq -r '.tool_input.command // \"\"'); if printf '%s' \"$CMD\" | grep -qiE 'gh +(secret|variable) +(set|delete)' || { printf '%s' \"$CMD\" | grep -qi 'gh api' && printf '%s' \"$CMD\" | grep -qiE 'secrets|variables' && printf '%s' \"$CMD\" | grep -qiE '(-X|--method)[ =]*(DELETE|PATCH|PUT|POST)|(^| )-(f|F) |--field|--raw-field|--input'; }; then echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Blocked by repo policy: modifying/deleting GitHub secrets and variables is not allowed\"}}'; fi",
-            "statusMessage": "Checking GitHub secrets/variables guard"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/no-remote-db-writes.sh",
+            "statusMessage": "Checking remote-database guard"
           },
           {
             "type": "command",
-            "command": "CMD=$(jq -r '.tool_input.command // \"\"'); REMOTE=0; URLS=$(printf '%s' \"$CMD\" | grep -oiE \"postgres(ql)?://[^[:space:]\\\"']+\" || true); if [ -n \"$URLS\" ] && printf '%s\\n' \"$URLS\" | grep -viE '^postgres(ql)?://([^@/]*@)?(localhost|127\\.0\\.0\\.1)' | grep -q .; then REMOTE=1; fi; if printf '%s' \"$CMD\" | grep -qiE '(^|[[:space:];|&])(psql|pgcli)\\b' && printf '%s' \"$CMD\" | grep -qiE '(^|[[:space:]])(-h|--host)[ =]' && ! printf '%s' \"$CMD\" | grep -qiE '(^|[[:space:]])(-h|--host)[ =]+(localhost|127\\.0\\.0\\.1)'; then REMOTE=1; fi; if [ \"$REMOTE\" = 1 ] && printf '%s' \"$CMD\" | grep -qiE '\\b(insert|update|delete|drop|alter|create|truncate|grant|revoke|merge|vacuum|reindex|cluster|refresh)\\b|\\bcopy\\b.*\\bfrom\\b|(^|[[:space:]])-f[[:space:]]|--file|(^|[^<])<($|[^<])'; then echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Blocked by repo policy: never WRITE to a remote database (no DDL/DML/migrations, no executing .sql files). Read-only SELECT is fine. For changes, prepare a .sql file - a developer applies it manually via pgAdmin.\"}}'; fi",
-            "statusMessage": "Checking remote-database write guard"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/no-force-push.sh",
+            "statusMessage": "Checking force-push guard"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/no-ci-secret-writes.sh",
+            "statusMessage": "Checking CI secrets guard"
           }
         ]
       }

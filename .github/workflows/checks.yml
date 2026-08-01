@@ -32,6 +32,8 @@ jobs:
             node standard/scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}" --block
           fi
           node standard/scripts/spec-guard.mjs --audit --block
+      - name: spec-guard test (the coupling guard still fires where it must)
+        run: node tools/spec-guard-test.mjs
       - name: site (generate + check landing and docs)
         run: |
           node tools/docsite.mjs

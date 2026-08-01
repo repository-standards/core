@@ -25,10 +25,19 @@ people now ask first.
 | DISCO-1 | Deploy tail: site, npm, listings | the name is settled and both domains are owned; the funnel exists but is not public | deploy `site/` under repository-standards.com; publish the npm package with the positioning one-liner; submit the listings (awesome-lists, the AGENTS.md ecosystem, registries). Measured by: a fresh agent, asked the target questions, names it | todo |
 | DISCO-3 | Publish the posts (owner) | LLMs learn from and cite public writing; the queries "how to keep docs/specs/decisions in-repo, agents-first" should resolve here | all three posts sit publish-ready in the owner's private space, CTAs wired to the repo; the remaining step is the owner's publish click on their channels - the only physically external action in the epic | doing |
 
+## Epic: Gate health - the guards stay honest
+
+A gate that fires when nothing is wrong teaches people to satisfy it cosmetically, and
+then it is decoration. Items here keep the guards deserving of the trust they demand.
+
+| id | title | why | DoD | status |
+|----|-------|-----|-----|--------|
+| GUARD-1 | The coupling map separates a file's schema from its data | `specs/capability-map.json` maps `standard.manifest.json` to `verify-engine`, so **any** manifest edit demands a spec update - including a pure data addition, which the verify-engine spec itself says is not an engine change. Hit once already: adding one `references[]` entry failed CI with nothing to legitimately write. The next author's cheapest escape is a cosmetic spec edit, which is how a good gate rots into ritual | spec-guard distinguishes an interpretation change (spec must move) from a data addition (it must not) - by splitting the map entry, by inspecting which keys changed, or by giving the manifest its own capability; a data-only manifest PR passes with no spec edit, and a schema change still fails without one; the chosen form recorded where the guard's spec lives | done (2026-08-01) - `couples: "shape"` map entries, documented in [`enforcement.md`](standard/specs/enforcement.md), covered by `tools/spec-guard-test.mjs` |
+
 ## Epic: Deferred by the one-tree restructure
 
-The collapse to a single authored `standard/` tree deliberately left two threads for
-later - both demand-driven, neither blocking a release.
+The collapse to a single authored `standard/` tree deliberately left several threads for
+later - all demand-driven, none blocking a release.
 
 | id | title | why | DoD | status |
 |----|-------|-----|-----|--------|

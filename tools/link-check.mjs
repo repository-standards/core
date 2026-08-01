@@ -12,7 +12,12 @@ import { readFileSync, existsSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { dirname, normalize, join } from "node:path";
 
-const files = execSync("git ls-files '*.md'", { encoding: "utf8" }).trim().split("\n");
+const list = (cmd) => execSync(cmd, { encoding: "utf8" }).trim().split("\n").filter(Boolean);
+const tracked = list("git ls-files '*.md'");
+// untracked files count too - a fresh doc must fail here, before git add, not only
+// in CI (where everything is tracked); skipping them silently hid dead links locally
+const untracked = list("git ls-files --others --exclude-standard '*.md'");
+const files = [...tracked, ...untracked];
 const dead = [];
 
 for (const f of files) {
@@ -35,4 +40,5 @@ if (dead.length) {
   console.log(`\nlink-check: FAIL - ${dead.length} dead relative link(s)`);
   process.exit(1);
 }
-console.log(`link-check: OK - all relative links resolve (${files.length} md files)`);
+const scope = untracked.length ? `${files.length} md files, ${untracked.length} untracked` : `${files.length} md files`;
+console.log(`link-check: OK - all relative links resolve (${scope})`);
