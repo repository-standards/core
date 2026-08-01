@@ -29,7 +29,11 @@ clients get them by reference (ADR-004), never as copies.
   `node tools/tree-check.mjs` (no leaks into the tree, manifest promises present,
   the tree passes its own `self-verify --skeleton`), `node tools/link-check.mjs`,
   `node standard/scripts/spec-structure.mjs` (the repo's own specs stay shaped),
-  `node tools/docsite.mjs && node tools/site-check.mjs`.
+  `node standard/scripts/spec-guard.mjs --base origin/main --block` **and**
+  `node standard/scripts/spec-guard.mjs --audit --block` (code and its capability
+  spec move together; every capability spec is mapped),
+  `node tools/docsite.mjs && node tools/site-check.mjs`. The list is the set CI
+  runs - if a check is in `checks.yml` and not here, this line is the bug.
 - **Changelog:** a PR describes its change under `CHANGELOG.md`'s `## Unreleased`
   heading - never a version heading, never `VERSION`; the maintainer cuts every
   release. (The fragments mechanism ships to team repos as a scale-profile

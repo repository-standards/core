@@ -6,7 +6,7 @@ manual. The client-authored templates and tool manuals live in the shipped tree 
 
 | File | What it is |
 |---|---|
-| [method/](method/README.md) | the standard's method manual - adoption, assessment, taxonomy, decision checklist, ways of working, changelog process; clients adopt it by reference from the living standard - always latest (ADR-023) |
+| [method/](method/README.md) | the standard's method manual - adoption, assessment, taxonomy, decision checklist, ways of working (including [working with AI](method/working-with-ai/README.md)), changelog process; clients adopt it by reference from the living standard - always latest (ADR-023) |
 | [manifesto.md](manifesto.md) | the founder's why - the itch, the idea, the non-negotiables |
 | [ecosystem.md](ecosystem.md) | how the repos fit together - the engine, the map packs, and how a stack plugs in |
 | [positioning.md](positioning.md) | the one statement and pillars every surface quotes verbatim |

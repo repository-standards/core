@@ -105,6 +105,9 @@ especially for the PO, whose view this is:
 - **Onboarding** - a brownfield repo reaches this steady-state flow only after
   the align router (assess -> align -> onboard) has seeded the specs,
   decisions and backlog.
+- **Driving the agent** - this doc says who owns what; [working-with-ai/](working-with-ai/README.md)
+  says how the AI stage actually behaves - context, verification, review load, blast
+  radius - with the evidence behind each practice.
 
 ## Not this
 

@@ -61,7 +61,8 @@
     { "id": "ways-of-working", "path": "docs/method/ways-of-working.md", "purpose": "how work flows around the spec (PO -> dev -> AI)", "since": "unreleased", "rule": "R3" },
     { "id": "changelog-process", "path": "docs/method/changelog-process.md", "purpose": "the two-outputs changelog model teams follow", "since": "unreleased", "rule": "R18" },
     { "id": "working-with-specs", "path": "docs/method/working-with-specs.md", "purpose": "real situations -> the prompt -> what the standard does (specs day to day)", "since": "unreleased", "rule": "R3" },
-    { "id": "discovery", "path": "docs/method/discovery.md", "purpose": "discovery dossiers: from a meeting to a spec with provenance (ADR-024)", "since": "unreleased", "rule": "R5" }
+    { "id": "discovery", "path": "docs/method/discovery.md", "purpose": "discovery dossiers: from a meeting to a spec with provenance (ADR-024)", "since": "unreleased", "rule": "R5" },
+    { "id": "working-with-ai", "path": "docs/method/working-with-ai/README.md", "purpose": "evidence-checked practices for driving the agent: context, verification, review load, blast radius", "since": "unreleased", "rule": "R3" }
   ],
 
   "sections": [

@@ -73,6 +73,7 @@ Output: header `self-verify - compliance with manifest <version>` (or `the pinne
 - **Recursion guard.** GIVEN the manifest lists guard `id: "self-verify"` WHEN guards run THEN that entry is skipped.
 - **Stray skill.** GIVEN `.claude/skills/align-to-standards/` exists WHEN run THEN a WARN names it and drift is unchanged.
 - **References are not files.** GIVEN the manifest carries `references[]` and none of the referenced paths exist in the repo WHEN run THEN drift is unchanged (one note, zero file checks).
+- **Manifest data grows without the engine.** GIVEN a new `references[]` (or `files[]` / `sections[]`) entry is added to the manifest and no engine source changes WHEN run THEN the note's count follows the manifest and every other result is unchanged - manifest content is data, and only a change to how an entry is *interpreted* is an engine change.
 - **Failing guard.** GIVEN a static guard exits non-zero WHEN run THEN its captured output prints indented under the FAIL and exit is 1.
 
 ### Stack manifest merge

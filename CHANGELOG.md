@@ -9,6 +9,78 @@ The simplification wave - the standard put on one page, in one tree, with one
 engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
 align engine, Layer 2 and the product spine.
 
+### Working with AI gets an evidence layer (2026-08-01)
+
+- **A new method folder: `docs/method/working-with-ai/`** - the method manual said
+  who owns what in the PO -> Dev -> AI loop but nothing about the AI stage itself,
+  which is where the loud claims and the thin evidence live. Seven notes, each one
+  opening with the complaint people actually make and closing with the rule we run:
+  comments that earn their tokens, context as the budget, felt speed vs measured
+  speed, a check the agent can run, review as the place the cost lands, instructions
+  that survive, and blast radius before autonomy.
+- **A claim without a source does not go in** - every note declares a confidence
+  (`strong` / `mixed` / `thin`), lists its sources with what each one actually shows,
+  and carries a `Last checked` stamp, because a note about model behavior is a claim
+  about a moving target. Vendor docs count as evidence of intent, surveys as evidence
+  of perception, and only studies or large code datasets as evidence of outcomes - the
+  notes say which they are leaning on.
+- **The first entry settles a live argument** - "AI writes ten lines of comments for
+  two lines of code" is true and measurable, *and* the counter-argument (comments
+  carry context to the next, more atomic run) is half right: models read comments as
+  semantics strongly enough that misleading ones hurt more than misleading variable
+  names. The resolution is a lifetime test - expiring context belongs in the plan,
+  durable non-obvious *why* belongs in the code, structure belongs in the spec - plus
+  the observation that "I will remove them later" is the failure mode this standard
+  exists to remove.
+- **Wired in, not parked** - the folder is a manifest reference (adopted like the rest
+  of the method manual), a docs-site page, and a link from `ways-of-working.md` where
+  the AI stage is named.
+- **Citations you can check without the link** - "16 developers, 246 tasks" is exactly the
+  kind of claim a reader wants to verify, and a bare URL does not let them. Every note now
+  cites by key into a bibliography
+  ([sources.md](docs/method/working-with-ai/sources.md)) carrying the durable part: authors
+  or publisher, date, stable identifier (`arXiv:2507.09089`, a thread id, an issue number),
+  the sample the finding rests on, and an accessed date. The key's **prefix is the evidence
+  class** - `Study`, `Data`, `Survey`, `Vendor`, `Incident`, `Field` - so a reader sees what
+  kind of support a sentence has without leaving the sentence.
+- **Every load-bearing figure re-read at the source, and two were wrong** - the pass turned
+  up that trust in AI accuracy in the Stack Overflow survey is **32.7%**, not the 29% the
+  press repeated (that is the *somewhat trust* band alone), and that the duplication growth
+  cited from GitClear needed replacing with the measured series (cloned lines 8.3% -> 12.3%,
+  moved code 25% -> under 10%, and 3.8% in the follow-up dataset). Entries now declare
+  `primary` or `secondary`: reformatting an unverified number into a precise-looking citation
+  makes it more misleading, not less. Names are used only where the source carries a byline;
+  pseudonymous posts are cited by thread id, never by handle.
+- **Notes declare how fast they rot** - a `Decays:` class (slow / medium / fast) and a line
+  naming **what would change this**, which doubles as the re-check instruction. Economics and
+  architecture age slowly; model behavior and tool defaults age fast; the README carries the
+  three-level re-check - follow the falsifier, walk the source entries, then check the claim
+  against our own repositories. A claim confirmed on our own code graduates into a case study.
+- **An eighth note, and the field-report layer that earned it** - practitioner threads were
+  read directly rather than through secondary write-ups, and the strongest signal was one
+  the desk research had missed: consultants describing their inbound shifting from building
+  systems to repairing AI-built ones. That is
+  [the-cleanup-comes-later.md](docs/method/working-with-ai/the-cleanup-comes-later.md) -
+  marked `mixed` on purpose, because loud testimony from a self-selected sample is not a
+  measurement. The same pass sharpened four existing notes: comment density is *inverted* in
+  agent-written code (heavy on trivial CRUD, near-absent where the maths is dense), a large
+  green test suite can carry a tenth of its own value, an engineer publicly refusing to
+  review code its authors cannot explain named the collapsed generation-to-review cost ratio
+  before this repo did, and a long-running setup on a 300k-line codebase reached the
+  skills-plus-hooks split by exhaustion rather than by reading the docs.
+- **The README now says what each kind of source may prove** - a table separating controlled
+  studies and code datasets (what happens) from surveys (what is perceived), vendor docs
+  (what is intended), field reports (what people hit) and documented incidents (that it
+  happened at least once, in public).
+- **The pre-PR check list stops lying** - `AGENTS.md` claimed to carry "the same set CI
+  runs" while omitting the spec-coupling guard, so a green local run could still meet a
+  red CI. Both `spec-guard` invocations are now on the list, with a line saying that a
+  check present in `checks.yml` and absent here is a bug in the list. Two specs the
+  wiring touched moved with it: the web-surface spec stops hand-writing the page-map
+  length (it was already stale, and the count is derived at check time anyway), and the
+  verify-engine spec gains the criterion that manifest **data** growing is not an engine
+  change - only a change in how an entry is interpreted is.
+
 ### The mainline gets a shape (2026-07-31)
 
 - **Branch and history is normative now (ADR-026, new R23)** - the standard had
