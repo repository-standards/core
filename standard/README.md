@@ -29,6 +29,6 @@ One-line description of the product. Entry point for agents + humans:
 
 ## The model
 
-- **Behavior** = [`specs/`](specs/README.md); **decisions** = [`adr`](docs/decision-records/adr/) + [`bdr`](docs/decision-records/bdr/); **structure** = `docs/ARCHITECTURE.md`; **vision** = `docs/PRODUCT.md`.
+- **Behavior** = [`specs/`](specs/); **decisions** = [`adr`](docs/decision-records/adr/) + [`bdr`](docs/decision-records/bdr/); **structure** = `docs/ARCHITECTURE.md`; **vision** = `docs/PRODUCT.md`.
 - **Enforcement** = the guards in `scripts/` + the CI templates + the spec-first workflow.
 - **Altitude** (wins on conflict): `PRINCIPLES -> ADR/BDR -> specs + ARCHITECTURE -> conventions/rules -> code`.

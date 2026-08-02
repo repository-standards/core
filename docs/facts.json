@@ -78,10 +78,6 @@
       {
         "file": "standard/standard.manifest.json",
         "pattern": "\"version\": \"(\\d+\\.\\d+\\.\\d+)\""
-      },
-      {
-        "file": "docs/quick-start.md",
-        "pattern": "self-verify\\.mjs --version (\\d+\\.\\d+\\.\\d+)"
       }
     ]
   }

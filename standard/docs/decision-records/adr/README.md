@@ -1,7 +1,7 @@
 # ADR index
 
-Architecture Decision Records - the technical *why*. See
-[`../README.md`](../README.md) for the system, lifecycle, and altitude hierarchy.
+Architecture Decision Records - the technical *why*. The record test, the lifecycle and the
+altitude hierarchy: [decision records (by reference)](https://github.com/repository-standards/core/blob/main/docs/tree/docs-decision-records.md).
 
 | # | Title | Status |
 |---|-------|--------|

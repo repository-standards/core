@@ -18,6 +18,6 @@ automatically after specify; plan/tasks/mirror are mechanically blocked unless t
 has a `## Clarifications` section and zero open `[NEEDS CLARIFICATION]`; the gate is what
 earns `Status: ready-to-develop`.
 
-**Where it lives now.** [`standard/specs/README.md`](../../standard/specs/README.md)
+**Where it lives now.** [`standard/specs/README.md`](../tree/specs.md)
 ("Make the loop self-triggering"), [`standard/specs/enforcement.md`](../../standard/specs/enforcement.md)
 (the clarify gate), ADR-010, the "loop runs itself" section of the AGENTS template.

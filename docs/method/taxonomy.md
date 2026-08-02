@@ -77,14 +77,14 @@ beats clever.
 - **BDR** - a business / product decision; a separate stream (different stakeholders,
   altitude).
 - Sub-scope goes in the record's `Tags`, never in the acronym. Full policy:
-  [`decision-records/`](../../standard/docs/decision-records/README.md) (ADR-001).
+  [`decision-records/`](../tree/docs-decision-records.md) (ADR-001).
 
 ## Ideas / discovery before a decision
 
 Not everything worth writing down is a decision, a rule, or a behavior - some of it is a
 **speculative idea that may never ship**. That is first-class here, not a lesser draft: an
 idea is explored end-to-end - including its **provisional technical and business shape** -
-in one file under [`docs/ideas/`](../../standard/docs/ideas/README.md), and it is worth keeping in the repo
+in one file under [`docs/ideas/`](../tree/docs-ideas.md), and it is worth keeping in the repo
 even while it is only a maybe.
 
 The rule that keeps the decision log honest:

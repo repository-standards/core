@@ -94,4 +94,4 @@ and should say so).
 - ADR-002 (capability paths - now patched in, not fought around), ADR-009 (our skills
   ship, transition skills do not), ADR-010 (statuses + gate), `ENG-5` in
   [`backlog.md`](../../backlog.md);
-  [`spec-kit-setup.md`](../../standard/specs/README.md).
+  [`spec-kit-setup.md`](../tree/specs.md).

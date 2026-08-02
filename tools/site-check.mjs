@@ -120,12 +120,21 @@ for (const f of pages) {
 // Counted, not compared: a missing page and a stale one cancel out in a length check.
 if (failures === beforePages) ok(`${SITE}: ${pages.length} pages present, exactly what the page map declares`);
 
+// A table separator or a fence inside <pre>/<code> is a markdown EXAMPLE, deliberately
+// shown - the docs teach people what to write, so they quote markdown constantly. The
+// leak this check exists for is a table or a fence that failed to render in prose, so
+// look for it in prose only. Scanning the raw page made every page carrying an example
+// fail, which is the fastest way to get a check switched off.
+const stripCode = (html) =>
+  html.replace(/<pre[\s\S]*?<\/pre>/gi, "").replace(/<code[\s\S]*?<\/code>/gi, "");
+
 for (const page of pages) {
   const path = `${SITE}/${page}`;
   const html = readFileSync(path, "utf8");
+  const prose = stripCode(html);
   checkDashes(path, html);
-  if (html.includes("|---")) fail(`${path}: raw markdown table separator leaked`);
-  if (html.includes("```")) fail(`${path}: raw code fence leaked`);
+  if (prose.includes("|---")) fail(`${path}: raw markdown table separator leaked`);
+  if (prose.includes("```")) fail(`${path}: raw code fence leaked`);
   // every internal .html link must resolve to a generated page
   for (const m of html.matchAll(/href="([^"#]+\.html)(#[^"]*)?"/g)) {
     const target = m[1];

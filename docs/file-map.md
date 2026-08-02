@@ -13,9 +13,9 @@ so.* The **Rule** column links the numbered rule in the spec that each entry enf
 row can be traced from "there is a file here" to "here is why the standard says so".
 
 **Adapt** is how an entry lands in your repo when you align: `copy` arrives verbatim,
-`merge` is reconciled with what you already have, and `fill-from-repo` is a shell you author
-- the standard never invents your content. **Needed** says whether a missing entry counts as
-drift, and at which profile (`core` is every repo; `scale` is teams).
+`merge` is reconciled with what you already have, and `fill-from-repo` is a shell you
+author, because the standard never invents your content. **Needed** says whether a missing
+entry counts as drift, and at which profile (`core` is every repo; `scale` is teams).
 
 What this map does **not** tell you is *how to author* what goes inside a folder. Where that
 needs a manual, the folder carries one as its own `README.md` and it appears as a row below,
@@ -51,13 +51,6 @@ copy of a rule is a second thing to keep true.
 | `docs/facts.example.json` | the shape of a declared fact - copy to docs/facts.json and replace with this repo's own | optional, core | `copy` | [R4](../standard/SPEC.md) |
 | `docs/PRINCIPLES.md` | the altitude apex R1 names - optional but expected | optional, core | `fill-from-repo` | [R1](../standard/SPEC.md) |
 | `docs/personas.md` | the persona roster the R10 gate checks specs against - without it the gate has nothing to hold | **required**, core | `fill-from-repo` | [R10](../standard/SPEC.md) |
-| `docs/decision-records/README.md` | the ADR/BDR system - which stream a decision belongs to, its lifecycle, and where records sit in the altitude hierarchy | optional, core | `copy` | [R5](../standard/SPEC.md) |
-| `docs/discovery/README.md` | how a dossier stamps provenance and why it is never normative (ADR-024); also the only file holding the folder open in a fresh clone | optional, core | `copy` | [R5](../standard/SPEC.md) |
-| `docs/ideas/README.md` | how an idea is explored end to end before any record is minted, and what graduating one means (ADR-010) | optional, core | `copy` | [R14](../standard/SPEC.md) |
-| `docs/runbooks/README.md` | what a runbook must contain to be followable at 3 a.m., and when the postmortem template beside it is used | optional, core | `copy` | [R3](../standard/SPEC.md) |
-| `docs/cycles/README.md` | how a cycle is opened and closed, and the one-place invariant every intent must satisfy (ADR-028) | optional, scale | `copy` | [R15](../standard/SPEC.md) |
-| `docs/journeys/README.md` | how a journey map stays true - each stage coupled to the capability that serves it | optional, scale | `copy` | [R3](../standard/SPEC.md) |
-| `docs/research/README.md` | how a study is anonymized and written so it reaches the personas and specs it should change | optional, scale | `copy` | [R3](../standard/SPEC.md) |
 | `docs/README.md` | the docs hub table | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `docs/ARCHITECTURE.md` | how it is built - the altitude names it (filled from this repo) | optional, core | `fill-from-repo` | [R1](../standard/SPEC.md) |
 | `docs/PRODUCT.md` | what it is and where it is going (filled from this repo) | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
@@ -73,7 +66,6 @@ copy of a rule is a second thing to keep true.
 | Path | What it is, and why | Needed | Adapt | Rule |
 |---|---|---|---|---|
 | `specs/capability-map.json` | capability -> code globs, so the coupling guard can bind spec to code | **required**, core | `fill-from-repo` | [R11](../standard/SPEC.md) |
-| `specs/README.md` | how to write a capability spec - tiers, the required sections, the clarify gate; the manual the spec template is authored against | optional, core | `copy` | [R8](../standard/SPEC.md) |
 
 ## `scripts/` - the guards, and the spec engine's runtime
 
@@ -125,6 +117,8 @@ them rather than checking files.
 | [`docs/method/self-verify.md`](#) | what drift 0 does and does not certify - the tiers, the flags, the arithmetic |
 | [`docs/method/prerequisites.md`](#) | what must be installed before an agent starts an adoption |
 | [`docs/method/security-baseline.md`](#) | the axes a repo decides once - a menu, answered in your own security ADR |
+| [`docs/tree/specs.md`](#) | how to write a capability spec - the tiers, the contracts, what makes buildable checkable (R8, R9) |
+| [`docs/tree/docs-decision-records.md`](#) | the ADR/BDR streams, the record test and the altitude hierarchy (R5) |
 
 ## Required headings
 
@@ -133,5 +127,3 @@ A file can exist and still be a shell. These headings are checked by name.
 | File | Heading | Why it must be there |
 |---|---|---|
 | `AGENTS.md` | `Altitude` | the precedence order wins-on-conflict must be stated |
-| `specs/README.md` | `Spec depth` | the buildable-vs-behavioral tier decision, led by the rebuild-and-verify test |
-| `docs/decision-records/README.md` | `When to record` | the ADR test - a contestable, re-litigable decision |

@@ -51,33 +51,41 @@ const NODE_STACK_URL =
 // first time it is seen (consecutive pages sharing a group nest under one heading).
 // Exported so site-check asserts against the real page list instead of re-deriving it
 // by parsing this file - a second, drifting copy of the same map.
-// Ordered by what a reader is trying to DO, not by what the repo happens to contain:
-// start, then work, then understand, then look things up. The method documents are long
-// because they are written for an agent that needs precision; short human pages go in
-// front of them so nobody has to read two thousand words to get going. README is
-// deliberately absent - it is the GitHub front door, and using it as the docs home put
-// the same "why it exists" argument on two pages.
+// Ordered by what a reader is trying to DO: run it, understand it, work in it, look it
+// up - and only then, at the very bottom, walk the shipped tree file by file. Prose comes
+// before reference and reference before the tree, because the tree is the one section
+// nobody reads front to back; it is looked up. Putting it mid-sidebar buried the FAQ and
+// the open questions under fifty file nodes.
+// Quick start is the docs home. A reader arriving from the landing has already been told
+// what this is - what they need next is the command. README is deliberately absent: it is
+// the GitHub front door, and using it as the docs home put the same "why it exists"
+// argument on two pages.
 export const PAGES = CONFIG.pages || [
-  { src: "docs/what-this-is.md", out: "index.html", nav: "What this is", group: null },
-  { src: "docs/quick-start.md", out: "quick-start.html", nav: "Quick start", group: null },
-  { src: "docs/method/adoption.md", out: "adopt.html", nav: "Adopt: the gated path", group: null },
-  { src: "docs/method/working-with-specs.md", out: "working-with-specs.html", nav: "Working with specs", group: "Guides" },
-  { src: "docs/method/working-with-ai/README.md", out: "working-with-ai.html", nav: "Working with AI", group: "Guides" },
-  { src: "docs/method/self-verify.md", out: "self-verify.html", nav: "Verifying compliance", group: "Guides" },
-  { src: "docs/method/discovery.md", out: "discovery.html", nav: "Turning meetings into specs", group: "Guides" },
-  { src: "docs/method/working-language.md", out: "working-language.html", nav: "Choosing a working language", group: "Guides" },
-  { src: "docs/manifesto.md", out: "why.html", nav: "Why it exists", group: "Concepts" },
+  { src: "docs/quick-start.md", out: "index.html", nav: "Quick start", group: null },
+  { src: "docs/what-this-is.md", out: "what-this-is.html", nav: "What this is", group: null },
+  { src: "docs/manifesto.md", out: "why.html", nav: "Why it exists", group: null },
+
+  { src: "docs/method/adoption.md", out: "adopt.html", nav: "Adopt: the gated path", group: "Adopting" },
+  { src: "docs/method/self-verify.md", out: "self-verify.html", nav: "Verifying compliance", group: "Adopting" },
+  { src: "docs/method/checklist.md", out: "checklist.html", nav: "Decision checklist", group: "Adopting" },
+
+  { src: "docs/method/ways-of-working.md", out: "ways-of-working.html", nav: "The loop, and who does what", group: "Ways of working" },
+  { src: "docs/method/working-with-specs.md", out: "working-with-specs.html", nav: "Working with specs", group: "Ways of working" },
+  { src: "docs/method/working-with-ai/README.md", out: "working-with-ai.html", nav: "Working with AI", group: "Ways of working" },
+  { src: "docs/method/discovery.md", out: "discovery.html", nav: "Turning meetings into specs", group: "Ways of working" },
+  { src: "docs/method/working-language.md", out: "working-language.html", nav: "Choosing a working language", group: "Ways of working" },
+
   { src: "docs/method/taxonomy.md", out: "taxonomy.html", nav: "Where knowledge lands", group: "Concepts" },
-  { src: "docs/method/ways-of-working.md", out: "ways-of-working.html", nav: "Ways of working", group: "Concepts" },
-  { src: "standard/specs/README.md", out: "specs.html", nav: "Specs", group: "Concepts" },
+  { src: "docs/tree/specs.md", out: "specs.html", nav: "Specs", group: "Concepts" },
   { src: "docs/ecosystem.md", out: "ecosystem.html", nav: "How it fits together", group: "Concepts" },
+
   { src: "standard/SPEC.md", out: "spec.html", nav: "The spec", group: "Reference" },
-  { src: "docs/file-map.md", out: "file-map.html", nav: "Every file, and why", group: "Reference", render: "tree-root" },
-  { src: "docs/method/checklist.md", out: "checklist.html", nav: "Decision checklist", group: "Reference" },
-  { src: "standard/docs/decision-records/README.md", out: "decision-records.html", nav: "Decision records", group: "Reference" },
+  { src: "docs/tree/docs-decision-records.md", out: "decision-records.html", nav: "Decision records", group: "Reference" },
   { src: "docs/faq.md", out: "faq.html", nav: "FAQ", group: "Reference" },
   { src: "docs/open-questions/README.md", out: "open-questions.html", nav: "Open questions", group: "Reference" },
   { src: "docs/case-studies/README.md", out: "case-studies.html", nav: "Case studies", group: "Reference" },
+
+  { src: "docs/file-map.md", out: "file-map.html", nav: "Every file, and why", group: "File conventions", render: "tree-root" },
 ];
 const PAGES_BY_SRC = new Map(PAGES.map((p) => [p.src, p]));
 // Sidebar footer links - a site's own chrome, not the generator's. Empty by default:
@@ -119,6 +127,13 @@ function resolveHref(href, ctx) {
   const resolved = resolveRelativePath(ctx.srcDir, pathPart);
   const page = PAGES_BY_SRC.get(resolved);
   if (page) return page.out + frag;
+
+  // A tree page has no PAGE MAP entry to match on - every one of them is generated from
+  // the manifest and shares its src. Its authored prose does have a file, so one path
+  // page links to another by naming that file, which link-check can then verify exists.
+  // Writing the generated .html name directly would be a link nothing checks.
+  const companion = resolved.match(/^docs\/tree\/(.+)\.md$/);
+  if (companion) return `tree-${companion[1]}.html${frag}`;
 
   const isDir = resolved.endsWith("/");
   const ghPath = isDir ? resolved.slice(0, -1) : resolved;
@@ -524,8 +539,8 @@ a:hover { text-decoration: none; }
    its last link already are. */
 .layout { display: flex; align-items: flex-start; min-height: 100vh; max-width: ${SPINE}; margin: 0 auto; padding: 0 16px; }
 .sidebar {
-  flex: 0 0 232px;
-  width: 232px;
+  flex: 0 0 262px;
+  width: 262px;
   background: transparent;
   border-right: 1px solid var(--line2);
   position: sticky;
@@ -534,54 +549,79 @@ a:hover { text-decoration: none; }
   overflow-y: auto;
   padding: 1.25rem 18px 2rem 10px;
 }
-/* The sidebar's file tree. Indentation plus a guide rule per level carries the nesting;
-   box-drawing characters would not survive the names wrapping. */
-.nav-tree { margin: 0.15rem 0 0; font-family: var(--font-mono); }
-.nav-tree-kids { margin-left: 0.5rem; padding-left: 0.55rem; border-left: 1px solid var(--line2); }
+/* The sidebar's file tree, styled as part of the nav rather than as a terminal: the
+   sidebar's own sans face, one size step under the top-level links. Monospace made it
+   read as embedded output - a different kind of thing on the page - when it is just the
+   nav going one level deeper. Indentation plus a guide rule per level carries the
+   nesting; box-drawing characters would not survive the names wrapping. */
+.nav-tree { margin: 0.15rem 0 0 0.35rem; padding-left: 0.35rem; border-left: 1px solid var(--line2); }
+.nav-tree-kids { margin-left: 0.62rem; padding-left: 0.62rem; border-left: 1px solid var(--line2); }
 .nav-tree-link {
-  display: block; padding: 0.24rem 0.5rem; border-radius: 6px;
-  font-size: 0.8rem; color: var(--muted); text-decoration: none;
+  display: block; flex: 1 1 auto; padding: 0.32rem 0.5rem; border-radius: 6px;
+  font-size: 0.855rem; line-height: 1.35; color: var(--muted); text-decoration: none;
   overflow-wrap: anywhere;
 }
 .nav-tree-link:visited { color: var(--muted); }
 a.nav-tree-link:hover { background: var(--active-bg); color: var(--fg); }
 .nav-tree-link.active { background: var(--active-bg); color: var(--active-fg); font-weight: 600; }
-.nav-tree-link.is-plain { color: var(--dim, var(--muted)); opacity: 0.75; }
-.nav-tree details > summary { list-style: none; cursor: pointer; }
-.nav-tree details > summary::-webkit-details-marker { display: none; }
-.nav-tree details > summary::before {
-  content: "\\25B8"; float: left; margin: 0.3rem 0 0 -0.1rem;
-  font-size: 0.6rem; color: var(--muted); transition: transform 0.15s ease;
+/* A folder the manifest never names has no page to open. It still has to read as a
+   folder, so it dims rather than vanishing. */
+.nav-tree-link.is-plain { color: var(--muted); opacity: 0.68; }
+.nav-tree details > summary {
+  list-style: none; cursor: pointer; display: flex; align-items: flex-start; border-radius: 6px;
 }
-.nav-tree details[open] > summary::before { transform: rotate(90deg); }
-.nav-tree details > summary .nav-tree-link { padding-left: 0.75rem; }
+.nav-tree details > summary::-webkit-details-marker { display: none; }
+/* A border-drawn chevron: right when closed, down when open. Flex-aligned rather than
+   floated so it stays on the first line when a long name wraps. */
+.nav-tree details > summary::before {
+  content: ""; flex: 0 0 auto; width: 5px; height: 5px;
+  margin: 0.56rem 0.34rem 0 0.22rem;
+  border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted);
+  transform: rotate(-45deg); transition: transform 0.15s ease;
+}
+.nav-tree details[open] > summary::before { transform: rotate(45deg); }
+@media (prefers-reduced-motion: reduce) {
+  .nav-tree details > summary::before { transition: none; }
+}
 
-/* A single path's page. */
+/* A single path's page. The rule separates the prose a reader came for from the machine
+   facts underneath it, so the page has a visible bottom half rather than trailing off. */
+.fm-rule { border: 0; border-top: 1px solid var(--line2); margin: 3rem 0 0; max-width: 68ch; }
 .fm-lead { font-size: 1.05rem; color: var(--fg); max-width: 62ch; }
 .fm-facts { margin: 0 0 1.25rem; padding-left: 1.1rem; }
 .fm-facts > li { margin: 0 0 0.5rem; max-width: 68ch; }
 .fm-note { font-size: 0.9rem; margin-top: -0.5rem; }
 .nav-foot { margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid var(--line2); }
 .nav-foot { margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid var(--line2); }
+/* A section heading, not a label. Uppercase micro-caps read as chrome and the eye skips
+   them; at body size in sentence case they read as the thing they are, which is how the
+   column gets scannable instead of dense. */
 .nav-group-title {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  padding: 0.9rem 0.6rem 0.3rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--fg);
+  padding: 1.5rem 0.6rem 0.45rem;
 }
+/* One guide rule runs down the column and the current page lights up its own segment.
+   That is the whole orientation cue: where am I, and how deep. A filled pill for the
+   active row said the same thing louder and gave no sense of position. */
 .nav-link {
   display: block;
-  padding: 0.4rem 0.6rem;
-  border-radius: 6px;
-  color: var(--fg);
+  padding: 0.35rem 0.7rem;
+  margin-left: 0.35rem;
+  border-left: 1px solid var(--line2);
+  color: var(--muted);
   text-decoration: none;
-  font-size: 0.92rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
 }
-.nav-link:visited { color: var(--fg); }
-.nav-link:hover { background: var(--active-bg); }
-.nav-link.active { background: var(--active-bg); color: var(--active-fg); font-weight: 600; }
+.nav-link:visited { color: var(--muted); }
+.nav-link:hover { color: var(--fg); border-left-color: var(--muted); }
+.nav-link.active {
+  color: var(--active-fg);
+  font-weight: 600;
+  border-left-color: currentColor;
+}
 .content {
   flex: 1 1 auto;
   min-width: 0;
@@ -616,13 +656,20 @@ code {
   padding: 0.15em 0.4em;
   border-radius: 4px;
 }
+/* Code blocks wrap rather than scroll. A horizontal scrollbar inside a dark panel is
+   invisible until you try it, so a long line simply looked truncated - and most of what
+   these blocks hold is prose anyway: the sentence you say to the agent, a shell command,
+   a markdown example. The trade is that a block relying on aligned columns reflows if it
+   overruns, so those are written to fit. That failure is at least visible, which the
+   scrollbar's never was. */
 pre {
   background: var(--code-bg);
   padding: 1rem 1.1rem;
   border-radius: 8px;
-  overflow-x: auto;
   margin: 0 0 1.25rem;
   max-width: 76ch;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 pre code { background: none; padding: 0; border-radius: 0; font-size: 0.85em; }
 .table-wrap { overflow-x: auto; margin: 0 0 1.25rem; }
@@ -854,12 +901,39 @@ function isFolder(relPath) {
   return !/\.[^/.]+$/.test(relPath);
 }
 
+// Where a path's page lives. Normally a generated tree page; but when that path's prose is
+// important enough to also sit in the sidebar under its own name, the PAGE MAP already
+// renders that same file, and the tree node points at it instead of generating a second
+// copy. One node per thing: two pages from one source is the duplication this whole
+// section exists to remove.
 function treeSlug(relPath) {
+  const mapped = PAGES_BY_SRC.get(treeProsePath(relPath));
+  if (mapped) return mapped.out;
   return `tree-${slugify(relPath.replace(/\//g, " "))}.html`;
 }
 
-// Manifest order is the author's order - entry point, pin, specs, guards, security, docs.
-// Insertion-ordered Maps keep it, so the tree has no second ordering to maintain.
+// Explorer order, not manifest order: folders before files, dotted names at the top of
+// their group, then alphabetical - what `ls -a` and every file explorer show. The manifest
+// is ordered by argument (entry point, pin, specs, guards, security, docs), which is right
+// for reading the manifest and wrong for finding a path you already know the name of.
+// Sorting once here keeps the sidebar and the generated page sequence from disagreeing.
+function compareTreeNodes(a, b) {
+  const aFolder = isFolder(a.path);
+  const bFolder = isFolder(b.path);
+  if (aFolder !== bFolder) return aFolder ? -1 : 1;
+  const aDot = a.name.startsWith(".");
+  const bDot = b.name.startsWith(".");
+  if (aDot !== bDot) return aDot ? -1 : 1;
+  return a.name.localeCompare(b.name, "en", { sensitivity: "base", numeric: true });
+}
+
+function sortTree(node) {
+  const sorted = [...node.children.values()].sort(compareTreeNodes);
+  node.children = new Map(sorted.map((child) => [child.name, child]));
+  for (const child of node.children.values()) sortTree(child);
+  return node;
+}
+
 function buildTree(files) {
   const root = { children: new Map() };
   for (const f of files) {
@@ -872,18 +946,25 @@ function buildTree(files) {
       if (i === parts.length - 1) node.entry = f;
     });
   }
-  return root;
+  return sortTree(root);
 }
 
 const TREE = MANIFEST ? buildTree(MANIFEST.files || []) : { children: new Map() };
 
 // One page per manifest path, appended after the section index so the sidebar order
-// follows the tree. Intermediate nodes the manifest never names (`.github/`) stay
-// folders in the nav with nothing to click - inventing a page for them would invent
-// a purpose the manifest does not state.
+// follows the tree. A node the manifest never names (`.claude/`, `.github/`) gets a page
+// too as soon as somebody writes its prose: the reason those used to expand-only was that
+// the manifest states no purpose for them, and an invented purpose would be worse than
+// none. Authored prose is a stated purpose, so the objection lapses. Without prose the
+// node still just expands, because a page saying nothing is a dead end with a heading.
 function collectTreePages(node, acc = []) {
   for (const child of node.children.values()) {
-    if (child.entry) {
+    // Already a PAGE MAP page under its own name - the tree links there, nothing to generate.
+    if (PAGES_BY_SRC.has(treeProsePath(child.path))) {
+      collectTreePages(child, acc);
+      continue;
+    }
+    if (child.entry || existsSync(treeProsePath(child.path))) {
       acc.push({
         src: "standard/standard.manifest.json",
         out: treeSlug(child.path),
@@ -945,48 +1026,73 @@ function statusLine(e) {
   return bits.join(" - ");
 }
 
+// A path's authored companion: prose written for a person who has to decide what to put
+// in this folder. `docs/tree/<slug>.md` - same slug as the page, so the file a writer
+// opens is named after the page a reader lands on. Absent for a path nobody has written
+// up yet, which is a gap in the docs rather than an error in the build.
+function treeProsePath(relPath) {
+  return `docs/tree/${slugify(relPath.replace(/\//g, " "))}.md`;
+}
+
+// The page a reader wants: what this is, what to put in it, what not to, an example -
+// then, once, at the bottom, the machine facts and the decisions behind them. The facts
+// used to open the page, which meant every path read as a manifest row wearing a heading
+// and nobody learned what to keep in the folder.
 function renderTreeFilePage(page) {
   const { node } = page;
   const e = node.entry;
   const dir = isFolder(node.path);
-  const adaptRule = (MANIFEST.adaptRules || {})[e.adapt] || "";
+  const adaptRule = e ? (MANIFEST.adaptRules || {})[e.adapt] || "" : "";
   const shipped = existsSync(`standard/${node.path}`);
 
   const sections = (MANIFEST.sections || []).filter((s) => s.file === node.path);
   const guards = (MANIFEST.guards || []).filter((g) => g.run.includes(node.path));
   const children = [...node.children.values()];
 
-  let html = `<h1><code>${escapeHtml(node.path)}${dir ? "/" : ""}</code></h1>
-<p class="fm-lead">${escapeHtml(e.purpose)}</p>
-<ul class="fm-facts">
-<li><strong>Status.</strong> ${statusLine(e)}.</li>
-<li><strong>How it arrives.</strong> <code>${escapeHtml(e.adapt)}</code> - ${escapeHtml(adaptRule)}</li>
-${shipped ? `<li><strong>Shipped form.</strong> <a href="${escapeAttr(GITHUB_REPO_URL)}/blob/main/standard/${escapeAttr(node.path)}" target="_blank" rel="noopener noreferrer">read it in the standard's own tree</a></li>` : `<li><strong>Shipped form.</strong> None - this one is written into your repo during alignment, from your repo's own reality.</li>`}
-</ul>`;
+  let html = `<h1><code>${escapeHtml(node.path)}${dir ? "/" : ""}</code></h1>`;
 
-  const quote = ruleQuote(e.rule);
-  if (quote) html += `\n<h2>Why it is there</h2>\n${quote}`;
-
-  if (sections.length) {
-    html += `\n<h2>What has to be inside</h2>\n<ul class="fm-facts">\n${sections
-      .map((s) => `<li><strong>${escapeHtml(s.heading)}.</strong> ${escapeHtml(s.purpose)}${s.required ? "" : " (optional)"}</li>`)
-      .join("\n")}\n</ul>`;
-  }
-
-  if (guards.length) {
-    html += `\n<h2>What checks it</h2>\n<ul class="fm-facts">\n${guards
-      .map((g) => `<li><code>${escapeHtml(g.run)}</code> - ${escapeHtml(g.purpose)}${g.blocks ? " Blocks the build when it fails." : ""}</li>`)
-      .join("\n")}\n</ul>`;
+  const prosePath = treeProsePath(node.path);
+  if (existsSync(prosePath)) {
+    html += "\n" + mdToHtml(readFileSync(prosePath, "utf8"), { srcDir: dirnamePosix(prosePath) });
+  } else if (e) {
+    html += `\n<p class="fm-lead">${escapeHtml(e.purpose)}</p>`;
   }
 
   if (children.length) {
-    html += `\n<h2>What it contains</h2>\n<ul class="fm-facts">\n${children
+    html += `\n<h2>What is inside</h2>\n<ul class="fm-facts">\n${children
       .map((c) => {
         const label = `<code>${escapeHtml(c.name)}${isFolder(c.path) ? "/" : ""}</code>`;
         return c.entry
           ? `<li><a href="${escapeAttr(treeSlug(c.path))}">${label}</a> - ${escapeHtml(c.entry.purpose)}</li>`
           : `<li>${label}</li>`;
       })
+      .join("\n")}\n</ul>`;
+  }
+
+  if (sections.length) {
+    html += `\n<h2>The headings it must carry</h2>\n<ul class="fm-facts">\n${sections
+      .map((s) => `<li><strong>${escapeHtml(s.heading)}.</strong> ${escapeHtml(s.purpose)}${s.required ? "" : " (optional)"}</li>`)
+      .join("\n")}\n</ul>`;
+  }
+
+  // A node the manifest does not name has no status, no adapt class and no rule - it is a
+  // container the entries below it live in. Printing an empty Reference block for it would
+  // read as "we checked and there is nothing", which is a different claim.
+  if (e) {
+    html += `\n<hr class="fm-rule">\n<h2>Reference</h2>
+<ul class="fm-facts">
+<li><strong>Status.</strong> ${statusLine(e)}.</li>
+<li><strong>How it arrives.</strong> <code>${escapeHtml(e.adapt)}</code> - ${escapeHtml(adaptRule)}</li>
+${shipped ? `<li><strong>Shipped form.</strong> <a href="${escapeAttr(GITHUB_REPO_URL)}/blob/main/standard/${escapeAttr(node.path)}" target="_blank" rel="noopener noreferrer">read it in the standard's own tree</a></li>` : `<li><strong>Shipped form.</strong> None - this one is written into your repo during alignment, from your repo's own reality.</li>`}
+</ul>`;
+
+    const quote = ruleQuote(e.rule);
+    if (quote) html += `\n<h3>The rule that requires it</h3>\n${quote}`;
+  }
+
+  if (guards.length) {
+    html += `\n<h3>What checks it</h3>\n<ul class="fm-facts">\n${guards
+      .map((g) => `<li><code>${escapeHtml(g.run)}</code> - ${escapeHtml(g.purpose)}${g.blocks ? " Blocks the build when it fails." : ""}</li>`)
       .join("\n")}\n</ul>`;
   }
 

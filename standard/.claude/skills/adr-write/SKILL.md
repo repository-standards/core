@@ -16,8 +16,9 @@ Two questions, in this order:
    belongs in `AGENTS.md` where the next person will look. One obviously-right answer does
    not need a record; it needs a line in the rules.
 2. **Who would overrule it - an architect or a product owner?** An architect means ADR. A
-   product owner means **BDR** and `bdr-write` is the skill (`docs/decision-records/README.md`
-   has the test). If both would, write the BDR and let the ADR reference it.
+   product owner means **BDR** and `bdr-write` is the skill. The test itself is R5, and the
+   standard works it through in [decision records (by reference)](https://github.com/repository-standards/core/blob/main/docs/tree/docs-decision-records.md).
+   If both would overrule it, write the BDR and let the ADR reference it.
 
 Say which way you routed and why, in one line. A user who disagrees will say so, and that is
 cheaper than discovering it in review.

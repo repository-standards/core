@@ -2,7 +2,7 @@
 
 > The technical "how it is **built**" doc - **structure and boundaries**, not
 > behavior. Components, boundaries, data, integrations, runtime. Kept current.
-> How the system *behaves* lives in the [capability specs](../specs/README.md);
+> How the system *behaves* lives in the [capability specs](../specs/);
 > decisions (why) live in [ADRs](decision-records/adr/README.md).
 
 ## Overview
@@ -19,7 +19,7 @@ Diagram with **C4** (Simon Brown): work top-down, only as deep as the reader nee
   and how they communicate. The default working level for most repos.
 - **Component** (level 3) - the major parts inside one container. Draw only where it earns
   its keep (a complex container).
-- **Code** (level 4) - skip; the code and the [specs](../specs/README.md) are the truth at
+- **Code** (level 4) - skip; the code and the [specs](../specs/) are the truth at
   that level.
 
 Keep diagrams in Mermaid, in this file, versioned with the code - not in a wiki that rots.

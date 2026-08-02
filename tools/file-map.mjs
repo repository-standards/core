@@ -78,9 +78,9 @@ so.* The **Rule** column links the numbered rule in the spec that each entry enf
 row can be traced from "there is a file here" to "here is why the standard says so".
 
 **Adapt** is how an entry lands in your repo when you align: \`copy\` arrives verbatim,
-\`merge\` is reconciled with what you already have, and \`fill-from-repo\` is a shell you author
-- the standard never invents your content. **Needed** says whether a missing entry counts as
-drift, and at which profile (\`core\` is every repo; \`scale\` is teams).
+\`merge\` is reconciled with what you already have, and \`fill-from-repo\` is a shell you
+author, because the standard never invents your content. **Needed** says whether a missing
+entry counts as drift, and at which profile (\`core\` is every repo; \`scale\` is teams).
 
 What this map does **not** tell you is *how to author* what goes inside a folder. Where that
 needs a manual, the folder carries one as its own \`README.md\` and it appears as a row below,
