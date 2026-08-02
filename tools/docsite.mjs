@@ -1033,6 +1033,20 @@ function buildNavRows() {
 // That is what makes clicking a folder both open its page and expand it, the way the sites
 // this is modelled on behave: the expansion is a consequence of arriving, not a second
 // click. Deep links land with their branch already open for the same reason.
+// Basenames that appear more than once anywhere in the tree. Computed on first use, since
+// TREE is built further down this file, and cached so the label rule does not walk per row.
+let _ambiguous = null;
+function ambiguousNames() {
+  if (_ambiguous) return _ambiguous;
+  const seen = new Map();
+  const walk = (n) => {
+    for (const c of n.children.values()) { seen.set(c.name, (seen.get(c.name) ?? 0) + 1); walk(c); }
+  };
+  walk(TREE);
+  _ambiguous = new Set([...seen].filter(([, n]) => n > 1).map(([name]) => name));
+  return _ambiguous;
+}
+
 function renderNavTree(node, currentOut, depth = 0) {
   let html = "";
   for (const child of node.children.values()) {
@@ -1042,7 +1056,13 @@ function renderNavTree(node, currentOut, depth = 0) {
     const hasPage = child.entry || existsSync(treeProsePath(child.path));
     const out = hasPage ? treeSlug(child.path) : null;
     const active = out === currentOut;
-    const label = `${escapeHtml(child.name)}${isFolder(child.path) ? "/" : ""}`;
+    // Two different files can share a basename - README.md at the root and in docs/ are
+    // both real entries. A row that reads the same as another row is a row you cannot
+    // choose, so an ambiguous name carries its parent.
+    const bare = `${child.name}${isFolder(child.path) ? "/" : ""}`;
+    const label = escapeHtml(ambiguousNames().has(child.name) && child.path.includes("/")
+      ? `${child.path.slice(0, child.path.lastIndexOf("/") + 1)}${bare}`
+      : bare);
     const link = out
       ? `<a class="nav-tree-link${active ? " active" : ""}" href="${escapeAttr(BASE + out)}"${active ? ' aria-current="page"' : ""}>${label}</a>`
       : `<span class="nav-tree-link is-plain">${label}</span>`;

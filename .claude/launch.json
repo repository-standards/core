@@ -1,0 +1,46 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve@14.2.4",
+        "site",
+        "-l",
+        "4321",
+        "--no-clipboard"
+      ],
+      "port": 4321
+    },
+    {
+      "name": "site-wip",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve@14.2.4",
+        "/Users/lukaszbodurka/git/rs-docs-ia/site",
+        "-l",
+        "4323",
+        "--no-clipboard",
+        "--config",
+        "/Users/lukaszbodurka/git/repository-standards/.claude/serve.json"
+      ],
+      "port": 4323
+    },
+    {
+      "name": "palette",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve@14.2.4",
+        "/private/tmp/claude-501/-Users-lukaszbodurka-git-repository-standards/96889b07-547a-4983-a34b-ce1e69868fcc/scratchpad",
+        "-l",
+        "4324",
+        "--no-clipboard"
+      ],
+      "port": 4324
+    }
+  ]
+}

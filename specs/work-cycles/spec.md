@@ -51,7 +51,7 @@ Then one table of intents, the same columns the backlog declares, so a row moves
 
 `node scripts/cycle-guard.mjs [--block]` - dependency-free Node, run from the repo root.
 
-Reads the backlog - `docs/backlog.md` or `backlog.md`, the manifest's two accepted paths - and every `docs/cycles/**/*.md` except: names beginning `_` (templates, as files **and** directories), and `TIMELINE.md` / `README.md`, which are derived or descriptive rather than cycles. Collects the first cell of every table row that looks like an intent id (`^[A-Z][A-Z0-9]*-[A-Za-z0-9-]+$`), keyed by the file it came from, ignoring HTML comments and fenced code blocks. Reports any id appearing in more than one file.
+Reads the backlog - `docs/backlog.md` or `backlog.md`, the manifest's two accepted paths - and every `docs/cycles/**/*.md` except: names beginning `_` (templates, as files **and** directories), and `TIMELINE.md` / `README.md`, which are derived or descriptive rather than cycles. The shipped tree carries no README here any more - the folder's manual is a documentation page read at the standard - but the skip stays, because an adopting repo is free to write one. Collects the first cell of every table row that looks like an intent id (`^[A-Z][A-Z0-9]*-[A-Za-z0-9-]+$`), keyed by the file it came from, ignoring HTML comments and fenced code blocks. Reports any id appearing in more than one file.
 
 It also reads the **last** cell of each such row as the status - last, not a fixed index, so the check does not depend on a column count the adopter may extend. A status matching `blocked:<id>` (case-insensitive) is a **stale block** when the named intent exists nowhere, or exists with status `done`; naming the row itself is an error. A block pointing at finished or deleted work is the failure that costs time silently, because the row looks legitimately stuck.
 
@@ -61,7 +61,7 @@ Comment state is scanned left to right within each line rather than by testing f
 
 | Exit | Condition |
 |---|---|
-| 0 | no problems; or **neither cycle files nor a backlog** (nothing to check - the cycles directory existing is not enough, since the tree ships a README and a template into it); or problems found without `--block` |
+| 0 | no problems; or **neither cycle files nor a backlog** (nothing to check - the cycles directory existing is not enough, since the tree ships a template into it); or problems found without `--block` |
 | 1 | a duplicate id, a stale block or a self-block found, and `--block` given; or cycle files exist with no backlog at either accepted path, and `--block` given |
 
 Output: one line per problem - a duplicated id naming every file it appears in, or a block naming what it points at and why that no longer applies - then a verdict line: `cycle-guard: OK - <n> intent(s) ...` or `cycle-guard: <n> problem(s).` followed by the rule each class of problem broke.
