@@ -201,10 +201,14 @@ if (manifest) {
 // 2b. surviving template placeholders - drift 0 with empty shells is a hollow win.
 // A warning, never drift: substance stays the judgment tier's call.
 if (!skeleton) {
-  for (const p of ["AGENTS.md", "docs/PRODUCT.md", "docs/personas.md"]) {
+  // Case-insensitive and broader than it was: the entry file ships `<repo>` in lower case,
+  // so the one file this check exists for was the one it could not see. The angle-bracket
+  // form excludes `:` and `/` so markdown autolinks are not mistaken for placeholders.
+  const PLACEHOLDER = /\{\{[^}]+\}\}|<[A-Za-z][A-Za-z0-9 +_-]{1,30}>/;
+  for (const p of ["AGENTS.md", "README.md", "SECURITY.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md"]) {
     if (!existsSync(p)) continue;
     const body = readFileSync(p, "utf8");
-    if (/\{\{[^}]+\}\}|<Repo>|<Product>/.test(body)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
+    if (PLACEHOLDER.test(body)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
   }
 }
 

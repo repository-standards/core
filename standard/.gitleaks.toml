@@ -9,13 +9,16 @@ useDefault = true
 
 [allowlist]
 description = "Paths and patterns allowed to contain secret-like strings."
+# No blanket entry for docs/: `docs/discovery/` is where the standard tells the agent to
+# paste meeting notes, mails and transcripts, and runbooks carry real command lines - the
+# two places in the tree most likely to receive a live credential. Placeholder-shaped
+# findings in templates are covered by the `regexes` below, which match the secret itself.
 paths = [
   '''(.*/)?\.env\.example$''',
   '''(.*/)?\.env\.sample$''',
   '''(.*/)?pnpm-lock\.yaml$''',
   '''(.*/)?package-lock\.json$''',
   '''(.*/)?yarn\.lock$''',
-  '''(?i)docs/.*\.md$''',
 ]
 regexes = [
   '''EXAMPLE''',

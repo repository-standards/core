@@ -72,9 +72,17 @@ alone), `why` is one line, `DoD` is the observable finish line.
 
 | id | title | cap | persona | owner | why | DoD | status |
 |----|-------|-----|---------|-------|-----|-----|--------|
+| | | | | | | | |
+
+<!-- Example rows, from a rental-property product - delete this block once the table above is
+     yours. They are here rather than in the table because a row left in the table reads as
+     work this repo owes itself:
+
 | SPEC-1 | Spec `pricing` to buildable | pricing | Owner-operator Olga | dev | money path, behavioral-only today | pricing spec has data + algorithm contracts, cited from code | todo |
 | ADR-1 | Record datastore choice | - | (infra) | architect | re-litigated in review, decision only in code | ADR Accepted, states rejected options | todo |
 | DRIFT-1 | Reconcile refund flow | refunds | Owner-operator Olga | agent | README says X, code does Y | spec matches real behavior; guard green | todo |
+-->
+
 
 Statuses: `todo` / `doing` / `blocked` / `done` (drop `done` rows on release, or let the
 Backlog.md tool archive them).

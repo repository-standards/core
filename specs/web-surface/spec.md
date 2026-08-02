@@ -52,6 +52,7 @@ The prose of the rendered pages (owned by their source files); markdown link int
 - The docsite MUST render the same markdown an agent reads, verbatim - it contributes navigation and layout, never prose; each page's H1 comes from the source file.
 - Raw HTML in source markdown MUST be escaped, and inline code spans MUST be immune to link/emphasis rewriting.
 - The site MUST be dark by default with a light `prefers-color-scheme` override, and usable at mobile widths.
+- **The landing MUST NOT state as fact anything the repo cannot back.** Counts derivable from a source are named, not numbered ("the rules", never "20 rules" - `tree-check` enforces this and strips markup first, so a tag between the digits and the word does not hide it). Sample terminal output MUST reproduce what the shipped tools actually print, or be marked illustrative; a fabricated check count reads as evidence. Capability claims name their cost where one exists - the guards need Node and `jq`, and a non-Claude agent needs the skills ported - so "nothing to install" is not available to us.
 
 ## Invariants
 

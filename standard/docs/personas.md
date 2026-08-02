@@ -24,9 +24,13 @@ List the real customer/user types for this product. Keep it small (3-6). Mark th
 
 | Persona | Primary? | One-line |
 |---|---|---|
-| `Owner-operator Olga` | yes | runs a small property herself, no ops team |
-| `Agency admin Adam` | no | manages many properties for clients |
-| `Guest Gabor` | no | books and stays; never logs into the back office |
+| `<Name + role>` | yes | (fill at adoption - the roster below is what the R10 gate checks specs against) |
+
+<!-- The worked example further down carries a filled roster from a rental-property product.
+     It stays there deliberately: `scripts/spec-structure.mjs` reads THIS table as the live
+     roster, so example names left here would let a spec claim to serve a persona from someone
+     else's domain and still pass the gate. -->
+
 
 ## Persona template
 
@@ -47,6 +51,15 @@ Copy this block per persona.
   them.
 
 ## Worked example (delete after filling your roster)
+
+A filled roster, from a rental-property product - this is what the table above should look
+like once it is yours:
+
+| Persona | Primary? | One-line |
+|---|---|---|
+| `Owner-operator Olga` | yes | runs a small property herself, no ops team |
+| `Agency admin Adam` | no | manages many properties for clients |
+| `Guest Gabor` | no | books and stays; never logs into the back office |
 
 ### `Owner-operator Olga` (primary)
 

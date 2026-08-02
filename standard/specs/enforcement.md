@@ -72,8 +72,11 @@ run by the CI job [`../.github/workflows/spec-guard.yml`](../.github/workflows/s
 ## Where the gates run
 
 - **pre-commit** (cheap, local): structure/lint + coupling **warn**.
-- **CI** (on PR): structure/lint + coupling **block** + optional `/spec-reconcile`
-  **advisory** comment.
+- **CI** (on PR): structure/lint blocks at both profiles. Coupling **blocks at `scale`
+  and advises at `core`** - the shipped workflow reads the profile and picks; a solo repo
+  gets the signal without the gate. The full-tree `--audit` (every capability spec is
+  mapped) blocks at both, because an unmapped spec is a hole in the mechanism rather than
+  a coordination cost. Optionally, a `/spec-reconcile` **advisory** comment.
 
 ## Setup cost
 

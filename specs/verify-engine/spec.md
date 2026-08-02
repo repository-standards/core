@@ -34,8 +34,9 @@ Guarding this repo's own shipped tree ([tree-guard](../tree-guard/spec.md)); aut
 5. **Guards.** Each `guards[]` entry runs via `execSync(g.run)` with output captured. Skips: `id === "self-verify"` (never recurse into itself); `kind === "diff"` -> note (runs in CI on the PR diff, not here); a `scripts/<name>.mjs` path extracted from `run` that does not exist -> note (not installed - skipped); under `--skeleton` all guards are skipped with a single note. A non-zero guard FAILs with its output indented.
 6. **Profiles.** `--profile core` checks core entries only across files/sections/guards and notes how many scale-only entries were skipped; `--profile scale` checks everything. With no flag, the repo's manifest copy's top-level `profile` field (written at align time, ADR-011) is the default - a note names it - and absent that, `scale`. `solo`/`team` are accepted as deprecated aliases.
 7. **Stray transition skills.** `align-to-standards`, `onboard-repo`, `modernize`, `greenfield-start` found under `.claude/skills/` each produce a WARN (a hand-copy mistake, delete it - ADR-009), never drift.
-8. **Decisions.** A non-empty `decisions[]` produces one note (judgment tier, confirmed recorded at review) - never checked mechanically.
-9. **References.** A non-empty `references[]` produces one note naming the count (method docs read in the standards repo at latest - the living standard, ADR-023/025) - never a file check; a `files[]` entry with `adapt: "reference"` is likewise noted and skipped, never existence-checked.
+8. **Surviving placeholders.** Outside `--skeleton`, each of `AGENTS.md`, `README.md`, `SECURITY.md`, `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/personas.md`, `docs/backlog.md` that exists is scanned for `{{TOKEN}}` or an angle-bracket placeholder (`<[A-Za-z][A-Za-z0-9 +_-]{1,30}>` - the bracket form excludes `:` and `/` so markdown autolinks do not match) and produces one WARN each. Never drift: drift 0 with empty shells is a hollow win, but substance stays the judgment tier's call. Case-insensitivity is load-bearing - the entry file ships `<repo>` in lower case.
+9. **Decisions.** A non-empty `decisions[]` produces one note (judgment tier, confirmed recorded at review) - never checked mechanically.
+10. **References.** A non-empty `references[]` produces one note naming the count (method docs read in the standards repo at latest - the living standard, ADR-023/025) - never a file check; a `files[]` entry with `adapt: "reference"` is likewise noted and skipped, never existence-checked.
 
 Output: header `self-verify - compliance with manifest <version>` (or `the pinned standard`), one `PASS | FAIL | WARN | ....` row per result (`<tag>  <name padded to 9>  <msg>`), then the verdict.
 
@@ -67,7 +68,9 @@ Output: header `self-verify - compliance with manifest <version>` (or `the pinne
 - **Pin mismatch.** GIVEN `.standards-version` is `0.7.1` WHEN run with `--version 0.7.2` THEN a version FAIL is reported and exit is 1.
 - **Manifest/pin split.** GIVEN manifest `version: 0.8.0` and pin `0.7.2` WHEN run THEN a FAIL says the manifest must match the pin.
 - **Warn mode.** GIVEN drift 3 WHEN run with `--warn` THEN the drift line still prints and exit is 0.
-- **Skeleton.** GIVEN the pristine shipped tree WHEN run with `--skeleton` THEN the pin is a note, fill-from-repo files are notes, no guard executes, and exit is 0.
+- **Skeleton.** GIVEN the pristine shipped tree WHEN run with `--skeleton` THEN the pin is a note, fill-from-repo files are notes, no guard executes, no placeholder scan runs, and exit is 0.
+- **Placeholder still in the entry file.** GIVEN an adopted repo whose `AGENTS.md` still opens `# AGENTS.md - <repo> agent and contributor guide` WHEN self-verify runs without `--skeleton` THEN a WARN names the file, and drift is unchanged - lower case must be caught exactly like `<Repo>`.
+- **Autolink is not a placeholder.** GIVEN a scanned file containing `<https://example.com>` and no template token WHEN self-verify runs THEN no placeholder WARN is raised for it.
 - **Core profile.** GIVEN a manifest with scale-only entries WHEN run with `--profile core` THEN those entries are skipped and their count appears as a note.
 - **Persisted profile.** GIVEN the manifest copy carries `"profile": "core"` WHEN run with no flag THEN core is the applied profile (a note says so); a CLI `--profile` flag overrides it.
 - **Recursion guard.** GIVEN the manifest lists guard `id: "self-verify"` WHEN guards run THEN that entry is skipped.

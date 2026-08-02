@@ -36,10 +36,15 @@ de-duplicating against existing items first.
 3. **Place and name it.** Pick the epic it belongs to (or note a genuinely new epic).
    Give it a stable, scoped id (`SPEC-3`, `ADR-auth`, `DRIFT-2`) that will not be reused.
 
-4. **Write the row** with every column: `id`, `title`, `why` (one line), `DoD` (the
-   observable finish line - "spec is buildable", "ADR Accepted", "drift resolved"),
-   `status: todo`. Slot it by **risk x leverage** (money / security / external contracts
-   / data integrity first; then churn), not at the bottom by default.
+4. **Write the row** with every column the backlog declares: `id`, `title`, `cap` (the
+   capability it touches, or `-`), `persona` (from `docs/personas.md` - an item that serves
+   no persona is parked, not queued), `owner` (the **role** that must act: `product`,
+   `architect`, `dev` or `agent`), `why` (one line), `DoD` (the observable finish line -
+   "spec is buildable", "ADR Accepted", "drift resolved"), `status: todo`. A row missing
+   `cap`, `persona` or `owner` fails the backlog's own Definition of Ready, so it cannot be
+   pulled - writing it short only moves the work to whoever pulls it. Slot it by
+   **risk x leverage** (money / security / external contracts / data integrity first; then
+   churn), not at the bottom by default.
 
 5. **Do not do the work now**, and do not make the decision here - "write an ADR for X"
    is a backlog item; the decision itself is made in the ADR when the item is worked.

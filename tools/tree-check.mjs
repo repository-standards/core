@@ -122,7 +122,11 @@ const FACT_PATTERNS = [
 let factFails = 0;
 for (const s of FACT_SURFACES) {
   if (!existsSync(s)) continue;
-  const body = readFileSync(s, "utf8");
+  // Markup is stripped before matching. The landing carried `20<small>rules ...</small>` for
+  // weeks against a spec that had grown past twenty: the digits and the word were adjacent to
+  // a reader and separated by a tag to the regex, so the one guard written for this exact
+  // failure reported green over a live instance of it on the most public surface.
+  const body = readFileSync(s, "utf8").replace(/<[^>]+>/g, " ");
   for (const [re, why] of FACT_PATTERNS) {
     const m = body.match(re);
     if (m) { fail(`${s} hardcodes "${m[0]}" - ${why}`); factFails++; }

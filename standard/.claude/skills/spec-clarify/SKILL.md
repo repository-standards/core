@@ -19,7 +19,15 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 Goal: Detect and reduce ambiguity or missing decision points in the active feature specification and record the clarifications directly in the spec file.
 
-Note: This clarification workflow is expected to run (and be completed) BEFORE invoking `/spec-plan`. If the user explicitly states they are skipping clarification (e.g., exploratory spike), you may proceed, but must warn that downstream rework risk increases.
+<!-- PATCHED(repository-standards): upstream lets the user wave the gate off for a spike. R12
+     makes passing it a MUST and the entry file says never take a spec past it, so the escape
+     hatch contradicted both - and the gate is enforced by script, so waving it off here only
+     produced a later, more confusing refusal. -->
+Note: this workflow runs and completes BEFORE `/spec-plan`. There is no skip: the gate is
+what earns `Status: ready-to-develop`, and `/spec-plan` and `/spec-tasks` refuse a spec that
+has not passed it. If the user asks to skip ahead, show what is still open instead - an
+exploratory spike is a legitimate reason to *defer* an answer, and a recorded deferral is an
+answer. It is not a reason to leave the question unwritten.
 
 Execution steps:
 
@@ -145,12 +153,18 @@ Execution steps:
        - Under it, create (if not present) a `### Session YYYY-MM-DD` subheading for today.
     - Append a bullet line immediately after acceptance: `- Q: <question> → A: <final answer>`.
     - Then immediately apply the clarification to the most appropriate section(s):
-       - Functional ambiguity → Update or add a bullet in Functional Requirements.
-       - User interaction / actor distinction → Update User Stories or Actors subsection (if present) with clarified role, constraint, or scenario.
-       - Data shape / entities → Update Data Model (add fields, types, relationships) preserving ordering; note added constraints succinctly.
-       - Non-functional constraint → Add/modify measurable criteria in Success Criteria > Measurable Outcomes (convert vague adjective to metric or explicit target).
-       - Edge case / negative flow → Add a new bullet under Edge Cases / Error Handling (or create such subsection if template provides placeholder for it).
-       - Terminology conflict → Normalize term across spec; retain original only if necessary by adding `(formerly referred to as "X")` once.
+       <!-- PATCHED(repository-standards): routed to the sections capability-spec.template.md
+            actually has. Upstream targets Functional Requirements / User Stories / Data Model /
+            Success Criteria > Measurable Outcomes - none of which exist here, so answers landed
+            in sections the agent had to invent. -->
+       - Functional ambiguity → update or add a bullet under `## Requirements` in the right `### <Area>`.
+       - Who may do this / actor distinction → `## Trust boundaries` (who can call it, with what proof); if it changes who the capability is for, correct the `Serves` field instead of adding a roster.
+       - Data shape, fields, enums, constraints → `## Data contracts`, quoting real identifiers; add the matching row to `## Interface contracts` where it crosses the boundary.
+       - Non-functional constraint → a testable bullet under `## Requirements`, plus the acceptance criterion that verifies it. Convert the vague adjective into a number.
+       - Edge case / negative flow → `## Edge cases`, and the error row in the `## Interface contracts` table if it surfaces to a caller.
+       - Rule, ordering, rounding, concurrency → `## Algorithms & rules` as numbered steps.
+       - Something that must always hold → `## Invariants`, with an acceptance criterion covering it.
+       - Terminology conflict → normalize the term across the spec and record it in `## Core concepts`; retain the original only if necessary by adding `(formerly referred to as "X")` once.
     - If the clarification invalidates an earlier ambiguous statement, replace that statement instead of duplicating; leave no obsolete contradictory text.
     - Save the spec file AFTER each integration to minimize risk of context loss (atomic overwrite).
     - Preserve formatting: do not reorder unrelated sections; keep heading hierarchy intact.

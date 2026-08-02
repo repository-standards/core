@@ -1,7 +1,6 @@
 ---
 name: pre-pr-review
 description: Self-review the current branch diff in a clean, independent pass before opening a PR - run local quality checks, then review the diff as if you did not write it, and fix findings first.
-disable-model-invocation: true
 ---
 
 # Pre-PR review

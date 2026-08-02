@@ -18,8 +18,11 @@ The whole normative core fits one page: [`standard/SPEC.md`](standard/SPEC.md) -
 numbered MUST/SHOULD rules. Everything else here explains or enforces them. One
 orientation rule for this repo: the root is this project's own life; `standard/`
 is the standard you adopt - the two share names (docs, specs, skills) but never
-content. The daily lifecycle skills ship inside the tree (`standard/.claude/skills/`);
-the root `skills/` holds only the transition router that brings a repo in.
+content. One exception, and it is the one worth knowing:
+[`docs/method/`](docs/method/README.md) is in the root but belongs to you - the method
+manual is adopted **by reference**, always latest, never copied (ADR-023). The daily
+lifecycle skills ship inside the tree (`standard/.claude/skills/`); the root `skills/`
+holds only the transition router that brings a repo in.
 
 Status: pre-1.0 (the 0.7.x line), mechanics field-run on the author's production
 repos. No release tags exist yet - a degit today resolves to the default branch,
@@ -101,6 +104,7 @@ that is actually true. All of it doubles as the context an AI agent can act on.
   for each. [`decision-records/`](standard/docs/decision-records/README.md), [`checklist.md`](docs/method/checklist.md)
 - **A backlog that feeds itself** - items fall out of spec deltas, code<->spec drift, and
   onboarding; they leave only when their definition of done is met.
+  [`backlog.md`](standard/docs/backlog.md)
 - **Guardrails as tooling** - dependency-free guards (spec-structure, spec coupling +
   `--audit`, self-verify), secret scan, remote-DB write guard, hardened CI.
 - **A taxonomy map** - where each kind of knowledge lands, so "ADR or rule?" stops

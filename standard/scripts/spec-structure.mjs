@@ -87,7 +87,19 @@ const personasPath = ["docs/personas.md", "personas.md"].find((p) => existsSync(
 if (!personasPath && files.some(isCapSpec)) rosterMissing = true;
 if (personasPath) {
   const roster = new Set();
-  for (const line of readFileSync(personasPath, "utf8").split("\n")) {
+  const personaLines = readFileSync(personasPath, "utf8").split("\n");
+  // Only the roster section counts. The shipped template also carries a filled worked
+  // example, and scanning the whole file line by line reads those names as live personas -
+  // which would let a spec "serve" someone from the example's domain and pass the gate.
+  // Repos whose personas file has no such heading keep the whole-file scan.
+  const hasRosterHeading = personaLines.some((l) => /^##\s+the roster\b/i.test(l));
+  let inRoster = !hasRosterHeading;
+  for (const line of personaLines) {
+    if (hasRosterHeading && /^##\s/.test(line)) {
+      inRoster = /^##\s+the roster\b/i.test(line);
+      continue;
+    }
+    if (!inRoster) continue;
     const m = line.match(/^\|\s*`([^`]+)`\s*\|/); // roster rows: | `Name` | ...
     if (m && !m[1].includes("<")) roster.add(m[1].toLowerCase());
   }

@@ -5,6 +5,11 @@
 | **Status** | Proposed |
 | **Date** | YYYY-MM-DD |
 | **Author** | {{AUTHOR}} |
+| **Superseded by** | - |
+
+<!-- An Accepted record is never edited into a different decision. When it stops being
+     true, flip Status to `Superseded` and name the record that replaced it in the row
+     above; the text below stays as it was written. -->
 
 ## Context
 

@@ -9,6 +9,161 @@ The simplification wave - the standard put on one page, in one tree, with one
 engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
 align engine, Layer 2 and the product spine.
 
+### Navigation leads where it promises (2026-08-02)
+
+- **The shipped entry point never named the rules it cited** - `AGENTS.md` referred to R23
+  and R24 without saying what an R-number is or where it lives, and `SPEC.md` was reachable
+  only from `README.md`, which `AGENTS.md` does not link. An agent working inside an adopted
+  repo could read the whole entry file and never find the normative page it is measured
+  against. It now links the spec, the manifest and the verification doc in one sentence.
+- **The tree ships knowing it is not compliant yet, and now says what to do about it** - a
+  freshly adopted repo owes `.standards-version`, a filled persona roster and a capability
+  map before anything is green, and the remedy the tree pointed at was the transition skill,
+  which by design never ships into a consuming repo. A "First 30 minutes" section replaces
+  the dead pointer with the seven steps, ending at drift 0 and only then enabling the
+  workflow templates - which ship disabled, contrary to what a reader of "the self-verify
+  gate runs in CI" would assume.
+- **Three lifecycle skills could not be started by the agent** - `spec-update`,
+  `pre-pr-review` and `update-to-version` carried `disable-model-invocation`, while the entry
+  file tells the agent to update every affected spec on its own, the contribution guide makes
+  `pre-pr-review` the gate before a pull request, and the product's whole pitch is asking in
+  one sentence. A user who has to know the slash command has been handed a manual. The flags
+  are gone and the loop section names all three, plus `add-to-backlog`, which it never
+  mentioned at all.
+- **The docs hub listed 8 of 17 entries** - `personas.md`, `backlog.md`, `self-verify.md`,
+  `prerequisites.md`, `ideas/`, `journeys/`, `research/`, `runbooks/`, `analytics.template.md`
+  and `facts.example.json` were reachable only by knowing they existed. This is the file an
+  adopter's agent lands on when it goes looking for docs.
+- **`ADR-0NN` meant two different things at once** - the tree cites the standard's own
+  decisions dozens of times, while telling the adopter to number theirs from `ADR-001` in an
+  index that reads "(none yet)". One line now says which is which, with the address.
+- **The supersede rule had no slot in the form** - the policy says an accepted record gains a
+  `Superseded by` line, and neither template had that row. Both do now.
+- **The coupling guard's documented behaviour was the team-profile one, stated as universal** -
+  it blocks at `scale` and advises at `core`, which is what the workflow and the rule both
+  say; only `enforcement.md` disagreed. The full-tree audit blocks at both, because an
+  unmapped spec is a hole rather than a coordination cost.
+- **The taxonomy sent adopters to a path that will never exist in their repo** - a single
+  `docs/open-questions.md` file. The standard ships no such artifact; the row now offers the
+  two forms that actually work and says why the standard keeps its own separately.
+- **`docs/method/` was filed as this project's private life and is not** - its nine documents
+  are adopter-normative, taken by reference at latest. A reader applying the zone rule as
+  written discarded the taxonomy, the adoption gates, the decision checklist and ways of
+  working. Both the README and `AGENTS.md` now carry the exception.
+- **This repo says plainly that it is not itself an aligned repo** - no pin, no manifest copy,
+  no `CLAUDE.md`, and the altitude order lives in the README rather than in `AGENTS.md`. That
+  is deliberate, and until now nothing said so while `PRODUCT.md` claimed the standard follows
+  its own rules. It follows its own decisions, specs, backlog, personas and guards; the
+  adopter-side pin is proved instead by the skeleton check on the pristine tree.
+- **A blank line had pushed the newest decision out of its own table** - the ADR index broke
+  after ADR-026, so ADR-027 rendered as a paragraph of pipe characters. Neither the link check
+  nor the site check can see a table that stopped being a table.
+
+### The tree stops shipping fiction as content (2026-08-02)
+
+- **The persona roster shipped three invented people** - `Owner-operator Olga`, `Agency admin
+  Adam` and `Guest Gabor`, from a rental-property product, sat under the instruction "List the
+  real customer/user types for this product" with nothing marking them as an example. An
+  adopter inherits them as their roster, and `spec-structure.mjs` reads that table as the live
+  roster the persona gate checks specs against - so a spec could serve someone from a domain
+  the repo has nothing to do with and pass. The table is now a placeholder row; the filled
+  version moved under the "Worked example (delete after filling your roster)" heading that
+  already existed.
+- **Moving them was not enough** - the roster scan read the whole file line by line, so the
+  example table would have been picked up wherever it sat. The scan is now bounded to the
+  `## The roster` section, with the whole-file behaviour kept for personas files that carry no
+  such heading.
+- **The backlog shipped three invented items** the same way - `SPEC-1`, `ADR-1`, `DRIFT-1`
+  read as work the adopting repo owes itself. They are an example block now, outside the table.
+- **The placeholder check could not see the file it exists for** - it matched `<Repo>` and
+  `<Product>` case-sensitively, and the entry file ships `# AGENTS.md - <repo> ...` in lower
+  case. It also scanned three files while the tree ships placeholders in seven. Both fixed;
+  the bracket form excludes `:` and `/` so markdown autolinks are not mistaken for tokens.
+  On the pristine tree it now warns on all seven, `AGENTS.md` included.
+- **`add-to-backlog` wrote rows that failed the backlog's own Definition of Ready** - it said
+  "write the row with every column" and then listed four of seven, omitting `cap`, `persona`
+  and `owner`, which are exactly what makes an item pullable. Writing a row short only moves
+  the work to whoever picks it up.
+
+### The spec engine speaks the standard's language (2026-08-02)
+
+- **The engine wrote a spec shape the standard does not have** - `/spec-specify` filled User
+  Scenarios, Functional Requirements, Success Criteria and Key Entities; the capability spec
+  template has none of them. The engine was extracted from upstream and its paths, directory
+  layout and template source were patched, but the sections it fills were not. A spec written
+  to them could not be reconciled against the shape the guards check.
+- **Worse, it gated against buildable specs** - the quality checklist required "no
+  implementation details" and "written for non-technical stakeholders", while the spec method
+  requires contracts quoted verbatim: real field names, real enums, real endpoints, an
+  exhaustive error table. The two rules cannot both hold, and the one the engine enforced was
+  the wrong one. Upstream's example of a *bad* success criterion - a p95 latency target - is
+  exactly what a buildable requirement looks like here. The checklist now gates on the tier
+  the spec declares.
+- **Tests stopped being a per-feature preference** - `/spec-tasks` said "Tests are OPTIONAL:
+  only generate test tasks if explicitly requested", which quietly opted a repo out of its own
+  recorded testing-strategy decision, one feature at a time. It also disagreed with
+  `/spec-implement` two files away, which mandated TDD. Tasks now follow the recorded strategy,
+  treat money, security, external-contract and data-integrity paths as non-negotiable, and
+  emit the missing decision as a task where no record exists.
+- **One asking protocol instead of two** - specify presented up to three questions together;
+  clarify asks up to five, one at a time, each with a recommended answer. Both ran, in that
+  order, so the same gap was raised twice and answers given to specify landed outside the
+  `## Clarifications` section the gate reads. Specify now marks gaps and hands off; clarify
+  owns the asking.
+- **Clarify lost its bypass** - upstream let the user wave the gate off for an exploratory
+  spike, while the entry file and the rule both say a spec never passes to planning without it.
+  A spike is a reason to defer an answer, and a recorded deferral is an answer; it is not a
+  reason to leave the question unwritten.
+- **Answers land in sections that exist** - clarify routed them to Functional Requirements,
+  User Stories, Data Model and Success Criteria > Measurable Outcomes. They now route to
+  Requirements, Data contracts, Interface contracts, Algorithms & rules, Invariants, Edge cases
+  and Trust boundaries, with the error table treated as part of the contract.
+- **Tasks group by requirement slice** - one Requirements area plus the acceptance criteria
+  that verify it, ordered by risk x leverage. The upstream unit was a user story with a
+  P1/P2/P3 priority, and a capability spec carries neither, so `tasks-template.md` asked the
+  agent to extract something that was never there.
+
+### The agent guards stop failing open (2026-08-02)
+
+- **Without `jq`, every guard passed everything and said nothing** - `read_command()` is a
+  `jq` call, so on a machine without it `CMD` came out empty, each guard cleared its own
+  `[ -n "${CMD}" ]` check and exited 0. The output was byte-identical to a clean pass, so
+  the remote-database, force-push and CI-secret protection R19 promises was simply absent
+  with nothing to signal it. `deny()` was built on `jq` too, so even a decision to refuse
+  produced malformed JSON.
+- **A guard that cannot read the command now refuses it** - `deny()` escapes its own JSON
+  with `sed`/`awk` and no longer needs the tool that may be missing; a missing `jq` is
+  itself a denial, and so is a `lib.sh` that will not load. The denial names the install
+  command, because the failure mode is a one-time setup gap, not a policy dispute.
+- **The regression is covered rather than promised** - `verifyAgentGuards.sh` runs a guard
+  on a `PATH` holding everything except `jq` and requires a denial. The same command with
+  `jq` present is allowed, so the case discriminates instead of passing by construction.
+- **The secret scan stopped exempting the folder most likely to hold a live secret** - the
+  gitleaks allowlist waived every markdown file under `docs/`, and `docs/discovery/` is
+  precisely where the standard instructs the agent to paste meeting notes, mails and
+  transcripts, while runbooks carry real command lines. Placeholder-shaped findings in
+  templates stay covered by the pattern allowlist, which matches the secret itself.
+- **`docs/prerequisites.md` ships** - what has to be installed before any of this protects
+  anything, and what each absence actually costs. It is a page rather than a `self-verify`
+  check on purpose: a laptop missing `jq` is not repository drift, and counting it as drift
+  would make the number mean two different things.
+
+### The stranded stack phase comes home (2026-08-01)
+
+- **The align router's third phase existed and was never merged** - `stack.md` sat on a
+  branch from 22 July while the router described stack adaptation inline and pointed at
+  nothing. Found by clearing the stale branches: of eight, seven were fully landed under
+  different SHAs and one held this.
+- **What it adds over the inline text** - the wave order by blast radius (what protects,
+  then what shapes code as its own PR because the diff noise is real, then what proves,
+  last what automates), the rule that a kept competing tool is a recorded exception with
+  its trade-off named rather than a fight, and the reminder that the starter is a
+  reference, never a second app beside the code.
+- **Reconciled with what the router became since** - the branch's own edit to the router
+  was the older, thinner form and was dropped in favour of the current text; only the
+  phase file and the pointer to it survive. Technology knowledge still never enters this
+  repo: the phase reads the stack repo's `ADAPTING.md` and `DECISIONS.md`.
+
 ### Adopters get the derived-facts check, and R4 says why (2026-08-01)
 
 - **`scripts/facts-check.mjs` ships** - the check that caught this repo's own stale

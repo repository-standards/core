@@ -27,6 +27,33 @@ This repo follows repository-standards at the version pinned in
 technology layer (Layer 2): `self-verify` counts one drift number across both,
 and the rationale behind every stack entry lives in that stack repo's DECISIONS.
 
+The rules it is measured against are the numbered rules in [`SPEC.md`](SPEC.md) -
+where this file cites R11 or R24, that is what it means.
+[`standard.manifest.json`](standard.manifest.json) is their machine-readable
+projection and [`docs/self-verify.md`](docs/self-verify.md) is how they are checked.
+
+## First 30 minutes (a freshly adopted repo)
+
+Until these are done the repo is not aligned, and enabling the CI templates first
+only turns that into a red build on someone's unrelated pull request:
+
+1. Write `.standards-version` with the version this tree came from.
+2. Fill this file: the repo map, Commands, the working language, and the hard bans
+   at the bottom. They ship as empty slots on purpose - nobody else can fill them.
+3. Fill [`docs/personas.md`](docs/personas.md). The persona gate has nothing to hold
+   without it, and every capability spec must name someone from that roster.
+4. Author `specs/capability-map.json` from
+   [`specs/capability-map.example.json`](specs/capability-map.example.json). Absent, the
+   coupling guard exits zero and quietly checks nothing.
+5. Decide the profile - `core` for a solo repo, `scale` for a team - and write it as the
+   manifest copy's top-level `profile`.
+6. Run `node scripts/self-verify.mjs` until it reports drift 0.
+7. Only then enable the workflows under `.github/` - they ship disabled as templates.
+
+An agent aligning a repo from a checkout of the standards repo runs its transition
+skill instead, which does all of the above; that skill never ships here, so a repo
+that already has this tree follows the list.
+
 ## Repo map
 
 | Path | Purpose |
@@ -37,6 +64,10 @@ and the rationale behind every stack entry lives in that stack repo's DECISIONS.
 ## Commands
 
 Common commands (install, dev, build, test, checks).
+
+Before any of it, the toolchain the shipped guards need must be present -
+[`docs/prerequisites.md`](docs/prerequisites.md). Node and `jq` are not optional: without
+`jq` the `PreToolUse` guards deny every Bash command rather than pass it unchecked.
 
 ## Conventions
 
@@ -116,8 +147,19 @@ Do not wait to be asked. The standard's loop is **AI-led** (ADR-010; the clarify
   instead.
 - **Ask once, up front**: will the user author the technical detail, or should you
   propose it? Either way you propose and guide - hand-holding is the product.
+- **Work surfaces that is not this change** -> run `add-to-backlog` rather than doing it now
+  or losing it: one row with its source, the role that must act, and what done looks like.
+- **The branch is ready for a pull request** -> run `pre-pr-review` yourself, before pushing.
+  Local checks, then read the diff as if someone else wrote it, then fix what it finds. A
+  review that happens after the push is a review of something already published.
+- **The user asks to move to a newer standard version** -> run `update-to-version`. It reads
+  the delta between the pin and the target and applies only that; it is a dependency bump, not
+  a re-scaffold, and it ends at drift 0 or it is not finished.
 - **On request, explain simply**: any ADR/BDR/spec, in plain language with examples
   anchored to `docs/personas.md` - the PO must never have to gate what they cannot read.
+
+None of these skills waits to be invoked by name. A user who has to know the slash command
+has been handed a manual, which is the opposite of the point.
 
 ## What you must not do
 

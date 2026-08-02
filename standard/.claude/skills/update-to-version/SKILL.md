@@ -1,7 +1,6 @@
 ---
 name: update-to-version
 description: Update a repo that already follows repository-standards from its current pinned version to a target version - read the delta between the two versions, apply just that (adapted to this repo, preserving local deviations), bump .standards-version, then self-verify. Not a re-scaffold.
-disable-model-invocation: true
 ---
 
 # update-to-version

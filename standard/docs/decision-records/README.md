@@ -57,6 +57,12 @@ Naming: `ADR-NNN-slug.md` (3-digit, gapless, never reused). Same for BDR. A reti
 record is marked `Superseded` / `Withdrawn`, not deleted - the number stays a
 permanent anchor.
 
+> **`ADR-0NN` inside a file the standard shipped means the standard's own decision**,
+> not a record in this repo. Those live at
+> [repository-standards/docs/decision-records](https://github.com/bodurkalukasz/repository-standards/tree/main/docs/decision-records).
+> This repo's own records start at `ADR-001` and are indexed in
+> [`adr/README.md`](adr/README.md) - the two numbering lines never meet.
+
 > **Decision records hold *why*, not *how it behaves*.** Behavior lives in the
 > [living capability specs](../../specs/README.md); structure lives in
 > `ARCHITECTURE.md`. There is no TDR stream - "living technical design" is absorbed

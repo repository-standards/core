@@ -3,7 +3,12 @@
 set -uo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-. "${DIR}/lib.sh"
+# Fail closed on a missing or unreadable lib.sh: without it deny() is undefined, read_command
+# is undefined, CMD comes out empty and the guard exits 0 - protection gone, nothing printed.
+. "${DIR}/lib.sh" || {
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Blocked by repository policy: the agent guard could not load .claude/hooks/lib.sh, so this command was never checked."}}\n'
+  exit 0
+}
 
 CMD=$(read_command)
 [ -n "${CMD}" ] || exit 0

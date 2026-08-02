@@ -49,8 +49,8 @@ Before any phase runs, one intake pass:
 | **HAS `.standards-version`, wants the pin moved** | Hand off to `/update-to-version` - the repo is already on the standard; this skill gets a repo *to* the pin, not past it. |
 | **HAS `.standards-version`, wants a technology stack added** | Run the **Technology best practices** step below against the stack's `stack.manifest.json`; skip the Layer 1 waves - the pin already covers them. |
 
-`greenfield.md` and `onboard.md` are phase files of this skill - they run inside it,
-never as separate skills.
+`greenfield.md`, `onboard.md` and `stack.md` are phase files of this skill - they
+run inside it, never as separate skills.
 
 **Where this runs.** From a checkout of `repository-standards` - this skill is never
 shipped to a client repo. The tree you reconcile the target against is `standard/` in
@@ -147,14 +147,16 @@ fourth route).
    composition rule - the starter degits into the repo root first, the Layer 1
    tree lays over it (see `greenfield.md`, step 4) - then copy
    `stack.manifest.json` from the stack checkout into the new repo.
-   Brownfield: the same machinery as Layer 1, on the stack's own data - read
-   `stack.manifest.json` from a checkout of the stack repo, classify the target
-   against every entry (missing / drifted / ok; `merge`-class configs diff
-   against the starter's reference copy), propose payoff-ordered waves, apply
-   adapted - never a second scaffold beside the code. Close by copying the
-   stack manifest into the repo: from then on `self-verify` counts one drift
-   across both layers. The DECISIONS file is the why behind every entry -
-   quote it when the user asks.
+   Brownfield: run the [stack adaptation phase](stack.md) - the same machinery
+   as Layer 1, on the stack's own data - read `stack.manifest.json` from a
+   checkout of the stack repo, classify the target against every entry
+   (missing / drifted / ok; `merge`-class configs diff against the starter's
+   reference copy), propose waves ordered by blast radius, apply adapted -
+   never a second scaffold beside the code. Close by copying the stack
+   manifest into the repo: from then on `self-verify` counts one drift across
+   both layers. The DECISIONS file is the why behind every entry - quote it
+   when the user asks; technology-specific migration notes come from the stack
+   repo's ADAPTING.md, never from this skill.
 5. **No match in the registry:** say so plainly, then offer the fallback: a
    researched best-practices document for the detected technology, shaped like
    the node stack's DECISIONS (summary table first; per axis the pick, a short

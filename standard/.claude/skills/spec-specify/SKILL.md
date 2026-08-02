@@ -94,17 +94,29 @@ Given that feature description, do this:
          - No reasonable default exists
        - **LIMIT: Maximum 3 [NEEDS CLARIFICATION] markers total**
        - Prioritize clarifications by impact: scope > security/privacy > user experience > technical details
-    4. Fill User Scenarios & Testing section
-       If no clear user flow: ERROR "Cannot determine user scenarios"
-    5. Generate Functional Requirements
-       Each requirement must be testable
-       Use reasonable defaults for unspecified details (document assumptions in Assumptions section)
-    6. Define Success Criteria
-       Create measurable, technology-agnostic outcomes
-       Include both quantitative metrics (time, performance, volume) and qualitative measures (user satisfaction, task completion)
-       Each criterion must be verifiable without implementation details
-    7. Identify Key Entities (if data involved)
-    8. Return: SUCCESS (spec ready for planning)
+    <!-- PATCHED(repository-standards): the sections are the standard's template, not the
+         engine's. Upstream fills User Scenarios / Functional Requirements / Success
+         Criteria / Key Entities; none of those exist in capability-spec.template.md, and
+         a spec written to them cannot be reconciled against the shape the guards check. -->
+    4. Fill Purpose, Scope and Out of scope
+       If the boundary cannot be determined: ERROR "Cannot determine the capability's boundary"
+    5. Fill Core concepts, then the contracts the declared tier requires
+       buildable (the default, R9): Data contracts and Interface contracts quoted VERBATIM -
+         real table and field names, real enums, real endpoints and methods, and the
+         exhaustive error table. A paraphrased contract is not a contract
+       behavioral (the escape hatch): contracts may stay descriptive, and the spec MUST
+         state why the buildable tier was not met
+    6. Generate Requirements, each testable; add Invariants, and Algorithms & rules
+       wherever the logic is non-trivial (numbered implementable steps, not prose)
+       Reasonable defaults for unspecified details are fine - record each one under
+       Open questions rather than letting it pass silently
+    7. Write Acceptance criteria as Given/When/Then covering the happy path, every error
+       path, every edge case and every state transition. Every Invariant must be covered
+       by at least one of them
+    8. Set the front-matter fields the template declares: Spec tier, Serves (a persona
+       from `docs/personas.md` - a spec that serves nobody fails the structure guard),
+       Status, Success metric
+    9. Return: SUCCESS (spec ready for the clarify loop)
 
 6. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
 
@@ -119,30 +131,36 @@ Given that feature description, do this:
       **Created**: [DATE]
       **Feature**: [Link to spec.md]
 
+      <!-- PATCHED(repository-standards): upstream gates on "no implementation details",
+           which is the opposite of what a buildable spec is. R9 makes buildable the
+           default and specs/README.md requires contracts quoted verbatim - real field
+           names, enums, endpoints. The checklist now gates on the tier the spec declares. -->
       ## Content Quality
 
-      - [ ] No implementation details (languages, frameworks, APIs)
-      - [ ] Focused on user value and business needs
-      - [ ] Written for non-technical stakeholders
-      - [ ] All mandatory sections completed
+      - [ ] Spec tier is declared, and the spec meets it: buildable means an agent could
+            rebuild and verify this capability from the spec alone; behavioral says why not
+      - [ ] Contracts quote real identifiers verbatim, never paraphrase (buildable tier)
+      - [ ] Serves names a persona from `docs/personas.md`
+      - [ ] Success metric names the KPI this capability moves, or says why "n/a"
+      - [ ] All applicable template sections completed, section order preserved
 
       ## Requirement Completeness
 
-      - [ ] No [NEEDS CLARIFICATION] markers remain
+      - [ ] No `[NEEDS ...]` markers of any type remain unrecorded - a deferral is an
+            answer written down, never a dropped question
       - [ ] Requirements are testable and unambiguous
-      - [ ] Success criteria are measurable
-      - [ ] Success criteria are technology-agnostic (no implementation details)
-      - [ ] All acceptance scenarios are defined
+      - [ ] Every Invariant is covered by at least one acceptance criterion
+      - [ ] Acceptance criteria cover the happy path, every error path, every edge case
+            and every state transition
       - [ ] Edge cases are identified
-      - [ ] Scope is clearly bounded
-      - [ ] Dependencies and assumptions identified
+      - [ ] Scope and Out of scope are bounded, and Out of scope names the owning capability
+      - [ ] Open questions records what is genuinely unresolved, or says "None known."
 
       ## Feature Readiness
 
-      - [ ] All functional requirements have clear acceptance criteria
-      - [ ] User scenarios cover primary flows
-      - [ ] Feature meets measurable outcomes defined in Success Criteria
-      - [ ] No implementation details leak into specification
+      - [ ] Every requirement traces to an acceptance criterion
+      - [ ] Cross-capability interactions name and link the other spec
+      - [ ] Trust boundaries filled where the capability touches money, auth or personal data
 
       ## Notes
 
@@ -163,40 +181,15 @@ Given that feature description, do this:
         3. Re-run validation until all items pass (max 3 iterations)
         4. If still failing after 3 iterations, document remaining issues in checklist notes and warn user
 
-      - **If [NEEDS CLARIFICATION] markers remain**:
-        1. Extract all [NEEDS CLARIFICATION: ...] markers from the spec
-        2. **LIMIT CHECK**: If more than 3 markers exist, keep only the 3 most critical (by scope/security/UX impact) and make informed guesses for the rest
-        3. For each clarification needed (max 3), present options to user in this format:
-
-           ```markdown
-           ## Question [N]: [Topic]
-
-           **Context**: [Quote relevant spec section]
-
-           **What we need to know**: [Specific question from NEEDS CLARIFICATION marker]
-
-           **Suggested Answers**:
-
-           | Option | Answer | Implications |
-           |--------|--------|--------------|
-           | A      | [First suggested answer] | [What this means for the feature] |
-           | B      | [Second suggested answer] | [What this means for the feature] |
-           | C      | [Third suggested answer] | [What this means for the feature] |
-           | Custom | Provide your own answer | [Explain how to provide custom input] |
-
-           **Your choice**: _[Wait for user response]_
-           ```
-
-        4. **CRITICAL - Table Formatting**: Ensure markdown tables are properly formatted:
-           - Use consistent spacing with pipes aligned
-           - Each cell should have spaces around content: `| Content |` not `|Content|`
-           - Header separator must have at least 3 dashes: `|--------|`
-           - Test that the table renders correctly in markdown preview
-        5. Number questions sequentially (Q1, Q2, Q3 - max 3 total)
-        6. Present all questions together before waiting for responses
-        7. Wait for user to respond with their choices for all questions (e.g., "Q1: A, Q2: Custom - [details], Q3: B")
-        8. Update the spec by replacing each [NEEDS CLARIFICATION] marker with the user's selected or provided answer
-        9. Re-run validation after all clarifications are resolved
+      <!-- PATCHED(repository-standards): specify does not ask - it hands off. Upstream asks
+           up to three questions presented together; clarify asks up to five, one at a time,
+           each with a recommended answer. Running both meant the same gaps were raised twice
+           under two protocols, and answers given here landed outside the `## Clarifications`
+           section the gate actually reads. -->
+      - **If `[NEEDS ...]` markers remain**: leave them exactly where they are and finish.
+        Clarify runs next in the same session and owns the question protocol end to end -
+        it is what writes answers into `## Clarifications`, and that section plus zero open
+        markers is what earns `Status: ready-to-develop`. Do not ask the user here.
 
    d. **Update Checklist**: After each validation iteration, update the checklist file with current pass/fail status
 
@@ -212,9 +205,16 @@ Report completion to the user with:
 
 ## Quick Guidelines
 
-- Focus on **WHAT** users need and **WHY**.
-- Avoid HOW to implement (no tech stack, APIs, code structure).
-- Written for business stakeholders, not developers.
+<!-- PATCHED(repository-standards): upstream's "avoid HOW, write for business stakeholders"
+     describes the behavioral tier, which here is the escape hatch and not the default. -->
+- A capability spec is the current truth of one **capability**, never of a ticket, a page
+  or a release. If it surfaces on three screens it is still one spec.
+- **Buildable is the default** (R9): an agent could rebuild and verify the capability from
+  this spec alone. Contracts name real fields, real enums, real endpoints, real error codes.
+- The **behavioral** tier is the escape hatch - a PO writing intent starts here, a developer
+  raises it to buildable. Declaring it obliges the spec to say why.
+- Avoid naming the *implementation* - which framework, which library, which file - but never
+  avoid the *contract*. The contract is the point.
 - DO NOT create any checklists that are embedded in the spec.
 
 ### Section Requirements
@@ -228,7 +228,9 @@ Report completion to the user with:
 When creating this spec from a user prompt:
 
 1. **Make informed guesses**: Use context, industry standards, and common patterns to fill gaps
-2. **Document assumptions**: Record reasonable defaults in the Assumptions section
+2. **Document assumptions**: record each reasonable default under `## Open questions` - the
+   template has no Assumptions section, and an undocumented default is the drift that a
+   later reader mistakes for a decision <!-- PATCHED(repository-standards) -->
 3. **Limit clarifications**: Maximum 3 [NEEDS CLARIFICATION] markers - use only for critical decisions that:
    - Significantly impact feature scope or user experience
    - Have multiple reasonable interpretations with different implications
@@ -248,28 +250,28 @@ When creating this spec from a user prompt:
 - Authentication method: Standard session-based or OAuth2 for web apps
 - Integration patterns: Use project-appropriate patterns (REST/GraphQL for web services, function calls for libraries, CLI args for tools, etc.)
 
-### Success Criteria Guidelines
+### Success metric, and where measurable targets go
 
-Success criteria must be:
+<!-- PATCHED(repository-standards): the template has no "Success Criteria" section. It has a
+     `Success metric` front-matter field (the product KPI) and an Acceptance criteria section
+     (Given/When/Then). Upstream's rule that a measurable target is "too technical" would
+     strip exactly the numbers a buildable spec exists to carry. -->
 
-1. **Measurable**: Include specific metrics (time, percentage, count, rate)
-2. **Technology-agnostic**: No mention of frameworks, languages, databases, or tools
-3. **User-focused**: Describe outcomes from user/business perspective, not system internals
-4. **Verifiable**: Can be tested/validated without knowing implementation details
+**`Success metric`** is a front-matter field, not a section: the one KPI from the product's
+KPI tree this capability moves. A capability that moves none needs a stated why, not an
+invented metric.
 
-**Good examples**:
+**Measurable targets belong in Requirements** and are verified in **Acceptance criteria**.
+They are allowed - required, where the number is load-bearing - to be technical:
 
-- "Users can complete checkout in under 3 minutes"
-- "System supports 10,000 concurrent users"
-- "95% of searches return results in under 1 second"
-- "Task completion rate improves by 40%"
+- "The endpoint responds within 200 ms at p95" is a requirement, and an acceptance criterion
+  can assert it. It is not "too technical"; it is the kind of thing a spec is for.
+- "Users see results instantly" is not a requirement. Nothing can pass or fail it.
 
-**Bad examples** (implementation-focused):
-
-- "API response time is under 200ms" (too technical, use "Users see results instantly")
-- "Database can handle 1000 TPS" (implementation detail, use user-facing metric)
-- "React components render efficiently" (framework-specific)
-- "Redis cache hit rate above 80%" (technology-specific)
+What to keep out is the *implementation*: which cache, which framework, which library. The
+threshold stays, the vendor goes. "Cache hit rate above 80%" names a design choice, so it
+belongs in the plan or an ADR; "a repeated lookup within the same request MUST NOT re-query"
+is the invariant that survives whichever cache is chosen.
 
 ## Done When
 

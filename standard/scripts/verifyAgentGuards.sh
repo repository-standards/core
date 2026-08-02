@@ -3,7 +3,7 @@
 # Checks every guard in .claude/hooks/ denies and allows what it should.
 # A broken guard is silent - the hooks only emit output on a denial - so this is the only signal.
 #
-#   pnpm verify:agent-guards
+#   bash scripts/verifyAgentGuards.sh
 
 set -uo pipefail
 
@@ -71,6 +71,29 @@ check "${SEC}" DENY  "gh variable delete FOO"
 check "${SEC}" DENY  "gh pr list && gh secret set TOKEN --body x"
 check "${SEC}" allow "gh pr create --title x"
 check "${SEC}" allow "gh run list"
+
+# The regression this exists for: read_command() is jq, so without jq CMD came out empty,
+# every guard cleared its own `[ -n "${CMD}" ]` check and exited 0. Protection absent, output
+# identical to a clean pass. Runs one guard on a PATH that has everything except jq.
+echo "== fail-closed when jq is missing"
+NOJQ="$(mktemp -d 2>/dev/null || printf '')"
+if [ -z "${NOJQ}" ] || [ ! -d "${NOJQ}" ]; then
+  printf '  FAIL could not create a temp dir, so the jq-absent case never ran\n'
+  FAILURES=$((FAILURES + 1))
+else
+  for tool in bash dirname sed awk tr grep cat; do
+    src="$(command -v "${tool}" 2>/dev/null)" && ln -sf "${src}" "${NOJQ}/${tool}"
+  done
+  nojq_out=$(printf '{"tool_input":{"command":"echo hello"}}' \
+    | env -i PATH="${NOJQ}" "${NOJQ}/bash" "${HOOKS}/no-force-push.sh" 2>/dev/null)
+  if printf '%s' "${nojq_out}" | grep -q '"permissionDecision":"deny"'; then
+    printf '  ok   DENY  a guard that cannot read the command denies it\n'
+  else
+    printf '  FAIL expected DENY with jq absent, got: %s\n' "${nojq_out:-<no output - the guard passed silently>}"
+    FAILURES=$((FAILURES + 1))
+  fi
+  rm -rf "${NOJQ}"
+fi
 
 echo
 if [ "${FAILURES}" -eq 0 ]; then

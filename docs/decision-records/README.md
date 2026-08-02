@@ -36,7 +36,6 @@ one settled.
 | [024](ADR-024-discovery-dossiers-beside-the-specs.md) | Discovery dossiers beside the specs | `docs/discovery/<topic>/` holds provenance-stamped extracts, never normative; the `Last reconciled:` stamp ends re-asking; typed open markers let a spec draft early and gate honestly | Accepted |
 | [025](ADR-025-the-standard-is-living-latest-is-the-target.md) | The standard is living - latest is the only target | no version ranges or requirements anywhere, ever; every align/update targets latest; `.standards-version` is a bookmark of the last aligned state, never a constraint; references resolve at `main` deliberately | Accepted |
 | [026](ADR-026-rebase-merge-onto-a-linear-main.md) | Rebase-merge onto a linear `main` | branches update by rebase and never back-merge; every PR is based on the mainline; a PR lands as one readable unit - rebase-merge on the paved road, squash where per-commit hygiene is not held (R23) | Accepted |
-
 | [027](ADR-027-the-database-schema-lives-in-the-repo-with-a-typed-twin.md) | The database schema lives in the repo, with a typed twin | executable DDL under `database/schema/` rebuilds the database from a checkout; a typed definition in the stack's idiom is what every access path goes through; the two are a declared 1:1 pair that moves in one PR (R24) | Accepted |
 
 Add one row per record; the template ships in the tree
