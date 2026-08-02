@@ -15,7 +15,7 @@ The loop, its state file, the clarify gate, the setup scripts, the templates, an
 
 ## Out of scope
 
-The spec model itself - capability specs, tiers, personas (`standard/specs/README.md`); coupling enforcement (`spec-guard.mjs`, `spec-structure.mjs`).
+The spec model itself - capability specs, tiers, personas (documented at [`docs/tree/specs.md`](../../docs/tree/specs.md), read at the standard rather than copied into an adopting repo); coupling enforcement (`spec-guard.mjs`, `spec-structure.mjs`).
 
 ## Core concepts
 
