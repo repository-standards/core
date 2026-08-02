@@ -4,6 +4,39 @@
 > founder's voice. If a change ever contradicts this file, the change is wrong or this
 > file must be consciously rewritten first.
 
+## Our vision
+
+**Software should no longer be built around disconnected tools and isolated teams.**
+
+For thirty years the industry has answered every coordination problem by adding another
+place to put things. Requirements went to one tool, decisions to a second, diagrams to a
+third, and the conversation that produced all three went to a fourth. Each of those tools
+is defensible on its own. Together they guarantee that no single place is ever right, and
+that the person who needs the whole picture has to assemble it by hand, from fragments,
+against the clock.
+
+Business, product, engineering and AI should collaborate through **one living repository**:
+one place where knowledge is versioned with the code it describes, validated by the same
+gates that guard the build, and improved continuously rather than rewritten in a panic
+before an audit. Not one more tool alongside the others. The one that makes the others
+optional.
+
+That means the repository has to be genuinely open to people who do not write code. A
+product owner should be able to state behaviour in plain language and be walked, not
+quizzed, to something a developer can build. An analyst should be able to land a domain
+rule where it will be read. A tester should be able to write what "done" means and watch
+it become a test. None of that is a courtesy: a repository that only developers can
+contribute to will always be a partial record of the product, and a partial record is
+exactly what an AI agent cannot work from.
+
+By standardizing **how every role contributes**, this project sets out to turn the
+repository from a source code container into the single source of truth for the whole
+organization - the place you point at when someone asks what the product does, why it does
+it that way, and whether it still holds.
+
+That is the aim. The rest of this document is the itch that produced it, the idea that
+answers it, and the bet we are making on it.
+
 ## The itch
 
 I kept watching the same thing happen, in companies of every size: the product's truth

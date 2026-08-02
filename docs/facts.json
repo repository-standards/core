@@ -45,10 +45,6 @@
       {
         "file": "AGENTS.md",
         "pattern": "npx degit\\n(\\S+?)(?:/standard)?`"
-      },
-      {
-        "file": "site/index.html",
-        "pattern": "npx degit (\\S+?)(?:/standard)? "
       }
     ]
   },
@@ -74,6 +70,10 @@
       {
         "file": "site/index.html",
         "pattern": "class=\"tag mono\">v(\\d+\\.\\d+\\.\\d+)"
+      },
+      {
+        "file": "standard/standard.manifest.json",
+        "pattern": "\"version\": \"(\\d+\\.\\d+\\.\\d+)\""
       }
     ]
   }

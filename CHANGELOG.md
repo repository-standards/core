@@ -14,11 +14,11 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > curated sequence and the record of what really happened, is
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
-## Unreleased
+## 1.0.0 - 2026-08-02
 
-The simplification wave - the standard put on one page, in one tree, with one
-engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
-align engine, Layer 2 and the product spine.
+The first stable line. The simplification wave - the standard put on one page, in
+one tree, with one engine copy - plus everything since 0.7.2: the lifecycle, the
+guided loop, the align engine, Layer 2 and the product spine.
 
 ### Folder READMEs: the ones that teach stay, the ones that restate are gone (2026-08-02)
 

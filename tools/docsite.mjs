@@ -21,6 +21,7 @@
 // No dependencies. Zone 1 tooling - never shipped.
 
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 
 // Form is the core's, content is the repo's: any repo in the ecosystem can carry
 // a site.config.json (brand, repo URL, topbar, page map) and run THIS generator
@@ -34,16 +35,23 @@ const CONFIG = CONFIG_PATH ? JSON.parse(readFileSync(CONFIG_PATH, "utf8")) : {};
 const OUT_DIR = CONFIG.out_dir || "site/docs";
 const GITHUB_REPO_URL = CONFIG.repo_url || "https://github.com/bodurkalukasz/repository-standards";
 const BRAND = CONFIG.brand || "repository-standards";
-const TOPBAR = CONFIG.topbar || [
-  { label: "Landing", href: "../index.html" },
-  { label: "Docs", href: "index.html", on: true },
-  { label: "Node stack \u2197", href: "https://github.com/bodurkalukasz/repository-standards-node", external: true },
-];
+// The header wears the released version, read from its one home rather than restated here.
+const VERSION = readFileSync("VERSION", "utf8").trim();
+// The header is fixed now - brand, version, ecosystem switcher, one link home - so the
+// only thing a site still configures up there is where the switcher's stack entry points.
+// The old `topbar` list is read as a fallback so a config written for the previous header
+// still resolves, but it no longer draws anything.
+const NODE_STACK_URL =
+  CONFIG.node_stack_url ||
+  (CONFIG.topbar || []).find((l) => l.external)?.href ||
+  "https://github.com/bodurkalukasz/repository-standards-node";
 
 // --- the page map (nav order) -----------------------------------------------------
 // group: null renders as a flat top-level link; a string renders a group heading the
 // first time it is seen (consecutive pages sharing a group nest under one heading).
-const PAGES = CONFIG.pages || [
+// Exported so site-check asserts against the real page list instead of re-deriving it
+// by parsing this file - a second, drifting copy of the same map.
+export const PAGES = CONFIG.pages || [
   { src: "README.md", out: "index.html", nav: "Home", group: null },
   { src: "standard/SPEC.md", out: "spec.html", nav: "The spec", group: null },
   { src: "docs/manifesto.md", out: "why.html", nav: "Why", group: null },
@@ -53,6 +61,7 @@ const PAGES = CONFIG.pages || [
   { src: "docs/method/ways-of-working.md", out: "ways-of-working.html", nav: "Ways of working", group: "Concepts" },
   { src: "docs/method/working-with-specs.md", out: "working-with-specs.html", nav: "Working with specs", group: "Concepts" },
   { src: "docs/method/working-with-ai/README.md", out: "working-with-ai.html", nav: "Working with AI", group: "Concepts" },
+  { src: "docs/method/working-language.md", out: "working-language.html", nav: "Working language", group: "Concepts" },
   { src: "docs/method/discovery.md", out: "discovery.html", nav: "Discovery", group: "Concepts" },
   { src: "standard/specs/README.md", out: "specs.html", nav: "Specs", group: "Concepts" },
   { src: "docs/method/self-verify.md", out: "self-verify.html", nav: "Self-verify", group: "Guides" },
@@ -64,12 +73,10 @@ const PAGES = CONFIG.pages || [
   { src: "docs/case-studies/README.md", out: "case-studies.html", nav: "Case studies", group: null },
 ];
 const PAGES_BY_SRC = new Map(PAGES.map((p) => [p.src, p]));
-// Sidebar footer links - a site's own chrome, not the generator's (config first;
-// the default is the core repo's pair).
-const SIDEBAR_LINKS = CONFIG.sidebar_links || [
-  { label: "← Landing", href: "../index.html" },
-  { label: "Node stack (Layer 2) ↗", href: "https://github.com/bodurkalukasz/repository-standards-node", external: true },
-];
+// Sidebar footer links - a site's own chrome, not the generator's. Empty by default:
+// the top bar already carries the way home and the ecosystem switcher, and a second
+// copy in the sidebar is the same fact twice. A downstream site can still set its own.
+const SIDEBAR_LINKS = CONFIG.sidebar_links || [];
 
 // --- path helpers (repo-relative, forward-slash, independent of host OS) ----------
 
@@ -369,43 +376,106 @@ function mdToHtml(markdown, ctx) {
 
 // --- HTML shell (CSS + sidebar nav) --------------------------------------------------
 
-const CSS = `
-.topbar{position:sticky;top:0;z-index:50;background:rgba(13,14,17,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.07)}
-.topbar-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:10px 20px}
-.tb-brand{font-weight:700;text-decoration:none}
-.tb-links{margin-left:auto;display:flex;gap:16px;font-size:14px}
-.tb-links a{text-decoration:none;opacity:.75}
-.tb-links a:hover,.tb-links a.tb-on{opacity:1}
+// Crossing from the landing into the docs must not move the header: same logo position,
+// same switcher, same right edge. That means one spine width for both surfaces, and the
+// landing owns it (--maxw) - the docs read it rather than declaring a second copy. The
+// fallback only covers a site that ships docs without a landing.
+const LANDING_PATH = CONFIG.landing || "site/index.html";
+const SPINE =
+  (existsSync(LANDING_PATH) &&
+    (readFileSync(LANDING_PATH, "utf8").match(/--maxw:\s*([0-9.]+px)/) || [])[1]) ||
+  "1120px";
 
-/* Dark by default, matching the landing page's palette (site/index.html
-   :root vars: ink/surface/line/tx/mid/amber) - the docs and the landing read as one
-   product, nextjs.org-style. Light stays as an explicit user-preference override. */
+const CSS = `
+/* The docs wear the landing's header: same mark, same wordmark, same centred ecosystem
+   switcher. Only the right-hand link differs - here it points back to the homepage. */
+.topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px) saturate(140%);
+  background:linear-gradient(180deg,rgba(8,8,11,.82),rgba(8,8,11,.42));
+  border-bottom:1px solid var(--line2)}
+.topbar-in{max-width:${SPINE};margin:0 auto;display:flex;align-items:center;gap:18px;
+  padding:0 26px;height:66px;position:relative}
+.tb-brand{display:flex;align-items:center;gap:11px;white-space:nowrap;text-decoration:none}
+.tb-mark{height:32px;width:auto;flex:none;display:block}
+.tb-word{display:flex;flex-direction:column;line-height:1}
+.tb-word b{font-weight:750;font-size:16.5px;letter-spacing:-.025em;color:var(--fg)}
+.tb-word i{font-style:normal;font-weight:700;font-size:9.5px;letter-spacing:.34em;
+  text-transform:uppercase;margin-top:4px;
+  background:linear-gradient(96deg,var(--orange) 4%,var(--orange-soft) 34%,var(--violet-soft) 96%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.tb-tag{font-family:var(--font-mono);font-size:11px;color:var(--orange);
+  border:1px solid rgba(255,122,47,.34);border-radius:999px;padding:2px 8px;letter-spacing:.04em}
+.tb-spacer{flex:1}
+.tb-links{display:flex;gap:2px;align-items:center}
+.tb-links a{color:var(--muted);font-size:14.5px;font-weight:600;padding:8px 11px;
+  border-radius:9px;text-decoration:none;white-space:nowrap;transition:color .18s ease,background .18s ease}
+.tb-links a:hover,.tb-links a.tb-on{color:var(--fg);background:rgba(255,255,255,.05)}
+.tb-switch{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+.tb-switch>button{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-sans);
+  font-size:14px;font-weight:650;color:var(--fg);background:rgba(255,255,255,.045);
+  border:1px solid var(--line);border-radius:11px;padding:9px 13px;cursor:pointer;
+  transition:border-color .18s ease,background .18s ease}
+.tb-switch>button:hover{border-color:rgba(255,122,47,.5)}
+.tb-switch .pip{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+.tb-switch .chev{font-size:10px;opacity:.7;transition:transform .2s ease}
+.tb-switch[data-open] .chev{transform:rotate(180deg)}
+.tb-menu{position:absolute;top:calc(100% + 10px);left:50%;width:320px;text-align:left;
+  background:linear-gradient(180deg,#141319,#0e0d12);border:1px solid var(--line);
+  border-radius:16px;padding:10px;box-shadow:0 30px 70px rgba(0,0,0,.6);
+  opacity:0;transform:translateX(-50%) translateY(-8px) scale(.98);pointer-events:none;
+  transition:opacity .18s ease,transform .18s ease}
+.tb-switch[data-open] .tb-menu{opacity:1;transform:translateX(-50%);pointer-events:auto}
+.tb-menu .grp{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted);padding:10px 12px 6px}
+.tb-menu a{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:11px;
+  color:var(--fg);font-size:14.5px;font-weight:600;text-decoration:none}
+.tb-menu a:hover{background:rgba(255,255,255,.06)}
+.tb-menu a small{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-top:1px;line-height:1.35}
+.tb-menu a .now{margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--green);
+  border:1px solid rgba(52,211,153,.35);border-radius:999px;padding:2px 8px}
+.tb-menu .div{height:1px;background:var(--line2);margin:6px 8px}
+@media(max-width:820px){
+  .tb-switch{position:static;transform:none;margin-left:auto}
+  .tb-menu{left:auto;right:0;transform:translateY(-8px) scale(.98)}
+  .tb-switch[data-open] .tb-menu{transform:none}
+  .tb-tag{display:none}
+}
+
+/* One palette with the landing (site/index.html :root) so the two read as one product.
+   Light stays as an explicit user-preference override. */
 :root {
-  --bg: #0D0E11;
-  --bg-sidebar: #101216;
-  --fg: #ECEDEF;
-  --muted: #9BA1AB;
-  --border: #242832;
-  --link: #FFB454;
-  --link-visited: #e79b3e;
-  --code-bg: #16181D;
-  --active-bg: #1b1e24;
-  --active-fg: #FFB454;
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, "JetBrains Mono", "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --bg: #08080b;
+  --bg-panel: #0c0c11;
+  --fg: #f4f2ee;
+  --muted: #a7a3b2;
+  --border: rgba(255,255,255,.08);
+  --line: rgba(255,255,255,.08);
+  --line2: rgba(255,255,255,.05);
+  --orange: #ff7a2f;
+  --orange-soft: #ff9a5c;
+  --violet-soft: #a884ff;
+  --green: #34d399;
+  --link: #ff7a2f;
+  --link-visited: #ff9a5c;
+  --code-bg: rgba(255,255,255,.045);
+  --active-bg: rgba(255,122,47,.09);
+  --active-fg: #ff7a2f;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Inter, system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: light) {
   :root {
     --bg: #ffffff;
-    --bg-sidebar: #f7f7f8;
+    --bg-panel: #f7f7f8;
     --fg: #1a1a1a;
     --muted: #5f6368;
     --border: #e3e3e6;
-    --link: #b06400;
-    --link-visited: #8a4d00;
+    --line: #e3e3e6;
+    --line2: #ececef;
+    --link: #c1490d;
+    --link-visited: #993a0a;
     --code-bg: #f0f1f3;
     --active-bg: #fdeeda;
-    --active-fg: #8a4d00;
+    --active-fg: #c1490d;
   }
 }
 * { box-sizing: border-box; }
@@ -416,33 +486,41 @@ body {
   background: var(--bg);
   color: var(--fg);
   line-height: 1.65;
+  position: relative;
 }
+/* The landing's atmosphere, same colours and same falloff: it lights the top of the page
+   and then gets out of the way. Without it the docs read as a different product. */
+body::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 900px;
+  z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 16% -180px, rgba(255,122,47,.16), transparent 62%),
+    radial-gradient(circle at 78% -120px, rgba(139,92,246,.15), transparent 62%);
+}
+@media (prefers-color-scheme: light) { body::before { display: none; } }
+/* Lifts the content off the glow. Deliberately not z-index'd alongside .topbar: the
+   top bar must keep its 50, or the ecosystem menu opens behind the page. */
+.layout { position: relative; z-index: 0; }
 a { color: var(--link); text-decoration-thickness: from-font; }
 a:visited { color: var(--link-visited); }
 a:hover { text-decoration: none; }
-.layout { display: flex; align-items: flex-start; min-height: 100vh; }
+/* Centred like the landing rather than flush left, on the landing's own spine: the
+   sidebar's left edge and the content's right edge land where the header's logo and
+   its last link already are. */
+.layout { display: flex; align-items: flex-start; min-height: 100vh; max-width: ${SPINE}; margin: 0 auto; padding: 0 16px; }
 .sidebar {
-  flex: 0 0 260px;
-  width: 260px;
-  background: var(--bg-sidebar);
-  border-right: 1px solid var(--border);
+  flex: 0 0 232px;
+  width: 232px;
+  background: transparent;
+  border-right: 1px solid var(--line2);
   position: sticky;
   top: 0;
   height: 100vh;
   overflow-y: auto;
-  padding: 1.25rem 1rem 2rem;
+  padding: 1.25rem 18px 2rem 10px;
 }
-.brand {
-  display: block;
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--fg);
-  text-decoration: none;
-  padding: 0.25rem 0.6rem 1rem;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 0.75rem;
-}
-.brand:visited { color: var(--fg); }
+.nav-foot { margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid var(--line2); }
 .nav-group-title {
   font-size: 0.72rem;
   font-weight: 700;
@@ -465,10 +543,12 @@ a:hover { text-decoration: none; }
 .content {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 2.5rem clamp(1.25rem, 4vw, 3.5rem) 5rem;
+  /* 10px here plus the layout's 16px puts the content's right edge on the header's
+     26px gutter, so the page has one right edge from the top bar down. */
+  padding: 2.5rem 10px 5rem clamp(1.25rem, 3vw, 2.75rem);
 }
 .content > :first-child { margin-top: 0; }
-.prose { max-width: 76ch; }
+.prose { max-width: 76ch; margin: 0 auto; }
 h1, h2, h3, h4, h5, h6 { line-height: 1.3; scroll-margin-top: 1rem; }
 h1 { font-size: 1.9rem; margin: 0 0 1.25rem; }
 h2 { font-size: 1.4rem; margin: 2.25rem 0 1rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
@@ -506,7 +586,7 @@ pre code { background: none; padding: 0; border-radius: 0; font-size: 0.85em; }
 .table-wrap { overflow-x: auto; margin: 0 0 1.25rem; }
 table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
 th, td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; vertical-align: top; }
-th { background: var(--bg-sidebar); font-weight: 600; }
+th { background: var(--bg-panel); font-weight: 600; }
 .page-footer {
   max-width: 76ch;
   margin-top: 3rem;
@@ -573,15 +653,33 @@ function renderPage(page, contentHtml) {
 <style>${CSS}</style>
 </head>
 <body>
-<div class="topbar"><div class="topbar-in"><a class="tb-brand" href="${escapeAttr(TOPBAR[0]?.href || "../index.html")}">${escapeHtml(BRAND)}</a><span class="tb-links">${TOPBAR.map((l) => `<a href="${escapeAttr(l.href)}"${l.on ? ' class="tb-on"' : ""}${l.external ? ' target="_blank" rel="noopener noreferrer"' : ""}>${escapeHtml(l.label)}</a>`).join("")}</span></div></div>
+<header class="topbar"><div class="topbar-in">
+<a class="tb-brand" href="../index.html"><img class="tb-mark" src="../logo-mark.png" alt="" width="428" height="512"><span class="tb-word"><b>repository</b><i>Standards</i></span></a>
+<span class="tb-tag">v${escapeHtml(VERSION)}</span>
+<span class="tb-spacer"></span>
+<nav class="tb-links"><a href="../index.html">Homepage</a></nav>
+<div class="tb-switch" id="ecoswitch">
+<button type="button" aria-haspopup="true" aria-expanded="false" id="ecobtn"><span class="pip"></span> Repository Standards <span class="chev">&#9662;</span></button>
+<div class="tb-menu" role="menu" aria-label="Ecosystem">
+<div class="grp">Core</div>
+<a role="menuitem" href="index.html"><span>Repository Standards<small>the method - align, verify, drift 0</small></span><span class="now">here</span></a>
+<div class="div"></div>
+<div class="grp">Best practices</div>
+<a role="menuitem" href="${escapeAttr(NODE_STACK_URL)}" target="_blank" rel="noopener noreferrer"><span>Node<small>Next.js + Fastify - starter, decisions, adapting guide</small></span></a>
+</div>
+</div>
+</div></header>
 <div class="layout">
 <nav class="sidebar" aria-label="Documentation">
-<a class="brand" href="index.html">${escapeHtml(BRAND)}</a>
 <div class="nav-links">
 ${renderNav(page.out)}</div>
-<div class="nav-links" style="margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,.07)">
-${SIDEBAR_LINKS.map((l) => `<a href="${escapeAttr(l.href)}"${l.external ? ' target="_blank" rel="noopener noreferrer"' : ""}>${escapeHtml(l.label)}</a>`).join("\n")}
-</div>
+${
+  SIDEBAR_LINKS.length
+    ? `<div class="nav-foot">
+${SIDEBAR_LINKS.map((l) => `<a class="nav-link" href="${escapeAttr(l.href)}"${l.external ? ' target="_blank" rel="noopener noreferrer"' : ""}>${escapeHtml(l.label)}</a>`).join("\n")}
+</div>`
+    : ""
+}
 </nav>
 <main class="content">
 <div class="prose">
@@ -590,6 +688,33 @@ ${contentHtml}
 </div>
 </main>
 </div>
+<script>
+(function(){
+  var eco=document.getElementById("ecoswitch"),ecb=document.getElementById("ecobtn");
+  if(!eco||!ecb) return;
+  ecb.addEventListener("click",function(){var o=eco.hasAttribute("data-open");eco.toggleAttribute("data-open");ecb.setAttribute("aria-expanded",String(!o));});
+  document.addEventListener("click",function(e){if(!eco.contains(e.target)){eco.removeAttribute("data-open");ecb.setAttribute("aria-expanded","false");}});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"){eco.removeAttribute("data-open");ecb.setAttribute("aria-expanded","false");}});
+})();
+// Every click here is a full page load, so the sidebar would scroll back to the top and
+// lose your place in the tree. Carry its position across navigations; on a first visit
+// (or a deep link) centre the page you landed on instead.
+(function(){
+  var sb=document.querySelector(".sidebar"); if(!sb) return;
+  var KEY="docs-nav-scroll";
+  try{
+    var y=sessionStorage.getItem(KEY);
+    if(y!==null) sb.scrollTop=parseInt(y,10)||0;
+    // Expanding a branch shifts everything below it, so the restored position can still
+    // leave the page you opened off-screen. Only then do we move.
+    var a=sb.querySelector('[aria-current="page"]');
+    if(a&&(a.offsetTop<sb.scrollTop||a.offsetTop>sb.scrollTop+sb.clientHeight-40)){
+      sb.scrollTop=Math.max(0,a.offsetTop-sb.clientHeight/2);
+    }
+  }catch(e){}
+  sb.addEventListener("scroll",function(){try{sessionStorage.setItem(KEY,sb.scrollTop);}catch(e){}},{passive:true});
+})();
+</script>
 </body>
 </html>
 `;
@@ -638,9 +763,7 @@ function main() {
   mkdirSync(OUT_DIR, { recursive: true });
 
   for (const page of PAGES) {
-    const markdown = readFileSync(page.src, "utf8");
-    const ctx = { srcDir: dirnamePosix(page.src) };
-    const contentHtml = mdToHtml(markdown, ctx);
+    const contentHtml = mdToHtml(readFileSync(page.src, "utf8"), { srcDir: dirnamePosix(page.src) });
     writeFileSync(`${OUT_DIR}/${page.out}`, renderPage(page, contentHtml));
     console.log(`  wrote  ${OUT_DIR}/${page.out}  (from ${page.src})`);
   }
@@ -652,4 +775,5 @@ function main() {
   process.exit(0);
 }
 
-main();
+// Importers (site-check) want PAGES, not a generation run.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();

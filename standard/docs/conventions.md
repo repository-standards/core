@@ -21,6 +21,9 @@ English commits is a first-class setup, not a workaround.
 | User-facing copy | the persona's language | driven by the audience, not the team |
 
 Pick once, record it in `AGENTS.md`, and keep it consistent within an artifact type.
+The reasoning behind the default, the cases where your own language wins, and how to draw
+the boundary when a repo carries more than one: the standard's
+[working-language guide](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/working-language.md).
 
 ### Commits and PRs
 

@@ -1,534 +1,537 @@
-<title>repository-standards</title>
+<title>Repository Standards - the engineering standard for repos built with AI agents</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Agents write code faster than anyone can document it. Repository Standards is a living, versioned, self-verifying engineering standard: point a repo at it and it aligns, guides the build, and proves compliance - drift as a number.">
 <style>
   :root{
-    --mono: ui-monospace, "JetBrains Mono", "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
-    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --ink:#0D0E11; --ink2:#101216; --surface:#16181D; --surface2:#1b1e24;
-    --line:#242832; --line2:#31363f;
-    --tx:#ECEDEF; --mid:#9BA1AB; --dim:#5D636E;
-    --amber:#FFB454; --amber2:#e79b3e;
-    --add:#4EC9A6; --del:#E8705F; --focus:#8fb3ff;
+    --bg:#08080b; --bg2:#0c0c11;
+    --ink:#f4f2ee; --muted:#a7a3b2; --dim:#6f6b7d;
+    --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.05);
+    --orange:#ff7a2f; --orange-soft:#ff9a5c;
+    --violet:#8b5cf6; --violet-soft:#a884ff;
+    --green:#34d399; --del:#ff8a7a;
+    --card:rgba(255,255,255,.025); --card2:rgba(255,255,255,.04);
+    --radius:16px;
+    --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Inter,system-ui,sans-serif;
     --maxw:1120px;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
   body{
-    margin:0;background:var(--ink);color:var(--tx);
-    font-family:var(--sans);font-size:16px;line-height:1.6;
-    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
-    background-image:
-      radial-gradient(60rem 40rem at 78% -8%, rgba(255,180,84,.06), transparent 60%),
-      radial-gradient(50rem 40rem at 0% 8%, rgba(78,201,166,.045), transparent 55%);
-    background-attachment:fixed;
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);font-size:17px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;
   }
   a{color:inherit;text-decoration:none}
-  ::selection{background:rgba(255,180,84,.24);color:#fff}
-  :focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:2px}
+  ::selection{background:rgba(255,122,47,.30);color:#fff}
+  :focus-visible{outline:2px solid var(--orange);outline-offset:3px;border-radius:6px}
 
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+  /* ---- atmosphere: lights the hero only, then the page goes quiet ---- */
+  .atmos{position:absolute;top:0;left:0;width:100%;height:960px;z-index:0;pointer-events:none;overflow:hidden}
+  .atmos .glow{position:absolute;border-radius:50%;filter:blur(20px)}
+  .atmos .g1{top:-260px;left:16%;width:1100px;height:900px;transform:translateX(-50%);
+    background:radial-gradient(circle at center, rgba(255,122,47,.16), transparent 62%);
+    animation:drift1 22s ease-in-out infinite alternate}
+  .atmos .g2{top:-200px;left:78%;width:1100px;height:900px;transform:translateX(-50%);
+    background:radial-gradient(circle at center, rgba(139,92,246,.15), transparent 62%);
+    animation:drift2 26s ease-in-out infinite alternate}
+  .atmos .g3{top:180px;left:50%;width:900px;height:700px;transform:translateX(-50%);
+    background:radial-gradient(circle at center, rgba(139,92,246,.08), transparent 60%);
+    animation:drift3 30s ease-in-out infinite alternate}
+  .grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.04;mix-blend-mode:soft-light;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+  @keyframes drift1{from{transform:translate(-50%,0) scale(1)}to{transform:translate(-46%,3vh) scale(1.08)}}
+  @keyframes drift2{from{transform:translate(-42%,0) scale(1)}to{transform:translate(-48%,4vh) scale(1.12)}}
+  @keyframes drift3{from{transform:translate(-50%,0) scale(1)}to{transform:translate(-54%,-3vh) scale(1.1)}}
+  @media (prefers-reduced-motion: reduce){.atmos .glow{animation:none}}
+
+  header,main,footer{position:relative;z-index:1}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
   .mono{font-family:var(--mono)}
-  .eyebrow{
-    font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--mid);display:inline-flex;align-items:center;gap:10px;
-  }
-  .eyebrow::before{content:"";width:22px;height:1px;background:var(--amber);display:inline-block}
 
-  /* ---- top bar ---- */
-  header{position:sticky;top:0;z-index:50;
-    backdrop-filter:saturate(140%) blur(10px);
-    background:rgba(13,14,17,.72);border-bottom:1px solid var(--line)}
-  .bar{display:flex;align-items:center;gap:20px;height:60px}
-  .brand{font-family:var(--mono);font-weight:600;letter-spacing:-.01em;font-size:15px;display:flex;align-items:center;gap:10px}
-  .brand b{color:var(--amber);font-weight:700}
-  .tag{font-family:var(--mono);font-size:11px;color:var(--amber);border:1px solid rgba(255,180,84,.34);
+  /* ---- header ---- */
+  header{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px) saturate(140%);
+    background:linear-gradient(180deg, rgba(8,8,11,.82), rgba(8,8,11,.42));border-bottom:1px solid var(--line2)}
+  .nav{display:flex;align-items:center;gap:18px;height:66px;position:relative}
+  .brand{display:flex;align-items:center;gap:11px;white-space:nowrap}
+  /* The mark, lifted from the dark-background artwork (white R, gradient hexagon) and
+     knocked out to transparency, so it sits on the page rather than in a black tile. */
+  .brand .mark{height:32px;width:auto;flex:none;display:block}
+  /* The logo's lockup: lowercase name in ink (the artwork's black inverts on a dark page),
+     spaced uppercase STANDARDS carrying the gradient. */
+  .brand .wordmark{display:flex;flex-direction:column;line-height:1}
+  .brand .wordmark b{font-weight:750;font-size:16.5px;letter-spacing:-.025em;color:var(--ink)}
+  .brand .wordmark i{font-style:normal;font-weight:700;font-size:9.5px;letter-spacing:.34em;
+    text-transform:uppercase;margin-top:4px;
+    background:linear-gradient(96deg,var(--orange) 4%,var(--orange-soft) 34%,var(--violet-soft) 96%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .tag{font-family:var(--mono);font-size:11px;color:var(--orange);border:1px solid rgba(255,122,47,.34);
     border-radius:999px;padding:2px 8px;letter-spacing:.04em}
-  nav.links{margin-left:auto;display:flex;gap:26px;font-size:14px;color:var(--mid)}
-  nav.links a:hover{color:var(--tx)}
-  .ghbtn{font-family:var(--mono);font-size:13px;border:1px solid var(--line2);padding:7px 13px;border-radius:7px;color:var(--tx);
-    display:inline-flex;gap:8px;align-items:center;transition:border-color .15s, background .15s}
-  .ghbtn:hover{border-color:var(--amber);background:rgba(255,180,84,.06)}
-  @media(max-width:860px){nav.links{display:none}}
+  .nav .spacer{flex:1}
+  .nav .links{display:flex;gap:2px;align-items:center}
+  .nav .links a{color:var(--muted);font-size:14.5px;font-weight:600;padding:8px 11px;border-radius:9px;
+    white-space:nowrap;transition:color .18s ease,background .18s ease}
+  .nav .links a:hover{color:var(--ink);background:rgba(255,255,255,.05)}
+
+  /* ecosystem switcher - centred in the bar, so it reads as the ecosystem's own control
+     rather than one more nav item. Absolute, because the left and right groups are not
+     the same width and flex spacers would only fake it. */
+  .switch{position:relative}
+  .switch.centred{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+  .switch>button{display:inline-flex;align-items:center;gap:9px;font-family:var(--sans);font-size:14px;
+    font-weight:650;color:var(--ink);background:rgba(255,255,255,.045);
+    border:1px solid var(--line);border-radius:11px;padding:9px 13px;cursor:pointer;
+    transition:border-color .18s ease, background .18s ease}
+  .switch>button:hover{border-color:rgba(255,122,47,.5)}
+  .switch>button .pip{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+  .switch>button .chev{font-size:10px;opacity:.7;transition:transform .2s ease}
+  .switch[data-open] .chev{transform:rotate(180deg)}
+  .menu{position:absolute;top:calc(100% + 10px);left:50%;width:320px;
+    background:linear-gradient(180deg,#141319,#0e0d12);border:1px solid var(--line);border-radius:16px;
+    box-shadow:0 30px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.03) inset;
+    padding:10px;opacity:0;transform:translateX(-50%) translateY(-8px) scale(.98);pointer-events:none;
+    transition:opacity .18s ease, transform .18s ease;text-align:left}
+  .switch[data-open] .menu{opacity:1;transform:translateX(-50%);pointer-events:auto}
+  .menu .grp{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);padding:10px 12px 6px}
+  .menu a{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:11px;color:var(--ink);
+    font-size:14.5px;font-weight:600;transition:background .15s ease}
+  .menu a:hover{background:rgba(255,255,255,.06)}
+  .menu a .ic{width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;font-size:13px;border:1px solid var(--line)}
+  .menu a .ic.core{background:linear-gradient(135deg,rgba(255,122,47,.28),rgba(255,122,47,.05))}
+  .menu a .ic.node{background:linear-gradient(135deg,rgba(52,211,153,.25),rgba(52,211,153,.05))}
+  .menu a small{display:block;color:var(--dim);font-weight:500;font-size:12px;margin-top:1px;line-height:1.35}
+  .menu a .now{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--green);
+    border:1px solid rgba(52,211,153,.35);border-radius:999px;padding:2px 8px}
+  .menu .div{height:1px;background:var(--line2);margin:6px 8px}
+  /* Too narrow to centre anything: put the switcher back in the flow before it lands on the brand. */
+  @media(max-width:820px){
+    .switch.centred{position:static;transform:none;margin-left:auto}
+    .menu{left:auto;right:0;transform:translateY(-8px) scale(.98)}
+    .switch[data-open] .menu{transform:none}
+    .tag{display:none}
+  }
+
+  /* ---- buttons ---- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:var(--sans);
+    font-weight:650;font-size:15px;cursor:pointer;padding:13px 22px;border-radius:12px;border:1px solid transparent;
+    transition:background .18s ease, border-color .18s ease, color .18s ease}
+  .btn-primary{color:#170a02;background:var(--orange)}
+  .btn-primary:hover{background:var(--orange-soft)}
+  .btn-ghost{color:var(--ink);background:rgba(255,255,255,.045);border-color:var(--line)}
+  .btn-ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22)}
+  .btn svg{width:18px;height:18px;flex:none}
+  .cta{display:flex;gap:14px;flex-wrap:wrap}
 
   /* ---- hero ---- */
-  .hero{padding:78px 0 54px;border-bottom:1px solid var(--line)}
-  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center}
-  @media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:38px}.hero{padding:52px 0 40px}}
-  h1{font-family:var(--mono);font-weight:700;letter-spacing:-.02em;line-height:1.08;
-    font-size:clamp(30px,4.4vw,50px);margin:20px 0 0;text-wrap:balance;color:#fff}
-  h1 .hl{color:var(--amber)}
-  .lede{color:var(--mid);font-size:clamp(16px,1.5vw,18.5px);max-width:56ch;margin:22px 0 0}
-  .lede b{color:var(--tx);font-weight:600}
-  .cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}
-  .btn{font-family:var(--mono);font-size:14px;font-weight:600;padding:12px 20px;border-radius:9px;
-    display:inline-flex;align-items:center;gap:9px;transition:transform .12s ease, box-shadow .2s, background .15s;cursor:pointer;border:1px solid transparent}
-  .btn.primary{background:var(--amber);color:#221704;box-shadow:0 1px 0 rgba(255,255,255,.25) inset, 0 10px 30px -12px rgba(255,180,84,.7)}
-  .btn.primary:hover{transform:translateY(-1px);background:#ffbf6b}
-  .btn.ghost{border-color:var(--line2);color:var(--tx)}
-  .btn.ghost:hover{border-color:var(--mid);background:var(--surface)}
-  .microfacts{display:flex;gap:22px;flex-wrap:wrap;margin-top:30px;font-family:var(--mono);font-size:12.5px;color:var(--dim)}
-  .microfacts span{display:inline-flex;gap:8px;align-items:center}
-  .microfacts b{color:var(--mid);font-weight:500}
-  .dot{width:5px;height:5px;border-radius:50%;background:var(--add);box-shadow:0 0 8px var(--add)}
+  .hero{padding:74px 0 30px;text-align:center;position:relative}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;
+    letter-spacing:.06em;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line);
+    border-radius:999px;padding:7px 14px;margin-bottom:26px}
+  .eyebrow .pip{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 12px var(--orange);animation:blink 2.6s ease-in-out infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+  @media (prefers-reduced-motion: reduce){.eyebrow .pip{animation:none}}
+  h1.title{font-size:clamp(38px,6.1vw,74px);line-height:1.02;letter-spacing:-.035em;font-weight:850;margin:0 0 24px}
+  /* The standard promises anyone may demand a plain explanation (EXPLAIN-1), so the page
+     honours it: a sticker tucked behind the headline, discovered rather than announced. */
+  .stage{position:relative;display:inline-block}
+  .stage h1.title{position:relative;z-index:2}
+  .sticker{position:absolute;left:100%;top:50%;margin-top:-34px;z-index:1;cursor:pointer;border:0;
+    display:flex;align-items:center;gap:13px;padding:19px 30px 19px 44px;white-space:nowrap;
+    color:#170a02;font-family:var(--sans);font-size:21px;font-weight:750;letter-spacing:-.01em;
+    background:linear-gradient(96deg,var(--orange),var(--orange-soft));
+    border-radius:0 18px 18px 0;
+    /* the left edge is an arrowhead cut into the shape, so it reads as a label pointing
+       into its own words rather than a rectangle with one rounded corner */
+    clip-path:polygon(0 0, 100% 0, 100% 100%, 0 100%, 26px 50%);
+    padding-left:50px;
+    transform:translateX(2%) rotate(-4.5deg);transform-origin:0 50%;
+    box-shadow:0 18px 50px -16px rgba(255,122,47,.75);
+    transition:transform .34s cubic-bezier(.3,1.35,.5,1),background .25s ease,box-shadow .25s ease}
+  /* A nudge, not a reveal: it is already clickable, so hover only has to acknowledge you. */
+  .stage:hover .sticker,.sticker:focus-visible{transform:translateX(calc(2% + 12px)) rotate(-4.5deg)}
+  .sticker .ic{width:25px;height:25px;flex:none}
+  .sticker[data-on="1"]{background:linear-gradient(96deg,rgba(255,255,255,.11),rgba(255,255,255,.06));
+    color:var(--ink);box-shadow:0 18px 44px -18px rgba(0,0,0,.75)}
+  h1.title,.lede{transition:opacity .22s ease}
+  h1.title.fading,.lede.fading{opacity:0}
+  @media(max-width:900px){
+    .stage{display:block}
+    .sticker{position:static;transform:none;margin:20px auto 0;border-radius:14px;
+      padding:15px 24px;font-size:17px}
+    .stage:hover .sticker{transform:none}
+    .sticker .ic{width:20px;height:20px}
+  }
+  h1.title .grad{background:linear-gradient(96deg,var(--orange) 6%,var(--orange-soft) 40%,var(--violet-soft) 96%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% 100%;
+    display:inline-block;padding-bottom:.09em;animation:shine 9s ease-in-out infinite}
+  @keyframes shine{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  @media (prefers-reduced-motion: reduce){h1.title .grad{animation:none}}
+  /* Narrower than the headline on purpose: the h1 sets the block's outer edge and the
+     subtext reads as sitting inside it, not competing with it. */
+  .lede{max-width:770px;margin:0 auto;color:var(--muted);font-size:clamp(16px,1.6vw,18px);
+    line-height:1.62;text-wrap:pretty}
+  .lede b{color:var(--ink);font-weight:650}
+  /* Straddles the terminal's bottom edge: half the button sits on the window, half below it. */
+  #how .cta{justify-content:center;position:relative;z-index:3;margin-top:-26px}
 
-  /* ---- terminal ---- */
-  .term{background:linear-gradient(180deg,var(--surface),var(--ink2));border:1px solid var(--line2);
-    border-radius:13px;overflow:hidden;box-shadow:0 40px 90px -40px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.02) inset}
-  .term-top{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.015)}
-  .term-top i{width:11px;height:11px;border-radius:50%;background:#2c313b;display:block}
-  .term-top .fname{margin-left:10px;font-family:var(--mono);font-size:12px;color:var(--dim)}
-  .term-body{padding:18px 18px 20px;font-family:var(--mono);font-size:13.4px;line-height:1.72;overflow-x:auto}
-  .term-body .ln{white-space:pre;display:block}
-  .cprompt{color:var(--add)}
-  .ccmd{color:var(--tx)}
-  .ccmd .v{color:var(--amber)}
-  .cmuted{color:var(--dim)}
-  .cadd{color:var(--add)}
-  .cdel{color:var(--del)}
-  .cfile{color:#c7cdd6}
-  .cok{color:#0e1512;background:var(--add);padding:0 7px;border-radius:4px;font-weight:700}
-  .caret{display:inline-block;width:8px;height:15px;background:var(--amber);vertical-align:-2px;margin-left:2px;animation:bl 1.05s step-end infinite}
-  @keyframes bl{50%{opacity:0}}
-  @media (prefers-reduced-motion: reduce){.caret{animation:none}}
+  /* ---- sections ---- */
+  section{padding:76px 0;position:relative}
+  section+section{border-top:1px solid var(--line2)}
+  #how{padding-top:38px;border-top:0}
+  .shead{max-width:66ch;margin:0 0 40px}
+  .shead.mid{margin-left:auto;margin-right:auto;text-align:center}
+  .shead h2{font-size:clamp(28px,4.2vw,46px);line-height:1.05;letter-spacing:-.03em;font-weight:800;margin:0;text-wrap:balance}
+  .shead h2 .grad{background:linear-gradient(96deg,var(--orange) 6%,var(--orange-soft) 40%,var(--violet-soft) 96%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;padding-bottom:.09em}
+  .shead p{margin:16px 0 0;color:var(--muted);font-size:17px}
+  .shead p b{color:var(--ink);font-weight:650}
+  .shead .eyebrow{margin-bottom:20px}
+  .secmore{margin-top:34px;text-align:center}
+  .doclink{font-family:var(--mono);font-size:13px;color:var(--orange);display:inline-flex;align-items:center;gap:9px;
+    border:1px solid rgba(255,122,47,.28);border-radius:11px;padding:9px 15px;transition:background .15s,border-color .15s}
+  .doclink:hover{background:rgba(255,122,47,.08);border-color:var(--orange)}
+  .doclink::after{content:"\2192"}
 
-  /* ---- hero B: the live Claude Code window ---- */
-  .herob{padding:64px 0 56px;border-bottom:1px solid var(--line)}
-  .herob-head{text-align:center;max-width:780px;margin:0 auto}
-  .herob-head .lede{margin-left:auto;margin-right:auto}
-  .cc{max-width:860px;margin:40px auto 0;background:linear-gradient(180deg,var(--surface),var(--ink2));
-    border:1px solid var(--line2);border-radius:13px;overflow:hidden;
-    box-shadow:0 40px 90px -40px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.02) inset}
+  /* ---- the agent session ---- */
+  .cc{max-width:880px;margin:0 auto;border-radius:var(--radius);overflow:hidden;
+    background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+    border:1px solid var(--line);box-shadow:0 50px 110px -50px rgba(0,0,0,.95), 0 0 0 1px rgba(255,255,255,.02) inset}
+  .cc-top{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line2);background:rgba(255,255,255,.02)}
+  .cc-top i{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.14);display:block}
+  .cc-top .fname{margin-left:10px;font-family:var(--mono);font-size:12px;color:var(--dim)}
+  /* Fixed height, not min-height: the transcript grows line by line and any slack it
+     outgrows shoves the rest of the page down mid-animation. */
   .cc-body{padding:20px 22px 24px;font-family:var(--mono);font-size:13.5px;line-height:1.78;
-    min-height:460px;overflow-x:auto;transition:opacity .4s ease}
+    height:536px;overflow:auto;transition:opacity .4s ease;text-align:left}
   .cc-body.fade{opacity:0}
   .cc-body .ln{white-space:pre;display:block}
-  .cc-user{white-space:pre;color:var(--tx);font-weight:600}
-  .cc-user::before{content:"> ";color:var(--amber);font-weight:700}
-  .cc-caret{display:inline-block;width:8px;height:15px;background:var(--amber);vertical-align:-2px;animation:bl 1.05s step-end infinite}
+  .cc-user{white-space:pre;color:var(--ink);font-weight:600}
+  .cc-user::before{content:"> ";color:var(--orange);font-weight:700}
+  .cc-caret{display:inline-block;width:8px;height:15px;background:var(--orange);vertical-align:-2px;animation:bl 1.05s step-end infinite}
+  @keyframes bl{50%{opacity:0}}
   @media (prefers-reduced-motion: reduce){.cc-caret{animation:none}}
-  .cb{color:var(--amber)}
-  .cv{color:var(--amber)}
-  .cw{color:#fff;font-weight:700}
-  @media(max-width:600px){.cc-body{font-size:12px;min-height:420px}}
+  .cb{color:var(--orange)}.cv{color:var(--orange)}.cw{color:#fff;font-weight:700}
+  .cmuted{color:var(--dim)}.cdel{color:var(--del)}
+  .cok{color:#08140f;background:var(--green);padding:0 7px;border-radius:5px;font-weight:700}
+  @media(max-width:600px){.cc-body{font-size:11.5px;height:470px}}
 
-  /* ---- generic section ---- */
-  section{padding:74px 0;border-bottom:1px solid var(--line)}
-  .shead{display:flex;flex-direction:column;gap:14px;margin-bottom:42px;max-width:64ch}
-  .shead h2{font-family:var(--mono);font-weight:700;font-size:clamp(22px,2.7vw,30px);letter-spacing:-.015em;margin:0;color:#fff;text-wrap:balance}
-  .shead p{margin:0;color:var(--mid);font-size:17px}
+  /* ---- failure modes ---- */
+  .modes{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media(max-width:760px){.modes{grid-template-columns:1fr}}
+  .mode{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:32px 34px 34px;
+    transition:border-color .18s ease,transform .18s ease}
+  .mode:hover{border-color:rgba(255,255,255,.16);transform:translateY(-2px)}
+  .mode .n{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;color:var(--dim)}
+  .mode b{display:block;font-size:clamp(21px,2.4vw,26px);font-weight:750;letter-spacing:-.025em;
+    margin:16px 0 12px;color:#fff}
+  .mode p{margin:0;font-size:16.5px;color:var(--muted);line-height:1.55;max-width:44ch}
 
-  /* keystone triptych */
-  .trip{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--line);border-radius:13px;overflow:hidden}
-  .trip>div{padding:26px 24px}
-  .trip>div+div{border-left:1px solid var(--line)}
-  .trip .k{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:10px}
-  .trip .k .n{color:var(--dim)}
-  .trip h3{font-family:var(--mono);font-size:18px;margin:16px 0 8px;color:#fff}
-  .trip p{margin:0;color:var(--mid);font-size:14.5px}
-  .trip code{font-family:var(--mono);color:var(--tx);background:var(--surface);padding:1px 6px;border-radius:5px;font-size:12.5px;border:1px solid var(--line)}
-  @media(max-width:820px){.trip{grid-template-columns:1fr}.trip>div+div{border-left:none;border-top:1px solid var(--line)}}
+  /* ---- who it's for ---- */
+  /* Copy left, loop right. The heading is sized so "The PO writes it. The dev sharpens it."
+     survives on one line at this column width - the break before the agent line is the point. */
+  /* Copy left, loop right. The wheel gives up width to the copy so both role sentences
+     still land on one line at this heading size - the break before the agent line is the point. */
+  /* One sentence per line keeps each line short, which buys the copy a narrower column -
+     so the loop can take the width back and the type can grow at the same time. */
+  .whorow{display:grid;grid-template-columns:minmax(0,1fr) 520px;gap:40px;align-items:center;margin-bottom:40px}
+  .whorow .shead{max-width:none;margin:0}
+  .whorow .shead h2{font-size:clamp(26px,3.6vw,40px);line-height:1.12}
+  .whorow .shead p{max-width:46ch;font-size:16.5px}
+  @media(max-width:1000px){
+    .whorow{grid-template-columns:1fr;gap:24px;text-align:center}
+    .whorow .shead .eyebrow{margin-left:auto;margin-right:auto}
+    .whorow .shead p{margin-left:auto;margin-right:auto}
+  }
+  .wheelwrap{display:flex;justify-content:center;margin:0}
+  .jswheel{width:100%;max-width:520px;aspect-ratio:1/1;height:auto;display:block}
+  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:880px){.roles{grid-template-columns:1fr}}
+  /* Column layout so the payoff line sits on the card floor: the copy above it is never
+     exactly the same length, and a ragged bottom edge reads as three unfinished cards. */
+  .role{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);padding:24px}
+  .role .who{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--orange)}
+  .role h3{font-size:21px;font-weight:750;letter-spacing:-.02em;line-height:1.2;margin:12px 0 10px;
+    color:#fff;min-height:2.4em}
+  .role p{margin:0;color:var(--muted);font-size:15px;line-height:1.55}
+  .role p+p{margin-top:10px}
+  .role .win{display:block;margin-top:auto;padding-top:18px;border-top:1px dashed var(--line);
+    font-family:var(--mono);font-size:12.5px;color:var(--green)}
+  @media(max-width:880px){.role h3{min-height:0}}
 
-  /* paths */
-  .paths{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media(max-width:820px){.paths{grid-template-columns:1fr}}
-  .card{border:1px solid var(--line);border-radius:13px;padding:24px;background:linear-gradient(180deg,var(--surface),transparent 120%);
-    position:relative;transition:border-color .18s, transform .18s;overflow:hidden}
-  .card:hover{border-color:var(--line2);transform:translateY(-2px)}
-  .card .idx{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.1em}
-  .card h3{font-family:var(--mono);font-size:19px;margin:12px 0 6px;color:#fff;letter-spacing:-.01em}
-  .card .who{font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--amber);margin-bottom:12px;display:inline-block}
-  .card p{margin:0;color:var(--mid);font-size:15px}
-  .card .cmd{margin-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--tx);
-    border-top:1px dashed var(--line2);padding-top:14px;color:var(--mid)}
-  .card .cmd .p{color:var(--add)}.card .cmd .v{color:var(--amber)}
-  .card.feat{border-color:rgba(255,180,84,.32)}
-  .card.feat::after{content:"KEY";position:absolute;top:16px;right:16px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
-    color:var(--amber);border:1px solid rgba(255,180,84,.4);border-radius:4px;padding:1px 6px}
+  /* ---- ways in ---- */
+  .ways{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:880px){.ways{grid-template-columns:1fr}}
+  /* The panel treatment the spec block used to carry: tinted, warm-bordered, generous. */
+  .way{background:linear-gradient(135deg,rgba(255,122,47,.08),rgba(139,92,246,.06) 60%,transparent);
+    border:1px solid rgba(255,122,47,.28);border-radius:24px;padding:36px 38px 34px;
+    position:relative;overflow:hidden;transition:border-color .18s ease,transform .18s ease}
+  .way:hover{border-color:rgba(255,122,47,.55);transform:translateY(-2px)}
+  .way .wnum{display:block;font-family:var(--mono);font-weight:700;font-size:clamp(44px,5.4vw,68px);
+    line-height:.88;letter-spacing:-.05em;margin-bottom:16px;
+    background:linear-gradient(160deg,#ffc79e,var(--orange) 45%,var(--orange-soft));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .way .who{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--orange)}
+  .way h3{font-size:24px;font-weight:800;letter-spacing:-.025em;margin:12px 0 10px;color:#fff}
+  .way p{margin:0;color:var(--muted);font-size:15.5px;line-height:1.55}
+  .way ul{margin:16px 0 0;padding-left:18px;color:var(--muted);font-size:14.5px;line-height:1.7}
+  .way ul li::marker{color:var(--orange)}
+  .way .cmd{margin-top:20px;font-family:var(--mono);font-size:12.5px;color:var(--muted);
+    border-top:1px dashed var(--line);padding-top:15px}
+  .way .cmd .p{color:var(--green)}.way .cmd .v{color:var(--orange)}
+  /* the optional stack, coloured like the satellite project so the add-on reads as an add-on */
+  .way .cmd .opt{color:var(--green)}
+  .way ul li b{color:var(--ink);font-weight:650}
+  /* The technology layer is a separate project, so it gets its own band inside each road
+     rather than a bullet that reads like one more feature. */
+  .stackrow{display:flex;gap:14px;align-items:flex-start;margin-top:20px;padding:16px 18px;
+    border:1px solid rgba(52,211,153,.22);border-radius:12px;background:rgba(52,211,153,.05)}
+  .stackrow .lb2{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--green);border:1px solid rgba(52,211,153,.35);border-radius:999px;padding:3px 9px;
+    white-space:nowrap;margin-top:2px}
+  .stackrow p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.5}
+  .stackrow a{color:var(--green);border-bottom:1px solid rgba(52,211,153,.4)}
+  .stackrow a:hover{border-bottom-color:var(--green)}
 
-  /* inside - file tree */
-  .inside{display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:start}
-  @media(max-width:880px){.inside{grid-template-columns:1fr;gap:30px}}
-  .tree{border:1px solid var(--line2);border-radius:12px;background:var(--ink2);padding:18px 20px;font-family:var(--mono);font-size:13.2px;line-height:2.05;overflow-x:auto}
-  .tree .d{color:var(--amber)}
-  .tree .f{color:var(--tx)}
-  .tree .c{color:var(--dim)}
-  .tree .in{padding-left:22px}.tree .in2{padding-left:44px}
-  .ilist{display:flex;flex-direction:column;gap:18px}
-  .irow{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
-  .irow .badge{font-family:var(--mono);font-size:11px;color:var(--tx);border:1px solid var(--line2);border-radius:6px;padding:3px 8px;white-space:nowrap;margin-top:2px}
-  .irow h4{margin:0 0 3px;font-size:15.5px;color:var(--tx);font-family:var(--mono);font-weight:600}
-  .irow p{margin:0;color:var(--mid);font-size:14.5px}
+  /* ---- proposed workflow: a phase rail, not a wall of tiles ---- */
+  .tl{display:grid;grid-template-columns:320px 1fr;gap:56px;align-items:start}
+  @media(max-width:900px){.tl{grid-template-columns:1fr;gap:28px}}
+  .rail{position:relative;padding-left:30px}
+  .rail::before{content:"";position:absolute;left:9px;top:18px;bottom:18px;width:2px;
+    background:linear-gradient(180deg,var(--orange),var(--violet-soft))}
+  .phase{position:relative;display:block;width:100%;text-align:left;background:none;border:0;
+    padding:16px 0;cursor:pointer;font-family:var(--sans)}
+  .phase::before{content:"";position:absolute;left:-30px;top:24px;width:20px;height:20px;border-radius:50%;
+    background:var(--bg);border:2px solid var(--line);transition:border-color .2s ease,box-shadow .2s ease}
+  .phase[aria-selected="true"]::before{border-color:var(--orange);box-shadow:0 0 0 5px rgba(255,122,47,.14)}
+  .phase .n{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;color:var(--dim)}
+  .phase[aria-selected="true"] .n{color:var(--orange)}
+  .phase h3{font-size:25px;font-weight:790;letter-spacing:-.03em;margin:6px 0 6px;color:var(--dim);transition:color .2s ease}
+  .phase[aria-selected="true"] h3{color:#fff}
+  .phase p{margin:0;color:var(--dim);font-size:14.5px;line-height:1.5}
+  .phase .cnt{display:inline-block;margin-top:10px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--dim);opacity:.7}
+  .phase[aria-selected="true"] .cnt{color:var(--orange);opacity:1}
+  /* The container animates to the active panel's height rather than reserving the tallest.
+     Reserving left a hole under the shorter phases; animating keeps the page from jumping. */
+  .panels{position:relative;transition:height .3s ease}
+  .panels .panel{position:absolute;top:0;left:0;right:0;visibility:hidden;opacity:0;transition:opacity .25s ease}
+  .panels .panel.on{visibility:visible;opacity:1}
+  @media (prefers-reduced-motion: reduce){.panels{transition:none}.panels .panel{transition:none}}
+  .item{display:grid;grid-template-columns:150px 1fr;gap:20px;padding:18px 10px 18px 0;
+    border-bottom:1px solid var(--line2);transition:background .15s ease,padding .15s ease}
+  .item:first-child{border-top:1px solid var(--line2)}
+  .item:hover{background:rgba(255,255,255,.03);padding-left:10px}
+  .item .k{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--orange)}
+  .item .b b{display:block;font-size:17px;font-weight:650;color:#fff;letter-spacing:-.01em;margin-bottom:4px}
+  .item .b span{display:block;color:var(--muted);font-size:14.5px;line-height:1.5}
+  .item .b i{display:inline-block;margin-top:8px;font-style:normal;font-family:var(--mono);
+    font-size:12px;color:var(--dim);transition:color .15s ease}
+  .item:hover .b i{color:var(--orange)}
+  .item .b i::after{content:" \2192"}
+  @media(max-width:640px){.item{grid-template-columns:1fr;gap:6px}}
 
-  /* flow pipeline */
-  .pipe{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .stage ul{margin:8px 0 0;padding-left:16px;color:var(--mid);font-size:13px}
-  .stage ul li{margin:2px 0}
-  .cycle{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:13px;color:var(--mid)}
-  .cycle b{color:var(--amber)}
-  .cycle .loop{color:var(--add);font-weight:700}
-  .wheelwrap{display:flex;justify-content:center;margin:6px 0 26px}
-  .jswheel{width:100%;max-width:420px;aspect-ratio:1/1;height:auto;display:block}
-  @media(max-width:820px){.pipe{grid-template-columns:1fr 1fr}}
-  @media(max-width:520px){.pipe{grid-template-columns:1fr}}
-  .stage{border:1px solid var(--line);border-radius:11px;padding:18px;background:var(--surface);position:relative}
-  .stage .role{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
-  .stage h4{font-family:var(--mono);margin:9px 0 6px;font-size:15px;color:#fff}
-  .stage p{margin:0;color:var(--mid);font-size:13.5px}
-  .stage .arw{position:absolute;right:-9px;top:50%;transform:translateY(-50%);color:var(--dim);font-family:var(--mono);z-index:2}
-  @media(max-width:820px){.stage .arw{display:none}}
+  /* ---- what the standard covers ---- */
+  /* width:min-content sizes each item to its own tag (the tag never wraps), so the caption
+     wraps to that width instead of running past it, and rows pack by natural width. */
+  .fmap{display:flex;flex-wrap:wrap;gap:26px 22px;align-items:flex-start}
+  .fm{flex:0 1 auto;width:min-content;min-width:0;max-width:320px}
+  .fmtag{display:inline-flex;align-items:center;gap:10px;margin-bottom:10px;
+    font-family:var(--mono);font-size:17.5px;font-weight:600;color:var(--ink);white-space:nowrap;
+    background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:12px;padding:15px 21px;
+    transition:border-color .18s ease,background .18s ease,color .18s ease}
+  .fm:hover .fmtag{border-color:rgba(255,122,47,.55);background:rgba(255,122,47,.09);color:var(--orange)}
+  .fmtag svg{width:19px;height:19px;flex:none;stroke:var(--orange);fill:none;stroke-width:2;
+    stroke-linecap:round;stroke-linejoin:round}
+  .fm p{margin:0;color:var(--muted);font-size:14px;line-height:1.5;padding-left:3px;text-wrap:pretty}
+  @media(max-width:560px){.fm{width:auto;max-width:100%;flex-basis:100%}}
 
-  /* layers */
-  .layers{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media(max-width:820px){.layers{grid-template-columns:1fr}}
-  .layer{border:1px solid var(--line);border-radius:13px;padding:26px;background:var(--surface)}
-  .layer .lb{font-family:var(--mono);font-size:12px;color:var(--amber);letter-spacing:.12em;text-transform:uppercase}
-  .layer h3{font-family:var(--mono);font-size:20px;margin:12px 0 8px;color:#fff}
-  .layer p{margin:0 0 16px;color:var(--mid);font-size:14.5px}
-  .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{font-family:var(--mono);font-size:12px;color:var(--mid);border:1px solid var(--line2);border-radius:999px;padding:4px 11px}
-
-  /* agents strip */
-  .agents{display:flex;gap:26px;align-items:center;justify-content:space-between;flex-wrap:wrap;
-    border:1px solid var(--line2);border-radius:14px;padding:28px 30px;background:linear-gradient(100deg,rgba(255,180,84,.05),transparent 60%)}
-  .agents h3{font-family:var(--mono);font-size:clamp(19px,2.4vw,26px);margin:0;color:#fff;letter-spacing:-.01em;max-width:22ch;text-wrap:balance}
-  .agents p{margin:8px 0 0;color:var(--mid);max-width:46ch}
-  .agents .rd{font-family:var(--mono);font-size:12.5px;color:var(--mid);border:1px solid var(--line2);border-radius:8px;padding:14px 16px;line-height:1.8}
-  .agents .rd b{color:var(--amber);font-weight:500}
-
-  /* footer / final cta */
-  .final{padding:88px 0}
-  .final .box{text-align:center;display:flex;flex-direction:column;align-items:center;gap:22px}
-  .final h2{font-family:var(--mono);font-size:clamp(26px,3.6vw,42px);margin:0;letter-spacing:-.02em;color:#fff;text-wrap:balance}
-  .final h2 .hl{color:var(--amber)}
-  .final p{margin:0;color:var(--mid);max-width:52ch}
-  footer{border-top:1px solid var(--line);padding:30px 0;color:var(--dim);font-family:var(--mono);font-size:12.5px}
+  /* ---- final ---- */
+  /* The workflow rail already ends on a lot of air; 96px on top of it read as a hole. */
+  #parts{padding-bottom:52px}
+  .final{padding:60px 0 84px;text-align:center}
+  .final h2{font-size:clamp(30px,5vw,58px);line-height:1.02;letter-spacing:-.035em;font-weight:850;margin:0 0 22px;text-wrap:balance}
+  .final h2 .grad{background:linear-gradient(96deg,var(--orange) 6%,var(--orange-soft) 40%,var(--violet-soft) 96%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;padding-bottom:.09em}
+  .final p{margin:0 auto 30px;max-width:64ch;color:var(--muted);font-size:16.5px}
+  /* the positioning one-liner, quoted verbatim from docs/positioning.md (site-check enforces it) */
+  .final .oneliner{max-width:70ch;color:var(--ink);font-size:clamp(17px,1.9vw,19.5px);
+    font-weight:600;line-height:1.55;letter-spacing:-.01em;margin-bottom:22px}
+  footer{border-top:1px solid var(--line2);padding:32px 0;color:var(--dim);font-family:var(--mono);font-size:12.5px}
   .foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
-  .foot a:hover{color:var(--tx)}
+  .foot a:hover{color:var(--ink)}
 
-  /* ---- why band (slim) ---- */
-  section.slim{padding:40px 0}
-  .bandhead{display:flex;align-items:baseline;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:18px}
-  .bandhead p{margin:0;font-family:var(--mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid)}
-  .whyband{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:13px;overflow:hidden;background:linear-gradient(180deg,var(--surface),transparent 140%)}
-  .whyband>div{padding:16px 18px}
-  .whyband>div+div{border-left:1px solid var(--line)}
-  .whyband b{display:block;font-family:var(--mono);font-size:13px;color:var(--tx);font-weight:600;margin-bottom:3px}
-  .whyband p{margin:0;font-size:13px;color:var(--dim);line-height:1.5}
-  @media(max-width:860px){.whyband{grid-template-columns:1fr 1fr}.whyband>div+div{border-left:none}.whyband>div:nth-child(even){border-left:1px solid var(--line)}.whyband>div:nth-child(n+3){border-top:1px solid var(--line)}}
-  @media(max-width:520px){.whyband{grid-template-columns:1fr}.whyband>div:nth-child(even){border-left:none}.whyband>div+div{border-top:1px solid var(--line)}}
-
-  /* ---- the spec section ---- */
-  .specwrap{display:grid;grid-template-columns:auto 1fr;gap:52px;align-items:center;border:1px solid rgba(255,180,84,.3);border-radius:16px;padding:42px 46px;
-    background:linear-gradient(135deg,rgba(255,180,84,.06),transparent 55%)}
-  .bignum{font-family:var(--mono);font-weight:700;font-size:clamp(84px,11vw,148px);line-height:.9;color:var(--amber);letter-spacing:-.04em;text-align:center}
-  .bignum small{display:block;font-size:12px;letter-spacing:.18em;color:var(--mid);text-transform:uppercase;margin-top:12px;font-weight:500}
-  .speccopy h2{font-family:var(--mono);font-weight:700;font-size:clamp(22px,2.7vw,30px);letter-spacing:-.015em;margin:0 0 12px;color:#fff;text-wrap:balance}
-  .speccopy>p{margin:0;color:var(--mid);font-size:16px;max-width:58ch}
-  .rulepeek{margin:20px 0 0;display:flex;flex-direction:column;gap:7px;font-family:var(--mono);font-size:13px;color:var(--mid)}
-  .rulepeek span b{color:var(--amber);font-weight:600;margin-right:10px}
-  @media(max-width:820px){.specwrap{grid-template-columns:1fr;gap:26px;padding:30px 26px}.bignum{text-align:left}}
-
-  /* ---- section funnel link ---- */
-  .secmore{margin-top:36px}
-  .doclink{font-family:var(--mono);font-size:13px;color:var(--amber);display:inline-flex;align-items:center;gap:9px;
-    border:1px solid rgba(255,180,84,.28);border-radius:8px;padding:8px 14px;transition:background .15s,border-color .15s}
-  .doclink:hover{background:rgba(255,180,84,.07);border-color:var(--amber)}
-  .doclink::after{content:"\2192"}
-  .doclink i{font-style:normal;color:var(--mid)}
-
-  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease, transform .6s ease}
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease, transform .6s ease}
   .reveal.in{opacity:1;transform:none}
   @media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none;transition:none}}
-
-  /* human-language story */
-  #lang .lstage{position:relative;max-width:720px;margin:26px auto 0;height:430px}
-  #lang #langcanvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
-  #lang .person{position:absolute;top:0;width:31%;display:flex;flex-direction:column;align-items:center;gap:9px;z-index:2}
-  #lang .p0{left:0}#lang .p1{left:34.5%}#lang .p2{left:69%}
-  #lang .speech{background:var(--surface);border:1px solid var(--line);border-radius:13px;border-bottom-left-radius:3px;padding:10px 12px;font-size:12px;font-style:italic;color:var(--tx);line-height:1.45;text-align:center;min-height:52px;display:flex;align-items:center;animation:lfloat 4s ease-in-out infinite}
-  #lang .p1 .speech{animation-delay:-1.3s}#lang .p2 .speech{animation-delay:-2.6s}
-  @keyframes lfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-  #lang .figure{display:flex;align-items:center;gap:5px}
-  #lang .figure .av{font-size:34px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
-  #lang .figure .flag{font-size:19px}
-  #lang .prole{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mid)}
-  #lang .hub2{position:absolute;left:50%;top:188px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:3}
-  #lang .hub2 .core{width:68px;height:68px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(180deg,#191c22,#111318);display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--add);transition:box-shadow .25s ease,border-color .25s ease}
-  #lang .hub2 .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid)}
-  #lang .doc{position:absolute;left:50%;top:300px;transform:translateX(-50%);width:min(400px,96%);border:1px solid var(--line);border-radius:13px;background:linear-gradient(180deg,#17191f,#131519);padding:13px 16px;box-shadow:0 12px 40px rgba(0,0,0,.35);z-index:2}
-  #lang .dhead{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--mid);margin-bottom:10px}
-  #lang .dhead .dt{color:var(--tx)}
-  #lang .dhead .chip{margin-left:auto;font-size:10px;border:1px solid rgba(78,201,166,.4);border-radius:20px;padding:2px 10px;color:var(--add);white-space:nowrap}
-  #lang .dbody{display:flex;flex-direction:column;gap:8px;transition:opacity .28s ease}
-  #lang .dbody.swap{opacity:0}
-  #lang .dl{font-size:13px;color:var(--tx);line-height:1.4}
-  #lang .dl b{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);display:inline-block;min-width:74px}
-  #lang .dfoot{margin-top:11px;padding-top:10px;border-top:1px solid var(--line);font-size:11.5px;color:var(--mid);line-height:1.5}
-  #lang .dfoot b{color:var(--add)}
-  @media(max-width:600px){#lang .lstage{height:490px}#lang .speech{font-size:11px;min-height:60px}}
-
-  .ecoswitch{position:relative;margin:0 auto}
-  .ecoswitch>button{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line2);color:var(--tx);font:600 14px/1 var(--sans);padding:9px 14px;border-radius:10px;cursor:pointer}
-  .ecoswitch>button:hover{background:var(--surface2)}
-  .ecaret{font-size:10px;color:var(--dim);transition:transform .15s}
-  .ecoswitch[data-open] .ecaret{transform:rotate(180deg)}
-  .ecomenu{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);min-width:320px;background:var(--ink2);border:1px solid var(--line2);border-radius:14px;padding:8px;box-shadow:0 18px 50px rgba(0,0,0,.5);display:none;text-align:left}
-  .ecoswitch[data-open] .ecomenu{display:block}
-  .egrp{font:600 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:10px 12px 6px}
-  .ecomenu a{display:flex;flex-direction:column;gap:2px;text-decoration:none;padding:10px 12px;border-radius:9px}
-  .ecomenu a:hover{background:var(--surface)}
-  .ecomenu a b{font-size:14px}
-  .ecomenu a span{font-size:12px;color:var(--dim)}
-  .ecomenu a[aria-current] b::after{content:"  \2713";color:var(--add)}
-  .ecomenu hr{border:0;border-top:1px solid var(--line);margin:6px 4px}
-  @media(max-width:860px){.ecoswitch{display:none}}
 </style>
 
+<div class="atmos" aria-hidden="true">
+  <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div><div class="glow g4"></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
 <header>
-  <div class="wrap bar">
-    <span class="brand">repository<b>-</b>standards</span>
-    <span class="tag mono">v0.7.2</span>
-    <div class="ecoswitch" id="ecoswitch">
-      <button type="button" aria-haspopup="true" aria-expanded="false" id="ecobtn">Repository Standards <span class="ecaret">&#9662;</span></button>
-      <div class="ecomenu" role="menu" aria-label="Ecosystem">
-        <div class="egrp">Core</div>
-        <a role="menuitem" href="index.html" aria-current="page"><b>Repository Standards</b><span>the standard - one page of rules, align, verify, drift 0</span></a>
-        <hr>
-        <div class="egrp">Best practices</div>
-        <a role="menuitem" href="https://github.com/bodurkalukasz/repository-standards-node"><b>Node</b><span>Next.js + Fastify - starter, decisions, adapting guide</span></a>
-      </div>
-    </div>
+  <div class="wrap nav">
+    <span class="brand"><img class="mark" src="logo-mark.png" alt="" width="428" height="512"><span class="wordmark"><b>repository</b><i>Standards</i></span></span>
+    <span class="tag mono">v1.0.0</span>
+    <span class="spacer"></span>
     <nav class="links">
       <a href="docs/">Docs</a>
-      <a href="https://github.com/bodurkalukasz/repository-standards-node">Node stack</a>
-      <a href="#spec">The spec</a>
-      <a href="#keystone">Mechanism</a>
-      <a href="#paths">Two paths in</a>
-      <a href="#inside">Inside</a>
-      <a href="#layers">Layers</a>
-      <a href="#start">Start</a>
     </nav>
-    <a class="ghbtn" href="https://github.com/bodurkalukasz/repository-standards">GitHub &#8599;</a>
+    <div class="switch centred" id="ecoswitch">
+      <button type="button" aria-haspopup="true" aria-expanded="false" id="ecobtn">
+        <span class="pip"></span> Repository Standards <span class="chev">&#9662;</span>
+      </button>
+      <div class="menu" role="menu" aria-label="Ecosystem">
+        <div class="grp">Core</div>
+        <a role="menuitem" href="index.html" aria-current="page">
+          <span class="ic core">&#9670;</span>
+          <span>Repository Standards<small>the method - align, verify, drift 0</small></span>
+          <span class="now">here</span>
+        </a>
+        <div class="div"></div>
+        <div class="grp">Best practices</div>
+        <a role="menuitem" href="https://github.com/bodurkalukasz/repository-standards-node">
+          <span class="ic node">&#9679;</span>
+          <span>Node<small>Next.js + Fastify - starter, decisions, adapting guide</small></span>
+        </a>
+      </div>
+    </div>
   </div>
 </header>
 
 <main>
-  <!-- HERO: the live Claude Code window -->
-  <div class="hero herob">
+  <!-- HERO -->
+  <div class="hero">
     <div class="wrap">
-      <div class="herob-head reveal">
-        <span class="eyebrow">One sentence in &middot; a plan out</span>
-        <h1>Say it to your agent: <span class="hl">&ldquo;align my project&rdquo;</span></h1>
-        <p class="lede">No framework to learn and no build step - Node and <span class="mono">jq</span>, nothing else. Open your coding agent in any repo -
-          brand new or years deep - point it at the standard and ask. It measures the repo, reports
-          <b>drift as a number</b>, and walks it back to health - <b>with your consent at every step</b>.</p>
-        <p class="lede"><b>Others give you a workflow or a scaffold. This gives your repo a reference to true up to - and walks it there.</b></p>
-      </div>
-
-      <div class="cc reveal" aria-label="A coding-agent session aligning my-project to repository-standards">
-        <div class="term-top"><i></i><i></i><i></i><span class="fname">my-project &nbsp;-&nbsp; Claude Code</span></div>
-        <div class="cc-body" id="ccbody">
-          <span class="cc-user" id="ccuser"></span><span class="cc-caret" id="cccaret"></span>
+      <div class="reveal">
+        <div class="stage">
+          <h1 class="title">The missing layer between<br><span class="grad">business, engineering and AI.</span></h1>
+          <button type="button" class="sticker" id="explain" data-on="0" aria-pressed="false">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H8l-4 3v-4.4A7.5 7.5 0 0 1 12.5 4a7.5 7.5 0 0 1 7.5 7.5z"/>
+              <path d="M9 9.5h7M9 13.5h4"/>
+            </svg>
+            <span class="txt">Explain it easily</span>
+          </button>
         </div>
-      </div>
-
-      <div class="cta reveal" style="justify-content:center">
-        <a class="btn primary" href="docs/spec.html">Read the spec - 3 minutes</a>
-        <a class="btn ghost" href="#start">Start in 3 lines</a>
-      </div>
-      <div class="microfacts reveal" style="justify-content:center">
-        <span><i class="dot"></i><b>The rules fit one page</b></span>
-        <span><i class="dot"></i><b>drift 0 or CI fails</b></span>
-        <span><i class="dot"></i><b>Any stack, any language</b></span>
-        <span><i class="dot"></i><b>MIT, no build step</b></span>
+        <p class="lede">For the first time, product owners, business analysts, architects, developers,
+          QA engineers and AI agents can contribute through <b>the same workflow and the same source of
+          truth</b>. Instead of knowledge being scattered across Jira, Confluence, Miro and forgotten
+          documents, <b>everything lives in the repository</b>, evolves with the code, and stays
+          continuously validated. Repository Standards turns your repository into <b>the operating
+          system for AI-native software development</b>.</p>
       </div>
     </div>
   </div>
 
-  <!-- PROBLEM (slim band) -->
-  <section id="why" class="slim">
+  <!-- HOW IT WORKS: the live agent session -->
+  <section id="how">
     <div class="wrap">
-      <div class="bandhead reveal">
-        <p>Built to kill four failure modes every team recognizes</p>
-        <a class="doclink" href="docs/why.html">the full argument</a>
+      <div class="cc reveal" aria-label="A coding-agent session aligning booking-api to repository-standards">
+        <div class="cc-top"><i></i><i></i><i></i><span class="fname">Quickstart &nbsp;-&nbsp; Claude Code</span></div>
+        <div class="cc-body" id="ccbody">
+          <span class="cc-user" id="ccuser"></span><span class="cc-caret" id="cccaret"></span>
+        </div>
       </div>
-      <div class="whyband reveal">
-        <div><b>Decisions evaporate in chat</b><p>The <em>why</em> dies in a thread; the next person re-litigates it.</p></div>
-        <div><b>Docs rot away from code</b><p>A wiki elsewhere drifts on the first commit; nobody trusts it.</p></div>
-        <div><b>Specs describe, they don't build</b><p>If you can't rebuild from the spec, the code is the only truth.</p></div>
-        <div><b>Drift goes unnoticed</b><p>Code and intent diverge silently - found in an incident, not a review.</p></div>
+      <div class="cta reveal">
+        <a class="btn btn-primary" href="docs/adopt.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2.5" y="4" width="19" height="16" rx="2.5"/>
+            <path d="M7 9.5l3 2.5-3 2.5"/><path d="M13 15h4"/>
+          </svg>
+          Quick start with one prompt</a>
       </div>
     </div>
   </section>
 
-  <!-- THE SPEC -->
-  <section id="spec">
+  <!-- WHY -->
+  <section id="why">
     <div class="wrap">
-      <div class="specwrap reveal">
-        <div class="bignum"><small>the rules<br>one page</small></div>
-        <div class="speccopy">
-          <span class="eyebrow">The spec</span>
-          <h2 style="margin-top:14px">The whole standard is one page. Read it in three minutes.</h2>
-          <p><span class="mono" style="color:var(--tx)">standard/SPEC.md</span> is the entire normative core: numbered rules on one page, numbers stable - the tooling cites them. The manifest is the spec's machine-readable projection; <span class="mono" style="color:var(--tx)">self-verify</span> scores your repo against it. No hundred-page handbook to interpret.</p>
-          <div class="rulepeek">
-            <span><b>R3</b>Knowledge lives in the repo, versioned with the code.</span>
-            <span><b>R8</b>Behavior is specified by capability - never by ticket or page.</span>
-            <span><b>R12</b>No planning until the clarify gate passes: zero open questions.</span>
-            <span><b>R16</b>Compliance is tooling, not prose: drift 0 or the build fails.</span>
-          </div>
-          <div class="cta" style="margin-top:26px">
-            <a class="btn primary" href="docs/spec.html">Read the rules</a>
-          </div>
-        </div>
+      <div class="shead mid reveal">
+        <span class="eyebrow">Why it exists</span>
+        <h2>You are not shipping too slowly.<br><span class="grad">You are forgetting too fast.</span></h2>
+        <p>None of them show up in a sprint review. They surface eighteen months later, when the
+          person who knew has left and a two-line change becomes a two-week dig. Teams survived that,
+          because the damage accrued at human speed. <b>Agents do not work at human speed.</b></p>
       </div>
-    </div>
-  </section>
-
-  <!-- KEYSTONE -->
-  <section id="keystone">
-    <div class="wrap">
-      <div class="shead reveal">
-        <span class="eyebrow">The mechanism</span>
-        <h2>One versioned standard. One align mechanism. Three moments.</h2>
-        <p>Adopting, updating, and staying compliant are the same operation at different starting points - not three tools you wire together.</p>
-      </div>
-      <div class="trip reveal">
-        <div>
-          <div class="k"><span class="n">01</span> Adopt</div>
-          <h3>Point &amp; align</h3>
-          <p>A new or existing repo is read, compared to the target version, and brought into line - adapted to its own stack, never blind-copied.</p>
+      <div class="modes">
+        <div class="mode reveal">
+          <span class="n">01</span>
+          <b>Tribal knowledge</b>
+          <p>Why it works this way lives in one person's head and a thread from March. They leave,
+            and the decision gets made again, differently.</p>
         </div>
-        <div>
-          <div class="k"><span class="n">02</span> Update</div>
-          <h3>True up again</h3>
-          <p>The standard moved. Read the delta since the state your repo last aligned to and apply just that - never a re-scaffold. There is no version to pin to: latest is the only target.</p>
+        <div class="mode reveal">
+          <span class="n">02</span>
+          <b>Documentation drift</b>
+          <p>The wiki was true the day it was written. Now nobody opens it, and nobody can say which
+            half of it still holds.</p>
         </div>
-        <div>
-          <div class="k"><span class="n">03</span> Verify</div>
-          <h3>Drift as a number</h3>
-          <p>The version ships a <b style="color:var(--tx)">manifest</b>; <code>self-verify</code> checks the repo against every entry and reports <b style="color:var(--tx)">drift</b> - <code>drift 0</code> or the build fails. A number your CI asserts and a fleet owner can sort on.</p>
+        <div class="mode reveal">
+          <span class="n">03</span>
+          <b>The verification bottleneck</b>
+          <p>An agent writes in a minute what takes an afternoon to review. Reading code nobody on
+            the team wrote is slower than writing it was.</p>
+        </div>
+        <div class="mode reveal">
+          <span class="n">04</span>
+          <b>Silent drift</b>
+          <p>Code and intent part ways without one failing test. You find out in an incident, an
+            audit, or a handover - never in a review.</p>
         </div>
       </div>
       <div class="secmore reveal">
-        <a class="doclink" href="docs/self-verify.html">every check self-verify asserts</a>
+        <a class="doclink" href="docs/why.html">Read the full argument - the itch, the idea, the bet</a>
       </div>
     </div>
   </section>
 
-  <!-- PATHS -->
-  <section id="paths">
+  <!-- WHO IT'S FOR -->
+  <section id="who">
     <div class="wrap">
-      <div class="shead reveal">
-        <span class="eyebrow">Two paths in</span>
-        <h2>Greenfield or brownfield. Same standard underneath.</h2>
-        <p>Where you start doesn't change where you end up. And you don't stop at the method: the align router detects your technology and offers the registered best practices for it - stack repos, official when listed in the registry.</p>
-      </div>
-      <div class="paths">
-        <div class="card reveal">
-          <div class="idx">01</div>
-          <span class="who">Greenfield</span>
-          <h3>Start clean</h3>
-          <p>Scaffold from the standard and go - specs, decisions, guards and the agent guide are wired in from commit one.</p>
-          <div class="cmd"><span class="p">&rsaquo;</span> scaffold this repo from repository-standards</div>
+      <div class="whorow">
+        <div class="shead reveal">
+          <span class="eyebrow">Who it's for</span>
+          <h2>The PO writes it.<br>The dev sharpens it.<br><span class="grad">AI Agents maintain it!</span></h2>
+          <p>One living spec, three pairs of hands, on a loop that never dead-ends. Everyone keeps
+            the job they are good at, and nobody has to reconstruct last quarter from memory.</p>
         </div>
-        <div class="card reveal">
-          <div class="idx">02</div>
-          <span class="who">Brownfield</span>
-          <h3>Rescue a messy repo</h3>
-          <p>Assess, align, onboard - in prioritized waves, not a big-bang rewrite. Re-enter the loop wave after wave until drift hits zero. A years-old, messy repo is a first-class citizen here, not a lost cause.</p>
-          <div class="cmd"><span class="p">&rsaquo;</span> align my project to repository-standards</div>
-        </div>
-        <div class="card reveal feat">
-          <div class="idx">03</div>
-          <span class="who">PO &middot; Architect &middot; Dev</span>
-          <h3>The PO writes the story</h3>
-          <p>A PO writes a story in plain language - no code required. The loop walks them through clarifying questions; technical ones can be explicitly deferred. The spec reaches <b style="color:var(--tx)">ready-to-develop</b> only through that gate, so developers and the AI build from a contract, not from vibes.</p>
-          <div class="cmd"><span class="p">story</span> &rarr; clarify &rarr; ready-to-develop &rarr; build</div>
-        </div>
-        <div class="card reveal feat">
-          <div class="idx">04</div>
-          <span class="who">Team &middot; Standard owner</span>
-          <h3>Keep a fleet current</h3>
-          <p>Cut a new version of the standard and every repo can <b style="color:var(--tx)">update to it</b> - one repo or a hundred - each self-verifying that it actually complies.</p>
-          <div class="cmd"><span class="p">&rsaquo;</span> update me to the latest repository-standards</div>
+        <div class="wheelwrap reveal">
+          <canvas class="jswheel" id="loopwheel" role="img" aria-label="An endless loop: work flows clockwise through PO, Architect and Dev, then AI, and back again."></canvas>
         </div>
       </div>
-      <div class="secmore reveal">
-        <a class="doclink" href="docs/adopt.html">the adoption guide - greenfield, brownfield, waves</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- INSIDE -->
-  <section id="inside">
-    <div class="wrap inside">
-      <div class="reveal">
-        <div class="shead" style="margin-bottom:24px">
-          <span class="eyebrow">What lands in your repo</span>
-          <h2>Knowledge that lives next to the code.</h2>
-          <p>Not a wiki that rots. Everything the standard installs is a file in the repo, read by humans and agents alike - and <span class="mono" style="color:var(--tx)">AGENTS.md</span> at the root is the entry an agent executes: it reads, loads the skills and guards, aligns, specs, records, verifies.</p>
+      <div class="roles">
+        <div class="role reveal">
+          <span class="who">Product owner</span>
+          <h3>Write it in words. Not in YAML.</h3>
+          <p>You describe the behaviour you want, and the loop asks exactly the questions that make
+            it buildable - one round, in plain language.</p>
+          <p>The technical ones you can defer on the record, so nothing gets guessed and nothing
+            quietly goes missing.</p>
+          <span class="win">no story reaches a developer half-baked</span>
         </div>
-        <div class="tree" aria-hidden="true">
-<span class="ln"><span class="d">AGENTS.md</span> <span class="c"># single entry point, agents-first</span></span>
-<span class="ln"><span class="f">SPEC.md</span> <span class="c"># the whole standard - one page of rules</span></span>
-<span class="ln"><span class="f">.standards-version</span> <span class="c"># the pin</span></span>
-<span class="ln"><span class="f">standard.manifest.json</span> <span class="c"># what compliant means, as data</span></span>
-<span class="ln"><span class="d">specs/</span> <span class="c"># living capability specs</span></span>
-<span class="ln in"><span class="f">README.md</span> <span class="c"># by capability, buildable</span></span>
-<span class="ln in"><span class="f">capability-map.json</span> <span class="c"># spec &lt;-&gt; code coupling</span></span>
-<span class="ln"><span class="d">docs/decision-records/</span></span>
-<span class="ln in"><span class="d">adr/</span> <span class="c"># technical decisions (MADR)</span></span>
-<span class="ln in"><span class="d">bdr/</span> <span class="c"># business decisions</span></span>
-<span class="ln"><span class="f">docs/backlog.md</span> <span class="c"># the work, agent-first</span></span>
-<span class="ln"><span class="d">.claude/skills/</span> <span class="c"># the loop as skills, executable</span></span>
-<span class="ln"><span class="d">scripts/</span> <span class="c"># self-verify, guards, the spec engine</span></span>
+        <div class="role reveal">
+          <span class="who">Architect &middot; Developer</span>
+          <h3>Pick up a spec, not a mystery.</h3>
+          <p>Every spec you receive is buildable: the contracts written down, the decision recorded
+            where the next person will actually look.</p>
+          <p>Move a capability's code without its spec and the guard stops the pull request, long
+            before a reviewer has to notice.</p>
+          <span class="win">no re-litigating what was decided last spring</span>
         </div>
-      </div>
-      <div class="ilist reveal">
-        <div class="irow"><span class="badge">specs/</span><div><h4>Living capability specs</h4><p>Behavior organized by capability, not by ticket or page - and buildable, not just described. The spec stays the source of truth after merge; a guard keeps it coupled to the code.</p></div></div>
-        <div class="irow"><span class="badge">adr &middot; bdr</span><div><h4>Decision records + the checklist</h4><p>Technical (ADR) and business (BDR) decisions in MADR format - plus a checklist of the forks every project hits, with an opinionated default for each.</p></div></div>
-        <div class="irow"><span class="badge">backlog.md</span><div><h4>A backlog that feeds itself</h4><p>Items arrive from spec deltas, code&harr;spec drift, and onboarding - and leave only when their definition of done is met.</p></div></div>
-        <div class="irow"><span class="badge">scripts/</span><div><h4>Enforcement, not prose</h4><p>Dependency-free, zero-install checks: <code>self-verify</code> scores drift against the version's manifest; a structure guard keeps specs shaped and owned; a coupling guard binds each spec to its code; secrets are scanned. The &ldquo;verify&rdquo; step, mechanized.</p></div></div>
-      </div>
-    </div>
-    <div class="wrap">
-      <div class="secmore reveal">
-        <a class="doclink" href="docs/taxonomy.html">where each kind of knowledge lands - the taxonomy</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- FLOW -->
-  <section id="flow">
-    <div class="wrap">
-      <div class="shead reveal">
-        <span class="eyebrow">Who it's for</span>
-        <h2>Specify. Detail. Build. Forever.</h2>
-        <p>Three roles, one living spec, on an endless loop. Each change goes around again - <b>specify -&gt; detail -&gt; build</b> - so the spec stays the truth and the work never dead-ends. The AI never invents behavior or an unrecorded decision.</p>
-      </div>
-      <div class="wheelwrap reveal">
-        <canvas class="jswheel" id="loopwheel" role="img" aria-label="An endless loop: work flows clockwise through PO, Architect and Dev, then AI, and back again."></canvas>
-      </div>
-      <div class="pipe reveal">
-        <div class="stage">
-          <div class="role">PO / Product</div>
-          <h4>Specify</h4>
-          <p>Shapes the product, then sharpens each story into clear behavior and rules - the <em>what</em> and the <em>why</em>, for a named persona.</p>
-          <ul><li>Vision &amp; product thinking</li><li>Description &amp; features</li><li>Sharpen each story</li></ul>
-          <span class="arw">&rarr;</span>
-        </div>
-        <div class="stage">
-          <div class="role">Architect + Dev</div>
-          <h4>Detail</h4>
-          <p>Technical analysis: details each story and makes it <b>buildable</b> - the contracts, the shape, and the decisions that make it feasible.</p>
-          <ul><li>Technical analysis</li><li>Contracts &amp; shape</li><li>Decisions (ADR / BDR)</li></ul>
-          <span class="arw">&rarr;</span>
-        </div>
-        <div class="stage">
-          <div class="role">AI agent</div>
-          <h4>Build</h4>
-          <p>Turns the spec into a plan - asking clarifying questions until it's ready to develop - then writes the tasks, builds and tests.</p>
-          <ul><li>Plan + ask questions</li><li>Tasks, build &amp; test</li><li>Grow &amp; update the backlog</li></ul>
+        <div class="role reveal">
+          <span class="who">Your AI agent</span>
+          <h3>Reads the repo. Not your mind.</h3>
+          <p>One entry point, honest indexes, and gates it can actually obey. It plans, asks until
+            nothing is open, then builds against the spec.</p>
+          <p>It never invents behaviour, and it never invents a decision that nobody recorded.</p>
+          <span class="win">a fresh session starts where the last one left off</span>
         </div>
       </div>
       <div class="secmore reveal">
@@ -537,129 +540,225 @@
     </div>
   </section>
 
-  <!-- LANGUAGE -->
-  <section id="lang">
+  <!-- WAYS IN -->
+  <section id="ways">
     <div class="wrap">
-      <div class="shead reveal">
-        <span class="eyebrow">Human-language agnostic</span>
-        <h2>Everyone writes in their own language. One spec comes out.</h2>
-        <p>Non-technical contributors talk in their native tongue - the framework gathers every language into one source and writes it down consistently, in the repo's language, native or default English. Language stops being the thing that blocks people from contributing.</p>
+      <div class="shead mid reveal">
+        <span class="eyebrow">How it comes in</span>
+        <h2>Start a project clean, or start from<br>the mess you already have.</h2>
+        <p>Most tooling assumes a repository that does not exist yet. This one also takes the repo
+          you actually have: four years deep, three abandoned conventions, a test suite nobody
+          trusts. <b>You do not clean it up first.</b> It gets measured as it is, and nothing moves
+          until you say so.</p>
       </div>
-      <div class="lstage reveal" id="stage">
-        <canvas id="langcanvas"></canvas>
-        <div class="person p0" id="pr0">
-          <div class="speech">"Gosc moze zmienic date rezerwacji w niecala minute."</div>
-          <div class="figure"><span class="av">&#129489;</span><span class="flag">&#127477;&#127473;</span></div>
-          <div class="prole">PO &middot; Polski</div>
-        </div>
-        <div class="person p1" id="pr1">
-          <div class="speech">"PATCH /bookings/:id - Idempotenz-Key erforderlich."</div>
-          <div class="figure"><span class="av">&#128104;</span><span class="flag">&#127465;&#127466;</span></div>
-          <div class="prole">Dev &middot; Deutsch</div>
-        </div>
-        <div class="person p2" id="pr2">
-          <div class="speech">"El flujo debe caber en una sola pantalla movil."</div>
-          <div class="figure"><span class="av">&#128105;</span><span class="flag">&#127466;&#127480;</span></div>
-          <div class="prole">Design &middot; Espanol</div>
-        </div>
-        <div class="hub2" id="hub"><div class="core">&#9881;</div><div class="lbl">framework</div></div>
-        <div class="doc" id="doc">
-          <div class="dhead"><span class="di">&#128196;</span><span class="dt">booking spec</span><span class="chip" id="chip">English &middot; default</span></div>
-          <div class="dbody" id="dbody">
-            <div class="dl"><b>Capability</b> <span data-k="cap"></span></div>
-            <div class="dl"><b>Rule</b> <span data-k="rule"></span></div>
-            <div class="dl"><b>Done</b> <span data-k="done"></span></div>
+      <div class="ways">
+        <div class="way reveal">
+          <span class="wnum">01</span>
+          <span class="who">A fresh project</span>
+          <h3>Day one, already in order.</h3>
+          <p>Scaffold from the current standard and start building. The specs, decision records,
+            guards and the agent guide are wired in from the first commit, so there is no "we will
+            document it later" to come back to.</p>
+          <ul>
+            <li>The eight foundation decisions come with a paved-road default each</li>
+            <li>CI gates compliance from the first push</li>
+            <li>You choose whether the technology layer comes along on day one</li>
+          </ul>
+          <div class="stackrow">
+            <span class="lb2">Layer 2</span>
+            <p>Say yes and <a href="https://github.com/bodurkalukasz/repository-standards-node">repository-standards-node</a>
+              comes with it: Next.js and Fastify, running before you write a line. Say no and the
+              method still stands on its own.</p>
           </div>
-          <div class="dfoot">One final language, decided per repo: <b>English by default</b> - or the team's native (e.g. Polski), if that's the recorded choice.</div>
+          <div class="cmd"><span class="p">&rsaquo;</span> scaffold this repo from repository-standards<span class="opt">, with the node stack</span></div>
+        </div>
+        <div class="way reveal">
+          <span class="wnum">02</span>
+          <span class="who">A repo that got away from you</span>
+          <h3>Rescue the mess, in waves.</h3>
+          <p>A years-old repo is a first-class citizen here, not a lost cause. It gets assessed,
+            then aligned in prioritized waves - never a big-bang rewrite, never a branch that
+            stays open for a month. You re-enter the loop whenever you have the appetite.</p>
+          <ul>
+            <li>The decisions living in chat get written down where they belong</li>
+            <li>Money paths get specs first, the rest queues in the backlog</li>
+            <li>Nobody asks you what you are running - the assessment works it out</li>
+          </ul>
+          <div class="stackrow">
+            <span class="lb2">Layer 2</span>
+            <p>Your technology is detected during the assessment. If a layer exists for it -
+              <a href="https://github.com/bodurkalukasz/repository-standards-node">node</a> today -
+              you are asked whether to bring it in. Decline it and add it in a later wave.</p>
+          </div>
+          <div class="cmd"><span class="p">&rsaquo;</span> bring this repo onto the standard, one wave at a time</div>
         </div>
       </div>
       <div class="secmore reveal">
-        <a class="doclink" href="docs/specs.html">how a capability spec is written</a>
+        <a class="doclink" href="docs/adopt.html">the adoption guide - greenfield, brownfield, waves</a>
       </div>
     </div>
   </section>
 
-  <!-- LAYERS -->
-  <section id="layers">
+  <!-- PROPOSED WORKFLOW -->
+  <section id="parts">
     <div class="wrap">
-      <div class="shead reveal">
-        <span class="eyebrow">Two layers</span>
-        <h2>Take the method. Add the stack when you want it.</h2>
-        <p>The standard is stack-agnostic. Technology best practices live in satellite repos - one per technology, listed in the core registry. Adopt the method alone, or add your stack.</p>
+      <div class="shead mid reveal">
+        <span class="eyebrow">Proposed workflow</span>
+        <h2>Not just how the code looks.<br><span class="grad">How the work runs.</span></h2>
+        <p>Three phases, one living spec, and a hand-off that never loses anything on the way.
+          Everything below is a file in your repo and a page in the docs.</p>
       </div>
-      <div class="layers">
-        <div class="layer reveal">
-          <span class="lb">Layer 1 &middot; The standard</span>
-          <h3>Stack-agnostic method</h3>
-          <p>The durable part - works for any repo, any language.</p>
-          <div class="chips">
-            <span class="chip">Decision records</span><span class="chip">Capability specs</span><span class="chip">Decision checklist</span>
-            <span class="chip">Backlog</span><span class="chip">Guards-as-templates</span><span class="chip">AGENTS.md</span>
+
+      <div class="tl reveal">
+        <div class="rail" role="tablist" aria-label="Workflow phases">
+          <button class="phase" role="tab" aria-selected="true" data-p="1">
+            <span class="n">01</span><h3>Define</h3>
+            <p>Name who it is for, then write the behaviour in their own words. The loop asks what
+              is missing, and nothing reaches a developer while a question is still open.</p>
+            <span class="cnt">5 parts</span>
+          </button>
+          <button class="phase" role="tab" aria-selected="false" data-p="2">
+            <span class="n">02</span><h3>Build</h3>
+            <p>The developer picks it up and raises it to something buildable, records the decisions
+              it forces, and the agent builds against exactly that.</p>
+            <span class="cnt">4 parts</span>
+          </button>
+          <button class="phase" role="tab" aria-selected="false" data-p="3">
+            <span class="n">03</span><h3>Keep</h3>
+            <p>After the merge the spec stays the truth, and the checks keep answering whether that
+              is still so - out loud, as a number.</p>
+            <span class="cnt">5 parts</span>
+          </button>
+        </div>
+
+        <div class="panels">
+          <div class="panel on" data-p="1">
+            <a class="item" href="docs/ways-of-working.html"><span class="k">Personas</span><span class="b"><b>Built for someone, on the record</b><span>Every capability names the persona it serves, and one that serves nobody fails the structure guard. The cheapest way to stop a backlog filling with work nobody asked for.</span><i>who the work is for</i></span></a>
+            <a class="item" href="docs/working-with-specs.html"><span class="k">PO &middot; stories</span><span class="b"><b>A story, asked the right questions</b><span>Behaviour in plain language, then the questions that actually block a build. The technical ones get deferred on the record instead of guessed.</span><i>how a spec gets written</i></span></a>
+            <a class="item" href="docs/working-with-specs.html"><span class="k">Clarify gate</span><span class="b"><b>Nothing gets built on a maybe</b><span>A spec cannot reach planning while a question is still open. Answers or explicit deferrals, recorded either way.</span><i>what you say, what happens</i></span></a>
+            <a class="item" href="docs/discovery.html"><span class="k">Discovery</span><span class="b"><b>From a meeting to a spec</b><span>Notes and materials get a home with their provenance, and the spec drafts early while it is still honest about its gaps.</span><i>the worked example</i></span></a>
+            <a class="item" href="docs/working-with-specs.html"><span class="k">Status</span><span class="b"><b>Where everything actually is</b><span>In refinement, ready to develop, in development, live. The product owner's view of the pipeline, kept in the repo.</span><i>the status walk</i></span></a>
+          </div>
+          <div class="panel" data-p="2">
+            <a class="item" href="docs/specs.html"><span class="k">specs/</span><span class="b"><b>Capabilities, not tickets</b><span>Behaviour organized by what the product does, and buildable enough that the capability can be rebuilt from its spec alone.</span><i>how specs are shaped</i></span></a>
+            <a class="item" href="docs/ways-of-working.html"><span class="k">Impact &middot; reconcile</span><span class="b"><b>Know what a change touches</b><span>Before the work: which capabilities, records and code it ripples into. After it: spec, code and tests are reconciled until they agree.</span><i>the loop, stage by stage</i></span></a>
+            <a class="item" href="docs/decision-records.html"><span class="k">adr &middot; bdr</span><span class="b"><b>Decisions that stay decided</b><span>Technical and business calls in MADR form. An accepted record gets superseded by a new one, never quietly rewritten.</span><i>the records</i></span></a>
+            <a class="item" href="docs/checklist.html"><span class="k">Checklist</span><span class="b"><b>The eight forks every project hits</b><span>Repo topology, domain boundaries, datastore, API contract, auth, testing, security, releases - each with a paved-road default.</span><i>the decision checklist</i></span></a>
+          </div>
+          <div class="panel" data-p="3">
+            <a class="item" href="docs/ways-of-working.html"><span class="k">Backlog &middot; flow</span><span class="b"><b>Work that cannot quietly disappear</b><span>Every item carries a definition of done and leaves only when it is met. Execution state stays in your tracker.</span><i>roles, gates and hand-offs</i></span></a>
+            <a class="item" href="docs/self-verify.html"><span class="k">self-verify</span><span class="b"><b>Drift as a number</b><span>The repo scores itself against the version's manifest. Drift 0 or the build fails, on your laptop and in CI alike.</span><i>every check it asserts</i></span></a>
+            <a class="item" href="docs/adopt.html"><span class="k">Update</span><span class="b"><b>The standard moves. So does your repo.</b><span>Alignment always targets the latest, and only the delta is applied - the way a dependency bump works, not a re-scaffold.</span><i>adoption and updates</i></span></a>
+            <a class="item" href="docs/working-language.html"><span class="k">Working language</span><span class="b"><b>Your team's language, on the record</b><span>English is the paved road, but an agent reads any language. Declare which part of the repo speaks what.</span><i>why English, when not</i></span></a>
+            <a class="item" href="docs/spec.html"><span class="k">SPEC.md</span><span class="b"><b>Numbered rules. One file.</b><span>The entire normative core, numbered and stable because the tooling cites the numbers.</span><i>read the rules</i></span></a>
           </div>
         </div>
-        <div class="layer reveal">
-          <span class="lb">Layer 2 &middot; Node / TypeScript &middot; <span style="opacity:.75">in progress</span></span>
-          <h3>A runnable setup</h3>
-          <p>Node/TypeScript first: <a href="https://github.com/bodurkalukasz/repository-standards-node">repository-standards-node</a> - picks distilled from production repos, a boot-verified starter, its own weekly boot CI. One stack per technology, by policy - variation is a profile, never a sibling repo.</p>
-          <div class="chips">
-            <span class="chip">pnpm + Turbo</span><span class="chip">Biome</span><span class="chip">Fastify</span>
-            <span class="chip">Next.js</span><span class="chip">Vitest / Playwright</span><span class="chip">Hardened CI</span>
-          </div>
-        </div>
-      </div>
-      <div class="secmore reveal">
-        <a class="doclink" href="docs/faq.html">solo or fleet, Layer 1 alone or with a stack - the FAQ</a>
       </div>
     </div>
   </section>
 
-  <!-- AGENTS -->
-
-
-  <!-- QUICKSTART -->
-  <section id="start">
+  <!-- WHAT THE STANDARD COVERS -->
+  <section id="covers">
     <div class="wrap">
-      <div class="shead reveal">
-        <span class="eyebrow">Quickstart</span>
-        <h2>Three lines to a repo that stays in line.</h2>
-        <p>Agent-first: you talk to your coding agent, and the standard's own guard proves
-          the result - the same check your CI runs.</p>
+      <div class="shead mid reveal">
+        <span class="eyebrow">What the standard covers</span>
+        <h2>Seventeen things a project forgets.<br><span class="grad">All seventeen get a home.</span></h2>
+        <p>The short version. Every one of these is a real file or folder that lands in your repository.</p>
       </div>
-      <div class="term reveal">
-        <div class="term-top"><i></i><i></i><i></i><span class="fname">agent + CI</span></div>
-        <div class="term-body">
-          <span class="ln"><span class="cmuted"># 1 &middot; point your agent at the standard - a new repo, or your messiest one</span></span>
-          <span class="ln"><span class="cprompt">&rsaquo;</span> <span class="ccmd">align this repo to repository-standards</span></span>
-          <span class="ln">&nbsp;</span>
-          <span class="ln"><span class="cmuted"># 2 &middot; it scaffolds / assesses / aligns - then proves it against the manifest</span></span>
-          <span class="ln"><span class="cprompt">$</span> <span class="ccmd">node scripts/self-verify.mjs</span></span>
-          <span class="ln">  <span class="cok">self-verify: OK - drift 0 - 52 checks, compliant with the standard</span></span>
-          <span class="ln">&nbsp;</span>
-          <span class="ln"><span class="cmuted"># 3 &middot; when the standard moves, bump it like a dependency</span></span>
-          <span class="ln"><span class="cprompt">&rsaquo;</span> <span class="ccmd">update me to the latest repository-standards</span></span>
-          <span class="ln">&nbsp;</span>
-          <span class="ln"><span class="cmuted"># no agent? grab the tree: npx degit bodurkalukasz/repository-standards/standard my-repo</span></span>
+      <div class="fmap reveal">
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>personas.md</span>
+          <p>who you are building for</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.8-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.4l6.1-.8z"/></svg>PRODUCT.md</span>
+          <p>the vision, and the metric each capability moves</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3L3 6v15l6-3 6 3 6-3V3l-6 3z"/><path d="M9 3v15M15 6v15"/></svg>journeys/</span>
+          <p>how a real person moves through it</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/></svg>specs/</span>
+          <p>behaviour by capability, buildable</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4"/><path d="M12 2a6 6 0 0 0-3.5 10.9c.6.5.9 1.2.9 1.9V15h5.2v-.2c0-.7.3-1.4.9-1.9A6 6 0 0 0 12 2z"/></svg>ideas/</span>
+          <p>undecided, and labelled as such</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3l7 7-3 3-7-7z"/><path d="M4 20h10"/><path d="M11 8l-7 7 3 3 7-7"/></svg>decision-records/adr/</span>
+          <p>the why, and what it cost</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M5 7h14"/><path d="M5 7l-3 6h6zM19 7l-3 6h6z"/></svg>decision-records/bdr/</span>
+          <p>the business calls, same shape</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M12 7v14M5 13a7 7 0 0 0 14 0"/></svg>PRINCIPLES.md</span>
+          <p>what wins when two documents disagree</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>discovery/</span>
+          <p>meetings, with their provenance</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>backlog.md</span>
+          <p>intents, each with a definition of done</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>.claude/skills/</span>
+          <p>the loop, as procedures the agent runs</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>conventions.md</span>
+          <p>commits, branches, working language</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.4 8.4-8 9-4.6-.6-8-4-8-9V6z"/></svg>security-baseline.md</span>
+          <p>every axis answered, including not applicable</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14"/><path d="M7 20v-6a5 5 0 0 1 10 0v6"/><path d="M12 3v2M4 8l1.5 1M20 8l-1.5 1"/></svg>runbooks/</span>
+          <p>incidents, and the postmortem after</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>standard.manifest.json</span>
+          <p>what compliant means, as data</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="12" r="3"/><path d="M6 9v6M9 12h6"/></svg>scripts/</span>
+          <p>drift scoring and the guards</p>
+        </div>
+        <div class="fm">
+          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M18 7h2v13H7"/></svg>SPEC.md</span>
+          <p>the numbered rules, all of them</p>
         </div>
       </div>
       <div class="secmore reveal">
-        <a class="doclink" href="docs/checklist.html">aligned? the eight foundation decisions come next</a>
+        <a class="doclink" href="docs/taxonomy.html">where each kind of knowledge lands, and what settles it</a>
       </div>
     </div>
   </section>
 
-  <!-- FINAL CTA -->
+  <!-- FINAL -->
   <div class="final">
-    <div class="wrap box reveal">
-      <span class="eyebrow">Get started</span>
-      <h2>Pin your repo to a standard. <span class="hl">Update</span> when it moves. <span class="hl">Verify</span> it stuck.</h2>
-      <p>Open source, MIT, no build step. Bring a fresh repo or your messiest one.
-        Pre-1.0 (the 0.7.x line), no release tags yet, and no public adopter to point at -
-        the mechanics were run on the author's own repos. One registered technology stack so
-        far. Every guard here is dependency-free and runs in a clone, so test the mechanism
-        before you trust it - and adopt the mechanism, not a promise.</p>
+    <div class="wrap reveal">
+      <h2>Point it at the standard. <span class="grad">Watch it prove the result.</span></h2>
+      <p class="oneliner">The missing layer between business, engineering and AI: one repository every role contributes to, and a standard that proves it still holds.</p>
+      <p>Open source, MIT, no build step. Bring a fresh repo or your worst one. Version 1.0.0, the
+        first stable line - no release tag until the maintainer cuts one, and no public adopter to
+        point at, because the mechanics have been run on the author's own repositories. Every guard
+        here is dependency-free and runs in a clone, so test the mechanism before you trust it.</p>
       <div class="cta" style="justify-content:center">
-        <a class="btn primary" href="docs/">Read the docs</a>
-        <a class="btn ghost" href="https://github.com/bodurkalukasz/repository-standards">Star on GitHub</a>
+        <a class="btn btn-primary" href="docs/adopt.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2.5" y="4" width="19" height="16" rx="2.5"/>
+            <path d="M7 9.5l3 2.5-3 2.5"/><path d="M13 15h4"/>
+          </svg>
+          Quick start with one prompt</a>
+        <a class="btn btn-ghost" href="https://github.com/bodurkalukasz/repository-standards">Star on GitHub</a>
       </div>
     </div>
   </div>
@@ -667,7 +766,7 @@
 
 <footer>
   <div class="wrap foot">
-    <span>repository-standards &middot; v0.7.2 &middot; MIT</span>
+    <span>repository-standards &middot; v1.0.0 &middot; MIT</span>
     <span>no build &middot; one standard &middot; self-verifying</span>
     <a href="https://github.com/bodurkalukasz/repository-standards">github.com/bodurkalukasz/repository-standards</a>
   </div>
@@ -677,7 +776,6 @@
 (function(){
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // scroll reveal
   var els = [].slice.call(document.querySelectorAll(".reveal"));
   if(reduce || !("IntersectionObserver" in window)){
     els.forEach(function(e){e.classList.add("in")});
@@ -688,22 +786,22 @@
     els.forEach(function(e){io.observe(e)});
   }
 
-  // hero: the agent session - type the ask, then play the align out live
+  // the agent session: type the ask, then play the align out live
   var ccbody = document.getElementById("ccbody");
   var ccuser = document.getElementById("ccuser");
   var cccaret = document.getElementById("cccaret");
   var CMD = "align my project to repository-standards";
   var SCRIPT = [
     {sp:1, d:340},
-    {h:'<span class="cb">&#9210;</span> Reading the standard&hellip; <span class="cv">repository-standards</span> <span class="cmuted">- latest, the rules fit one page</span>', d:640},
-    {h:'<span class="cb">&#9210;</span> Scanning <span class="cw">my-project</span> <span class="cmuted">- 214 files</span>', d:520},
+    {h:'<span class="cb">&#9210;</span> Reading the standard&hellip; <span class="cv">repository-standards@1.0.0</span> <span class="cmuted">- the rules, one file</span>', d:640},
+    {h:'<span class="cb">&#9210;</span> Scanning <span class="cw">booking-api</span> <span class="cmuted">- 214 files</span>', d:520},
     {h:'  <span class="cmuted">&#9151;</span>  12 capabilities detected &middot; 0 specs &middot; the decisions live in chat history', d:720},
     {h:'<span class="cb">&#9210;</span> Comparing the tree against the manifest&hellip;', d:700},
     {h:'  <span class="cmuted">&#9151;</span>  <span class="cdel"><span id="cccount">0</span> divergences</span> found', d:1000, count:67},
     {sp:1, d:280},
     {h:'<span class="cb">&#9210;</span> Building the fit report + adoption plan&hellip;', d:840},
     {sp:1, d:260},
-    {h:'  <span class="cw">Adoption plan</span> <span class="cmuted">my-project -&gt; repository-standards, latest</span>', d:360},
+    {h:'  <span class="cw">Adoption plan</span> <span class="cmuted">booking-api -&gt; repository-standards@1.0.0</span>', d:360},
     {h:'  &#9500; 7 ADRs to record           <span class="cmuted">the why that today lives only in chat</span>', d:300},
     {h:'  &#9500; 1 BDR                      <span class="cmuted">the pricing rule that exists only in code</span>', d:300},
     {h:'  &#9500; PRODUCT.md                 <span class="cmuted">what this app is, and for whom</span>', d:300},
@@ -776,17 +874,68 @@
   } else {
     setTimeout(loop, 800);
   }
-})();
+
+  // EXPLAIN-1 on the page itself: the same claims, in words that assume nothing
+  var HERO = {
+    tech: {
+      h1: 'The missing layer between<br><span class="grad">business, engineering and AI.</span>',
+      lede: 'For the first time, product owners, business analysts, architects, developers, QA engineers and AI agents can contribute through <b>the same workflow and the same source of truth</b>. Instead of knowledge being scattered across Jira, Confluence, Miro and forgotten documents, <b>everything lives in the repository</b>, evolves with the code, and stays continuously validated. Repository Standards turns your repository into <b>the operating system for AI-native software development</b>.'
+    },
+    plain: {
+      h1: 'Your team\'s knowledge<br><span class="grad">stops walking out the door.</span>',
+      lede: 'Right now what your team knows is scattered across chat, tickets, documents and people\'s heads, and when someone leaves it goes with them. We keep all of it in one folder next to the code: <b>what the app should do, why it was built this way, and who decided</b>. It gets checked on its own, so when the notes stop matching the code <b>you find out</b>. And anyone can write there, not just programmers: product people, testers, consultants, and the AI.'
+    }
+  };
+  var sticker = document.getElementById("explain");
+  if(sticker){
+    var h1el = document.querySelector("h1.title"), ledeEl = document.querySelector(".lede");
+    var stxt = sticker.querySelector(".txt");
+    sticker.addEventListener("click", function(){
+      var on = sticker.dataset.on === "1" ? "0" : "1";
+      sticker.dataset.on = on;
+      sticker.setAttribute("aria-pressed", String(on === "1"));
+      stxt.textContent = on === "1" ? "Technical description" : "Explain it easily";
+      var copy = HERO[on === "1" ? "plain" : "tech"];
+      h1el.classList.add("fading"); ledeEl.classList.add("fading");
+      setTimeout(function(){
+        h1el.innerHTML = copy.h1; ledeEl.innerHTML = copy.lede;
+        h1el.classList.remove("fading"); ledeEl.classList.remove("fading");
+      }, 220);
+    });
+  }
+
+  // the workflow phase rail: hover switches too, so the content behind a phase costs no click
+  var phases = [].slice.call(document.querySelectorAll(".phase"));
+  var panels = [].slice.call(document.querySelectorAll(".panels .panel"));
+  var panelBox = document.querySelector(".panels");
+  function fitPanels(){
+    var open = panels.filter(function(p){ return p.classList.contains("on"); })[0];
+    if(open && panelBox) panelBox.style.height = open.offsetHeight + "px";
+  }
+  function selectPhase(t){
+    phases.forEach(function(x){ x.setAttribute("aria-selected", String(x === t)); });
+    panels.forEach(function(p){ p.classList.toggle("on", p.dataset.p === t.dataset.p); });
+    fitPanels();
+  }
+  if(panelBox){ fitPanels(); window.addEventListener("resize", fitPanels); }
+  phases.forEach(function(t){
+    t.addEventListener("click", function(){ selectPhase(t); });
+    t.addEventListener("mouseenter", function(){ selectPhase(t); });
+    t.addEventListener("focus", function(){ selectPhase(t); });
+  });
 
   var eco=document.getElementById("ecoswitch"),ecb=document.getElementById("ecobtn");
-  if(eco&&ecb){ecb.addEventListener("click",function(){var o=eco.hasAttribute("data-open");eco.toggleAttribute("data-open");ecb.setAttribute("aria-expanded",String(!o));});
-  document.addEventListener("click",function(e){if(!eco.contains(e.target)){eco.removeAttribute("data-open");ecb.setAttribute("aria-expanded","false");}});
-  document.addEventListener("keydown",function(e){if(e.key==="Escape"){eco.removeAttribute("data-open");ecb.setAttribute("aria-expanded","false");}});}
+  if(eco&&ecb){
+    ecb.addEventListener("click",function(){var o=eco.hasAttribute("data-open");eco.toggleAttribute("data-open");ecb.setAttribute("aria-expanded",String(!o));});
+    document.addEventListener("click",function(e){if(!eco.contains(e.target)){eco.removeAttribute("data-open");ecb.setAttribute("aria-expanded","false");}});
+    document.addEventListener("keydown",function(e){if(e.key==="Escape"){eco.removeAttribute("data-open");ecb.setAttribute("aria-expanded","false");}});
+  }
+})();
 </script>
 
 <script>
-/* Who it's for - the endless loop wheel (canvas). Work tokens flow clockwise through the
-   three roles, colour-shifting by phase (PO amber -> Arch/Dev white -> AI teal). */
+/* Who it's for - the endless loop wheel. Work tokens flow clockwise through the three
+   roles, colour-shifting by phase (PO amber -> Arch/Dev pink -> AI green). */
 (function(){
   var cv = document.getElementById("loopwheel");
   if(!cv || !cv.getContext) return;
@@ -796,19 +945,19 @@
   var DPR = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
   function fit(){
     var box = cv.getBoundingClientRect();
-    var size = Math.max(200, box.width || 420);
+    var size = Math.max(200, box.width || 400);
     cv.width = size * DPR; cv.height = size * DPR;
     var k = size / W * DPR; ctx.setTransform(k,0,0,k,0,0);
   }
   fit(); window.addEventListener("resize", fit);
   var nodes = [
-    { deg:-90, label:"PO", verb:"SPECIFY", color:[255,180,84] },
-    { deg: 30, label:"ARCH+DEV", verb:"DETAIL", color:[236,237,239] },
-    { deg:150, label:"AI", verb:"BUILD", color:[78,201,166] }
+    { deg:-90, label:"PO", verb:"SPECIFY", color:[255,122,47] },
+    { deg: 30, label:"ARCH+DEV", verb:"DETAIL", color:[168,132,255] },
+    { deg:150, label:"AI", verb:"BUILD", color:[52,211,153] }
   ];
   var rad=function(d){return d*Math.PI/180;}, lerp=function(a,b,t){return a+(b-a)*t;};
   function pos(deg){ return { x: CX+R*Math.cos(rad(deg)), y: CY+R*Math.sin(rad(deg)) }; }
-  var cols=[[255,180,84],[236,237,239],[78,201,166]];
+  var cols=[[255,122,47],[168,132,255],[52,211,153]];
   function colAt(t){ t=((t%1)+1)%1; var s=t*3, i=Math.floor(s)%3, f=s-Math.floor(s); var a=cols[i], b=cols[(i+1)%3]; return [lerp(a[0],b[0],f),lerp(a[1],b[1],f),lerp(a[2],b[2],f)]; }
   var rgb=function(c,al){return "rgba("+(c[0]|0)+","+(c[1]|0)+","+(c[2]|0)+","+(al==null?1:al)+")";};
   var N=5, TAIL=9, tokens=[]; for(var i=0;i<N;i++) tokens.push({t:i/N}); var SPEED=0.055;
@@ -816,7 +965,7 @@
   function nodeGlow(nodeDeg){ var g=0; for(var i=0;i<tokens.length;i++){ var d=Math.abs(((degOf(tokens[i].t)-nodeDeg+540)%360)-180); d=180-d; g=Math.max(g, Math.max(0,(d-150)/30)); } return g; }
   function draw(){
     ctx.clearRect(0,0,W,W);
-    ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2); ctx.strokeStyle="#242832"; ctx.lineWidth=2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2); ctx.strokeStyle="rgba(255,255,255,.10)"; ctx.lineWidth=2; ctx.stroke();
     for(var i=0;i<tokens.length;i++){ var tk=tokens[i];
       for(var j=TAIL;j>=0;j--){ var tt=tk.t-j*0.012; var p=pos(degOf(tt)); var c=colAt(tt); var al=(1-j/(TAIL+1))*0.9; var r=j===0?7:Math.max(1,6-j*0.6);
         if(j===0){ var gr=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,16); gr.addColorStop(0,rgb(c,0.9)); gr.addColorStop(1,rgb(c,0)); ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(p.x,p.y,16,0,Math.PI*2); ctx.fill(); }
@@ -825,80 +974,17 @@
     }
     for(var n=0;n<nodes.length;n++){ var nd=nodes[n]; var p=pos(nd.deg); var glow=nodeGlow(nd.deg);
       if(glow>0){ ctx.fillStyle=rgb(nd.color,0.16*glow); ctx.beginPath(); ctx.arc(p.x,p.y,46+8*glow,0,Math.PI*2); ctx.fill(); }
-      ctx.beginPath(); ctx.arc(p.x,p.y,40,0,Math.PI*2); ctx.fillStyle="#16181D"; ctx.strokeStyle=rgb(nd.color,0.35+0.55*glow); ctx.lineWidth=1.5; ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(p.x,p.y,40,0,Math.PI*2); ctx.fillStyle="#111017"; ctx.strokeStyle=rgb(nd.color,0.35+0.55*glow); ctx.lineWidth=1.5; ctx.fill(); ctx.stroke();
       ctx.fillStyle="#fff"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.font="700 "+(nd.label.length>4?12.5:15)+"px ui-monospace, Menlo, monospace"; ctx.fillText(nd.label,p.x,p.y-4);
       ctx.fillStyle=rgb(nd.color,0.95); ctx.font="10.5px ui-monospace, Menlo, monospace"; ctx.fillText(nd.verb,p.x,p.y+13);
     }
-    ctx.beginPath(); ctx.arc(CX,CY,34,0,Math.PI*2); ctx.fillStyle="#0D0E11"; ctx.strokeStyle="#242832"; ctx.lineWidth=1; ctx.fill(); ctx.stroke();
-    ctx.fillStyle="#4EC9A6"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.font="28px ui-monospace, Menlo, monospace"; ctx.fillText("↻",CX,CY-2);
-    ctx.fillStyle="#9BA1AB"; ctx.font="10px ui-monospace, Menlo, monospace"; ctx.fillText("ENDLESS",CX,CY+22);
+    ctx.beginPath(); ctx.arc(CX,CY,34,0,Math.PI*2); ctx.fillStyle="#08080b"; ctx.strokeStyle="rgba(255,255,255,.10)"; ctx.lineWidth=1; ctx.fill(); ctx.stroke();
+    ctx.fillStyle="#34d399"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.font="28px ui-monospace, Menlo, monospace"; ctx.fillText("↻",CX,CY-2);
+    ctx.fillStyle="#a7a3b2"; ctx.font="10px ui-monospace, Menlo, monospace"; ctx.fillText("ENDLESS",CX,CY+22);
   }
   var last=null;
   function frame(now){ if(last==null) last=now; var dt=(now-last)/1000; last=now; for(var i=0;i<tokens.length;i++){ tokens[i].t=(tokens[i].t+SPEED*dt)%1; } draw(); requestAnimationFrame(frame); }
   if(reduce){ tokens=nodes.map(function(nd){ return {t:((nd.deg+90)/360+1)%1}; }); draw(); }
   else { requestAnimationFrame(frame); }
-})();
-</script>
-
-<script>
-/* Human-language story: native-language streams flow into the framework, which writes one
-   consistent spec - toggling English (default) <-> the repo's native language. */
-(function(){
-  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var stage=document.getElementById("stage"), cv=document.getElementById("langcanvas");
-  var hub=document.getElementById("hub"), chip=document.getElementById("chip"), dbody=document.getElementById("dbody");
-  if(!stage||!cv||!hub) return;
-  var ctx=cv.getContext("2d"), DPR=Math.max(1,Math.min(2.5,window.devicePixelRatio||1));
-  var CONTENT={
-    en:{chip:"English · default", cap:"change booking dates", rule:"allowed up to 24h before check-in", done:"guest sees the new dates instantly"},
-    pl:{chip:"Polski · native", cap:"zmiana dat rezerwacji", rule:"dozwolone do 24h przed zameldowaniem", done:"gosc od razu widzi nowe daty"}
-  };
-  function setLang(k){ dbody.classList.add("swap");
-    setTimeout(function(){ var c=CONTENT[k]; chip.textContent=c.chip;
-      dbody.querySelector('[data-k="cap"]').textContent=c.cap;
-      dbody.querySelector('[data-k="rule"]').textContent=c.rule;
-      dbody.querySelector('[data-k="done"]').textContent=c.done;
-      dbody.classList.remove("swap"); },300);
-  }
-  setLang("en");
-  var srcEls=[document.getElementById("pr0"),document.getElementById("pr1"),document.getElementById("pr2")];
-  var COLORS=[[255,180,84],[236,237,239],[78,201,166]];
-  var srcs=[], target={x:0,y:0}, W=0, H=0;
-  function anchors(){ var s=stage.getBoundingClientRect(); W=s.width; H=s.height;
-    cv.width=W*DPR; cv.height=H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0);
-    srcs=srcEls.map(function(el){ var f=el.querySelector(".figure").getBoundingClientRect();
-      return {x:f.left+f.width/2-s.left, y:f.top+f.height/2-s.top}; });
-    var h=hub.querySelector(".core").getBoundingClientRect();
-    target={x:h.left+h.width/2-s.left, y:h.top+h.height/2-s.top};
-  }
-  anchors(); window.addEventListener("resize", anchors); setTimeout(anchors, 700);
-  var rgb=function(c,a){return "rgba("+c[0]+","+c[1]+","+c[2]+","+a+")";};
-  var ease=function(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;};
-  var parts=[], charge=0;
-  function spawn(){ for(var i=0;i<srcs.length;i++){ if(Math.random()<0.5) parts.push({i:i,t:0,life:1.5+Math.random()*0.7,off:(Math.random()-0.5)*22}); } }
-  function draw(dt){ ctx.clearRect(0,0,W,H);
-    for(var i=0;i<srcs.length;i++){ var s=srcs[i]; ctx.strokeStyle=rgb(COLORS[i],0.10); ctx.lineWidth=1;
-      ctx.beginPath(); ctx.moveTo(s.x,s.y); var cx=(s.x+target.x)/2, cy=Math.min(s.y,target.y)-10;
-      ctx.quadraticCurveTo(cx,cy,target.x,target.y); ctx.stroke(); }
-    for(var p=parts.length-1;p>=0;p--){ var pt=parts[p]; pt.t+=dt/pt.life;
-      if(pt.t>=1){ charge=Math.min(1,charge+0.5); parts.splice(p,1); continue; }
-      var s=srcs[pt.i], e=ease(pt.t); var cx=(s.x+target.x)/2+pt.off, cy=Math.min(s.y,target.y)-10;
-      var mx=(1-e)*(1-e)*s.x+2*(1-e)*e*cx+e*e*target.x, my=(1-e)*(1-e)*s.y+2*(1-e)*e*cy+e*e*target.y;
-      var c=COLORS[pt.i], a=Math.sin(Math.min(1,pt.t)*Math.PI)*0.9+0.1;
-      var gr=ctx.createRadialGradient(mx,my,0,mx,my,9); gr.addColorStop(0,rgb(c,a)); gr.addColorStop(1,rgb(c,0));
-      ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(mx,my,9,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle=rgb(c,Math.min(1,a+0.2)); ctx.beginPath(); ctx.arc(mx,my,2.1,0,Math.PI*2); ctx.fill();
-    }
-    charge=Math.max(0,charge-dt*1.4); var core=hub.querySelector(".core");
-    core.style.boxShadow="0 0 0 "+(4+charge*10).toFixed(1)+"px rgba(78,201,166,"+(0.05+charge*0.16).toFixed(3)+")";
-    core.style.borderColor="rgba(78,201,166,"+(0.25+charge*0.5).toFixed(3)+")";
-  }
-  if(reduce){ anchors(); return; }
-  var last=null, acc=0;
-  function frame(now){ if(last==null)last=now; var dt=Math.min(0.05,(now-last)/1000); last=now;
-    acc+=dt; if(acc>0.16){ spawn(); acc=0; }
-    draw(dt); requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
 })();
 </script>
