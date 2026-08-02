@@ -21,7 +21,7 @@
 //
 // No dependencies. Zone 1 tooling - never shipped.
 
-import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, statSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, statSync, readdirSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
 // Form is the core's, content is the repo's: any repo in the ecosystem can carry
@@ -34,6 +34,8 @@ import { pathToFileURL } from "node:url";
 const CONFIG_PATH = ["site/site.config.json", "site.config.json"].find((p) => existsSync(p));
 const CONFIG = CONFIG_PATH ? JSON.parse(readFileSync(CONFIG_PATH, "utf8")) : {};
 const OUT_DIR = CONFIG.out_dir || "site/docs";
+// The deployed root - the docs live under it, and so does llms.txt.
+const SITE_DIR = OUT_DIR.includes("/") ? OUT_DIR.slice(0, OUT_DIR.lastIndexOf("/")) : ".";
 const GITHUB_REPO_URL = CONFIG.repo_url || "https://github.com/repository-standards/core";
 const BRAND = CONFIG.brand || "repository-standards";
 // The header wears the released version, read from its one home rather than restated here.
@@ -73,30 +75,80 @@ export const PAGES = CONFIG.pages || [
   { src: "docs/method/ways-of-working.md", out: "ways-of-working.html", nav: "The loop, and who does what", group: "Ways of working" },
   { src: "docs/method/working-with-specs.md", out: "working-with-specs.html", nav: "Working with specs", group: "Ways of working" },
   { src: "docs/method/working-with-ai/README.md", out: "working-with-ai.html", nav: "Working with AI", group: "Ways of working" },
-  { src: "docs/method/working-with-ai/context-is-the-budget.md", out: "wwa-context-is-the-budget.html", nav: null, group: "Ways of working" },
-  { src: "docs/method/working-with-ai/comments-that-earn-their-tokens.md", out: "wwa-comments-that-earn-their-tokens.html", nav: null, group: "Ways of working" },
-  { src: "docs/method/working-with-ai/felt-speed-vs-measured-speed.md", out: "wwa-felt-speed-vs-measured-speed.html", nav: null, group: "Ways of working" },
-  { src: "docs/method/working-with-ai/a-check-the-agent-can-run.md", out: "wwa-a-check-the-agent-can-run.html", nav: null, group: "Ways of working" },
-  { src: "docs/method/working-with-ai/review-is-where-the-cost-lands.md", out: "wwa-review-is-where-the-cost-lands.html", nav: null, group: "Ways of working" },
-  { src: "docs/method/working-with-ai/the-cleanup-comes-later.md", out: "wwa-the-cleanup-comes-later.html", nav: null, group: "Ways of working" },
-  { src: "docs/method/working-with-ai/instructions-that-survive.md", out: "wwa-instructions-that-survive.html", nav: null, group: "Ways of working" },
-  { src: "docs/method/working-with-ai/blast-radius-before-autonomy.md", out: "wwa-blast-radius-before-autonomy.html", nav: null, group: "Ways of working" },
-  { src: "docs/method/working-with-ai/sources.md", out: "wwa-sources.html", nav: null, group: "Ways of working" },
+  { src: "docs/method/working-with-ai/context-is-the-budget.md", out: "wwa-context-is-the-budget.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/comments-that-earn-their-tokens.md", out: "wwa-comments-that-earn-their-tokens.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/felt-speed-vs-measured-speed.md", out: "wwa-felt-speed-vs-measured-speed.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/a-check-the-agent-can-run.md", out: "wwa-a-check-the-agent-can-run.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/review-is-where-the-cost-lands.md", out: "wwa-review-is-where-the-cost-lands.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/the-cleanup-comes-later.md", out: "wwa-the-cleanup-comes-later.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/instructions-that-survive.md", out: "wwa-instructions-that-survive.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/blast-radius-before-autonomy.md", out: "wwa-blast-radius-before-autonomy.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/sources.md", out: "wwa-sources.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
   { src: "docs/method/discovery.md", out: "discovery.html", nav: "Turning meetings into specs", group: "Ways of working" },
   { src: "docs/method/working-language.md", out: "working-language.html", nav: "Choosing a working language", group: "Ways of working" },
 
   { src: "docs/method/taxonomy.md", out: "taxonomy.html", nav: "Where knowledge lands", group: "Concepts" },
-  { src: "docs/tree/specs.md", out: "specs.html", nav: "Specs", group: "Concepts" },
   { src: "docs/ecosystem.md", out: "ecosystem.html", nav: "How it fits together", group: "Concepts" },
+  { src: "docs/personas.md", out: "personas.html", nav: "Who this is built for", group: "Concepts" },
 
   { src: "standard/SPEC.md", out: "spec.html", nav: "The spec", group: "Reference" },
-  { src: "docs/tree/docs-decision-records.md", out: "decision-records.html", nav: "Decision records", group: "Reference" },
   { src: "docs/faq.md", out: "faq.html", nav: "FAQ", group: "Reference" },
-  { src: "docs/open-questions/README.md", out: "open-questions.html", nav: "Open questions", group: "Reference" },
-  { src: "docs/case-studies/README.md", out: "case-studies.html", nav: "Case studies", group: "Reference" },
+  { src: "docs/decision-records/README.md", out: "decision-records.html", nav: "Decision records", group: "Decisions and evidence" },
+  { src: "docs/open-questions/README.md", out: "open-questions.html", nav: "Open questions", group: "Decisions and evidence" },
+  { src: "docs/case-studies/README.md", out: "case-studies.html", nav: "Case studies", group: "Decisions and evidence" },
+
+  { src: "docs/how-this-repo-works.md", out: "how-this-repo-works.html", nav: "How this repo runs itself", group: "Contributing" },
+  { src: "CONTRIBUTING.md", out: "contributing.html", nav: "Want to contribute?", group: "Contributing" },
 
   { src: "docs/file-map.md", out: "file-map.html", nav: "Every file, and why", group: "File anatomy", render: "tree-root" },
 ];
+// The collections: decision records, case studies, open questions. Each has an index in the
+// sidebar and a folder of documents behind it, and those documents are meant to be READ -
+// every "the decision behind this" link on a path page points at one. Left out of the map
+// they fell through to GitHub, so following a decision meant leaving the docs for a raw file
+// in a repository a reader may not even be able to open.
+// Discovered rather than listed: a hand-written list of fifty-eight entries is a second
+// index that goes stale the first time somebody adds a record.
+function collectionPages(dir, prefix, group, parent) {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => f.endsWith(".md") && f !== "README.md")
+    .sort()
+    .map((f) => {
+      const slug = slugify(f.replace(/\.md$/, ""));
+      // ADR-014-one-authored-tree already says what it is; prefixing it again reads as a
+      // stutter in the URL. The prefix exists to keep two collections from colliding, so
+      // it is only added when the name does not already carry it.
+      const out = slug.startsWith(`${prefix}-`) ? `${slug}.html` : `${prefix}-${slug}.html`;
+      return { src: `${dir}/${f}`, out, nav: null, group, parent };
+    });
+}
+
+// This repo's own capability specs. They are the standard applied to itself, and the only
+// buildable specs anybody can read before adopting - which makes them the most convincing
+// artifact here and, until now, the least reachable. Discovered rather than listed, for the
+// same reason as the collections above.
+function ownSpecPages() {
+  if (!existsSync("specs")) return [];
+  return readdirSync("specs", { withFileTypes: true })
+    .filter((d) => d.isDirectory() && existsSync(`specs/${d.name}/spec.md`))
+    .map((d) => d.name)
+    .sort()
+    .map((name) => ({
+      src: `specs/${name}/spec.md`,
+      out: `ownspec-${slugify(name)}.html`,
+      nav: null,
+      group: "Decisions and evidence",
+      parent: "how-this-repo-works.html",
+    }));
+}
+
+PAGES.push(
+  ...collectionPages("docs/decision-records", "adr", "Decisions and evidence", "decision-records.html"),
+  ...collectionPages("docs/case-studies", "case", "Decisions and evidence", "case-studies.html"),
+  ...collectionPages("docs/open-questions", "oq", "Decisions and evidence", "open-questions.html"),
+  ...ownSpecPages(),
+);
 const PAGES_BY_SRC = new Map(PAGES.map((p) => [p.src, p]));
 // Sidebar footer links - a site's own chrome, not the generator's. Empty by default:
 // the top bar already carries the way home and the ecosystem switcher, and a second
@@ -347,7 +399,25 @@ function mdToHtml(markdown, ctx) {
         i++;
       }
       i++; // consume closing fence (or EOF if unterminated)
-      out.push(`<pre><code>${escapeHtml(codeLines.join("\n"))}</code></pre>\n`);
+      // A block whose lines all start with `>` is not code, it is the sentence you say to
+      // the agent. It reads as the most important thing on the page and rendered as the
+      // least, indistinguishable from a shell transcript. It gets its own warm block and a
+      // copy button, because being pasted is the entire point of it.
+      const codeText = codeLines.join("\n");
+      const isPrompt =
+        codeLines.some((l) => l.trim()) &&
+        codeLines.filter((l) => l.trim()).every((l) => l.trimStart().startsWith(">"));
+      if (isPrompt) {
+        const spoken = codeLines
+          .map((l) => l.replace(/^\s*>\s?/, ""))
+          .join("\n")
+          .trim();
+        out.push(
+          `<div class="prompt"><button class="prompt-copy" type="button" data-copy="${escapeAttr(spoken)}">Copy</button><pre><code>${escapeHtml(spoken)}</code></pre></div>\n`,
+        );
+      } else {
+        out.push(`<pre><code>${escapeHtml(codeText)}</code></pre>\n`);
+      }
       continue;
     }
 
@@ -490,6 +560,9 @@ const CSS = `
   --bg: #08080b;
   --bg-panel: #0c0c11;
   --fg: #f4f2ee;
+  /* Body copy sits a step under the heading ink. Same hue, less glare - the difference
+     between a page you scan and one you can read for ten minutes. */
+  --fg-body: #cbc7d1;
   --muted: #a7a3b2;
   --border: rgba(255,255,255,.08);
   --line: rgba(255,255,255,.08);
@@ -514,6 +587,7 @@ const CSS = `
     --bg: #ffffff;
     --bg-panel: #f7f7f8;
     --fg: #1a1a1a;
+    --fg-body: #35363a;
     --muted: #5f6368;
     --border: #e3e3e6;
     --line: #e3e3e6;
@@ -610,6 +684,9 @@ a.nav-tree-link:hover { background: var(--active-bg); color: var(--fg); }
   .nav-tree details > summary::after { transition: none; }
 }
 
+.backlink { margin: 0 0 1.4rem; font-size: 0.875rem; }
+.backlink a { color: var(--muted); text-decoration: none; }
+.backlink a:hover { color: var(--fg); }
 /* A single path's page. The rule separates the prose a reader came for from the machine
    facts underneath it, so the page has a visible bottom half rather than trailing off. */
 .fm-rule { border: 0; border-top: 1px solid var(--line2); margin: 3rem 0 0; max-width: 68ch; }
@@ -656,16 +733,22 @@ a.nav-tree-link:hover { background: var(--active-bg); color: var(--fg); }
   padding: 2.5rem 10px 5rem clamp(1.25rem, 3vw, 2.75rem);
 }
 .content > :first-child { margin-top: 0; }
-.prose { max-width: 76ch; margin: 0 auto; }
-h1, h2, h3, h4, h5, h6 { line-height: 1.3; scroll-margin-top: 1rem; }
-h1 { font-size: 1.9rem; margin: 0 0 1.25rem; }
-h2 { font-size: 1.4rem; margin: 2.25rem 0 1rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+/* Long-form reading, not a landing page. Three things do the work and they were all set for
+   a short page: body copy one step below the headings rather than the same near-white
+   (full-strength white on a dark background glares and flattens the hierarchy, so every
+   line arrives with equal weight), a longer line-height, and a shorter measure. Bold and
+   headings keep the bright ink, so emphasis still reads as emphasis. */
+.prose { max-width: 70ch; margin: 0 auto; color: var(--fg-body); font-size: 1.02rem; line-height: 1.78; }
+.prose strong, .prose b { color: var(--fg); font-weight: 650; }
+h1, h2, h3, h4, h5, h6 { line-height: 1.3; scroll-margin-top: 1rem; color: var(--fg); }
+h1 { font-size: 1.95rem; margin: 0 0 1.4rem; letter-spacing: -0.012em; }
+h2 { font-size: 1.42rem; margin: 2.6rem 0 1rem; padding-top: 0.6rem; border-top: 1px solid var(--border); letter-spacing: -0.008em; }
 .prose > h2:first-of-type { border-top: none; padding-top: 0; }
-h3 { font-size: 1.15rem; margin: 1.75rem 0 0.75rem; }
-h4 { font-size: 1rem; margin: 1.5rem 0 0.5rem; }
-p { margin: 0 0 1rem; }
-ul, ol { margin: 0 0 1rem; padding-left: 1.4rem; }
-li { margin: 0.25rem 0; }
+h3 { font-size: 1.14rem; margin: 2rem 0 0.7rem; }
+h4 { font-size: 1rem; margin: 1.6rem 0 0.5rem; }
+p { margin: 0 0 1.15rem; }
+ul, ol { margin: 0 0 1.15rem; padding-left: 1.4rem; }
+li { margin: 0.4rem 0; }
 li > ul, li > ol { margin: 0.35rem 0 0.25rem; }
 blockquote {
   margin: 0 0 1rem;
@@ -698,10 +781,54 @@ pre {
   overflow-wrap: anywhere;
 }
 pre code { background: none; padding: 0; border-radius: 0; font-size: 0.85em; }
-.table-wrap { overflow-x: auto; margin: 0 0 1.25rem; }
-table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
-th, td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; vertical-align: top; }
-th { background: var(--bg-panel); font-weight: 600; }
+/* What you say to the agent, as opposed to what you run. Warm rather than neutral so the
+   eye finds it while skimming, and with a copy button because pasting it is the point. */
+.prompt { position: relative; max-width: 76ch; margin: 0 0 1.25rem; }
+.prompt pre {
+  margin: 0;
+  background: rgba(255,176,64,.07);
+  border: 1px solid rgba(255,176,64,.28);
+  border-left: 3px solid rgba(255,176,64,.75);
+  padding-right: 5.2rem;
+}
+.prompt code { color: var(--fg); }
+.prompt-copy {
+  position: absolute; top: 0.6rem; right: 0.6rem;
+  font: inherit; font-size: 0.75rem; line-height: 1;
+  padding: 0.42rem 0.65rem; border-radius: 6px; cursor: pointer;
+  color: var(--muted); background: rgba(255,255,255,.04);
+  border: 1px solid var(--line2);
+}
+.prompt-copy:hover { color: var(--fg); border-color: var(--muted); }
+.prompt-copy[data-done] { color: var(--green, #34d399); border-color: currentColor; }
+@media (prefers-color-scheme: light) {
+  .prompt pre { background: rgba(255,150,0,.09); border-color: rgba(200,120,0,.3); }
+}
+/* A table is not running prose, so it does not want the reading measure. It reclaims the
+   content column's spare width, and where it still does not fit, the scroll says so: the
+   two gradients are pinned to the wrapper and the two are pinned to the content, so a
+   shadow shows on whichever side has more table hiding behind it. An unannounced
+   scrollbar in a dark panel is how a table reads as broken rather than as scrollable. */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0 0 1.25rem;
+  background:
+    linear-gradient(to right, var(--bg) 30%, transparent) left / 3rem 100% no-repeat local,
+    linear-gradient(to left, var(--bg) 30%, transparent) right / 3rem 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.45), transparent) left / 1.1rem 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.45), transparent) right / 1.1rem 100% no-repeat scroll;
+}
+@media (min-width: 1000px) { .table-wrap { margin-right: -6.5rem; } }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; line-height: 1.5; }
+th, td { border: 1px solid var(--border); padding: 0.55rem 0.75rem; text-align: left; vertical-align: top; min-width: 6.5rem; }
+/* A first column that is an index or a short key should stay narrow rather than take a
+   share it does not need - it is the widest columns that get squeezed when it does not. */
+th:first-child, td:first-child { min-width: 0; }
+/* A header never wraps, so a column is at least as wide as its own label. Auto-layout
+   shares width by cell content, which starved the column whose cells were short and left
+   its heading stacked three words tall - the column read as broken while the data was
+   fine. Cells still wrap; only the label holds the floor. */
+th { background: var(--bg-panel); font-weight: 600; color: var(--fg); white-space: nowrap; }
 .page-footer {
   max-width: 76ch;
   margin-top: 3rem;
@@ -853,8 +980,15 @@ ${SIDEBAR_LINKS.map((l) => `<a class="nav-link" href="${escapeAttr(l.href)}"${l.
 </nav>
 <main class="content">
 <div class="prose">
-${contentHtml}
-<p class="page-footer">Generated from <a href="${escapeAttr(sourceUrl)}" target="_blank" rel="noopener noreferrer"><code>${escapeHtml(page.src)}</code></a> by <code>tools/docsite.mjs</code> - edit the source there, not this HTML.</p>
+${
+  // A page with no sidebar row has no highlighted position to navigate back from - open a
+  // decision record and the list you came from is gone. The link back is the whole
+  // orientation such a page gets, so it goes above the title rather than under the fold.
+  page.parent
+    ? `<p class="backlink"><a href="${escapeAttr(page.parent)}">&larr; ${escapeHtml(PAGES.find((p) => p.out === page.parent)?.nav ?? "Back")}</a></p>\n`
+    : ""
+}${contentHtml}
+<p class="page-footer">Read this page's <a href="${escapeAttr(page.out.replace(/\.html$/, ".md"))}">markdown</a>, or <a href="${escapeAttr(sourceUrl)}" target="_blank" rel="noopener noreferrer">its source on GitHub</a>.</p>
 </div>
 </main>
 </div>
@@ -884,6 +1018,18 @@ ${contentHtml}
   }catch(e){}
   sb.addEventListener("scroll",function(){try{sessionStorage.setItem(KEY,sb.scrollTop);}catch(e){}},{passive:true});
 })();
+// One handler for every copy button, delegated - the prompt is what a reader came to paste.
+document.addEventListener("click",function(e){
+  var b=e.target.closest&&e.target.closest(".prompt-copy");
+  if(!b)return;
+  var t=b.getAttribute("data-copy")||"";
+  var done=function(){b.setAttribute("data-done","1");b.textContent="Copied";
+    setTimeout(function(){b.removeAttribute("data-done");b.textContent="Copy";},1600);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,function(){});return;}
+  var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();
+  try{document.execCommand("copy");done();}catch(err){}
+  document.body.removeChild(ta);
+});
 </script>
 </body>
 </html>
@@ -1204,6 +1350,12 @@ function main() {
   rmSync(OUT_DIR, { recursive: true, force: true });
   mkdirSync(OUT_DIR, { recursive: true });
 
+  // Every page ships its markdown beside its HTML, at the same name with the extension
+  // swapped. An agent that lands on a page can drop `.html` for `.md` and read the source
+  // instead of parsing a layout - no scraping, no separate index to keep in step. Markdown
+  // rather than JSON on purpose: it is what the models read best, and wrapping prose in
+  // JSON adds escaping and takes nothing away.
+  const corpus = [];
   for (const page of PAGES) {
     const contentHtml =
       page.render === "file"
@@ -1211,6 +1363,27 @@ function main() {
         : mdToHtml(readFileSync(page.src, "utf8"), { srcDir: dirnamePosix(page.src) });
     writeFileSync(`${OUT_DIR}/${page.out}`, renderPage(page, contentHtml));
     console.log(`  wrote  ${OUT_DIR}/${page.out}  (from ${page.src})`);
+
+    // A tree page's substance is its authored prose; the rest of it is manifest facts,
+    // which a machine reader should take from the manifest itself rather than from prose
+    // about the manifest.
+    const mdSrc = page.render === "file" ? treeProsePath(page.node.path) : page.src;
+    if (!existsSync(mdSrc)) continue;
+    const md = readFileSync(mdSrc, "utf8");
+    const outMd = page.out.replace(/\.html$/, ".md");
+    writeFileSync(`${OUT_DIR}/${outMd}`, md);
+    corpus.push(`# ${page.nav ?? page.out.replace(/\.html$/, "")}\n\nSource: ${mdSrc}\n\n${md}`);
+  }
+
+  // One fetch for the whole corpus, for a reader that would otherwise make thirty.
+  writeFileSync(`${OUT_DIR}/llms-full.txt`, corpus.join("\n\n---\n\n"));
+  console.log(`  wrote  ${OUT_DIR}/llms-full.txt  (${corpus.length} documents)`);
+
+  // llms.txt belongs at the site root, and only site/ is deployed - so a copy that lives
+  // in the repo root is a file nothing serves.
+  if (existsSync("llms.txt")) {
+    writeFileSync(`${SITE_DIR}/llms.txt`, readFileSync("llms.txt", "utf8"));
+    console.log(`  wrote  ${SITE_DIR}/llms.txt  (from the repo root)`);
   }
 
   writeFileSync(`${OUT_DIR}/README.md`, SITE_README);

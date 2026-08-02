@@ -58,8 +58,8 @@ review culture rejects "it's in my memory" as a rule location.
 
 ## Revisit when
 
-Agent platforms ship portable, repo-scoped memory that is itself versioned in the repo
-- at which point it *is* an in-repo instruction and the distinction dissolves.
+Agent platforms ship portable, repo-scoped memory that is itself versioned in the
+repo, at which point it *is* an in-repo instruction and the distinction dissolves.
 
 ## Related
 

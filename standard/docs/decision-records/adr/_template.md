@@ -6,11 +6,11 @@
 | **Date** | YYYY-MM-DD |
 | **Author** | {{AUTHOR}} |
 | **Tags** | <area> |
-| **Superseded by** | - |
 
 <!-- An Accepted record is never edited into a different decision. When it stops being
-     true, flip Status to `Superseded` and name the record that replaced it in the row
-     above; the text below stays as it was written. -->
+     true, write `Superseded by ADR-NNN (date)` in Status; the text below stays exactly as
+     it was written. There is deliberately no empty row waiting for that - a field printed
+     as "-" on every record is noise on all of them to serve the few that are superseded. -->
 
 
 ## Context
