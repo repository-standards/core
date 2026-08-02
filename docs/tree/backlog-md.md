@@ -23,8 +23,8 @@ One row per intent, each carrying who it is for and what done looks like:
 ```
 
 An intent names its persona, because work that serves nobody is how a backlog becomes a
-graveyard. And it names **what done looks like**, because an item without that never leaves
-- there is no moment at which anyone can say it is finished.
+graveyard. And it names **what done looks like**, because an item without that never leaves:
+there is no moment at which anyone can say it is finished.
 
 At the `scale` profile the file also carries an **In flight** section: which intents left
 the pool and into which cycle. An intent is in the pool **or** in exactly one cycle, never

@@ -336,7 +336,12 @@
   /* ---- what the standard covers ---- */
   /* width:min-content sizes each item to its own tag (the tag never wraps), so the caption
      wraps to that width instead of running past it, and rows pack by natural width. */
-  .fmap{display:flex;flex-wrap:wrap;gap:26px 22px;align-items:flex-start}
+  /* Centred rather than flush left: the rows are ragged by nature (a tag is as wide as its
+     filename), so a left-aligned last row read as an unfinished column. Centring lets each
+     row settle around the same spine the heading above it sits on. */
+  .fmap{display:flex;flex-wrap:wrap;justify-content:center;gap:26px 22px;align-items:flex-start}
+  .fm{text-align:center}
+  .fm p{margin-left:auto;margin-right:auto}
   .fm{flex:0 1 auto;width:min-content;min-width:0;max-width:320px}
   .fmtag{display:inline-flex;align-items:center;gap:10px;margin-bottom:10px;
     font-family:var(--mono);font-size:17.5px;font-weight:600;color:var(--ink);white-space:nowrap;
@@ -439,7 +444,7 @@
         </div>
       </div>
       <div class="cta reveal">
-        <a class="btn btn-primary" href="docs/quick-start.html">
+        <a class="btn btn-primary" href="docs/">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect x="2.5" y="4" width="19" height="16" rx="2.5"/>
@@ -640,14 +645,14 @@
             <a class="item" href="docs/working-with-specs.html"><span class="k">Status</span><span class="b"><b>Where everything actually is</b><span>In refinement, ready to develop, in development, live. The product owner's view of the pipeline, kept in the repo.</span><i>the status walk</i></span></a>
           </div>
           <div class="panel" data-p="2">
-            <a class="item" href="docs/specs.html"><span class="k">specs/</span><span class="b"><b>Capabilities, not tickets</b><span>Behaviour organized by what the product does, and buildable enough that the capability can be rebuilt from its spec alone.</span><i>how specs are shaped</i></span></a>
+            <a class="item" href="docs/tree-specs.html"><span class="k">specs/</span><span class="b"><b>Capabilities, not tickets</b><span>Behaviour organized by what the product does, and buildable enough that the capability can be rebuilt from its spec alone.</span><i>how specs are shaped</i></span></a>
             <a class="item" href="docs/ways-of-working.html"><span class="k">Impact &middot; reconcile</span><span class="b"><b>Know what a change touches</b><span>Before the work: which capabilities, records and code it ripples into. After it: spec, code and tests are reconciled until they agree.</span><i>the loop, stage by stage</i></span></a>
             <a class="item" href="docs/decision-records.html"><span class="k">adr &middot; bdr</span><span class="b"><b>Decisions that stay decided</b><span>Technical and business calls in MADR form. An accepted record gets superseded by a new one, never quietly rewritten.</span><i>the records</i></span></a>
             <a class="item" href="docs/checklist.html"><span class="k">Checklist</span><span class="b"><b>The eight forks every project hits</b><span>Repo topology, domain boundaries, datastore, API contract, auth, testing, security, releases - each with a paved-road default.</span><i>the decision checklist</i></span></a>
           </div>
           <div class="panel" data-p="3">
             <a class="item" href="docs/ways-of-working.html"><span class="k">Backlog &middot; flow</span><span class="b"><b>Work that cannot quietly disappear</b><span>Every item carries a definition of done and leaves only when it is met. Execution state stays in your tracker.</span><i>roles, gates and hand-offs</i></span></a>
-            <a class="item" href="docs/self-verify.html"><span class="k">self-verify</span><span class="b"><b>Drift as a number</b><span>The repo scores itself against the version's manifest. Drift 0 or the build fails, on your laptop and in CI alike.</span><i>every check it asserts</i></span></a>
+            <a class="item" href="docs/self-verify.html"><span class="k">self-verify</span><span class="b"><b>Drift as a number</b><span>The repo scores itself against the standard's manifest. Drift 0 or the build fails, on your laptop and in CI alike.</span><i>every check it asserts</i></span></a>
             <a class="item" href="docs/adopt.html"><span class="k">Update</span><span class="b"><b>The standard moves. So does your repo.</b><span>Alignment always targets the latest, and only the delta is applied - the way a dependency bump works, not a re-scaffold.</span><i>adoption and updates</i></span></a>
             <a class="item" href="docs/working-language.html"><span class="k">Working language</span><span class="b"><b>Your team's language, on the record</b><span>English is the paved road, but an agent reads any language. Declare which part of the repo speaks what.</span><i>why English, when not</i></span></a>
             <a class="item" href="docs/spec.html"><span class="k">SPEC.md</span><span class="b"><b>Numbered rules. One file.</b><span>The entire normative core, numbered and stable because the tooling cites the numbers.</span><i>read the rules</i></span></a>
@@ -666,74 +671,57 @@
         <p>The short version. Every one of these is a real file or folder that lands in your repository.</p>
       </div>
       <div class="fmap reveal">
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>personas.md</span>
+        <a class="fm" href="docs/tree-docs-personas-md.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>personas.md</span>
           <p>who you are building for</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.8-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.4l6.1-.8z"/></svg>PRODUCT.md</span>
+        </a>
+        <a class="fm" href="docs/tree-docs-product-md.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.8-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.4l6.1-.8z"/></svg>PRODUCT.md</span>
           <p>the vision, and the metric each capability moves</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3L3 6v15l6-3 6 3 6-3V3l-6 3z"/><path d="M9 3v15M15 6v15"/></svg>journeys/</span>
+        </a>
+        <a class="fm" href="docs/tree-docs-journeys.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3L3 6v15l6-3 6 3 6-3V3l-6 3z"/><path d="M9 3v15M15 6v15"/></svg>journeys/</span>
           <p>how a real person moves through it</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/></svg>specs/</span>
+        </a>
+        <a class="fm" href="docs/tree-specs.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/></svg>specs/</span>
           <p>behaviour by capability, buildable</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4"/><path d="M12 2a6 6 0 0 0-3.5 10.9c.6.5.9 1.2.9 1.9V15h5.2v-.2c0-.7.3-1.4.9-1.9A6 6 0 0 0 12 2z"/></svg>ideas/</span>
+        </a>
+        <a class="fm" href="docs/tree-docs-ideas.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4"/><path d="M12 2a6 6 0 0 0-3.5 10.9c.6.5.9 1.2.9 1.9V15h5.2v-.2c0-.7.3-1.4.9-1.9A6 6 0 0 0 12 2z"/></svg>ideas/</span>
           <p>undecided, and labelled as such</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3l7 7-3 3-7-7z"/><path d="M4 20h10"/><path d="M11 8l-7 7 3 3 7-7"/></svg>decision-records/adr/</span>
+        </a>
+        <a class="fm" href="docs/tree-docs-decision-records.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3l7 7-3 3-7-7z"/><path d="M4 20h10"/><path d="M11 8l-7 7 3 3 7-7"/></svg>decision-records/adr/</span>
           <p>the why, and what it cost</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M5 7h14"/><path d="M5 7l-3 6h6zM19 7l-3 6h6z"/></svg>decision-records/bdr/</span>
+        </a>
+        <a class="fm" href="docs/tree-docs-decision-records.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M5 7h14"/><path d="M5 7l-3 6h6zM19 7l-3 6h6z"/></svg>decision-records/bdr/</span>
           <p>the business calls, same shape</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M12 7v14M5 13a7 7 0 0 0 14 0"/></svg>PRINCIPLES.md</span>
+        </a>
+        <a class="fm" href="docs/tree-docs-principles-md.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M12 7v14M5 13a7 7 0 0 0 14 0"/></svg>PRINCIPLES.md</span>
           <p>what wins when two documents disagree</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>discovery/</span>
+        </a>
+        <a class="fm" href="docs/tree-docs-discovery.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>discovery/</span>
           <p>meetings, with their provenance</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>backlog.md</span>
+        </a>
+        <a class="fm" href="docs/tree-backlog-md.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>backlog.md</span>
           <p>intents, each with a definition of done</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>.claude/skills/</span>
+        </a>
+        <a class="fm" href="docs/tree-claude-skills.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>.claude/skills/</span>
           <p>the loop, as procedures the agent runs</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>conventions.md</span>
+        </a>
+        <a class="fm" href="docs/tree-docs-conventions-md.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>conventions.md</span>
           <p>commits, branches, working language</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.4 8.4-8 9-4.6-.6-8-4-8-9V6z"/></svg>security-baseline.md</span>
-          <p>every axis answered, including not applicable</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14"/><path d="M7 20v-6a5 5 0 0 1 10 0v6"/><path d="M12 3v2M4 8l1.5 1M20 8l-1.5 1"/></svg>runbooks/</span>
+        </a>
+        <a class="fm" href="docs/tree-security-md.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.4 8.4-8 9-4.6-.6-8-4-8-9V6z"/></svg>SECURITY.md</span>
+          <p>where a report goes, and what happens next</p>
+        </a>
+        <a class="fm" href="docs/tree-docs-runbooks.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14"/><path d="M7 20v-6a5 5 0 0 1 10 0v6"/><path d="M12 3v2M4 8l1.5 1M20 8l-1.5 1"/></svg>runbooks/</span>
           <p>incidents, and the postmortem after</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>standard.manifest.json</span>
+        </a>
+        <a class="fm" href="docs/tree-standard-manifest-json.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>standard.manifest.json</span>
           <p>what compliant means, as data</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="12" r="3"/><path d="M6 9v6M9 12h6"/></svg>scripts/</span>
+        </a>
+        <a class="fm" href="docs/tree-scripts.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="12" r="3"/><path d="M6 9v6M9 12h6"/></svg>scripts/</span>
           <p>drift scoring and the guards</p>
-        </div>
-        <div class="fm">
-          <span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M18 7h2v13H7"/></svg>SPEC.md</span>
+        </a>
+        <a class="fm" href="docs/tree-spec-md.html"><span class="fmtag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M18 7h2v13H7"/></svg>SPEC.md</span>
           <p>the numbered rules, all of them</p>
-        </div>
+        </a>
       </div>
       <div class="secmore reveal">
         <a class="doclink" href="docs/taxonomy.html">where each kind of knowledge lands, and what settles it</a>
@@ -751,7 +739,7 @@
         point at, because the mechanics have been run on the author's own repositories. Every guard
         here is dependency-free and runs in a clone, so test the mechanism before you trust it.</p>
       <div class="cta" style="justify-content:center">
-        <a class="btn btn-primary" href="docs/quick-start.html">
+        <a class="btn btn-primary" href="docs/">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect x="2.5" y="4" width="19" height="16" rx="2.5"/>

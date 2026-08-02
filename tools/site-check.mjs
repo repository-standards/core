@@ -120,6 +120,16 @@ for (const f of pages) {
 // Counted, not compared: a missing page and a stale one cancel out in a length check.
 if (failures === beforePages) ok(`${SITE}: ${pages.length} pages present, exactly what the page map declares`);
 
+// The landing's own links into the docs. Nothing checked these until a docs page was
+// renamed and the landing's primary call to action started 404-ing; the docs' internal
+// links were checked all along, which made the gap invisible - the one page a first-time
+// reader is guaranteed to see was the one page nobody verified.
+const beforeLanding = failures;
+for (const m of landing.matchAll(/href="((?!https?:)[^"#]*\.html)(#[^"]*)?"/g)) {
+  if (!existsSync(`site/${m[1]}`)) fail(`${LANDING}: broken link into the site -> ${m[1]}`);
+}
+if (failures === beforeLanding) ok(`${LANDING}: every link into the site resolves`);
+
 // A table separator or a fence inside <pre>/<code> is a markdown EXAMPLE, deliberately
 // shown - the docs teach people what to write, so they quote markdown constantly. The
 // leak this check exists for is a table or a fence that failed to render in prose, so

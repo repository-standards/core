@@ -22,8 +22,8 @@ cannot be written without identifying someone, **it does not get written**. Rese
 its place here by being reusable years later, and a study nobody can share is not.
 
 Every study says what it **moves**: which persona claim it confirms or breaks, which idea it
-spawns or parks, which spec it touches. A study with an empty links section is not finished
-- it is a note about a conversation.
+spawns or parks, which spec it touches. A study with an empty links section is not
+finished; it is a note about a conversation.
 
 ## What does not go in here
 

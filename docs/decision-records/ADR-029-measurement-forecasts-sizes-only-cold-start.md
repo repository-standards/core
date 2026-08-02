@@ -5,7 +5,6 @@
 | **Status** | Accepted |
 | **Date** | 2026-08-02 |
 | **Author** | bodurkalukasz |
-| **Superseded by** | - |
 
 ## Context
 

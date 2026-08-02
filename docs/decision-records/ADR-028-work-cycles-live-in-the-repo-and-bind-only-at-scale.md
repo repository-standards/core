@@ -6,7 +6,6 @@
 | **Date** | 2026-08-02 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | backlog, cycles, planning, tracker, scale |
-| **Superseded by** | - |
 
 ## Context
 
