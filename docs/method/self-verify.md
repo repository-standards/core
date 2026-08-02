@@ -1,6 +1,6 @@
-# Self-verify - proving a repo complies with its pinned standard
+# Proving it, and staying current
 
-A repo that follows repository-standards is pinned to a version in **`.standards-version`**.
+A repo that follows repository-standards records the state it last aligned to in **`.standards-version`**.
 Self-verify is how it proves it actually meets that version - the **"verify"** step that
 runs after adopting the standard (`align-to-standards`), after updating it
 (`update-to-version`), and in CI on every PR. Same pass/fail each time.
@@ -34,7 +34,7 @@ It checks:
 
 - **Version pin** - `.standards-version` exists and is well-formed (`x.y.z`); with
   `--version <target>` it must equal that target (used right after an update to confirm
-  the bump landed); and it must equal the manifest's `version` (a repo pinned to X carries
+  the bump landed); and it must equal the manifest's `version` (a repo that recorded X carries
   manifest X).
 - **Files** - every `required` manifest file (or one of its `altPaths`) exists.
 - **Sections** - every required section heading is present in its file (e.g. `AGENTS.md`
@@ -64,8 +64,8 @@ review; the number is the floor, not the ceiling.
 **Drift as a number.** Each unmet required check scores one, so `drift N` is a measurable
 distance from the standard - a fleet owner can sort repos by it, and an update's job
 is to drive it back to `0`. Mostly that is one point per manifest entry, with one deliberate
-exception: a missing `.standards-version` scores **two**, once as the version pin and once
-as the required file. That is not double counting by accident - a repo with no pin has both
+exception: a missing `.standards-version` scores **two**, once as the recorded state and once
+as the required file. That is not double counting by accident - a repo with no record has both
 failed to record which version it follows and failed to carry the file that says so, and it
 is the single most consequential thing that can be absent. Comparing two repos' numbers is
 still sound; reading a number as "exactly N missing files" is not.
@@ -83,9 +83,9 @@ A machine cannot (yet) decide these; they are checked when the PR is reviewed:
   buildable, not merely described.
 - **No unrecorded drift** - no known spec<->code contradiction is left unresolved.
 
-## Staying current - the pin is a bookmark, not a lock
+## Staying current - the record is a bookmark, not a lock
 
-The pin records the state this repo last aligned to. The target of every update is
+That file records the state this repo last aligned to. The target of every update is
 **latest** (ADR-025), so a repo does not need to be told which version it may use - it
 needs to be told that a newer one exists. Two ways to get that signal, both
 notifications, neither of them a gate:
@@ -95,10 +95,10 @@ notifications, neither of them a gate:
 Weekly, it compares `.standards-version` against the standard's newest release and
 opens **one issue per target version** - not one per week - saying what to say to take
 the update. Before the standard publishes its first release the job says so and exits
-green; a watch installed early is not an error. It never edits the pin: an alignment
+green; a watch installed early is not an error. It never edits the recorded state: an alignment
 that happens while nobody is looking is not an alignment.
 
-**Renovate, if the repo already runs it.** A custom manager treats the pin like any
+**Renovate, if the repo already runs it.** A custom manager treats the recorded state like any
 other dependency, so the proposal arrives in the same place as every other bump:
 
 ```json
@@ -118,9 +118,9 @@ other dependency, so the proposal arrives in the same place as every other bump:
 
 (Older Renovate calls `managerFilePatterns` `fileMatch`.)
 
-Know what that PR is: **a proposal, and only half the work.** Merging a pin bump on its
+Know what that PR is: **a proposal, and only half the work.** Merging a version bump on its
 own leaves the repo red on purpose - self-verify requires the manifest copy to match
-the pin, and the manifest arrives with the update. Take the PR as the reminder, run
+the record, and the manifest arrives with the update. Take the PR as the reminder, run
 `update-to-version`, and let the same PR carry the delta.
 
 ## When it fails
