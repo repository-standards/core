@@ -12,8 +12,9 @@
 // title on every page is the rendered file's own top-level `#` heading; this script
 // contributes navigation and layout, not prose.
 //
-// IA: modeled on nextjs.org/docs - a left sidebar (Home / Why / Adopt / Concepts /
-// Guides / Reference / FAQ / Open questions / Case studies), one page per source file.
+// IA: modeled on nextjs.org/docs - a left sidebar, one page per source file, ordered by
+// what a reader is trying to do. The groups are the PAGE MAP's own `group` fields; do not
+// restate them here, since a list in a comment is a second copy that goes stale first.
 //
 // Usage:
 //   node tools/docsite.mjs   # (re)generates every page in site/docs/, exit 0
@@ -72,6 +73,15 @@ export const PAGES = CONFIG.pages || [
   { src: "docs/method/ways-of-working.md", out: "ways-of-working.html", nav: "The loop, and who does what", group: "Ways of working" },
   { src: "docs/method/working-with-specs.md", out: "working-with-specs.html", nav: "Working with specs", group: "Ways of working" },
   { src: "docs/method/working-with-ai/README.md", out: "working-with-ai.html", nav: "Working with AI", group: "Ways of working" },
+  { src: "docs/method/working-with-ai/context-is-the-budget.md", out: "wwa-context-is-the-budget.html", nav: null, group: "Ways of working" },
+  { src: "docs/method/working-with-ai/comments-that-earn-their-tokens.md", out: "wwa-comments-that-earn-their-tokens.html", nav: null, group: "Ways of working" },
+  { src: "docs/method/working-with-ai/felt-speed-vs-measured-speed.md", out: "wwa-felt-speed-vs-measured-speed.html", nav: null, group: "Ways of working" },
+  { src: "docs/method/working-with-ai/a-check-the-agent-can-run.md", out: "wwa-a-check-the-agent-can-run.html", nav: null, group: "Ways of working" },
+  { src: "docs/method/working-with-ai/review-is-where-the-cost-lands.md", out: "wwa-review-is-where-the-cost-lands.html", nav: null, group: "Ways of working" },
+  { src: "docs/method/working-with-ai/the-cleanup-comes-later.md", out: "wwa-the-cleanup-comes-later.html", nav: null, group: "Ways of working" },
+  { src: "docs/method/working-with-ai/instructions-that-survive.md", out: "wwa-instructions-that-survive.html", nav: null, group: "Ways of working" },
+  { src: "docs/method/working-with-ai/blast-radius-before-autonomy.md", out: "wwa-blast-radius-before-autonomy.html", nav: null, group: "Ways of working" },
+  { src: "docs/method/working-with-ai/sources.md", out: "wwa-sources.html", nav: null, group: "Ways of working" },
   { src: "docs/method/discovery.md", out: "discovery.html", nav: "Turning meetings into specs", group: "Ways of working" },
   { src: "docs/method/working-language.md", out: "working-language.html", nav: "Choosing a working language", group: "Ways of working" },
 
@@ -85,7 +95,7 @@ export const PAGES = CONFIG.pages || [
   { src: "docs/open-questions/README.md", out: "open-questions.html", nav: "Open questions", group: "Reference" },
   { src: "docs/case-studies/README.md", out: "case-studies.html", nav: "Case studies", group: "Reference" },
 
-  { src: "docs/file-map.md", out: "file-map.html", nav: "Every file, and why", group: "File conventions", render: "tree-root" },
+  { src: "docs/file-map.md", out: "file-map.html", nav: "Every file, and why", group: "File anatomy", render: "tree-root" },
 ];
 const PAGES_BY_SRC = new Map(PAGES.map((p) => [p.src, p]));
 // Sidebar footer links - a site's own chrome, not the generator's. Empty by default:
@@ -422,7 +432,7 @@ const CSS = `
   background:linear-gradient(180deg,rgba(8,8,11,.82),rgba(8,8,11,.42));
   border-bottom:1px solid var(--line2)}
 .topbar-in{max-width:${SPINE};margin:0 auto;display:flex;align-items:center;gap:18px;
-  padding:0 26px;height:66px;position:relative}
+  padding:0 var(--tb-pad);height:var(--tb-h);position:relative}
 .tb-brand{display:flex;align-items:center;gap:11px;white-space:nowrap;text-decoration:none}
 .tb-mark{height:32px;width:auto;flex:none;display:block}
 .tb-word{display:flex;flex-direction:column;line-height:1}
@@ -472,6 +482,11 @@ const CSS = `
 /* One palette with the landing (site/index.html :root) so the two read as one product.
    Light stays as an explicit user-preference override. */
 :root {
+  /* The header's own height, declared once. The sidebar sticks below it and sizes itself
+     against it; hard-coding the number in both places is how the column ends up scrolling
+     under the header with its first entries unreachable. */
+  --tb-h: 66px;
+  --tb-pad: 26px;
   --bg: #08080b;
   --bg-panel: #0c0c11;
   --fg: #f4f2ee;
@@ -486,6 +501,9 @@ const CSS = `
   --link: #ff7a2f;
   --link-visited: #ff9a5c;
   --code-bg: rgba(255,255,255,.045);
+  /* Masked rather than drawn with borders, so the chevron keeps its shape while its box
+     stays big enough to click. Inline, because the site loads no external asset. */
+  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3.2 1.4 L6.8 5 L3.2 8.6' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --active-bg: rgba(255,122,47,.09);
   --active-fg: #ff7a2f;
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Inter, system-ui, sans-serif;
@@ -544,9 +562,10 @@ a:hover { text-decoration: none; }
   background: transparent;
   border-right: 1px solid var(--line2);
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: var(--tb-h);
+  height: calc(100vh - var(--tb-h));
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 1.25rem 18px 2rem 10px;
 }
 /* The sidebar's file tree, styled as part of the nav rather than as a terminal: the
@@ -567,21 +586,28 @@ a.nav-tree-link:hover { background: var(--active-bg); color: var(--fg); }
 /* A folder the manifest never names has no page to open. It still has to read as a
    folder, so it dims rather than vanishing. */
 .nav-tree-link.is-plain { color: var(--muted); opacity: 0.68; }
+/* The label navigates, the chevron expands - two jobs, two targets. With one chevron on
+   the left and the whole row toggling, clicking a folder opened it instead of opening its
+   page, and its page was unreachable from the tree. pointer-events off on the summary and
+   back on for the two children is what splits them without any script. */
 .nav-tree details > summary {
-  list-style: none; cursor: pointer; display: flex; align-items: flex-start; border-radius: 6px;
+  list-style: none; display: flex; align-items: center; border-radius: 6px;
+  pointer-events: none;
 }
 .nav-tree details > summary::-webkit-details-marker { display: none; }
-/* A border-drawn chevron: right when closed, down when open. Flex-aligned rather than
-   floated so it stays on the first line when a long name wraps. */
-.nav-tree details > summary::before {
-  content: ""; flex: 0 0 auto; width: 5px; height: 5px;
-  margin: 0.56rem 0.34rem 0 0.22rem;
-  border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted);
-  transform: rotate(-45deg); transition: transform 0.15s ease;
+.nav-tree details > summary .nav-tree-link { pointer-events: auto; }
+.nav-tree details > summary::after {
+  content: ""; flex: 0 0 auto; width: 1.4rem; height: 1.4rem; margin-left: auto;
+  background-color: var(--muted);
+  -webkit-mask: var(--chevron) center / 0.42rem no-repeat;
+  mask: var(--chevron) center / 0.42rem no-repeat;
+  transform: rotate(0deg); transition: transform 0.15s ease;
+  pointer-events: auto; cursor: pointer; border-radius: 5px;
 }
-.nav-tree details[open] > summary::before { transform: rotate(45deg); }
+.nav-tree details > summary::after:hover { background-color: var(--fg); }
+.nav-tree details[open] > summary::after { transform: rotate(90deg); }
 @media (prefers-reduced-motion: reduce) {
-  .nav-tree details > summary::before { transition: none; }
+  .nav-tree details > summary::after { transition: none; }
 }
 
 /* A single path's page. The rule separates the prose a reader came for from the machine
@@ -711,6 +737,11 @@ function buildNavRows() {
     // Per-path pages are not flat rows - renderNav draws them nested, from the tree
     // itself, so the sidebar mirrors the shipped folder structure rather than a list.
     if (p.render === "file") continue;
+    // `nav: null` - rendered and linkable, but not a sidebar row. For the pages that hang
+    // off one entry point and are read from it: putting all nine practice notes in the
+    // column would triple the section to serve a page nobody navigates to by name. Without
+    // this they were not pages at all, and their links fell through to GitHub.
+    if (p.nav === null) continue;
     if (p.group !== last) {
       if (p.group) rows.push({ type: "group", label: p.group });
       last = p.group;
@@ -721,13 +752,19 @@ function buildNavRows() {
   return rows;
 }
 
-// The sidebar's nested file tree. A folder with children becomes a <details> so the
-// column stays scannable; it opens when the page you are on lives inside it, which also
-// makes deep links land with their branch already expanded.
+// The sidebar's nested file tree. A folder with children becomes a <details> so the column
+// stays scannable, and it renders open when the page you are on IS it or lives inside it.
+// That is what makes clicking a folder both open its page and expand it, the way the sites
+// this is modelled on behave: the expansion is a consequence of arriving, not a second
+// click. Deep links land with their branch already open for the same reason.
 function renderNavTree(node, currentOut, depth = 0) {
   let html = "";
   for (const child of node.children.values()) {
-    const out = child.entry ? treeSlug(child.path) : null;
+    // Linked when a page exists for it - which is either a manifest entry or authored
+    // prose. Keying this on the manifest alone left .claude/ and .github/ expanding with
+    // nothing to click even after their pages were written.
+    const hasPage = child.entry || existsSync(treeProsePath(child.path));
+    const out = hasPage ? treeSlug(child.path) : null;
     const active = out === currentOut;
     const label = `${escapeHtml(child.name)}${isFolder(child.path) ? "/" : ""}`;
     const link = out
@@ -735,7 +772,7 @@ function renderNavTree(node, currentOut, depth = 0) {
       : `<span class="nav-tree-link is-plain">${label}</span>`;
 
     if (child.children.size) {
-      const open = containsPage(child, currentOut);
+      const open = active || containsPage(child, currentOut);
       html += `<details class="nav-tree-node"${open ? " open" : ""}>
 <summary>${link}</summary>
 <div class="nav-tree-kids">${renderNavTree(child, currentOut, depth + 1)}</div>
@@ -771,7 +808,11 @@ function renderNav(currentOut) {
 }
 
 function renderPage(page, contentHtml) {
-  const title = escapeHtml(page.nav);
+  // A page with no sidebar label still needs a browser-tab title, and the document already
+  // states one: its own H1. Taking it from the rendered content rather than the page map
+  // means the two cannot disagree.
+  const h1 = contentHtml.match(/<h1[^>]*>([\s\S]*?)<\/h1>/);
+  const title = escapeHtml(page.nav ?? (h1 ? h1[1].replace(/<[^>]+>/g, "").trim() : page.out));
   const sourceUrl = `${GITHUB_REPO_URL}/blob/main/${page.src}`;
   return `<!doctype html>
 <html lang="en">

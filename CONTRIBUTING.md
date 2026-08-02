@@ -62,10 +62,56 @@ repo is the stack:
 Layer 1 here is stack-agnostic by rule, so technology opinions genuinely cannot land in
 this repo - they land there.
 
-**Where it goes:** GitHub issues and pull requests, nothing else to learn. Anyone can open
-a PR against `main` and put it up for review. For a doc change a PR beats an issue; for a
-disagreement about a decision, an issue referencing the open-questions entry is the right
-shape, because the discussion is the deliverable.
+## Where to put it
+
+Three places, and picking the right one is most of the etiquette here.
+
+| | for | example |
+|---|---|---|
+| **[Discussions](https://github.com/repository-standards/core/discussions)** | anything without a defined outcome yet | does this fit a monorepo, is R21 too strict, has anyone run this on a Python service |
+| **Issue** | something specific that should change | a guard misfires, a doc contradicts the spec, your technology has no stack |
+| **Pull request** | you already know what the change is | any doc fix, a new case study, a sharper rule |
+
+The line between the first two: an **issue** says something is wrong; a **discussion** works
+out whether it is. Opening an issue to ask a question is not a faux pas, but you will get a
+better answer in Discussions, because there the disagreement is allowed to be the point.
+
+**For a doc change, a pull request beats an issue.** Describing the wording you would prefer
+takes longer than writing it.
+
+**For a disagreement about a decision**, open an issue that references the
+[open-questions](docs/open-questions/README.md) entry - or add one if the decision is not
+listed there yet. Those entries exist precisely to be argued with.
+
+### Opening a pull request
+
+1. Branch off an up-to-date `main`, and base the PR on `main`.
+2. Make the change, and update whatever it makes untrue: the spec if it changes a rule, the
+   affected capability spec if it changes behaviour, `CHANGELOG.md` under `## Unreleased`.
+3. Run the gate set from [`AGENTS.md`](./AGENTS.md) locally. All of it.
+4. Read your own diff as if someone else wrote it, then open the PR.
+
+There is no CLA, no template to fill beyond the checklist, and no expectation that you are
+already familiar with the standard. A first pull request that gets the reasoning right and
+the conventions wrong is easy to land; the reverse is not.
+
+## How this repository is laid out
+
+You only need this if you are changing the standard itself. It has **two zones**, and the
+difference between them is enforced rather than remembered:
+
+| | what it is |
+|---|---|
+| `standard/` | the tree an adopter receives, authored directly at client-repo paths |
+| everything else | this project's own life - its docs, its site, its tooling, its specs |
+
+`docs/` is this repo's documentation and `docs/method/` is the method manual adopters read
+**by reference**, never copied. `tools/` holds this repo's own checks, which never ship.
+`site/` is the landing plus the generated docs. `skills/` holds the transition skills that
+run from a checkout of this repo and deliberately never ship into an adopted one.
+
+`tree-check` fails if repo-own material leaks into `standard/`, or if the manifest promises
+a file the tree does not have. That is why there is nothing to keep in sync by hand.
 
 ## Feedback from adopters
 
