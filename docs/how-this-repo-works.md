@@ -24,29 +24,41 @@ adopters got, which meant the script was the standard and nobody could read it.
 
 ## What each directory is
 
-**`docs/`** - this project's documentation, including the method manual under
-`docs/method/`. That manual is the one part adopters read **from here** rather than
-receiving: it is adopted by reference, always at latest, so there are not as many forks of
-the method as there are repositories ([ADR-023](decision-records/ADR-023-method-docs-live-beside-the-tree.md)).
+```
+repository-standards/
+├── standard/            the tree an adopter receives, at client-repo paths
+│   ├── AGENTS.md            what their agent loads first
+│   ├── specs/               their capability specs live here
+│   ├── scripts/             the guards, copied in and run by their CI
+│   └── .claude/skills/      the lifecycle, as procedures
+│
+├── docs/                this project's documentation
+│   ├── method/              the manual adopters read FROM HERE, never copied
+│   ├── tree/                one page per shipped path (the File anatomy section)
+│   ├── decision-records/    our own ADRs
+│   ├── open-questions/      calls made on judgment, held open on purpose
+│   └── case-studies/        times the loop caught something, and times it did not
+│
+├── specs/               our own capability specs - the tooling you are using now
+├── tools/               the checks this repo runs on itself; never shipped
+├── skills/              the transition skills; run from a checkout, against your repo
+└── site/                the landing, plus the generated docs
+```
 
-**`docs/tree/`** - one page per shipped path, which is what the File anatomy section
-renders. These used to be README files inside the shipped tree; they were removed because a
-manual copied into someone's repository ages there and nobody edits it.
+Three of those are worth a sentence, because their names do not give them away.
 
-**`specs/`** - this repository's own capability specs. Five of them, buildable tier, and
-they describe the tooling you are using right now: the verifier, the coupling guard, the
-cycle guard, this site.
+**`docs/method/`** is the only part an adopter reads from here rather than receiving. It is
+adopted by reference, always at latest, so there are not as many forks of the method as
+there are repositories ([ADR-023](decision-records/ADR-023-method-docs-live-beside-the-tree.md)).
 
-**`tools/`** - the checks this repository runs on itself, which never ship. `tree-check`,
-`link-check`, `prose-check`, `site-check`, the docs generator, the file-map generator, and a
-test file for each guard that could fail silently.
+**`docs/tree/`** used to be README files inside the shipped tree. They were removed because
+a manual copied into somebody's repository ages there and nobody edits it.
 
-**`skills/`** - the transition skills, which also never ship. `align-to-standards` runs
-**from a checkout of this repository** against yours; shipping it into an adopted repo would
-leave a skill for a transition that already happened.
+**`skills/`** never ships. `align-to-standards` runs from a checkout of this repository
+against yours; shipping it into an adopted repo would leave behind a skill for a transition
+that already happened.
 
-**`site/`** - the landing plus the generated docs. `site/docs/` is generated and gitignored;
-editing the HTML there is editing an output.
+`site/docs/` is generated and gitignored. Editing the HTML there is editing an output.
 
 ## The standard, applied to itself
 

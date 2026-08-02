@@ -1,117 +1,117 @@
 # How to use this project
 
 ```figure
-<svg viewBox="0 0 640 372" role="img" aria-label="The loop: say what you want, it asks back, nothing left open, it gets built, reconcile, merge, and round again">
-  <circle class="loop-ring" cx="320" cy="180" r="130"/>
+<svg viewBox="0 0 700 372" role="img" aria-label="The loop: say what you want, it asks back, nothing left open, it gets built, reconcile, merge, and round again">
+  <circle class="loop-ring" cx="350" cy="180" r="130"/>
   <circle r="1.7" opacity="0.19" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-0.39s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-0.39s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-0.39s" repeatCount="indefinite"/>
   </circle>
   <circle r="2.8" opacity="0.38" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-0.26s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-0.26s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-0.26s" repeatCount="indefinite"/>
   </circle>
   <circle r="3.9" opacity="0.56" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-0.13s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-0.13s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-0.13s" repeatCount="indefinite"/>
   </circle>
   <circle r="6.0" opacity="1.00" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="0.00s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="0.00s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="0.00s" repeatCount="indefinite"/>
   </circle>
   <circle r="1.7" opacity="0.19" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-2.19s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-2.19s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-2.19s" repeatCount="indefinite"/>
   </circle>
   <circle r="2.8" opacity="0.38" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-2.06s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-2.06s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-2.06s" repeatCount="indefinite"/>
   </circle>
   <circle r="3.9" opacity="0.56" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-1.93s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-1.93s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-1.93s" repeatCount="indefinite"/>
   </circle>
   <circle r="6.0" opacity="1.00" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-1.80s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-1.80s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-1.80s" repeatCount="indefinite"/>
   </circle>
   <circle r="1.7" opacity="0.19" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-3.99s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-3.99s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-3.99s" repeatCount="indefinite"/>
   </circle>
   <circle r="2.8" opacity="0.38" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-3.86s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-3.86s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-3.86s" repeatCount="indefinite"/>
   </circle>
   <circle r="3.9" opacity="0.56" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-3.73s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-3.73s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-3.73s" repeatCount="indefinite"/>
   </circle>
   <circle r="6.0" opacity="1.00" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-3.60s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-3.60s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-3.60s" repeatCount="indefinite"/>
   </circle>
   <circle r="1.7" opacity="0.19" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-5.79s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-5.79s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-5.79s" repeatCount="indefinite"/>
   </circle>
   <circle r="2.8" opacity="0.38" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-5.66s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-5.66s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-5.66s" repeatCount="indefinite"/>
   </circle>
   <circle r="3.9" opacity="0.56" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-5.53s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-5.53s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-5.53s" repeatCount="indefinite"/>
   </circle>
   <circle r="6.0" opacity="1.00" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-5.40s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-5.40s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-5.40s" repeatCount="indefinite"/>
   </circle>
   <circle r="1.7" opacity="0.19" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-7.59s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-7.59s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-7.59s" repeatCount="indefinite"/>
   </circle>
   <circle r="2.8" opacity="0.38" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-7.46s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-7.46s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-7.46s" repeatCount="indefinite"/>
   </circle>
   <circle r="3.9" opacity="0.56" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-7.33s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-7.33s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-7.33s" repeatCount="indefinite"/>
   </circle>
   <circle r="6.0" opacity="1.00" fill="#ff7a2f">
-    <animateMotion dur="9s" begin="-7.20s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animateMotion dur="9s" begin="-7.20s" repeatCount="indefinite" path="M 350 50 A 130 130 0 1 1 349.9 50"/>
     <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-7.20s" repeatCount="indefinite"/>
   </circle>
   <g>
-    <circle cx="320" cy="50" r="9" class="loop-node" stroke="#ff7a2f"/>
-    <text class="loop-label" x="320" y="7" text-anchor="middle" fill="#ff7a2f">1. Say what you want</text>
-    <text class="loop-sub" x="320" y="21" text-anchor="middle">plain language, no syntax</text>
+    <circle cx="350" cy="50" r="8.5" class="loop-node" stroke="#ff7a2f"/>
+    <text class="loop-label" x="350" y="24" text-anchor="middle" fill="#ff7a2f">1. Say what you want</text>
+    <text class="loop-sub" x="350" y="38" text-anchor="middle">plain language, no syntax</text>
   </g>
   <g>
-    <circle cx="433" cy="115" r="9" class="loop-node" stroke="#ff7a2f"/>
-    <text class="loop-label" x="583" y="114" text-anchor="start" fill="#ff7a2f">2. It asks back</text>
-    <text class="loop-sub" x="583" y="128" text-anchor="start">only what you must decide</text>
+    <circle cx="463" cy="115" r="8.5" class="loop-node" stroke="#ff7a2f"/>
+    <text class="loop-label" x="479" y="111" text-anchor="start" fill="#ff7a2f">2. It asks back</text>
+    <text class="loop-sub" x="479" y="125" text-anchor="start">only what you must decide</text>
   </g>
   <g>
-    <circle cx="433" cy="245" r="9" class="loop-node" stroke="#a884ff"/>
-    <text class="loop-label" x="583" y="244" text-anchor="start" fill="#a884ff">3. Nothing left open</text>
-    <text class="loop-sub" x="583" y="258" text-anchor="start">a script decides, not a person</text>
+    <circle cx="463" cy="245" r="8.5" class="loop-node" stroke="#a884ff"/>
+    <text class="loop-label" x="479" y="241" text-anchor="start" fill="#a884ff">3. Nothing left open</text>
+    <text class="loop-sub" x="479" y="255" text-anchor="start">a script decides, not a person</text>
   </g>
   <g>
-    <circle cx="320" cy="310" r="9" class="loop-node" stroke="#a884ff"/>
-    <text class="loop-label" x="320" y="361" text-anchor="middle" fill="#a884ff">4. It gets built</text>
-    <text class="loop-sub" x="320" y="375" text-anchor="middle">plan, tasks, code, tests</text>
+    <circle cx="350" cy="310" r="8.5" class="loop-node" stroke="#a884ff"/>
+    <text class="loop-label" x="350" y="340" text-anchor="middle" fill="#a884ff">4. It gets built</text>
+    <text class="loop-sub" x="350" y="354" text-anchor="middle">plan, tasks, code, tests</text>
   </g>
   <g>
-    <circle cx="207" cy="245" r="9" class="loop-node" stroke="#34d399"/>
-    <text class="loop-label" x="57" y="244" text-anchor="end" fill="#34d399">5. Reconcile</text>
-    <text class="loop-sub" x="57" y="258" text-anchor="end">spec = code = tests</text>
+    <circle cx="237" cy="245" r="8.5" class="loop-node" stroke="#34d399"/>
+    <text class="loop-label" x="221" y="241" text-anchor="end" fill="#34d399">5. Reconcile</text>
+    <text class="loop-sub" x="221" y="255" text-anchor="end">spec = code = tests</text>
   </g>
   <g>
-    <circle cx="207" cy="115" r="9" class="loop-node" stroke="#34d399"/>
-    <text class="loop-label" x="57" y="114" text-anchor="end" fill="#34d399">6. Merge</text>
-    <text class="loop-sub" x="57" y="128" text-anchor="end">or the guard says no</text>
+    <circle cx="237" cy="115" r="8.5" class="loop-node" stroke="#34d399"/>
+    <text class="loop-label" x="221" y="111" text-anchor="end" fill="#34d399">6. Merge</text>
+    <text class="loop-sub" x="221" y="125" text-anchor="end">or the guard says no</text>
   </g>
 </svg>
 ```
