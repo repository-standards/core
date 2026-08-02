@@ -82,11 +82,10 @@ row can be traced from "there is a file here" to "here is why the standard says 
 author, because the standard never invents your content. **Needed** says whether a missing
 entry counts as drift, and at which profile (\`core\` is every repo; \`scale\` is teams).
 
-What this map does **not** tell you is *how to author* what goes inside a folder. Where that
-needs a manual, the folder carries one as its own \`README.md\` and it appears as a row below,
-so this map lists it rather than repeating it. Everywhere else the rule is a numbered rule in
-the spec or a line in \`docs/conventions.md\` and the folder carries no README at all: a second
-copy of a rule is a second thing to keep true.
+This map is the index, not the manual. What each path is **for**, what belongs in it, what
+does not, and the decisions behind it are written up one page per path - open the path in
+the sidebar. Those pages live with the standard and are read at latest, rather than being
+copied into your repository as folder READMEs that then age in place.
 
 ${groups.join("\n\n")}
 

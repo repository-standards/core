@@ -3,3 +3,6 @@ contact_links:
   - name: Challenge an open question
     url: https://github.com/repository-standards/core/tree/main/docs/open-questions
     about: The owner's provisional calls, openly seeking better options - winning a challenge there is the most valuable contribution.
+  - name: Ask or argue in Discussions
+    url: https://github.com/repository-standards/core/discussions
+    about: Anything without a defined outcome yet - does this fit my situation, is this rule right, has anyone tried X. An issue is for something that should change; a discussion is for working out whether it should.
