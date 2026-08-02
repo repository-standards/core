@@ -20,7 +20,7 @@
 //
 // No dependencies. Zone 1 tooling - never shipped.
 
-import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, statSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
 // Form is the core's, content is the repo's: any repo in the ecosystem can carry
@@ -51,26 +51,33 @@ const NODE_STACK_URL =
 // first time it is seen (consecutive pages sharing a group nest under one heading).
 // Exported so site-check asserts against the real page list instead of re-deriving it
 // by parsing this file - a second, drifting copy of the same map.
+// Ordered by what a reader is trying to DO, not by what the repo happens to contain:
+// start, then work, then understand, then look things up. The method documents are long
+// because they are written for an agent that needs precision; short human pages go in
+// front of them so nobody has to read two thousand words to get going. README is
+// deliberately absent - it is the GitHub front door, and using it as the docs home put
+// the same "why it exists" argument on two pages.
 export const PAGES = CONFIG.pages || [
-  { src: "README.md", out: "index.html", nav: "Home", group: null },
-  { src: "standard/SPEC.md", out: "spec.html", nav: "The spec", group: null },
-  { src: "docs/manifesto.md", out: "why.html", nav: "Why", group: null },
-  { src: "docs/ecosystem.md", out: "ecosystem.html", nav: "How it fits together", group: null },
-  { src: "docs/method/adoption.md", out: "adopt.html", nav: "Adopt (start here)", group: null },
-  { src: "docs/method/taxonomy.md", out: "taxonomy.html", nav: "Taxonomy", group: "Concepts" },
+  { src: "docs/what-this-is.md", out: "index.html", nav: "What this is", group: null },
+  { src: "docs/quick-start.md", out: "quick-start.html", nav: "Quick start", group: null },
+  { src: "docs/method/adoption.md", out: "adopt.html", nav: "Adopt: the gated path", group: null },
+  { src: "docs/method/working-with-specs.md", out: "working-with-specs.html", nav: "Working with specs", group: "Guides" },
+  { src: "docs/method/working-with-ai/README.md", out: "working-with-ai.html", nav: "Working with AI", group: "Guides" },
+  { src: "docs/method/self-verify.md", out: "self-verify.html", nav: "Verifying compliance", group: "Guides" },
+  { src: "docs/method/discovery.md", out: "discovery.html", nav: "Turning meetings into specs", group: "Guides" },
+  { src: "docs/method/working-language.md", out: "working-language.html", nav: "Choosing a working language", group: "Guides" },
+  { src: "docs/manifesto.md", out: "why.html", nav: "Why it exists", group: "Concepts" },
+  { src: "docs/method/taxonomy.md", out: "taxonomy.html", nav: "Where knowledge lands", group: "Concepts" },
   { src: "docs/method/ways-of-working.md", out: "ways-of-working.html", nav: "Ways of working", group: "Concepts" },
-  { src: "docs/method/working-with-specs.md", out: "working-with-specs.html", nav: "Working with specs", group: "Concepts" },
-  { src: "docs/method/working-with-ai/README.md", out: "working-with-ai.html", nav: "Working with AI", group: "Concepts" },
-  { src: "docs/method/working-language.md", out: "working-language.html", nav: "Working language", group: "Concepts" },
-  { src: "docs/method/discovery.md", out: "discovery.html", nav: "Discovery", group: "Concepts" },
   { src: "standard/specs/README.md", out: "specs.html", nav: "Specs", group: "Concepts" },
-  { src: "docs/method/self-verify.md", out: "self-verify.html", nav: "Self-verify", group: "Guides" },
-  { src: "docs/file-map.md", out: "file-map.html", nav: "Every file, and why", group: "Reference" },
+  { src: "docs/ecosystem.md", out: "ecosystem.html", nav: "How it fits together", group: "Concepts" },
+  { src: "standard/SPEC.md", out: "spec.html", nav: "The spec", group: "Reference" },
+  { src: "docs/file-map.md", out: "file-map.html", nav: "Every file, and why", group: "Reference", render: "tree-root" },
   { src: "docs/method/checklist.md", out: "checklist.html", nav: "Decision checklist", group: "Reference" },
   { src: "standard/docs/decision-records/README.md", out: "decision-records.html", nav: "Decision records", group: "Reference" },
-  { src: "docs/faq.md", out: "faq.html", nav: "FAQ", group: null },
-  { src: "docs/open-questions/README.md", out: "open-questions.html", nav: "Open questions", group: null },
-  { src: "docs/case-studies/README.md", out: "case-studies.html", nav: "Case studies", group: null },
+  { src: "docs/faq.md", out: "faq.html", nav: "FAQ", group: "Reference" },
+  { src: "docs/open-questions/README.md", out: "open-questions.html", nav: "Open questions", group: "Reference" },
+  { src: "docs/case-studies/README.md", out: "case-studies.html", nav: "Case studies", group: "Reference" },
 ];
 const PAGES_BY_SRC = new Map(PAGES.map((p) => [p.src, p]));
 // Sidebar footer links - a site's own chrome, not the generator's. Empty by default:
@@ -287,7 +294,14 @@ function startsNewBlock(line, nextLine) {
 }
 
 function mdToHtml(markdown, ctx) {
-  const lines = markdown.replace(/\r\n/g, "\n").split("\n");
+  // HTML comments are a note to whoever opens the source file - a "generated, do not edit"
+  // banner, a lint pragma. Everything else here escapes raw HTML so a literal tag renders as
+  // text, which turned those notes into visible body copy on the page. They are dropped, not
+  // escaped: the reader of the rendered page is not the audience the comment was written for.
+  const lines = markdown
+    .replace(/\r\n/g, "\n")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .split("\n");
   const out = [];
   const seenIds = new Set();
   let i = 0;
@@ -520,6 +534,34 @@ a:hover { text-decoration: none; }
   overflow-y: auto;
   padding: 1.25rem 18px 2rem 10px;
 }
+/* The sidebar's file tree. Indentation plus a guide rule per level carries the nesting;
+   box-drawing characters would not survive the names wrapping. */
+.nav-tree { margin: 0.15rem 0 0; font-family: var(--font-mono); }
+.nav-tree-kids { margin-left: 0.5rem; padding-left: 0.55rem; border-left: 1px solid var(--line2); }
+.nav-tree-link {
+  display: block; padding: 0.24rem 0.5rem; border-radius: 6px;
+  font-size: 0.8rem; color: var(--muted); text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.nav-tree-link:visited { color: var(--muted); }
+a.nav-tree-link:hover { background: var(--active-bg); color: var(--fg); }
+.nav-tree-link.active { background: var(--active-bg); color: var(--active-fg); font-weight: 600; }
+.nav-tree-link.is-plain { color: var(--dim, var(--muted)); opacity: 0.75; }
+.nav-tree details > summary { list-style: none; cursor: pointer; }
+.nav-tree details > summary::-webkit-details-marker { display: none; }
+.nav-tree details > summary::before {
+  content: "\\25B8"; float: left; margin: 0.3rem 0 0 -0.1rem;
+  font-size: 0.6rem; color: var(--muted); transition: transform 0.15s ease;
+}
+.nav-tree details[open] > summary::before { transform: rotate(90deg); }
+.nav-tree details > summary .nav-tree-link { padding-left: 0.75rem; }
+
+/* A single path's page. */
+.fm-lead { font-size: 1.05rem; color: var(--fg); max-width: 62ch; }
+.fm-facts { margin: 0 0 1.25rem; padding-left: 1.1rem; }
+.fm-facts > li { margin: 0 0 0.5rem; max-width: 68ch; }
+.fm-note { font-size: 0.9rem; margin-top: -0.5rem; }
+.nav-foot { margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid var(--line2); }
 .nav-foot { margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid var(--line2); }
 .nav-group-title {
   font-size: 0.72rem;
@@ -619,13 +661,51 @@ function buildNavRows() {
   const rows = [];
   let last = null;
   for (const p of PAGES) {
+    // Per-path pages are not flat rows - renderNav draws them nested, from the tree
+    // itself, so the sidebar mirrors the shipped folder structure rather than a list.
+    if (p.render === "file") continue;
     if (p.group !== last) {
       if (p.group) rows.push({ type: "group", label: p.group });
       last = p.group;
     }
     rows.push({ type: "link", page: p });
+    if (p.render === "tree-root") rows.push({ type: "tree" });
   }
   return rows;
+}
+
+// The sidebar's nested file tree. A folder with children becomes a <details> so the
+// column stays scannable; it opens when the page you are on lives inside it, which also
+// makes deep links land with their branch already expanded.
+function renderNavTree(node, currentOut, depth = 0) {
+  let html = "";
+  for (const child of node.children.values()) {
+    const out = child.entry ? treeSlug(child.path) : null;
+    const active = out === currentOut;
+    const label = `${escapeHtml(child.name)}${isFolder(child.path) ? "/" : ""}`;
+    const link = out
+      ? `<a class="nav-tree-link${active ? " active" : ""}" href="${escapeAttr(out)}"${active ? ' aria-current="page"' : ""}>${label}</a>`
+      : `<span class="nav-tree-link is-plain">${label}</span>`;
+
+    if (child.children.size) {
+      const open = containsPage(child, currentOut);
+      html += `<details class="nav-tree-node"${open ? " open" : ""}>
+<summary>${link}</summary>
+<div class="nav-tree-kids">${renderNavTree(child, currentOut, depth + 1)}</div>
+</details>\n`;
+    } else {
+      html += `<div class="nav-tree-node">${link}</div>\n`;
+    }
+  }
+  return html;
+}
+
+function containsPage(node, currentOut) {
+  for (const child of node.children.values()) {
+    if (child.entry && treeSlug(child.path) === currentOut) return true;
+    if (containsPage(child, currentOut)) return true;
+  }
+  return false;
 }
 
 function renderNav(currentOut) {
@@ -633,6 +713,8 @@ function renderNav(currentOut) {
   for (const row of buildNavRows()) {
     if (row.type === "group") {
       html += `<div class="nav-group-title">${escapeHtml(row.label)}</div>\n`;
+    } else if (row.type === "tree") {
+      html += `<div class="nav-tree">${renderNavTree(TREE, currentOut)}</div>\n`;
     } else {
       const active = row.page.out === currentOut;
       html += `<a class="nav-link${active ? " active" : ""}" href="${row.page.out}"${active ? ' aria-current="page"' : ""}>${escapeHtml(row.page.nav)}</a>\n`;
@@ -749,6 +831,219 @@ node tools/docsite.mjs
 Dependency-free (Node built-ins only), like the rest of \`tools/\`.
 `;
 
+// --- the shipped tree (projected from the manifest, never authored) -----------------
+// R4 in practice. The list of what an aligned repo carries has ONE home:
+// standard/standard.manifest.json - the same file `scripts/self-verify.mjs` scores a repo
+// against. This section renders that data into a page per path, so the tree a reader
+// browses and the tree the tooling enforces cannot disagree. Counts are counted.
+//
+// Rule ids (R1, R19, ...) are the standard's internal handles. They index the spec; they
+// mean nothing to someone reading a docs page, so nothing here prints one. What a reader
+// gets instead is the rule's own sentence, quoted from SPEC.md.
+
+const MANIFEST_PAGE = PAGES.find((p) => p.render === "tree-root");
+// The tree root renders main's generated overview; the per-path leaves come from the
+// same manifest that overview is generated from, so there is still one source.
+const MANIFEST = MANIFEST_PAGE ? JSON.parse(readFileSync("standard/standard.manifest.json", "utf8")) : null;
+
+// A path is a folder if the shipped tree says so. The few entries with no shipped
+// counterpart (the pin, the backlog, per-repo JSON) are written at align time and are files.
+function isFolder(relPath) {
+  const shipped = `standard/${relPath}`;
+  if (existsSync(shipped)) return statSync(shipped).isDirectory();
+  return !/\.[^/.]+$/.test(relPath);
+}
+
+function treeSlug(relPath) {
+  return `tree-${slugify(relPath.replace(/\//g, " "))}.html`;
+}
+
+// Manifest order is the author's order - entry point, pin, specs, guards, security, docs.
+// Insertion-ordered Maps keep it, so the tree has no second ordering to maintain.
+function buildTree(files) {
+  const root = { children: new Map() };
+  for (const f of files) {
+    const parts = f.path.split("/");
+    let node = root;
+    parts.forEach((part, i) => {
+      const path = parts.slice(0, i + 1).join("/");
+      if (!node.children.has(part)) node.children.set(part, { name: part, path, children: new Map() });
+      node = node.children.get(part);
+      if (i === parts.length - 1) node.entry = f;
+    });
+  }
+  return root;
+}
+
+const TREE = MANIFEST ? buildTree(MANIFEST.files || []) : { children: new Map() };
+
+// One page per manifest path, appended after the section index so the sidebar order
+// follows the tree. Intermediate nodes the manifest never names (`.github/`) stay
+// folders in the nav with nothing to click - inventing a page for them would invent
+// a purpose the manifest does not state.
+function collectTreePages(node, acc = []) {
+  for (const child of node.children.values()) {
+    if (child.entry) {
+      acc.push({
+        src: "standard/standard.manifest.json",
+        out: treeSlug(child.path),
+        nav: child.name + (isFolder(child.path) ? "/" : ""),
+        group: MANIFEST_PAGE.group,
+        render: "file",
+        node: child,
+      });
+    }
+    collectTreePages(child, acc);
+  }
+  return acc;
+}
+
+if (MANIFEST_PAGE) {
+  const treePages = collectTreePages(TREE);
+  const seen = new Set();
+  for (const p of treePages) {
+    if (seen.has(p.out)) throw new Error(`docsite: two manifest paths slug to ${p.out} - treeSlug needs disambiguating`);
+    seen.add(p.out);
+  }
+  PAGES.push(...treePages);
+}
+
+// The spec's rules, by id: `- **R7.** text...` until the next rule or heading. Read so a
+// file's page can quote the sentence that puts it there instead of printing "R7".
+function loadRules() {
+  const specPage = PAGES.find((p) => p.src.endsWith("SPEC.md"));
+  if (!specPage || !existsSync(specPage.src)) return new Map();
+  const spec = readFileSync(specPage.src, "utf8");
+  const rules = new Map();
+  const re = /^- \*\*(R\d+)\.\*\*\s([\s\S]*?)(?=\n- \*\*R\d+\.\*\*|\n## |\n*$)/gm;
+  let m;
+  while ((m = re.exec(spec))) rules.set(m[1], m[2].replace(/\s+/g, " ").trim());
+  return rules;
+}
+const RULES = loadRules();
+
+// The first sentence carries the obligation; the rest qualifies it. Abbreviations like
+// "e.g." are not sentence ends, so require the next character to open a new one.
+function firstSentence(text) {
+  const m = text.match(/^[\s\S]*?[.:](?=\s+[A-Z`(])/);
+  return (m ? m[0] : text).trim();
+}
+
+function ruleQuote(ruleId) {
+  const full = RULES.get(ruleId);
+  if (!full) return "";
+  const lead = firstSentence(full);
+  const more = lead.length < full.length;
+  return `<blockquote><p>${renderInline(lead, { srcDir: "standard" })}</p></blockquote>
+<p class="fm-note"><a href="spec.html">${more ? "Read this rule in full" : "See it in the spec"}</a></p>`;
+}
+
+function statusLine(e) {
+  const bits = [e.required ? "Required" : "Optional"];
+  if (e.profile === "scale") bits.push("arrives at the <code>scale</code> profile, not at <code>core</code>");
+  else bits.push("part of the <code>core</code> profile");
+  return bits.join(" - ");
+}
+
+function renderTreeFilePage(page) {
+  const { node } = page;
+  const e = node.entry;
+  const dir = isFolder(node.path);
+  const adaptRule = (MANIFEST.adaptRules || {})[e.adapt] || "";
+  const shipped = existsSync(`standard/${node.path}`);
+
+  const sections = (MANIFEST.sections || []).filter((s) => s.file === node.path);
+  const guards = (MANIFEST.guards || []).filter((g) => g.run.includes(node.path));
+  const children = [...node.children.values()];
+
+  let html = `<h1><code>${escapeHtml(node.path)}${dir ? "/" : ""}</code></h1>
+<p class="fm-lead">${escapeHtml(e.purpose)}</p>
+<ul class="fm-facts">
+<li><strong>Status.</strong> ${statusLine(e)}.</li>
+<li><strong>How it arrives.</strong> <code>${escapeHtml(e.adapt)}</code> - ${escapeHtml(adaptRule)}</li>
+${shipped ? `<li><strong>Shipped form.</strong> <a href="${escapeAttr(GITHUB_REPO_URL)}/blob/main/standard/${escapeAttr(node.path)}" target="_blank" rel="noopener noreferrer">read it in the standard's own tree</a></li>` : `<li><strong>Shipped form.</strong> None - this one is written into your repo during alignment, from your repo's own reality.</li>`}
+</ul>`;
+
+  const quote = ruleQuote(e.rule);
+  if (quote) html += `\n<h2>Why it is there</h2>\n${quote}`;
+
+  if (sections.length) {
+    html += `\n<h2>What has to be inside</h2>\n<ul class="fm-facts">\n${sections
+      .map((s) => `<li><strong>${escapeHtml(s.heading)}.</strong> ${escapeHtml(s.purpose)}${s.required ? "" : " (optional)"}</li>`)
+      .join("\n")}\n</ul>`;
+  }
+
+  if (guards.length) {
+    html += `\n<h2>What checks it</h2>\n<ul class="fm-facts">\n${guards
+      .map((g) => `<li><code>${escapeHtml(g.run)}</code> - ${escapeHtml(g.purpose)}${g.blocks ? " Blocks the build when it fails." : ""}</li>`)
+      .join("\n")}\n</ul>`;
+  }
+
+  if (children.length) {
+    html += `\n<h2>What it contains</h2>\n<ul class="fm-facts">\n${children
+      .map((c) => {
+        const label = `<code>${escapeHtml(c.name)}${isFolder(c.path) ? "/" : ""}</code>`;
+        return c.entry
+          ? `<li><a href="${escapeAttr(treeSlug(c.path))}">${label}</a> - ${escapeHtml(c.entry.purpose)}</li>`
+          : `<li>${label}</li>`;
+      })
+      .join("\n")}\n</ul>`;
+  }
+
+  return html;
+}
+
+function unusedTreeIndex() {
+  const files = MANIFEST.files || [];
+  const refs = MANIFEST.references || [];
+  const required = files.filter((f) => f.required).length;
+  const scale = files.filter((f) => f.profile === "scale").length;
+
+  const legend = Object.entries(MANIFEST.adaptRules || {})
+    .map(([k, v]) => `<li><strong><code>${escapeHtml(k)}</code></strong> - ${escapeHtml(v)}</li>`)
+    .join("\n");
+
+  const refRows = refs
+    .map((r) => `<li><code>${escapeHtml(r.path)}</code> - ${escapeHtml(r.purpose)}</li>`)
+    .join("\n");
+
+  const roots = [...TREE.children.values()]
+    .map((c) => {
+      const label = `<code>${escapeHtml(c.name)}${isFolder(c.path) ? "/" : ""}</code>`;
+      return c.entry
+        ? `<li><a href="${escapeAttr(treeSlug(c.path))}">${label}</a> - ${escapeHtml(c.entry.purpose)}</li>`
+        : `<li>${label}</li>`;
+    })
+    .join("\n");
+
+  return `<h1>The shipped tree</h1>
+<p class="fm-lead">Everything an aligned repository carries: ${files.length} paths, ${required} of them
+required, ${scale} arriving only at the <code>scale</code> profile. Every one has its own page in the
+sidebar - what it is for, why the standard asks for it, and what checks it.</p>
+<p>This is not a hand-written inventory. It is
+<a href="${escapeAttr(GITHUB_REPO_URL)}/blob/main/standard/standard.manifest.json" target="_blank" rel="noopener noreferrer"><code>standard.manifest.json</code></a>
+rendered - the same file <code>self-verify</code> scores your repo against. If a path is listed here,
+its absence is drift you can measure.</p>
+
+<h2>Four ways a file arrives</h2>
+<p>Adoption is not a copy job. Each path carries the way it should reach your repo:</p>
+<ul class="fm-facts">
+${legend}
+</ul>
+
+<h2>Start at the root</h2>
+<ul class="fm-facts">
+${roots}
+</ul>
+
+<h2>Adopted by reference, never copied</h2>
+<p>${refs.length} method documents are not files you receive - they stay in the standard and you
+read them at latest, which is why updating the method never touches your tree:</p>
+<ul class="fm-facts">
+${refRows}
+</ul>`;
+}
+
 // --- main -----------------------------------------------------------------------
 
 function main() {
@@ -763,7 +1058,10 @@ function main() {
   mkdirSync(OUT_DIR, { recursive: true });
 
   for (const page of PAGES) {
-    const contentHtml = mdToHtml(readFileSync(page.src, "utf8"), { srcDir: dirnamePosix(page.src) });
+    const contentHtml =
+      page.render === "file"
+        ? renderTreeFilePage(page)
+        : mdToHtml(readFileSync(page.src, "utf8"), { srcDir: dirnamePosix(page.src) });
     writeFileSync(`${OUT_DIR}/${page.out}`, renderPage(page, contentHtml));
     console.log(`  wrote  ${OUT_DIR}/${page.out}  (from ${page.src})`);
   }

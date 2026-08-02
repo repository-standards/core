@@ -21,9 +21,10 @@ The prose of the rendered pages (owned by their source files); markdown link int
 
 ## Core concepts
 
-- **PAGE MAP** - the ordered list defining the site; each entry is `{ src, out, nav, group }` (source md path, output html name, sidebar label, group heading or null). `README.md -> index.html` is first and `standard/SPEC.md -> spec.html` second; `group: null` renders flat, a string groups consecutive entries under one heading. The default map lives in `tools/docsite.mjs` and is the only statement of its own length - the count is derived wherever it is needed, never restated here; a `site/site.config.json` `pages` array overrides it wholesale.
+- **PAGE MAP** - the ordered list defining the site; each entry is `{ src, out, nav, group }` (source md path, output html name, sidebar label, group heading or null). The order is what a reader is trying to DO - start, work, understand, look up - not what the repo contains: the site's front page is first and the quick start second, and the spec sits in Reference. `group: null` renders flat, a string groups consecutive entries under one heading. The repo's `README.md` is deliberately NOT in the map: it is the GitHub front door, and serving it as the docs home put the same "why it exists" argument on two pages of one site. The default map lives in `tools/docsite.mjs` and is the only statement of its own length - the count is derived wherever it is needed, never restated here; a `site/site.config.json` `pages` array overrides it wholesale.
 - **SITE CONFIG** - an optional `site/site.config.json` (the repo root is accepted as a legacy location) makes the generator serve any ecosystem repo ("one form, many sites"): `brand` (page titles), `repo_url` (GitHub fallback links + page footers), `out_dir`, `node_stack_url` (where the ecosystem switcher's stack entry points), `landing` (the landing whose spine and ink the docs adopt), `pages` (replaces the PAGE MAP), `sidebar_links` (sidebar footer links, empty by default because the top bar already carries every destination). Every field falls back to the core repo's defaults. A `topbar` array written for the previous, config-drawn header is still read for its external entry, so an older config resolves rather than breaking, but it no longer draws anything.
 - **OUT_DIR** - `site/docs` by default (config `out_dir` overrides), wiped and regenerated on every run; generated and gitignored, never hand-edited.
+- **CNAME** - `site/CNAME`, the apex the deploy is served under. It lives beside the landing, inside the directory the deploy uploads, so the domain is something the repository ships rather than a setting someone configured by hand and has to remember. GitHub Pages reads it from the published artifact and moves the domain to whichever repository published last, which makes a second copy a race rather than a redundancy - see the invariant below.
 - **Positioning one-liner** - the blockquote under `## The one-liner` in `docs/positioning.md`; surfaces quote it, never re-phrase.
 - **FILE MAP** - `docs/file-map.md`, rendered from `standard/standard.manifest.json` by `tools/file-map.mjs`: one row per shipped entry with its purpose, required-ness and profile, adapt class and the rule it enforces, plus the by-reference documents and the required headings. It is a PAGE MAP entry like any other and, unlike any other, it is **generated** - `tools/file-map.mjs --check` compares the committed file against a fresh render and fails CI when the manifest has moved and the map has not. Hand-editing it is the failure that check exists to catch, because the map's whole claim is that it cannot disagree with what `self-verify` reads.
 - **A page's `src` follows its document.** Moving a source file moves its PAGE MAP entry - `self-verify.md` left `standard/docs/` for `docs/method/` when it stopped being copied into adopters' repositories, and the entry moved with it. A `src` pointing at a moved file is caught by the generated-page count being derived from the map rather than written down.
@@ -78,6 +79,12 @@ The prose of the rendered pages (owned by their source files); markdown link int
   teach pinning, in four places, for as long as the decision had been in force.
 - No authored surface MUST contain an em or en dash.
 - No non-GitHub external host MUST appear on the landing.
+- **At most one repository in the ecosystem MUST publish a deploy carrying the apex `CNAME`.**
+  GitHub Pages allows a custom domain a single holder and hands it to whichever repository
+  published most recently, so two live copies do not reinforce each other - the later deploy
+  silently takes the domain off the earlier one. **Not script-enforced**: the guard would have to
+  see across repositories, so this is a review rule, checked whenever a repository in the
+  ecosystem gains or loses a Pages deploy.
 
 ## Acceptance criteria
 
@@ -91,6 +98,7 @@ The prose of the rendered pages (owned by their source files); markdown link int
 - **Foreign host.** GIVEN the landing links `https://example.com` WHEN site-check runs THEN it FAILs `unexpected external host example.com`.
 - **Markdown leak.** GIVEN a generated page contains `|---` WHEN site-check runs THEN it FAILs (raw table separator leaked).
 - **Palette.** GIVEN `site/docs/index.html` lacks `#0D0E11` WHEN site-check runs THEN it FAILs (dark-first palette missing).
+- **The domain survives a rebuild.** GIVEN `site/CNAME` exists WHEN docsite regenerates the site THEN the file is still there - the generator clears `OUT_DIR`, never `site/` itself, so a rebuild cannot drop the binding and hand the apex back to the default domain.
 
 ## Acceptance criteria (config)
 

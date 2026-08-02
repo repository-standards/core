@@ -6,6 +6,8 @@ manual. The client-authored templates and tool manuals live in the shipped tree 
 
 | File | What it is |
 |---|---|
+| [what-this-is.md](what-this-is.md) | the docs site's front page - what the product is, in the length someone will actually read, then where to go |
+| [quick-start.md](quick-start.md) | the first run: fetch, the prompt for each situation, prove it, update it |
 | [method/](method/README.md) | the standard's method manual - adoption, assessment, taxonomy, decision checklist, ways of working (including [working with AI](method/working-with-ai/README.md)), changelog process; clients adopt it by reference from the living standard - always latest (ADR-023) |
 | [manifesto.md](manifesto.md) | the founder's why - the itch, the idea, the non-negotiables |
 | [ecosystem.md](ecosystem.md) | how the repos fit together - the engine, the map packs, and how a stack plugs in |
