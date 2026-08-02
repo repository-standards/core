@@ -21,8 +21,8 @@ The prose of the rendered pages (owned by their source files); markdown link int
 
 ## Core concepts
 
-- **PAGE MAP** - the ordered list defining the site; each entry is `{ src, out, nav, group }` (source md path, output html name, sidebar label, group heading or null). `README.md -> index.html` is first and `standard/SPEC.md -> spec.html` second; `group: null` renders flat, a string groups consecutive entries under one heading. The default map lives in `tools/docsite.mjs` and is the only statement of its own length - the count is derived wherever it is needed, never restated here; a `site.config.json` `pages` array overrides it wholesale.
-- **SITE CONFIG** - an optional `site.config.json` at the repo root makes the generator serve any ecosystem repo ("one form, many sites"): `brand` (page titles + sidebar brand), `repo_url` (GitHub fallback links + page footers), `out_dir`, `topbar` (label/href/on/external), `pages` (replaces the PAGE MAP), `sidebar_links` (the sidebar footer links). Every field falls back to the core repo's defaults.
+- **PAGE MAP** - the ordered list defining the site; each entry is `{ src, out, nav, group }` (source md path, output html name, sidebar label, group heading or null). `README.md -> index.html` is first and `standard/SPEC.md -> spec.html` second; `group: null` renders flat, a string groups consecutive entries under one heading. The default map lives in `tools/docsite.mjs` and is the only statement of its own length - the count is derived wherever it is needed, never restated here; a `site/site.config.json` `pages` array overrides it wholesale.
+- **SITE CONFIG** - an optional `site/site.config.json` (the repo root is accepted as a legacy location) makes the generator serve any ecosystem repo ("one form, many sites"): `brand` (page titles + sidebar brand), `repo_url` (GitHub fallback links + page footers), `out_dir`, `topbar` (label/href/on/external), `pages` (replaces the PAGE MAP), `sidebar_links` (the sidebar footer links). Every field falls back to the core repo's defaults.
 - **OUT_DIR** - `site/docs` by default (config `out_dir` overrides), wiped and regenerated on every run; generated and gitignored, never hand-edited.
 - **Positioning one-liner** - the blockquote under `## The one-liner` in `docs/positioning.md`; surfaces quote it, never re-phrase.
 
@@ -52,6 +52,7 @@ The prose of the rendered pages (owned by their source files); markdown link int
 - The docsite MUST render the same markdown an agent reads, verbatim - it contributes navigation and layout, never prose; each page's H1 comes from the source file.
 - Raw HTML in source markdown MUST be escaped, and inline code spans MUST be immune to link/emphasis rewriting.
 - The site MUST be dark by default with a light `prefers-color-scheme` override, and usable at mobile widths.
+- **The landing MUST carry the same maturity disclosure as the other entry surfaces.** Whatever the README, the FAQ and `llms.txt` say about release tags, adopters and registered stacks, the landing says too. It is the surface a first-time reader is most likely to see and least likely to leave, so it cannot be the one where the limits are softest - and a disclosure that varies by surface is not a disclosure, it is a choice about who gets told.
 - **The landing MUST NOT state as fact anything the repo cannot back.** Counts derivable from a source are named, not numbered ("the rules", never "20 rules" - `tree-check` enforces this and strips markup first, so a tag between the digits and the word does not hide it). Sample terminal output MUST reproduce what the shipped tools actually print, or be marked illustrative; a fabricated check count reads as evidence. Capability claims name their cost where one exists - the guards need Node and `jq`, and a non-Claude agent needs the skills ported - so "nothing to install" is not available to us.
 
 ## Invariants
@@ -76,4 +77,5 @@ The prose of the rendered pages (owned by their source files); markdown link int
 
 - **Page count derived.** GIVEN the PAGE MAP gains an entry and the site is regenerated WHEN site-check runs THEN it passes with the new count - no check-side edit needed; GIVEN a generated page is deleted THEN site-check FAILs on the count mismatch.
 - **Stale landing version.** GIVEN `VERSION` moves and the landing still advertises the old `vX.Y.Z` WHEN site-check runs THEN it FAILs.
-- **Brand follows config.** GIVEN a `site.config.json` with `brand: "x"` WHEN docsite renders THEN page titles end `- x docs` and the sidebar brand reads `x`.
+- **Brand follows config.** GIVEN a `site/site.config.json` with `brand: "x"` WHEN docsite renders THEN page titles end `- x docs` and the sidebar brand reads `x`.
+- **Legacy location still resolves.** GIVEN no `site/site.config.json` but a `site.config.json` at the repo root WHEN docsite runs THEN it is read - moving the file must not silently drop an ecosystem repo back to the core defaults.

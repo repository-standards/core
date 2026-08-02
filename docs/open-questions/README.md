@@ -18,7 +18,7 @@ outgrew itself - as its own meta entry predicted it would.)
 | Topic | Decided | The doubt, in one line |
 |---|---|---|
 | [One authored tree](one-tree.md) | ADR-014: single `standard/` tree, no source/dist split | template shells and read-as-is docs mix in one tree |
-| [Twenty rules](twenty-rules.md) | SPEC.md, the numbered rules on one page | the count is past the top of the winners' range and only grew; some rules bundle several MUSTs |
+| [How many rules](twenty-rules.md) | SPEC.md, the numbered rules on one page | the count is past the top of the winners' range and only grew; some rules bundle several MUSTs |
 | [Stacks as satellite repos](stacks-satellite.md) | ADR-016: one repo per technology + registry | two repos to run; registry is a solo-merge gate |
 | [Genesis history for the org move](genesis-history.md) | clean-slate, curated commit sequence, honest dates | narrative order vs the record of what really happened |
 | [Engine cherry-pick](engine-cherry-pick.md) | ADR-015: prompts are ours; upstream read at release | five prompts could quietly fall behind upstream |
@@ -35,7 +35,27 @@ outgrew itself - as its own meta entry predicted it would.)
 | [One source, two surfaces](docs-funnel.md) | docs site renders the same md agents read | in-place READMEs may not sequence into a learning path |
 | [Case-study anonymization](case-anonymization.md) | describe the situation, never the company | the identifiability line is unwritten judgment |
 | [Rebase-merge as the paved road](rebase-merge.md) | ADR-026: linear `main`, rebase-merge, squash as the alternative | squash asks less and delivers most of it; the option that wins on merits is missing from GitHub |
+| [What to call a bounded period of work](work-periods.md) | `cycle`, per team, several in parallel | the name is load-bearing and no candidate is obviously right; and whether the standard should carry work periods at all |
 
 Stack-pick doubts (Better Auth, CSS Modules vs Tailwind) moved with Layer 2 to
 [repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node)'s
 DECISIONS - the stack owns its own doubts now.
+
+## This is the front door for new maintainers
+
+A single author decided every entry above, which is the honest weakness of this project.
+Winning a challenge here is the most valuable contribution it takes - more than a feature,
+because a rule this project got wrong propagates into every repo that adopts it.
+
+You do not need to have used the standard to argue one. Each entry states the decision in
+force, the doubt in one line, and - where there was real deliberation - the options already
+weighed, so you can start from where the thinking stopped rather than from scratch. Bring
+evidence from how you actually work; "we ran the other way for two years and here is what
+broke" ends an argument that abstract reasoning cannot.
+
+**If your expertise is a technology rather than the method**, this is the wrong repo to
+spend it in: Layer 1 is stack-agnostic by rule, so a TypeScript or Node opinion cannot land
+here no matter how right it is. It lands in
+[repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node),
+which owns its own picks and its own doubts. Same for any future stack - one repo per
+technology, and each carries the argument for what it chose.

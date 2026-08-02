@@ -110,7 +110,12 @@ if (personasPath) {
     const serves = body.match(/\*\*serves:\*\*\s*`([^`]+)`/i); // Serves: `Name`, not placeholder
     const hasServes = serves && !serves[1].includes("<");
     const namesRoster = [...roster].some((n) => low.includes(n));
-    const refsPersonas = low.includes("personas.md") || /for whom/i.test(body);
+    // Deliberately NOT a plain `includes("personas.md")`: the shipped capability template
+    // carries `**Serves:** <persona from docs/personas.md>` in its placeholder, so that test
+    // passed every spec instantiated from the template - the template defeating the guard
+    // the template exists to satisfy. Prose that genuinely reasons about who this is for
+    // still counts, and an unfilled `Serves` placeholder no longer does.
+    const refsPersonas = /for whom/i.test(body);
     if (!hasServes && !namesRoster && !refsPersonas) personaless.push(f);
   }
 }

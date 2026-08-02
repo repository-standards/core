@@ -21,7 +21,9 @@ part of this is mechanical; the rest needs an AI pass.
   in CI, not just on the diff.
 - **Clarify gate (ADR-010; field-proven in production, 2026-07):** a spec may not reach
   plan / tasks / the tracker mirror unless it has a `## Clarifications` section and
-  **zero** open `[NEEDS CLARIFICATION]`. Wire it as a mandatory `before_plan` /
+  **zero** open markers of the `[NEEDS ...` family - CLARIFICATION, DECISION, INPUT and
+  ASSET alike, which is what the gate script counts: a missing decision blocks planning
+  exactly like an open question. Wire it as a mandatory `before_plan` /
   `before_tasks` hook plus a bridge precondition (abort even dry-run). This is what
   flips the spec's `Status` to `ready-to-develop` mechanically, not by opinion - and
   it is why the loop cannot be skipped by simply not invoking a skill.

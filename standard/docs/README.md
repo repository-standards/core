@@ -13,6 +13,7 @@ Hub for this repo's docs. Start where you need:
 | [backlog.md](backlog.md) | the ordered work the repo still owes itself, each item with a definition of done |
 | [self-verify.md](self-verify.md) | how compliance is checked, what the drift number covers and what it does not |
 | [prerequisites.md](prerequisites.md) | what must be installed before the shipped guards protect anything |
+| [security-baseline.md](security-baseline.md) | the axes the security decision must each answer - the menu behind that ADR |
 | [conventions.md](conventions.md) | day-to-day conventions (merged into `AGENTS.md` at adoption) |
 | [discovery/](discovery/README.md) | discovery dossiers - meeting/mail extracts per topic, with provenance (ADR-024) |
 | [ideas/](ideas/README.md) | speculative ideas under a status, before they earn a spec or a record |
@@ -22,8 +23,9 @@ Hub for this repo's docs. Start where you need:
 | [analytics.template.md](analytics.template.md) | the event taxonomy / tracking plan *(scale)* |
 | [facts.example.json](facts.example.json) | the shape of `facts.json` - a fact's home and every declared restatement |
 
-The standard's **method manual** (taxonomy, adoption, working with specs, discovery,
-the decision checklist, ways of working, changelog process) is adopted by reference from the living standard - always latest:
+The standard's **method manual** (taxonomy, adoption, the repo assessment, working with
+specs, discovery, the decision checklist, ways of working, the changelog process, working
+with AI) is adopted by reference from the living standard - always latest:
 [docs/method/](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/README.md).
 
 Agents: the entry point is the repo-root `AGENTS.md`.

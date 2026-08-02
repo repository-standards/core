@@ -1,6 +1,6 @@
 ---
 name: spec-clarify
-description: Run the clarify loop on a spec: propose answers, record deferrals in ## Clarifications, drive to zero open markers (based on github/spec-kit v0.13.2, MIT - scripts/spec/LICENSE)
+description: Run the clarify loop on a spec: propose answers, record deferrals in ## Clarifications, drive the questions to zero and report any DECISION/INPUT/ASSET markers as the remaining blockers (based on github/spec-kit v0.13.2, MIT - scripts/spec/LICENSE)
 ---
 
 <!-- Vendored from github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED(repository-standards) hunks are marked inline; CHERRY-PICKED hunks name the upstream commit they came from. -->

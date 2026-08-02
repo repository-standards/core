@@ -26,7 +26,7 @@ Verifying an adopted repo ([verify-engine](../verify-engine/spec.md)); checking 
 
 ## Interface contracts
 
-`node tools/tree-check.mjs` - run from the repo root, no flags, no dependencies. Seven checks, all always run:
+`node tools/tree-check.mjs` - run from the repo root, no flags, no dependencies. Every check below always runs (the count is deliberately not restated here - it has been wrong three different ways in this file alone, which is the drift the guard's own check 4b exists to stop):
 
 1. **Leaks.** Walk every file under `standard/`. A path matching any of these patterns fails:
    - `/\/ADR-\d{3}-/` - a numbered ADR (this repo's decisions live in `docs/decision-records/`, clients get them by reference - ADR-004)
@@ -55,15 +55,15 @@ Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-c
 
 | Tool | Exit | Condition |
 |---|---|---|
-| tree-check | 0 | all four checks clean |
-| tree-check | 1 | any leak, unmet manifest promise, skeleton self-verify failure, or version-surface mismatch (count in the verdict) |
+| tree-check | 0 | every check clean |
+| tree-check | 1 | any check above failing: a leak, an unmet manifest promise, an unresolved reference, a shipped file no manifest entry covers, a skeleton self-verify failure, a version-surface mismatch, a hand-written derived fact, or a loose workflow pin (count in the verdict) |
 | link-check | 0 | every relative link resolves |
 | link-check | 1 | one or more dead relative links (count in the verdict) |
 
 ## Requirements
 
 - Both tools MUST be dependency-free (Node built-ins only) and runnable from the repo root.
-- tree-check MUST run all seven checks and report every failure, never stop at the first.
+- tree-check MUST run every check and report every failure, never stop at the first.
 - link-check MUST strip a `#fragment` from the target before resolving the path.
 
 ## Invariants

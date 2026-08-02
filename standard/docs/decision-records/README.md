@@ -97,7 +97,7 @@ supersedes it.
 PRINCIPLES.md
   -> ADR / BDR (accepted decisions - why)
     -> specs/<capability> (behavior - what)  +  ARCHITECTURE.md (structure - how built)
-      -> conventions -> .cursor/rules + skills
+      -> conventions (incl. agent rules and skills)
         -> code
 ```
 

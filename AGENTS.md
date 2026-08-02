@@ -12,10 +12,10 @@
 | **2. The standard itself** | the one authored, shipped tree, at the paths a client repo will have (ADR-014) | everything under `standard/` - `SPEC.md`, `AGENTS.md`, `.claude/skills/` (12 lifecycle skills), `.github/` (TEMPLATES - never enabled here), `docs/`, `specs/`, `scripts/` (guards + `scripts/spec/` engine), `standard.manifest.json` |
 
 **One exception to the zone split, and it matters:** [`docs/method/`](docs/method/README.md)
-sits in the root but is **not** repo-own. Its nine documents are adopter-normative, taken
+sits in the root but is **not** repo-own. Its documents are adopter-normative, taken
 **by reference** at latest rather than copied (the manifest's `references[]`, ADR-023) - the
-taxonomy, the adoption gates, the decision checklist, ways of working, working with specs,
-discovery, the changelog process, working with AI. A reader who applies "the root is our own
+taxonomy, the adoption gates, the repo assessment, the decision checklist, ways of working,
+working with specs, discovery, the changelog process, working with AI. A reader who applies "the root is our own
 life" to that folder discards half the method. Everything else under `docs/` - the product
 docs, the case studies, `open-questions/`, `decision-records/` - is genuinely zone 1.
 

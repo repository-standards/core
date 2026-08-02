@@ -64,7 +64,7 @@ The same split, applied to the web: every repo in the ecosystem may carry its
 own site - its own landing, its own docs, in its own scope (the core sells the
 method; a stack sells its picks and its starter). The FORM is shared the only
 safe way: the generator lives in the core, and a repo describes its site as
-data (`site.config.json`: brand, top bar, page map) - one form, many sites,
+data (`site/site.config.json`: brand, top bar, page map) - one form, many sites,
 zero copied generators. The top-bar switcher spans them all; with the org's
 path model each site lands at its own path under one domain. A stack earns a
 site when its content justifies one - until then GitHub renders its markdown

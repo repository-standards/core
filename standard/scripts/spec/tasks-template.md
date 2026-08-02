@@ -45,7 +45,7 @@ tested independently.
   - Entities from data-model.md
   - Endpoints from contracts/
 
-  Tasks MUST be organized by requirement slice so each story can be:
+  Tasks MUST be organized by requirement slice so each slice can be:
   - Implemented independently
   - Tested independently
   - Delivered as its own increment
@@ -75,7 +75,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T004 Setup database schema and migrations framework
 - [ ] T005 [P] Implement authentication/authorization framework
 - [ ] T006 [P] Setup API routing and middleware structure
-- [ ] T007 Create base models/entities that all stories depend on
+- [ ] T007 Create base models/entities that all slices depend on
 - [ ] T008 Configure error handling and logging infrastructure
 - [ ] T009 Setup environment configuration management
 
@@ -85,9 +85,9 @@ Examples of foundational tasks (adjust based on your project):
 
 ## Phase 3: Requirement slice 1 - [Requirements area] 🎯 first increment
 
-**Goal**: [Brief description of what this story delivers]
+**Goal**: [Brief description of what this slice delivers]
 
-**Independent Test**: [How to verify this story works on its own]
+**Independent Test**: [How to verify this slice works on its own]
 
 ### Tests for Requirement slice 1 (per the repo's testing strategy) ⚠️
 
@@ -111,9 +111,9 @@ Examples of foundational tasks (adjust based on your project):
 
 ## Phase 4: Requirement slice 2 - [Requirements area]
 
-**Goal**: [Brief description of what this story delivers]
+**Goal**: [Brief description of what this slice delivers]
 
-**Independent Test**: [How to verify this story works on its own]
+**Independent Test**: [How to verify this slice works on its own]
 
 ### Tests for Requirement slice 2 (per the repo's testing strategy) ⚠️
 
@@ -133,9 +133,9 @@ Examples of foundational tasks (adjust based on your project):
 
 ## Phase 5: Requirement slice 3 - [Requirements area]
 
-**Goal**: [Brief description of what this story delivers]
+**Goal**: [Brief description of what this slice delivers]
 
-**Independent Test**: [How to verify this story works on its own]
+**Independent Test**: [How to verify this slice works on its own]
 
 ### Tests for Requirement slice 3 (per the repo's testing strategy) ⚠️
 
@@ -162,7 +162,7 @@ Examples of foundational tasks (adjust based on your project):
 
 - [ ] TXXX [P] Documentation updates in docs/
 - [ ] TXXX Code cleanup and refactoring
-- [ ] TXXX Performance optimization across all stories
+- [ ] TXXX Performance optimization across all slices
 - [ ] TXXX [P] Additional unit tests in tests/unit/
 - [ ] TXXX Security hardening
 - [ ] TXXX Run quickstart.md validation
@@ -200,7 +200,7 @@ Examples of foundational tasks (adjust based on your project):
 - All Foundational tasks marked [P] can run in parallel (within Phase 2)
 - Once Foundational phase completes, all requirement slices can start in parallel (if team capacity allows)
 - All tests for a requirement slice marked [P] can run in parallel
-- Models within a story marked [P] can run in parallel
+- Models within a slice marked [P] can run in parallel
 - Different requirement slices can be worked on in parallel by different team members
 
 ---
@@ -208,7 +208,7 @@ Examples of foundational tasks (adjust based on your project):
 ## Parallel Example: Requirement slice 1
 
 ```bash
-# Launch all tests for Requirement slice 1 together (if tests requested):
+# Launch all tests for Requirement slice 1 together
 Task: "Contract test for [endpoint] in tests/contract/test_[name].py"
 Task: "Integration test for [user journey] in tests/integration/test_[name].py"
 
@@ -257,5 +257,5 @@ With multiple developers:
 - Each requirement slice should be independently completable and testable
 - Verify tests fail before implementing
 - Commit after each task or logical group
-- Stop at any checkpoint to validate story independently
-- Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+- Stop at any checkpoint to validate the slice independently
+- Avoid: vague tasks, same file conflicts, cross-slice dependencies that break independence

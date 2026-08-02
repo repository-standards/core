@@ -205,7 +205,7 @@ if (!skeleton) {
   // so the one file this check exists for was the one it could not see. The angle-bracket
   // form excludes `:` and `/` so markdown autolinks are not mistaken for placeholders.
   const PLACEHOLDER = /\{\{[^}]+\}\}|<[A-Za-z][A-Za-z0-9 +_-]{1,30}>/;
-  for (const p of ["AGENTS.md", "README.md", "SECURITY.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md"]) {
+  for (const p of ["AGENTS.md", "README.md", "SECURITY.md", "docs/PRINCIPLES.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md"]) {
     if (!existsSync(p)) continue;
     const body = readFileSync(p, "utf8");
     if (PLACEHOLDER.test(body)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);

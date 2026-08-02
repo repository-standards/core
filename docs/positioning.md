@@ -40,7 +40,7 @@ already have is a first-class citizen.
   across a fleet.
 - **Spec-first PO Paula** - pillar 3: the loop that walks her from story to
   ready-to-develop without code.
-- **Owner Olek** - pillar 1 phrased as assurance: community-vetted, verifiable quality
+- **Owner Olek** - pillar 1 phrased as assurance: public and checkable, verifiable quality
   he can point at.
 - **Buildable-truth Dev Darek** - pillar 2: contracts instead of archaeology.
 

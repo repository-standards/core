@@ -16,11 +16,11 @@ contribution this repo takes.
   when the base is rebase-merged - if you must stack, merge the parent PR first.
 - **Commits:** Conventional Commits. No AI/tool attribution trailers. ASCII
   hyphen only (no em/en dash).
-- **Before a PR:** run the gate set from `AGENTS.md` (tree-check, link-check,
-  docsite + site-check) and self-review your diff (the `pre-pr-review` skill).
+- **Before a PR:** run the gate set from [`AGENTS.md`](./AGENTS.md) - all of it, it is
+  longer than it looks - and self-review your diff (the `pre-pr-review` skill).
 - **Changelog:** describe your change under `CHANGELOG.md`'s `## Unreleased`
-  heading; never add a version heading and never touch `VERSION` - the maintainer
-  cuts every release (see
+  heading. A contribution never adds a version heading and never edits `VERSION`;
+  the maintainer alone bumps it when cutting a release (see
   [`docs/method/changelog-process.md`](./docs/method/changelog-process.md) for
   the fragments mechanism team repos get).
 - **One tree:** the standard is authored directly in `standard/` at client-repo
@@ -31,6 +31,41 @@ contribution this repo takes.
   not land. Accepted ADRs are binding - contradict one only via a superseding ADR.
 - **Secrets never live in the repo.** Secret manager + env vars only; gitleaks
   gates on this.
+
+## What this project is looking for
+
+Not "help wanted" in general. Four things specifically, in the order they move the
+standard:
+
+- **Practices that beat the ones here.** Every rule is a bet. If you have run something
+  that works better - a different way to keep specs honest, a gate that catches more with
+  less ceremony, a decision format that survives a year - that is the most valuable thing
+  you can bring, and it does not need to be polite about what it replaces.
+- **People who think the way this repo thinks.** In-repo over wiki, executable over
+  prose, decisions recorded with their rejected options, documents updated in place
+  rather than appended to. If that reads as obvious, you will be at home here; if it reads
+  as overhead, say why - that argument is worth more than agreement.
+- **Maintainers.** This is a single-author project and that is a weakness, not a style.
+  The clearest way in is [`docs/open-questions/`](docs/open-questions/README.md): every
+  entry is a call made on judgment and openly held open. Win one and you have changed the
+  standard.
+- **AI practitioners.** How agents actually behave against instructions is the part with
+  the least settled knowledge and the most consequence: which phrasings survive a long
+  session, where an agent silently skips a gate, what to recommend to people working this
+  way daily. [`docs/method/working-with-ai/`](docs/method/working-with-ai/README.md) is
+  where that knowledge lands, and it is thin on purpose - it only takes what someone has
+  actually observed.
+
+**If your expertise is TypeScript or Node rather than methodology**, the higher-leverage
+repo is the stack:
+[repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node).
+Layer 1 here is stack-agnostic by rule, so technology opinions genuinely cannot land in
+this repo - they land there.
+
+**Where it goes:** GitHub issues and pull requests, nothing else to learn. Anyone can open
+a PR against `main` and put it up for review. For a doc change a PR beats an issue; for a
+disagreement about a decision, an issue referencing the open-questions entry is the right
+shape, because the discussion is the deliverable.
 
 ## Feedback from adopters
 

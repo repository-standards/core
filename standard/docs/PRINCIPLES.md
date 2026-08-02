@@ -1,5 +1,11 @@
 # Engineering principles
 
+> **Template - these are the standard's paved-road defaults, not yet your team's
+> principles.** Keep, cut or rewrite every one of them, then delete this note. They sit at
+> the top of the altitude hierarchy, so shipping them unread means adopting commitments
+> nobody in your team agreed to - a seven-day dependency cooldown and a ban on writing to
+> remote databases are opinions, defensible ones, but opinions.
+
 The top of the altitude hierarchy. These outrank local preference; nothing outranks
 them except an explicit change to this file.
 

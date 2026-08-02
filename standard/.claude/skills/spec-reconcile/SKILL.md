@@ -35,4 +35,19 @@ truth - so the spec, the code, and the tests must agree.
 6. Re-run the coupling guard (`node scripts/spec-guard.mjs --staged`) - a mapped
    capability's code changed, so its spec must have changed too.
 
+7. **Close the work: delete the scaffolding.** Plan and task files are ephemeral by rule
+   (R13) and this is the step that acts on it - nothing else in the loop does, which is
+   why `spec-structure` has been reduced to warning about files it cannot remove. Once
+   spec == code == tests, delete `plan.md`, `tasks.md` and any `research.md`,
+   `data-model.md`, `quickstart.md` or `contracts/` the plan stage produced, and clear
+   `specs/feature.json`. Report what was removed.
+
+   Two things survive on purpose: the spec, and anything the scaffolding recorded that is
+   still true - a decision belongs in a record, an unfinished thread in the backlog, an
+   unresolved question in the spec's **Open questions**. Move it before deleting; a task
+   list kept "just in case" is a second, staler description of a capability that already
+   has a living one, and the next reader cannot tell which is current.
+
+   If the work is not finished, say so and stop - the scaffolding stays until it is.
+
 No knowingly-contradicting spec merges (rule 8: no silent drift).

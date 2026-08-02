@@ -101,7 +101,8 @@ const SITE = "site/docs";
 const pages = readdirSync(SITE).filter((f) => f.endsWith(".html"));
 // The expected count is derived from the same source the generator reads - config
 // first, else the default PAGE MAP in tools/docsite.mjs. Never hand-written here.
-const cfg = existsSync("site.config.json") ? JSON.parse(readFileSync("site.config.json", "utf8")) : {};
+const cfgPath = ["site/site.config.json", "site.config.json"].find((p) => existsSync(p));
+const cfg = cfgPath ? JSON.parse(readFileSync(cfgPath, "utf8")) : {};
 let expectedPages;
 if (cfg.pages) expectedPages = cfg.pages.length;
 else {

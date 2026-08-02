@@ -46,3 +46,23 @@ standard's own extracted engine - upstream improvements are cherry-picked at rel
 `node scripts/self-verify.mjs` - compliance is a number, asserted in CI, against the
 version pinned in `.standards-version`. When the standard moves, `update-to-version`
 applies the delta and self-verify proves it again.
+
+**What does drift 0 actually certify?**
+Structure, not judgment. It checks that the version pin is well-formed and matches, that
+every required file and required heading is present, and that the shipped static guards exit
+zero. It does **not** check that your specs are good, that the decisions you should have
+recorded were recorded, or that a port of the skills to a non-Claude agent is faithful -
+those sit in the judgment tier, confirmed at review
+([`self-verify.md`](../standard/docs/self-verify.md) draws the line explicitly). Drift 0 is
+the floor. A repo can be drift 0 and still sloppy; it cannot be drift 0 and structurally
+missing the things the standard is built on.
+
+**Who is using this?**
+No public adopter yet - and that is the honest answer rather than a modest one. The mechanics
+were run on the author's own private repos; there is no named repo you can inspect, no
+measured before/after, and the project's own [backlog](../backlog.md) carries "an adoption you
+can point at" as open work. There are no release tags yet either, so a fetch resolves to the
+default branch. What you can check today is the machinery: every guard in this repo is
+dependency-free, runs in CI on every pull request, and you can run all of it yourself in a
+clone before deciding anything. Adopt the mechanism because it holds when you test it, not
+because of a logo.

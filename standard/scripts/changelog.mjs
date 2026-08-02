@@ -11,8 +11,9 @@
 //                    from their headlines - a starting point, not the finished notes.
 //
 // It prints to stdout and never writes files or touches VERSION - the maintainer cuts the
-// release (sets the version + date, curates the notes, clears changes/). See
-// docs/changelog-process.md.
+// release (sets the version + date, curates the notes, clears changes/). The process is
+// adopted by reference from the living standard, not shipped here:
+// https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/changelog-process.md
 //
 // Usage:
 //   node scripts/changelog.mjs             # assemble: print CHANGELOG block + notes draft

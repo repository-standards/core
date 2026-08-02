@@ -27,6 +27,11 @@
     "home": { "read": "VERSION" },
     "claims": [
       { "file": "standard/SPEC.md", "pattern": "^Version (\\d+\\.\\d+\\.\\d+)" },
+      { "file": "README.md", "pattern": "align this repo to repository-standards@(\\d+\\.\\d+\\.\\d+)" },
+      { "file": "README.md", "pattern": "self-verify\\.mjs --version (\\d+\\.\\d+\\.\\d+)" },
+      { "file": "README.md", "pattern": "Apply just the \\*\\*delta\\*\\* to `v(\\d+\\.\\d+\\.\\d+)`" },
+      { "file": "standard/docs/self-verify.md", "pattern": "self-verify\\.mjs --version (\\d+\\.\\d+\\.\\d+)" },
+      { "file": "standard/scripts/self-verify.mjs", "pattern": "self-verify\\.mjs --version (\\d+\\.\\d+\\.\\d+)" },
       { "file": "site/index.html", "pattern": "class=\"tag mono\">v(\\d+\\.\\d+\\.\\d+)" },
       { "file": "site/index.html", "pattern": "Read the delta to <code>v(\\d+\\.\\d+\\.\\d+)</code>" },
       { "file": "site/index.html", "pattern": "scaffold from repository-standards<span class=\"v\">@(\\d+\\.\\d+\\.\\d+)" },

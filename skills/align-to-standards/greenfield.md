@@ -68,8 +68,12 @@ after personas and product.
    serves. This map becomes the `specs/` layout and the first epics.
 
 6. **Write the first specs + business requirements.** For the initial capabilities, write
-   specs (`specs/README.md`) at the **behavioral** tier (raise money/security/data paths
-   to **buildable**). Each spec **names its persona(s)** and how it serves them, and states
+   specs (`specs/README.md`) at the **buildable** tier - R9's default: an agent could
+   rebuild and verify the capability from the spec alone. Dropping to `behavioral` is an
+   escape hatch that must be justified in the spec itself, and never to save effort:
+   writing the contracts is what surfaces the disagreements while they are still cheap,
+   which on a greenfield is the entire point of writing them before the code exists.
+   Each spec **names its persona(s)** and how it serves them, and states
    the business rules and acceptance criteria. Where a decision is forced, write the
    **ADR/BDR** first.
 

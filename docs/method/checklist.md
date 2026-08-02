@@ -97,7 +97,7 @@ picks and rationale live in its DECISIONS).
 |---|---|---|---|
 | Testing strategy | "How much testing" argued per-PR forever otherwise | Named test tiers and where each runs; money/security/contract paths are non-negotiable (mirrors buildable specs) `-> stack layer` | ADR |
 | Observability | You cannot fix what you cannot see | Structured logging + the metrics/traces that matter, decided as a baseline, not bolted on after an incident | ADR |
-| Security baseline | The floor below which nothing ships | Secret scanning, dependency audit, least-privilege CI, no plaintext secrets - a stated minimum; reference OWASP ASVS + SLSA `-> stack layer`; capabilities touching money, auth, or personal data get a trust-boundaries pass in their spec (see the capability template) | ADR |
+| Security baseline | The floor below which nothing ships | Secret scanning, dependency audit, least-privilege CI, no plaintext secrets - a stated minimum; the full axis list the record must answer ships as `docs/security-baseline.md`, including the ones answered "not applicable"; reference OWASP ASVS + SLSA `-> stack layer`; capabilities touching money, auth, or personal data get a trust-boundaries pass in their spec (see the capability template) | ADR |
 | Accessibility baseline | "We'll do a11y later" means never; retrofitting it is dear | **WCAG 2.2 AA** as the floor for any user-facing surface; enforce what tooling can (e.g. Biome a11y rules) `-> stack layer` | ADR |
 | UX review lens & research cadence | UI ships on vibes unless a named lens gates it | **NN/g 10 usability heuristics** as the review lens for user-facing change; lightweight usability tests (~5 users) before a meaningful surface change ships; personas carry **JTBD** so specs state the job, not just the actor | ADR |
 | Design tokens & design-system handoff | Hardcoded values fork the visual language across surfaces | **W3C DTCG tokens (v2025.10)**, three tiers (primitive -> semantic -> component), one token source drives design tools and code `-> stack layer` | ADR |
@@ -111,7 +111,7 @@ picks and rationale live in its DECISIONS).
 | Integration method & history shape | Rebase-vs-merge is re-argued every PR until it is decided once; the wrong pick strands work or makes `main` unreadable | **Rebase-merge onto a linear `main`**, branches updated by rebase and never back-merged, no PR based on another PR's branch; **squash-merge** where per-commit hygiene is not held - both are compliant, drifting between them is not (R23, ADR-026) | ADR (with branching, above) |
 | CI/CD & environments | Manual deploys drift and break | Pipeline-driven, reproducible; least-privilege permissions; actions pinned `-> stack layer` | ADR |
 | Feature-flagging & rollout | Big-bang releases are high-risk | A decided rollout mechanism (flags / staged) for risky change, not deploy-and-pray | ADR |
-| Changelog & release notes | Undocumented releases erode trust | Per-PR changelog fragments assembled at release; separate technical vs stakeholder audiences | ADR |
+| Changelog & release notes | Undocumented releases erode trust | A PR describes its change under the changelog's `Unreleased` heading and never cuts a version; teams swap that for per-PR fragments in `changes/`, assembled at release `-> scale`; separate technical vs stakeholder audiences | ADR |
 
 ## Product & business (BDR stream)
 

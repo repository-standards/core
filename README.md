@@ -43,7 +43,7 @@ anything is touched ([ADR-020](docs/decision-records/ADR-020-intake-first-adopti
 | "Take the repository-standards repo and **start a new project** on it." | Greenfield: a short interview, then a scaffold at a pinned version - `PRODUCT.md`, the first decisions, the first capability specs. |
 | "Take the repository-standards repo and **analyse how my project fits** it." | Plan-only: a fit report + adoption plan (what diverges, what it would take) - nothing changed yet. |
 | "**Update** my repo to the next standard version." | The delta between your pin and the target, applied like a dependency bump - never a re-scaffold. |
-| "**Verify** this repo still complies with its pinned standard." | `node scripts/self-verify.mjs` - drift as a number, the same pass/fail your CI asserts. |
+| "**Verify** this repo still complies with its pinned standard." | `node scripts/self-verify.mjs`, run inside your repo once align has copied `scripts/` in - drift as a number, the same pass/fail your CI asserts. |
 | "We are a **Node team** - adopt the standard **with the Node stack**." | Layer 1 + Layer 2 together: the standard plus the Node best practices, one drift number across both. |
 | "My stack is **Python** - does the standard cover it?" | An honest registry check - and on a miss, the agent offers to file a stack request here, so the gap becomes an issue, not a dead end. |
 | "**Explain** this repo's decisions and specs in plain language." | The PO view: any ADR/BDR/spec retold against the personas - no jargon, with examples. |
@@ -75,7 +75,7 @@ and the same align mechanism runs at three moments:
 |--------|--|
 | **Adopt** | point a repo at the standard; it is read, compared, and brought into line - adapted to its stack, never blind-copied ([`align-to-standards`](skills/align-to-standards/SKILL.md)). |
 | **Update** | already on `v0.7.1`? Apply just the **delta** to `v0.7.2` - like bumping a dependency, not a re-scaffold ([`update-to-version`](standard/.claude/skills/update-to-version/SKILL.md)). |
-| **Verify** | prove it: `node scripts/self-verify.mjs` - version pin, skeleton, guards - a pass/fail your CI asserts ([`self-verify`](standard/docs/self-verify.md)). |
+| **Verify** | prove it: `node scripts/self-verify.mjs`, from inside the aligned repo - version pin, skeleton, guards - a pass/fail your CI asserts ([`self-verify`](standard/docs/self-verify.md)). |
 
 ## Who it's for
 
@@ -143,8 +143,8 @@ scale-profile prescription - `docs/method/changelog-process.md`.)
 
 ```
 # 1 - fetch the standard and point your agent at its entry skill
-$ npx degit bodurkalukasz/repository-standards standards-ref
-> follow standards-ref/skills/align-to-standards/SKILL.md - align this repo to repository-standards@0.7.2
+$ npx degit bodurkalukasz/repository-standards .repository-standards   # add it to .gitignore
+> follow .repository-standards/skills/align-to-standards/SKILL.md - align this repo to repository-standards@0.7.2
 
 # 2 - it scaffolds / assesses / aligns (copying scripts/ in), then proves it
 $ node scripts/self-verify.mjs --version 0.7.2

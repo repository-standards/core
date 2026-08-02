@@ -12,7 +12,7 @@
 | `Spec-first PO Paula` | no | owns behavior and priorities; builds via stories and specs, never via code |
 | `Buildable-truth Dev Darek` | no | turns intent into buildable specs and code; hates re-litigating settled decisions |
 | `Coding agent` | no | the AI that reads the repo as context and executes the loop; consumer, not customer |
-| `Owner Olek` | no | owns the company / project / teams; cannot audit code himself - buys **assurance**: a community-vetted standard proving his people ship quality |
+| `Owner Olek` | no | owns the company / project / teams; cannot audit code himself - buys **assurance**: a public, checkable standard proving his people ship quality |
 
 ## `Standard-bearer Staszek` (primary)
 
@@ -87,8 +87,9 @@
   docs lied; paying enterprise prices for process a five-person company cannot carry.
 - **Decisions they influence.** ADR-011 (the scale profile is his shape of the product;
   core keeps his solo projects cheap), naming and discovery (his trust story only works if the
-  standard is publicly credible and community-reviewed), the going-public bar (nothing
-  in the repo the community should not see).
+  standard will be publicly credible and community-reviewed - it is neither yet, and that
+  gap is the work, not the claim), the going-public bar (nothing in the repo the community
+  should not see).
 - **Success signals.** He can ask any repo "are you compliant, and to which version?"
   and get a number; an external audit or handover starts from the repo itself; his
   teams' PRs cite the standard instead of debating taste.

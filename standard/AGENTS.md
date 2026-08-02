@@ -34,8 +34,12 @@ projection and [`docs/self-verify.md`](docs/self-verify.md) is how they are chec
 
 ## First 30 minutes (a freshly adopted repo)
 
-Until these are done the repo is not aligned, and enabling the CI templates first
-only turns that into a red build on someone's unrelated pull request:
+Until these are done the repo is not aligned - and the shipped workflows are **live the
+moment they land**, not dormant templates: `spec-guard.yml` runs on every pull request,
+`gitleaks.yml` on every push to the mainline, `standards-update-watch.yml` on a weekly
+cron. So the first pull request after adoption goes red until this list is finished. That
+is the intended pressure, but it should not arrive as a surprise on someone's unrelated
+change - do the list first, or delete the workflow files until you are ready for them:
 
 1. Write `.standards-version` with the version this tree came from.
 2. Fill this file: the repo map, Commands, the working language, and the hard bans
@@ -48,7 +52,7 @@ only turns that into a red build on someone's unrelated pull request:
 5. Decide the profile - `core` for a solo repo, `scale` for a team - and write it as the
    manifest copy's top-level `profile`.
 6. Run `node scripts/self-verify.mjs` until it reports drift 0.
-7. Only then enable the workflows under `.github/` - they ship disabled as templates.
+7. Keep the workflows under `.github/` - by this point they pass instead of blocking.
 
 An agent aligning a repo from a checkout of the standards repo runs its transition
 skill instead, which does all of the above; that skill never ships here, so a repo
@@ -85,6 +89,9 @@ Before any of it, the toolchain the shipped guards need must be present -
   every read and write path goes through. They are 1:1, each names the other in a
   `pair: <path>` comment, and `scripts/schema-pair.mjs` checks it. Never apply a
   schema change to a remote database - prepare the reviewed `.sql`.
+- **Comments:** explain *why*, never *what*. Match the comment density of the file you
+  are editing. If a comment restates the line below it, delete it. Context that only
+  matters across a work session belongs in the plan or the spec, not in the source.
 - **Working language:** `<declare per artifact - default English>`. E.g. code +
   commits in English, docs + specs in `<team language>`, user-facing copy in the
   persona's language. Honor this everywhere; it is a config, not a constraint.

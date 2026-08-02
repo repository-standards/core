@@ -64,7 +64,12 @@ feeds none of these gets removed.
 
 ## How the standard governs itself (dogfood)
 
-- Follows its own rules: its own ADRs, specs, guards.
+- Follows its own rules where they apply to it: its own ADRs, capability specs, backlog,
+  personas and guards, all gated in CI. Not the adopter-side ones - this repo carries no
+  `.standards-version`, no manifest copy and no `CLAUDE.md`, because it *produces* the tree
+  rather than consuming it; the tree's compliance is proved by `self-verify --skeleton`
+  running against the pristine tree in `tree-check`. Aligning this repo on itself is an open
+  question, not a settled omission.
 - **Right-size:** rule vs ADR vs doc - weight matches substance; an ADR only for a
   contestable, re-litigable decision.
 - **The maintainer cuts every release;** PRs append to the CHANGELOG's

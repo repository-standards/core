@@ -38,12 +38,15 @@ tightening the loop early, not being the gate. (The gate is CI + human review.)
 
 4. **Independent diff review (the important part).** Review the diff as if a
    stranger wrote it - read *what the code does*, not *what you meant it to do*.
-   Prefer a clean context: run `/code-review` (which reviews the diff in a fresh
-   sub-agent) rather than eyeballing it in the same session that wrote it. For a
-   deeper multi-model pass use `/code-review ultra`.
+   Prefer a clean context. If your agent has a command that reviews a diff in a
+   fresh sub-agent, use it; otherwise re-read the diff in a new session. What must
+   not happen is reviewing it in the session that wrote it - that session already
+   believes the code is right, which is the belief under test.
    Look for: correctness bugs, missing edge cases / error handling, security
    issues (injection, secrets, authz), violations of this repo's ADRs and coding
-   standards, and missing/stale tests.
+   standards, missing or stale tests, **narration comments** that restate the line
+   below them, **duplication** of something the repo already has, and **scope
+   creep** - changes this PR did not need.
 
 5. **Fix findings, then re-run step 3.** Loop until clean.
 

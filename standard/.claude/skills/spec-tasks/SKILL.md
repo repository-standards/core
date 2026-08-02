@@ -95,7 +95,7 @@ record yet, say so and file it - that missing decision is itself a task.
 Every task MUST strictly follow this format:
 
 ```text
-- [ ] [TaskID] [P?] [Story?] Description with file path
+- [ ] [TaskID] [P?] [Slice?] Description with file path
 ```
 
 **Format Components**:

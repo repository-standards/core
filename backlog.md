@@ -7,6 +7,17 @@
 
 Statuses: `todo` / `doing` / `blocked` / `done`. Drop `done` rows when a release is cut.
 
+**Column exemption, stated rather than silent.** The shipped format
+([`standard/docs/backlog.md`](standard/docs/backlog.md)) also carries `cap`, `persona` and
+`owner`, and the shipped `add-to-backlog` skill refuses a row without them. This repo runs
+the shorter shape on purpose: it has one contributor, so `owner` is always the same person,
+and its work is the standard itself rather than a product with capabilities - `cap` would be
+`-` on every row and `persona` would be `Standard-bearer Staszek` on nearly all of them.
+Three columns that never vary are noise, not traceability. This is the same class of
+exemption as the one [`AGENTS.md`](AGENTS.md) records for the version pin: written down,
+because an undeclared divergence from your own shipped format is indistinguishable from
+having forgotten it.
+
 ## Epic: Layer 2 - Node/TS stack
 
 | id | title | why | DoD | status |
@@ -57,7 +68,10 @@ The restructure landed: one authored tree at `standard/`, the spec engine extrac
 the standard's own skills, the starter boot-verified, the discovery front door in
 place; starter maintenance moved to repository-standards-node. What remains is gated
 or external, in priority order: the **DISCO-1** deploy tail + **DISCO-3** (deploy, npm,
-listings; the owner publishes the posts), **STACKS-2** (waits for an evidence repo),
-and the deferred pair **OPS-1** / **UPSTREAM-1** (adopter-driven operate depth; the
-upstream scan rides with each release). Releases stay maintainer-only: versions are
-cut from the CHANGELOG's `## Unreleased` when the maintainer decides.
+listings; the owner publishes the posts), **EXHIBIT-1** (an adoption a sceptic can
+inspect - the single most load-bearing gap for anyone evaluating this),
+**STACK-ALIGN-1** (the node satellite aligns; waits on the first tag),
+**STACKS-2** (waits for an evidence repo), and the deferred pair **OPS-1** /
+**UPSTREAM-1** (adopter-driven operate depth; the upstream scan rides with each
+release). Releases stay maintainer-only: versions are cut from the CHANGELOG's
+`## Unreleased` when the maintainer decides.

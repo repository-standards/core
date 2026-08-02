@@ -101,7 +101,12 @@ binds every repo, a solo one included.
   `changes/` instead, assembled at release.
 - **R19.** Secrets MUST NOT enter the repo - environment and a secret manager only.
   The shipped secret scan SHOULD gate CI, and agent access to remote databases
-  SHOULD be write-blocked by the shipped settings baseline.
+  SHOULD be write-blocked by the shipped settings baseline. The security baseline
+  R7 requires as a recorded decision MUST state, at minimum, where each of the
+  axes in `docs/security-baseline.md` lands for this repo - including the ones
+  answered "not applicable", because an axis nobody considered and an axis
+  deliberately dropped are indistinguishable a year later. Technology-specific
+  depth belongs to the stack layer, never here.
 
 ## Layers and profiles
 

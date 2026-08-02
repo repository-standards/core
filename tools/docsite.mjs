@@ -25,7 +25,12 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from "node
 // Form is the core's, content is the repo's: any repo in the ecosystem can carry
 // a site.config.json (brand, repo URL, topbar, page map) and run THIS generator
 // against its own markdown - one form, many sites, zero copied generators.
-const CONFIG = existsSync("site.config.json") ? JSON.parse(readFileSync("site.config.json", "utf8")) : {};
+// The config lives with the thing it configures. The repo root is for what the product is;
+// a marketing site's brand and top bar are not that, and reading as product config at the
+// root is how it got mistaken for one. The old location still resolves for any repo that
+// already carries it there.
+const CONFIG_PATH = ["site/site.config.json", "site.config.json"].find((p) => existsSync(p));
+const CONFIG = CONFIG_PATH ? JSON.parse(readFileSync(CONFIG_PATH, "utf8")) : {};
 const OUT_DIR = CONFIG.out_dir || "site/docs";
 const GITHUB_REPO_URL = CONFIG.repo_url || "https://github.com/bodurkalukasz/repository-standards";
 const BRAND = CONFIG.brand || "repository-standards";

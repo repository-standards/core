@@ -3,11 +3,225 @@
 All notable changes to the standards. Semver: MAJOR = removals/breaking policy
 changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
+> **This file and the git history behind it will be rewritten before the move to the
+> official organization.** Both grew while the product was still deciding what it was, and
+> they carry the sediment: threads that were abandoned, mechanisms that were built and
+> removed, restructures described in terms that no longer exist. That record is honest but
+> it is not useful - a person or an agent arriving here has to sift it to find what the
+> standard actually is. On a fresh branch, the commit sequence will be re-authored to read
+> as the development of a product, with what was dropped simply gone rather than narrated,
+> and this changelog rewritten to match. The decision to do it, and the tension between a
+> curated sequence and the record of what really happened, is
+> [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
+
 ## Unreleased
 
 The simplification wave - the standard put on one page, in one tree, with one
 engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
 align engine, Layer 2 and the product spine.
+
+### The indexes stop misdescribing their own contents (2026-08-02)
+
+A repo whose job is keeping documents true to code had eight documents describing
+themselves wrongly, several of them written the same day.
+
+- **`tools/README.md` listed four tools of seven and gave a pre-PR command block that
+  skipped every shipped guard** - so a contributor who trusted it got a red pull request.
+  The three missing entries are the guard self-tests, which is a particular kind of
+  omission: the file that documents the tooling did not mention the tools that check the
+  tooling. The command list is gone rather than corrected; it lives in `AGENTS.md`, which
+  carries a self-guard tying it to CI, and a second copy is a second thing to drift.
+- **`CONTRIBUTING.md` pointed at the right file and then parenthesised a wrong, shorter
+  list** - the same divergence, on the file a new contributor opens first.
+- **The zone paragraph said "nine documents" and listed eight** - written yesterday, and it
+  dropped the repo assessment, which is the one an agent needs first on an unfamiliar repo.
+  The count is gone; the list is complete.
+- **The spec for the guard that bans hand-written counts stated its own check count three
+  ways, all wrong** - "Seven checks", "all four checks clean", "all seven checks", against
+  eight. It broke when a check was added without touching the header. Counts removed, and
+  the failure-cause list now names all eight rather than four.
+- **`standard/docs/README.md` named seven of nine method docs** - and it ships, so every
+  adopted repo inherited the wrong list at every update.
+- **Three version restatements were undeclared** - one in the README's update example and
+  two in the shipped tree, including a usage comment inside the verifier itself. Declared;
+  the fact now has eleven agreeing restatements instead of eight.
+- **`docs/PRINCIPLES.md` shipped as authored content** - no banner, no placeholders, and it
+  sits at the top of the altitude hierarchy, so an adopter inherited a seven-day dependency
+  cooldown and a ban on remote-database writes as their own ratified principles. It now
+  says it is a template, and `self-verify` warns while it stays unfilled - it was the one
+  such document the placeholder check did not look at.
+- **The clarify gate was described two ways** - the script counts the whole `[NEEDS ...`
+  family, `enforcement.md` said only CLARIFICATION, and the clarify skill's own description
+  promised to drive to zero markers while its body says to leave DECISION, INPUT and ASSET
+  open. An agent reading the narrow version would call a blocked spec ready.
+- **The decision-records doc drew a five-level altitude chain** where the rule, the entry
+  file and the README all draw four. R1 requires the order to be stated; one shipped file
+  stated a different one.
+- **`changelog.mjs` cited a path that does not exist** in either zone.
+- **The backlog's "what remains" omitted the two items an evaluator is sent there to find** -
+  the missing adoption evidence and the satellite alignment, both open. And this repo's own
+  backlog runs three columns short of the format it ships: now stated as an exemption with
+  its reason, rather than looking like an oversight.
+- **The landing was the last surface still carrying only the soft disclosure** - "pre-1.0,
+  field-run on the author's production repos". It now says what the README, the FAQ and
+  `llms.txt` already say: no tags, no public adopter, one stack, and that the machinery is
+  testable in a clone before anyone trusts it.
+
+### The shipped procedures start doing what they say (2026-08-02)
+
+Found by re-running the readability probes against the changed tree, then verified by
+execution rather than by reading.
+
+- **The spec engine's shell scripts shipped non-executable** - mode `100644`, while every
+  skill invokes them by path rather than through `bash`. The clarify gate therefore exited
+  126 on a fresh adoption, and `/spec-plan` and `/spec-tasks` are told to STOP on any
+  non-zero exit, so a permissions problem was reported to the user as a spec that failed
+  clarification. The core loop was broken for every adopter and the failure named the wrong
+  cause. Now `100755`, with an acceptance criterion that runs the gate the way the skills do.
+- **The persona gate passed every spec that came from the template** - the structure guard
+  accepted any spec whose text mentioned `personas.md`, and the shipped capability template
+  carries `**Serves:** <persona from docs/personas.md>` in its placeholder. So the template
+  satisfied the guard the template exists to satisfy, and a spec serving nobody passed. The
+  escape is gone; prose that genuinely reasons about who a capability is for still counts.
+  Verified both ways: a raw template copy now fails, a filled `Serves` with a filled roster
+  passes.
+- **Greenfield told agents to write behavioral specs** - "write specs at the **behavioral**
+  tier" - while the rule makes buildable the default and the escape hatch something that
+  must be justified and should be rare, and the brownfield phase file says outright "do not
+  drop to `behavioral` to save effort". The path a brand-new project takes was the one
+  instructing against the rule. On a greenfield the argument is strongest: writing the
+  contracts is what surfaces the disagreements while they are still cheap.
+- **The scaffolding rule got an owner.** Plan and task files are ephemeral by rule and
+  nothing removed them - `spec-structure` warned about files it cannot delete and that was
+  the whole enforcement. `/spec-reconcile` now closes the work: it is where spec == code ==
+  tests is established, so it is where the scaffolding goes. What the scaffolding recorded
+  and is still true moves first - a decision to a record, a loose thread to the backlog, an
+  open question to the spec. Unfinished work keeps its files.
+- **"The workflows ship disabled as templates" was false** - written yesterday in the
+  first-30-minutes list, and all three ship with live triggers: pull request, push, and a
+  weekly cron. The warning about a red build on an unrelated pull request described the
+  guaranteed outcome rather than a risk to avoid. The text now says they are live on
+  arrival, why that pressure is intended, and how to opt out.
+- **`pre-pr-review` required a command that does not ship** - it instructed the adopter's
+  agent to run `/code-review`, which exists in the author's environment and nowhere in the
+  tree. It now describes the property that matters - review in a context that does not
+  already believe the code is right - and leaves the mechanism to the agent. Its finding
+  list also gained narration, duplication and scope creep, which the method notes had been
+  claiming it covered.
+- **The comments rule finally exists where it was prescribed** - the method note said it
+  belongs in the entry file as one line in the imperative, and no such line shipped. It does
+  now.
+- **The story-to-slice rename was half done** - fourteen survivors in the task template,
+  including all six per-phase Goal and Independent-Test lines, plus the label format block
+  in `spec-tasks` and a phase list in `spec-implement` naming phases the template no longer
+  has. One of the survivors still said tests were generated "if tests requested", 195 lines
+  below the patch note explaining why that is wrong.
+- **The changelog checklist row presented the team mechanism as everyone's default** -
+  per-PR fragments are scale-only, and a solo repo following the checklist adopted a
+  mechanism the contribution guide tells it not to use. Marked `-> scale`, like its
+  neighbours.
+- **The transition router kept the flag that was removed from the others** - the same
+  reasoning that freed `spec-update`, `pre-pr-review` and `update-to-version` applies
+  hardest to the router, which is what the front page sells as the one-sentence entry point.
+
+### The project says what it is looking for, and from whom (2026-08-02)
+
+- **"Contributions welcome" was doing no work** - the guide explained mechanics and never
+  said what would actually help. It now names four things in the order they move the
+  standard: practices that beat the ones here, people who already think in-repo and
+  executable-over-prose, maintainers, and AI practitioners - because how agents behave
+  against instructions is the area with the least settled knowledge and the most
+  consequence.
+- **Technology expertise is routed away, deliberately** - Layer 1 is stack-agnostic by
+  rule, so a TypeScript or Node opinion cannot land in this repo however right it is. Both
+  the contribution guide and the open-questions front door now send it to the stack repo,
+  which owns its own picks and its own doubts.
+- **`open-questions/` is named as the front door for maintainers** - a single author decided
+  every entry, which is this project's honest weakness. Each carries the decision in force,
+  the doubt, and the options already weighed, so a challenger starts where the thinking
+  stopped. Evidence from how someone actually works ends arguments that abstract reasoning
+  cannot.
+- **A new entry: what to call a bounded period of work** - `cycle` is the provisional pick
+  over `sprint` (carries the ceremony argument with it), `wave` (already means the brownfield
+  alignment waves - the same collision this project keeps finding in its own files) and
+  `track` (holds the parallelism, loses the time bound and the goal). The entry also holds
+  the question underneath: whether the standard should carry work periods at all, and if so
+  that they are scale-only.
+- **The changelog says it will be rewritten** - both it and the git history grew while the
+  product was deciding what it was, and they carry abandoned threads and removed mechanisms
+  described in terms that no longer exist. Before the move to the official organization the
+  sequence gets re-authored to read as a product's development, with what was dropped simply
+  gone rather than narrated.
+- **The reference checkout stops leaving litter** - `standards-ref/` becomes
+  `.repository-standards/`, gitignored, because it is a cache of the reference rather than
+  part of the project.
+- **`site.config.json` moved into `site/`** - it configures the marketing site, and sitting
+  at the repo root is how it got read as product configuration. The root path still resolves,
+  so no ecosystem repo silently falls back to the core defaults.
+- **The contribution guide stops overstating the version rule** - a contribution never edits
+  `VERSION`; the maintainer alone bumps it when cutting a release. The old phrasing read as
+  "nobody ever touches this", which is not what the rule says.
+
+### The security baseline gets a menu, without a new rule (2026-08-02)
+
+- **"Security baseline" was a required decision with nothing behind it** - one of the eight
+  foundation forks every repo must consciously decide and record, described in a single
+  checklist cell. Two repos could both claim to have decided it and mean entirely different
+  things, and neither would be wrong.
+- **`docs/security-baseline.md` ships as the menu** - thirteen axes, each a question the
+  record must answer: secrets, authn, authz, input validation, injection, transport and
+  headers, rate limiting, logging and privacy, dependencies, CI permissions, agent
+  boundaries, data at rest, and a one-paragraph threat model. It lists what has to be
+  decided, never what to decide.
+- **"Not applicable" is an answer; blank is not.** The rule now requires the record to say
+  where each axis lands, including the ones that do not apply, because an axis nobody
+  considered and an axis deliberately dropped are indistinguishable a year later. A CLI with
+  no network genuinely has no CORS story - writing that down takes a line and settles it.
+- **No new rule number.** The obligation attaches to R19, which already owned secrets and the
+  shipped guards, rather than becoming R25. The rule count is past the top of the range this
+  project measured itself against, the numbers are cited by the manifest and throughout the
+  tree, and a twenty-fifth entry would have bought a heading rather than a mechanism.
+- **Technology depth stays in the stack repos** - which header, which library, which OWASP
+  control. The same page has to serve a CLI, a data pipeline and a payment service, and a
+  control catalogue that pretends they share a checklist would be ignored by all three.
+- Nothing here is machine-checked, and the page says so. Whether a baseline is *good* is
+  review's call; what the rule buys is that the record cannot silently omit an axis.
+
+### The surfaces stop claiming more than the repo can back (2026-08-02)
+
+- **The landing said twenty rules against a spec that had grown past twenty** - and the guard
+  written for exactly this failure reported green over it, because the number and the word sat
+  either side of a tag: `20<small>rules</small>`. Adjacent to a reader, two unrelated tokens to
+  the regex. `tree-check` now strips markup before matching, which was verified by feeding it
+  the original markup and watching it catch `20 rules`. The landing states no number at all -
+  the count is derivable, so it is not restated by hand.
+- **The terminal on the landing showed output no run produces** - "drift 0 - 25 checks". Real
+  runs of the shipped checker report 52 on the shipped tree. A fabricated line reads as
+  evidence, which is worse than no line.
+- **"No framework to learn, nothing to install" was not true** - every guard is a Node
+  invocation, the guards need `jq`, and a non-Claude agent must port the shipped skills before
+  claiming compliance. It now says what it actually costs.
+- **"Community-vetted" was written in the present tense** in the persona roster and the
+  positioning file that every surface is required to quote. There is no community yet: one
+  committer, no external reviews, the site not deployed. It reads as the goal it is.
+- **`llms.txt` recommended the standard with no mention of its maturity** - and it is the file
+  designated as the machine-readable summary, so it is the copy an agent quotes to a user. It
+  now carries a "Status and limits" block: pre-1.0, no tags, no public adopter, one registered
+  stack, and what drift 0 does and does not certify.
+- **The FAQ never asked the two questions that decide adoption** - "who is using this?" and
+  "what does drift 0 actually certify?". Both answered, without softening: there is no public
+  adopter, the evidence gap is the project's own open work, and what you can check today is
+  the machinery, which runs in a clone before you commit to anything.
+- **The verify command was presented as if it ran here** - `node scripts/self-verify.mjs`,
+  bare, in the README twice and in `llms.txt`. It is an adopted-repo command; run against this
+  repo it fails to resolve, and an agent that tries concludes the tooling is broken.
+- **The README's version restatements were not guarded** - the fact mechanism covered
+  `SPEC.md` and six places on the landing while the README named the version twice and could
+  rot silently. Declared now, and the guard was checked by deliberately breaking one.
+- **`PRODUCT.md` claimed the standard follows its own rules** without saying which. It follows
+  its own decisions, specs, backlog, personas and guards; it carries no version pin, manifest
+  copy or `CLAUDE.md`, because it produces the tree rather than consuming it. Whether it
+  should align on itself is an open question, not a settled omission.
 
 ### Navigation leads where it promises (2026-08-02)
 
