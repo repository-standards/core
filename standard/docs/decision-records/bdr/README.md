@@ -1,7 +1,7 @@
 # BDR index
 
-Business Decision Records - the business / product *why*. See
-[`../README.md`](../README.md) for the system and lifecycle.
+Business Decision Records - the business / product *why*. Which stream a decision belongs to,
+and the lifecycle: [decision records (by reference)](https://github.com/repository-standards/core/blob/main/docs/tree/docs-decision-records.md).
 
 | # | Title | Status |
 |---|-------|--------|

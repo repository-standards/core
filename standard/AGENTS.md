@@ -14,8 +14,8 @@ PRINCIPLES.md -> ADR / BDR (accepted decisions)
       -> code
 ```
 
-Behavioral source of truth = the [capability specs](specs/README.md) (what the
-system does now). Decisions = [ADR / BDR](docs/decision-records/README.md) (why).
+Behavioral source of truth = the [capability specs](specs/) (what the
+system does now). Decisions = [ADR / BDR](docs/decision-records/) (why).
 Structure = ARCHITECTURE.md. There is no TDR stream.
 
 ## Project

@@ -54,7 +54,7 @@ Alignment copies `scripts/` into your repo. From then on the claim is checkable 
 including your CI:
 
 ```
-node scripts/self-verify.mjs --version 0.8.0
+node scripts/self-verify.mjs
 ```
 
 It exits non-zero on any failure and reports drift as a number. That number is the whole
@@ -65,7 +65,7 @@ contract: not "we follow a standard", but "we are this far from it, and here is 
 An update is a delta, not a re-scaffold - the same shape as bumping a dependency:
 
 ```
-update me to repository-standards@next
+update me to the latest repository-standards
 ```
 
 Your recorded deviations survive it. A gate that does not fit your repo is a legitimate,

@@ -8,8 +8,8 @@ description: Use when a team is picking up work for the next stretch - "let's st
 A team is committing to a stretch of work. This creates the cycle and moves the intents
 into it. *(scale profile only - a `core` repo has a backlog and needs nothing else.)*
 
-Read [`docs/cycles/README.md`](../../../docs/cycles/README.md) for what a cycle is; this is how
-one is opened.
+What a cycle is, and what belongs in one: [cycles (by reference)](https://github.com/repository-standards/core/blob/main/docs/tree/docs-cycles.md).
+This is how one is opened.
 
 ## Steps
 

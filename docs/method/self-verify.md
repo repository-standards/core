@@ -14,13 +14,18 @@ mechanical - but do not let the mechanical tier depend on a human either.
 Run the shipped checker; it exits non-zero on any failure, so CI can gate on it:
 
 ```
-node scripts/self-verify.mjs                  # gate: exit 1 on any failure
-node scripts/self-verify.mjs --version 0.8.0  # also assert the record equals a given target
-node scripts/self-verify.mjs --warn           # report only (local, non-gating)
+# gate: exit 1 on any failure
+node scripts/self-verify.mjs
+
+# report only, non-gating - for local runs
+node scripts/self-verify.mjs --warn
+
+# also assert the recorded state equals a given target
+node scripts/self-verify.mjs --version 0.8.0
 ```
 
-It is **manifest-driven** (ADR-005). It reads `standard.manifest.json`
-- the standard describing itself as of the recorded state - and checks the repo against every
+It is **manifest-driven** (ADR-005). It reads `standard.manifest.json`, the standard
+describing itself as of the recorded state, and checks the repo against every
 entry, reporting **drift** as a number (how many required entries are unmet; `drift 0` =
 compliant). Without a manifest it falls back to a built-in skeleton, so it still works on
 repos that predate ADR-005.

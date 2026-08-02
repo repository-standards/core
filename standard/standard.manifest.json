@@ -326,78 +326,6 @@
       "rule": "R5"
     },
     {
-      "path": "specs/README.md",
-      "purpose": "how to write a capability spec - tiers, the required sections, the clarify gate; the manual the spec template is authored against",
-      "adapt": "copy",
-      "required": false,
-      "profile": "core",
-      "since": "0.1.0",
-      "rule": "R8"
-    },
-    {
-      "path": "docs/decision-records/README.md",
-      "purpose": "the ADR/BDR system - which stream a decision belongs to, its lifecycle, and where records sit in the altitude hierarchy",
-      "adapt": "copy",
-      "required": false,
-      "profile": "core",
-      "since": "0.1.0",
-      "rule": "R5"
-    },
-    {
-      "path": "docs/discovery/README.md",
-      "purpose": "how a dossier stamps provenance and why it is never normative (ADR-024); also the only file holding the folder open in a fresh clone",
-      "adapt": "copy",
-      "required": false,
-      "profile": "core",
-      "since": "0.8.0",
-      "rule": "R5"
-    },
-    {
-      "path": "docs/ideas/README.md",
-      "purpose": "how an idea is explored end to end before any record is minted, and what graduating one means (ADR-010)",
-      "adapt": "copy",
-      "required": false,
-      "profile": "core",
-      "since": "0.7.2",
-      "rule": "R14"
-    },
-    {
-      "path": "docs/runbooks/README.md",
-      "purpose": "what a runbook must contain to be followable at 3 a.m., and when the postmortem template beside it is used",
-      "adapt": "copy",
-      "required": false,
-      "profile": "core",
-      "since": "0.8.0",
-      "rule": "R3"
-    },
-    {
-      "path": "docs/cycles/README.md",
-      "purpose": "how a cycle is opened and closed, and the one-place invariant every intent must satisfy (ADR-028)",
-      "adapt": "copy",
-      "required": false,
-      "profile": "scale",
-      "since": "0.8.0",
-      "rule": "R15"
-    },
-    {
-      "path": "docs/journeys/README.md",
-      "purpose": "how a journey map stays true - each stage coupled to the capability that serves it",
-      "adapt": "copy",
-      "required": false,
-      "profile": "scale",
-      "since": "0.8.0",
-      "rule": "R3"
-    },
-    {
-      "path": "docs/research/README.md",
-      "purpose": "how a study is anonymized and written so it reaches the personas and specs it should change",
-      "adapt": "copy",
-      "required": false,
-      "profile": "scale",
-      "since": "0.8.0",
-      "rule": "R3"
-    },
-    {
       "path": "docs/README.md",
       "purpose": "the docs hub table",
       "adapt": "fill-from-repo",
@@ -572,6 +500,14 @@
       "purpose": "the axes a repo decides once - a menu, answered in your own security ADR",
       "since": "0.8.0",
       "rule": "R19"
+    },
+    {
+      "path": "docs/tree/specs.md",
+      "purpose": "how to write a capability spec - the tiers, the contracts, what makes buildable checkable (R8, R9)"
+    },
+    {
+      "path": "docs/tree/docs-decision-records.md",
+      "purpose": "the ADR/BDR streams, the record test and the altitude hierarchy (R5)"
     }
   ],
   "sections": [
@@ -583,24 +519,6 @@
       "profile": "core",
       "since": "0.2.0",
       "rule": "R1"
-    },
-    {
-      "file": "specs/README.md",
-      "heading": "Spec depth",
-      "purpose": "the buildable-vs-behavioral tier decision, led by the rebuild-and-verify test",
-      "required": true,
-      "profile": "core",
-      "since": "0.6.0",
-      "rule": "R9"
-    },
-    {
-      "file": "docs/decision-records/README.md",
-      "heading": "When to record",
-      "purpose": "the ADR test - a contestable, re-litigable decision",
-      "required": true,
-      "profile": "core",
-      "since": "0.2.0",
-      "rule": "R5"
     }
   ],
   "guards": [

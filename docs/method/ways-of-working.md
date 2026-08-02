@@ -53,10 +53,11 @@ everything below; the AI does not invent behavior or make an unrecorded decision
 
 ```
 backlog item / intent
-  -> PO:   behavioral spec  (what + why + acceptance)
-    -> Dev:  spec-impact (ripple) -> buildable spec + plan + ADR/BDR if the change needs one
-      -> AI:   /spec-plan -> /spec-tasks -> /spec-implement -> tests
-        -> reconcile: spec == code == tests  (spec-reconcile)
+  -> PO:  behavioral spec (what + why + acceptance)
+    -> Dev: spec-impact for the ripple, then buildable spec,
+            plan, and a record if the change needs one
+      -> AI:  /spec-plan -> /spec-tasks -> /spec-implement -> tests
+        -> reconcile: spec == code == tests (spec-reconcile)
           -> pre-pr-review -> PR -> reviewer gate -> merge
 ```
 
@@ -68,7 +69,7 @@ delta**. After merge, the spec is current production truth - not a historical ti
 1. **Intent (PO).** Pull an item from the [`backlog`](../../standard/docs/backlog.md) (or capture a new
    one). **Name the persona** it serves (from [`personas.md`](../../standard/docs/personas.md)) and how it
    advances their job - an item that serves no persona is parked, not built (ADR-006).
-   Then write or extend the capability's [spec](../../standard/specs/README.md) at the **behavioral**
+   Then write or extend the capability's [spec](../tree/specs.md) at the **behavioral**
    tier: what it should do, the rules, the acceptance criteria, for whom. No code, no
    schema - just behavior and why. If two personas conflict, resolve it with a **BDR**,
    not in your head. The PO never has to gate blind: **ask the agent to explain any
@@ -129,9 +130,9 @@ especially for the PO, whose view this is:
 
 - **Backlog** - intents and stories come from [`backlog`](../../standard/docs/backlog.md); spec deltas and
   reconcile drift feed new items back into it.
-- **Specs** - the [capability specs](../../standard/specs/README.md) are the travelling artifact and
+- **Specs** - the [capability specs](../tree/specs.md) are the travelling artifact and
   the post-merge source of truth.
-- **Decisions** - the [ADR/BDR](../../standard/docs/decision-records/README.md) stream holds the *why*; the
+- **Decisions** - the [ADR/BDR](../tree/docs-decision-records.md) stream holds the *why*; the
   [decision checklist](checklist.md) says which forks deserve a record.
 - **Onboarding** - a brownfield repo reaches this steady-state flow only after
   the align router (assess -> align -> onboard) has seeded the specs,

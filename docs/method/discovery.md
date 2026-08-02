@@ -73,8 +73,8 @@ becomes a **typed open marker** naming what is missing and who brings it:
 **Status:** in-refinement    <- the draft state
 
 ## Algorithms & rules
-1. A change is allowed until 24h before check-in.        <- from the kickoff entry
-2. Repricing: [NEEDS DECISION: BDR - keep old price vs reprice at change time; owner: business]
+1. A change is allowed until 24h before check-in.   <- from the kickoff
+2. Repricing: [NEEDS DECISION: old price or reprice; owner: business]
 ...
 ## Interface contracts
 [NEEDS INPUT: UX flow for the date-change screen; owner: design]

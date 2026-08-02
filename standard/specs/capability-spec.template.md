@@ -1,7 +1,7 @@
 # <Capability>
 
-<!-- A capability spec is a BUILDABLE technical spec, not a description - see
-     specs/README.md "Spec depth". Declare the tier below. Contracts are quoted
+<!-- A capability spec is a BUILDABLE technical spec, not a description - R9 makes
+     buildable the default. Declare the tier below. Contracts are quoted
      VERBATIM (real field names, enums, error codes, endpoints), never paraphrased.
      Drop sections that genuinely do not apply. No change-log section (R4,
      ADR-018): the spec describes the present; git and the standard's changelog

@@ -133,7 +133,7 @@ Given that feature description, do this:
 
       <!-- PATCHED(repository-standards): upstream gates on "no implementation details",
            which is the opposite of what a buildable spec is. R9 makes buildable the
-           default and specs/README.md requires contracts quoted verbatim - real field
+           default and the standard requires contracts quoted verbatim - real field
            names, enums, endpoints. The checklist now gates on the tier the spec declares. -->
       ## Content Quality
 

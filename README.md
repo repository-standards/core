@@ -112,10 +112,10 @@ that is actually true. All of it doubles as the context an AI agent can act on.
 
 - **Living capability specs** - behavior by **capability** (not ticket or page) and
   **buildable** (rebuildable + verifiable from the spec alone), kept coupled to the code
-  by a guard. [`specs/`](standard/specs/README.md)
+  by a guard. [`specs/`](docs/tree/specs.md)
 - **Decision records** - ADR (technical *why*) + BDR (business *why*) in MADR format,
   plus a **decision checklist**: the forks every project hits, with an opinionated default
-  for each. [`decision-records/`](standard/docs/decision-records/README.md), [`checklist.md`](docs/method/checklist.md)
+  for each. [`decision-records/`](docs/tree/docs-decision-records.md), [`checklist.md`](docs/method/checklist.md)
 - **A backlog that feeds itself** - items fall out of spec deltas, code<->spec drift, and
   onboarding; they leave only when their definition of done is met.
   [`backlog.md`](standard/docs/backlog.md)

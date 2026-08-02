@@ -20,6 +20,6 @@ shape included - with its own statuses (`idea -> exploring -> approved | parked 
 dropped`). **No ADR/BDR/spec is minted until the idea is approved**; on approval it
 *graduates* into the normal flow and the idea doc links what it became.
 
-**Where it lives now.** [`standard/docs/ideas/`](../../standard/docs/ideas/README.md), the taxonomy's
+**Where it lives now.** [`standard/docs/ideas/`](../tree/docs-ideas.md), the taxonomy's
 "Ideas / discovery before a decision" section, ADR-010 (the lifecycle),
 the records README rule "not a record until approved".
