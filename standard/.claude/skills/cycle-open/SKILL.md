@@ -37,6 +37,15 @@ one is opened.
    and pasted into the cycle file unchanged - same columns, same values. An intent lives in
    the pool or in exactly one cycle, and copying is how that stops being true.
 
+   One cell fills on the way in: **`assignee`**, the person taking it (ADR-030). Ask for the
+   names once, as a set, rather than row by row. A row arriving with no assignee is work the
+   cycle has not really committed to - say so, and accept it if the team means it, because a
+   deliberately unassigned item is honest and a silently unassigned one is not.
+
+   **Flag any `L` that is being pulled unsplit.** An `L` means split before pulling
+   (ADR-029); pulling one anyway is a choice the team can make, but not one to make by
+   accident.
+
 6. **Write the cycle file** from [`docs/cycles/_template.md`](../../../docs/cycles/_template.md)
    at `docs/cycles/<team>/<slug>.md` - lowercase kebab-case, a slug that will still mean
    something in six months (`2026-08-checkout`, not `sprint-4`).
@@ -59,7 +68,10 @@ one is opened.
 - **Do not invent intents.** A cycle holds items that were already in the pool. Work
   discovered while opening a cycle goes through `add-to-backlog` first, then in - so it
   keeps its source and its definition of done.
-- **Do not assign people.** The row's `owner` is a role. Who is doing it lives in the
-  tracker, not here (ADR-010).
+- **Do not record who *used to* hold an item.** `assignee` is present tense and reassignment
+  overwrites it; the trail of who touched what is the tracker's (ADR-010, narrowed by
+  ADR-030). If a team needs that trail, they need a tracker.
+- **Do not assign in the pool.** An item nobody has picked up is not yet anyone's, and a pool
+  that assigns work has quietly become a queue of orders.
 - **Do not set a length policy.** Two-week cycles are a choice a team may make; the standard
   has no opinion and should not grow one.

@@ -110,11 +110,11 @@ especially for the PO, whose view this is:
 
 `in-refinement -> ready-to-develop -> in-development -> live`
 
-- **`in-refinement`** - the clarify loop is running; open `[NEEDS CLARIFICATION]` markers
+- **`in-refinement`** - the clarify loop is running; open `[NEEDS ...]` markers of any type
   are expected. Deferrals are answers too: "leaving this to the technical side" is
   **recorded** in `## Clarifications`, never lost.
 - **`ready-to-develop`** - requires the **clarify gate**: a `## Clarifications` section
-  and zero open `[NEEDS CLARIFICATION]`. Plan/tasks (and any tracker mirror) are blocked
+  and zero open markers of the `[NEEDS ...` family (CLARIFICATION, DECISION, INPUT, ASSET). Plan/tasks (and any tracker mirror) are blocked
   until then - a spec cannot reach a developer half-baked.
 - **Enabling work** (a token from IT, access, an agreement) is front-matter
   (`needs_decision_records`-style), mirrored to the tracker as a **blocking Story** -

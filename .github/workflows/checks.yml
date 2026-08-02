@@ -38,6 +38,8 @@ jobs:
         run: node tools/schema-pair-test.mjs
       - name: cycle-guard test (an intent cannot be in two places)
         run: node tools/cycle-guard-test.mjs
+      - name: self-verify fill test (the placeholder warning is clearable and still fires)
+        run: node tools/self-verify-fill-test.mjs
       - name: facts-check (a restated fact agrees with its source) + its test
         run: |
           node standard/scripts/facts-check.mjs

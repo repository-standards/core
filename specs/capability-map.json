@@ -19,6 +19,7 @@
   "work-cycles": [
     "standard/scripts/cycle-guard.mjs",
     "standard/docs/cycles/**",
-    "standard/.claude/skills/cycle-*/**"
+    "standard/.claude/skills/cycle-*/**",
+    "standard/.claude/skills/timeline-update/**"
   ]
 }

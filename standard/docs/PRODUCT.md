@@ -7,6 +7,13 @@
 
 One paragraph: the product, who it serves, the core value it delivers.
 
+## What people do today instead
+
+The status quo this displaces - a competitor, a spreadsheet, a manual process, or genuinely
+nothing. Name it plainly, including "nothing": a product with no alternative being displaced
+usually means the problem has not been found yet, and that is worth knowing early rather than
+after the build. This is what makes "why would anyone switch" answerable.
+
 ## Vision
 
 Where this is going - the 6-18 month direction and the bet behind it.

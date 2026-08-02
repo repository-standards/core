@@ -5,7 +5,7 @@ description: Use when the plan exists and the work needs breaking into ordered, 
 
 <!-- Based on github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED hunks are marked inline. -->
 <!-- PATCHED(repository-standards): ADR-010 clarify gate - mandatory precheck before task generation -->
-**MANDATORY PRECHECK - the clarify gate.** Before anything else in this command, run `scripts/spec/check-spec-clarified.sh <FEATURE_SPEC>` from the repo root (resolve `FEATURE_SPEC` via `scripts/spec/check-prerequisites.sh --json --paths-only`). If it exits non-zero, STOP and run the clarify loop (`/spec-clarify`) - do not generate tasks for a spec that is not ready-to-develop (a spec is ready only when it has a `## Clarifications` section and zero open `[NEEDS CLARIFICATION` markers).
+**MANDATORY PRECHECK - the clarify gate.** Before anything else in this command, run `scripts/spec/check-spec-clarified.sh <FEATURE_SPEC>` from the repo root (resolve `FEATURE_SPEC` via `scripts/spec/check-prerequisites.sh --json --paths-only`). If it exits non-zero, STOP and run the clarify loop (`/spec-clarify`) - do not generate tasks for a spec that is not ready-to-develop (a spec is ready only when it has a `## Clarifications` section and zero open markers of the `[NEEDS ...` family - CLARIFICATION, DECISION, INPUT and ASSET alike, which is what the gate script counts).
 
 ## User Input
 

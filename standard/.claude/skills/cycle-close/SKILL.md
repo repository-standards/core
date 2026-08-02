@@ -30,40 +30,61 @@ who did what, stop - that is the tracker's.
    point of this step; a close that rubber-stamps teaches everyone the DoD column is
    decoration.
 
-2. **Return what did not finish.** Unfinished rows are **cut** back into `docs/backlog.md`,
-   unchanged, at their risk x leverage position - not appended to the bottom, which quietly
-   demotes work that was important enough to commit to. If an item's scope changed while in
-   flight, say so and let the user re-word the row before it goes back.
+2. **Return what did not finish - and split it rather than re-sizing it.** Unfinished rows are
+   **cut** back into `docs/backlog.md` at their risk x leverage position, not appended to the
+   bottom, which quietly demotes work that was important enough to commit to. Clear the
+   `assignee` on the way out: the pool holds nobody's work (ADR-030).
 
-3. **Ask the one question the data cannot answer**: did anything get done that was never in
+   An item that did not fit is **split into what finished and what remains**, not given a
+   bigger size (ADR-029). Propose the split; the user confirms it. This is what keeps item
+   counts comparable without an estimation currency, and skipping it is how throughput
+   quietly stops meaning anything.
+
+3. **Report rows whose status never moved.** An item that entered the cycle `todo` and left it
+   `todo` is the one worth naming - usually blocked without a `blocked:` reference, or
+   assigned to someone who was never really on it. State the observation, not the cause.
+
+4. **Ask the one question the data cannot answer**: did anything get done that was never in
    the cycle? If yes, it goes into the outcome block as a count and a line, because a cycle
    that "missed" three items while absorbing two emergencies is not a cycle that
    underdelivered, and a timeline built without that reads the team as slower than it is.
 
-4. **Write the outcome block**, once, in the cycle file:
+5. **Write the outcome block**, once, in the cycle file:
    - planned, finished, returned to the pool
    - unplanned work absorbed, if any
    - commits in the window: `git log --oneline --since=<opened> --until=<closed> | wc -l`
    - days elapsed, opened to closed
    Flip `Status` to `closed` and record the actual close date, which is often not the target.
 
-5. **Remove the pointer row** from `docs/backlog.md`'s active-cycles table.
+6. **Remove the pointer row** from `docs/backlog.md`'s active-cycles table.
 
-6. **Prove it.** `node scripts/cycle-guard.mjs --block` - every returned row must now be in
+7. **Prove it.** `node scripts/cycle-guard.mjs --block` - every returned row must now be in
    exactly one place again.
 
-7. **Offer the retrospective the data supports, and no more.** Say what the numbers show -
+8. **Offer the retrospective the data supports, and no more.** Say what the numbers show -
    "planned seven, finished four, absorbed two unplanned" - and stop. Do not narrate why.
    A single cycle is one data point; `/timeline-update` is what turns several into
    throughput, and it refuses to project from too few.
 
+## Show the close, do not just file it
+
+This is the moment a team looks at, so end with a table a person can read: each intent, its
+assignee, whether its DoD was met, and where it went (stayed / returned / split). Then the
+counts in one line - planned, finished, returned, unplanned absorbed, days elapsed.
+
+That table is the artifact someone screenshots into a channel. It should need no editing, and
+it should not hide the rows that did not make it.
+
 ## Done when
 
 - [ ] Every intent was checked against its DoD and the result reported
-- [ ] Unfinished rows are back in the pool at their position, not at the bottom
+- [ ] Unfinished rows are back in the pool at their position, not at the bottom, with the
+      assignee cleared
+- [ ] Anything that overran was split, not re-sized
 - [ ] The outcome block is written and `Status` is `closed`
 - [ ] The pointer row is gone from the backlog
 - [ ] `cycle-guard --block` passes
+- [ ] A readable close table was shown, including what did not finish
 
 ## Not this
 

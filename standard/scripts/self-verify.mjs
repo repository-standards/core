@@ -205,9 +205,21 @@ if (!skeleton) {
   // so the one file this check exists for was the one it could not see. The angle-bracket
   // form excludes `:` and `/` so markdown autolinks are not mistaken for placeholders.
   const PLACEHOLDER = /\{\{[^}]+\}\}|<[A-Za-z][A-Za-z0-9 +_-]{1,30}>/;
+
+  // Code spans and fenced blocks are stripped first, because generic notation lives there and
+  // a *correctly filled* repo keeps it: `specs/<capability>`, `docs/discovery/<topic>/`,
+  // `blocked:<id>`. Without this the warning can never be cleared - AGENTS.md ships
+  // `specs/<capability>` in its own altitude ladder - and a warning nobody can clear is one
+  // everybody learns to skip, on the single file this check exists for.
+  //
+  // The cost is a real placeholder written inside backticks going unseen. That is why the
+  // shipped templates put fill markers in prose and keep code formatting for notation; the
+  // convention is what makes the check precise, not the regex alone.
+  const stripCode = (s) => s.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, "").replace(/`[^`\n]*`/g, "");
+
   for (const p of ["AGENTS.md", "README.md", "SECURITY.md", "docs/PRINCIPLES.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md"]) {
     if (!existsSync(p)) continue;
-    const body = readFileSync(p, "utf8");
+    const body = stripCode(readFileSync(p, "utf8"));
     if (PLACEHOLDER.test(body)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
   }
 }

@@ -83,24 +83,39 @@ persona is parked, not queued; ADR-006), `owner` names the **role that must act*
 boundaries), `dev` (specs, code, guards) or `agent` (mechanical work the agent does
 alone), `why` is one line, `DoD` is the observable finish line.
 
+`assignee` is the **person**, and it is empty here by definition: an item in the pool is
+not yet anyone's. It fills when the item is pulled into a cycle.
+
+`size` is `S`, `M` or `L`, and optional. It is a **splitting trigger, not a forecast**: an
+`L` means split this before pulling it. Sizes are never summed, never converted to numbers,
+and never fed into a projection - once three cycles have closed, the measured time an item
+actually took supersedes them entirely (ADR-028). An item that does not finish in its cycle
+is **split, not re-sized**.
+
 ### Epic: <name>
 
-| id | title | cap | persona | owner | why | DoD | status |
-|----|-------|-----|---------|-------|-----|-----|--------|
-| | | | | | | | |
+| id | title | cap | persona | owner | assignee | size | why | DoD | status |
+|----|-------|-----|---------|-------|----------|------|-----|-----|--------|
+| | | | | | | | | | |
 
 <!-- Example rows, from a rental-property product - delete this block once the table above is
      yours. They are here rather than in the table because a row left in the table reads as
      work this repo owes itself:
 
-| SPEC-1 | Spec `pricing` to buildable | pricing | Owner-operator Olga | dev | money path, behavioral-only today | pricing spec has data + algorithm contracts, cited from code | todo |
-| ADR-1 | Record datastore choice | - | (infra) | architect | re-litigated in review, decision only in code | ADR Accepted, states rejected options | todo |
-| DRIFT-1 | Reconcile refund flow | refunds | Owner-operator Olga | agent | README says X, code does Y | spec matches real behavior; guard green | todo |
+| SPEC-1 | Spec `pricing` to buildable | pricing | Owner-operator Olga | dev | | M | money path, behavioral-only today | pricing spec has data + algorithm contracts, cited from code | todo |
+| ADR-1 | Record datastore choice | - | (infra) | architect | | S | re-litigated in review, decision only in code | ADR Accepted, states rejected options | todo |
+| DRIFT-1 | Reconcile refund flow | refunds | Owner-operator Olga | agent | | S | README says X, code does Y | spec matches real behavior; guard green | blocked:SPEC-1 |
 -->
 
 
 Statuses: `todo` / `doing` / `blocked` / `done` (drop `done` rows on release, or let the
 Backlog.md tool archive them).
+
+**`blocked` takes a reference**: write `blocked:SPEC-1` to name what blocks it. Blocking gets
+no column of its own - the status already carries `blocked` and what it lacked was *what*.
+`cycle-guard` checks that the named intent exists, is not the row itself, and is not already
+done: a block pointing at something finished or deleted is the failure that costs time
+silently, because the row looks legitimately stuck.
 
 ## Definition of Ready (before an item is pulled)
 

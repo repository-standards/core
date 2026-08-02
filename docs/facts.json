@@ -6,8 +6,8 @@
     "claims": [
       { "file": "AGENTS.md", "pattern": "`\\.claude/skills/` \\((\\d+) lifecycle skills\\)" },
       { "file": "AGENTS.md", "pattern": "the (\\d+) under `standard/\\.claude/skills/`" },
-      { "file": "docs/open-questions/README.md", "pattern": "one family, (\\d+) skills" },
-      { "file": "docs/open-questions/shipped-skills.md", "pattern": "ship into every adopted repo, currently (\\d+)" }
+      { "file": "docs/open-questions/README.md", "pattern": "not the count - (\\d+) ship today" },
+      { "file": "docs/open-questions/shipped-skills.md", "pattern": "Currently (\\d+) ship into every adopted repo" }
     ]
   },
   {

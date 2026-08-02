@@ -132,6 +132,17 @@ repo will have (`AGENTS.md`, `.claude/skills/`, `.github/`, `docs/`, `specs/`,
 (ADR-014); there is no separate source and no build step. An agent reads the tree
 and your repo, sees the difference, and applies it - it does not blind-copy.
 
+## Where this came from
+
+The spec loop's five prompts are extracted from [GitHub Spec Kit](https://github.com/github/spec-kit)
+v0.13.2 (MIT) and heavily rewritten since - ancestry and a licence obligation, not an
+integration. **Spec Kit builds specs; this runs a repository** - decisions, guards, adoption,
+drift as a number - and the spec loop is the one component it gave us a head start on.
+
+The decision-record form is MADR, the changelog shape is Keep a Changelog, the word *cycle*
+is Linear's. What was taken as code, what was borrowed as an idea, and what this project is
+only compared against are kept apart in [`ATTRIBUTIONS.md`](ATTRIBUTIONS.md).
+
 ## Versioning
 
 Semver (`VERSION` + `CHANGELOG.md`). A PR describes its change under the changelog's

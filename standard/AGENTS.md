@@ -92,9 +92,15 @@ Before any of it, the toolchain the shipped guards need must be present -
 - **Comments:** explain *why*, never *what*. Match the comment density of the file you
   are editing. If a comment restates the line below it, delete it. Context that only
   matters across a work session belongs in the plan or the spec, not in the source.
-- **Working language:** `<declare per artifact - default English>`. E.g. code +
-  commits in English, docs + specs in `<team language>`, user-facing copy in the
+- **Working language:** <declare per artifact - default English>. E.g. code and
+  commits in English, docs and specs in <team language>, user-facing copy in the
   persona's language. Honor this everywhere; it is a config, not a constraint.
+  <!-- Deliberately not in backticks: the fill check strips code spans, because generic
+       notation lives there. A marker someone must replace belongs in prose. -->
+
+- **The convention that keeps the fill check honest:** angle brackets in **prose** mean
+  *replace me*; angle brackets inside `code formatting` are notation and stay. Writing a
+  real placeholder inside backticks hides it from `self-verify`.
 
 ## Red flags - STOP and ask the human
 
@@ -156,7 +162,7 @@ carry a password.
 - **The user describes a feature, story, or behavior change** -> start the loop yourself:
   ask the clarify questions, record answers in the spec's `## Clarifications`. A deferral
   ("leaving this to the technical side") is an answer - record it, route it to the
-  technical pass, never drop it. Loop until zero `[NEEDS CLARIFICATION]`.
+  technical pass, never drop it. Loop until zero open markers of the `[NEEDS ...` family - a missing decision, input or asset blocks planning exactly like an open question.
 - **The user changes code** -> run `spec-impact` on your own; if the change touches a
   capability's behavior, update its spec in the same PR (the coupling guard will block
   otherwise).
@@ -173,6 +179,13 @@ carry a password.
   propose it? Either way you propose and guide - hand-holding is the product.
 - **Work surfaces that is not this change** -> run `add-to-backlog` rather than doing it now
   or losing it: one row with its source, the role that must act, and what done looks like.
+- **A decision gets made in conversation** -> run `adr-write` (technical) or `bdr-write`
+  (product) *while it is still fresh*. Who would overrule it decides which: an architect
+  means ADR, a product owner means BDR. A decision that stays in the thread is the failure
+  mode this whole standard exists to stop - do not wait to be asked.
+- **The repo cannot say who it is for, or what it is building** -> `personas-write` and
+  `product-write`. A spec written against "the user" settles nothing, because "the user"
+  wants everything.
 - **A team is picking work up, or putting it down** *(scale)* -> `cycle-open` moves the
   chosen intents out of the pool and into a cycle with a goal and an agreed date;
   `cycle-close` checks each against its definition of done, returns what did not finish, and

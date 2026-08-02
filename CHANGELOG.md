@@ -20,6 +20,208 @@ The simplification wave - the standard put on one page, in one tree, with one
 engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
 align engine, Layer 2 and the product spine.
 
+### The fill warning could never be cleared, so it was noise (2026-08-02)
+
+Found by building a real adopting repo and filling it in properly - the first defect the
+fixture produced, and one no existing gate could have caught.
+
+- **The placeholder scan matched generic notation.** `specs/<capability>`,
+  `docs/discovery/<topic>/`, `blocked:<id>` - all of which a *correctly filled* repo keeps,
+  and the shipped `AGENTS.md` carries `specs/<capability>` in its own altitude ladder. So the
+  single file the check exists for could **never** clear the warning, however completely an
+  adopter filled it. A warning nobody can clear is one everybody learns to skip.
+- **The fix is a convention, not just a regex**: angle brackets in **prose** mean *replace
+  me*; angle brackets inside code formatting are notation. The scan strips code spans and
+  fenced blocks first, and `AGENTS.md` states the rule so the next person writing a template
+  knows which side to put a marker on.
+- The tree's own genuine marker moved out of backticks to stay visible - it was hidden by the
+  very fix that made the check usable, which is the trade this convention pays for.
+- `tools/self-verify-fill-test.mjs` asserts **both directions**: notation must not warn, and a
+  prose placeholder must still warn. A fix that silenced the check would pass one of those and
+  fail the other. Verified by reverting the fix - two cases fail without it.
+
+### Cycles get precise enough to manage a project, and say what they refuse to do (2026-08-02)
+
+- **Measurement is the forecast; sizes only cover the cold start** ([ADR-029](docs/decision-records/ADR-029-measurement-forecasts-sizes-only-cold-start.md)).
+  Story points were a proxy for time calibrated by a stable team's throughput, and with an
+  agent in the loop that base does not hold - the same nominal three-pointer is twenty minutes
+  or two days. So `size` is `S`/`M`/`L`, optional, a **splitting trigger**: an `L` means split
+  before pulling. Below three closed cycles the timeline may reason from sizes and must label
+  the result an estimate; at three it switches to measured durations and sizes leave the
+  projection entirely. **No blended mode** - one input at a time is what stops `S`=1, `M`=3,
+  `L`=5 rebuilding the currency.
+- **An item that overruns its cycle is split, not re-sized.** This is what keeps item counts
+  comparable without an estimation currency, and it replaces re-estimation outright.
+- **`assignee` names who holds an intent now** ([ADR-030](docs/decision-records/ADR-030-the-current-holder-is-cycle-state-not-history.md)).
+  `cycle-open` used to say "do not assign people - it lives in the tracker", which named a
+  place that does not exist for a team that chose in-repo tracking at intake. ADR-010 is
+  narrowed **by tense**, not replaced: one current holder on cycle rows, empty in the pool,
+  overwritten on reassignment, archived as written. Who *used to* hold it is still the
+  tracker's, and a team needing that trail still needs a tracker.
+- **`blocked` takes a reference** - `blocked:PAY-1`. No new column: the status already carried
+  `blocked` and what it lacked was *what*. `cycle-guard` fails a block naming an intent that
+  exists nowhere, is the row itself, or is already `done` - a block pointing at finished work
+  is the failure that costs time silently, because the row looks legitimately stuck.
+- **The guard now runs its block checks without cycles.** It used to exit early on "no cycles,
+  not using this" - which skipped the only check a `core`-profile repo could get, on a pool
+  where a stale block costs exactly the same. The one-place invariant still needs cycles; the
+  block checks no longer do.
+- **The status is read as the last cell, not a fixed column index**, so an adopter adding a
+  column does not silently disable the check. Asserted with tables of two different widths,
+  because a guard that only worked at the shipped width would have passed its own tests.
+- **`cycle-close` and `timeline-update` now show their result**, not just file it: a close
+  table (intent, assignee, DoD met, where it went) and a timeline summary a person can paste
+  into a status update unedited. The file is the record; the reply is what gets read.
+- **What was deliberately not built**, recorded so the argument does not recur: burndown
+  charts, velocity trends, time tracking, per-person throughput, and per-item state history.
+  Both records state plainly that these exclusions are **review rules, not script-enforced** -
+  a guard detecting "this column is being used as a currency" would be guessing.
+
+### Documents get written with someone, not handed to them as a form (2026-08-02)
+
+- **Four authoring skills ship** - `adr-write`, `bdr-write`, `product-write`,
+  `personas-write`. The spec loop had six skills to produce one artifact; decisions, the
+  product frame and the persona roster had templates and nothing that would sit down and ask.
+  So the flow asked a product person to fill an ADR the way a developer would, and got what a
+  form always gets: the sections filled and the thinking skipped.
+- **Each opens by checking it is the right skill.** `adr-write` and `bdr-write` both run the
+  overrule test first - an architect means ADR, a product owner means BDR - and hand over
+  rather than answer wrongly. Both draft from the code and `docs/discovery/` before asking, so
+  the user corrects a draft instead of typing what the repo already knows.
+- **The BDR template stopped being the ADR template with different nouns.** It carried
+  Context / Options / Decision / Consequences / Revisit - so *who it serves*, *what this rules
+  out* and *how we would know we were wrong* had nowhere to go, which is precisely why business
+  records read like technical ones. Those three sections now exist, and only in the BDR.
+- **`PRODUCT.md` gained "What people do today instead".** The frame could not answer why
+  anyone would switch, because the status quo being displaced had no home. Naming it as
+  "nothing" is a valid and informative answer.
+- **The persona roster's "3-6" is a ceiling, not a quota** - one persona a team actually knows
+  beats three invented to fill a table, and invented personas produce specs that serve nobody.
+- **Found while self-reviewing, and worth naming as the recurring shape**: `personas-write`
+  first elicited five fields against a template that stores seven, and described the roster as
+  sections when the gate reads a table. A skill that collects something other than what the
+  file holds is the same document-to-tooling seam that has produced most defects here - it
+  passes every gate, because no gate compares a procedure to the artifact it writes.
+
+### The skill ceiling was the wrong constraint, and it was deciding things (2026-08-02)
+
+- **The owner challenged the ceiling instead of the options, which was the right question.**
+  Asked to choose between one routing skill and one per document type, he asked whether a
+  ceiling of eight to ten was sensible at all. It was not, and it had been quietly making the
+  decision.
+- **It had no source.** "Respected skill collections treat eight to ten as the ceiling" was
+  written with no citation, and the parenthetical offered to support it named a collection
+  that ships **17**. The evidence produced in its defence contradicted it.
+- **The cost it feared was never measured.** Every skill's name and description sit in the
+  agent's context each turn - so it was measured: all 15 come to 4,772 characters, roughly
+  **1,190 tokens**, about **0.6%** of a 200k window. Four more add around 300 tokens. Whatever
+  the constraint is, it is not size.
+- **The real failure was already observed today, and it was not about count.**
+  `spec-specify` did not fire on "we need refunds" at twelve skills, because its description
+  defined the artifact instead of naming the situation. Rewriting that one description fixed
+  it **with the count unchanged**. That is the experiment, run by accident: what breaks is a
+  description naming no situation, and it breaks at fifteen exactly as at five.
+- **So the constraint is discriminability**, and the entry now says so: a skill earns its
+  place when its description names a situation no other names, and costs something only when
+  it overlaps one. Ten blurred descriptions are worse than twenty sharp ones. Two questions
+  replace the number, neither arithmetic.
+- **And that inverts the decision it was gating.** `authoring-skills` recommended two routing
+  skills *specifically to respect the ceiling*. With the ceiling gone the recommendation
+  flips to **one skill per document type** - `adr-write`, `bdr-write`, `product-write`,
+  `personas-write` - because four descriptions each naming one situation discriminate better
+  than two that each cover two. A routing `record-decision` has to match both "we picked
+  Postgres over Mongo yesterday" and "we decided to charge per seat", and a description
+  covering both is by construction vaguer than either alone.
+- **The doubt that survives is narrower and honest**: four sibling files can drift. This repo
+  proved that four times in one day - but those were four copies of one fact, where any
+  divergence is a defect. Four question sets restate nothing and can legitimately differ.
+- What would reopen it is now an observation rather than a number: a real user's sentence
+  matching the wrong skill, with the descriptions that did it.
+
+### The cycles work is audited and repaired (2026-08-02)
+
+An audit of the day's last eight changes found sixteen defects that every gate passed over.
+The worst were in the newest code.
+
+- **The shipped cycle template was HTML-entity-escaped, so its "comment" was not one.** The
+  only file in the tree written with `&lt;!--` instead of `<!--`. Consequences in ascending
+  order: the example block rendered as body text; the guard's comment about ids being safe
+  "because the examples live in comments" was false of the one file it names; and
+  `cycle-open` tells the user to instantiate that template at a real cycle path, where the
+  `_`-prefix protection is gone - **injecting two example intent ids into a live cycle**, on
+  a file the standard's own skill just told them to write. The test missed it by copying the
+  template to `_template.md`, proving the filename rule while its comment claimed the
+  comment rule. It now instantiates the template the way the skill does.
+- **The guard hardcoded the backlog's alternate path and passed silently without it.** The
+  manifest's primary path is `backlog.md` with `docs/backlog.md` as the altPath; the guard
+  only knew the second. A manifest-compliant repo lost the pool from the file list and got
+  `cycle-guard: OK` - the pool-versus-cycle half of the invariant, which is the half the
+  guard exists for, unchecked and reported as checked. Both paths now, and cycles with no
+  backlog at all are an error rather than a silent pass.
+- **`/timeline-update` wrote into the directory the guard walks.** `TIMELINE.md` names the
+  intents it projects, so the normal sequence *update the timeline, then close a cycle*
+  would red-line on a file the standard generated, telling the user to move a row nobody
+  duplicated.
+- **The comment scanner had two holes and one of them was not a hole.** An inline comment
+  inside a row (`| PAY-7 | fix <!-- was PAY-4 --> the export |`) deleted a real row - fixed
+  by scanning comment state left to right within the line. But a `-->` in commented prose
+  genuinely does end the comment: that is HTML, every renderer agrees, and deviating would
+  make the guard disagree with what the author sees rendered. The hazard is asserted in a
+  test rather than engineered around.
+- **`_`-prefixed directories were recursed into**, and fenced code blocks contributed ids.
+- **Three enumerations of skills still listed twelve** while the declared count said fifteen -
+  including the shipped `standard/README.md`, so an adopter could not discover from their own
+  repo that three of their skills existed. `cycle-guard.mjs` was missing from the scripts row
+  of the same file.
+- **The marker-family rule was written and then not applied to the four files it names.**
+  `spec-tasks`, the shipped entry point and the by-reference ways-of-working doc still said
+  "zero open `[NEEDS CLARIFICATION]`" while the gate script counts the whole family - so a
+  spec blocked by a missing decision read as ready in three of the four places describing it.
+- **A cycle "carries an owner" in the decision, the README and the spec's prose, and nowhere
+  in the artifact.** The front-matter contract had no Owner row, while three downstream
+  statements attribute judgement to one. Added.
+- **The ceiling argument was understated by three** in all four places it appears - the entire
+  open question is about how far past 8-10 to go, and every number in it predated the cycle
+  skills.
+- **The backlog epic's intro said "nothing here is built yet"** above four rows marked done,
+  and claimed ten test cases where the suite prints eighteen. It also now says plainly that
+  the spec-before-code experiment was only half run: the spec was hand-written rather than
+  produced by `/spec-specify`, and the skipped half is the half that would have tested the loop.
+- Smaller: `standard/README.md` still called `CLAUDE.md` a thin router with `as-is` adapt
+  class after both changed; `timeline-update` was governed by a spec but absent from the
+  coupling map, so it could be rewritten with no guard noticing; `docs/README.md` cited an
+  adopted-repo script path for a zone-1 file; the timeline split cycles by outcome block
+  while `cycle-close` uses `Status`; and `ATTRIBUTIONS.md` was missing five borrowed ideas -
+  Impact Mapping, Story Mapping, INVEST, jobs-to-be-done and the NN/g heuristics - all used
+  in normative or shipped material.
+- **One audit finding was wrong and is recorded as such**: the tree-guard spec was said to
+  list six of eight checks. It lists eight. The first fix duplicated two of them and was
+  reverted.
+
+### Attribution gets a page a person can read (2026-08-02)
+
+- **The credit was legally sound and humanly unreadable.** The MIT text ships, every derived
+  file carries its provenance line, two records settle the relationship - and all of it was
+  scattered across a licence file, inline comments, ADR-013, ADR-015 and a guard. Someone
+  evaluating the project, or inheriting it, had nowhere to read what came from where. The
+  owner asked the question twice, which is the evidence that the repo did not answer it.
+- **`ATTRIBUTIONS.md` keeps three kinds apart on purpose**: vendored code carries a licence
+  obligation, a borrowed idea carries a debt of credit, and a project this one is merely
+  compared against carries neither. **OpenSpec, BMAD, Backstage and adr-tools appear only in
+  the third list** - they are named in the FAQ as neighbours and influenced nothing, and
+  listing them as influences would be its own kind of dishonesty.
+- **It says what the spec-kit relationship is not**: not an integration, not a dependency,
+  not a vendored copy kept in sync. Five prompts extracted and made ours, upstream read once
+  per release and cherry-picked. It also says how far it has diverged - sections, tier,
+  tests, question protocol and the unit of work all changed today - and that the attribution
+  stands as long as any of the original does.
+- **Borrowed ideas are credited where they were not before**: MADR, Conventional Commits,
+  Semver, Keep a Changelog, RFC 2119, deliberate Backlog.md compatibility, and Linear for the
+  word *cycle*.
+- The page closes by inviting the correction rather than defending the list: an unlisted debt
+  is a bug, and this project would rather over-credit than have someone discover later that
+  it did not.
+
 ### The timeline states its evidence, or gives no date (2026-08-02)
 
 - **`/timeline-update` answers "when will this land" from what the repo already holds** -

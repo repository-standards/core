@@ -31,6 +31,7 @@ Per-item execution state, assignment and work history remain the tracker's (ADR-
 | Field | Meaning |
 |---|---|
 | **Team** | the directory name, restated so the file is readable alone |
+| **Owner** | who decides when it ends and whether the date moves - the word ADR-028 uses, and the artifact has to record it or the decisions attributed to an owner have nobody attached |
 | **Goal** | one sentence: the outcome, not the item list |
 | **Opened** | `YYYY-MM-DD` |
 | **Target** | `YYYY-MM-DD` - agreed, movable |
@@ -38,22 +39,32 @@ Per-item execution state, assignment and work history remain the tracker's (ADR-
 
 Then one table of intents, the same columns the backlog declares, so a row moves between the two files unchanged:
 
-`| id | title | cap | persona | owner | why | DoD | status |`
+`| id | title | cap | persona | owner | assignee | size | why | DoD | status |`
 
 `id` is the stable backlog id (`SPEC-3`, `ADR-auth`). It is the key the invariant is checked on.
+
+`owner` is the **role** that must act; `assignee` is the **person currently holding** it, present tense, cycle rows only - the pool leaves it empty and reassignment overwrites rather than accumulating (ADR-030). `size` is `S` \| `M` \| `L`, optional, a splitting trigger and a cold-start estimate that measurement supersedes at three closed cycles; it is never summed and never charted (ADR-029).
+
+`status` is `todo` \| `doing` \| `blocked` \| `done`, and `blocked` MAY carry a reference - `blocked:<id>` - naming the intent that blocks it. Blocking deliberately gets no column: the status already carried `blocked` and what it lacked was *what*.
 
 ## Interface contracts
 
 `node scripts/cycle-guard.mjs [--block]` - dependency-free Node, run from the repo root.
 
-Reads `docs/backlog.md` and every `docs/cycles/**/*.md` except files whose basename begins `_` (templates). Collects the first cell of every table row that looks like an intent id (`^[A-Z][A-Z0-9]*-[A-Za-z0-9-]+$`), keyed by the file it came from. Reports any id appearing in more than one file.
+Reads the backlog - `docs/backlog.md` or `backlog.md`, the manifest's two accepted paths - and every `docs/cycles/**/*.md` except: names beginning `_` (templates, as files **and** directories), and `TIMELINE.md` / `README.md`, which are derived or descriptive rather than cycles. Collects the first cell of every table row that looks like an intent id (`^[A-Z][A-Z0-9]*-[A-Za-z0-9-]+$`), keyed by the file it came from, ignoring HTML comments and fenced code blocks. Reports any id appearing in more than one file.
+
+It also reads the **last** cell of each such row as the status - last, not a fixed index, so the check does not depend on a column count the adopter may extend. A status matching `blocked:<id>` (case-insensitive) is a **stale block** when the named intent exists nowhere, or exists with status `done`; naming the row itself is an error. A block pointing at finished or deleted work is the failure that costs time silently, because the row looks legitimately stuck.
+
+The block checks run **whether or not the repo uses cycles**: a `core`-profile repo has a pool and no cycles, and a stale block costs it the same. Only the one-place invariant needs cycles to exist.
+
+Comment state is scanned left to right within each line rather than by testing for `<!--` and `-->` independently, or an inline comment inside a row would delete a real row. A `-->` in commented prose does end the comment - that is HTML, and every renderer agrees - so a commented example block must not contain one.
 
 | Exit | Condition |
 |---|---|
-| 0 | no duplicate ids; or no `docs/cycles/` at all (a repo not using cycles); or violations found without `--block` |
-| 1 | duplicate ids found and `--block` given |
+| 0 | no problems; or **neither cycle files nor a backlog** (nothing to check - the cycles directory existing is not enough, since the tree ships a README and a template into it); or problems found without `--block` |
+| 1 | a duplicate id, a stale block or a self-block found, and `--block` given; or cycle files exist with no backlog at either accepted path, and `--block` given |
 
-Output: one line per duplicated id naming every file it appears in, then a verdict line - `cycle-guard: OK - <n> intent(s) across <m> place(s)` or `cycle-guard: <n> intent(s) in more than one place`.
+Output: one line per problem - a duplicated id naming every file it appears in, or a block naming what it points at and why that no longer applies - then a verdict line: `cycle-guard: OK - <n> intent(s) ...` or `cycle-guard: <n> problem(s).` followed by the rule each class of problem broke.
 
 `/cycle-open` and `/cycle-close` are the procedures that maintain the invariant. Open moves rows out of the pool and adds the cycle's pointer row to it; close checks each intent against its own definition of done, **cuts unfinished rows back** at their risk x leverage position rather than appending them, writes the single outcome block, flips `Status`, and removes the pointer row. Both end by running the guard, because a copied row rather than a moved one is the failure they can most easily produce.
 
@@ -63,17 +74,22 @@ The outcome block is written once and holds: planned, finished, returned, unplan
 
 ## Algorithms & rules
 
-1. If `docs/cycles/` does not exist, print the skip note and exit 0. A repo at `core` never meets this guard.
-2. Collect ids from `docs/backlog.md`, then from each cycle file, skipping `_`-prefixed basenames and rows inside HTML comments.
+1. If there is neither a cycle file nor a backlog, print the note and exit 0. Testing the cycles directory alone would never fire for an adopter, because the tree ships files into it. No cycles **but** a backlog still runs the block checks - exiting there would skip the only check a `core` repo gets.
+1b. If cycle files exist but no backlog does, report that and stop: the pool half of the invariant cannot be checked, and printing OK would claim that it was.
+2. Collect rows from `docs/backlog.md`, then from each cycle file, skipping `_`-prefixed basenames and rows inside HTML comments. Each row yields its id (first cell) and its status (last cell).
 3. A row contributes its id once per file even if the file repeats it; the invariant is about *files*, not occurrences.
 4. Group by id. Any id with more than one distinct file is a violation.
-5. Report every violation before exiting - never stop at the first.
+5. For each `blocked:<ref>` status: a violation if `ref` is the row's own id, if `ref` appears in no file, or if `ref`'s status is `done`.
+6. Report every violation before exiting - never stop at the first.
 
 ## Invariants
 
 - An intent id MUST appear in at most one of: the pool, or one cycle file.
 - The guard MUST NOT fail a repo that has no cycles directory.
 - Template files (`_`-prefixed) MUST NOT contribute ids, or the shipped example would violate the invariant on arrival.
+- A `blocked:<id>` reference MUST name an existing intent that is neither the row itself nor already `done`.
+- `assignee` MUST be empty on pool rows, and MUST NOT accumulate: one current holder, overwritten on reassignment (ADR-030).
+- `size` MUST NOT be summed, converted to a number, or used in a projection once three cycles have closed (ADR-029). Neither of these last two is script-enforced - they are review rules, and the records say so rather than implying a guard that does not exist.
 
 ## Edge cases
 
@@ -100,6 +116,13 @@ The outcome block is written once and holds: planned, finished, returned, unplan
 - **Unplanned work counts toward throughput.** GIVEN a closed cycle that finished four planned intents and absorbed three unplanned WHEN throughput is derived THEN it reflects seven, not four - a team measured only on what it planned reads permanently slower than it is.
 - **A slipping cycle is named.** GIVEN an open cycle eleven days past its target WHEN the timeline is written THEN it names the cycle, the overrun and what remains, without softening and without calling it a failure - the date is agreed and movable by design.
 - **Regenerated, never appended.** GIVEN an existing `TIMELINE.md` WHEN the skill runs again THEN the file is replaced whole and carries no history of its own; git holds what it said before (R4).
+- **A live block passes.** GIVEN `PAY-2` with status `blocked:PAY-1` and `PAY-1` present and unfinished WHEN the guard runs THEN it exits 0 and reports one live block.
+- **A block on a deleted intent fails.** GIVEN `PAY-2` blocked by `PAY-9` which appears in no file WHEN the guard runs with `--block` THEN it says the block no longer applies and exits 1.
+- **A block on finished work fails.** GIVEN `PAY-2` blocked by `PAY-1` whose status is `done` WHEN the guard runs with `--block` THEN it says the block no longer applies and exits 1.
+- **A block reaches across files.** GIVEN `PAY-2` in the pool blocked by `PAY-1` held in a cycle WHEN the guard runs THEN it exits 0 - the reference is repo-wide, not per-file.
+- **Plain `blocked` stays legal.** GIVEN a row whose status is `blocked` with no reference WHEN the guard runs THEN it exits 0; the reference is a MAY, and requiring it would fail every repo on the day it upgraded.
+- **The status is the last cell, not a fixed column.** GIVEN tables of differing widths WHEN the guard reads them THEN the status is taken from the final cell of each row, so an adopter adding a column does not silently disable the block checks.
+- **A core repo still gets the block checks.** GIVEN a backlog and no `docs/cycles/` at all WHEN the guard runs with `--block` on a stale block THEN it exits 1 rather than skipping as not-using-cycles.
 
 ## Open questions
 

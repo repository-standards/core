@@ -19,8 +19,10 @@ the **code**; personas make behavior verifiable against a **user**.
 
 ## The roster
 
-List the real customer/user types for this product. Keep it small (3-6). Mark the
-**primary** persona - the one who wins ties unless a decision says otherwise.
+List the real customer/user types for this product. Keep it small - typically 3-6, but that
+is a ceiling and not a quota: one persona you actually know beats three invented to fill the
+table, and invented ones produce specs that serve nobody. Mark the **primary** persona - the
+one who wins ties unless a decision says otherwise.
 
 | Persona | Primary? | One-line |
 |---|---|---|

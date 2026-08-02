@@ -23,6 +23,15 @@ const TEMPLATE = join(process.cwd(), "standard/docs/cycles/_template.md");
 const table = (...ids) =>
   `| id | title |\n|----|-------|\n${ids.map((i) => `| ${i} | something |`).join("\n")}\n`;
 
+// Rows carrying a real status cell, for the `blocked:<id>` checks. The status is read as
+// the last cell whatever the column count, so this deliberately uses a different width
+// from `table` above - a guard that only worked at one width would pass its own tests and
+// fail on the shipped ten-column table.
+const statusTable = (...pairs) =>
+  `| id | title | owner | status |\n|----|-------|-------|--------|\n${pairs
+    .map(([id, s]) => `| ${id} | something | dev | ${s} |`)
+    .join("\n")}\n`;
+
 // spawnSync, not execFileSync: the guard reports violations on stderr and advisory runs
 // still exit 0, so a success-only capture loses exactly the output the advisory case is
 // asserting. The first version of this test did that and reported a false failure.
@@ -63,7 +72,7 @@ const CYC_B = "docs/cycles/growth/august.md";
 check("a repo with no cycles directory is not using cycles", {
   files: { [POOL]: table("SPEC-1", "SPEC-2") },
   code: 0,
-  expect: ["does not use work cycles"],
+  expect: ["no cycles in use"],
 });
 
 check("pool and one cycle, no overlap", {
@@ -75,7 +84,7 @@ check("pool and one cycle, no overlap", {
 check("an intent in the pool and a cycle at once fails", {
   files: { [POOL]: table("SPEC-1", "PAY-9"), [CYC_A]: table("PAY-9") },
   code: 1,
-  expect: ["PAY-9 is in 2 places", "in more than one place"],
+  expect: ["PAY-9 is in 2 places", "belongs to the pool or to one cycle"],
 });
 
 check("the same intent in two teams' cycles fails", {
@@ -133,24 +142,124 @@ check("a cycle with no rows yet is valid", {
   }
 }
 
-// The shipped cycle template, verbatim - its example ids must not collide with a real backlog.
+check("the backlog at its primary manifest path is still read", {
+  files: { "backlog.md": table("PAY-9"), [CYC_A]: table("PAY-9") },
+  code: 1,
+  expect: ["PAY-9 is in 2 places"],
+});
+
+check("cycles with no backlog anywhere is reported, not passed", {
+  files: { [CYC_A]: table("PAY-9") },
+  code: 1,
+  expect: ["no backlog at", "cannot be checked"],
+});
+
+check("the derived timeline is not a cycle", {
+  files: { [POOL]: table("SPEC-1"), [CYC_A]: table("PAY-9"), "docs/cycles/TIMELINE.md": table("PAY-9") },
+  code: 0,
+  expect: ["OK"],
+});
+
+check("a template directory is skipped like a template file", {
+  files: { [POOL]: table("PAY-9"), "docs/cycles/_drafts/x.md": table("PAY-9") },
+  code: 0,
+  // Skipping `_drafts/` leaves no cycle files at all, so the guard takes the
+  // not-using-cycles branch rather than reporting OK. Either way PAY-9 is not duplicated,
+  // which is what this asserts.
+  expect: ["no cycles in use"],
+});
+
+check("an inline comment inside a row does not delete the row", {
+  files: {
+    [POOL]: `| id | title |\n|----|-------|\n| PAY-7 | fix <!-- was PAY-4 --> the export |\n`,
+    [CYC_A]: table("PAY-7"),
+  },
+  code: 1,
+  expect: ["PAY-7 is in 2 places"],
+});
+
+// `-->` ends an HTML comment wherever it appears - that is the spec, and every markdown
+// renderer does it. So an example block containing `migrate A --> B` really is un-commented
+// from that point on, in the reader's browser as much as in this guard. Matching HTML here
+// is correct; deviating would make the guard disagree with what the author sees rendered.
+// The hazard is real, so it is asserted rather than left to be rediscovered: a commented
+// block must not contain an arrow, and none of the shipped templates does.
+check("an arrow in commented prose ends the comment, exactly as a renderer would", {
+  files: {
+    [POOL]: table("PAY-9"),
+    [CYC_A]: `# Cycle\n\n<!-- example:\nmigrate A --> B\n${table("PAY-9")}-->\n`,
+  },
+  code: 1,
+  expect: ["PAY-9 is in 2 places"],
+});
+
+check("a table inside a fenced block is illustration, not rows", {
+  files: { [POOL]: table("PAY-9"), [CYC_A]: "# Cycle\n\n```\n" + table("PAY-9") + "```\n" },
+  code: 0,
+  expect: ["OK"],
+});
+
+// The shipped cycle template, instantiated the way cycle-open tells a user to instantiate
+// it - at a real cycle path, without the `_` prefix. The earlier version of this case
+// copied it to `_template.md` and so proved only the filename rule, while its comment
+// claimed the comment-skipping rule. That gap hid an entity-escaped template whose
+// "comment" was not one.
 {
   const dir = fixture({ [POOL]: table("PAY-2", "PAY-3") });
-  mkdirSync(join(dir, "docs/cycles"), { recursive: true });
-  cpSync(TEMPLATE, join(dir, "docs/cycles/_template.md"));
+  mkdirSync(join(dir, "docs/cycles/payments"), { recursive: true });
+  cpSync(TEMPLATE, join(dir, "docs/cycles/payments/august.md"));
   const { code, out } = run(dir, true);
   rmSync(dir, { recursive: true, force: true });
   if (code !== 0) {
     failures++;
-    console.error(`  FAIL the shipped template does not trip the guard\n       exit ${code}: ${out.trim()}`);
+    console.error(`  FAIL the shipped template, instantiated as a real cycle, does not trip the guard\n       exit ${code}: ${out.trim()}`);
   } else {
-    console.log("  ok    the shipped template does not trip the guard");
+    console.log("  ok    the shipped template, instantiated as a real cycle, does not trip the guard");
   }
 }
+
+check("a block naming a live intent is fine", {
+  files: { [POOL]: statusTable(["PAY-1", "todo"], ["PAY-2", "blocked:PAY-1"]) },
+  code: 0,
+  expect: ["OK", "1 live block(s)"],
+});
+
+check("a block naming an intent that exists nowhere is stale", {
+  files: { [POOL]: statusTable(["PAY-2", "blocked:PAY-9"]) },
+  code: 1,
+  expect: ["PAY-9 exists nowhere", "no longer applies"],
+});
+
+check("a block naming a finished intent is stale", {
+  files: { [POOL]: statusTable(["PAY-1", "done"], ["PAY-2", "blocked:PAY-1"]) },
+  code: 1,
+  expect: ["PAY-1 is done", "no longer applies"],
+});
+
+check("an intent blocked by itself fails", {
+  files: { [POOL]: statusTable(["PAY-1", "blocked:PAY-1"]) },
+  code: 1,
+  expect: ["blocked by itself"],
+});
+
+check("a block reaches across the pool into a cycle", {
+  files: {
+    [POOL]: statusTable(["PAY-2", "blocked:PAY-1"]),
+    [CYC_A]: statusTable(["PAY-1", "doing"]),
+  },
+  code: 0,
+  expect: ["OK"],
+});
+
+check("plain `blocked` with no reference stays legal", {
+  files: { [POOL]: statusTable(["PAY-2", "blocked"]) },
+  code: 0,
+  expect: ["OK"],
+});
 
 console.log();
 if (failures) {
   console.error(`cycle-guard-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("cycle-guard-test: OK - 11 cases, one intent lives in exactly one place");
+console.log("cycle-guard-test: OK - 24 cases, one intent lives in exactly one place and blocks point at something real");
