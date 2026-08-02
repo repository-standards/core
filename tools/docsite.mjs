@@ -33,7 +33,7 @@ import { pathToFileURL } from "node:url";
 const CONFIG_PATH = ["site/site.config.json", "site.config.json"].find((p) => existsSync(p));
 const CONFIG = CONFIG_PATH ? JSON.parse(readFileSync(CONFIG_PATH, "utf8")) : {};
 const OUT_DIR = CONFIG.out_dir || "site/docs";
-const GITHUB_REPO_URL = CONFIG.repo_url || "https://github.com/bodurkalukasz/repository-standards";
+const GITHUB_REPO_URL = CONFIG.repo_url || "https://github.com/repository-standards/core";
 const BRAND = CONFIG.brand || "repository-standards";
 // The header wears the released version, read from its one home rather than restated here.
 const VERSION = readFileSync("VERSION", "utf8").trim();
@@ -44,7 +44,7 @@ const VERSION = readFileSync("VERSION", "utf8").trim();
 const NODE_STACK_URL =
   CONFIG.node_stack_url ||
   (CONFIG.topbar || []).find((l) => l.external)?.href ||
-  "https://github.com/bodurkalukasz/repository-standards-node";
+  "https://github.com/repository-standards/node";
 
 // --- the page map (nav order) -----------------------------------------------------
 // group: null renders as a flat top-level link; a string renders a group heading the
@@ -724,7 +724,7 @@ const SITE_README = `# site/docs - generated docs site (DISCO-4)
 
 This folder is **generated**. Every file in it is produced by the ecosystem's shared
 generator - \`tools/docsite.mjs\` in
-[repository-standards](https://github.com/bodurkalukasz/repository-standards) - from
+[repository-standards](https://github.com/repository-standards/core) - from
 this repo's own Markdown; never hand-edit the HTML here, it will be overwritten the
 next time the script runs.
 

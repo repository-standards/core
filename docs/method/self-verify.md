@@ -70,7 +70,7 @@ still sound; reading a number as "exactly N missing files" is not.
 A machine cannot (yet) decide these; they are checked when the PR is reviewed:
 
 - **Decisions recorded** - the forks in the standard's
-  [decision checklist](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/checklist.md)
+  [decision checklist](https://github.com/repository-standards/core/blob/main/docs/method/checklist.md)
   (adopted by reference from the living standard - always latest) that apply to this repo are recorded as
   ADR/BDR, or consciously deferred as a backlog item - not silently undecided.
 - **Specs buildable where it counts** - each mapped capability has a
@@ -103,7 +103,7 @@ other dependency, so the proposal arrives in the same place as every other bump:
       "customType": "regex",
       "managerFilePatterns": ["/^\\.standards-version$/"],
       "matchStrings": ["^(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
-      "depNameTemplate": "bodurkalukasz/repository-standards",
+      "depNameTemplate": "repository-standards/core",
       "datasourceTemplate": "github-releases",
       "versioningTemplate": "semver"
     }

@@ -29,7 +29,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           # The standard this repo follows. Change it if you consume a fork.
-          STANDARD_REPO: bodurkalukasz/repository-standards
+          STANDARD_REPO: repository-standards/core
         run: |
           set -euo pipefail
 

@@ -42,7 +42,7 @@ outgrew itself - as its own meta entry predicted it would.)
 | [Skills that co-author a document](authoring-skills.md) | one per document type - `adr-write`, `bdr-write`, `product-write`, `personas-write` | four sibling files can drift apart; the count objection fell away once the ceiling was measured rather than assumed |
 
 Stack-pick doubts (Better Auth, CSS Modules vs Tailwind) moved with Layer 2 to
-[repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node)'s
+[repository-standards/node](https://github.com/repository-standards/node)'s
 DECISIONS - the stack owns its own doubts now.
 
 ## This is the front door for new maintainers
@@ -60,6 +60,6 @@ broke" ends an argument that abstract reasoning cannot.
 **If your expertise is a technology rather than the method**, this is the wrong repo to
 spend it in: Layer 1 is stack-agnostic by rule, so a TypeScript or Node opinion cannot land
 here no matter how right it is. It lands in
-[repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node),
+[repository-standards/node](https://github.com/repository-standards/node),
 which owns its own picks and its own doubts. Same for any future stack - one repo per
 technology, and each carries the argument for what it chose.

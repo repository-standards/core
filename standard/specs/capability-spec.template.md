@@ -6,7 +6,7 @@
      Drop sections that genuinely do not apply. No change-log section (R4,
      ADR-018): the spec describes the present; git and the standard's changelog
      process (adopted by reference from the living standard - always latest:
-     https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/changelog-process.md)
+     https://github.com/repository-standards/core/blob/main/docs/method/changelog-process.md)
      hold the past. -->
 
 **Spec tier:** buildable | behavioral   <!-- declare one -->

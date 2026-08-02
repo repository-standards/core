@@ -40,7 +40,7 @@ Option **D**. Concretely:
 1. `standard/` is the single authored, committed, consumable tree, holding
    real-repo paths (`AGENTS.md`, `.claude/skills/`, `.github/`, `docs/`, `specs/`,
    `scripts/`, `SPEC.md`, the manifest). What you degit is what we maintain:
-   `npx degit bodurkalukasz/repository-standards/standard my-repo`.
+   `npx degit repository-standards/core/standard my-repo`.
 2. `dist/` and the old by-concern source are gone. Template-vs-real pairs resolve
    to the one shipped form (placeholders where a client authors content).
 3. Repo-own material lives outside the tree: this repo's ADRs in

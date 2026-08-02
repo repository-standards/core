@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
   - name: Challenge an open question
-    url: https://github.com/bodurkalukasz/repository-standards/tree/main/docs/open-questions
+    url: https://github.com/repository-standards/core/tree/main/docs/open-questions
     about: The owner's provisional calls, openly seeking better options - winning a challenge there is the most valuable contribution.

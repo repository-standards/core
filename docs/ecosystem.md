@@ -11,8 +11,8 @@ a route. Adding a technology means adding a map, never a second engine.
 
 | Repo | Role | Carries |
 |---|---|---|
-| [repository-standards](https://github.com/bodurkalukasz/repository-standards) | the engine and the methodology (Layer 1) | `SPEC.md` (the numbered rules), the shipped tree (`standard/`), the align router and its phases, `self-verify`, the stack registry (`stacks.json`) |
-| [repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node) | a map pack (Layer 2, Node/TS) | `stack.manifest.json` (what compliant means), `DECISIONS.md` (why), `starter/` (the working reference), `ADAPTING.md` (how to migrate from theirs to ours) |
+| [repository-standards](https://github.com/repository-standards/core) | the engine and the methodology (Layer 1) | `SPEC.md` (the numbered rules), the shipped tree (`standard/`), the align router and its phases, `self-verify`, the stack registry (`stacks.json`) |
+| [repository-standards/node](https://github.com/repository-standards/node) | a map pack (Layer 2, Node/TS) | `stack.manifest.json` (what compliant means), `DECISIONS.md` (why), `starter/` (the working reference), `ADAPTING.md` (how to migrate from theirs to ours) |
 
 Officialdom is the registry: the router reads only `stacks.json`, so a stack is
 official exactly when the core lists it - wherever else lookalikes live.

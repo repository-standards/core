@@ -1,8 +1,8 @@
 # Stacks as satellite repos (ADR-016)
 
 **Decided:** technology best practices live in one repo per technology
-(`repository-standards-<technology>`), official only when listed in the core's
-`stacks.json` registry. First satellite: repository-standards-node.
+(`repository-standards/<technology>`), official only when listed in the core's
+`stacks.json` registry. First satellite: repository-standards/node.
 
 ## Options weighed
 
@@ -15,8 +15,12 @@
 Naming was its own deliberation: `env-node` (owner's first instinct - but "env"
 reads as environment variables), bare `node` (prettiest degit, but the family
 scatters and the name says nothing), `stack-node` (the project's own vocabulary)
-- settled as `repository-standards-<technology>` standalone, shortening naturally
-if the GitHub org migration happens.
+It first settled as a standalone `repository-standards-<technology>`, with the note
+that it would shorten if the org migration happened. It did: the repos live in the
+`repository-standards` organization now, so the family is held by the namespace and
+each repo is named for its technology alone - `repository-standards/node`. The
+objection to bare `node` was that the name says nothing; inside this org it says
+everything it needs to.
 
 Governance rests on research, not hope: officialdom = the registry file the
 owner alone merges (the Homebrew core-vs-taps model); copycat repos elsewhere

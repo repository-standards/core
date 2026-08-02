@@ -5,7 +5,7 @@ has no record, it does not exist - reviewers and agents treat undocumented
 divergence as a red flag.
 
 > **Which decisions should a project even have?** See the standard's
-> [decision checklist](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/checklist.md)
+> [decision checklist](https://github.com/repository-standards/core/blob/main/docs/method/checklist.md)
 > (adopted by reference from the living standard - always latest) - the menu of forks a project keeps hitting
 > (datastore, auth, API shape, release strategy, ...) with the standard's paved-road
 > default for each. It drives greenfield scaffolding and the brownfield onboarding sweep.
@@ -59,7 +59,7 @@ permanent anchor.
 
 > **`ADR-0NN` inside a file the standard shipped means the standard's own decision**,
 > not a record in this repo. Those live at
-> [repository-standards/docs/decision-records](https://github.com/bodurkalukasz/repository-standards/tree/main/docs/decision-records).
+> [repository-standards/docs/decision-records](https://github.com/repository-standards/core/tree/main/docs/decision-records).
 > This repo's own records start at `ADR-001` and are indexed in
 > [`adr/README.md`](adr/README.md) - the two numbering lines never meet.
 
@@ -77,7 +77,7 @@ could reasonably have chosen otherwise, and without the record the debate reopen
 A settled way of doing things is not a decision; it is a **rule** in the relevant
 methodology doc. A significant decision usually produces **both**: the record holds
 the why, the rule holds the resulting practice - see the standard's
-[taxonomy](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/taxonomy.md)
+[taxonomy](https://github.com/repository-standards/core/blob/main/docs/method/taxonomy.md)
 (adopted by reference from the living standard - always latest) for which knowledge lands where.
 
 ## Status lifecycle (ADR / BDR)

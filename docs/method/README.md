@@ -55,7 +55,7 @@ The shipped tree ([`standard/`](../../standard/)) is strictly the client repo at
 zero: client-authored artifacts plus the operating manuals for the tools it ships.
 The method - how to get there and how to run - would only drift if copied into every
 repo, so it stays here and is read at latest - `main` IS the living standard
-(`https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/`);
+(`https://github.com/repository-standards/core/blob/main/docs/method/`);
 your `.standards-version` records the state your repo last aligned to (ADR-025).
 An agent aligning a repo reads these from its standards checkout; a client repo links
 them, never vendors them.
