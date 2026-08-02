@@ -96,55 +96,90 @@ Execution steps:
    - Clarification would not materially change implementation or validation strategy
    - Information is better deferred to planning phase (note internally)
 
-4. Generate (internally) a prioritized queue of candidate clarification questions (maximum 5). Do NOT output them all at once. Apply these constraints:
-    - Maximum of 5 total questions across the whole session.
-    - Each question must be answerable with EITHER:
-       - A short multiple‑choice selection (2–5 distinct, mutually exclusive options), OR
-       - A one-word / short‑phrase answer (explicitly constrain: "Answer in <=5 words").
-    - Only include questions whose answers materially impact architecture, data modeling, task decomposition, test design, UX behavior, operational readiness, or compliance validation.
-    - Ensure category coverage balance: attempt to cover the highest impact unresolved categories first; avoid asking two low-impact questions when a single high-impact area (e.g., security posture) is unresolved.
-    - Exclude questions already answered, trivial stylistic preferences, or plan-level execution details (unless blocking correctness).
-    - Favor clarifications that reduce downstream rework risk or prevent misaligned acceptance tests.
-    - If more than 5 categories remain unresolved, select the top 5 by (Impact * Uncertainty) heuristic.
+<!-- PATCHED(repository-standards): upstream caps the session at five questions and reports
+     whatever is left over as "Deferred" in the completion message. That is wrong here for two
+     reasons. Our default tier is BUILDABLE (R9) - verbatim data contracts, interface contracts,
+     invariants, algorithms, acceptance criteria - and a real capability has far more than five
+     things that decide whether it can be built from the spec alone. Worse, the leftovers went
+     into a chat report rather than into the spec. Gaps that /spec-specify marked are safe - they
+     are in the file and the gate counts them - but the ambiguities THIS skill discovers in its
+     own scan are not markers, so anything past the fifth was reported once and then gone: not in
+     the spec, not blocking the gate, not recoverable. The skill's most valuable output was the
+     part the cap discarded. Coverage replaces the count, and anything unsettled is written into
+     the spec as a marker. -->
+4. Build a prioritized queue. **There is no question limit** - the loop is bounded by *coverage*,
+   not by a count.
+    - **What must be asked:** anything whose absence means the capability cannot be built or
+      verified from the spec alone. At the `buildable` tier that means every field name, type,
+      enum value, endpoint, error code, ordering rule, boundary and invariant the spec asserts
+      but does not pin down. Paraphrase is not a contract.
+    - **What must not be asked:** anything that changes no contract and no test - stylistic
+      preference, plan-level execution detail, or something a sensible default already covers.
+      A question the user cannot tell the point of costs more than it buys.
+    - Rank by (Impact x Uncertainty). Prefer the question whose answer unblocks a whole section
+      over three that each polish one line.
+    - Exclude anything already answered in the spec, in `## Clarifications`, or in the discovery
+      dossier.
 
-5. Sequential questioning loop (interactive):
-    - Present EXACTLY ONE question at a time.
+5. Ask, in rounds, and **stop on coverage rather than on a number**:
+    - **Batch by contract, not one question per message forever.** Questions that belong to the
+      same contract are one conversation - a field's name, type and nullability get asked
+      together, in one message, numbered. Unrelated questions stay separate. Asking six things
+      about one table across six messages is not thoroughness, it is a worse interface.
+    - Keep a round to roughly **five messages**, then **check in**: say how many open items
+      remain and what they block, and offer three ways forward - keep going, park the rest as
+      markers, or park a named subset. Parking is safe *because* it writes markers, and the gate
+      then refuses to plan. Say that when offering it.
+    - **Stop when** every section the declared tier requires either carries a real contract or
+      carries a typed marker; or the user says stop. Never stop merely because a number was hit.
     <!-- CHERRY-PICKED(github/spec-kit 39f2ac3, after v0.13.2): ask a real question, not a label -->
-    - Lead with `**Question:** <full interrogative>?` - something answerable as written. NEVER use a topic label, a section heading or a requirement id as the question itself: "Retention policy" and "FR-023" are subjects, not questions. An id may trail the question: `**Question:** How long are booking records kept after cancellation? (FR-023)`.
-    - Under it, one plain-language sentence on why it matters - what changes depending on the answer. Everyday wording; introduce a term only if the same sentence defines it.
-    - For multiple‑choice questions:
-       - **Analyze all options** and determine the **most suitable option** based on:
-          - Best practices for the project type
-          - Common patterns in similar implementations
-          - Risk reduction (security, performance, maintainability)
-          - Alignment with any explicit project goals or constraints visible in the spec
-       - Present your **recommended option prominently** at the top with clear reasoning (1-2 sentences explaining why this is the best choice).
-       - Format as: `**Recommended:** Option [X] - <reasoning>`
-       - Then render all options as a Markdown table:
+    - Lead each with `**Question:** <full interrogative>?` - answerable as written. NEVER use a
+      topic label, a section heading or a requirement id as the question itself: "Retention
+      policy" and "FR-023" are subjects, not questions. An id may trail it:
+      `**Question:** How long are booking records kept after cancellation? (FR-023)`.
+    - Under it, one plain-language sentence on why it matters - what changes depending on the
+      answer. Everyday wording; introduce a term only if the same sentence defines it.
+    - For multiple-choice questions:
+       - **Analyze the options** and pick the most suitable, on best practice for this project
+         type, common patterns, risk (security, performance, maintainability), and the spec's own
+         stated goals and constraints.
+       - Present the recommendation first: `**Recommended:** Option [X] - <1-2 sentence reason>`.
+       - Then the options as a table:
 
        | Option | Description |
        |--------|-------------|
        | A | <Option A description> |
        | B | <Option B description> |
-       | C | <Option C description> (add D/E as needed up to 5) |
-       | Short | Provide a different short answer (<=5 words) (Include only if free-form alternative is appropriate) |
+       | C | <Option C description> (add D/E as needed, up to 5) |
+       | Short | Provide a different short answer (Include only if a free-form alternative fits) |
 
-       - After the table, add: `You can reply with the option letter (e.g., "A"), accept the recommendation by saying "yes" or "recommended", or provide your own short answer.`
-    - For short‑answer style (no meaningful discrete options):
-       - Provide your **suggested answer** based on best practices and context.
-       - Format as: `**Suggested:** <your proposed answer> - <brief reasoning>`
-       - Then output: `Format: Short answer (<=5 words). You can accept the suggestion by saying "yes" or "suggested", or provide your own answer.`
-    - After the user answers:
-       - If the user replies with "yes", "recommended", or "suggested", use your previously stated recommendation/suggestion as the answer.
-       - Otherwise, validate the answer maps to one option or fits the <=5 word constraint.
-       - If ambiguous, ask for a quick disambiguation (count still belongs to same question; do not advance).
-       - Once satisfactory, record it in working memory (do not yet write to disk) and move to the next queued question.
-    - Stop asking further questions when:
-       - All critical ambiguities resolved early (remaining queued items become unnecessary), OR
-       - User signals completion ("done", "good", "no more"), OR
-       - You reach 5 asked questions.
-    - Never reveal future queued questions in advance.
-    - If no valid questions exist at start, immediately report no critical ambiguities.
+       - After the table: `Reply with the option letter (e.g. "A"), accept the recommendation with
+         "yes", or give your own answer.`
+    - For short-answer questions:
+       - Give your **suggested answer** first: `**Suggested:** <proposal> - <brief reason>`, then
+         `Accept with "yes", or give your own.`
+       - **Do not impose a word limit on a contract.** Upstream constrains every short answer to
+         five words; that is fine for "which auth model?" and useless for "what does the payload
+         look like?". Ask for exactly the shape the spec section needs - a field list, an enum, a
+         rule - and say so.
+    - After each answer:
+       - "yes" / "recommended" / "suggested" accepts what you proposed.
+       - **A deferral is an answer.** "Decide later", "ask the architect", "the designer owes us
+         that" - record it, and write the matching typed marker so the gate holds it.
+       - If the answer is ambiguous, ask once for disambiguation - it is the same question, not a
+         new one.
+       - Record it, then integrate it (step 6) before moving on.
+    - Never reveal queued questions in advance.
+    - If nothing is unclear at the start, say so plainly and stop.
+
+<!-- PATCHED(repository-standards): the hole the cap opened, closed. -->
+5b. **Everything unresolved becomes a marker in the spec, before this skill returns.** Not a
+    bullet in a completion report - a `[NEEDS CLARIFICATION: ...]`, `[NEEDS DECISION: ...]`,
+    `[NEEDS INPUT: ...]` or `[NEEDS ASSET: ...]` written into the section it belongs to, naming
+    what is missing and who brings it. This is what makes stopping early safe: the gate counts
+    those markers, so a spec that was only half settled cannot reach plan or tasks. A question
+    that was never asked and never marked is indistinguishable from a question that was answered,
+    and that is the failure this step exists to prevent.
 
 6. Integration after EACH accepted answer (incremental update approach):
     - Maintain in-memory representation of the spec (loaded once at start) plus the raw file contents.
@@ -172,7 +207,7 @@ Execution steps:
 
 7. Validation (performed after EACH write plus final pass):
    - Clarifications session contains exactly one bullet per accepted answer (no duplicates).
-   - Total asked (accepted) questions ≤ 5.
+   - Every open item is either answered in `## Clarifications` or present as a typed marker - nothing unresolved exists only in the conversation.
    - Updated sections contain no lingering vague placeholders the new answer was meant to resolve.
    - No contradictory earlier statement remains (scan for now-invalid alternative choices removed).
    - Markdown structure valid; only allowed new headings: `## Clarifications`, `### Session YYYY-MM-DD`.
@@ -203,22 +238,22 @@ Behavior rules:
 
 - If no meaningful ambiguities found (or all potential questions would be low-impact), respond: "No critical ambiguities detected worth formal clarification." and suggest proceeding.
 - If spec file missing, instruct user to run `/spec-specify` first (do not create a new spec here).
-- Never exceed 5 total asked questions (clarification retries for a single question do not count as new questions).
+- There is no cap on questions. There is a cap on *unrecorded* ones: zero.
 - Avoid speculative tech stack questions unless the absence blocks functional clarity.
 - Respect user early termination signals ("stop", "done", "proceed").
 - If no questions asked due to full coverage, output a compact coverage summary (all categories Clear) then suggest advancing.
-- If quota reached with unresolved high-impact categories remaining, explicitly flag them under Deferred with rationale.
+- If the user stops the loop early, write the remaining items as typed markers, say how many were written, and say plainly that plan and tasks will refuse the spec until they are resolved.
 
 Context for prioritization: $ARGUMENTS
 
 ## Completion Report
 
 Report completion (after questioning loop ends or early termination):
-- Number of questions asked & answered.
+- Number of questions asked and answered, and the number of markers written for what was not.
 - Path to updated spec.
 - Sections touched (list names).
 - Spec quality checklist status (if `FEATURE_DIR/checklists/requirements.md` was re-validated): show before/after pass counts (e.g., "Spec Quality Checklist: 12/16 → 15/16 items passing") and list any items that changed state — both newly checked (unchecked → checked) and any regressions (checked → unchecked). If any items remain unchecked, list them as areas needing attention.
-- Coverage summary table listing each taxonomy category with Status: Resolved (was Partial/Missing and addressed), Deferred (exceeds question quota or better suited for planning), Clear (already sufficient), Outstanding (still Partial/Missing but low impact).
+- Coverage summary table listing each taxonomy category with Status: Resolved (was Partial/Missing and addressed), Marked (unresolved and now carrying a typed marker - with the marker's type and owner), Clear (already sufficient).
 - If any Outstanding or Deferred remain, recommend whether to proceed to `/spec-plan` or run `/spec-clarify` again later post-plan.
 - Suggested next command.
 

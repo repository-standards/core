@@ -20,6 +20,200 @@ The simplification wave - the standard put on one page, in one tree, with one
 engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
 align engine, Layer 2 and the product spine.
 
+### The landing showed agent sentences as shell commands (2026-08-02)
+
+Both found by the owner asking whether a line on the landing was real.
+
+- **It was not.** `$ scaffold from repository-standards` carries a shell prompt and is not a
+  command - there is no `scaffold` binary. Nor is `$ assess -> align -> onboard`, which is a
+  list of phases. Someone who typed either into a terminal got `command not found`.
+- **The same page already had the right convention** twenty lines down: the terminal block uses
+  `>` for what you say to the agent and `$` only for `node scripts/self-verify.mjs`. The
+  marketing cards used the wrong one. Corrected to match, and the update card **still carried
+  `@next`** - missed in the same day's pinning sweep.
+- For the record, since it was asked: neither `@latest` nor `+ node` is real syntax. There is no
+  version to name, and the technology is something the intake **asks about** - or you say it in
+  words.
+
+### The docs were behind what shipped the same day (2026-08-02)
+
+The FAQ still answered the tracker question as though ADR-010 were the whole picture: *the repo
+holds intents, the tracker holds execution state.* That was true this morning.
+
+By the afternoon the repo had work cycles per team, the person currently holding each item,
+blocking references and a timeline projecting from measured throughput - which makes **in-repo a
+complete third posture**, not an aspiration. The answer now names all three (tracker-bridged,
+in-repo, both) and states plainly what in-repo does **not** give you: previous holders, per
+person throughput, burndown, time tracking. Those are a tracker's job, and saying so is better
+than letting a reader discover the gap.
+
+Worth recording as a pattern rather than a one-off: **the surfaces lag the decisions by hours,
+and nothing checks that.** Guards compare code to specs and facts to their sources; nothing
+compares a FAQ answer to an ADR accepted after it was written.
+
+### The messaging had no pillar for the thing nobody else does (2026-08-02)
+
+Sharpening the positioning after the landscape check found something better hidden than a
+wrong claim: **decision records did not appear in the messaging at all.** ADRs and BDRs are one
+of the four things that distinguish this from the spec-driven-development field, and across the
+one-liner, the positioning statement and three pillars they showed up once, as an item in a
+list.
+
+- **"The why survives" is now pillar 2**, and it is stated as the one the field does not have:
+  every technical and business decision recorded where the code is, so the next person - or the
+  next agent - inherits the reasoning instead of re-litigating it. It is also the pillar that
+  pays back latest, which is exactly why it goes unsaid.
+- **The "Unlike" clause landed on the wrong thing.** It used to end on the brownfield
+  transition. That is a strength and it is no longer a differentiator, so the clause now lands
+  on what actually differs, and the file says outright: *say what the walk ends at, never that
+  the walk itself is unusual.*
+- **"point a repo at a version and it aligns" is gone** from the positioning statement - the
+  last piece of pinning language, in the one file every surface is supposed to quote.
+- The README gained the same four-things paragraph, including the sentence that a spec workflow
+  is better served elsewhere. Naming a competitor as the better answer for a job we do not do
+  costs nothing and buys the reader's trust for the parts we do.
+- The one-liner is unchanged, so the landing needed no edit - `site-check` asserts it verbatim
+  and still passes.
+
+### The update channel watches releases; the standard lives on main (2026-08-02)
+
+- **The mismatch, recorded rather than patched.** ADR-025 named the channel and the watch
+  workflow is built and shipped - but it compares `.standards-version` against
+  `releases/latest`, while the same decision says the target is always latest and `main` **is**
+  the living standard. Between two tags `main` moves, sometimes a great deal, and no adopter is
+  told anything. The notification answers "has a milestone been cut" when the design implies
+  "has the thing I true up to changed".
+- **Watching `main` instead is worse**, which is why this is a question and not a fix: it would
+  fire on a reworded FAQ, and a channel nobody reads is the same failure as a gate that fires
+  when nothing is wrong.
+- Five options are laid out in [`staying-current`](docs/open-questions/staying-current.md),
+  including the owner's own framing - **drop the channel and re-run alignment on a cadence**,
+  since adoption was never meant to be work-done. What settles it is `FIELD-1`: an adopter who
+  is not us, running behind, and what they actually missed.
+- The shipped watch **also still said "pins"** - missed in the same day's sweep. Corrected, and
+  the known gap is now a comment in the workflow rather than a surprise for whoever reads it
+  next.
+
+### Layer 2 ships data and no procedures, and has never once run (2026-08-02)
+
+Asked whether the two-layer offer is explained and whether it has been tested. The first
+answer is yes; the second is no, in a stronger sense than expected.
+
+- **The offer is made properly.** The router's intake asks technology and Layer 2 consent
+  outright, but looks the technology up in `stacks.json` *first* and then says the true thing -
+  a registered stack gets offered, a miss is called a miss with a consent-gated upstream
+  request. There is also a route for a repo that aligned to Layer 1 earlier and wants a stack
+  added later.
+- **The asymmetry nobody decided:** Layer 1 ships 19 lifecycle skills; a stack ships four data
+  files - `stack.manifest.json`, `DECISIONS.md`, `starter/`, `ADAPTING.md` - and no procedures.
+  Adoption is covered, thinly (`stack.md` is 41 lines against the core router's 313). A
+  technology's **recurring** work is covered by nothing: adding a dependency under R21's
+  pin-plus-cooldown rule, a framework major, a new test tier, a migration.
+- **The mechanism for stack skills already exists and is unnamed.** `stack.manifest.json` is
+  the core manifest's schema plus two fields, and the core ships `.claude/skills` as an ordinary
+  `files[]` entry - so a stack can ship procedures today with no code change. A mechanism that
+  works by accident is one the second stack will use differently.
+- **Nothing has run.** `STACK-ALIGN-1` is still `todo`, so the Layer 2 path has never executed
+  on any repo in either direction. Every question here is currently answered from the armchair,
+  which is why the new item is **blocked on running it once** rather than on writing skills
+  first - the lifecycle should fall out of what actually recurs.
+
+Recorded as [`stack-lifecycle-skills`](docs/open-questions/stack-lifecycle-skills.md) and
+`STACK-LIFE-1`, with the four questions that need answers: ship-vs-stay against ADR-009, how two
+skill families stay discriminable in one namespace, who owns the R22 port, and which side wins
+when `AGENTS.md` merges.
+
+### The five-question cap was manufacturing a false green (2026-08-02)
+
+The clarify loop inherited upstream's limit of five questions per session. That is wrong here
+in two ways, and the second one is a defect rather than a preference.
+
+- **Five is not enough for a buildable spec.** The default tier (R9) demands verbatim data
+  contracts, interface contracts, invariants, algorithms and acceptance criteria. A real
+  capability has far more than five things that decide whether it can be rebuilt from the spec
+  alone.
+- **The loop's own findings could evaporate.** On hitting the quota, upstream lists what it did
+  not ask under "Deferred" in the completion message. Gaps that `spec-specify` marked are safe -
+  they are in the file and the gate counts them. But the ambiguities **clarify itself discovers**
+  in its taxonomy scan are not markers, so anything past the fifth was reported in chat and then
+  gone: not in the spec, not blocking the gate, not recoverable. The skill's most valuable
+  output was the part the cap discarded.
+
+  *(Corrected the day it shipped. The first version of this entry claimed a half-interrogated
+  spec reached a passing gate outright - that overstates it, because specify's markers do hold.
+  Found by running the loop against the fixture repo, which is what the fixture is for.)*
+- **The cap is gone; coverage replaces it.** The loop now ends when every section the declared
+  tier requires either carries a real contract or carries a typed marker - never because a
+  number was reached.
+- **Nothing unresolved may exist only in the conversation.** Whatever is open when the loop ends
+  is written into the spec as a typed marker, naming what is missing and who brings it, *before
+  the skill returns*. This is what makes stopping early safe: the gate then refuses to plan.
+- **Questions are batched by contract**, and the user is offered a stop between rounds with a
+  count of what remains and what it blocks. Asking six things about one table across six
+  messages was not thoroughness, it was a worse interface.
+- **The five-word answer limit is gone for contract answers.** It suits "which auth model?" and
+  is useless for "what does the payload look like?".
+
+This is now the largest single divergence from upstream and [`ATTRIBUTIONS.md`](ATTRIBUTIONS.md)
+says so.
+
+### There is no version to pin to - the pinning language leaves every surface (2026-08-02)
+
+[ADR-025](docs/decision-records/ADR-025-the-standard-is-living-latest-is-the-target.md) decided
+on 2026-07-30 that the standard is living and latest is the only target, and said the "pinned
+version" phrasing had left every live surface. It had not - and this change put more of it back
+before removing all of it.
+
+- **The normative core contradicted itself in two sentences.** `SPEC.md` opened with "a repo
+  complies at the version pinned in its own `.standards-version`" and then, immediately, with
+  ADR-025's actual position. **R2** required a repo to *pin* a version; it now requires the repo
+  to **record the state it last aligned to**, and says outright that nothing may read that as a
+  version to stay at or a compatibility requirement.
+- **A guard was enforcing the deleted model.** `tree-check` asserted that the README quick start
+  must contain `@<VERSION>` - a check demanding the phrasing a decision had removed. It failed
+  the moment the README was corrected, which is how it was found. Removed, with the reason
+  written into the code and the spec so it is not reinstated as an oversight.
+- **The landing taught it to every visitor**: `scaffold from repository-standards@0.7.2`,
+  `--version 0.7.2`, and an Update card explaining the model as *"the way a dependency bump
+  works"* - the exact analogy ADR-025 rejects. The version badge and footer stay: the standard
+  has a version, and adopters simply do not pin to it.
+- Swept the same way: `README.md` (including the quick start, which no longer names a version at
+  all), `AGENTS.md`, `llms.txt`, `docs/faq.md`, `docs/method/adoption.md`, `standard/README.md`,
+  `standard/docs/self-verify.md`, `update-to-version`'s description (which called itself "a
+  dependency bump"), and the backlog item that was waiting on a tag "so the pin names something
+  addressable".
+- **Historical records keep their wording**, as ADR-025 prescribed - but the ADR index row for
+  ADR-004 now carries its revision, because a reader scanning the table was being shown a
+  superseded policy as current.
+- `facts-check` caught the surfaces reworded past their own declarations, and the stale
+  restatements were **deleted rather than re-patterned**: the fact they restated was the
+  pinning language itself.
+
+### The comparison was wrong about the field, and brownfield is not the difference (2026-08-02)
+
+A landscape check for the discovery work, measured from the GitHub API rather than from
+articles - which were months stale and understated every number.
+
+- **The field is large and awake.** Spec Kit 125k stars, OpenSpec 63k, BMAD 51k, all pushed
+  within two days of the check. The FAQ dismissed them as "a workflow or a scaffold", which is
+  not a description anyone in the field would recognise.
+- **"Brownfield" is no longer a differentiator, and we were claiming it.** OpenSpec's own
+  stated philosophy is *"built for brownfield not just greenfield"*, with a guide for adopting
+  on an existing codebase. The FAQ now says this plainly, including that our earlier phrasing
+  got it wrong - a reader who knows the field would have caught it, and hearing it from us is
+  better than being caught.
+- **What actually distinguishes this, stated as four things none of them does:** decisions
+  recorded, an undocumented repo walked into line with a *standard*, that standard carrying a
+  version the repo pins, and compliance as a number CI asserts.
+- **ProductSpec is named as the nearest neighbour by scope** - a schema-validated intent format
+  with a parser, CLI, Action, MCP server and skills. It postdates every design decision here
+  and the attribution says so, because the compared-against list exists precisely so a reader
+  finds the alternatives from us.
+- **`docs/open-questions/npm-as-a-channel.md`**: the backlog assumes an npm package and there is
+  no `package.json`. Writing one would have decided the question by accident - a Node front door
+  on a stack-agnostic standard, and a second version number to drift against
+  `.standards-version`. Open, and after the first tag whatever the answer.
+
 ### The fill warning could never be cleared, so it was noise (2026-08-02)
 
 Found by building a real adopting repo and filling it in properly - the first defect the

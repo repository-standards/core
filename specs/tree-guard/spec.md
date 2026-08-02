@@ -33,11 +33,11 @@ Verifying an adopted repo ([verify-engine](../verify-engine/spec.md)); checking 
    - `/\.specify\//` - the retired `.specify` engine layout (ADR-015)
    - `/spec-kit\//` - a vendored spec-kit area (ADR-015)
    - `/skills\/(align-to-standards|onboard-repo|modernize|greenfield-start|speckit-)/` - a transition or speckit skill, never shipped (ADR-009/ADR-015)
-2. **Manifest promises.** For every `manifest.files[]` entry whose `path` is not in `CLIENT_ONLY = { ".standards-version", "specs/capability-map.json", "docs/facts.json" }`, at least one of `[path, ...altPaths]` must exist under `standard/`. Every `manifest.sections[]` entry's `file` must also exist there. `CLIENT_ONLY` holds the entries a client authors from nothing: shipping an example would seed a repo with another repo's pin, capability map or facts.
+2. **Manifest promises.** For every `manifest.files[]` entry whose `path` is not in `CLIENT_ONLY = { ".standards-version", "specs/capability-map.json", "docs/facts.json" }`, at least one of `[path, ...altPaths]` must exist under `standard/`. Every `manifest.sections[]` entry's `file` must also exist there. `CLIENT_ONLY` holds the entries a client authors from nothing: shipping an example would seed a repo with another repo's alignment record, capability map or facts.
 2b. **References resolve.** Every `manifest.references[]` path must exist at this repo's root (the method docs clients adopt by reference, ADR-023) - a dead reference FAILs.
 2c. **Tree -> manifest coverage.** The reverse direction: every file under `standard/` must be covered by a manifest entry - an exact `path`/`altPaths` match or a prefix match under a directory entry - or listed in the explicit `EXEMPT` set (empty today; an exemption needs a recorded reason). A shipped-but-unlisted file FAILs: self-verify cannot see it and `update-to-version`'s delta cannot carry it.
 3. **Skeleton self-verify.** `node scripts/self-verify.mjs --skeleton` executed with cwd `standard/` must exit 0; on failure its captured output is indented under the FAIL line.
-4. **Version surfaces.** `VERSION` is read; `standard/SPEC.md` must contain `Version <V>` and `README.md` must contain `@<V>`. The two checks are independent - one mismatch never masks the other.
+4. **Version surface.** `VERSION` is read; `standard/SPEC.md` must contain `Version <V>`. The README is deliberately **not** checked for `@<V>`: that assertion required the quick start to instruct an adopter to pin a version, which is the model [ADR-025](../../docs/decision-records/ADR-025-the-standard-is-living-latest-is-the-target.md) removed. A guard that demands phrasing a decision deleted keeps reinstating it, and this one did - it failed the moment the README was corrected.
 4b. **Derived facts stay derived.** The surfaces in `FACT_SURFACES` (`README.md`, `llms.txt`, `AGENTS.md`, `docs/ecosystem.md`, `site/index.html`, `standard/README.md`) must not hand-write a rule range (`R1-R<n>`) or a rule count (`<number|word> [numbered] rules`); a match FAILs, quoting the offending text. Facts derivable from `SPEC.md` are stated as "the numbered rules" or derived, never restated by hand. **Markup is stripped (`<[^>]+>` -> a space) before matching**: one of the surfaces is HTML, and a count split across a tag - `20<small>rules` - reads as a count to a human and as two unrelated tokens to a naive regex, which is exactly how a stale number survived on the landing page while this check reported green.
 5. **Workflow pins are exact (R21/ADR-017).** Every workflow under `.github/workflows/` and `standard/.github/workflows/`: each `uses:` names a full 40-hex commit SHA (local `./` actions exempt; comment-only lines - first non-space char `#` - are skipped), no `runs-on` label containing `-latest`, no bare-major `node-version`, and `standard/.nvmrc` (when present) is an exact `x.y.z`.
 
@@ -56,7 +56,7 @@ Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-c
 | Tool | Exit | Condition |
 |---|---|---|
 | tree-check | 0 | every check clean |
-| tree-check | 1 | any check above failing: a leak, an unmet manifest promise, an unresolved reference, a shipped file no manifest entry covers, a skeleton self-verify failure, a version-surface mismatch, a hand-written derived fact, or a loose workflow pin (count in the verdict) |
+| tree-check | 1 | any check above failing: a leak, an unmet manifest promise, an unresolved reference, a shipped file no manifest entry covers, a skeleton self-verify failure, a spec version mismatch, a hand-written derived fact, or a loose workflow pin (count in the verdict) |
 | link-check | 0 | every relative link resolves |
 | link-check | 1 | one or more dead relative links (count in the verdict) |
 
@@ -83,7 +83,8 @@ Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-c
 - **Anchor skip.** GIVEN a link target `#section` or `mailto:x@y.z` WHEN link-check runs THEN it is ignored.
 - **Untracked dead link.** GIVEN a freshly created, not yet `git add`-ed md file links a relative target that does not exist WHEN link-check runs THEN it FAILs exactly as for a tracked file, exit 1.
 
-- **Version mismatch.** GIVEN `VERSION` is `9.9.9` and SPEC.md says `Version 0.7.2` WHEN tree-check runs THEN both the SPEC and README mismatches are reported and exit is 1.
+- **Version mismatch.** GIVEN `VERSION` is `9.9.9` and SPEC.md says `Version 0.7.2` WHEN tree-check runs THEN the SPEC mismatch is reported and exit is 1.
+- **The README is not required to name a version.** GIVEN a README whose quick start contains no `@<version>` at all WHEN tree-check runs THEN no version failure is raised - latest is the only target, so a quick start naming one would be the defect.
 - **Unmanifested file.** GIVEN `standard/docs/stray.md` exists and no manifest entry or `EXEMPT` row covers it WHEN tree-check runs THEN a FAIL names it and exit is 1.
 - **Floating pin.** GIVEN a workflow line `uses: actions/checkout@v4` (not a 40-hex SHA) WHEN tree-check runs THEN a FAIL quotes it; a commented-out `# uses: ...@v4` line is skipped.
 - **Hand-written count.** GIVEN a `FACT_SURFACES` file contains a hand-written rule range WHEN tree-check runs THEN a FAIL quotes the match and exit is 1.

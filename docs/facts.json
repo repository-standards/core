@@ -2,41 +2,79 @@
   {
     "id": "shipped-skills",
     "what": "how many lifecycle skills ship in the tree",
-    "home": { "count": "standard/.claude/skills/*/SKILL.md" },
+    "home": {
+      "count": "standard/.claude/skills/*/SKILL.md"
+    },
     "claims": [
-      { "file": "AGENTS.md", "pattern": "`\\.claude/skills/` \\((\\d+) lifecycle skills\\)" },
-      { "file": "AGENTS.md", "pattern": "the (\\d+) under `standard/\\.claude/skills/`" },
-      { "file": "docs/open-questions/README.md", "pattern": "not the count - (\\d+) ship today" },
-      { "file": "docs/open-questions/shipped-skills.md", "pattern": "Currently (\\d+) ship into every adopted repo" }
+      {
+        "file": "AGENTS.md",
+        "pattern": "`\\.claude/skills/` \\((\\d+) lifecycle skills\\)"
+      },
+      {
+        "file": "AGENTS.md",
+        "pattern": "the (\\d+) under `standard/\\.claude/skills/`"
+      },
+      {
+        "file": "docs/open-questions/README.md",
+        "pattern": "not the count - (\\d+) ship today"
+      },
+      {
+        "file": "docs/open-questions/shipped-skills.md",
+        "pattern": "Currently (\\d+) ship into every adopted repo"
+      }
     ]
   },
   {
     "id": "repo-slug",
     "what": "the GitHub path a client degits the tree from",
-    "home": { "match": { "file": "README.md", "pattern": "npx degit (\\S+?)(?:/standard)? " } },
+    "home": {
+      "match": {
+        "file": "README.md",
+        "pattern": "npx degit (\\S+?)(?:/standard)? "
+      }
+    },
     "claims": [
-      { "file": "README.md", "pattern": "npx degit (\\S+?)(?:/standard)? " },
-      { "file": "llms.txt", "pattern": "npx degit (\\S+?)(?:/standard)?[ `\\n]" },
-      { "file": "AGENTS.md", "pattern": "npx degit\\n(\\S+?)(?:/standard)?`" },
-      { "file": "site/index.html", "pattern": "npx degit (\\S+?)(?:/standard)? " }
+      {
+        "file": "README.md",
+        "pattern": "npx degit (\\S+?)(?:/standard)? "
+      },
+      {
+        "file": "llms.txt",
+        "pattern": "npx degit (\\S+?)(?:/standard)?[ `\\n]"
+      },
+      {
+        "file": "AGENTS.md",
+        "pattern": "npx degit\\n(\\S+?)(?:/standard)?`"
+      },
+      {
+        "file": "site/index.html",
+        "pattern": "npx degit (\\S+?)(?:/standard)? "
+      }
     ]
   },
   {
     "id": "standard-version",
     "what": "the version the standard currently ships",
-    "home": { "read": "VERSION" },
+    "home": {
+      "read": "VERSION"
+    },
     "claims": [
-      { "file": "standard/SPEC.md", "pattern": "^Version (\\d+\\.\\d+\\.\\d+)" },
-      { "file": "README.md", "pattern": "align this repo to repository-standards@(\\d+\\.\\d+\\.\\d+)" },
-      { "file": "README.md", "pattern": "self-verify\\.mjs --version (\\d+\\.\\d+\\.\\d+)" },
-      { "file": "README.md", "pattern": "Apply just the \\*\\*delta\\*\\* to `v(\\d+\\.\\d+\\.\\d+)`" },
-      { "file": "standard/docs/self-verify.md", "pattern": "self-verify\\.mjs --version (\\d+\\.\\d+\\.\\d+)" },
-      { "file": "standard/scripts/self-verify.mjs", "pattern": "self-verify\\.mjs --version (\\d+\\.\\d+\\.\\d+)" },
-      { "file": "site/index.html", "pattern": "class=\"tag mono\">v(\\d+\\.\\d+\\.\\d+)" },
-      { "file": "site/index.html", "pattern": "Read the delta to <code>v(\\d+\\.\\d+\\.\\d+)</code>" },
-      { "file": "site/index.html", "pattern": "scaffold from repository-standards<span class=\"v\">@(\\d+\\.\\d+\\.\\d+)" },
-      { "file": "site/index.html", "pattern": "repository-standards@<span class=\"v\">(\\d+\\.\\d+\\.\\d+)" },
-      { "file": "site/index.html", "pattern": "--version <span class=\"v\">(\\d+\\.\\d+\\.\\d+)" }
+      {
+        "file": "standard/SPEC.md",
+        "pattern": "^Version (\\d+\\.\\d+\\.\\d+)"
+      },
+      {
+        "file": "standard/docs/self-verify.md",
+        "pattern": "self-verify\\.mjs --version (\\d+\\.\\d+\\.\\d+)"
+      },
+      {
+        "file": "standard/scripts/self-verify.mjs",
+        "pattern": "self-verify\\.mjs --version (\\d+\\.\\d+\\.\\d+)"
+      },
+      {
+        "file": "site/index.html",
+        "pattern": "class=\"tag mono\">v(\\d+\\.\\d+\\.\\d+)"
+      }
     ]
   }
 ]

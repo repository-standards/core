@@ -59,6 +59,21 @@ The prose of the rendered pages (owned by their source files); markdown link int
 
 - Every internal `.html` link in a generated page MUST resolve to a generated page.
 - The landing MUST contain the positioning one-liner byte-for-byte.
+- **A `$` prompt on the landing MUST introduce something a shell can run.** What you say to an
+  agent is prefixed `>` instead. The page mixed the two - `$ scaffold from
+  repository-standards` and `$ assess -> align -> onboard` are sentences and phase lists, not
+  commands, and a reader who pasted either into a terminal got `command not found` while the
+  terminal block twenty lines below used the convention correctly. **Not script-enforced**:
+  `site-check` cannot tell a real command from a plausible one, so this is a review rule, and it
+  is written here because the page has already broken it once.
+- The landing MUST advertise the standard's current version (the badge and footer) and MUST NOT
+  present that version as something an adopter pins to or requests: no `@<version>` in a
+  quickstart command, no `--version` in the shown invocation, and no dependency-bump analogy for
+  updating. Latest is the only target ([ADR-025](../../docs/decision-records/ADR-025-the-standard-is-living-latest-is-the-target.md));
+  the version is a fact about the standard, not an instruction to the reader. **Not
+  script-enforced** - `site-check` asserts the badge is present and cannot judge copy, so this is
+  a review rule and is written here rather than implied. It is recorded because the landing did
+  teach pinning, in four places, for as long as the decision had been in force.
 - No authored surface MUST contain an em or en dash.
 - No non-GitHub external host MUST appear on the landing.
 

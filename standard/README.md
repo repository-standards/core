@@ -13,7 +13,7 @@ One-line description of the product. Entry point for agents + humans:
 |------|-----------|----------|
 | [`AGENTS.md`](AGENTS.md) | Entry point: altitude, conventions, red-flags, workflows | adapt |
 | [`CLAUDE.md`](CLAUDE.md) | The file Claude Code loads first: points at AGENTS.md **and** carries the rule to check whether a shipped skill covers the request before acting (R1) | merge |
-| [`SPEC.md`](SPEC.md) | The standard's normative core (the numbered rules) at the pinned version | as-is |
+| [`SPEC.md`](SPEC.md) | The standard's normative core (the numbered rules), as of the state this repo last aligned to | as-is |
 | [`SECURITY.md`](SECURITY.md) | How to report a vulnerability; no-secrets posture | fill placeholders |
 | [`standard.manifest.json`](standard.manifest.json) | Machine-readable projection of SPEC.md - what `self-verify` checks | as-is |
 | `.standards-version` | The version pin - written at adoption, advanced by `update-to-version` | write at adoption |

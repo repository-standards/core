@@ -1,6 +1,6 @@
 ---
 name: update-to-version
-description: Use when someone wants to move to a newer version of the standard - "update me to the latest", "bump the standard", "what changed since we adopted?". Applies only the delta between the pinned version and the target, adapted to this repo and preserving its recorded deviations. A dependency bump, never a re-scaffold.
+description: Use when someone wants to move to a newer version of the standard - "update me to the latest", "bump the standard", "what changed since we adopted?". Applies only the delta between the state this repo last aligned to and latest, adapted to this repo and preserving its recorded deviations - never a re-scaffold.
 ---
 
 # update-to-version

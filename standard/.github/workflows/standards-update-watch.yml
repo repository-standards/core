@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
 
-      - name: Compare the pin against the standard's newest release
+      - name: Compare the recorded state against the standard's newest release
         env:
           GH_TOKEN: ${{ github.token }}
           # The standard this repo follows. Change it if you consume a fork.
@@ -41,6 +41,11 @@ jobs:
 
           # No releases yet is a normal state, not a failure: the watch is installed
           # before the first tag exists and starts speaking when one does.
+          #
+          # Known gap, deliberately not papered over: this compares against RELEASES, while
+          # the standard lives on main (ADR-025). Between tags the standard moves and this
+          # stays quiet. Watching main instead would fire on every typo, so neither answer is
+          # right yet - docs/open-questions/staying-current.md holds the question.
           LATEST=$(gh api "repos/${STANDARD_REPO}/releases/latest" --jq .tag_name 2>/dev/null || true)
           if [ -z "${LATEST}" ]; then
             echo "${STANDARD_REPO} has published no release yet - nothing to compare ${PIN} against"
@@ -69,14 +74,14 @@ jobs:
           fi
 
           gh issue create --title "${TITLE}" --body "$(printf '%s\n' \
-            "\`.standards-version\` pins **${PIN}**; ${STANDARD_REPO} has released **${LATEST}**." \
+            "This repo last aligned to **${PIN}**; ${STANDARD_REPO} has released **${LATEST}**." \
             "" \
-            "This is a notification, not a requirement (ADR-025). The pin records the state this repo last aligned to; the target of an update is always the latest." \
+            "This is a notification, not a requirement (ADR-025). \`.standards-version\` records the state this repo last aligned to - it is a bookmark, never a version to stay at; the target of an update is always the latest." \
             "" \
             "To take it, in this repo:" \
             "" \
             "    > update this repo to standards ${LATEST}" \
             "" \
-            "The \`update-to-version\` skill applies the delta between the pin and latest, preserves the deviations recorded in this repo's manifest, and finishes when \`node scripts/self-verify.mjs\` reports drift 0." \
+            "The \`update-to-version\` skill applies the delta between that state and latest, preserves the deviations recorded in this repo's manifest, and finishes when \`node scripts/self-verify.mjs\` reports drift 0." \
             "" \
             "Closing this issue without updating is a valid answer - say why in a comment, so the next person does not re-open the same question.")"

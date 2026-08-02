@@ -179,7 +179,7 @@ concrete models and wire the orchestration.
 
 ## Pick your profile: core vs scale (ADR-011)
 
-One standard, two postures - declared next to your version pin, verified per profile
+One standard, two postures - declared next to the recorded alignment state, verified per profile
 (previously written solo/team):
 
 - **`core`** - solo repos adopt core: a one-person or small project carries what keeps

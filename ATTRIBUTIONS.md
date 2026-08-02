@@ -44,7 +44,11 @@ earlier arrangement - a pinned vendored area re-synced with patches reapplied - 
 **How far it has diverged.** Substantially, and mostly on 2026-08-02: the sections a spec
 carries, the default depth tier, whether tests are optional, the question protocol, and the
 unit of work tasks group by were all changed to match this standard rather than upstream's
-model. What remains is the shape of the flow and parts of the prompt scaffolding - enough
+model. The largest single departure is in `clarify`: upstream caps a session at five questions
+and reports the remainder in a completion message. Here there is **no cap** - the loop is bounded
+by coverage of the declared tier - and nothing unresolved may end up only in the conversation,
+because the ambiguities the loop discovers for itself are not markers and were being discarded
+with the report. What remains is the shape of the flow and parts of the prompt scaffolding - enough
 that the attribution stands and must keep standing while any of it does.
 
 **No claim is made** that upstream endorses this, reviewed it, or is responsible for how it
@@ -80,6 +84,10 @@ a comparison as a debt:
 - **BMAD**
 - **Backstage**
 - **adr-tools**
+- **ProductSpec** - found on 2026-08-02 while researching how this project gets discovered,
+  which is to say **after** every design decision here was already made. It is the closest
+  neighbour of the five and the comparison is in [the FAQ](docs/faq.md); listing it here is
+  the point of this section - a reader should learn about the nearest alternative from us.
 
 ## If something is missing
 

@@ -100,16 +100,19 @@ try {
   fail("self-verify --skeleton FAILS on the pristine tree:\n" + out.split("\n").map((l) => "        " + l).join("\n"));
 }
 
-// --- 4. version surfaces agree with VERSION ----------------------------------------------
-// The maintainer alone bumps VERSION; this only ensures the bump cannot leave the
-// spec header or the README quick start advertising a different number.
+// --- 4. the spec header agrees with VERSION ----------------------------------------------
+// The maintainer alone bumps VERSION; this only ensures the bump cannot leave the spec
+// header advertising a different number.
+//
+// The README quick start is NOT checked for `@<version>` any more, and the removal is the
+// point: that assertion required the quick start to tell an adopter to pin a version, which
+// is the model ADR-025 removed. A guard demanding the phrasing a decision deleted keeps
+// putting it back, and this one did - it failed the moment the README was corrected.
 const version = readFileSync("VERSION", "utf8").trim();
 const spec = readFileSync(`${TREE}/SPEC.md`, "utf8");
-const readme = readFileSync("README.md", "utf8");
 let vFails = 0;
 if (!spec.includes(`Version ${version}`)) { fail(`${TREE}/SPEC.md header does not say "Version ${version}" (VERSION file is ${version})`); vFails++; }
-if (!readme.includes(`@${version}`)) { fail(`README.md quick start does not pin @${version} (VERSION file is ${version})`); vFails++; }
-if (!vFails) ok(`SPEC.md and README agree with VERSION (${version})`);
+if (!vFails) ok(`SPEC.md agrees with VERSION (${version})`);
 
 // --- 4b. derived facts are never hand-written on surfaces --------------------------------
 // A fact derivable from a source (the rule count, a rule range) must not be restated

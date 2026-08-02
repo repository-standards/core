@@ -15,12 +15,12 @@ Run the shipped checker; it exits non-zero on any failure, so CI can gate on it:
 
 ```
 node scripts/self-verify.mjs                  # gate: exit 1 on any failure
-node scripts/self-verify.mjs --version 0.7.2  # also assert the pinned version matches
+node scripts/self-verify.mjs --version 0.7.2  # also assert the record equals a given target
 node scripts/self-verify.mjs --warn           # report only (local, non-gating)
 ```
 
 It is **manifest-driven** (ADR-005). It reads [`standard.manifest.json`](../standard.manifest.json)
-- the standard describing itself at the pinned version - and checks the repo against every
+- the standard describing itself as of the recorded state - and checks the repo against every
 entry, reporting **drift** as a number (how many required entries are unmet; `drift 0` =
 compliant). Without a manifest it falls back to a built-in skeleton, so it still works on
 repos that predate ADR-005.
@@ -57,7 +57,7 @@ number, listed in the judgment tier below. A repo can be drift 0 and still slopp
 review; the number is the floor, not the ceiling.
 
 **Drift as a number.** Each unmet required check scores one, so `drift N` is a measurable
-distance from the pinned version - a fleet owner can sort repos by it, and an update's job
+distance from the standard - a fleet owner can sort repos by it, and an update's job
 is to drive it back to `0`. Mostly that is one point per manifest entry, with one deliberate
 exception: a missing `.standards-version` scores **two**, once as the version pin and once
 as the required file. That is not double counting by accident - a repo with no pin has both

@@ -23,9 +23,9 @@ docs, the case studies, `open-questions/`, `decision-records/` - is genuinely zo
 `standard.manifest.json` and no `CLAUDE.md`, and the altitude order R1 requires lives in
 [`README.md`](README.md) rather than here. That is deliberate: the tree is the product, and
 its compliance is proved by `tools/tree-check.mjs` running `self-verify --skeleton` against
-the pristine tree, not by this repo scoring itself against a pin it does not carry. Where
+the pristine tree, not by this repo scoring itself against a recorded state it does not carry. Where
 `PRODUCT.md` says the standard follows its own rules, read it as: its own decisions, specs,
-backlog, personas and guards - not the adopter-side pin.
+backlog, personas and guards - not the adopter-side alignment record.
 
 There is no third zone: the tree IS the shipped form - `npx degit
 bodurkalukasz/repository-standards/standard` hands a client exactly what you see.

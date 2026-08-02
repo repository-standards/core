@@ -1,9 +1,11 @@
 # The repository-standards spec
 
-Version 0.7.2 - the spec is versioned with the standard (`VERSION`); a repo complies
-at the version pinned in its own `.standards-version`. The standard is living: the
-target of every align and update is always the latest - the pin records the state
-last aligned to, never a version to stay at (ADR-025). The key words MUST, MUST NOT,
+Version 0.7.2 - the spec is versioned with the standard (`VERSION`). **The standard is
+living and the only target is latest** (ADR-025): a repo complies against the state it
+last aligned to, recorded in its own `.standards-version`. That record is a bookmark -
+it makes an update a delta and self-verify a meaningful assertion, and it never names a
+version to stay at. Tags mark the standard's own development; nothing downstream tracks
+them. The key words MUST, MUST NOT,
 SHOULD and MAY are to be read as in RFC 2119.
 
 This page is the whole normative core. Everything else in the standard explains,
@@ -28,10 +30,13 @@ binds every repo, a solo one included.
   acting on it, and again when the work closes. For Claude Code that file is
   `CLAUDE.md`; another agent has its own. A rule that only exists one hop away is a
   rule the agent reaches after it has already started.
-- **R2.** A repo MUST pin the standard's version in `.standards-version` and MUST
-  carry its copy of `standard.manifest.json` at that version. It SHOULD carry the
-  spec page (`SPEC.md`) the manifest projects, so the rules it is checked against
-  are readable in place.
+- **R2.** A repo MUST record the standard's state it last aligned to in
+  `.standards-version`, and MUST carry the matching copy of
+  `standard.manifest.json`. This is a bookmark, not a constraint - it is what makes
+  an update a delta and self-verify a meaningful assertion, and nothing MAY read it
+  as a version the repo is held at or as a compatibility requirement (ADR-025). The
+  repo SHOULD carry the spec page (`SPEC.md`) the manifest projects, so the rules it
+  is checked against are readable in place.
 - **R3.** Project knowledge - documentation, specs, decisions, conventions - MUST
   live in the repo, versioned with the code. A rule that exists only in chat, a
   wiki or someone's personal agent config does not exist.
@@ -90,11 +95,11 @@ binds every repo, a solo one included.
 ## Verification and updates
 
 - **R16.** Compliance MUST be enforced by tooling, not prose: `self-verify`
-  (against the pinned manifest) and `spec-structure` MUST gate CI; *(scale)*
+  (against the recorded manifest) and `spec-structure` MUST gate CI; *(scale)*
   `spec-guard` too. Aligned means self-verify reports drift 0.
 - **R17.** Adoption and updates MUST adapt, never blind-copy: align reconciles a
-  repo to the standard - always the latest; the pin then records the state
-  aligned to, and an update applies the delta between the pin and latest,
+  repo to the standard - always the latest; the record then names the state
+  aligned to, and an update applies the delta between that and latest,
   preserving the repo's recorded deviations (the manifest's `exceptions`).
 
 ## Releases and hygiene

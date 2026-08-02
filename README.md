@@ -14,6 +14,14 @@ not an opinion.
 Others give you a workflow or a scaffold. This gives your repo a reference to true up
 to - **and walks it there**.
 
+Spec-driven development frameworks standardise **how a change gets specified**. This
+standardises **the repository**, and four things follow that none of them does: the
+**decisions** behind the code are recorded and kept, an existing repo is walked into line
+with **a standard** rather than into a workflow, that standard **keeps moving and your
+repo trues up to it**, and how far you still are from it comes out as **a number your CI
+asserts**. If a spec workflow is what you want, those projects are large, well maintained
+and the better answer - [the FAQ](docs/faq.md) names them and says so.
+
 The whole normative core fits one page: [`standard/SPEC.md`](standard/SPEC.md) -
 numbered MUST/SHOULD rules. Everything else here explains or enforces them. One
 orientation rule for this repo: the root is this project's own life; `standard/`
@@ -25,10 +33,13 @@ lifecycle skills ship inside the tree (`standard/.claude/skills/`); the root `sk
 holds only the transition router that brings a repo in.
 
 Status: pre-1.0 (the 0.7.x line), mechanics field-run on the author's production
-repos. No release tags exist yet - a degit today resolves to the default branch,
-and the pin labels the state you adopted; tags make it exact when the maintainer
-cuts them. The pin makes updates deltas, and a degit'd tree keeps working offline
-even if this repo goes quiet - adopt the mechanism, not a promise.
+repos. **There is no version to pin to: the standard is living and latest is the
+only target** (ADR-025). `.standards-version` records the state your repo last
+aligned to - a bookmark, so an update is a delta rather than a re-scaffold, and
+never a version you are held at. Tags, when the maintainer cuts them, mark the
+standard's own development; they are not something your repo tracks. A degit'd
+tree keeps working offline even if this repo goes quiet - adopt the mechanism,
+not a promise.
 
 ## Say it to your agent
 
@@ -40,7 +51,7 @@ anything is touched ([ADR-020](docs/decision-records/ADR-020-intake-first-adopti
 | You say | You get |
 |---|---|
 | "Take the repository-standards repo and **align my project** to it." | Brownfield: state assessed first, then one guided wave - specs seeded, decisions recorded from the code, the rest queued in a backlog. |
-| "Take the repository-standards repo and **start a new project** on it." | Greenfield: a short interview, then a scaffold at a pinned version - `PRODUCT.md`, the first decisions, the first capability specs. |
+| "Take the repository-standards repo and **start a new project** on it." | Greenfield: a short interview, then a scaffold from the current standard - `PRODUCT.md`, the first decisions, the first capability specs. |
 | "Take the repository-standards repo and **analyse how my project fits** it." | Plan-only: a fit report + adoption plan (what diverges, what it would take) - nothing changed yet. |
 | "**Update** my repo to the next standard version." | The delta between your pin and the target, applied like a dependency bump - never a re-scaffold. |
 | "**Verify** this repo still complies with its pinned standard." | `node scripts/self-verify.mjs`, run inside your repo once align has copied `scripts/` in - drift as a number, the same pass/fail your CI asserts. |
@@ -66,16 +77,19 @@ Built to kill the four failure modes every team recognizes:
 - **Drift goes unnoticed.** Code and intent diverge silently - found in an incident, not
   a review.
 
-## The keystone: a versioned, self-verifying standard
+## The keystone: a living, self-verifying standard
 
-The standard ships **versions**. A repo pins the one it follows in `.standards-version`,
-and the same align mechanism runs at three moments:
+**There is one target and it is latest** (ADR-025). The standard is not a dependency you
+constrain - it is a reference your repo trues up to, and the reference moves.
+`.standards-version` records the state you last aligned to, which is what makes an update a
+delta and self-verify a meaningful assertion; it never names a version to stay at. The same
+align mechanism runs at three moments:
 
 | Moment | |
 |--------|--|
 | **Adopt** | point a repo at the standard; it is read, compared, and brought into line - adapted to its stack, never blind-copied ([`align-to-standards`](skills/align-to-standards/SKILL.md)). |
-| **Update** | already on `v0.7.1`? Apply just the **delta** to `v0.7.2` - like bumping a dependency, not a re-scaffold ([`update-to-version`](standard/.claude/skills/update-to-version/SKILL.md)). |
-| **Verify** | prove it: `node scripts/self-verify.mjs`, from inside the aligned repo - version pin, skeleton, guards - a pass/fail your CI asserts ([`self-verify`](standard/docs/self-verify.md)). |
+| **Update** | the standard moved? Apply just the **delta** since the state you last aligned to - not a re-scaffold ([`update-to-version`](standard/.claude/skills/update-to-version/SKILL.md)). |
+| **Verify** | prove it: `node scripts/self-verify.mjs`, from inside the aligned repo - files, sections, guards - a pass/fail your CI asserts ([`self-verify`](standard/docs/self-verify.md)). |
 
 ## Who it's for
 
@@ -84,7 +98,7 @@ sharpens into buildable specs (and can always ask for the plain-language version
 **developer** gets contracts instead of archaeology; the **project** keeps documentation
 that is actually true. All of it doubles as the context an AI agent can act on.
 
-- **A new repo** - scaffold from the standard at a pinned version and go.
+- **A new repo** - scaffold from the standard and go.
 - **An existing, undocumented repo** - `assess -> align -> onboard`: capabilities specced,
   decisions recorded from the code, the rest queued as a backlog. Incremental, never a
   big-bang dump ([`align-to-standards`](skills/align-to-standards/SKILL.md), brownfield phase).
@@ -155,14 +169,18 @@ scale-profile prescription - `docs/method/changelog-process.md`.)
 ```
 # 1 - fetch the standard and point your agent at its entry skill
 $ npx degit bodurkalukasz/repository-standards .repository-standards   # add it to .gitignore
-> follow .repository-standards/skills/align-to-standards/SKILL.md - align this repo to repository-standards@0.7.2
+> follow .repository-standards/skills/align-to-standards/SKILL.md - align this repo to repository-standards
 
 # 2 - it scaffolds / assesses / aligns (copying scripts/ in), then proves it
-$ node scripts/self-verify.mjs --version 0.7.2
+$ node scripts/self-verify.mjs
 
-# 3 - when the standard moves, bump it like a dependency
-> update me to repository-standards@next
+# 3 - when the standard moves, true up to it again
+> update me to the latest repository-standards
 ```
+
+There is no version to ask for: **latest is the only target** (ADR-025). Your repo records
+what it last aligned to so the next update is a delta, not a re-scaffold - and being behind is
+a fact about your repo, never a compatibility problem.
 
 No agent handy? Grab the tree directly and let any agent (or you) fill it in:
 

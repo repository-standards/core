@@ -400,8 +400,8 @@
         </div>
         <div>
           <div class="k"><span class="n">02</span> Update</div>
-          <h3>Bump the version</h3>
-          <p>Already on <code>v0.7.1</code>? Read the delta to <code>v0.7.2</code> and apply just that - the way <code>copier update</code> or a dependency bump works, not a re-scaffold.</p>
+          <h3>True up again</h3>
+          <p>The standard moved. Read the delta since the state your repo last aligned to and apply just that - never a re-scaffold. There is no version to pin to: latest is the only target.</p>
         </div>
         <div>
           <div class="k"><span class="n">03</span> Verify</div>
@@ -428,15 +428,15 @@
           <div class="idx">01</div>
           <span class="who">Greenfield</span>
           <h3>Start clean</h3>
-          <p>Scaffold from the standard at a pinned version and go - specs, decisions, guards and the agent guide are wired in from commit one.</p>
-          <div class="cmd"><span class="p">$</span> scaffold from repository-standards<span class="v">@0.7.2</span></div>
+          <p>Scaffold from the standard and go - specs, decisions, guards and the agent guide are wired in from commit one.</p>
+          <div class="cmd"><span class="p">&rsaquo;</span> scaffold this repo from repository-standards</div>
         </div>
         <div class="card reveal">
           <div class="idx">02</div>
           <span class="who">Brownfield</span>
           <h3>Rescue a messy repo</h3>
           <p>Assess, align, onboard - in prioritized waves, not a big-bang rewrite. Re-enter the loop wave after wave until drift hits zero. A years-old, messy repo is a first-class citizen here, not a lost cause.</p>
-          <div class="cmd"><span class="p">$</span> assess &rarr; align &rarr; onboard</div>
+          <div class="cmd"><span class="p">&rsaquo;</span> align my project to repository-standards</div>
         </div>
         <div class="card reveal feat">
           <div class="idx">03</div>
@@ -450,7 +450,7 @@
           <span class="who">Team &middot; Standard owner</span>
           <h3>Keep a fleet current</h3>
           <p>Cut a new version of the standard and every repo can <b style="color:var(--tx)">update to it</b> - one repo or a hundred - each self-verifying that it actually complies.</p>
-          <div class="cmd"><span class="p">$</span> update me to repository-standards<span class="v">@next</span></div>
+          <div class="cmd"><span class="p">&rsaquo;</span> update me to the latest repository-standards</div>
         </div>
       </div>
       <div class="secmore reveal">
@@ -629,14 +629,14 @@
         <div class="term-top"><i></i><i></i><i></i><span class="fname">agent + CI</span></div>
         <div class="term-body">
           <span class="ln"><span class="cmuted"># 1 &middot; point your agent at the standard - a new repo, or your messiest one</span></span>
-          <span class="ln"><span class="cprompt">&rsaquo;</span> <span class="ccmd">align this repo to repository-standards@<span class="v">0.7.2</span></span></span>
+          <span class="ln"><span class="cprompt">&rsaquo;</span> <span class="ccmd">align this repo to repository-standards</span></span>
           <span class="ln">&nbsp;</span>
           <span class="ln"><span class="cmuted"># 2 &middot; it scaffolds / assesses / aligns - then proves it against the manifest</span></span>
-          <span class="ln"><span class="cprompt">$</span> <span class="ccmd">node scripts/self-verify.mjs --version <span class="v">0.7.2</span></span></span>
+          <span class="ln"><span class="cprompt">$</span> <span class="ccmd">node scripts/self-verify.mjs</span></span>
           <span class="ln">  <span class="cok">self-verify: OK - drift 0 - 52 checks, compliant with the standard</span></span>
           <span class="ln">&nbsp;</span>
           <span class="ln"><span class="cmuted"># 3 &middot; when the standard moves, bump it like a dependency</span></span>
-          <span class="ln"><span class="cprompt">&rsaquo;</span> <span class="ccmd">update me to repository-standards@<span class="v">next</span></span></span>
+          <span class="ln"><span class="cprompt">&rsaquo;</span> <span class="ccmd">update me to the latest repository-standards</span></span>
           <span class="ln">&nbsp;</span>
           <span class="ln"><span class="cmuted"># no agent? grab the tree: npx degit bodurkalukasz/repository-standards/standard my-repo</span></span>
         </div>
@@ -695,7 +695,7 @@
   var CMD = "align my project to repository-standards";
   var SCRIPT = [
     {sp:1, d:340},
-    {h:'<span class="cb">&#9210;</span> Reading the standard&hellip; <span class="cv">repository-standards@0.7.2</span> <span class="cmuted">- the rules fit one page</span>', d:640},
+    {h:'<span class="cb">&#9210;</span> Reading the standard&hellip; <span class="cv">repository-standards</span> <span class="cmuted">- latest, the rules fit one page</span>', d:640},
     {h:'<span class="cb">&#9210;</span> Scanning <span class="cw">my-project</span> <span class="cmuted">- 214 files</span>', d:520},
     {h:'  <span class="cmuted">&#9151;</span>  12 capabilities detected &middot; 0 specs &middot; the decisions live in chat history', d:720},
     {h:'<span class="cb">&#9210;</span> Comparing the tree against the manifest&hellip;', d:700},
@@ -703,7 +703,7 @@
     {sp:1, d:280},
     {h:'<span class="cb">&#9210;</span> Building the fit report + adoption plan&hellip;', d:840},
     {sp:1, d:260},
-    {h:'  <span class="cw">Adoption plan</span> <span class="cmuted">my-project -&gt; repository-standards@0.7.2</span>', d:360},
+    {h:'  <span class="cw">Adoption plan</span> <span class="cmuted">my-project -&gt; repository-standards, latest</span>', d:360},
     {h:'  &#9500; 7 ADRs to record           <span class="cmuted">the why that today lives only in chat</span>', d:300},
     {h:'  &#9500; 1 BDR                      <span class="cmuted">the pricing rule that exists only in code</span>', d:300},
     {h:'  &#9500; PRODUCT.md                 <span class="cmuted">what this app is, and for whom</span>', d:300},

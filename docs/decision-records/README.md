@@ -13,7 +13,7 @@ one settled.
 | [001](ADR-001-decision-record-policy.md) | Decision record policy | two streams (ADR technical / BDR business), MADR format, sub-scope via Tags never new acronyms, gapless numbering | Accepted |
 | [002](ADR-002-specs-by-capability.md) | Specs by capability | specs live at `specs/<capability>/`, never per-ticket or per-page | Accepted |
 | [003](ADR-003-specs-buildable-not-descriptive.md) | Specs are buildable | a spec must let an agent rebuild and verify the capability without the code; verbatim contracts, not prose | Accepted |
-| [004](ADR-004-standard-decisions-by-reference.md) | Standard decisions by reference | consuming repos adopt the standard's decisions by link at a pinned version; deviations are local superseding records | Accepted |
+| [004](ADR-004-standard-decisions-by-reference.md) | Standard decisions by reference | consuming repos adopt the standard's decisions by link; deviations are local superseding records. **Revised by ADR-025**: references resolve at `main` - latest, not a pinned version | Accepted |
 | [005](ADR-005-align-engine-is-a-manifest.md) | Align-engine is a manifest | what an aligned repo must have lives in `standard.manifest.json` (data), not prose/JS; self-verify reads it, drift is a number | Accepted |
 | [006](ADR-006-personas-are-a-validation-gate.md) | Personas gate everything | every idea/spec/backlog item names the persona it serves or is parked; persona conflicts resolve by BDR | Accepted |
 | [007](ADR-007-modernize-is-plan-then-refactor.md) | Modernize is plan-then-refactor | document the repo first, record each move, then refactor - never bump-and-fix | Accepted |

@@ -23,6 +23,9 @@ outgrew itself - as its own meta entry predicted it would.)
 | [Genesis history for the org move](genesis-history.md) | clean-slate, curated commit sequence, honest dates | narrative order vs the record of what really happened |
 | [Engine cherry-pick](engine-cherry-pick.md) | ADR-015: prompts are ours; upstream read at release | five prompts could quietly fall behind upstream |
 | [Shipped skills](shipped-skills.md) | discriminability is the constraint, not the count - 19 ship today | four sibling authoring skills could drift apart |
+| [npm as a channel](npm-as-a-channel.md) | **open** - the backlog assumes a package; there is none | a Node front door on a stack-agnostic standard, and a second version number to drift |
+| [Stack lifecycle skills](stack-lifecycle-skills.md) | **open** - Layer 2 ships four data files and zero procedures | the mechanism to ship stack skills exists and is unnamed; nothing has run once |
+| [Staying current](staying-current.md) | **open** - the shipped watch compares against releases | the standard lives on `main` and there are no releases, so the channel is silent by construction |
 | [The repo specs its own tooling](own-specs.md) | four buildable capability specs in `specs/` | specs for small scripts risk documentation theatre |
 | [Folder self-description](folder-readmes.md) | three-section `README.md` per folder | READMEs may bloat; one file serves two audiences |
 | [`checklist.md` as the name](checklist-name.md) | `docs/method/checklist.md` | "checklist" undersells the paved-road defaults |

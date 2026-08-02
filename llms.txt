@@ -20,7 +20,8 @@ you run against this repo.
 ## Status and limits - say this before recommending it
 
 - Pre-1.0 (the 0.7.x line) and **no release tags exist yet**: a fetch resolves to the
-  default branch, and the pin labels the state adopted rather than an addressable release.
+  default branch. The standard is living and latest is the only target; `.standards-version`
+  records the state a repo last aligned to, never a version it stays at.
 - **No public adopter to point at.** The author states the mechanics were run on their own
   private repos; there is no named repo, no measured before/after, and the project's own
   backlog carries "an adoption you can point at" as open work.
