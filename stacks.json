@@ -1,9 +1,9 @@
 {
-  "$about": "The stack registry - the ONLY source of official technology best practices (Layer 2). The align router reads this file from its checkout of the living standard (always latest, ADR-025); a stack not listed here is not official, wherever it lives. Discovery only by design: name, repo, one line - a stack's own stack.manifest.json carries the linkage (the registry back-pointer + technology) and the alignable entries; no version range anywhere - stacks are linked, not version-locked (ADR-022) - so core releases are never blocked on registry edits. Policy: one stack repo per technology (repository-standards-<technology>); variation is a profile or an adoption mode inside the stack, never a sibling repo; an official stack keeps a named owner and a live boot CI or is delisted.",
+  "$about": "The stack registry - the ONLY source of official technology best practices (Layer 2). The align router reads this file from its checkout of the living standard (always latest, ADR-025); a stack not listed here is not official, wherever it lives. Discovery only by design: name, repo, one line - a stack's own stack.manifest.json carries the linkage (the registry back-pointer + technology) and the alignable entries; no version range anywhere - stacks are linked, not version-locked (ADR-022) - so core releases are never blocked on registry edits. Policy: one stack repo per technology, named for the technology inside the repository-standards organization (repository-standards/node, repository-standards/python); variation is a profile or an adoption mode inside the stack, never a sibling repo; an official stack keeps a named owner and a live boot CI or is delisted.",
   "stacks": [
     {
       "technology": "node",
-      "repo": "bodurkalukasz/repository-standards-node",
+      "repo": "repository-standards/node",
       "description": "Node/TypeScript - Next.js + Fastify through one proxy, Better Auth, tiered testing; boot-verified starter"
     }
   ]

@@ -47,7 +47,7 @@ already started rotting.
 | a deploy / rollback decision pre-made | **decision** | the release-strategy fork in the [decision checklist](checklist.md) - rollback triggers decided before the first deploy, not during the incident |
 | research / analysis that fed a decision | **working doc** | `docs/` (archivable once it has fed its decision) |
 | the story / the narrative rationale | **narrative** | a blog or working doc - not a record |
-| a judgment call in force, openly seeking a better option | **open question** | a record with `Status: Proposed`, or - if the project runs a governance surface for it - one file per topic under `docs/open-questions/`. The standard keeps its own at [`docs/open-questions/`](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/open-questions/README.md); it ships no template for one, because a repo that is building a product usually wants the doubt attached to the decision it qualifies, not filed separately |
+| a judgment call in force, openly seeking a better option | **open question** | a record with `Status: Proposed`, or - if the project runs a governance surface for it - one file per topic under `docs/open-questions/`. The standard keeps its own at [`docs/open-questions/`](https://github.com/repository-standards/core/blob/main/docs/open-questions/README.md); it ships no template for one, because a repo that is building a product usually wants the doubt attached to the decision it qualifies, not filed separately |
 
 ## The two rules that end the oscillation
 

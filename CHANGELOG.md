@@ -1643,7 +1643,7 @@ execution rather than by reading.
   retired within this unreleased span). `tools/tree-check.mjs` guards the tree
   instead: no repo-own leaks, every manifest promise present, and the pristine tree
   passes its own `self-verify --skeleton` (new flag). Adoption is one line:
-  `npx degit bodurkalukasz/repository-standards/standard`.
+  `npx degit repository-standards/core/standard`.
 - **Spec engine extracted (ADR-015, supersedes ADR-013)** - the five load-bearing
   Spec Kit prompts are now the standard's own skills (`spec-specify`, `spec-clarify`,
   `spec-plan`, `spec-tasks`, `spec-implement`; provenance: github/spec-kit v0.13.2,
@@ -1726,15 +1726,15 @@ execution rather than by reading.
 ### Layer 2 - split into satellite stack repos (ADR-016)
 
 - Layer 2 leaves the core: technology best practices live in one repo per
-  technology (`repository-standards-<tech>`), discovered via the `stacks.json`
+  technology (`repository-standards/<tech>`), discovered via the `stacks.json`
   registry - the only source of officialdom. First satellite:
-  repository-standards-node (DECISIONS + the boot-verified starter + its own
+  repository-standards/node (DECISIONS + the boot-verified starter + its own
   weekly boot CI + `stack.manifest.json` declaring `standards: ">=0.8 <1"`). The align
   router detects the target repo's technology and offers the matching practices;
   greenfield degits the stack's starter. One stack per technology by policy -
   variation is a profile or an adoption mode, never a sibling repo.
 
-### Layer 2 - Node/TS (now in repository-standards-node)
+### Layer 2 - Node/TS (now in repository-standards/node)
 
 - `stacks/node-ts` - the evidence-based paved road: pnpm + Turborepo, Node 24,
   Biome (+ Prettier for SCSS), strict TS, Fastify native-DI service template with

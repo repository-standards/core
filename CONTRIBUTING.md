@@ -58,7 +58,7 @@ standard:
 
 **If your expertise is TypeScript or Node rather than methodology**, the higher-leverage
 repo is the stack:
-[repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node).
+[repository-standards/node](https://github.com/repository-standards/node).
 Layer 1 here is stack-agnostic by rule, so technology opinions genuinely cannot land in
 this repo - they land there.
 

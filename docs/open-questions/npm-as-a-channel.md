@@ -13,7 +13,7 @@ job is to fetch the tree and point the agent at the align skill:
 
 ```
 npx repository-standards            # instead of
-npx degit bodurkalukasz/repository-standards .repository-standards
+npx degit repository-standards/core .repository-standards
 ```
 
 Roughly thirty lines. The question is whether those thirty lines earn a second distribution

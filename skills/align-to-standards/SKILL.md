@@ -137,7 +137,7 @@ this checkout: the real-repo files a compliant repo carries (`AGENTS.md`,
 can also pull that tree directly:
 
 ```
-npx degit bodurkalukasz/repository-standards/standard
+npx degit repository-standards/core/standard
 ```
 
 ## Steps
@@ -228,7 +228,7 @@ npx degit bodurkalukasz/repository-standards/standard
    something the standard should have answered; the registry had a gap; a guard
    fired on a false positive. For each, **offer** (with a ready title and body;
    the user consents per item, never automatically) an issue on
-   `bodurkalukasz/repository-standards` - the `adoption-friction` template - or
+   `repository-standards/core` - the `adoption-friction` template - or
    a PR when the fix is a concrete doc change. No consent, no side effect: the
    learning still lands in the target repo's records either way.
 
@@ -274,10 +274,10 @@ fourth route).
    why, an escape hatch; provenance = current community consensus with linked
    sources, clearly dated). It lands in the target repo as
    `docs/stack-decisions.md` - the repo's own record, not an official stack -
-   and the offer notes that a real `repository-standards-<technology>` can grow
+   and the offer notes that a real stack repo in the `repository-standards` org can grow
    from it later. Then **offer to file the demand upstream (ADR-021,
    consent-gated, never automatic):** a **stack request** issue on
-   `bodurkalukasz/repository-standards` (the `stack-request` template) with the
+   `repository-standards/core` (the `stack-request` template) with the
    detection evidence and the generated document as seed material - this is the
    signal the registry decides its next stack on. Either way Layer 1 continues
    unchanged - the methodology is stack-agnostic by design.

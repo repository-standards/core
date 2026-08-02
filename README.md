@@ -135,7 +135,7 @@ conventions -> code`.
   language.
 - **Layer 2 - technology best practices:** one satellite repo per technology,
   official when listed in [`stacks.json`](stacks.json). First:
-  [repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node)
+  [repository-standards/node](https://github.com/repository-standards/node)
   (Next.js + Fastify starter, boot-verified). Take Layer 1 alone, or 1 + 2.
 
 ## One tree
@@ -168,7 +168,7 @@ and writes the release notes - the same way at every profile
 
 ```
 # 1 - fetch the standard and point your agent at its entry skill
-$ npx degit bodurkalukasz/repository-standards .repository-standards   # add it to .gitignore
+$ npx degit repository-standards/core .repository-standards   # add it to .gitignore
 > follow .repository-standards/skills/align-to-standards/SKILL.md - align this repo to repository-standards
 
 # 2 - it scaffolds / assesses / aligns (copying scripts/ in), then proves it
@@ -185,7 +185,7 @@ a fact about your repo, never a compatibility problem.
 No agent handy? Grab the tree directly and let any agent (or you) fill it in:
 
 ```
-$ npx degit bodurkalukasz/repository-standards/standard my-repo && cd my-repo
+$ npx degit repository-standards/core/standard my-repo && cd my-repo
 $ node scripts/self-verify.mjs        # see what a fresh repo still owes
 ```
 

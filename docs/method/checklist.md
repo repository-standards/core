@@ -62,7 +62,7 @@ Record the trade-off, not the obvious. One record per decision; at most ~3 optio
 
 The **areas** below are stack-agnostic - every project decides them. The concrete
 paved-road **answers** for a given stack live in the registered stack repo for your
-technology (`stacks.json` in the standard repo; Node: repository-standards-node -
+technology (`stacks.json` in the standard repo; Node: repository-standards/node -
 picks and rationale live in its DECISIONS).
 
 | Decision | Why it matters | Default direction (paved road) | Record |

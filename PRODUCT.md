@@ -52,7 +52,7 @@ feeds none of these gets removed.
 - **Layer 2 - Technology best practices:** one satellite repo per technology,
   official when listed in the registry ([`stacks.json`](stacks.json)) - the picks and
   their rationale live in each stack repo's DECISIONS. First:
-  [repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node)
+  [repository-standards/node](https://github.com/repository-standards/node)
   (Next.js + Fastify, boot-verified starter).
 
 ## Adoption modes

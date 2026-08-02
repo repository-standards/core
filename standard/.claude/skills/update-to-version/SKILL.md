@@ -81,5 +81,5 @@ the result with `self-verify`.
 If the update hit friction - a delta entry that could not be applied as written, a
 deviation the new version silently collides with, a question the changelog should
 have answered - **offer** the user (per item, never automatically) to file it as an
-`adoption-friction` issue on `bodurkalukasz/repository-standards`, or a PR when the
+`adoption-friction` issue on `repository-standards/core`, or a PR when the
 fix is a concrete doc change. The standard absorbs what its updates teach.

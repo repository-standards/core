@@ -23,7 +23,7 @@ English commits is a first-class setup, not a workaround.
 Pick once, record it in `AGENTS.md`, and keep it consistent within an artifact type.
 The reasoning behind the default, the cases where your own language wins, and how to draw
 the boundary when a repo carries more than one: the standard's
-[working-language guide](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/working-language.md).
+[working-language guide](https://github.com/repository-standards/core/blob/main/docs/method/working-language.md).
 
 ### Commits and PRs
 
@@ -61,7 +61,7 @@ buildable, each one revertable. Four rules get you there:
 Turn on the platform's linear-history protection so the rule is enforced, not
 remembered, and set the merge button to the method this repo recorded. Why this
 shape, what it costs, and when squash or a merge commit is the better pick:
-[ADR-026](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/decision-records/ADR-026-rebase-merge-onto-a-linear-main.md),
+[ADR-026](https://github.com/repository-standards/core/blob/main/docs/decision-records/ADR-026-rebase-merge-onto-a-linear-main.md),
 adopted by reference from the living standard - always latest.
 
 ### Database schema (R24)
@@ -84,7 +84,7 @@ one pair:
   reviewed `.sql` file and hand it to a human (R19).
 
 Why two copies rather than one generated source:
-[ADR-027](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/decision-records/ADR-027-the-database-schema-lives-in-the-repo-with-a-typed-twin.md),
+[ADR-027](https://github.com/repository-standards/core/blob/main/docs/decision-records/ADR-027-the-database-schema-lives-in-the-repo-with-a-typed-twin.md),
 adopted by reference from the living standard - always latest.
 
 ### Writing
@@ -103,7 +103,7 @@ adopted by reference from the living standard - always latest.
 repo lives in the repo, at its taxonomy home: conventions here / `AGENTS.md`,
 contribution mechanics in `CONTRIBUTING`, behavior in specs, decisions in records
 (the process itself is the standard's
-[ways of working](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/ways-of-working.md),
+[ways of working](https://github.com/repository-standards/core/blob/main/docs/method/ways-of-working.md),
 adopted by reference from the living standard - always latest). Personal memory, `~/.claude`-style global configs, and chat may
 *point* at repo rules - they must never *hold* them. A rule that exists only outside
 the repo is treated as **missing**; finding one is a defect, fixed by landing the rule

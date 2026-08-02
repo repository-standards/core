@@ -33,8 +33,11 @@ gave the shape.
 
 Option **C**. Concretely:
 
-1. One repo per technology, named `repository-standards-<technology>`; first:
-   [repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node).
+1. One repo per technology in the `repository-standards` organization, named for the
+   technology alone; first: [repository-standards/node](https://github.com/repository-standards/node).
+   (This shipped as a standalone `repository-standards-<technology>` while the repos
+   still lived under a personal account; the org holds the family now, so the prefix
+   moved out of the name and into the namespace.)
    Inside it: `DECISIONS.md`, the runnable `starter/`, its own CI, and
    `stack.manifest.json` - the stack contract and manifest.
 2. **The registry is the officialdom** (`stacks.json` in this repo): the align
@@ -69,7 +72,7 @@ work, noted here so it is not mistaken for done.
 
 - Positive: the core repo is technology-silent (R20 reworded); stack releases
   never touch the standard's version; the starter gets real CI; a new technology
-  is one new repo plus one registry line; `repository-standards-node` becomes the
+  is one new repo plus one registry line; `repository-standards/node` becomes the
   standard's first genuinely aligned adopter once it pins `.standards-version`.
 - Negative: two repos to maintain (different kinds of care - that is the point);
   cross-repo links replace relative ones; the registry is one more file whose

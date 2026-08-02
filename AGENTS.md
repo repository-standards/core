@@ -28,7 +28,7 @@ the pristine tree, not by this repo scoring itself against a recorded state it d
 backlog, personas and guards - not the adopter-side alignment record.
 
 There is no third zone: the tree IS the shipped form - `npx degit
-bodurkalukasz/repository-standards/standard` hands a client exactly what you see.
+repository-standards/core/standard` hands a client exactly what you see.
 This repo's own decisions live in [`decision-records/`](docs/decision-records/README.md);
 clients get them by reference (ADR-004), never as copies.
 

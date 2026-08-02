@@ -21,7 +21,7 @@ body:
     id: seed
     attributes:
       label: Seed material
-      description: If the align run generated a researched docs/stack-decisions.md, paste it (or its summary table) here - it is the seed a real repository-standards-<technology> grows from.
+      description: If the align run generated a researched docs/stack-decisions.md, paste it (or its summary table) here - it is the seed a real stack repo in the repository-standards organization grows from.
   - type: textarea
     id: context
     attributes:

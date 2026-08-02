@@ -1,6 +1,6 @@
 {
   "$about": "This repo's site, in the ecosystem's shared form (tools/docsite.mjs). Any repo can carry this file and run the core's generator against its own markdown - one form, many sites, zero copied generators. Omitted fields fall back to the core's defaults.",
   "brand": "repository-standards",
-  "repo_url": "https://github.com/bodurkalukasz/repository-standards",
-  "node_stack_url": "https://github.com/bodurkalukasz/repository-standards-node"
+  "repo_url": "https://github.com/repository-standards/core",
+  "node_stack_url": "https://github.com/repository-standards/node"
 }

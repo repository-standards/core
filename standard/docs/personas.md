@@ -85,7 +85,7 @@ like once it is yours:
 ## Keeping them honest
 
 - **Reviewed at the PO stage** of every capability (see the standard's
-  [ways of working](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/ways-of-working.md),
+  [ways of working](https://github.com/repository-standards/core/blob/main/docs/method/ways-of-working.md),
   adopted by reference from the living standard - always latest) - the spec
   states the persona and how it serves them.
 - **Referenced in the backlog** - an item names the persona whose job it advances.

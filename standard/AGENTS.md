@@ -31,7 +31,7 @@ and the rationale behind every stack entry lives in that stack repo's DECISIONS.
 The rules it is measured against are the numbered rules in [`SPEC.md`](SPEC.md) -
 where this file cites R11 or R24, that is what it means.
 [`standard.manifest.json`](standard.manifest.json) is their machine-readable
-projection and [`self-verify.md` (by reference)](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/self-verify.md) is how they are checked.
+projection and [`self-verify.md` (by reference)](https://github.com/repository-standards/core/blob/main/docs/method/self-verify.md) is how they are checked.
 
 ## First 30 minutes (a freshly adopted repo)
 
@@ -71,7 +71,7 @@ that already has this tree follows the list.
 Common commands (install, dev, build, test, checks).
 
 Before any of it, the toolchain the shipped guards need must be present -
-[`prerequisites.md` (by reference)](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/prerequisites.md). Node and `jq` are not optional: without
+[`prerequisites.md` (by reference)](https://github.com/repository-standards/core/blob/main/docs/method/prerequisites.md). Node and `jq` are not optional: without
 `jq` the `PreToolUse` guards deny every Bash command rather than pass it unchecked.
 
 ## Conventions
@@ -128,7 +128,7 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
   closes spec == code == tests and checks the specs still agree with each other.
   Work items come from and return to [`docs/backlog.md`](docs/backlog.md). Roles and
   hand-offs (PO -> dev -> AI): the standard's
-  [ways of working](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/ways-of-working.md),
+  [ways of working](https://github.com/repository-standards/core/blob/main/docs/method/ways-of-working.md),
   adopted by reference from the living standard - always latest.
 - **Bring this repo up to the standard (brownfield)** - alignment + onboarding: derive
   capabilities from the code, seed specs + the decisions the code implies, and put the
@@ -137,7 +137,7 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
 - **Stay current with the standard** - this repo is pinned to a version in
   `.standards-version`. `update-to-version` applies the delta to a newer version (not a
   re-scaffold), then `self-verify` proves it complies: `node scripts/self-verify.mjs`
-  (see [`self-verify.md` (by reference)](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/self-verify.md)). The self-verify gate runs in CI.
+  (see [`self-verify.md` (by reference)](https://github.com/repository-standards/core/blob/main/docs/method/self-verify.md)). The self-verify gate runs in CI.
 
 ## The loop runs itself (unprompted)
 
