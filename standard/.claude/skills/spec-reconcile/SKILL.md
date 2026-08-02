@@ -1,6 +1,6 @@
 ---
 name: spec-reconcile
-description: After implementing, reconcile the capability specs against the code and tests - detect and resolve drift so the merged spec is the truth. No silent divergence.
+description: Use when a change is finished, before opening the pull request - "I think that's done". Makes the spec, the code and the tests agree, resolves any drift rather than merging around it, and deletes the plan and task scaffolding the work no longer needs.
 ---
 
 # spec-reconcile

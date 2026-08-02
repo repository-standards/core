@@ -73,12 +73,45 @@ guards are green - not when every file has a paragraph.
 
 ## Steps
 
-1. **Reconstruct the personas -> Gate 1.** Right after the assessment, before any spec
-   is seeded: infer **3-6 real user types from the code's evidence** - auth roles, UI
-   surfaces, API consumers - and **confirm them with the user**. Write
-   `docs/personas.md` with the **primary** marked, and record the target-personas
-   **BDR**. **No spec is written before this exists** (ADR-006): every spec seeded
-   below names the persona(s) it serves.
+1. **Reconstruct the personas -> Gate 1.** Right after the assessment, before any spec is
+   seeded.
+
+   **The code gives you roles, not personas.** Auth roles, UI surfaces and API consumers
+   tell you there is an `admin`, a `member` and something calling the public API. They
+   cannot tell you who that person is, what they are trying to get done, what they are
+   afraid of losing, or which of them wins when two of them want opposite things - and
+   that last one is what every later spec argument turns on.
+
+   So use the code for the **candidate list** and then **interview the user**, the same
+   way the greenfield phase does - this phase is not exempt just because a codebase
+   exists:
+   - Play back what the code shows: "I can see three kinds of caller - the back-office
+     login, a public booking surface, and an API key used by one integration. Is that the
+     real shape, or is something missing because it never got built?"
+   - Then ask what the code cannot answer, one persona at a time: who is this actually, in
+     a sentence? What are they trying to get done? What goes wrong for them today? What
+     must they never lose? What do they explicitly *not* need - so nobody gold-plates for
+     them?
+   - **Show one filled example so they know what a good answer looks like** - the worked
+     example in `docs/personas.md` is there for this - and say plainly that it is from a
+     different product. Almost nobody's roster maps onto someone else's, and offering the
+     example as a menu produces a roster that reads well and describes nobody. The example
+     is calibration: this much detail, this concrete, in the user's own words. If they
+     start agreeing with the example rather than describing their own users, stop and
+     re-ask - a borrowed persona passes the gate and then quietly decides specs for years.
+   - Ask which one **wins ties**, and say why it matters: that is the persona a spec cites
+     when two demands conflict, so it is a product decision, not a formality.
+   - Roles the code shows but nobody uses, and users the business has but the code never
+     modelled, both surface here. Both are findings worth reporting.
+
+   Write `docs/personas.md` with the **primary** marked, and record the target-personas
+   **BDR**. **No spec is written before this exists** (ADR-006): every spec seeded below
+   names the persona(s) it serves.
+
+   If the user cannot answer yet - the person who knows is on holiday, the business has
+   never written it down - say so and continue: seed the roster with the roles the code
+   proves, mark it explicitly as inferred and unconfirmed, and put the interview in the
+   backlog. An unconfirmed roster is a known gap; a missing one stops every spec.
 
 2. **Map the code into capabilities -> Gate 4 (opens here).** Read entry points,
    modules, routes, jobs, domain folders, tests. Group them into candidate
@@ -87,6 +120,13 @@ guards are green - not when every file has a paragraph.
    `pricing`) is **one** capability. Write the result to `specs/capability-map.json`
    (capability -> code globs). This is `spec-impact` run in reverse: code first,
    capability out.
+
+   **Play the list back before writing the file.** This map is what the coupling guard
+   binds to on every future pull request, so a boundary drawn wrong is friction the repo
+   lives with for years - and the person who inherited this codebase knows things the code
+   does not show. Show the candidates and ask the three questions that actually correct a
+   map: which two of these are really one thing, what is missing, and which name would your
+   team not recognise? Write `specs/capability-map.json` after their answer, not before it.
 
 3. **Rank by risk x opacity -> feeds Gates 4 and 5.** Order the capabilities: money,
    security, external contracts, and data integrity first; then most-churned (git
@@ -97,7 +137,25 @@ guards are green - not when every file has a paragraph.
    The code embodies decisions: this datastore, this framework, this auth model, this
    money handling, no DI container. Enumerate only the **contestable, re-litigable**
    ones (the ADR test - a decision someone will argue about again), and draft them as
-   **retroactive ADRs** (`Status: Accepted`, note "recorded retroactively"). A rule
+   **retroactive ADRs** (`Status: Accepted`, note "recorded retroactively").
+
+   **If intake produced existing material, file it first and read it here.** Anything
+   the user handed over - a Confluence page, an `rfcs/` folder, a decision buried in a
+   ticket - goes into `docs/discovery/<topic>/` with its provenance before this step
+   runs, and is then read as **a claim about the code, never as the record itself**.
+   Three outcomes, and the third is the valuable one:
+   - it **agrees** with the code -> the retroactive ADR is faster and better: it can
+     carry the real context and the options that were actually weighed, which code
+     alone never yields. Cite the source in the record.
+   - it is **silent** -> reconstruct from the code as usual.
+   - it **disagrees** with the code -> the code wins, because the code is what runs.
+     Record what the code does, and note the divergence in the ADR's context with a
+     pointer to the dossier entry. Then surface it to the user: a written decision the
+     system stopped honouring is exactly the drift this standard exists to make
+     visible, and it is often the most valuable thing the whole assessment finds. Do
+     not quietly pick one and move on.
+
+   A rule
    with one obviously-right answer is a convention, not an ADR. A baked-in *business*
    rule that is really a business decision is a **BDR**. Do **not** write one ADR per
    dependency.
@@ -132,6 +190,34 @@ guards are green - not when every file has a paragraph.
    backlog format), and a definition of done. Close with the **count** ("N tasks to
    full alignment"). This backlog is the deliverable that makes onboarding
    *continuable* by anyone.
+
+   **Hand the number over with its antidote, in the same breath.** A list of two dozen
+   documents is the point at which a user quietly decides this was a mistake - not because
+   the work is unreasonable, but because it arrives all at once and looks like homework.
+   Say the four things that make it tractable, out loud:
+   - **One at a time, in the order given.** The list is already sorted by risk x leverage;
+     the top item is the only one that matters today.
+   - **Every item says how it gets done, not just what is missing.** "Record the datastore
+     decision" leaves someone in front of an empty file; "record the datastore decision -
+     say what you remember and the agent drafts the record from that plus what the code
+     already shows, then you correct it" is a task someone can start. Name the skill or the
+     step that carries each item, in the row.
+   - **You are not writing these alone, and not by hand.** Each item runs through the same
+     loop as everything else: the agent drafts from the code and whatever landed in
+     `docs/discovery/`, asks only what it genuinely cannot infer, you correct, and the
+     guards check the result. Authoring from scratch is never the job; correcting a draft
+     is. Nothing here expects the user to learn the templates.
+   - **The material is often already there.** Whatever intake collected into
+     `docs/discovery/`, plus the code itself, is the first draft of most of these - a
+     retroactive decision record usually starts as something the repo already told us.
+   - **There is no deadline and no penalty for stopping.** The repo is better after each
+     item than before it; the count going down is the whole progress bar. Coming back in
+     three weeks costs nothing, because align resumes from measurement, not memory - and
+     coming back in six months to ask "where do we stand now?" is a supported request, not
+     an admission of having fallen behind.
+
+   If the list is long enough to look daunting, say so first and offer to walk just the
+   top item now - a user who finishes one leaves believing the rest is possible.
 
 8. **Wire the guards forward -> Gate 6.** Ensure the coupling map
    (`specs/capability-map.json`) and the guards (`spec-guard`, `spec-structure`,

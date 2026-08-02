@@ -1,6 +1,6 @@
 ---
 name: spec-implement
-description: Execute the tasks for the current feature, in order, with tests (based on github/spec-kit v0.13.2, MIT - scripts/spec/LICENSE)
+description: Use when the tasks exist and it is time to build - "go ahead", "start on it", "implement this". Executes them in order, tests before the code they cover, one phase at a time.
 ---
 
 <!-- Based on github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED hunks are marked inline. -->

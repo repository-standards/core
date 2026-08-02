@@ -134,7 +134,24 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
 
 ## The loop runs itself (unprompted)
 
-Do not wait to be asked. The standard's loop is **AI-led** (ADR-010; the clarify gate):
+Do not wait to be asked. The standard's loop is **AI-led** (ADR-010; the clarify gate).
+
+**The first rule of working here: check whether a skill owns the request before you act on
+it, and check again when the work is done.** The skills in [`.claude/skills/`](.claude/skills/)
+are how this repo does things, not a menu of shortcuts for people who remember the names.
+Each one's description says which situation it is for. Three layers make this hold, and only
+the last is certain - so do not rely on it:
+
+1. **A skill fires on its own** when what you were asked matches its description. This is
+   the normal path and it needs nothing from the user.
+2. **This file and `CLAUDE.md` tell you to look.** That covers what the descriptions miss.
+3. **The guards catch the outcome regardless.** The coupling guard blocks a pull request
+   where a capability's code moved without its spec, whether or not any skill ran. Reaching
+   that point means doing the work twice, under review pressure, at the worst moment.
+
+A user should never have to say "remember to use the skills". If that becomes necessary,
+the skill's description is wrong and fixing it is the bug - not instructing the user to
+carry a password.
 
 - **The user describes a feature, story, or behavior change** -> start the loop yourself:
   ask the clarify questions, record answers in the spec's `## Clarifications`. A deferral
@@ -156,6 +173,11 @@ Do not wait to be asked. The standard's loop is **AI-led** (ADR-010; the clarify
   propose it? Either way you propose and guide - hand-holding is the product.
 - **Work surfaces that is not this change** -> run `add-to-backlog` rather than doing it now
   or losing it: one row with its source, the role that must act, and what done looks like.
+- **A team is picking work up, or putting it down** *(scale)* -> `cycle-open` moves the
+  chosen intents out of the pool and into a cycle with a goal and an agreed date;
+  `cycle-close` checks each against its definition of done, returns what did not finish, and
+  records the one measurement that cannot be recovered later. An intent lives in the pool or
+  in exactly one cycle, and `cycle-guard` fails when that stops being true.
 - **The branch is ready for a pull request** -> run `pre-pr-review` yourself, before pushing.
   Local checks, then read the diff as if someone else wrote it, then fix what it finds. A
   review that happens after the push is a review of something already published.

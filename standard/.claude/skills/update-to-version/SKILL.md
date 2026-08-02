@@ -1,6 +1,6 @@
 ---
 name: update-to-version
-description: Update a repo that already follows repository-standards from its current pinned version to a target version - read the delta between the two versions, apply just that (adapted to this repo, preserving local deviations), bump .standards-version, then self-verify. Not a re-scaffold.
+description: Use when someone wants to move to a newer version of the standard - "update me to the latest", "bump the standard", "what changed since we adopted?". Applies only the delta between the pinned version and the target, adapted to this repo and preserving its recorded deviations. A dependency bump, never a re-scaffold.
 ---
 
 # update-to-version

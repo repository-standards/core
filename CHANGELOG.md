@@ -20,6 +20,267 @@ The simplification wave - the standard put on one page, in one tree, with one
 engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
 align engine, Layer 2 and the product spine.
 
+### The timeline states its evidence, or gives no date (2026-08-02)
+
+- **`/timeline-update` answers "when will this land" from what the repo already holds** -
+  every closed cycle's outcome block, regenerated whole into `docs/cycles/TIMELINE.md`
+  rather than appended to, because it describes the present and git holds what it said last
+  week.
+- **Below three closed cycles it refuses to project, and says why.** Three is not a magic
+  number and the file says so: it is the point below which one unusual cycle dominates the
+  average. A projection presented without its confidence is what teaches people to distrust
+  plans - and once they do, they stop reading the timeline and start asking in meetings,
+  which is the state this was built to replace.
+- **It reports the spread, not just the mean.** Three cycles at 0.4, 0.4 and 0.5 support a
+  date; 0.2, 0.4 and 1.1 do not, and averaging the second set to "roughly 0.55" is the
+  dishonest part. Wide spread gives a range, and says the spread is wide.
+- **Unplanned work counts toward throughput.** A team that finished four planned intents
+  while absorbing three emergencies did not move at four items' pace, and a projection built
+  on the planned number alone reads them as permanently slower than they are - which is how
+  a measurement becomes a grievance.
+- **A cycle past its target and still open is named with the overrun, never softened** - and
+  never called a failure, because the date is agreed and movable by design. A timeline that
+  hides a slipping cycle is worse than no timeline.
+- **It refuses to project from open cycles at all.** A cycle in flight has no throughput;
+  using its planned count as if it were finished is exactly how a timeline becomes a wish.
+- Six new acceptance criteria carry all of it, so the refusals cannot quietly become
+  estimates later.
+
+### Opening and closing a cycle become procedures, not discipline (2026-08-02)
+
+- **`/cycle-open` moves rows, it does not copy them.** Each chosen intent is cut from the
+  pool and pasted into the cycle unchanged. Copying is the one mistake this skill can make
+  and it is exactly what the guard exists to catch, so the skill ends by running it.
+- **It proposes rather than asks.** The intents come from the pool's existing risk x leverage
+  order, offered for correction; the goal is pushed back on once if it restates the item list,
+  because a cycle whose goal is its own contents tells the timeline nothing; and where past
+  cycles give evidence, the target date is proposed from them with the source named.
+- **`/cycle-close` cannot rubber-stamp.** It checks each intent against its own definition of
+  done and reports per item: met, not met, or **cannot tell from here** with what would settle
+  it. A close that waves items through teaches everyone the DoD column is decoration, which
+  makes every later measurement worthless.
+- **Unfinished work returns to its position, not to the bottom** - appending quietly demotes
+  work that was important enough to commit to.
+- **It asks the one question the data cannot answer**: did anything get done that was never in
+  the cycle? A cycle that "missed" three items while absorbing two emergencies did not
+  underdeliver, and a timeline built without that reads the team as slower than it is.
+- **The pool gained an "In flight" section** - one line per active cycle, no rows duplicated,
+  so the backlog stays the single place to start reading. The guard is tested against the real
+  shipped backlog template, so a cycle row can never be mistaken for an intent.
+- **The skill count moved from 12 to 14, and four prose restatements failed immediately.**
+  That is the derived-facts check doing precisely the job it was built for - the count is
+  declared once and every restatement is verified, so a number that grew could not quietly
+  disagree with three documents. `shipped-skills` records that this is the third growth, and
+  that the third is the one that should settle whether the ceiling is real.
+
+### The cycle artifact ships, and its invariant is checked rather than asked for (2026-08-02)
+
+- **`docs/cycles/<team>/<slug>.md` ships** *(scale only)* - a bounded period of work with an
+  owner, a goal, an agreed end date and the intents pulled into it. Several run in parallel,
+  one directory per team. A `core` repo never meets any of it.
+- **The one rule is mechanical now**: an intent is in `docs/backlog.md` **or** in exactly one
+  cycle. Never both, never two - including across two teams, because two teams believing they
+  own the same intent is the failure worth catching early.
+  `scripts/cycle-guard.mjs` proves it and reports every violation rather than the first.
+- **The spec came before the code**, which is what ADR-028 said would happen and the only
+  honest way to find out whether the loop works on its own features. `specs/work-cycles/` is
+  buildable-tier, mapped in `capability-map.json`, and its acceptance criteria are what the
+  test suite implements.
+- **Ten test cases, and the template case is the one worth naming**: the shipped
+  `_template.md` carries example rows, and a guard that read them would make the tree violate
+  its own invariant the moment it landed in a repo whose backlog uses the same ids. The
+  examples live inside an HTML comment for exactly that reason, and the test drives the real
+  template file rather than a copy of it.
+- **The test found a bug in itself first.** The advisory case asserted output that never
+  arrived, because violations go to stderr while an advisory run still exits 0 - and a
+  success-only capture loses precisely the output being asserted. Recorded in the file, since
+  the next person writing a guard test will hit it.
+- The guard skips itself where there is no `docs/cycles/`, so it is silent in every repo not
+  using cycles - the same shape as the schema-pair and facts checks.
+
+### The authoring-skills fork is written up, not decided (2026-08-02)
+
+- **Four options weighed, one recommended, the decision left open.** Whether decisions, the
+  product frame and the persona roster get one routing skill each or one per document type
+  is a call against this project's own ceiling - eight to ten shipped skills, twelve already
+  shipping - and it is not a call to make while implementing.
+- **The argument for splitting is real and stated plainly**: an ADR wants forces, options
+  weighed and what would reopen it; a BDR wants who it serves, what it costs and how we would
+  know we were wrong; a product frame wants the observable outcome and the non-goals nobody
+  volunteers; a roster wants jobs, pains and who wins ties. One set of prompts for all four
+  produces a BDR that reads like an ADR with the wrong nouns.
+- **The argument against is the same one this project keeps losing to** - the family grew
+  past its ceiling one useful skill at a time, and this proposes doing it again. Written
+  down so it is done deliberately or not at all.
+- **What would settle it is testable before committing**: whether a routing description can
+  fire on both "we picked Postgres over Mongo yesterday" and "we decided to charge per seat".
+  If it cannot, per-type skills buy something real and the ceiling is the wrong constraint.
+- Putting the elicitation in the templates instead was considered and rejected on evidence,
+  not preference: the templates already carry good prompts, and the flow audit still found
+  the wizard asking cold - a template cannot ask a question, and cannot notice a user
+  agreeing with the worked example instead of describing their own product.
+
+### The shipped tree stops citing a document it does not ship (2026-08-02)
+
+- **`docs/research/README.md` told adopters "the case-studies rules apply"** - and
+  `case-studies/` exists only in this project's own zone, never in the tree. The one rule
+  that mattered was already in the same sentence, so the reference bought nothing and cost
+  a reader looking for a document they do not have. The anonymization rule now stands on
+  its own, with the example that makes it concrete.
+- A sweep for the same failure across the whole shipped tree - every mention of
+  `case-studies`, `open-questions`, `positioning`, `manifesto`, `ecosystem`, `tools/`,
+  `site/` - returned **exactly this one hit**. The zone discipline holds everywhere else,
+  which is worth recording: the boundary this repo draws between what it keeps and what it
+  ships is real, not aspirational.
+
+### The skills say when to reach for them, not what they are (2026-08-02)
+
+- **A skill's description is the only text a model matches a request against, and every one
+  of them was written as a definition.** `spec-specify` - the entry to the whole loop - said
+  "Create or update a capability spec from a natural-language description". A user types "we
+  need refunds"; nothing in that sentence meets that description, so the most important skill
+  in the standard was the least likely to fire. They now open with the situation, in the
+  words someone would actually use.
+- **Five descriptions carried the spec-kit licence line**, spending fifty characters of the
+  matching surface on text no user will ever say. MIT compliance rests on
+  `scripts/spec/LICENSE` and the per-file provenance notes, exactly as the extraction record
+  states - never on a frontmatter field the model reads to pick a tool. The notes stay where
+  they belong, in the file body.
+- **`CLAUDE.md` stopped being a six-line router.** It is the file loaded first, so the
+  instruction to check whether a skill owns the request now lives there - in context from the
+  first turn, rather than one hop away in a file that may never be opened.
+- **The entry file states the three layers plainly, and which of them is certain.** A skill
+  fires on its own when the description matches; this file and `CLAUDE.md` cover what the
+  descriptions miss; the coupling guard catches the outcome regardless. Only the third is
+  deterministic - and reaching it means doing the work twice, under review pressure.
+- **Written into the record so it cannot quietly regress**: a user should never have to say
+  "remember to use the skills". If that becomes necessary, the description is the bug. The
+  spec now requires descriptions to match the request rather than name the artifact, with an
+  acceptance criterion that uses a real user sentence.
+
+### The wizard asks, confirms and suggests - instead of instructing (2026-08-02)
+
+An audit walked the adoption flow three times as three different people and marked every
+step ASK / CONFIRM / SUGGEST / INSTRUCT / ASSUME. It found eleven silent decisions, eight
+questions asked with no candidates to react to, and six places a user without something
+would reasonably conclude they could not continue.
+
+- **The flow demanded a gate it had already declared unreachable.** One step said "drift 0.
+  Do not open the PR on a red self-verify"; seventy lines later, "for a brownfield repo one
+  PR never reaches drift 0 - and it should not try". A literal agent either never opens the
+  pull request or sweeps every required artifact into one to force the number down, which is
+  exactly the unreviewable big-bang the brownfield phase forbids. Greenfield now requires
+  drift 0; brownfield closes wave one red by design, states the number, and opens the PR.
+- **The step whose blast radius is other people now asks first.** The shipped workflows are
+  live on merge, so until alignment finishes, colleagues' unrelated pull requests go red on
+  a change they did not make - which is how an adoption gets reverted and never retried. The
+  tree said so; the step that lands them did not. It now offers the three real options and
+  never lands them silently. Prerequisites are checked before the guards rather than after,
+  because without `jq` the guards deny every command by design and nothing connected that
+  symptom to this step.
+- **Intake stopped promising a stack before looking one up** - it said "I'll offer the
+  <technology> best practices from the registry" and then, for anything but Node, quietly
+  became something else three steps later. It now looks up first and says the true thing
+  either way. Greenfield gained the branch it never had: no registry entry means no starter
+  and no composition rule, not a step whose central instruction cannot run.
+- **Intake asks what it never asked: where else this project already writes things down.**
+  A tracker, a wiki, an `rfcs/` folder, decisions buried in tickets - suggested rather than
+  asked open, because nobody recalls their own documentation on demand, and paired with the
+  question that decides whether any of it is usable: can you reach it, and may it be quoted?
+  What arrives lands in `docs/discovery/` with provenance and is read as **a claim about the
+  code**. Where it disagrees with the code the code wins and the divergence is reported - a
+  written decision the system stopped honouring is usually the most valuable finding of the
+  whole assessment.
+- **And it asks where work is tracked** - in the repo, in a tracker, or both bridged -
+  detecting first from ticket keys in the commit log rather than asking cold. The intents
+  list is not the question; where execution lives is, and it was being decided silently.
+- **Brownfield interviews for personas instead of asking for a nod.** Code yields *roles*:
+  an admin, a member, an API caller. It cannot yield who that person is, what they are
+  afraid of losing, or which one wins when two of them want opposite things - and that last
+  one is what every later spec argument turns on. The code now supplies the candidate list
+  and the user is interviewed, the same way greenfield does it. The worked example is
+  offered as calibration for how concrete an answer should be, with a warning: a borrowed
+  persona passes the gate and then decides specs for years.
+- **Greenfield proposes a roster rather than asking cold**, since the product frame from the
+  previous step is enough to draft one, and people correct a wrong list far better than they
+  generate a right one. `provisional` is a complete answer with a backlog item attached.
+- **The capability map is played back before it is written.** It is what the coupling guard
+  binds to on every future pull request, so a boundary drawn wrong is friction the repo lives
+  with for years - and it was the one major inference with no confirmation step, two
+  paragraphs after one that had it.
+- **The behavioral tier stops reading as an accusation.** "Never to save effort" is aimed at
+  a developer skipping contracts on a money path; a product person who cannot name endpoints
+  for software that does not exist was reading it as being about them, and stopping. That is
+  now said explicitly.
+- **The counted backlog is handed over with its antidote in the same breath.** Two dozen
+  documents delivered at once is the moment a user decides this was a mistake. Each item now
+  names how it gets done rather than only what is missing, nothing is authored from scratch -
+  the agent drafts from the code and discovery and the user corrects - and stopping carries
+  no penalty.
+- **Coming back is a first-class intent, not an admission.** A repo drifts without the
+  standard moving at all, and a pinned repo asking "review how we are doing" was being routed
+  to a version bump, which answers a different question. It now gets the assessment. This is
+  the difference between a standard and a scaffold, and `PRODUCT.md` says so: you do not
+  adopt this once.
+- **The authentication method left the do-not-ask list.** It was there as a "reasonable
+  default" while the decision checklist calls the auth model an ADR-grade fork whose reason
+  is "retro-fitting authz is a security minefield". It was the one item on that list with
+  security consequences.
+- **Two jargon terms got glossed inside the questions that use them** - `pin` and `waves`
+  were both in intake options a user must choose between, and both were defined a hundred
+  lines later or not at all.
+
+### The gate list gets one home, and the docs hub finds its own facts file (2026-08-02)
+
+- **The pull-request template was the fourth copy of the gate list, and already wrong** - it
+  named nine commands and omitted `spec-guard --base ... --block`, which is the one that
+  catches a capability's code moving without its spec. Two of the other three copies were
+  consolidated earlier today and this one was missed, which is the whole argument: four
+  places restating one list, all four drifted, in a repo whose R4 says a fact has one home.
+  The checkbox now points at `AGENTS.md` and says why it stopped listing them.
+- **`docs/README.md` described nine of the ten things in its folder** - the missing one was
+  `facts.json`, the file that declares which facts are not allowed to drift.
+
+### Work cycles get a decision, not an implementation (2026-08-02)
+
+- **The repo could not answer "when will this land"** - the backlog holds intents ordered by
+  risk x leverage and nothing else. For one person that is enough; for several teams working
+  in parallel, three questions had no home: which items a team has picked up now, what the
+  period is *for*, and when it ends. ADR-028 designs the answer: a **cycle** is a
+  goal-bearing, dated grouping of backlog intents at `docs/cycles/<team>/`, several running
+  in parallel, ending when its owner says so rather than on a framework's clock.
+- **One intent is in the pool or in exactly one cycle, never both** - a backlog that also
+  lists what is already in flight is a backlog nobody believes. The property is mechanically
+  checkable, so it will be checked rather than asked for.
+- **It reopens something ADR-010 rejected, and says so** - that record explicitly turned down
+  "everything stays in the repo, including done-work history" on the grounds that git already
+  is the history. The narrowing rests on an argument ADR-010 did not have: **the grouping is
+  not recoverable afterwards.** Git can always count commits between two dates; it cannot
+  reconstruct that these seven intents were what a team believed it would finish, because the
+  pool mutates and the version of the backlog that made the plan is only reachable by knowing
+  which commit to read. An aggregate that cannot be recomputed is a measurement, not a
+  restatement - so one block per closed cycle is permanent, and per-item execution state
+  stays the tracker's exactly as before. ADR-010 is marked revised rather than superseded;
+  the rest of it stands.
+- **A projection states its own confidence or gives no date.** `/timeline-update` derives
+  throughput from closed cycles and refuses to project from too few of them. A number without
+  its evidence is what teaches people to distrust plans, and this repo would rather return
+  nothing.
+- **Scale only.** A solo repo never meets any of it - one person does not need to know which
+  of their hats is holding an item.
+- **The capability spec is deliberately not written here.** The idea is approved, so it
+  graduates into an ADR and backlog intents; the spec gets written by `/spec-specify` when the
+  first item is pulled. Hand-authoring it would bypass the loop this project sells, and using
+  the loop on the loop's own features is the only honest way to find out whether it works.
+- **The path changed from the first sketch** - `docs/teams/<team>/cycles/` lost to
+  `docs/cycles/<team>/` because every other folder under `docs/` is named for the kind of
+  thing inside it, and `teams/` would be the first to name an organizational unit and invite
+  everything else a team owns to move under it. Recorded with the reason, and open to reversal.
+- **The field test has a date and a reason for it** - the align router is the product's core
+  and the only major component with no gate at all. It gets run against three real
+  repositories shortly before the first tag: earlier measures a tree still moving, later ships
+  a tag nobody tested.
+
 ### The indexes stop misdescribing their own contents (2026-08-02)
 
 A repo whose job is keeping documents true to code had eight documents describing

@@ -1,6 +1,6 @@
 ---
 name: add-to-backlog
-description: Capture a work item into the repo's backlog in one step, well-formed and agent-first - when you spot work mid-flow that is out of scope for the current change, file it here instead of doing it now or losing it. Enforces the backlog's own rules (a real source, a definition of done, no duplicates).
+description: Use when work surfaces mid-change that does not belong to this change - "we should fix that too", "park it", "not now but do not lose it". Files one well-formed row with its source, the role that must act and what done looks like, ordered against what is already there, without interrupting what you were doing.
 ---
 
 # add-to-backlog

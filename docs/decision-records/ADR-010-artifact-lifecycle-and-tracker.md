@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Accepted (2026-07-22) |
+| **Status** | Accepted (2026-07-22), revised by [ADR-028](ADR-028-work-cycles-live-in-the-repo-and-bind-only-at-scale.md) |
 | **Date** | 2026-07-21 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | lifecycle, ideas, spec-kit, tracker, backlog |

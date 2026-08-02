@@ -1,6 +1,6 @@
 ---
 name: discovery-digest
-description: Ingest a meeting/mail/finding into the topic's discovery dossier - extract the essence with provenance, update the summary, flag contradictions, report spec-readiness (ADR-024)
+description: Use when someone hands over raw material rather than a request - meeting notes, a mail thread, a transcript, "here's what they said on the call", a half-decision nobody wrote down. Files it into the topic's dossier with its provenance, flags where it contradicts what is already recorded, and says whether the topic is ready to be specced. Never writes specs itself.
 ---
 
 The curator of `docs/discovery/` (ADR-024). This skill maintains dossiers; it

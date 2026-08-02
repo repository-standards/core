@@ -6,6 +6,21 @@
 > an agent can read, append and re-order it. Compatible with the [Backlog.md](https://github.com/MrLesk/Backlog.md)
 > tool if the team wants a CLI/board on top - do not build a custom backlog engine.
 
+## In flight *(scale - delete this section if you do not run cycles)*
+
+What left this pool and into which cycle. One line each, no rows duplicated: an intent is
+here **or** in a cycle, never both, and `scripts/cycle-guard.mjs` fails when that stops
+being true. This table is why the pool remains the single place to start reading.
+
+| Team | Goal | Target | Cycle | Items |
+|---|---|---|---|---|
+| | | | | |
+
+<!-- Filled, it reads like this - delete this block:
+
+| payments | checkout stops losing carts | 2026-08-29 | `cycles/payments/august.md` | 3 |
+-->
+
 ## You have this case - say this
 
 **Something surfaced mid-work and it is not this PR.** The most common case, and the

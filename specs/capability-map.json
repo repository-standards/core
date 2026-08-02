@@ -15,5 +15,10 @@
   "spec-engine": [
     "standard/scripts/spec/**",
     "standard/.claude/skills/spec-*/**"
+  ],
+  "work-cycles": [
+    "standard/scripts/cycle-guard.mjs",
+    "standard/docs/cycles/**",
+    "standard/.claude/skills/cycle-*/**"
   ]
 }

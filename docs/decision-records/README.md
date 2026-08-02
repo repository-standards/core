@@ -19,7 +19,7 @@ one settled.
 | [007](ADR-007-modernize-is-plan-then-refactor.md) | Modernize is plan-then-refactor | document the repo first, record each move, then refactor - never bump-and-fix | Accepted |
 | [008](ADR-008-standard-repo-three-zones.md) | Zones in this repo | repo-own life vs the standard's source; zone mechanics revised by ADR-014, stacks clause by ADR-016 | Accepted, revised by 014/016 |
 | [009](ADR-009-skills-lifecycle-vs-transition.md) | Transition skills never ship | lifecycle skills ship with the tree and stay; the transition router runs from this repo only | Accepted |
-| [010](ADR-010-artifact-lifecycle-and-tracker.md) | One artifact lifecycle + tracker | ideas -> records/specs (living) -> plan/tasks (ephemeral, cleaned at close); statuses with the clarify gate; GitHub Issues default, Jira/Linear adapters | Accepted |
+| [010](ADR-010-artifact-lifecycle-and-tracker.md) | One artifact lifecycle + tracker | ideas -> records/specs (living) -> plan/tasks (ephemeral, cleaned at close); statuses with the clarify gate; GitHub Issues default, Jira/Linear adapters | Accepted, revised by 028 |
 | [011](ADR-011-one-standard-two-profiles.md) | Core vs scale profiles | one repo, two verified profiles - core keeps knowledge alive (every repo), scale coordinates people (teams); declared per manifest entry | Accepted |
 | [012](ADR-012-in-repo-instructions-are-the-source-of-truth.md) | In-repo instructions are the source of truth | repo rules live at their taxonomy homes; personal memory/config may point, never hold | Accepted |
 | [013](ADR-013-spec-kit-is-an-engine-by-reference.md) | Spec Kit vendored as a pinned engine | superseded: the engine is extracted, not vendored | Superseded by 015 |
@@ -37,6 +37,7 @@ one settled.
 | [025](ADR-025-the-standard-is-living-latest-is-the-target.md) | The standard is living - latest is the only target | no version ranges or requirements anywhere, ever; every align/update targets latest; `.standards-version` is a bookmark of the last aligned state, never a constraint; references resolve at `main` deliberately | Accepted |
 | [026](ADR-026-rebase-merge-onto-a-linear-main.md) | Rebase-merge onto a linear `main` | branches update by rebase and never back-merge; every PR is based on the mainline; a PR lands as one readable unit - rebase-merge on the paved road, squash where per-commit hygiene is not held (R23) | Accepted |
 | [027](ADR-027-the-database-schema-lives-in-the-repo-with-a-typed-twin.md) | The database schema lives in the repo, with a typed twin | executable DDL under `database/schema/` rebuilds the database from a checkout; a typed definition in the stack's idiom is what every access path goes through; the two are a declared 1:1 pair that moves in one PR (R24) | Accepted |
+| [028](ADR-028-work-cycles-live-in-the-repo-and-bind-only-at-scale.md) | Work cycles live in the repo, and bind only at scale | a cycle is a goal-bearing, dated grouping of backlog intents at `docs/cycles/<team>/`; one intent is in the pool or in exactly one cycle, never both; `/cycle-close` writes one aggregate outcome because the grouping is not recoverable afterwards - narrowing ADR-010; scale only | Accepted |
 
 Add one row per record; the template ships in the tree
 (`standard/docs/decision-records/adr/_template.md`). Numbers are gapless and never

@@ -14,6 +14,7 @@ Maintainer machinery for the standard repo itself; a consuming repo gets `script
 | [spec-guard-test.mjs](spec-guard-test.mjs) | drives the coupling guard through cases that must fail - a guard nobody tests is a guard that quietly stops firing |
 | [schema-pair-test.mjs](schema-pair-test.mjs) | the same for the DDL/typed-twin pair check |
 | [facts-check-test.mjs](facts-check-test.mjs) | the same for the derived-facts check, including a surface reworded past its own declaration |
+| [cycle-guard-test.mjs](cycle-guard-test.mjs) | the same for the work-cycle guard - including that the shipped template's example rows never count as real ones |
 
 ## Why this shape, and how to use it
 

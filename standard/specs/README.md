@@ -121,7 +121,12 @@ docs - a property of the doc, never a reason to split the spec.
    coupling anchor that keeps the spec alive. The guard uses it to catch code that
    changes without its spec, so a capability spec with **no** map entry silently
    rots - a spec without a mapping fails the check.
-5. **A behavior change and its spec update land in the SAME PR (SD-6).** The coupling
+5. **An open question the change answered gets closed in the same PR (SD-7).** Specs
+   drift in both directions: a gap that stays marked open after the work resolved it is
+   as wrong as a missing one, and it teaches readers that the Open questions section is
+   decoration. `/spec-reconcile` flips them at close - if the answer turned out to be a
+   decision, it leaves as a record rather than a deleted line.
+6. **A behavior change and its spec update land in the SAME PR (SD-6).** The coupling
    guard is per-PR and has no bypass: a fix whose spec update rides in a separate PR
    makes the guard block the fix. "Update specs before implementing" is the principle;
    "in the same PR" is the operational corollary that keeps the guard green.
@@ -156,7 +161,11 @@ reconcile spec vs code vs tests **before** completion. No silent drift.
   (spec-specify, spec-clarify, spec-impact, spec-update, spec-plan, spec-tasks,
   spec-implement, spec-reconcile)
 - Engine scripts + templates: [`../scripts/spec/`](../scripts/spec/)
-- Governance bridge: [`constitution.template.md`](constitution.template.md)
+- Governance bridge: [`constitution.template.md`](constitution.template.md) - **copy it to
+  `specs/constitution.md` to switch it on.** Five skills load `specs/constitution.md` when it
+  exists and the plan template writes a "Constitution Check" gate against it, so leaving the
+  template uncopied means that gate silently never fires - it looks armed and checks nothing.
+  Either instantiate it or accept that the check is off; both are fine, being unaware is not.
 - Enforcement (pre-commit + CI): [`enforcement.md`](enforcement.md) +
   [`../scripts/spec-guard.mjs`](../scripts/spec-guard.mjs)
 

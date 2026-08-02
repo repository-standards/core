@@ -3,8 +3,11 @@
 <!-- PDLC-4. The anti-silo home: interviews and studies die in external tools;
      insights belong where the personas and specs they should change live. -->
 
-One file per study from [`_template.md`](_template.md), anonymized hard (the
-case-studies rules apply: describe the kind of user, never the person or company).
+One file per study from [`_template.md`](_template.md), **anonymized hard**: describe the
+kind of user - "an operations lead at a mid-size logistics firm" - never the person, never
+the company, never a quote that identifies either by its details. If a finding cannot be
+written without identifying someone, it does not get written. Research earns its place here
+by being reusable years later; a study nobody can share is not.
 
 ## You have this case - say this
 

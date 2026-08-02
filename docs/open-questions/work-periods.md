@@ -1,8 +1,17 @@
 # What to call a bounded period of work - and whether to have one
 
-**Decided, provisionally:** `cycle`, as `docs/teams/<team>/cycles/<slug>.md` - a container
-with its own goal and an agreed end date, several active in parallel, one per team. A story
-moved into a cycle leaves the backlog pool and cannot sit in two cycles at once.
+**Decided, provisionally:** `cycle`, as `docs/cycles/<team>/<slug>.md` - a container with
+its own goal and an agreed end date, several active in parallel, one per team. An intent
+moved into a cycle leaves the backlog pool and cannot sit in two cycles at once. Settled in
+[ADR-028](../decision-records/ADR-028-work-cycles-live-in-the-repo-and-bind-only-at-scale.md).
+
+**The path was the other way round first.** `docs/teams/<team>/cycles/` reads more naturally
+if you think team-first, and it lost on one argument: every other folder under `docs/` is
+named for the kind of thing inside it - `runbooks/`, `journeys/`, `ideas/`, `research/`,
+`discovery/`. `teams/` would be the first that names an organizational unit instead, and it
+would immediately invite everything else a team has to live under it. The artifact kind
+stays the folder; the team is a partition inside it. Worth overturning if a second team
+turns out to need genuinely per-team configuration rather than just its own files.
 
 **The doubt:** the name is doing real work and none of the candidates is obviously right.
 

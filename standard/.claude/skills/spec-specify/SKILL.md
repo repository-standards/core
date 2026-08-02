@@ -1,6 +1,6 @@
 ---
 name: spec-specify
-description: Create or update a capability spec from a natural-language description; chains into the clarify loop (based on github/spec-kit v0.13.2, MIT - scripts/spec/LICENSE)
+description: Use when someone describes a feature, a behaviour, or something the product should do - "we need refunds", "users should be able to reset their password", "add a way to export bookings". Turns it into that capability's living spec and goes straight into the clarify questions. Reach for this before writing the code, not after it.
 ---
 
 <!-- Vendored from github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED(repository-standards) hunks are marked inline. -->
@@ -247,7 +247,11 @@ When creating this spec from a user prompt:
 - Data retention: Industry-standard practices for the domain
 - Performance targets: Standard web/mobile app expectations unless specified
 - Error handling: User-friendly messages with appropriate fallbacks
-- Authentication method: Standard session-based or OAuth2 for web apps
+<!-- PATCHED(repository-standards): the authentication method was on this list upstream. It is
+     one of the eight foundation forks that must be consciously decided and recorded (R7), and
+     the decision checklist's reason for it is "retro-fitting authz is a security minefield".
+     A default nobody chose, recorded nowhere, is the exact failure the standard exists to
+     stop - and it is the one item here with security consequences. It is now a question. -->
 - Integration patterns: Use project-appropriate patterns (REST/GraphQL for web services, function calls for libraries, CLI args for tools, etc.)
 
 ### Success metric, and where measurable targets go

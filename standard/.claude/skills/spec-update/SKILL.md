@@ -1,6 +1,6 @@
 ---
 name: spec-update
-description: Change the affected capability specs to the TARGET state (how it should work after this change) before implementing. On a branch, the spec = target; git diff = the change delta. Update every affected spec, not just the obvious one.
+description: Use when behaviour is about to change and the specs need to say how it will work afterwards, before the code moves. On a branch the spec is the target and the git diff is the delta. Updates every affected spec, not only the one that came to mind.
 ---
 
 # spec-update

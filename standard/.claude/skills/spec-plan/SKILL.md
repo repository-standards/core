@@ -1,6 +1,6 @@
 ---
 name: spec-plan
-description: Produce the implementation plan for a clarified spec; refuses a spec that fails the clarify gate (based on github/spec-kit v0.13.2, MIT - scripts/spec/LICENSE)
+description: Use when a spec is settled and the question becomes how to build it - "how would we do this?", "what is the approach?". Produces the implementation plan, and refuses a spec that still has open questions rather than planning around them.
 ---
 
 <!-- Based on github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED hunks are marked inline. -->

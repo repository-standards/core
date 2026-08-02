@@ -22,8 +22,12 @@ binds every repo, a solo one included.
 - **R1.** A repo MUST carry `AGENTS.md` at its root as the single entry point for
   agents and humans: what the project is, where each kind of knowledge lives, how
   work flows. It MUST state the altitude order - `PRINCIPLES -> ADR/BDR -> specs +
-  ARCHITECTURE -> conventions -> code` - which wins on conflict. `CLAUDE.md` SHOULD
-  exist as a thin pointer to it.
+  ARCHITECTURE -> conventions -> code` - which wins on conflict. Whatever file the
+  repo's agent loads **first**, before it is asked anything, MUST point here and MUST
+  carry the working rule: check whether a shipped skill covers the request before
+  acting on it, and again when the work closes. For Claude Code that file is
+  `CLAUDE.md`; another agent has its own. A rule that only exists one hop away is a
+  rule the agent reaches after it has already started.
 - **R2.** A repo MUST pin the standard's version in `.standards-version` and MUST
   carry its copy of `standard.manifest.json` at that version. It SHOULD carry the
   spec page (`SPEC.md`) the manifest projects, so the rules it is checked against

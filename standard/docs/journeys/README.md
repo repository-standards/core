@@ -38,7 +38,8 @@ quietly gets the other's experience.
 
 - **Stages -> capabilities.** Every stage lists the `specs/<capability>` entries that
   serve it. A new capability slots into a stage; a retired one leaves it - in the same
-  PR (the specs README coupling note points here).
+  PR, for the same reason the coupling guard exists: a journey that names a capability the
+  repo no longer has is worse than no journey, because it reads as current.
 - **Pains are backlog feeders:** a stage pain with no backlog item is either accepted
   (say so) or missing work.
 

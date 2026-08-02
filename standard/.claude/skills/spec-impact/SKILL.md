@@ -1,6 +1,6 @@
 ---
 name: spec-impact
-description: Given a change to how a capability works, find everything it ripples to - other capability specs, ADRs, and code - before planning. Prevents a change that updates only the obvious file.
+description: Use before changing how something already works - "what breaks if we change X?", "can we make bookings cancellable?". Finds everything the change ripples to across other capability specs, decision records and code, so the change does not land having updated only the obvious file.
 ---
 
 # spec-impact

@@ -20,20 +20,98 @@ Before any phase runs, one intake pass:
      settles which.
 2. **Ask the user - one short round:**
    - **Intent.** Start a new repo / bring an existing repo to the standard /
-     **assessment only** ("tell me where I stand and give me the plan") / update
-     the pin.
+     **assessment only** ("tell me where I stand and give me the plan") / **a check-up on a
+     repo already on the standard** ("we adopted a while back - review how we are doing") /
+     update the pin (your repo records which version of the standard it follows; this moves
+     it to a newer one).
+
+     The check-up is a first-class intent, not a variant of the update. A repo drifts
+     without the standard moving at all - specs stop matching code, decisions get made in
+     chat again, the backlog stops being true - and a user asking for that review is doing
+     the thing the product exists for. Never route them to a version bump instead.
    - **Technology.** Detect from the repo's own evidence first (`package.json`,
-     `pyproject.toml`, `go.mod`, `Cargo.toml`, `*.csproj`), then **confirm** with
-     the user; greenfield has no evidence - ask outright. The answer carries the
-     **Layer 2 consent up front**: "this repo is <technology> - I'll offer the
-     <technology> best practices from the registry alongside Layer 1; ok?"
+     `pyproject.toml`, `go.mod`, `Cargo.toml`, `*.csproj`), then **confirm** with the user.
+     Greenfield has no evidence, so ask - but never as a blank question: name what the
+     registry actually has, so the user's answer is informed rather than a guess that gets
+     silently downgraded three steps later.
+     **Look the technology up in `stacks.json` before making the offer**, and say the true
+     thing:
+     - a registered stack: "this repo is <technology> - the registry has a boot-verified
+       stack for it, so I'll offer those best practices alongside Layer 1; ok?"
+     - no entry: "this repo is <technology>, and the registry has no stack for it yet.
+       Layer 1 applies in full and is unaffected. For the technology layer I can research
+       one and write it into your repo as your own record instead, and offer to file a
+       stack request upstream. Ok?"
+
+     Promising "the <technology> best practices from the registry" before the lookup makes
+     a promise the registry cannot keep, and the user only finds out when the offer
+     quietly becomes something else.
      Consent is gathered here; the actual stack reconciliation runs later, at its
      phase-defined place (the technology step below).
-   - **Appetite.** One focused PR now, or a program of waves?
+   - **Appetite.** One focused pull request now - a single reviewable change carrying the
+     highest-payoff items only - or a programme of **waves**: several sessions over days or
+     weeks, each closing as its own small PR, until the repo is fully aligned? Say the cost
+     out loud; "waves" means coming back, and a user who expected one afternoon should hear
+     that now rather than in week three.
    - **Profile.** Core or scale (ADR-011)? Solo or small = core (knowledge stays
      alive, guards run locally); a team = scale (CI-enforced gates, tracker
      bridge). The answer is written into the manifest copy at step 5 - it is what
      `self-verify` and the CI gate read.
+   - **Where work is tracked.** The repo always keeps the **intents** - that is R15 and it
+     is not the question. The question is where **execution** lives, and it decides what
+     gets scaffolded, so it is asked rather than assumed:
+     - **In the repo.** `docs/backlog.md` is the whole system; at `scale`, work cycles and
+       a timeline on top of it (ADR-028). Nothing to buy, nothing to log into, and the
+       agent can read the plan the same way it reads the code.
+     - **In a tracker.** The team already lives in Jira, Linear or GitHub Issues. The repo
+       keeps a thin intents list and the tracker holds execution state, assignment and
+       history - the split ADR-010 describes.
+     - **Both, bridged.** Intents in the repo, mirrored out for the people who will never
+       open it. Honest cost: two places to keep in step, and the standard's own backlog
+       doc warns against exactly that unless the team genuinely already lives there.
+
+     **Detect before asking.** Ticket keys in the commit log (`ABC-123` in subjects), a
+     `.github/ISSUE_TEMPLATE/`, a tracker link in the README - any of these is evidence,
+     so play it back instead of asking cold: "your commits reference `PAY-###`, so you are
+     on a tracker already - keep execution there and hold only intents here?" A confirmed
+     inference costs the user one word; an open question costs them a paragraph.
+
+     There is no wrong answer and none of it is permanent - a repo that starts in-repo and
+     later adopts a tracker changes one thing, not its history.
+   - **Existing knowledge - where else does this project already write things down?**
+     Ask this **before** reconstructing anything, and **suggest rather than
+     interrogate** - people do not think of their own wiki when asked an open
+     question. Offer the list and let them point:
+     - a tracker with real discussion in it (Jira, Linear, GitHub Issues/Projects)
+     - a wiki or knowledge base (Confluence, Notion, Slab, Coda, an internal handbook)
+     - decisions already written *somewhere*, in some other shape - `DECISIONS.md`,
+       `rfcs/`, `adr/`, `design/`, a `docs/` folder nobody maintains, an old README
+     - contracts and diagrams (OpenAPI/GraphQL schemas, Postman collections, Miro,
+       FigJam, Lucid, Figma)
+     - operational memory (runbooks, incident postmortems, on-call notes)
+     - product material (a roadmap, PRDs, a pitch deck, research)
+     - long-running threads people still quote (a Slack channel, a mail thread, a
+       recorded meeting with a transcript)
+
+     Then ask the part that decides whether any of it is usable: **can you actually
+     reach it, and may it be quoted here?** An export, a paste, a link the agent can
+     read, or "I can copy the relevant pages" are all fine; so is "it exists and I
+     cannot share it" - that is an answer, and it belongs in the assessment as a known
+     blind spot rather than a silence.
+
+     **Say what happens to it**, so nobody hands over a wiki blindly: whatever arrives
+     lands in `docs/discovery/<topic>/` with its provenance (ADR-024), **never as
+     normative text**. It becomes a claim to be checked against the code, not a fact.
+     And it is subject to the same discipline as everything else that enters the repo -
+     no secrets (R19), and if the repo is or will be public, extracts get anonymized
+     the way case studies are.
+
+     **Never let this block the run.** "Nothing" and "not now" are complete answers.
+     The code is always the primary source and alignment proceeds from it alone; align
+     is re-entrant, so material handed over next week is folded in on the next pass
+     with nothing repeated. Say this out loud - a user who thinks they must assemble
+     their documentation first will postpone the whole adoption, which is the one
+     outcome worse than adopting without it.
    - **Plan-only or execute?**
 3. **Assessment-only is a legal, named outcome** - not a failure to proceed:
    deliver the health report and the counted plan (Gate 2 plus the Gate 5 count
@@ -45,6 +123,7 @@ Before any phase runs, one intake pass:
 |---|---|
 | **EMPTY or brand new** | Follow the [greenfield phase](greenfield.md), then the align waves below. |
 | **EXISTS, no `.standards-version`** | Assessment-first onboarding per the [brownfield phase](onboard.md), then the align waves below. |
+| **HAS `.standards-version`, wants a check-up** | Run the [brownfield phase](onboard.md)'s assessment against the aligned repo: `self-verify` for the mechanical number, then the passes that machines cannot score - do the specs still describe what the code does, were the decisions since the last visit recorded, is the backlog still true. Deliver the health report and the counted list, same as a newcomer gets. **Do not route this to `/update-to-version`** - drift happens without the standard moving, and a version bump answers a different question. |
 | **HAS `.standards-version`, wants the pin moved** | Hand off to `/update-to-version` - the repo is already on the standard; this skill gets a repo *to* the pin, not past it. |
 | **HAS `.standards-version`, wants a technology stack added** | Run the **Technology best practices** step below against the stack's `stack.manifest.json`; skip the Layer 1 waves - the pin already covers them. |
 
@@ -78,7 +157,25 @@ npx degit bodurkalukasz/repository-standards/standard
      `.claude/settings.json`; keep repo-specific entries; adapt migration/deploy CLIs
      to the real stack.
    - Drop in the guard + workflows; wire the pre-commit into the repo's hook mechanism.
-   - Put conventions in `AGENTS.md` (single source); `CLAUDE.md` stays a thin router.
+     **Ask before the workflows land - this is the one step whose blast radius is other
+     people.** They are live on merge, not dormant: `spec-guard.yml` runs `self-verify` on
+     every pull request, so until alignment finishes, **your colleagues' unrelated PRs go
+     red on a change they did not make**. That is how an adoption gets reverted and never
+     retried. Offer the three real options and let the user pick: (a) land them now and
+     accept red CI while the waves run, (b) hold them until the final wave, (c) land them
+     now with the self-verify step set to `--warn` and flip it to blocking at drift 0.
+     Never land them silently.
+   - **Check the prerequisites before the guards, not after.** The `.claude/hooks/` guards
+     need `jq`, and without it they deny **every** Bash command by design - an agent that
+     suddenly refuses everything, with no explanation the user can connect to this step.
+     Name what is needed (`docs/prerequisites.md`) and confirm it is installed first.
+   - Put conventions in `AGENTS.md` (single source). `CLAUDE.md` is a router **plus** the
+     one rule that has to be in context before the agent is asked anything: check whether a
+     shipped skill covers the request before acting, and again when the work closes. It is
+     the first file Claude Code loads, which is the whole reason the rule lives there rather
+     than one hop away. If the repo's agent is not Claude Code, put the same content in
+     whatever that agent loads first - and if it loads nothing automatically, say so to the
+     user, because then the rule only holds while someone remembers it.
    - `docs/` and `specs/` in the shipped tree are **templates** - fill them with the
      target repo's content, in that repo's language.
    - Skills into the repo's skill dir (`.agents/skills` or `.claude/skills`).
@@ -86,7 +183,15 @@ npx degit bodurkalukasz/repository-standards/standard
 4. **Watch repo gotchas** (e.g. a broad `settings.json` `.gitignore` rule swallowing
    `.claude/settings.json` - add a `!` negation).
 
-   Also **elicit the unwritten rules (ADR-012):** ask the user for the tribal
+   Also **elicit the unwritten rules (ADR-012)** - and ask with candidates, not into the
+   void, because "what rules live in people's heads?" reliably returns "none" from someone
+   who has six. Offer the usual suspects and let them recognise their own: a deploy window
+   or freeze day, a file or service nobody may touch, a test everyone reruns because it is
+   flaky, a manual step missing from the README, an env var that breaks staging, someone
+   who must review certain changes, a release ritual. If there is nobody left to ask -
+   inherited codebases often have no team - mine the git log's authors, the review comments
+   on old pull requests and any handover doc, propose what you find, and confirm it.
+   Then ask the user for the tribal
    knowledge - rules living in heads, personal configs (`~/.claude`, dotfiles), agent
    memories, or pinned chats - and land each at its taxonomy home (`AGENTS.md`,
    conventions, `CONTRIBUTING`, a spec, a record). A repo rule that stays outside the
@@ -103,9 +208,16 @@ npx degit bodurkalukasz/repository-standards/standard
    deliberate deviation as a manifest `exceptions` entry so a later update does not
    silently overwrite it.
 
-6. **Self-verify.** Run `node scripts/self-verify.mjs --version <aligned>` (see
-   `docs/self-verify.md`): the pin matches the manifest, every required entry is met, the
-   guards are green - **drift 0**. Do not open the PR on a red self-verify.
+6. **Self-verify, and read the number correctly.** Run
+   `node scripts/self-verify.mjs --version <aligned>` (see `docs/self-verify.md`).
+   - **Greenfield: drift 0 before the PR.** Nothing legitimate is missing from a repo you
+     just scaffolded, so a red run means something is genuinely wrong.
+   - **Brownfield: wave one closes red, by design.** A multi-year repo does not reach drift
+     0 in one pull request and must not try - forcing it produces exactly the unreviewable
+     big-bang the brownfield phase forbids. State the number, list what remains and which
+     wave takes it, and **open the PR anyway**. The gate for a brownfield wave is "this
+     wave's items are complete and the build is green", never drift 0; drift 0 is where the
+     programme ends, not the entry price for its first step.
 
 7. **Open one focused PR.** Never push without the human's go. Never reference other
    repos.

@@ -56,9 +56,14 @@ supersede-not-edit, cooldown discipline - are review-verified: honestly outside 
 number, listed in the judgment tier below. A repo can be drift 0 and still sloppy at
 review; the number is the floor, not the ceiling.
 
-**Drift as a number.** Because the check is one entry per manifest line, `drift N` is a
-measurable distance from the pinned version - a fleet owner can sort repos by it, and an
-update's job is to drive it back to `0`.
+**Drift as a number.** Each unmet required check scores one, so `drift N` is a measurable
+distance from the pinned version - a fleet owner can sort repos by it, and an update's job
+is to drive it back to `0`. Mostly that is one point per manifest entry, with one deliberate
+exception: a missing `.standards-version` scores **two**, once as the version pin and once
+as the required file. That is not double counting by accident - a repo with no pin has both
+failed to record which version it follows and failed to carry the file that says so, and it
+is the single most consequential thing that can be absent. Comparing two repos' numbers is
+still sound; reading a number as "exactly N missing files" is not.
 
 ## Judgment tier - confirmed at review
 

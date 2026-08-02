@@ -22,7 +22,7 @@ outgrew itself - as its own meta entry predicted it would.)
 | [Stacks as satellite repos](stacks-satellite.md) | ADR-016: one repo per technology + registry | two repos to run; registry is a solo-merge gate |
 | [Genesis history for the org move](genesis-history.md) | clean-slate, curated commit sequence, honest dates | narrative order vs the record of what really happened |
 | [Engine cherry-pick](engine-cherry-pick.md) | ADR-015: prompts are ours; upstream read at release | five prompts could quietly fall behind upstream |
-| [Shipped skills](shipped-skills.md) | one family, 12 skills in every adopted repo | ecosystem ceiling is 8-10; engine steps might merge |
+| [Shipped skills](shipped-skills.md) | one family, 15 skills in every adopted repo | ecosystem ceiling is 8-10; engine steps might merge |
 | [The repo specs its own tooling](own-specs.md) | four buildable capability specs in `specs/` | specs for small scripts risk documentation theatre |
 | [Folder self-description](folder-readmes.md) | three-section `README.md` per folder | READMEs may bloat; one file serves two audiences |
 | [`checklist.md` as the name](checklist-name.md) | `docs/method/checklist.md` | "checklist" undersells the paved-road defaults |
@@ -36,6 +36,7 @@ outgrew itself - as its own meta entry predicted it would.)
 | [Case-study anonymization](case-anonymization.md) | describe the situation, never the company | the identifiability line is unwritten judgment |
 | [Rebase-merge as the paved road](rebase-merge.md) | ADR-026: linear `main`, rebase-merge, squash as the alternative | squash asks less and delivers most of it; the option that wins on merits is missing from GitHub |
 | [What to call a bounded period of work](work-periods.md) | `cycle`, per team, several in parallel | the name is load-bearing and no candidate is obviously right; and whether the standard should carry work periods at all |
+| [Skills that co-author a document](authoring-skills.md) | two - one routing ADR/BDR, one for the product frame and personas | it takes the family from 12 to 14 against a ceiling of 8-10; and a routing description may not fire reliably on either situation |
 
 Stack-pick doubts (Better Auth, CSS Modules vs Tailwind) moved with Layer 2 to
 [repository-standards-node](https://github.com/bodurkalukasz/repository-standards-node)'s

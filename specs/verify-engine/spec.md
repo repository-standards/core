@@ -38,7 +38,9 @@ Guarding this repo's own shipped tree ([tree-guard](../tree-guard/spec.md)); aut
 9. **Decisions.** A non-empty `decisions[]` produces one note (judgment tier, confirmed recorded at review) - never checked mechanically.
 10. **References.** A non-empty `references[]` produces one note naming the count (method docs read in the standards repo at latest - the living standard, ADR-023/025) - never a file check; a `files[]` entry with `adapt: "reference"` is likewise noted and skipped, never existence-checked.
 
-Output: header `self-verify - compliance with manifest <version>` (or `the pinned standard`), one `PASS | FAIL | WARN | ....` row per result (`<tag>  <name padded to 9>  <msg>`), then the verdict.
+Output: header `self-verify - compliance with manifest <version>` (or `the pinned standard`), one `PASS | FAIL | WARN | ....` row per result (`<tag>  <name padded to 10>` then a space, then `<msg>` - the separator is unconditional because a name exactly filling the column used to run into its own message, `reference9 method docs`), then the verdict.
+
+Drift arithmetic: one point per unmet required check. That is one point per manifest entry except for `.standards-version`, which scores two - once as the version pin, once as the required file - because a repo without it has both failed to record which version it follows and failed to carry the file that says so.
 
 ### Exit codes and verdicts
 

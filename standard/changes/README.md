@@ -9,6 +9,12 @@ complete **`CHANGELOG.md`** (mechanical) and the curated, written **`RELEASE-NOT
 they stop parallel PRs from colliding; a solo repo writes the `## Unreleased` section
 of `CHANGELOG.md` directly.
 
+**The standard ships no `CHANGELOG.md`** - it is yours, and its history is not ours to
+seed. Create it at the repo root the first time a change needs describing, with a
+`## Unreleased` heading; that is the whole requirement. A repo with no changelog yet is not
+in violation of anything, but a repo whose rule says "describe it under Unreleased" and has
+nowhere to write is, which is why this note exists.
+
 ## Add one per change
 
 `changes/<short-slug>.md`:

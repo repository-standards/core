@@ -61,6 +61,18 @@ feeds none of these gets removed.
 - **Layer 1 + 2** - a full Node/TS starter.
 - **Greenfield** - scaffold and go. **Brownfield** - `align-to-standards` reconciles
   what you already have.
+- **Recurring, and this is the mode that matters most.** Adoption is not a project that
+  finishes and gets walked away from - that is how every standard dies, slowly and without
+  anyone deciding to abandon it. A repo can be pointed at the standard again any time,
+  independently of whether the standard moved: it re-measures, reviews the state of the
+  documents, decisions and specs against what the code now does, and hands back the same
+  thing it hands a newcomer - a counted list of what drifted, ordered, with each item's
+  guided flow attached. Six months of silence is not falling behind; it is the normal
+  interval between check-ups, and asking for one costs a sentence.
+
+  This is the difference between a standard and a scaffold, and it is what the surfaces
+  should lead with: you do not adopt this once. You run it whenever you want to know where
+  you actually stand.
 
 ## How the standard governs itself (dogfood)
 

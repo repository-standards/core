@@ -143,7 +143,17 @@ The user explains the new input once; nothing old is re-litigated.
 6. **Curator vs consumer**: `discovery-digest` maintains the dossier and
    flags contradictions; the `spec-*` skills read it at specify/clarify/plan
    time. Neither does the other's job.
-7. **Idea vs discovery vs spec**: an idea (`docs/ideas/`) is a one-file maybe;
+7. **Adoption fills the first dossiers**: a repo joining the standard usually has years
+   of knowledge somewhere that is not the repo - a wiki, a tracker, an `rfcs/` folder,
+   a decision nobody moved out of a ticket. Intake asks for it and suggests where to
+   look, because nobody recalls their own documentation on demand. What arrives lands
+   here with its provenance and is then read as a **claim about the code**: where it
+   agrees, the retroactive record gets the context and rejected options that code alone
+   never yields; where it disagrees, **the code wins and the divergence is reported** -
+   a written decision the system stopped honouring is usually the most valuable finding
+   of the whole assessment. Nothing here blocks adoption: the code is always the primary
+   source, and material handed over later is folded in on the next pass.
+8. **Idea vs discovery vs spec**: an idea (`docs/ideas/`) is a one-file maybe;
    a dossier is a materials-bearing topic in active discovery; the spec is the
    specification. Approval moves an idea forward; drafting moves a dossier's
    essence into a spec; neither ever moves backward.

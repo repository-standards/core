@@ -17,7 +17,7 @@
     { "path": ".standards-version", "purpose": "the version pin this whole mechanism turns on - written by align-to-standards / update-to-version", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "unreleased", "rule": "R2" },
     { "path": "standard.manifest.json", "purpose": "this manifest, at the pinned version - what self-verify checks against", "adapt": "copy", "required": true, "profile": "core", "since": "unreleased", "rule": "R2" },
     { "path": "SPEC.md", "purpose": "the normative core this manifest projects - readable in place", "adapt": "copy", "required": false, "profile": "core", "since": "unreleased", "rule": "R2" },
-    { "path": "CLAUDE.md", "purpose": "thin pointer to AGENTS.md for Claude Code", "adapt": "copy", "required": false, "profile": "core", "since": "0.1.0", "rule": "R1" },
+    { "path": "CLAUDE.md", "purpose": "the file Claude Code loads first - points at AGENTS.md and carries the rule to check the skills before acting (R1); a non-Claude repo carries the same content in whatever its agent loads first", "adapt": "merge", "required": false, "altPaths": ["AGENTS.md"], "profile": "core", "since": "0.1.0", "rule": "R1" },
     { "path": "docs/decision-records", "purpose": "the ADR/BDR decision log", "adapt": "fill-from-repo", "required": true, "profile": "core", "since": "0.1.0", "rule": "R5" },
     { "path": "docs/ideas", "purpose": "pre-decision ideas - status-driven, graduate into records/specs on approval (ADR-010)", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "0.7.2", "rule": "R14" },
     { "path": "docs/discovery", "purpose": "discovery dossiers - provenance-stamped extracts per topic, never normative (ADR-024)", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "unreleased", "rule": "R5" },
@@ -59,7 +59,9 @@
     { "path": "docs/analytics.template.md", "purpose": "event-taxonomy tracking plan template", "adapt": "fill-from-repo", "required": false, "profile": "scale", "since": "unreleased", "rule": "R3" },
     { "path": "docs/journeys", "purpose": "per-persona journey maps coupled to capabilities", "adapt": "fill-from-repo", "required": false, "profile": "scale", "since": "unreleased", "rule": "R3" },
     { "path": "docs/research", "purpose": "anonymized research studies feeding personas, ideas and specs", "adapt": "fill-from-repo", "required": false, "profile": "scale", "since": "unreleased", "rule": "R3" },
-    { "path": "docs/runbooks", "purpose": "operational runbooks + postmortems - agent-followable at 3 a.m.", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "unreleased", "rule": "R3" }
+    { "path": "docs/runbooks", "purpose": "operational runbooks + postmortems - agent-followable at 3 a.m.", "adapt": "fill-from-repo", "required": false, "profile": "core", "since": "unreleased", "rule": "R3" },
+    { "path": "docs/cycles", "purpose": "work cycles - what a team committed to and by when; an intent is in the pool or in exactly one cycle (ADR-028)", "adapt": "fill-from-repo", "required": false, "profile": "scale", "since": "unreleased", "rule": "R15" },
+    { "path": "scripts/cycle-guard.mjs", "purpose": "proves the one-place invariant the pool and the cycles depend on", "adapt": "copy", "required": false, "profile": "scale", "since": "unreleased", "rule": "R15" }
   ],
 
   "references": [
@@ -85,7 +87,8 @@
     { "id": "spec-structure", "run": "node scripts/spec-structure.mjs --block", "kind": "static", "blocks": true, "purpose": "spec files are where and shaped as the standard requires", "profile": "core", "since": "0.3.0", "rule": "R10" },
     { "id": "facts-check", "run": "node scripts/facts-check.mjs", "kind": "static", "blocks": true, "purpose": "declared facts still agree with their source (skips itself where none are declared)", "profile": "core", "since": "unreleased", "rule": "R4" },
     { "id": "schema-pair", "run": "node scripts/schema-pair.mjs --block", "kind": "static", "blocks": true, "purpose": "the schema and its typed twin have not drifted (skips itself where there is no database)", "profile": "core", "since": "unreleased", "rule": "R24" },
-    { "id": "spec-guard", "run": "node scripts/spec-guard.mjs --block", "kind": "diff", "blocks": true, "purpose": "domain code changed without touching its spec fails CI", "profile": "scale", "since": "0.3.0", "rule": "R11" }
+    { "id": "spec-guard", "run": "node scripts/spec-guard.mjs --block", "kind": "diff", "blocks": true, "purpose": "domain code changed without touching its spec fails CI", "profile": "scale", "since": "0.3.0", "rule": "R11" },
+    { "id": "cycle-guard", "run": "node scripts/cycle-guard.mjs --block", "kind": "static", "blocks": true, "purpose": "an intent is in the backlog pool or in exactly one cycle (skips itself where there are no cycles)", "profile": "scale", "since": "unreleased", "rule": "R15" }
   ],
 
   "decisions": [

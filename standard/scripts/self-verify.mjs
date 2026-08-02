@@ -230,7 +230,9 @@ const drift = failed.length; // one unmet required entry = one point of drift
 console.log(`\nself-verify - compliance with ${manifest ? `manifest ${manifest.version}` : "the pinned standard"}\n`);
 for (const r of results) {
   const tag = !r.ok ? "FAIL" : r.isWarning ? "WARN" : r.dim ? "····" : "PASS";
-  console.log(`  ${tag}  ${r.name.padEnd(9)}${r.msg}`);
+  // padEnd(9) leaves no gap after a 9-character name, so `reference` ran into its own
+  // count: "reference9 method docs". One more column, and the separator is unconditional.
+  console.log(`  ${tag}  ${r.name.padEnd(10)} ${r.msg}`);
 }
 console.log("");
 

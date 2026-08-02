@@ -1,6 +1,6 @@
 ---
 name: spec-tasks
-description: Break the plan into dependency-ordered tasks; refuses a spec that fails the clarify gate (based on github/spec-kit v0.13.2, MIT - scripts/spec/LICENSE)
+description: Use when the plan exists and the work needs breaking into ordered, checkable steps - "break this down", "what do we do first?". Groups tasks by requirement so each slice can be built and tested on its own, with the tests the repo's testing decision calls for.
 ---
 
 <!-- Based on github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED hunks are marked inline. -->

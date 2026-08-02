@@ -36,6 +36,8 @@ jobs:
         run: node tools/spec-guard-test.mjs
       - name: schema-pair test (the R24 pair check catches a drifted twin)
         run: node tools/schema-pair-test.mjs
+      - name: cycle-guard test (an intent cannot be in two places)
+        run: node tools/cycle-guard-test.mjs
       - name: facts-check (a restated fact agrees with its source) + its test
         run: |
           node standard/scripts/facts-check.mjs

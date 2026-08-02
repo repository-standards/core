@@ -1,6 +1,6 @@
 ---
 name: pre-pr-review
-description: Self-review the current branch diff in a clean, independent pass before opening a PR - run local quality checks, then review the diff as if you did not write it, and fix findings first.
+description: Use before pushing a branch or opening a pull request - "is this ready?", "can I push?". Runs the repo's local checks, then reads the diff as if someone else wrote it, and fixes what it finds first. A review after the push is a review of something already published.
 ---
 
 # Pre-PR review

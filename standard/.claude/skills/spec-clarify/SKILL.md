@@ -1,6 +1,6 @@
 ---
 name: spec-clarify
-description: Run the clarify loop on a spec: propose answers, record deferrals in ## Clarifications, drive the questions to zero and report any DECISION/INPUT/ASSET markers as the remaining blockers (based on github/spec-kit v0.13.2, MIT - scripts/spec/LICENSE)
+description: Use right after a spec is drafted, or whenever one still has open questions in it. Asks one question at a time, each leading with a recommended answer you can accept by saying yes, and writes every answer into the spec - including a deliberate "decide that later", which is an answer and gets recorded as one. Planning and building refuse to start until this reaches zero open questions.
 ---
 
 <!-- Vendored from github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED(repository-standards) hunks are marked inline; CHERRY-PICKED hunks name the upstream commit they came from. -->

@@ -9,7 +9,7 @@
 | Zone | What | Where |
 |---|---|---|
 | **1. This repo's own life** | governance, roadmap, backlog, gate tooling, the web surface, the transition skill, this repo's decisions | `README.md`, `PRODUCT.md`, `backlog.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `VERSION`, `docs/` (product docs + case studies), `docs/decision-records/` (this repo's ADRs - the repo follows its own R5 layout), `skills/` (the align router), `tools/`, `site/`, `.github/workflows/checks.yml`. Working notes, blog material and idea-stage research live OUTSIDE the repo (the owner's private space) - by rule, not by accident |
-| **2. The standard itself** | the one authored, shipped tree, at the paths a client repo will have (ADR-014) | everything under `standard/` - `SPEC.md`, `AGENTS.md`, `.claude/skills/` (12 lifecycle skills), `.github/` (TEMPLATES - never enabled here), `docs/`, `specs/`, `scripts/` (guards + `scripts/spec/` engine), `standard.manifest.json` |
+| **2. The standard itself** | the one authored, shipped tree, at the paths a client repo will have (ADR-014) | everything under `standard/` - `SPEC.md`, `AGENTS.md`, `.claude/skills/` (15 lifecycle skills), `.github/` (TEMPLATES - never enabled here), `docs/`, `specs/`, `scripts/` (guards + `scripts/spec/` engine), `standard.manifest.json` |
 
 **One exception to the zone split, and it matters:** [`docs/method/`](docs/method/README.md)
 sits in the root but is **not** repo-own. Its documents are adopter-normative, taken
@@ -36,7 +36,7 @@ clients get them by reference (ADR-004), never as copies.
 
 | Class | Skills | In the consuming repo |
 |---|---|---|
-| **Lifecycle** - ships and stays (the standard in daily use) | the 12 under `standard/.claude/skills/`: `spec-specify`, `spec-clarify`, `spec-plan`, `spec-tasks`, `spec-implement` (the engine, extracted from Spec Kit - ADR-015), `discovery-digest`, `spec-impact`, `spec-update`, `spec-reconcile`, `add-to-backlog`, `pre-pr-review`, `update-to-version` | ship with the tree and stay - they ARE the ways of working |
+| **Lifecycle** - ships and stays (the standard in daily use) | the 15 under `standard/.claude/skills/`: `spec-specify`, `spec-clarify`, `spec-plan`, `spec-tasks`, `spec-implement` (the engine, extracted from Spec Kit - ADR-015), `discovery-digest`, `spec-impact`, `spec-update`, `spec-reconcile`, `add-to-backlog`, `pre-pr-review`, `update-to-version` | ship with the tree and stay - they ARE the ways of working |
 | **Transition** - getting TO the standard | `skills/align-to-standards/` (one router: greenfield / brownfield / update phases) | NEVER shipped - run from a checkout of this repo |
 
 ## Working here
@@ -48,7 +48,8 @@ clients get them by reference (ADR-004), never as copies.
   `node standard/scripts/spec-guard.mjs --base origin/main --block` **and**
   `node standard/scripts/spec-guard.mjs --audit --block` (code and its capability
   spec move together; every capability spec is mapped),
-  `node tools/spec-guard-test.mjs` and `node tools/schema-pair-test.mjs` (those
+  `node tools/spec-guard-test.mjs`, `node tools/schema-pair-test.mjs` and
+  `node tools/cycle-guard-test.mjs` (those
   guards still fire where they must), `node standard/scripts/facts-check.mjs` +
   `node tools/facts-check-test.mjs` (a fact restated in prose still agrees with
   its source - the declarations live in [`docs/facts.json`](docs/facts.json)),
