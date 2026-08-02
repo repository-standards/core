@@ -106,13 +106,13 @@ binds every repo, a solo one included.
 
 - **R18.** A PR MUST NOT add a version heading to the changelog and MUST NOT bump
   a version; the maintainer cuts every release. A PR describes its change under
-  the changelog's Unreleased heading. *(scale)* Teams record per-PR fragments in
-  `changes/` instead, assembled at release.
+  the changelog's Unreleased heading - at every profile, with no second
+  mechanism.
 - **R19.** Secrets MUST NOT enter the repo - environment and a secret manager only.
   The shipped secret scan SHOULD gate CI, and agent access to remote databases
   SHOULD be write-blocked by the shipped settings baseline. The security baseline
   R7 requires as a recorded decision MUST state, at minimum, where each of the
-  axes in `docs/security-baseline.md` lands for this repo - including the ones
+  axes in `security-baseline.md` (by reference) lands for this repo - including the ones
   answered "not applicable", because an axis nobody considered and an axis
   deliberately dropped are indistinguishable a year later. Technology-specific
   depth belongs to the stack layer, never here.

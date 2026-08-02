@@ -11,9 +11,9 @@ Hub for this repo's docs. Start where you need:
 | [decision-records/](decision-records/README.md) | ADR / BDR - the *why* (decisions) |
 | [personas.md](personas.md) | who the product is for - the roster every capability spec names |
 | [backlog.md](backlog.md) | the ordered work the repo still owes itself, each item with a definition of done |
-| [self-verify.md](self-verify.md) | how compliance is checked, what the drift number covers and what it does not |
-| [prerequisites.md](prerequisites.md) | what must be installed before the shipped guards protect anything |
-| [security-baseline.md](security-baseline.md) | the axes the security decision must each answer - the menu behind that ADR |
+| [self-verify.md](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/self-verify.md) | how compliance is checked, what the drift number covers and what it does not |
+| [prerequisites.md](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/prerequisites.md) | what must be installed before the shipped guards protect anything |
+| [security-baseline.md](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/security-baseline.md) | the axes the security decision must each answer - the menu behind that ADR |
 | [conventions.md](conventions.md) | day-to-day conventions (merged into `AGENTS.md` at adoption) |
 | [discovery/](discovery/README.md) | discovery dossiers - meeting/mail extracts per topic, with provenance (ADR-024) |
 | [ideas/](ideas/README.md) | speculative ideas under a status, before they earn a spec or a record |
@@ -21,7 +21,7 @@ Hub for this repo's docs. Start where you need:
 | [research/](research/README.md) | anonymized research studies feeding personas, ideas and specs *(scale)* |
 | [runbooks/](runbooks/README.md) | operational runbooks and postmortems - followable at 3 a.m. |
 | [cycles/](cycles/README.md) | what a team committed to and by when; an intent is in the pool or in exactly one cycle *(scale)* |
-| [analytics.template.md](analytics.template.md) | the event taxonomy / tracking plan *(scale)* |
+| [analytics.md](analytics.md) | the event taxonomy / tracking plan *(scale)* |
 | [facts.example.json](facts.example.json) | the shape of `facts.json` - a fact's home and every declared restatement |
 
 The standard's **method manual** (taxonomy, adoption, the repo assessment, working with

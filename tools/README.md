@@ -15,6 +15,7 @@ Maintainer machinery for the standard repo itself; a consuming repo gets `script
 | [schema-pair-test.mjs](schema-pair-test.mjs) | the same for the DDL/typed-twin pair check |
 | [facts-check-test.mjs](facts-check-test.mjs) | the same for the derived-facts check, including a surface reworded past its own declaration |
 | [cycle-guard-test.mjs](cycle-guard-test.mjs) | the same for the work-cycle guard - including that the shipped template's example rows never count as real ones |
+| [file-map.mjs](file-map.mjs) | renders `docs/file-map.md` - what every shipped file is, why, and the rule it enforces - **from the manifest**, so the map cannot disagree with what self-verify checks; `--check` fails CI on a stale copy |
 | [self-verify-fill-test.mjs](self-verify-fill-test.mjs) | that the placeholder warning is **clearable** by a properly filled repo and still fires on a real marker - it used to match generic notation, so the file it exists for could never satisfy it |
 
 ## Why this shape, and how to use it

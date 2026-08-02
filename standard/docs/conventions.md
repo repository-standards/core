@@ -105,3 +105,18 @@ adopted by reference from the living standard - always latest). Personal memory,
 *point* at repo rules - they must never *hold* them. A rule that exists only outside
 the repo is treated as **missing**; finding one is a defect, fixed by landing the rule
 at its home. "It's in my memory" is not a location.
+
+### Agent guards
+
+The hooks under `.claude/hooks/` refuse an action before the tool runs. Two properties, and
+the second is the one that gets forgotten:
+
+- They **fail closed**. A hook that cannot load its library, or whose dependency is missing,
+  denies - it never lets the command through unchecked.
+- They are **tested**. A guard prints only when it refuses, so a broken one is silent: it
+  stops protecting and nothing says so. `bash scripts/verifyAgentGuards.sh` exists for exactly
+  that reason - run it after any change under `.claude/hooks/`.
+
+A guard that blocks legitimate work gets disabled, and a disabled guard protects nothing, so
+anything slow, anything needing the network to decide, and anything prone to a false refusal
+does not belong there.

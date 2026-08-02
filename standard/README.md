@@ -26,7 +26,6 @@ One-line description of the product. Entry point for agents + humans:
 | [`specs/`](specs/) | Living capability specs: methodology, template, enforcement, constitution | fill specs; methodology as-is |
 | [`docs/`](docs/) | PRINCIPLES, ARCHITECTURE + PRODUCT (templates), `decision-records/` (ADR/BDR), `ideas/`, process docs | fill / mostly as-is |
 | [`docs/runbooks/`](docs/runbooks/) | One runbook per service + `postmortems/` - operational knowledge, agent-followable | fill |
-| [`changes/`](changes/) | Per-PR changelog fragments (scale profile) | as-is |
 
 ## The model
 

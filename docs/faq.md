@@ -106,7 +106,7 @@ consistent with the manifest, that every required file and required heading is p
 that the shipped static guards exit zero. It does **not** check that your specs are good, that the decisions you should have
 recorded were recorded, or that a port of the skills to a non-Claude agent is faithful -
 those sit in the judgment tier, confirmed at review
-([`self-verify.md`](../standard/docs/self-verify.md) draws the line explicitly). Drift 0 is
+([`self-verify.md`](method/self-verify.md) draws the line explicitly). Drift 0 is
 the floor. A repo can be drift 0 and still sloppy; it cannot be drift 0 and structurally
 missing the things the standard is built on.
 

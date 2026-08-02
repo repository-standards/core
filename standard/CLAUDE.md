@@ -3,7 +3,9 @@
 Read [`AGENTS.md`](./AGENTS.md) first - it is the single entry point and source of
 truth for conventions, structure, and the spec-first workflow.
 
-This repo follows repository-standards at the version pinned in `.standards-version`.
+This repo follows repository-standards. `.standards-version` records the state it last
+aligned to - a bookmark the next update measures from, never a version it is held at; the
+target is always the latest.
 
 ## Before you start working: check whether a skill owns this
 

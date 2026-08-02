@@ -5,6 +5,18 @@ the standard's own teaching material - versioned with the standard, **adopted by
 decision records: ADR-004, ADR-023). A client repo carries the artifacts the method
 produces; the method itself lives here, one home, one history.
 
+**The folder is broader than its name, and that is deliberate.** Since 2026-08-02 it also
+holds `self-verify.md` (what the compliance tool does), `prerequisites.md` (what to install
+before adopting) and `security-baseline.md` (a menu of decisions). Those are reference rather
+than method in the strict sense - they moved here because they are *the standard describing
+itself*, and the alternative was leaving them copied into the folder where an adopting repo
+keeps its own product knowledge, with no visible boundary between the two.
+
+Renaming this folder would be tidier and is **not worth doing**: every by-reference link in
+every adopted repo names this path, and they resolve at `main` by design (ADR-025). A rename
+breaks all of them at once, in repos we cannot see, to fix a word. If that trade ever changes,
+change it deliberately - do not tidy it.
+
 | Doc | What it is |
 |-----|-----|
 | [adoption.md](adoption.md) | the adoption checkmap - the gated path from unaligned to aligned + self-verifying |
@@ -16,6 +28,9 @@ produces; the method itself lives here, one home, one history.
 | [working-with-specs.md](working-with-specs.md) | real situations -> the exact prompt -> what the standard does; specs day to day |
 | [discovery.md](discovery.md) | from a meeting to a spec, with provenance - one worked example, dossiers, typed blockers |
 | [changelog-process.md](changelog-process.md) | two outputs, one source, one cut - the changelog + release-notes model |
+| [self-verify.md](self-verify.md) | what drift 0 does and does not certify - the tiers, the flags, the arithmetic |
+| [prerequisites.md](prerequisites.md) | what must be installed before an agent starts an adoption |
+| [security-baseline.md](security-baseline.md) | the axes a repo decides once - a menu, answered in your own security ADR |
 
 ## Find your case, skip the theory
 

@@ -25,6 +25,8 @@ The prose of the rendered pages (owned by their source files); markdown link int
 - **SITE CONFIG** - an optional `site/site.config.json` (the repo root is accepted as a legacy location) makes the generator serve any ecosystem repo ("one form, many sites"): `brand` (page titles + sidebar brand), `repo_url` (GitHub fallback links + page footers), `out_dir`, `topbar` (label/href/on/external), `pages` (replaces the PAGE MAP), `sidebar_links` (the sidebar footer links). Every field falls back to the core repo's defaults.
 - **OUT_DIR** - `site/docs` by default (config `out_dir` overrides), wiped and regenerated on every run; generated and gitignored, never hand-edited.
 - **Positioning one-liner** - the blockquote under `## The one-liner` in `docs/positioning.md`; surfaces quote it, never re-phrase.
+- **FILE MAP** - `docs/file-map.md`, rendered from `standard/standard.manifest.json` by `tools/file-map.mjs`: one row per shipped entry with its purpose, required-ness and profile, adapt class and the rule it enforces, plus the by-reference documents and the required headings. It is a PAGE MAP entry like any other and, unlike any other, it is **generated** - `tools/file-map.mjs --check` compares the committed file against a fresh render and fails CI when the manifest has moved and the map has not. Hand-editing it is the failure that check exists to catch, because the map's whole claim is that it cannot disagree with what `self-verify` reads.
+- **A page's `src` follows its document.** Moving a source file moves its PAGE MAP entry - `self-verify.md` left `standard/docs/` for `docs/method/` when it stopped being copied into adopters' repositories, and the entry moved with it. A `src` pointing at a moved file is caught by the generated-page count being derived from the map rather than written down.
 
 ## Interface contracts
 
@@ -83,6 +85,8 @@ The prose of the rendered pages (owned by their source files); markdown link int
 - **GitHub fallback.** GIVEN a page links `../scripts/self-verify.mjs` (not in the PAGE MAP) WHEN rendered THEN the href becomes the GitHub `blob/main` URL for the resolved path; a `dir/` target gets `tree/main`.
 - **Broken internal link.** GIVEN a generated page hrefs `nope.html` and `site/docs/nope.html` does not exist WHEN site-check runs THEN it FAILs naming page and target, exit 1.
 - **Re-phrased one-liner.** GIVEN the landing paraphrases the one-liner WHEN site-check runs THEN the verbatim check FAILs and exits 1.
+- **A stale file map fails.** GIVEN a manifest entry whose purpose changed and a `docs/file-map.md` that still carries the old text WHEN `tools/file-map.mjs --check` runs THEN it exits 1 naming the file, so the map cannot describe a tree that has moved on.
+- **A regenerated map is byte-identical.** GIVEN an unchanged manifest WHEN the map is rendered twice THEN the output is identical - the render carries no timestamp or ordering that would produce a diff on every run and train reviewers to ignore it.
 - **Dash ban.** GIVEN an em dash anywhere in `site/index.html` WHEN site-check runs THEN it FAILs with the offset and surrounding text.
 - **Foreign host.** GIVEN the landing links `https://example.com` WHEN site-check runs THEN it FAILs `unexpected external host example.com`.
 - **Markdown leak.** GIVEN a generated page contains `|---` WHEN site-check runs THEN it FAILs (raw table separator leaked).

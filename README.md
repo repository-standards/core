@@ -89,7 +89,7 @@ align mechanism runs at three moments:
 |--------|--|
 | **Adopt** | point a repo at the standard; it is read, compared, and brought into line - adapted to its stack, never blind-copied ([`align-to-standards`](skills/align-to-standards/SKILL.md)). |
 | **Update** | the standard moved? Apply just the **delta** since the state you last aligned to - not a re-scaffold ([`update-to-version`](standard/.claude/skills/update-to-version/SKILL.md)). |
-| **Verify** | prove it: `node scripts/self-verify.mjs`, from inside the aligned repo - files, sections, guards - a pass/fail your CI asserts ([`self-verify`](standard/docs/self-verify.md)). |
+| **Verify** | prove it: `node scripts/self-verify.mjs`, from inside the aligned repo - files, sections, guards - a pass/fail your CI asserts ([`self-verify`](docs/method/self-verify.md)). |
 
 ## Who it's for
 
@@ -161,8 +161,8 @@ only compared against are kept apart in [`ATTRIBUTIONS.md`](ATTRIBUTIONS.md).
 
 Semver (`VERSION` + `CHANGELOG.md`). A PR describes its change under the changelog's
 `## Unreleased` heading and never bumps a version; the maintainer cuts every release
-and writes the release notes. (Team repos get the heavier fragments mechanism as a
-scale-profile prescription - `docs/method/changelog-process.md`.)
+and writes the release notes - the same way at every profile
+(`docs/method/changelog-process.md`).
 
 ## Start
 

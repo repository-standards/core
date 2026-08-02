@@ -44,6 +44,8 @@ jobs:
         run: |
           node standard/scripts/facts-check.mjs
           node tools/facts-check-test.mjs
+      - name: file-map is regenerated from the manifest, not hand-written
+        run: node tools/file-map.mjs --check
       - name: site (generate + check landing and docs)
         run: |
           node tools/docsite.mjs

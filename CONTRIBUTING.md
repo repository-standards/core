@@ -22,7 +22,7 @@ contribution this repo takes.
   heading. A contribution never adds a version heading and never edits `VERSION`;
   the maintainer alone bumps it when cutting a release (see
   [`docs/method/changelog-process.md`](./docs/method/changelog-process.md) for
-  the fragments mechanism team repos get).
+  how the two outputs are cut).
 - **One tree:** the standard is authored directly in `standard/` at client-repo
   paths (ADR-014). There is nothing to sync; `tree-check` fails if repo-own
   material leaks in or a manifest promise goes missing.

@@ -20,6 +20,170 @@ The simplification wave - the standard put on one page, in one tree, with one
 engine copy - plus everything since 0.7.2: the lifecycle, the guided loop, the
 align engine, Layer 2 and the product spine.
 
+### Folder READMEs: the ones that teach stay, the ones that restate are gone (2026-08-02)
+
+Five README files in the shipped tree explained what belongs in `.claude/`, `.claude/skills/`,
+`.claude/hooks/`, `.github/` and `.github/workflows/`. Nothing in the tree linked to any of
+them, and most of what they said was already a numbered rule stated elsewhere:
+`.github/workflows/README.md` restated R21 (exact pins, never a floating tag), `.claude/README.md`
+restated R22 (a partial port to another agent is drift, not a variant), and `.github/README.md`
+restated what `AGENTS.md` already says about the workflows being live the moment they land. A
+second copy of a rule is a second thing to keep true.
+
+All five are deleted. Two facts lived **only** there, and those moved to a file something
+actually reads:
+
+- **How a skill's `description` is written** - it names the situation a user would type, never
+  the artifact the skill produces, because it is the only text a request is matched against -
+  is now in `AGENTS.md`, right after the sentence that already said a skill failing to fire is
+  a bug in its description. It said what to fix without saying how.
+- **Agent guards fail closed, and a broken guard is silent** - it prints only when it refuses,
+  so it stops protecting and nothing says so, which is why `scripts/verifyAgentGuards.sh` runs
+  after any change under `.claude/hooks/` - is now a section of `docs/conventions.md`, the
+  canonical conventions block that merges into `AGENTS.md` at adoption. Outside the script's
+  own header comment, `verifyAgentGuards.sh` was named in exactly two places in the shipped
+  tree: one cell of a table in `README.md`, and the README being deleted. "Fail closed" was
+  named in one.
+
+The READMEs that are folder *manuals* rather than folder *labels* stay - specs, decision
+records, cycles, ideas, runbooks, research, journeys, discovery - and each is now a manifest
+entry in its own right, so it shows up in the file map and `self-verify` notices when one goes
+missing. Previously only the folder was an entry, so deleting a manual left the folder present
+and drift at 0. `docs/discovery/README.md` is also the only file holding that folder open in a
+fresh clone, which the map now says out loud.
+
+### A placement audit that mostly found nothing, and the one note it left (2026-08-02)
+
+A second pass over the whole repo for misplaced files, wrong locations and broken references.
+Worth recording that it came back nearly empty, because "we looked and it was fine" is a
+result and gets forgotten otherwise.
+
+- **`tree-check` already verifies every by-reference path resolves** - and picked the count up
+  from 9 to 12 on its own after today's move. The hole suspected here did not exist.
+- **No shipped file links outside the tree.** Checked by resolving every relative link against
+  the filesystem rather than by pattern - a link like `../../../docs/cycles/` from a skill
+  resolves *inside* the tree and is correct for an adopter too, which a grep would have
+  mis-flagged. This class matters because `link-check` runs against **this** repo, where a link
+  escaping the tree still resolves; it would pass while being broken for everyone else.
+- **Tree and manifest cover each other in both directions**, mechanically, already.
+- **The one note left behind:** `docs/method/` is now broader than its name - it holds tool
+  reference and a decision menu alongside the method. Its README says so, and says explicitly
+  that **renaming it is not worth doing**: every by-reference link in every adopted repo names
+  that path and resolves at `main` by design, so a rename breaks all of them at once, in repos
+  we cannot see, to fix a word. Written down so nobody tidies it later.
+- The three moved documents joined the method index, which had not listed them.
+
+### The pinning language was hiding in the two files an agent loads first (2026-08-02)
+
+A sweep of the whole shipped tree for anything that is really *ours* rather than the
+adopter's - after three of our documents were moved out of their `docs/`.
+
+- **The tree is now clean of the mixing.** Every remaining `copy`-class entry is functional -
+  guards, hooks, the engine runtime, config - or the spec page itself. Nothing left in the
+  shipped `docs/` is documentation about the standard.
+- **Four more places still said "pinned version"**, on the third sweep of the day, and two of
+  them were `CLAUDE.md` and `AGENTS.md` - the files an agent loads *before anything else*. The
+  others were the manifest's own `$about` and a usage comment in `self-verify.mjs`.
+- Worth naming as a pattern rather than four more fixes: **a term sweep finds prose and misses
+  the places that are not prose** - a JSON description field, a comment in a script, a template's
+  opening line. The derived file map found some of these; grep found the rest only when the
+  search was widened past markdown.
+- **`SPEC.md` stays copied deliberately** - it is the one document about the standard that an
+  adopter keeps, and the reason survives scrutiny: it is what the manifest projects, so a repo's
+  local copy states the rules it was actually checked against. Snapshotting it *with* the
+  manifest is the bookmark semantics working, not an exception to them.
+
+### The shipped tree stopped mixing our documentation with the adopter's (2026-08-02)
+
+Two calls from the owner, both on the same fault line: **what belongs to the adopter and what
+belongs to the standard were living in one folder, with no visible boundary.**
+
+- **`changes/` is gone.** The per-PR fragments folder existed to stop parallel pull requests
+  colliding on the changelog. The owner's verdict: a change already goes to a concrete place,
+  and a second place for describing it is a divergence. On inspection the case was weaker than
+  the cost - a changelog conflict resolves in seconds by keeping both lines, while the folder
+  cost a convention on every PR, frontmatter, an assembly step and a script. **Nothing enforced
+  it**, and the entry was `required` at scale while the *practice* was unchecked: a team could
+  be compliant and get no benefit. `scripts/changelog.mjs` went with it. **R18 now has one path
+  at every profile** - describe the change under `## Unreleased`.
+  [ADR-018](docs/decision-records/ADR-018-history-lives-in-the-changelog.md) keeps its text and
+  carries the revision in its status; its decision (one accumulating history, no change-log
+  sections in living documents) is untouched.
+- **Three of our own documents left the adopter's `docs/`.** `self-verify.md`,
+  `prerequisites.md` and `security-baseline.md` were `copy`-class - shipped into the folder
+  where a repo keeps *its* product knowledge, so half of it was theirs and half ours with
+  nothing marking the line, and an update overwrote one half silently. They are the standard
+  describing itself, which is what `docs/method/` already is, so they became
+  **references**: read at their home, always latest, never copied. The precedent was already
+  there - `security-baseline.md` says outright it is *a menu, answered in your own ADR*, which
+  is exactly what `checklist.md` is and how it is already treated.
+- **Their internal links became plain paths.** A by-reference document naming `.nvmrc` or
+  `scripts/` means *the reader's*, so a link pointing at our copy was wrong in both directions.
+- **`analytics.template.md` followed neither convention the tree already has** - shells are named
+  plainly (`PRODUCT.md`), real templates are `_template.md` inside the folder they serve. It is
+  a shell; it is now `analytics.md`.
+- The shipped `docs/` now holds **only** what the adopter authors, plus one config shape and one
+  merge-class conventions file. The file map dropped from 52 entries to 47 and gained three
+  references.
+
+### The rendered docs are invisible to agents, and the map was two hops away (2026-08-02)
+
+Asked where this should be explained so that AI agents actually reach it. The answer is
+checkable and it constrains the previous entry.
+
+- **`site/docs/` is gitignored.** The rendered documentation does not exist in a clone, so an
+  agent working in a repository never sees it. "Explain it more thoroughly in the docs" is safe
+  only when *docs* means markdown in the repo; if it means the website, agents get nothing.
+- **`AGENTS.md` now links the file map directly**, not only through the docs hub. Two hops is
+  one too many for the file whose whole job is orienting someone who is lost - and the link
+  states the boundary in place: the map answers *what is this and why*, never *what do I put
+  here*.
+- **A folder `README.md` needs no pointer at all**, which is the strongest argument for keeping
+  it: an agent working inside a directory has it without searching. That is the cheapest context
+  there is.
+- **`MAP-1`**: an adopted repo gets no map. Its folders, its orientation problem and its own
+  manifest exceptions are all the same, and the generator is zone 1 only because that is where
+  it happened to be written. Shipping it means a freshness check counted as drift - a map that
+  silently describes last month's repo is worse than none - and that grows the guard list for
+  every adopter. Recorded as a decision rather than taken quietly at the end of a long session.
+
+### Every file explains itself, and the map is generated (2026-08-02)
+
+Asked whether each folder and file should be described individually, and whether that belongs in
+the docs or in per-folder files - the owner's own read being that two places sounds redundant.
+
+**Two questions were wearing one name**, and splitting them removes the redundancy rather than
+tolerating it.
+
+- **Orientation - *what is this and why*** - is now [`docs/file-map.md`](docs/file-map.md),
+  **generated** from `standard.manifest.json` by `tools/file-map.mjs`. Every shipped path with
+  its purpose, whether it is required and at which profile, how it lands when you align, and a
+  link to the numbered rule that made it so. It cannot disagree with what `self-verify` checks,
+  because it is the same data; `--check` fails CI on a stale copy.
+- **The local rule - *does my new file belong here*** - stays in the folder's own `README.md`,
+  short, and must not restate the map. It is needed at the moment someone is adding a file,
+  which is when they are in the folder and not on a docs site.
+- **The tree was not holding its own convention.** `taxonomy.md` says every folder explains
+  itself; `.claude/`, `.claude/skills/`, `.claude/hooks/`, `.github/` and `.github/workflows/`
+  had nothing. Written, each carrying only what a map cannot: hooks fail **closed** and are
+  silent when broken, skills are matched on a description that must name a situation no other
+  names, workflows pin exact SHAs because a mutable reference is a supply-chain problem rather
+  than a style choice.
+- **Generating the map immediately found four manifest purposes still carrying pinning
+  language** - missed by the same day's sweep of the prose. An argument for the derived view,
+  and a warning: the manifest is now text people read, not only data a script parses.
+- [`folder-readmes`](docs/open-questions/folder-readmes.md) revised with the split, including
+  the doubt that survives: **nothing checks that a folder README stays in its lane.** A future
+  author explaining *what a folder is* there recreates the duplication, and a guard would have
+  to judge what a paragraph is about.
+
+  *(Correction, same day: this bullet was true of the intent and false of the repository - the
+  revision did not land. A failed assertion in the script that wrote three files stopped after
+  the first, two were re-run and this one was not, and the entry shipped claiming a change
+  nobody had made. Written the next commit, and the miss left visible: a changelog that quietly
+  fixes its own false claims is worth less than one that does not, and this project asks
+  adopters to trust exactly that record.)*
+
 ### The landing showed agent sentences as shell commands (2026-08-02)
 
 Both found by the owner asking whether a line on the landing was real.

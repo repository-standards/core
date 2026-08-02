@@ -22,15 +22,16 @@ Structure = ARCHITECTURE.md. There is no TDR stream.
 
 One-liner. What/why: [PRODUCT.md](docs/PRODUCT.md). How: [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-This repo follows repository-standards at the version pinned in
-`.standards-version`. If a `stack.manifest.json` is present, it also carries a
+This repo follows repository-standards. `.standards-version` records the state it
+last aligned to - a bookmark, never a version it stays at; the target is always
+the latest. If a `stack.manifest.json` is present, it also carries a
 technology layer (Layer 2): `self-verify` counts one drift number across both,
 and the rationale behind every stack entry lives in that stack repo's DECISIONS.
 
 The rules it is measured against are the numbered rules in [`SPEC.md`](SPEC.md) -
 where this file cites R11 or R24, that is what it means.
 [`standard.manifest.json`](standard.manifest.json) is their machine-readable
-projection and [`docs/self-verify.md`](docs/self-verify.md) is how they are checked.
+projection and [`self-verify.md` (by reference)](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/self-verify.md) is how they are checked.
 
 ## First 30 minutes (a freshly adopted repo)
 
@@ -70,7 +71,7 @@ that already has this tree follows the list.
 Common commands (install, dev, build, test, checks).
 
 Before any of it, the toolchain the shipped guards need must be present -
-[`docs/prerequisites.md`](docs/prerequisites.md). Node and `jq` are not optional: without
+[`prerequisites.md` (by reference)](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/prerequisites.md). Node and `jq` are not optional: without
 `jq` the `PreToolUse` guards deny every Bash command rather than pass it unchecked.
 
 ## Conventions
@@ -136,7 +137,7 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
 - **Stay current with the standard** - this repo is pinned to a version in
   `.standards-version`. `update-to-version` applies the delta to a newer version (not a
   re-scaffold), then `self-verify` proves it complies: `node scripts/self-verify.mjs`
-  (see [`docs/self-verify.md`](docs/self-verify.md)). The self-verify gate runs in CI.
+  (see [`self-verify.md` (by reference)](https://github.com/bodurkalukasz/repository-standards/blob/main/docs/method/self-verify.md)). The self-verify gate runs in CI.
 
 ## The loop runs itself (unprompted)
 
@@ -158,6 +159,11 @@ the last is certain - so do not rely on it:
 A user should never have to say "remember to use the skills". If that becomes necessary,
 the skill's description is wrong and fixing it is the bug - not instructing the user to
 carry a password.
+
+**Writing that description is the mechanism, not paperwork about it.** It is the only text a
+request is matched against, so it names the *situation a user would actually type*, never the
+artifact the skill produces. Two skills whose descriptions could both plausibly match one
+sentence will each lose that sentence half the time: sharpen both, or merge them.
 
 - **The user describes a feature, story, or behavior change** -> start the loop yourself:
   ask the clarify questions, record answers in the spec's `## Clarifications`. A deferral

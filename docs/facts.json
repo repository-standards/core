@@ -64,7 +64,7 @@
         "pattern": "^Version (\\d+\\.\\d+\\.\\d+)"
       },
       {
-        "file": "standard/docs/self-verify.md",
+        "file": "docs/method/self-verify.md",
         "pattern": "self-verify\\.mjs --version (\\d+\\.\\d+\\.\\d+)"
       },
       {

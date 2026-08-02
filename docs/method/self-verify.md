@@ -19,7 +19,7 @@ node scripts/self-verify.mjs --version 0.7.2  # also assert the record equals a 
 node scripts/self-verify.mjs --warn           # report only (local, non-gating)
 ```
 
-It is **manifest-driven** (ADR-005). It reads [`standard.manifest.json`](../standard.manifest.json)
+It is **manifest-driven** (ADR-005). It reads `standard.manifest.json`
 - the standard describing itself as of the recorded state - and checks the repo against every
 entry, reporting **drift** as a number (how many required entries are unmet; `drift 0` =
 compliant). Without a manifest it falls back to a built-in skeleton, so it still works on
@@ -74,7 +74,7 @@ A machine cannot (yet) decide these; they are checked when the PR is reviewed:
   (adopted by reference from the living standard - always latest) that apply to this repo are recorded as
   ADR/BDR, or consciously deferred as a backlog item - not silently undecided.
 - **Specs buildable where it counts** - each mapped capability has a
-  [spec](../specs/README.md); money / security / data / external-contract paths are
+  `spec`; money / security / data / external-contract paths are
   buildable, not merely described.
 - **No unrecorded drift** - no known spec<->code contradiction is left unresolved.
 
@@ -86,7 +86,7 @@ needs to be told that a newer one exists. Two ways to get that signal, both
 notifications, neither of them a gate:
 
 **The shipped watch workflow.** Enable
-[`.github/workflows/standards-update-watch.yml`](../.github/workflows/standards-update-watch.yml).
+`.github/workflows/standards-update-watch.yml`.
 Weekly, it compares `.standards-version` against the standard's newest release and
 opens **one issue per target version** - not one per week - saying what to say to take
 the update. Before the standard publishes its first release the job says so and exits

@@ -27,7 +27,7 @@ outgrew itself - as its own meta entry predicted it would.)
 | [Stack lifecycle skills](stack-lifecycle-skills.md) | **open** - Layer 2 ships four data files and zero procedures | the mechanism to ship stack skills exists and is unnamed; nothing has run once |
 | [Staying current](staying-current.md) | **open** - the shipped watch compares against releases | the standard lives on `main` and there are no releases, so the channel is silent by construction |
 | [The repo specs its own tooling](own-specs.md) | four buildable capability specs in `specs/` | specs for small scripts risk documentation theatre |
-| [Folder self-description](folder-readmes.md) | three-section `README.md` per folder | READMEs may bloat; one file serves two audiences |
+| [Folder self-description](folder-readmes.md) | the manifest says *what it is* (map generated from it); a folder README says only *what goes in here* | nothing checks that a README stays in its lane; an adopted repo gets no map |
 | [`checklist.md` as the name](checklist-name.md) | `docs/method/checklist.md` | "checklist" undersells the paved-road defaults |
 | [Work history in the tracker](tracker-history.md) | ADR-010: repo holds intents, tracker holds history | kills in-repo who-did-what; regulated shops may object |
 | [GitHub Issues as default tracker](default-tracker.md) | ADR-010: free wins; Jira/Linear adapters | weakest PO experience of the three |

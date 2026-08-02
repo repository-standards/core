@@ -58,7 +58,7 @@ the result with `self-verify`.
    repo's `exceptions` forward). The pin and the manifest move together.
 
 6. **Self-verify.** Run the compliance check - `node scripts/self-verify.mjs --version <target>`
-   (see `docs/self-verify.md`). It must pass: the pin matches the manifest, every required
+   (see `self-verify.md` (by reference)). It must pass: the pin matches the manifest, every required
    entry is met, the guards are green - **drift 0**. Do not open the PR on a red self-verify.
 
 7. **One focused PR.** Title it with the version move (`update to repository-standards

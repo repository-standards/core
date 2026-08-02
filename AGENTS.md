@@ -53,12 +53,13 @@ clients get them by reference (ADR-004), never as copies.
   guards still fire where they must), `node standard/scripts/facts-check.mjs` +
   `node tools/facts-check-test.mjs` (a fact restated in prose still agrees with
   its source - the declarations live in [`docs/facts.json`](docs/facts.json)),
-  `node tools/docsite.mjs && node tools/site-check.mjs`. The list is the set CI
+  `node tools/file-map.mjs --check` (the file map is generated from the manifest,
+  never hand-written), `node tools/docsite.mjs && node tools/site-check.mjs`. The list is the set CI
   runs - if a check is in `checks.yml` and not here, this line is the bug.
 - **Changelog:** a PR describes its change under `CHANGELOG.md`'s `## Unreleased`
   heading - never a version heading, never `VERSION`; the maintainer cuts every
-  release. (The fragments mechanism ships to team repos as a scale-profile
-  prescription; this solo repo does not use it on itself.)
+  release. One mechanism at every profile - the per-PR fragments folder was
+  removed on 2026-08-02.
 - **The spec wins:** where any document appears to add a requirement,
   [`standard/SPEC.md`](standard/SPEC.md) is the normative text; the
   manifest cites the rule each entry enforces.
@@ -69,11 +70,16 @@ clients get them by reference (ADR-004), never as copies.
 - The map of what knowledge goes where: [`docs/method/taxonomy.md`](docs/method/taxonomy.md).
   The plan: [`backlog.md`](backlog.md). The process: [`CONTRIBUTING.md`](CONTRIBUTING.md).
   Everything the repo publishes, in one table: [`docs/README.md`](docs/README.md).
+- **Lost in the tree? [`docs/file-map.md`](docs/file-map.md)** - every shipped path with its
+  purpose, whether it is required, how it lands when a repo aligns, and the numbered rule that
+  put it there. Generated from the manifest, so it agrees with `self-verify` by construction.
+  It answers *what is this and why*; it deliberately does **not** answer *what do I put in this
+  folder* - that is the folder's own `README.md`, which in turn must not restate the map.
   What came from other projects, and in what form: [`ATTRIBUTIONS.md`](ATTRIBUTIONS.md) -
   vendored code with its licence, borrowed ideas, and the projects this is only compared
   against. Adding to that last list as if it were an influence is a defect, not politeness.
 - **If someone is evaluating whether to adopt this**, the honest material is not in the
   pitch: [`backlog.md`](backlog.md) names the evidence that does not exist yet,
-  [`standard/docs/self-verify.md`](standard/docs/self-verify.md) states the limits of the
+  [`standard/docs/self-verify.md`](docs/method/self-verify.md) states the limits of the
   drift number, and [`docs/open-questions/`](docs/open-questions/README.md) is the owner's
   own list of calls they are unsure about. Send them there before the README.

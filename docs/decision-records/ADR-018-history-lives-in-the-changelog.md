@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Accepted |
+| **Status** | Accepted; the `changes/` fragments mechanism it mentioned was removed on 2026-08-02 - one path at every profile, `## Unreleased` in `CHANGELOG.md`. The decision (one accumulating history; living documents carry no change-log section) stands unchanged |
 | **Date** | 2026-07-29 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | documentation, changelog, specs |
