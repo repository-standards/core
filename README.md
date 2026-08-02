@@ -32,7 +32,7 @@ manual is adopted **by reference**, always latest, never copied (ADR-023). The d
 lifecycle skills ship inside the tree (`standard/.claude/skills/`); the root `skills/`
 holds only the transition router that brings a repo in.
 
-Status: pre-1.0 (the 0.7.x line), mechanics field-run on the author's production
+Status: 0.8.0, the first stable line, mechanics field-run on the author's production
 repos. **There is no version to pin to: the standard is living and latest is the
 only target** (ADR-025). `.standards-version` records the state your repo last
 aligned to - a bookmark, so an update is a delta rather than a re-scaffold, and

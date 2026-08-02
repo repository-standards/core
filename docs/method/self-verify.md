@@ -15,7 +15,7 @@ Run the shipped checker; it exits non-zero on any failure, so CI can gate on it:
 
 ```
 node scripts/self-verify.mjs                  # gate: exit 1 on any failure
-node scripts/self-verify.mjs --version 0.7.2  # also assert the record equals a given target
+node scripts/self-verify.mjs --version 0.8.0  # also assert the record equals a given target
 node scripts/self-verify.mjs --warn           # report only (local, non-gating)
 ```
 

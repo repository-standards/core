@@ -64,19 +64,21 @@ checkTagBalance(LANDING, landing);
 checkDashes(LANDING, landing);
 
 // The one-liner from positioning.md must appear verbatim on the landing (PDLC-1).
+// The sentence itself is never written here: the heading locates it, the file owns it.
+// A check that hardcodes the copy is a second home for the same fact (R4).
 const pos = readFileSync(POSITIONING, "utf8");
-const oneLinerMatch = pos.match(/^> (Others give you .*)$\n^> (.*)$/m) || pos.match(/^> (Others give you .*)$/m);
-if (!oneLinerMatch) fail(`${POSITIONING}: cannot locate the one-liner blockquote`);
+const oneLinerBlock = pos.split("## The one-liner")[1];
+if (!oneLinerBlock) fail(`${POSITIONING}: no "## The one-liner" section to read`);
 else {
-  const oneLiner = pos
-    .split("## The one-liner")[1]
-    .split("##")[0]
+  const oneLiner = oneLinerBlock
+    .split("\n## ")[0]
     .split("\n")
     .filter((l) => l.startsWith("> "))
     .map((l) => l.slice(2).trim())
     .join(" ")
     .trim();
-  if (landing.includes(oneLiner)) ok(`${LANDING}: quotes the positioning one-liner verbatim`);
+  if (!oneLiner) fail(`${POSITIONING}: "## The one-liner" carries no blockquote`);
+  else if (landing.includes(oneLiner)) ok(`${LANDING}: quotes the positioning one-liner verbatim`);
   else fail(`${LANDING}: positioning one-liner not found verbatim ("${oneLiner.slice(0, 50)}...")`);
 }
 
@@ -86,9 +88,13 @@ const vRe = new RegExp(`v${version.replace(/\./g, "\\.")}(?![0-9.])`);
 if (vRe.test(landing)) ok(`${LANDING}: advertises v${version} (matches VERSION)`);
 else fail(`${LANDING}: does not advertise v${version} - VERSION moved and the landing did not`);
 
-// External hosts allowlist: only GitHub links may leave the page.
+// External hosts allowlist: only GitHub links may leave the page. Inlined `data:` URIs are
+// stripped first - an SVG's xmlns is a namespace identifier, not a request that leaves.
+const landingNet = landing
+  .replace(/url\((["'])data:[\s\S]*?\1\)/g, "url()")
+  .replace(/\bdata:[^"'\s)]*/g, "");
 const hosts = new Set(
-  [...landing.matchAll(/https?:\/\/([^/"'\s)]+)/g)].map((m) => m[1].toLowerCase()),
+  [...landingNet.matchAll(/https?:\/\/([^/"'\s)]+)/g)].map((m) => m[1].toLowerCase()),
 );
 for (const h of hosts) {
   if (h !== "github.com" && !h.endsWith(".github.com")) fail(`${LANDING}: unexpected external host ${h}`);
@@ -99,24 +105,20 @@ if (![...hosts].some((h) => h !== "github.com" && !h.endsWith(".github.com"))) o
 
 const SITE = "site/docs";
 const pages = readdirSync(SITE).filter((f) => f.endsWith(".html"));
-// The expected count is derived from the same source the generator reads - config
-// first, else the default PAGE MAP in tools/docsite.mjs. Never hand-written here.
-const cfgPath = ["site/site.config.json", "site.config.json"].find((p) => existsSync(p));
-const cfg = cfgPath ? JSON.parse(readFileSync(cfgPath, "utf8")) : {};
-let expectedPages;
-if (cfg.pages) expectedPages = cfg.pages.length;
-else {
-  try {
-    const gen = readFileSync("tools/docsite.mjs", "utf8");
-    const block = gen.split("const PAGES = CONFIG.pages || [")[1].split("];")[0];
-    expectedPages = (block.match(/\{\s*src:/g) || []).length;
-  } catch {
-    fail("tools/docsite.mjs: could not locate the default PAGE MAP marker ('const PAGES = CONFIG.pages || [') - the marker moved; update site-check's parse");
-    expectedPages = pages.length; // avoid a second, misleading count failure
-  }
+// The page list comes from the generator itself - imported, not re-derived. Parsing its
+// source for a marker made this check a second, drifting copy of the page map; the
+// generator exports PAGES and runs only when executed directly.
+const { PAGES } = await import("./docsite.mjs");
+const declared = new Set(PAGES.map((p) => p.out));
+const beforePages = failures;
+for (const p of PAGES) {
+  if (!existsSync(`${SITE}/${p.out}`)) fail(`${SITE}: the page map declares ${p.out}, which was not generated`);
 }
-if (pages.length !== expectedPages) fail(`${SITE}: ${pages.length} html pages but the PAGE MAP defines ${expectedPages}`);
-else ok(`${SITE}: ${pages.length} pages present (matches the PAGE MAP)`);
+for (const f of pages) {
+  if (!declared.has(f)) fail(`${SITE}: ${f} is not in the page map - a stale page survived a regeneration`);
+}
+// Counted, not compared: a missing page and a stale one cancel out in a length check.
+if (failures === beforePages) ok(`${SITE}: ${pages.length} pages present, exactly what the page map declares`);
 
 for (const page of pages) {
   const path = `${SITE}/${page}`;
@@ -131,9 +133,13 @@ for (const page of pages) {
     if (!existsSync(`${SITE}/${target}`)) fail(`${path}: broken internal link -> ${target}`);
   }
 }
+// The docs must be dark in the landing's own ink. The value is read off the landing rather
+// than written here, so restyling the landing cannot leave this check asserting a dead colour.
 const anyPage = readFileSync(`${SITE}/index.html`, "utf8");
-if (anyPage.includes("#0D0E11")) ok(`${SITE}: dark-first palette (landing ink) present`);
-else fail(`${SITE}: dark-first palette missing (expected the landing's #0D0E11)`);
+const landingInk = (landing.match(/--bg:\s*(#[0-9a-fA-F]{3,8})/) || [])[1];
+if (!landingInk) fail(`${LANDING}: no --bg custom property to read the ink from`);
+else if (anyPage.includes(landingInk)) ok(`${SITE}: dark-first palette shares the landing ink (${landingInk})`);
+else fail(`${SITE}: dark-first palette missing (expected the landing's ${landingInk})`);
 
 // --- verdict ----------------------------------------------------------------------
 
