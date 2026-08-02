@@ -53,7 +53,8 @@ The prose of the rendered pages (owned by their source files); markdown link int
 
 - Both tools MUST be dependency-free (Node built-ins only).
 - The docsite MUST render the same markdown an agent reads, verbatim - it contributes navigation and layout, never prose; each page's H1 comes from the source file.
-- Raw HTML in source markdown MUST be escaped, and inline code spans MUST be immune to link/emphasis rewriting.
+- Raw HTML in source markdown MUST be escaped, and inline code spans MUST be immune to link/emphasis rewriting. **The single exception is a fence tagged `figure`**, whose contents are emitted verbatim inside `<figure class="fig">`. It exists because a diagram is not expressible in markdown and the alternative was an image, which cannot be diffed, themed or read by a screen reader. The exception is deliberately one named fence rather than a general passthrough: every other scrap of HTML in a source file is still escaped, so a rendered page cannot do something its text does not say.
+- A fenced block whose non-empty lines all begin with `>` MUST render as a prompt block rather than as code: the `>` is stripped from what is shown and from what its copy button copies. What you say to an agent is the most important thing on these pages and rendered as a shell transcript it was the least distinguishable.
 - The site MUST be dark by default with a light `prefers-color-scheme` override, and usable at mobile widths.
 - **The landing MUST carry the same maturity disclosure as the other entry surfaces.** Whatever the README, the FAQ and `llms.txt` say about release tags, adopters and registered stacks, the landing says too. It is the surface a first-time reader is most likely to see and least likely to leave, so it cannot be the one where the limits are softest - and a disclosure that varies by surface is not a disclosure, it is a choice about who gets told.
 - **The landing MUST NOT state as fact anything the repo cannot back.** Counts derivable from a source are named, not numbered ("the rules", never "20 rules" - `tree-check` enforces this and strips markup first, so a tag between the digits and the word does not hide it). Sample terminal output MUST reproduce what the shipped tools actually print, or be marked illustrative; a fabricated check count reads as evidence. Capability claims name their cost where one exists - the guards need Node and `jq`, and a non-Claude agent needs the skills ported - so "nothing to install" is not available to us.
@@ -99,6 +100,10 @@ The prose of the rendered pages (owned by their source files); markdown link int
 - **Markdown leak.** GIVEN a generated page contains `|---` WHEN site-check runs THEN it FAILs (raw table separator leaked).
 - **Palette.** GIVEN `site/docs/index.html` lacks `#0D0E11` WHEN site-check runs THEN it FAILs (dark-first palette missing).
 - **The domain survives a rebuild.** GIVEN `site/CNAME` exists WHEN docsite regenerates the site THEN the file is still there - the generator clears `OUT_DIR`, never `site/` itself, so a rebuild cannot drop the binding and hand the apex back to the default domain.
+- **A figure fence passes through.** GIVEN a source file contains a fence tagged `figure` holding an `<svg>` WHEN docsite renders THEN the SVG reaches the page unescaped inside `<figure class="fig">`.
+- **Every other fence is still escaped.** GIVEN a fence with no tag, or any other tag, holding `<svg>` WHEN docsite renders THEN it appears as escaped text - the exception is the tag, not the presence of HTML.
+- **A prompt block loses its marker.** GIVEN a fence whose lines all begin with `>` WHEN docsite renders THEN the rendered text and the copy button's payload both carry the sentence without the `>`.
+- **A landing link into the site is checked.** GIVEN `site/index.html` links `docs/gone.html` and no such page is generated WHEN site-check runs THEN it FAILs naming the target - the docs' own links were always checked and the landing's were not, which is how its primary call to action reached production dead.
 
 ## Acceptance criteria (config)
 

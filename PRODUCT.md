@@ -2,7 +2,7 @@
 
 > The standard's own vision, dogfooded. This repo prescribes a `PRODUCT.md` for the
 > repos it standardizes - so it keeps one for itself.
-> The idea behind all of it: [`docs/manifesto.md`](docs/manifesto.md).
+> The idea behind all of it: [`docs/what-and-why.md`](docs/what-and-why.md).
 
 ## What this is
 

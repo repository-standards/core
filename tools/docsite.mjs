@@ -36,6 +36,13 @@ const CONFIG = CONFIG_PATH ? JSON.parse(readFileSync(CONFIG_PATH, "utf8")) : {};
 const OUT_DIR = CONFIG.out_dir || "site/docs";
 // The deployed root - the docs live under it, and so does llms.txt.
 const SITE_DIR = OUT_DIR.includes("/") ? OUT_DIR.slice(0, OUT_DIR.lastIndexOf("/")) : ".";
+// Every internal link is written root-absolute against this. Relative hrefs are at the mercy
+// of whatever the browser thinks the base is, so one visit to /docs without the trailing
+// slash turned every link in the page into a 404 - the sidebar included. A site served from
+// a different prefix (a stack at /docs/node/) sets base_path and nothing else changes.
+// The site root the docs hang under, so the header links home from any depth.
+const SITE_ROOT = (CONFIG.site_root || "/").replace(/\/+$/, "/");
+const BASE = (CONFIG.base_path || "/" + OUT_DIR.split("/").slice(1).join("/") + "/").replace(/\/+$/, "/");
 const GITHUB_REPO_URL = CONFIG.repo_url || "https://github.com/repository-standards/core";
 const BRAND = CONFIG.brand || "repository-standards";
 // The header wears the released version, read from its one home rather than restated here.
@@ -65,37 +72,40 @@ const NODE_STACK_URL =
 // argument on two pages.
 export const PAGES = CONFIG.pages || [
   { src: "docs/quick-start.md", out: "index.html", nav: "Quick start", group: null },
-  { src: "docs/what-this-is.md", out: "what-this-is.html", nav: "What this is", group: null },
-  { src: "docs/manifesto.md", out: "why.html", nav: "Why it exists", group: null },
+  { src: "docs/what-and-why.md", out: "what-and-why.html", nav: "What this is, and why", group: null },
 
-  { src: "docs/method/adoption.md", out: "adopt.html", nav: "Adopt: the gated path", group: "Adopting" },
-  { src: "docs/method/self-verify.md", out: "self-verify.html", nav: "Verifying compliance", group: "Adopting" },
-  { src: "docs/method/checklist.md", out: "checklist.html", nav: "Decision checklist", group: "Adopting" },
+  { src: "docs/method/ways-of-working.md", out: "ways-of-working.html", nav: "Start here", group: "How to use this project" },
+  { src: "docs/method/product-work.md", out: "product-work.html", nav: "Product Owner", role: "po", group: "How to use this project" },
+  { src: "docs/method/dev-work.md", out: "dev-work.html", nav: "Developer", role: "dev", group: "How to use this project" },
+  { src: "docs/method/lead-work.md", out: "lead-work.html", nav: "Consultant", role: "lead", group: "How to use this project" },
+  { src: "docs/method/working-with-specs.md", out: "working-with-specs.html", nav: "Anyone", role: "any", group: "How to use this project" },
+  { src: "docs/method/agent-work.md", out: "agent-work.html", nav: "What the agent does by itself", group: "How to use this project" },
+  { src: "docs/method/discovery.md", out: "discovery.html", nav: "Turning meetings into specs", group: "How to use this project" },
 
-  { src: "docs/method/ways-of-working.md", out: "ways-of-working.html", nav: "The loop, and who does what", group: "Ways of working" },
-  { src: "docs/method/working-with-specs.md", out: "working-with-specs.html", nav: "Working with specs", group: "Ways of working" },
-  { src: "docs/method/working-with-ai/README.md", out: "working-with-ai.html", nav: "Working with AI", group: "Ways of working" },
-  { src: "docs/method/working-with-ai/context-is-the-budget.md", out: "wwa-context-is-the-budget.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
-  { src: "docs/method/working-with-ai/comments-that-earn-their-tokens.md", out: "wwa-comments-that-earn-their-tokens.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
-  { src: "docs/method/working-with-ai/felt-speed-vs-measured-speed.md", out: "wwa-felt-speed-vs-measured-speed.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
-  { src: "docs/method/working-with-ai/a-check-the-agent-can-run.md", out: "wwa-a-check-the-agent-can-run.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
-  { src: "docs/method/working-with-ai/review-is-where-the-cost-lands.md", out: "wwa-review-is-where-the-cost-lands.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
-  { src: "docs/method/working-with-ai/the-cleanup-comes-later.md", out: "wwa-the-cleanup-comes-later.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
-  { src: "docs/method/working-with-ai/instructions-that-survive.md", out: "wwa-instructions-that-survive.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
-  { src: "docs/method/working-with-ai/blast-radius-before-autonomy.md", out: "wwa-blast-radius-before-autonomy.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
-  { src: "docs/method/working-with-ai/sources.md", out: "wwa-sources.html", nav: null, group: "Ways of working", parent: "working-with-ai.html" },
-  { src: "docs/method/discovery.md", out: "discovery.html", nav: "Turning meetings into specs", group: "Ways of working" },
-  { src: "docs/method/working-language.md", out: "working-language.html", nav: "Choosing a working language", group: "Ways of working" },
+  { src: "docs/method/adoption.md", out: "adopt.html", nav: "Adopt: the gated path", group: "Getting on the standard" },
+  { src: "docs/method/working-language.md", out: "working-language.html", nav: "Choosing a working language", group: "Getting on the standard" },
+  { src: "docs/method/self-verify.md", out: "self-verify.html", nav: "Drift, and staying current", group: "Getting on the standard" },
+  { src: "docs/method/working-with-ai/README.md", out: "working-with-ai.html", nav: "Working with AI", group: "Getting on the standard" },
+  { src: "docs/method/working-with-ai/context-is-the-budget.md", out: "wwa-context-is-the-budget.html", nav: null, group: "Getting on the standard", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/comments-that-earn-their-tokens.md", out: "wwa-comments-that-earn-their-tokens.html", nav: null, group: "Getting on the standard", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/felt-speed-vs-measured-speed.md", out: "wwa-felt-speed-vs-measured-speed.html", nav: null, group: "Getting on the standard", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/a-check-the-agent-can-run.md", out: "wwa-a-check-the-agent-can-run.html", nav: null, group: "Getting on the standard", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/review-is-where-the-cost-lands.md", out: "wwa-review-is-where-the-cost-lands.html", nav: null, group: "Getting on the standard", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/the-cleanup-comes-later.md", out: "wwa-the-cleanup-comes-later.html", nav: null, group: "Getting on the standard", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/instructions-that-survive.md", out: "wwa-instructions-that-survive.html", nav: null, group: "Getting on the standard", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/blast-radius-before-autonomy.md", out: "wwa-blast-radius-before-autonomy.html", nav: null, group: "Getting on the standard", parent: "working-with-ai.html" },
+  { src: "docs/method/working-with-ai/sources.md", out: "wwa-sources.html", nav: null, group: "Getting on the standard", parent: "working-with-ai.html" },
 
-  { src: "docs/method/taxonomy.md", out: "taxonomy.html", nav: "Where knowledge lands", group: "Concepts" },
-  { src: "docs/ecosystem.md", out: "ecosystem.html", nav: "How it fits together", group: "Concepts" },
-  { src: "docs/personas.md", out: "personas.html", nav: "Who this is built for", group: "Concepts" },
+  { src: "docs/method/taxonomy.md", out: "taxonomy.html", nav: "Where knowledge lands", group: "Getting on the standard" },
+  { src: "docs/ecosystem.md", out: "ecosystem.html", nav: "How it fits together", group: "Getting on the standard" },
+  { src: "docs/personas.md", out: "personas.html", nav: "Who this is built for", group: "Getting on the standard" },
 
-  { src: "standard/SPEC.md", out: "spec.html", nav: "The spec", group: "Reference" },
-  { src: "docs/faq.md", out: "faq.html", nav: "FAQ", group: "Reference" },
-  { src: "docs/decision-records/README.md", out: "decision-records.html", nav: "Decision records", group: "Decisions and evidence" },
-  { src: "docs/open-questions/README.md", out: "open-questions.html", nav: "Open questions", group: "Decisions and evidence" },
-  { src: "docs/case-studies/README.md", out: "case-studies.html", nav: "Case studies", group: "Decisions and evidence" },
+  { src: "standard/SPEC.md", out: "spec.html", nav: "The spec", group: "Getting on the standard", sub: "Reference" },
+  { src: "docs/method/checklist.md", out: "checklist.html", nav: "Decision checklist", group: "Getting on the standard", sub: "Reference" },
+  { src: "docs/faq.md", out: "faq.html", nav: "FAQ", group: "Getting on the standard", sub: "Reference" },
+  { src: "docs/decision-records/README.md", out: "decision-records.html", nav: "Decision records", group: "Getting on the standard", sub: "Decisions and evidence" },
+  { src: "docs/open-questions/README.md", out: "open-questions.html", nav: "Open questions", group: "Getting on the standard", sub: "Decisions and evidence" },
+  { src: "docs/case-studies/README.md", out: "case-studies.html", nav: "Case studies", group: "Getting on the standard", sub: "Decisions and evidence" },
 
   { src: "docs/how-this-repo-works.md", out: "how-this-repo-works.html", nav: "How this repo runs itself", group: "Contributing" },
   { src: "CONTRIBUTING.md", out: "contributing.html", nav: "Want to contribute?", group: "Contributing" },
@@ -138,7 +148,7 @@ function ownSpecPages() {
       src: `specs/${name}/spec.md`,
       out: `ownspec-${slugify(name)}.html`,
       nav: null,
-      group: "Decisions and evidence",
+      group: "Getting on the standard", sub: "Decisions and evidence",
       parent: "how-this-repo-works.html",
     }));
 }
@@ -188,14 +198,14 @@ function resolveHref(href, ctx) {
 
   const resolved = resolveRelativePath(ctx.srcDir, pathPart);
   const page = PAGES_BY_SRC.get(resolved);
-  if (page) return page.out + frag;
+  if (page) return BASE + page.out + frag;
 
   // A tree page has no PAGE MAP entry to match on - every one of them is generated from
   // the manifest and shares its src. Its authored prose does have a file, so one path
   // page links to another by naming that file, which link-check can then verify exists.
   // Writing the generated .html name directly would be a link nothing checks.
   const companion = resolved.match(/^docs\/tree\/(.+)\.md$/);
-  if (companion) return `tree-${companion[1]}.html${frag}`;
+  if (companion) return `${BASE}tree-${companion[1]}.html${frag}`;
 
   const isDir = resolved.endsWith("/");
   const ghPath = isDir ? resolved.slice(0, -1) : resolved;
@@ -392,6 +402,7 @@ function mdToHtml(markdown, ctx) {
 
     // fenced code block - consumed verbatim, escaped, never inline-parsed
     if (/^```/.test(line)) {
+      const fenceLang = line.slice(3).trim().toLowerCase();
       i++;
       const codeLines = [];
       while (i < lines.length && !/^```/.test(lines[i])) {
@@ -399,6 +410,14 @@ function mdToHtml(markdown, ctx) {
         i++;
       }
       i++; // consume closing fence (or EOF if unterminated)
+      // ```figure is the one way raw HTML reaches a page, and it is deliberately narrow: a
+      // named fence, in a file an author wrote, for a diagram markdown cannot express. Every
+      // other scrap of HTML in a source file is still escaped, which is the rule that keeps
+      // a rendered document from doing something its text does not say.
+      if (fenceLang === "figure") {
+        out.push(`<figure class="fig">${codeLines.join("\n")}</figure>\n`);
+        continue;
+      }
       // A block whose lines all start with `>` is not code, it is the sentence you say to
       // the agent. It reads as the most important thing on the page and rendered as the
       // least, indistinguishable from a shell transcript. It gets its own warm block and a
@@ -684,6 +703,18 @@ a.nav-tree-link:hover { background: var(--active-bg); color: var(--fg); }
   .nav-tree details > summary::after { transition: none; }
 }
 
+/* A figure-fenced block. It sizes itself to the reading column and keeps its own aspect, so
+   a diagram is never the thing that introduces a horizontal scroll. */
+.fig { margin: 1.6rem 0 1.9rem; padding: 0; max-width: 100%; }
+.fig svg { display: block; width: 100%; height: auto; }
+.fig figcaption { margin-top: 0.7rem; font-size: 0.85rem; color: var(--muted); }
+.loop-node { fill: var(--bg); stroke-width: 2.5; }
+.loop-label { fill: var(--fg); font-size: 13px; font-weight: 650; font-family: var(--font-sans); }
+.loop-sub { fill: var(--muted); font-size: 11px; font-family: var(--font-sans); }
+.loop-ring { fill: none; stroke: rgba(255,255,255,.10); stroke-width: 2; }
+/* One dot travels the ring so the diagram reads as a cycle rather than as five boxes. */
+.loop-dot { fill: var(--orange, #ff7a2f); }
+@media (prefers-reduced-motion: reduce) { .loop-dot { display: none; } }
 .backlink { margin: 0 0 1.4rem; font-size: 0.875rem; }
 .backlink a { color: var(--muted); text-decoration: none; }
 .backlink a:hover { color: var(--fg); }
@@ -718,8 +749,69 @@ a.nav-tree-link:hover { background: var(--active-bg); color: var(--fg); }
   font-size: 0.875rem;
   line-height: 1.4;
 }
+/* The pages a reader picks themselves out of. Bold, tinted, and carrying a figure, so the
+   eye lands on the group before it reads a single label - and each tint is the one that role
+   already wears on the loop, so the sidebar and the diagram agree. */
+.nav-role {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--fg);
+  font-weight: 650;
+  font-size: 0.92rem;
+}
+.nav-role:visited { color: var(--fg); }
+.nav-ico { width: 17px; height: 17px; flex: none; opacity: 0.95; }
+.nav-role-po { color: #ff7a2f; }
+.nav-role-dev { color: #a884ff; }
+.nav-role-lead { color: #34d399; }
+.nav-role-any { color: var(--fg); }
+.nav-role-po:visited { color: #ff7a2f; }
+.nav-role-dev:visited { color: #a884ff; }
+.nav-role-lead:visited { color: #34d399; }
+.nav-role:hover { filter: brightness(1.18); }
+/* The row you are on has to stay distinguishable even though every role row is already
+   coloured and bold - so being here is a filled chip in the role's own tint, not one more
+   shade of the same thing. */
+.nav-role.active {
+  border-left-color: currentColor;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+  border-radius: 0 7px 7px 0;
+}
+/* A collapsible shelf inside a group: material you look things up in, present without
+   burying the pages somebody actually walks through. */
+.nav-sub > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  border-left: 1px solid var(--line2);
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.nav-sub > summary::-webkit-details-marker { display: none; }
+.nav-sub > summary::after {
+  content: ""; width: 1.1rem; height: 1.1rem; margin-left: auto;
+  background-color: var(--muted);
+  -webkit-mask: var(--chevron) center / 0.4rem no-repeat;
+  mask: var(--chevron) center / 0.4rem no-repeat;
+  transform: rotate(0deg); transition: transform 0.15s ease;
+}
+.nav-sub[open] > summary::after { transform: rotate(90deg); }
+.nav-sub > summary:hover { color: var(--fg); }
+.nav-sub .nav-link { margin-left: 0.95rem; }
+@media (prefers-reduced-motion: reduce) { .nav-sub > summary::after { transition: none; } }
+@media (prefers-color-scheme: light) {
+  .nav-role-po, .nav-role-po:visited { color: #c1490d; }
+  .nav-role-dev, .nav-role-dev:visited { color: #6c3fd4; }
+  .nav-role-lead, .nav-role-lead:visited { color: #0f8a5f; }
+}
 .nav-link:visited { color: var(--muted); }
-.nav-link:hover { color: var(--fg); border-left-color: var(--muted); }
+.nav-link:hover { color: var(--fg); }
 .nav-link.active {
   color: var(--active-fg);
   font-weight: 600;
@@ -857,9 +949,26 @@ th { background: var(--bg-panel); font-weight: 600; color: var(--fg); white-spac
 }
 `;
 
+// A figure per role, drawn rather than lettered: the sidebar is scanned, and a shape is
+// found faster than a word is read. Stroke-only and currentColor, so each inherits the tint
+// its row carries and both themes work without a second set.
+const ICO = (paths) =>
+  `<svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+const ROLE_ICON = {
+  // one person, holding a list
+  po: ICO('<circle cx="9" cy="7" r="3.2"/><path d="M3.5 20v-1.4A4.1 4.1 0 0 1 7.6 14.5h2.8"/><rect x="14" y="12" width="7" height="9" rx="1.4"/><path d="M16.2 15h2.6M16.2 18h1.6"/>'),
+  // one person, at a terminal
+  dev: ICO('<circle cx="8.5" cy="6.5" r="3"/><path d="M3.2 20v-1.2a4 4 0 0 1 4-4h2"/><rect x="12" y="11" width="9.5" height="9.5" rx="1.6"/><path d="M14.6 14.6l1.8 1.6-1.8 1.6M18 18.6h1.7"/>'),
+  // two people, one leading
+  lead: ICO('<circle cx="8" cy="7" r="3.1"/><path d="M2.6 20v-1.5A4.2 4.2 0 0 1 6.8 14.3h2.4a4.2 4.2 0 0 1 4.2 4.2V20"/><circle cx="17.6" cy="8.4" r="2.4"/><path d="M15 20v-1.2a3.4 3.4 0 0 1 3.4-3.4h.6a2.8 2.8 0 0 1 2.4 1.4"/>'),
+  // a crowd
+  any: ICO('<circle cx="12" cy="7" r="3"/><path d="M6.8 20v-1.3A4 4 0 0 1 10.8 14.7h2.4a4 4 0 0 1 4 4V20"/><path d="M4.6 12.6a2.2 2.2 0 1 1 1.6-3.9M19.4 12.6a2.2 2.2 0 1 0-1.6-3.9M2 19v-.9a3 3 0 0 1 2.6-3M22 19v-.9a3 3 0 0 0-2.6-3"/>'),
+};
+
 function buildNavRows() {
   const rows = [];
   let last = null;
+  let lastSub = null;
   for (const p of PAGES) {
     // Per-path pages are not flat rows - renderNav draws them nested, from the tree
     // itself, so the sidebar mirrors the shipped folder structure rather than a list.
@@ -872,10 +981,21 @@ function buildNavRows() {
     if (p.group !== last) {
       if (p.group) rows.push({ type: "group", label: p.group });
       last = p.group;
+      lastSub = null;
+    }
+    // A `sub` key nests pages under a collapsible heading inside their group. Material you
+    // look things up in rather than read through - the rules, the records, the questions -
+    // belongs with the group it serves, but flat it would bury the pages somebody actually
+    // walks. Collapsed, it is present and out of the way.
+    if (p.sub !== lastSub) {
+      if (p.sub) rows.push({ type: "sub-open", label: p.sub });
+      else if (lastSub) rows.push({ type: "sub-close" });
+      lastSub = p.sub ?? null;
     }
     rows.push({ type: "link", page: p });
     if (p.render === "tree-root") rows.push({ type: "tree" });
   }
+  if (lastSub) rows.push({ type: "sub-close" });
   return rows;
 }
 
@@ -895,7 +1015,7 @@ function renderNavTree(node, currentOut, depth = 0) {
     const active = out === currentOut;
     const label = `${escapeHtml(child.name)}${isFolder(child.path) ? "/" : ""}`;
     const link = out
-      ? `<a class="nav-tree-link${active ? " active" : ""}" href="${escapeAttr(out)}"${active ? ' aria-current="page"' : ""}>${label}</a>`
+      ? `<a class="nav-tree-link${active ? " active" : ""}" href="${escapeAttr(BASE + out)}"${active ? ' aria-current="page"' : ""}>${label}</a>`
       : `<span class="nav-tree-link is-plain">${label}</span>`;
 
     if (child.children.size) {
@@ -919,16 +1039,32 @@ function containsPage(node, currentOut) {
   return false;
 }
 
+// A collapsed subgroup still has to open when the page you are on lives inside it, or a deep
+// link lands on a page whose own row is hidden.
+function subHoldsCurrent(label, currentOut) {
+  return PAGES.some((p) => p.sub === label && p.out === currentOut);
+}
+
 function renderNav(currentOut) {
   let html = "";
   for (const row of buildNavRows()) {
     if (row.type === "group") {
       html += `<div class="nav-group-title">${escapeHtml(row.label)}</div>\n`;
+    } else if (row.type === "sub-open") {
+      const holds = subHoldsCurrent(row.label, currentOut);
+      html += `<details class="nav-sub"${holds ? " open" : ""}><summary>${escapeHtml(row.label)}</summary>\n`;
+    } else if (row.type === "sub-close") {
+      html += `</details>\n`;
     } else if (row.type === "tree") {
       html += `<div class="nav-tree">${renderNavTree(TREE, currentOut)}</div>\n`;
     } else {
       const active = row.page.out === currentOut;
-      html += `<a class="nav-link${active ? " active" : ""}" href="${row.page.out}"${active ? ' aria-current="page"' : ""}>${escapeHtml(row.page.nav)}</a>\n`;
+      // A `role` key marks the pages a reader picks themselves out of. They are the point of
+      // the section, and as plain rows they read as four items among eight - so each gets a
+      // figure and the colour it carries on the loop, and the label goes bold.
+      const cls = `nav-link${row.page.role ? ` nav-role nav-role-${row.page.role}` : ""}${active ? " active" : ""}`;
+      const ico = row.page.role ? ROLE_ICON[row.page.role] ?? "" : "";
+      html += `<a class="${cls}" href="${BASE}${row.page.out}"${active ? ' aria-current="page"' : ""}>${ico}${escapeHtml(row.page.nav)}</a>\n`;
     }
   }
   return html;
@@ -941,6 +1077,7 @@ function renderPage(page, contentHtml) {
   const h1 = contentHtml.match(/<h1[^>]*>([\s\S]*?)<\/h1>/);
   const title = escapeHtml(page.nav ?? (h1 ? h1[1].replace(/<[^>]+>/g, "").trim() : page.out));
   const sourceUrl = `${GITHUB_REPO_URL}/blob/main/${page.src}`;
+  const hasMarkdown = existsSync(page.render === "file" ? treeProsePath(page.node.path) : page.src);
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -951,15 +1088,15 @@ function renderPage(page, contentHtml) {
 </head>
 <body>
 <header class="topbar"><div class="topbar-in">
-<a class="tb-brand" href="../index.html"><img class="tb-mark" src="../logo-mark.png" alt="" width="428" height="512"><span class="tb-word"><b>repository</b><i>Standards</i></span></a>
+<a class="tb-brand" href="${SITE_ROOT}"><img class="tb-mark" src="${SITE_ROOT}logo-mark.png" alt="" width="428" height="512"><span class="tb-word"><b>repository</b><i>Standards</i></span></a>
 <span class="tb-tag">v${escapeHtml(VERSION)}</span>
 <span class="tb-spacer"></span>
-<nav class="tb-links"><a href="../index.html">Homepage</a></nav>
+<nav class="tb-links"><a href="${SITE_ROOT}">Homepage</a></nav>
 <div class="tb-switch" id="ecoswitch">
 <button type="button" aria-haspopup="true" aria-expanded="false" id="ecobtn"><span class="pip"></span> Repository Standards <span class="chev">&#9662;</span></button>
 <div class="tb-menu" role="menu" aria-label="Ecosystem">
 <div class="grp">Core</div>
-<a role="menuitem" href="index.html"><span>Repository Standards<small>the method - align, verify, drift 0</small></span><span class="now">here</span></a>
+<a role="menuitem" href="${BASE}index.html"><span>Repository Standards<small>the method - align, verify, drift 0</small></span><span class="now">here</span></a>
 <div class="div"></div>
 <div class="grp">Best practices</div>
 <a role="menuitem" href="${escapeAttr(NODE_STACK_URL)}" target="_blank" rel="noopener noreferrer"><span>Node<small>Next.js + Fastify - starter, decisions, adapting guide</small></span></a>
@@ -985,10 +1122,15 @@ ${
   // decision record and the list you came from is gone. The link back is the whole
   // orientation such a page gets, so it goes above the title rather than under the fold.
   page.parent
-    ? `<p class="backlink"><a href="${escapeAttr(page.parent)}">&larr; ${escapeHtml(PAGES.find((p) => p.out === page.parent)?.nav ?? "Back")}</a></p>\n`
+    ? `<p class="backlink"><a href="${escapeAttr(BASE + page.parent)}">&larr; ${escapeHtml(PAGES.find((p) => p.out === page.parent)?.nav ?? "Back")}</a></p>\n`
     : ""
 }${contentHtml}
-<p class="page-footer">Read this page's <a href="${escapeAttr(page.out.replace(/\.html$/, ".md"))}">markdown</a>, or <a href="${escapeAttr(sourceUrl)}" target="_blank" rel="noopener noreferrer">its source on GitHub</a>.</p>
+<p class="page-footer">${
+  // The markdown twin is only written for a page that has a markdown source. Offering it
+  // unconditionally left one page pointing at a file that was never generated - which is
+  // exactly the kind of link nobody clicks until a reader does.
+  hasMarkdown ? `Read this page's <a href="${escapeAttr(BASE + page.out.replace(/\.html$/, ".md"))}">markdown</a>, or its ` : "Read the "
+}<a href="${escapeAttr(sourceUrl)}" target="_blank" rel="noopener noreferrer">source on GitHub</a>.</p>
 </div>
 </main>
 </div>
@@ -1203,7 +1345,7 @@ function ruleQuote(ruleId) {
   const lead = firstSentence(full);
   const more = lead.length < full.length;
   return `<blockquote><p>${renderInline(lead, { srcDir: "standard" })}</p></blockquote>
-<p class="fm-note"><a href="spec.html">${more ? "Read this rule in full" : "See it in the spec"}</a></p>`;
+<p class="fm-note"><a href="${BASE}spec.html">${more ? "Read this rule in full" : "See it in the spec"}</a></p>`;
 }
 
 function statusLine(e) {
@@ -1250,7 +1392,7 @@ function renderTreeFilePage(page) {
       .map((c) => {
         const label = `<code>${escapeHtml(c.name)}${isFolder(c.path) ? "/" : ""}</code>`;
         return c.entry
-          ? `<li><a href="${escapeAttr(treeSlug(c.path))}">${label}</a> - ${escapeHtml(c.entry.purpose)}</li>`
+          ? `<li><a href="${escapeAttr(BASE + treeSlug(c.path))}">${label}</a> - ${escapeHtml(c.entry.purpose)}</li>`
           : `<li>${label}</li>`;
       })
       .join("\n")}\n</ul>`;
@@ -1304,7 +1446,7 @@ function unusedTreeIndex() {
     .map((c) => {
       const label = `<code>${escapeHtml(c.name)}${isFolder(c.path) ? "/" : ""}</code>`;
       return c.entry
-        ? `<li><a href="${escapeAttr(treeSlug(c.path))}">${label}</a> - ${escapeHtml(c.entry.purpose)}</li>`
+        ? `<li><a href="${escapeAttr(BASE + treeSlug(c.path))}">${label}</a> - ${escapeHtml(c.entry.purpose)}</li>`
         : `<li>${label}</li>`;
     })
     .join("\n");

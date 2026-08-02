@@ -20,13 +20,21 @@ Watch the whole thread.
 
 ### Week 1 - the topic opens, materials arrive
 
-After the first meeting, the PO (or anyone) hands the agent the meeting notes:
+After the first meeting, the PO (or anyone) hands the agent the meeting notes. Just hand them
+over - the agent recognises raw material for what it is:
 
 ```
-> /discovery-digest here are the notes from today's booking-changes meeting: <paste>
+> notes from today's booking-changes meeting: <paste>
 ```
 
-The digest skill creates the dossier and its first provenance-stamped entry:
+**Advanced:** you can name the procedure yourself when you already know which one you want.
+Both do the same thing, and the plain sentence is the normal way:
+
+```
+> /discovery-digest notes from today's booking-changes meeting: <paste>
+```
+
+Either way the dossier is created with its first provenance-stamped entry:
 
 ```
 docs/discovery/booking-changes/
@@ -42,7 +50,7 @@ price vs reprice at change time - argued both ways, NOT decided".
 A mail arrives two days later; same move:
 
 ```
-> /discovery-digest mail from the payment provider about partial refunds: <paste>
+> mail from the payment provider about partial refunds: <paste>
 docs/discovery/booking-changes/2026-08-01-mail-provider-refunds.md
 ```
 
@@ -60,7 +68,7 @@ constraint contradicts what the kickoff assumed - flags it:
 The team wants to see where they are. They do not wait for discovery to end:
 
 ```
-> /spec-specify guests change their booking dates themselves
+> guests change their booking dates themselves
 ```
 
 `spec-specify` checks `docs/discovery/` first, finds `booking-changes/`,

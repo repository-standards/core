@@ -1,152 +1,281 @@
-# Ways of working - a feature, spec-driven, from intent to shipped
+# How to use this project
 
-How a new capability travels through the team: **PO writes the intent, a developer
-sharpens it into a buildable spec, an AI implements it, and the spec stays the truth.**
-The spec is the artifact that passes between roles - it starts as intent and gains
-precision at each hand-off. This is the ongoing flow once a repo is on the standard
-(greenfield from the start, or brownfield after the align router's onboarding phase).
+```figure
+<svg viewBox="0 0 640 372" role="img" aria-label="The loop: say what you want, it asks back, nothing left open, it gets built, reconcile, merge, and round again">
+  <circle class="loop-ring" cx="320" cy="180" r="130"/>
+  <circle r="1.7" opacity="0.19" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-0.39s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-0.39s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="2.8" opacity="0.38" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-0.26s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-0.26s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="3.9" opacity="0.56" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-0.13s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-0.13s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="6.0" opacity="1.00" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="0.00s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="0.00s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="1.7" opacity="0.19" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-2.19s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-2.19s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="2.8" opacity="0.38" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-2.06s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-2.06s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="3.9" opacity="0.56" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-1.93s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-1.93s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="6.0" opacity="1.00" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-1.80s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-1.80s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="1.7" opacity="0.19" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-3.99s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-3.99s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="2.8" opacity="0.38" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-3.86s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-3.86s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="3.9" opacity="0.56" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-3.73s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-3.73s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="6.0" opacity="1.00" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-3.60s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-3.60s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="1.7" opacity="0.19" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-5.79s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-5.79s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="2.8" opacity="0.38" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-5.66s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-5.66s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="3.9" opacity="0.56" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-5.53s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-5.53s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="6.0" opacity="1.00" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-5.40s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-5.40s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="1.7" opacity="0.19" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-7.59s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-7.59s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="2.8" opacity="0.38" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-7.46s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-7.46s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="3.9" opacity="0.56" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-7.33s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-7.33s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="6.0" opacity="1.00" fill="#ff7a2f">
+    <animateMotion dur="9s" begin="-7.20s" repeatCount="indefinite" path="M 320 50 A 130 130 0 1 1 319.9 50"/>
+    <animate attributeName="fill" values="#ff7a2f;#a884ff;#34d399;#ff7a2f" dur="9s" begin="-7.20s" repeatCount="indefinite"/>
+  </circle>
+  <g>
+    <circle cx="320" cy="50" r="9" class="loop-node" stroke="#ff7a2f"/>
+    <text class="loop-label" x="320" y="7" text-anchor="middle" fill="#ff7a2f">1. Say what you want</text>
+    <text class="loop-sub" x="320" y="21" text-anchor="middle">plain language, no syntax</text>
+  </g>
+  <g>
+    <circle cx="433" cy="115" r="9" class="loop-node" stroke="#ff7a2f"/>
+    <text class="loop-label" x="583" y="114" text-anchor="start" fill="#ff7a2f">2. It asks back</text>
+    <text class="loop-sub" x="583" y="128" text-anchor="start">only what you must decide</text>
+  </g>
+  <g>
+    <circle cx="433" cy="245" r="9" class="loop-node" stroke="#a884ff"/>
+    <text class="loop-label" x="583" y="244" text-anchor="start" fill="#a884ff">3. Nothing left open</text>
+    <text class="loop-sub" x="583" y="258" text-anchor="start">a script decides, not a person</text>
+  </g>
+  <g>
+    <circle cx="320" cy="310" r="9" class="loop-node" stroke="#a884ff"/>
+    <text class="loop-label" x="320" y="361" text-anchor="middle" fill="#a884ff">4. It gets built</text>
+    <text class="loop-sub" x="320" y="375" text-anchor="middle">plan, tasks, code, tests</text>
+  </g>
+  <g>
+    <circle cx="207" cy="245" r="9" class="loop-node" stroke="#34d399"/>
+    <text class="loop-label" x="57" y="244" text-anchor="end" fill="#34d399">5. Reconcile</text>
+    <text class="loop-sub" x="57" y="258" text-anchor="end">spec = code = tests</text>
+  </g>
+  <g>
+    <circle cx="207" cy="115" r="9" class="loop-node" stroke="#34d399"/>
+    <text class="loop-label" x="57" y="114" text-anchor="end" fill="#34d399">6. Merge</text>
+    <text class="loop-sub" x="57" y="128" text-anchor="end">or the guard says no</text>
+  </g>
+</svg>
+```
 
-## You have this case - say this
+This page is the operating manual. It says who does what, what you actually type, what the
+agent will ask you back, and where each person stops.
 
-The full flow is below; these are the three entry points people actually use. Each
-names the role it belongs to, because the same sentence means different work depending
-on who says it.
+**The one thing to understand before anything else: the agent leads.** You are not expected
+to remember commands, skill names, or the order of steps. You describe what you want in
+ordinary language; the agent recognises which procedure that is, runs it, and comes back to
+you with the questions only you can answer. If you ever find yourself having to remember a
+name, that is a defect in the tool, not in you.
 
-**You are the PO and you want something to exist** - describe the behavior, not the
-implementation:
+## Who does what
+
+Everyone writes into it, which is the point - and each role has a different job, a different
+page, and a different place where it stops.
+
+| | you own | you produce | what you never have to do |
+|---|---|---|---|
+| **[Product](product-work.md)** | what should be true, and for whom | behaviour, rules, what done means to a user | remember a command, or approve something you cannot read |
+| **[Development](dev-work.md)** | making that buildable and correct | contracts, the plan, the decisions the change forced | re-argue a decision that already carries a record |
+| **[The agent](agent-work.md)** | executing it faithfully | code, tests, a reconciled spec | invent anything - it stops and asks instead |
+
+Product owners and analysts write behaviour in their own words and the loop sharpens it into
+something buildable. Architects record the forks and what they cost. QA gets acceptance
+criteria that existed before the code. Developers get contracts instead of archaeology. The
+agent reads all of it as context and writes back into the same place.
+
+## Where you enter
+
+| You are... | Go to |
+|---|---|
+| the person who decides what the product does | [Product Owner](product-work.md) |
+| the person who builds it | [Developer](dev-work.md) |
+| rolling this out across a team or a client | [Consultant](lead-work.md) |
+| after the exact sentence for a situation | [Anyone](working-with-specs.md) |
+| wondering what the agent does unprompted | [What it does by itself](agent-work.md) |
+| holding notes from a meeting | [Turning meetings into specs](discovery.md) |
+
+## The loop, once, end to end
+
+Here is the whole thing with a real example, so the pages above have something to hang on.
+
+**1. Somebody wants something.** They say it plainly:
 
 ```
 > guests should be able to change their booking dates themselves
 ```
 
-**You are the developer and the intent is not buildable yet** - the gap is the point,
-and naming it is the job:
+**2. The agent finds out what it does not know.** It checks whether a spec for this
+capability already exists, checks `docs/discovery/` for anything from a meeting on the
+subject, drafts what it can, and then asks you - only about things it genuinely cannot
+decide:
+
+> Two questions before this is buildable. **(1)** If a guest moves a booking to a more
+> expensive week, do they pay the difference, or keep the original price? **(2)** Is there a
+> cut-off - can they change a booking that starts tomorrow?
+
+**3. You answer, or you say who will.** Both are valid, and "I do not know yet" is a real
+answer that gets recorded rather than lost:
 
 ```
-> sharpen the booking-changes spec into something I could build from - what is still missing?
+> they pay the difference. the cut-off is a business call - ask Maja, park it for now
 ```
 
-**The code shipped and you are not sure the spec still matches** - ask before the next
-change is built on the drift:
+**4. The spec cannot proceed until nothing is open.** What you parked is now a visible
+blocker with a name on it, not a forgotten thread. Anyone can ask:
 
 ```
-> reconcile the booking-changes spec against what we actually merged
+> what is blocking booking-changes?
 ```
 
-The exact prompts per situation - including "is this a new spec or an update", and
-what the agent does underneath - live in
-[working with specs](working-with-specs.md).
+> One open item: a decision on the change cut-off (business, Maja). Everything else is
+> settled.
 
-## Who owns what
+**5. When it is settled, it gets built.** The agent plans, breaks it into tasks, implements,
+and then reconciles: the spec, the code and the tests must agree, and if building revealed
+the spec was wrong, the spec gets fixed - it is the truth, not a wish.
 
-| Role | Owns | Produces |
+**6. The pull request cannot merge if the spec and the code disagree.** Not as a convention.
+A guard compares them and fails the build.
+
+## The skills, and when they fire
+
+The lifecycle ships as procedures the agent runs. Each one carries a description of **the
+situation it is for**, and the agent matches what you said against those descriptions - so
+you never have to know a name.
+
+You can still call one directly when you know exactly what you want. Both work.
+
+| you say | what runs | who usually says it |
 |---|---|---|
-| **PO / product** | the **what** and **why** - the behavior the product should have, the rules, what "done" means to a user | a **behavioral spec**: the capability's target behavior, business rules, acceptance criteria - in plain language, no implementation |
-| **Developer** | the **how** - turning intent into something buildable and correct | the **buildable spec** (adds data / interface / algorithm / state / config contracts), the **plan**, and any **decision** the change forces (ADR/BDR) |
-| **AI agent** | the **execution** - code and tests that satisfy the buildable spec | the implementation, tests, and a **reconciled** spec (spec == code == tests) |
-| **Reviewer (human + CI)** | the **gate** - is it correct, safe, and faithful to the spec and the ADRs | an approved, merged change |
+| "guests should be able to change their dates" | `spec-specify` then `spec-clarify` | product |
+| "notes from today's meeting: ..." | `discovery-digest` | anyone |
+| "we agreed on Postgres, mainly for the reporting joins" | `adr-write` | dev or architect |
+| "we are charging per seat, not per user" | `bdr-write` | product |
+| "what breaks if we change the refund window?" | `spec-impact` | dev |
+| "how would we build this?" | `spec-plan`, then `spec-tasks` | dev |
+| "go ahead" | `spec-implement` | dev |
+| "I think that is done" | `spec-reconcile` | dev |
+| "is this ready to push?" | `pre-pr-review` | dev |
+| "we should fix that too, but not here" | `add-to-backlog` | anyone |
+| "we do not have personas" | `personas-write` | product |
+| "let's start a cycle" / "the sprint is over" | `cycle-open` / `cycle-close` | whoever runs the team |
+| "when does billing ship?" | `timeline-update` | anyone |
+| "update me to the latest" | `update-to-version` | whoever maintains it |
 
-The altitude never inverts: the PO's behavior and the accepted decisions constrain
-everything below; the AI does not invent behavior or make an unrecorded decision.
+If you ever have to remind the agent to use one of these, that skill's description is wrong
+and fixing it is the bug - not you remembering to carry a password.
 
-## The flow
+## What is true for everyone
+
+**Say things in your own words.** There is no syntax. "we agreed on Postgres yesterday,
+write it up" works exactly as well as any command.
+
+**A deferral is an answer.** "Leave that to the technical side" gets recorded as a
+deferral with an owner. What is never acceptable is a question quietly dropped because
+nobody wanted to hold it.
+
+**Ask for a plain-language explanation of anything.** Any spec, any decision, any term:
 
 ```
-backlog item / intent
-  -> PO:  behavioral spec (what + why + acceptance)
-    -> Dev: spec-impact for the ripple, then buildable spec,
-            plan, and a record if the change needs one
-      -> AI:  /spec-plan -> /spec-tasks -> /spec-implement -> tests
-        -> reconcile: spec == code == tests (spec-reconcile)
-          -> pre-pr-review -> PR -> reviewer gate -> merge
+> explain ADR-014 to me like I have never seen this repo
 ```
 
-The spec on the branch is the **target**; `git diff` against the base is the **change
-delta**. After merge, the spec is current production truth - not a historical ticket.
+The person who has to approve something must never be in the position of approving what
+they cannot read. That is a rule of the standard, not a courtesy.
 
-### Stage by stage (mapped to the skills)
+**If you notice something and it is not this change, say so and keep going.**
 
-1. **Intent (PO).** Pull an item from the [`backlog`](../../standard/docs/backlog.md) (or capture a new
-   one). **Name the persona** it serves (from [`personas.md`](../../standard/docs/personas.md)) and how it
-   advances their job - an item that serves no persona is parked, not built (ADR-006).
-   Then write or extend the capability's [spec](../tree/specs.md) at the **behavioral**
-   tier: what it should do, the rules, the acceptance criteria, for whom. No code, no
-   schema - just behavior and why. If two personas conflict, resolve it with a **BDR**,
-   not in your head. The PO never has to gate blind: **ask the agent to explain any
-   ADR/spec/term in plain language, with examples anchored to the personas** - being able
-   to demand a simple explanation is part of this stage (EXPLAIN-1).
-2. **Sharpen (Dev).** Run `spec-impact` to find the ripple (which other capabilities,
-   which ADRs, which code). Raise the spec to the **buildable** tier - the contracts a
-   change can be built and verified from. If the change forces a contestable decision,
-   write the **ADR/BDR** first (see the [decision checklist](checklist.md)
-   for which forks warrant one). Run `spec-reconcile`'s cross-spec consistency step so the updated specs do not
-   contradict each other. Produce the plan.
-3. **Build (AI).** Implement against the buildable spec; write the tests the acceptance
-   criteria imply. Use `spec-reconcile` to close the gap between the spec and the branch
-   (missing implementation, missing tests).
-4. **Reconcile.** Run `spec-reconcile`: the spec, the code, and the tests must agree; if
-   the build revealed the spec was wrong, fix the spec (it is the truth, not a wish).
-   No knowingly-contradicting spec merges.
-5. **Review & merge.** `pre-pr-review` (a clean-context self-review), then open the PR
-   with honest ADR impact, then the human + CI gate.
+```
+> the export has no retry and dies on a timeout - park it, we are not fixing it here
+```
 
-## Right-size the ceremony
+It lands in the backlog with its source and what "done" would mean. Noticing and not
+recording is the only failure here.
 
-Not every change walks all four roles:
+**Nothing important lives in the chat.** A decision made in conversation and not written
+down did not happen. The agent writes it while it is fresh; that is the whole point of the
+project.
 
-- **A new capability or a behavior change** - the full flow: PO intent -> Dev buildable
-  -> AI build -> reconcile.
-- **A small fix within an existing spec** - Dev + AI; the behavioral intent is already
-  in the spec. Still reconcile.
-- **A pure refactor (no behavior change)** - no spec change; `spec-reconcile` confirms
-  behavior is unchanged. An ADR only if it changes a structural decision.
+## The status of a piece of work, at a glance
 
-The test is *substance, not paperwork*: a contestable decision earns an ADR, a real
-behavior change earns a spec edit - a rename does not.
+```
+in-refinement  ->  ready-to-develop  ->  in-development  ->  live
+```
 
-## Status & close - discovery vs build-ready, and the cleanup (ADR-010)
+`in-refinement` means questions are still open, which is healthy and can last weeks.
+`ready-to-develop` is **earned mechanically** - a script checks that nothing is left open;
+it cannot be typed in by someone who is impatient. `live` means the spec, the code and the
+tests have been reconciled and the scaffolding is gone.
 
-A capability spec carries a **Status** so the pipeline is readable at a glance -
-especially for the PO, whose view this is:
+## When it does not fit
 
-`in-refinement -> ready-to-develop -> in-development -> live`
+**A one-line fix.** No spec round. Change it, and if behaviour moved even slightly, the
+spec moves in the same pull request - the guard will say so if you forget.
 
-- **`in-refinement`** - the clarify loop is running; open `[NEEDS ...]` markers of any type
-  are expected. Deferrals are answers too: "leaving this to the technical side" is
-  **recorded** in `## Clarifications`, never lost.
-- **`ready-to-develop`** - requires the **clarify gate**: a `## Clarifications` section
-  and zero open markers of the `[NEEDS ...` family (CLARIFICATION, DECISION, INPUT, ASSET). Plan/tasks (and any tracker mirror) are blocked
-  until then - a spec cannot reach a developer half-baked.
-- **Enabling work** (a token from IT, access, an agreement) is front-matter
-  (`needs_decision_records`-style), mirrored to the tracker as a **blocking Story** -
-  never spec prose. Execution state and the work history live in the tracker (GitHub
-  Issues default; Jira/Linear as adapters); the repo backlog holds intents.
-- **`live` + close** - after reconcile, the **cleanup step verifies against the code**
-  (not by interrogating the user) that the work landed, then removes the scaffolding:
-  `plan.md`, `tasks.md`, satisfied enabling keys. What remains is the living truth -
-  spec, records, docs.
+**A refactor with no behaviour change.** No spec edit at all. The reconcile step confirms
+behaviour did not move.
 
-## How it connects
+**An emergency at 3 a.m.** Fix it. Then write down what you learned, in the runbook, and
+file what it revealed. The standard is designed to survive being skipped once; what it does
+not survive is nobody coming back.
 
-- **Backlog** - intents and stories come from [`backlog`](../../standard/docs/backlog.md); spec deltas and
-  reconcile drift feed new items back into it.
-- **Specs** - the [capability specs](../tree/specs.md) are the travelling artifact and
-  the post-merge source of truth.
-- **Decisions** - the [ADR/BDR](../tree/docs-decision-records.md) stream holds the *why*; the
-  [decision checklist](checklist.md) says which forks deserve a record.
-- **Onboarding** - a brownfield repo reaches this steady-state flow only after
-  the align router (assess -> align -> onboard) has seeded the specs,
-  decisions and backlog.
-- **Driving the agent** - this doc says who owns what; [working-with-ai/](working-with-ai/README.md)
-  says how the AI stage actually behaves - context, verification, review load, blast
-  radius - with the evidence behind each practice.
-
-## Not this
-
-- **Not spec-after-code** - the spec is written/updated to the target *before* the
-  implementation, not reverse-engineered from a merged diff.
-- **Not PO-writes-implementation** - the PO owns behavior and acceptance, not schemas
-  and algorithms; the developer owns the buildable detail.
-- **Not AI-invents-behavior-or-decisions** - an unknown is a question back to the PO or
-  a backlog item, never a fabricated rule or an unrecorded decision.
-- **Not a forked spec** (`payments-v2`) - update the existing capability spec in place.
+The test is always substance, not paperwork: a contestable decision earns a record, a real
+behaviour change earns a spec edit, a rename earns neither.
