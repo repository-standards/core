@@ -151,6 +151,20 @@
     transition:transform .34s cubic-bezier(.3,1.35,.5,1),background .25s ease,box-shadow .25s ease}
   /* A nudge, not a reveal: it is already clickable, so hover only has to acknowledge you. */
   .stage:hover .sticker,.sticker:focus-visible{transform:translateX(calc(2% + 12px)) rotate(-4.5deg)}
+  /* And every so often it nudges itself, because a reader who never moves the mouse over it
+     never learns it is a control. The idle beat is the same motion hover produces, so the
+     hint and the acknowledgement are one gesture rather than two vocabularies. It stops
+     while pressed - a toggle that is already on has nothing left to advertise. */
+  @keyframes sticker-beat{
+    0%,72%,100%{transform:translateX(2%) rotate(-4.5deg) scale(1)}
+    78%{transform:translateX(calc(2% + 26px)) rotate(-2.5deg) scale(1.045)}
+    84%{transform:translateX(calc(2% + 6px)) rotate(-5.4deg) scale(.995)}
+    90%{transform:translateX(calc(2% + 14px)) rotate(-3.8deg) scale(1.015)}
+    95%{transform:translateX(2%) rotate(-4.5deg) scale(1)}
+  }
+  .sticker{animation:sticker-beat 5.5s cubic-bezier(.3,1.35,.5,1) 2s infinite}
+  .stage:hover .sticker,.sticker:focus-visible,.sticker[data-on="1"]{animation:none}
+  @media (prefers-reduced-motion: reduce){.sticker{animation:none}}
   .sticker .ic{width:25px;height:25px;flex:none}
   .sticker[data-on="1"]{background:linear-gradient(96deg,rgba(255,255,255,.11),rgba(255,255,255,.06));
     color:var(--ink);box-shadow:0 18px 44px -18px rgba(0,0,0,.75)}
@@ -492,7 +506,7 @@
         </div>
       </div>
       <div class="secmore reveal">
-        <a class="doclink" href="docs/why.html">Read the full argument - the itch, the idea, the bet</a>
+        <a class="doclink" href="docs/what-and-why.html">Read the full argument - the itch, the idea, the bet</a>
       </div>
     </div>
   </section>

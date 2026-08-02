@@ -1,86 +1,82 @@
 # Quick start
 
-One prompt does the work. The rest of this page is what to expect from it.
-
-You need Node and `jq` on the machine, a git repository, and a coding agent. Nothing is
-installed into your project and nothing is built.
-
-## 1. Fetch the standard
+One line to your agent. There is nothing to install and nothing to build.
 
 ```
-npx degit repository-standards/core .repository-standards
+> follow repositorystandards.com - take this repo onto the standard, interview me for what you need
 ```
 
-Add `.repository-standards/` to your `.gitignore`. It is a checkout you read, not a
-dependency you vendor - the method is always read at latest, and the only thing that
-lands in your repo is the tree the standard puts there.
+That is the whole thing. The agent reads the standard, works out whether your repo is new
+or has ten years of history, and asks you what it cannot work out for itself.
 
-## 2. Say what you want
+## The other three lines you will ever need
 
-Point your agent at the entry skill and describe the situation in one sentence. Every
-route starts with the same short intake - what is this repo, what technology, how much
-do you want done - before anything is touched.
-
-**A repo with nothing in it yet.** The agent interviews you instead of scaffolding blind:
+**You want the number before committing to the work.** Nothing is changed:
 
 ```
-follow .repository-standards/skills/align-to-standards/SKILL.md - take this new repo onto the standard, interview me for what you need
+> score this repo against repositorystandards.com - count the work, do not do it
 ```
 
-**A repo with years of history.** Same path, opposite direction - it reads the code and
-reconstructs what you already chose before it proposes anything:
+**Later, when the standard has moved.** It is a delta, not a re-scaffold, and your recorded
+deviations survive it:
 
 ```
-follow .repository-standards/skills/align-to-standards/SKILL.md - bring this repo onto the standard, read what is here first and show me the plan before you change anything
+> update me to the latest repositorystandards.com
 ```
 
-**You want the number before you commit to the work.** Nothing is changed; you get a fit
-report and a counted backlog:
+**You are on a registered stack.** Both layers, one number:
 
 ```
-follow .repository-standards/skills/align-to-standards/SKILL.md - how far is this repo from drift 0? count the work, do not do it
+> follow repositorystandards.com - adopt the standard with the Node stack
 ```
 
-**You are a Node team.** The stack layer comes with it, and both are measured as one
-number:
+## What you get back
 
-```
-follow .repository-standards/skills/align-to-standards/SKILL.md - adopt the standard with the Node stack
-```
-
-## 3. Prove it
-
-Alignment copies `scripts/` into your repo. From then on the claim is checkable by anyone,
-including your CI:
+A tree in your repository: specs by capability, decision records, a persona roster, a
+backlog that feeds itself, and `scripts/` - so from then on the claim is checkable by
+anyone, including your CI:
 
 ```
 node scripts/self-verify.mjs
 ```
 
-It exits non-zero on any failure and reports drift as a number. That number is the whole
-contract: not "we follow a standard", but "we are this far from it, and here is the list".
+It exits non-zero on any failure and prints drift as a number. That number is the contract:
+not "we follow a standard", but "we are this far from it, and here is the list".
 
-## 4. Later, when the standard moves
+## If your agent cannot browse
 
-An update is a delta, not a re-scaffold - the same shape as bumping a dependency:
+Fetch the standard once and point at the checkout instead. It is a cache you read, not a
+dependency you vendor, so add it to `.gitignore`:
 
 ```
-update me to the latest repository-standards
+npx degit repository-standards/core .repository-standards
 ```
 
-Your recorded deviations survive it. A gate that does not fit your repo is a legitimate,
-recorded decision rather than a silent failure, and updates preserve those.
+```
+> follow .repository-standards/skills/align-to-standards/SKILL.md - take this repo onto the standard
+```
+
+You need Node and `jq` on the machine for the shipped guards to work. Without `jq` the
+pre-execution guards deny every command rather than pass it unchecked.
 
 ## If your agent is not Claude Code
 
-The skills ship in Claude Code's format. Port them to your agent's own mechanism - the
-standard requires a strict port rather than an approximation, because a skill that
-paraphrases the loop is a loop that drifts.
+The skills ship in Claude Code's format. Port them to your agent's own mechanism - strictly,
+not approximately, because a skill that paraphrases the loop is a loop that quietly does
+something else.
 
-## What next
+## Now find yourself
 
-- [Adopt](method/adoption.md) - the gates in order, what each one produces, and how a
-  deviation gets recorded.
-- [Verifying compliance](method/self-verify.md) - what the drift number covers, and what
-  stays a human judgment.
-- [Working with specs](method/working-with-specs.md) - the day-to-day loop once you are in.
+The loop looks different depending on which hand you are. Read the one that is yours, not
+all three.
+
+| | go here |
+|---|---|
+| You decide what the product should do | **[Product Owner](method/product-work.md)** - the four answers you are allowed to give, and what you must never be asked to do |
+| You build it | **[Developer](method/dev-work.md)** - raising a spec to buildable, the guard, and reading a refused plan as your to-do list |
+| You are rolling this out across a team or a client | **[Consultant](method/lead-work.md)** - the order to do it in, the three objections, and the two ways it goes wrong |
+| Any of the above, mid-task | **[Anyone](method/working-with-specs.md)** - find your situation, say the line |
+
+Want the whole picture first? [Start here](method/ways-of-working.md) walks the loop once,
+end to end. Wondering what the agent handles without being told?
+[What it does by itself](method/agent-work.md).

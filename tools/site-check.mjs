@@ -145,11 +145,16 @@ for (const page of pages) {
   checkDashes(path, html);
   if (prose.includes("|---")) fail(`${path}: raw markdown table separator leaked`);
   if (prose.includes("```")) fail(`${path}: raw code fence leaked`);
-  // every internal .html link must resolve to a generated page
-  for (const m of html.matchAll(/href="([^"#]+\.html)(#[^"]*)?"/g)) {
+  // Every internal link must resolve to something on disk. They are root-absolute now, so
+  // they resolve against the site root rather than against the page's own folder - which is
+  // the whole point: a relative href is at the mercy of whatever the browser thinks the base
+  // is, and one visit to /docs without the trailing slash turned every link on the page,
+  // sidebar included, into a 404.
+  for (const m of html.matchAll(/(?:href|src)="([^"#]+)(#[^"]*)?"/g)) {
     const target = m[1];
-    if (/^https?:\/\//.test(target)) continue;
-    if (!existsSync(`${SITE}/${target}`)) fail(`${path}: broken internal link -> ${target}`);
+    if (/^(https?:|mailto:|data:)/.test(target)) continue;
+    if (!target.startsWith("/")) fail(`${path}: relative link -> ${target} (internal links must be root-absolute)`);
+    else if (!existsSync(`site${target}`)) fail(`${path}: broken internal link -> ${target}`);
   }
 }
 // The docs must be dark in the landing's own ink. The value is read off the landing rather

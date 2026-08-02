@@ -1,10 +1,11 @@
-# Working with specs - what you say, what happens
+# Anyone - find your situation, say the line
 
-> The practical companion to [ways-of-working](ways-of-working.md): real
-> situations, the exact prompt you give your agent, and what the standard does
-> underneath. For busy people: find your case, say the line. The agent runs
-> the skills - you never have to remember their names, but every case below
-> shows which one fires so you can call it directly when you want to.
+Whatever your role, the situations below come up. Each one gives you the exact sentence and
+says what happens underneath.
+
+You never have to remember a skill's name - the agent recognises the situation from what you
+said. Every case names the skill anyway, so you can call it directly on the days you know
+exactly what you want.
 
 The one rule under all of it: **specs are living specifications of the current
 or target state - not archives, not wish lists** (ADR-002, ADR-024). Materials
@@ -43,7 +44,7 @@ when in doubt, say it and let the agent propose:
 ## "Something came out of a meeting" (anyone)
 
 ```
-> /discovery-digest notes from today's pricing meeting: <paste>
+> notes from today's pricing meeting: <paste>
 ```
 
 The extract (not the transcript) lands in `docs/discovery/<topic>/` with a
