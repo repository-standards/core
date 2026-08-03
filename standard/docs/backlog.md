@@ -52,6 +52,11 @@ definition of done is met teaches everyone the list is stale:
 "and", split it. An item that cannot be finished in one move is an epic, and an epic
 that never splits is a wish.
 
+**Corner case - the target retired before the item did.** A definition of done that
+names a capability which is now `retired` can never be met - drop the row rather than
+leaving it as unfinishable work; the retiring decision record is where the "why" lives,
+not a comment on this row.
+
 ## What feeds this backlog
 
 Items arrive from four places - never invent work that has no source:
