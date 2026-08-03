@@ -129,7 +129,11 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
   Work items come from and return to [`docs/backlog.md`](docs/backlog.md). Roles and
   hand-offs (PO -> dev -> AI): the standard's
   [ways of working](https://github.com/repository-standards/core/blob/main/docs/method/ways-of-working.md),
-  adopted by reference from the living standard - always latest.
+  adopted by reference from the living standard - always latest. Not sure where
+  something goes at all - a decision, a rule, raw material, a work item?
+  [`taxonomy.md` (by reference)](https://github.com/repository-standards/core/blob/main/docs/method/taxonomy.md)
+  is the routing map; the decision catalog itself is
+  [`checklist.md` (by reference)](https://github.com/repository-standards/core/blob/main/docs/method/checklist.md).
 - **Bring this repo up to the standard (brownfield)** - alignment + onboarding: derive
   capabilities from the code, seed specs + the decisions the code implies, and put the
   rest in the backlog (run from a checkout of repository-standards:

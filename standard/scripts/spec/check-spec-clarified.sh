@@ -46,5 +46,22 @@ if [ "$OPEN_MARKERS" -gt 0 ]; then
     exit 1
 fi
 
+# A spec that names the marker family (CLARIFICATION/DECISION/INPUT/ASSET) as a
+# numbered list item without the bracket form is still an open gap - it is
+# invisible to the check above, which only counts the literal string, and this
+# exact shape has been produced by hand (a spec not authored through
+# /spec-clarify): "- **CLARIFICATION-1 (owner: ...).** ...". Catching the family
+# name is enough to close the gap without trying to parse arbitrary free text.
+UNBRACKETED=$(grep -ncE '^[[:space:]]*-[[:space:]]*\*\*(CLARIFICATION|DECISION|INPUT|ASSET)-[0-9]+' "$SPEC_FILE") || true
+UNBRACKETED=${UNBRACKETED:-0}
+
+if [ "$UNBRACKETED" -gt 0 ]; then
+    echo "clarify gate: FAIL - $SPEC_FILE has $UNBRACKETED open marker(s) written as a numbered list item instead of the required [NEEDS ...] bracket form (invisible to the check above otherwise):" >&2
+    grep -nE '^[[:space:]]*-[[:space:]]*\*\*(CLARIFICATION|DECISION|INPUT|ASSET)-[0-9]+' "$SPEC_FILE" >&2
+    echo "clarify gate: rewrite each as [NEEDS CLARIFICATION: ...] / [NEEDS DECISION: ...; owner: ...] / [NEEDS INPUT: ...; owner: ...] / [NEEDS ASSET: ...; owner: ...], then resolve or defer it." >&2
+    echo "clarify gate: do not plan or generate tasks for a spec that is not ready-to-develop." >&2
+    exit 1
+fi
+
 echo "clarify gate: PASS - $SPEC_FILE has a '## Clarifications' section and no open [NEEDS ...] markers (ready-to-develop)."
 exit 0

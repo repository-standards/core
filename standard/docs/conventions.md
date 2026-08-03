@@ -104,7 +104,10 @@ repo lives in the repo, at its taxonomy home: conventions here / `AGENTS.md`,
 contribution mechanics in `CONTRIBUTING`, behavior in specs, decisions in records
 (the process itself is the standard's
 [ways of working](https://github.com/repository-standards/core/blob/main/docs/method/ways-of-working.md),
-adopted by reference from the living standard - always latest). Personal memory, `~/.claude`-style global configs, and chat may
+adopted by reference from the living standard - always latest; unsure which of these a
+given rule or fork is,
+[`taxonomy.md`](https://github.com/repository-standards/core/blob/main/docs/method/taxonomy.md)
+is the map). Personal memory, `~/.claude`-style global configs, and chat may
 *point* at repo rules - they must never *hold* them. A rule that exists only outside
 the repo is treated as **missing**; finding one is a defect, fixed by landing the rule
 at its home. "It's in my memory" is not a location.
