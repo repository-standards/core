@@ -123,6 +123,16 @@ const hasFile = (p, alts = []) => [p, ...alts].some((x) => existsSync(x));
 const isCore = (entry) => !entry.profile || entry.profile === "core"; // no profile = core (pre-ADR-011)
 let scaleSkipped = 0; // entries skipped by --profile core, across files/sections/guards
 
+// exceptions (R17): a deliberate, recorded deviation from a required entry - the
+// manifest's own escape hatch so an update never silently overwrites a choice the
+// repo already made. { "kind": "file"|"section"|"guard", "match": "<path, file#heading, or guard id>", "reason": "..." }
+const exceptions = manifest?.exceptions || [];
+const excepted = (kind, key) => exceptions.some((e) => e.kind === kind && e.match === key);
+const failOrExcept = (kind, key, name, msg) => {
+  if (excepted(kind, key)) note(name, `${msg} - excepted (recorded manifest deviation, R17)`);
+  else fail(name, msg);
+};
+
 if (manifest) {
   // method docs adopted by reference (ADR-004/023): named, never file-checked
   if ((manifest.references || []).length) {
@@ -134,20 +144,20 @@ if (manifest) {
     if (f.adapt === "reference") { note("file", `${f.path} is reference-class - adopted by link to the living standard, no file expected here`); continue; }
     if (hasFile(f.path, f.altPaths)) pass("file", `${f.path} (${f.purpose})`);
     else if (skeleton && f.adapt === "fill-from-repo") note("file", `${f.path} is authored at adoption - absent from the skeleton by design`);
-    else if (f.required) fail("file", `${f.path} missing - ${f.purpose}`);
+    else if (f.required) failOrExcept("file", f.path, "file", `${f.path} missing - ${f.purpose}`);
     else note("file", `${f.path} absent (optional) - ${f.purpose}`);
   }
   // required sections within files
   for (const s of manifest.sections || []) {
     if (coreOnly && !isCore(s)) { scaleSkipped++; continue; }
     if (!existsSync(s.file)) {
-      if (s.required) fail("section", `${s.file} missing, so "${s.heading}" cannot be checked`);
+      if (s.required) failOrExcept("section", `${s.file}#${s.heading}`, "section", `${s.file} missing, so "${s.heading}" cannot be checked`);
       continue;
     }
     const body = readFileSync(s.file, "utf8");
     const re = new RegExp(`^#{1,6}\\s+.*${escapeRe(s.heading)}`, "mi");
     if (re.test(body)) pass("section", `${s.file} > "${s.heading}"`);
-    else if (s.required) fail("section", `${s.file} is missing the "${s.heading}" section - ${s.purpose}`);
+    else if (s.required) failOrExcept("section", `${s.file}#${s.heading}`, "section", `${s.file} is missing the "${s.heading}" section - ${s.purpose}`);
   }
   // static guards (skip self to avoid recursion; diff guards run in CI on the PR diff)
   if (skeleton) note("guard", "guards run in an adopted repo, not on the skeleton - skipped (--skeleton)");

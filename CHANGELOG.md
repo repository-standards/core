@@ -14,6 +14,80 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > curated sequence and the record of what really happened, is
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### SPEC.md itself never said Layer 1's guards need a Node runtime (2026-08-03)
+
+The Node-runtime cost was disclosed in `align-to-standards/SKILL.md`'s conversational
+prose (1.0.13) but never in the normative spec text an agent actually reads R16 from.
+Found independently by three of four repos assessed against uncovered languages
+(Swift, Elixir, C#) in the same testing round. R16 now states it directly: the shipped
+guards are dependency-free Node scripts regardless of the repo's own stack, and that is
+a real cost for a non-Node repo, not a rounding error.
+
+### A capability's code could be deleted without ever touching its spec (2026-08-03)
+
+`spec-guard.mjs` scanned diffs with `--diff-filter=ACMR`, which excludes deleted files -
+so a PR removing 100% of a capability's implementation passed with `spec-guard: OK` and
+R11 never fired on the one PR that most needed it. Reproduced against a real capability
+deletion before and after the fix. `D` is now in the filter. Paired with two gaps this
+exposed: the spec template had no terminal `Status` for a capability that stops being
+built (added `retired`, with the convention - flip status, link the retiring BDR, leave
+the now-pointless `capability-map.json` entry alone so `--audit` does not misread the
+spec directory as an unmapped orphan), and the backlog template had no escape hatch for
+an item whose target retired before its definition of done could ever be met.
+
+### Two sources landing in the same handover were only diffed against the dossier, not each other (2026-08-03)
+
+`discovery-digest` diffs a new entry against every earlier one, which works when two
+contradicting sources arrive in separate sessions - the first becomes "earlier" the
+moment it is filed. It never said what to do when both are pasted into the same
+handover, which could silently skip the cross-diff that is exactly the scenario this
+step exists to catch. Now explicit: each source is still its own dated entry, filed and
+diffed in order, including against entries the same handover just added.
+
+### The tracker list, and one onboarding path's paragraph link, went stale (2026-08-03)
+
+R15 and the align-to-standards tracker questions named three trackers by brand (GitHub
+Issues, Jira, Linear); GitLab Issues and mailing-list-plus-Bugzilla workflows are real
+and were outside that list - confirmed independently against two repos in the same
+testing round. Reworded open-ended. Separately, `AGENTS.md`'s own adoption paragraph
+linked `docs/method/self-verify.md` under the visible text `standard/docs/self-verify.md`
+- a path that does not exist - fixed to match the real target.
+
+### The clarify gate could be satisfied by a spec whose open items were never in bracket form (2026-08-03)
+
+`check-spec-clarified.sh` only ever counted the literal string `[NEEDS `. A spec
+recording its open gaps as a numbered list in the marker family's own names -
+`- **CLARIFICATION-1 (owner: ...).**` - without the brackets was invisible to it:
+adding an empty `## Clarifications` heading flipped the gate from FAIL to PASS with
+every real question still open. Reproduced independently by two separate test passes
+against the same real fixture. The gate now also catches that specific unbracketed
+shape and fails on it, naming what to rewrite.
+
+### A recorded manifest exception had no mechanical effect (2026-08-03)
+
+R17 and `align-to-standards` both describe recording a deliberate deviation as a
+manifest `exceptions` entry so an update never silently overwrites it - but
+`self-verify.mjs` never read the `exceptions` array at all, so a repo that had honestly
+recorded why a required file or section does not apply still failed it, forever.
+`self-verify.mjs` now checks each required `files`/`sections` failure against
+`exceptions` first and reports it as excepted rather than drift.
+
+### Three smaller gaps between what the docs promised and what fires (2026-08-03)
+
+`docs/method/taxonomy.md` and `checklist.md` - the two files whose entire content is
+"say this and the agent routes it" - were never linked from the shipped `AGENTS.md`/
+`conventions.md` template, unlike every neighboring method doc. `checklist.md`'s two
+onboarding-flow example prompts now say so explicitly, and its third ("record the fork
+as open, with who unblocks it") now names `add-to-backlog`, not an implied `adr-write`
+call for a decision nobody made yet. `prerequisites.md`'s guard enumeration was missing
+`cycle-guard.mjs`, and its gitleaks trade-off claimed local pre-commit scanning is lost
+without it - no pre-commit hook actually ships with the tree yet, so nothing is lost
+either way; corrected to say so plainly rather than describe a mechanism that does not
+exist. `timeline-update` never said whether its three-closed-cycles threshold is
+per-team or global - now explicit: per team, never blended.
+
 ## 1.0.13 - 2026-08-03
 
 Ten fixes found by acting as an adopting user/agent through the greenfield and

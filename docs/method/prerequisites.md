@@ -35,7 +35,7 @@ bash scripts/verifyAgentGuards.sh
 
 | Tool | Why | Without it |
 |---|---|---|
-| **Node**, exact version in `.nvmrc` | every guard is dependency-free Node (`scripts/*.mjs`) - `self-verify`, `spec-structure`, `spec-guard`, `facts-check`, `schema-pair` | no compliance check runs; CI fails at setup |
+| **Node**, exact version in `.nvmrc` | every guard is dependency-free Node (`scripts/*.mjs`) - `self-verify`, `spec-structure`, `spec-guard`, `cycle-guard` *(scale)*, `facts-check`, `schema-pair` | no compliance check runs; CI fails at setup |
 | **git** | the coupling guard reads the PR diff; the spec engine resolves the active feature from the branch | `spec-guard` cannot compare anything |
 | **bash** | the agent guards under `.claude/hooks/` and the spec engine under `scripts/spec/` | neither runs |
 | **jq** | the `PreToolUse` guards parse the command out of the hook payload with it | **every Bash command is denied.** The guards fail closed on purpose: a guard that cannot read the command has not checked it, and the earlier behaviour - passing silently - meant the remote-database and force-push protection R19 promises was simply absent with nothing to show for it |
@@ -45,7 +45,7 @@ bash scripts/verifyAgentGuards.sh
 | Tool | Why | Without it |
 |---|---|---|
 | **python3** | a fallback JSON parser inside the spec engine (`scripts/spec/common.sh` tries jq, then python3, then grep/sed) | nothing - jq is tried first and the grep/sed path covers the rest |
-| **gitleaks** | the secret scan | the CI workflow installs it itself; only local pre-commit scanning is lost |
+| **gitleaks** | the secret scan | the CI workflow installs it itself, so nothing breaks locally either way. `specs/enforcement.md` describes a local pre-commit pass as the intended design, but no pre-commit hook installer ships with the tree yet (no husky/lefthook config, nothing under `.git/hooks/`) - today the secret scan only ever runs in CI, gitleaks installed locally or not |
 
 ## Why this page exists rather than a check
 
