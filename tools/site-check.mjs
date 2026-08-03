@@ -59,6 +59,26 @@ function checkTagBalance(path, html) {
 const LANDING = "site/index.html";
 const POSITIONING = "docs/positioning.md";
 
+// A root-absolute URL is not a filesystem path. The site knows two things about where it is
+// served - site_root for its landing, base_path for its docs - and both have to be undone
+// before an href can be looked up on disk. Without this, a stack served under a prefix has
+// every one of its own links reported as broken, which is the check being wrong rather than
+// the site.
+const CFG = (() => {
+  const f = ["site/site.config.json", "site.config.json"].find((x) => existsSync(x));
+  return f ? JSON.parse(readFileSync(f, "utf8")) : {};
+})();
+const OUT = CFG.out_dir || "site/docs";
+const ROOT = (CFG.site_root || "/").replace(/\/+$/, "/");
+const PREFIX = (CFG.base_path || "/" + OUT.split("/").slice(1).join("/") + "/").replace(/\/+$/, "/");
+const SITE_TOP = OUT.includes("/") ? OUT.slice(0, OUT.indexOf("/")) : ".";
+function urlToFile(u) {
+  const path = u.replace(/^https?:\/\/[^/]+/, "");
+  if (path.startsWith(PREFIX)) return `${OUT}/${path.slice(PREFIX.length)}`;
+  if (ROOT !== "/" && path.startsWith(ROOT)) return `${SITE_TOP}/${path.slice(ROOT.length)}`;
+  return `${SITE_TOP}${path}`;
+}
+
 const landing = readFileSync(LANDING, "utf8");
 checkTagBalance(LANDING, landing);
 checkDashes(LANDING, landing);
@@ -66,6 +86,14 @@ checkDashes(LANDING, landing);
 // The one-liner from positioning.md must appear verbatim on the landing (PDLC-1).
 // The sentence itself is never written here: the heading locates it, the file owns it.
 // A check that hardcodes the copy is a second home for the same fact (R4).
+//
+// Positioning is this repository's own artifact, not something every site in the ecosystem
+// carries - a stack running this same check against its own surfaces has no positioning file
+// and should not be told its landing is broken. Everything below this point is generic and
+// still runs for them.
+if (!existsSync(POSITIONING)) {
+  ok(`${POSITIONING} absent - the positioning criterion is this repo's own, and is skipped`);
+} else {
 const pos = readFileSync(POSITIONING, "utf8");
 const oneLinerBlock = pos.split("## The one-liner")[1];
 if (!oneLinerBlock) fail(`${POSITIONING}: no "## The one-liner" section to read`);
@@ -81,12 +109,18 @@ else {
   else if (landing.includes(oneLiner)) ok(`${LANDING}: quotes the positioning one-liner verbatim`);
   else fail(`${LANDING}: positioning one-liner not found verbatim ("${oneLiner.slice(0, 50)}...")`);
 }
+}
 
-// The landing must advertise the released version - VERSION is the source.
+// The landing must advertise the released version - VERSION is the source. Same reasoning
+// as above: a repository without one is not lying about its version, it just has none.
+if (!existsSync("VERSION")) {
+  ok("VERSION absent - the advertised-version criterion is skipped");
+} else {
 const version = readFileSync("VERSION", "utf8").trim();
 const vRe = new RegExp(`v${version.replace(/\./g, "\\.")}(?![0-9.])`);
 if (vRe.test(landing)) ok(`${LANDING}: advertises v${version} (matches VERSION)`);
 else fail(`${LANDING}: does not advertise v${version} - VERSION moved and the landing did not`);
+}
 
 // External hosts allowlist: only GitHub links may leave the page. Inlined `data:` URIs are
 // stripped first - an SVG's xmlns is a namespace identifier, not a request that leaves.
@@ -163,14 +197,14 @@ for (const page of pages) {
     const target = m[1];
     if (/^(https?:|mailto:|data:)/.test(target)) continue;
     if (!target.startsWith("/")) fail(`${path}: relative link -> ${target} (internal links must be root-absolute)`);
-    else if (!existsSync(`site${target}`)) fail(`${path}: broken internal link -> ${target}`);
+    else if (!existsSync(urlToFile(target))) fail(`${path}: broken internal link -> ${target} (looked for ${urlToFile(target)})`);
   }
 }
 // The docs must be dark in the landing's own ink. The value is read off the landing rather
 // than written here, so restyling the landing cannot leave this check asserting a dead colour.
 const anyPage = readFileSync(`${SITE}/index.html`, "utf8");
-const landingInk = (landing.match(/--bg:\s*(#[0-9a-fA-F]{3,8})/) || [])[1];
-if (!landingInk) fail(`${LANDING}: no --bg custom property to read the ink from`);
+const landingInk = (landing.match(/--(?:bg|ink):\s*(#[0-9a-fA-F]{3,8})/) || [])[1];
+if (!landingInk) fail(`${LANDING}: no --bg or --ink custom property to read the ink from`);
 else if (anyPage.includes(landingInk)) ok(`${SITE}: dark-first palette shares the landing ink (${landingInk})`);
 else fail(`${SITE}: dark-first palette missing (expected the landing's ${landingInk})`);
 
@@ -188,7 +222,7 @@ else fail(`${SITE}: dark-first palette missing (expected the landing's ${landing
     if (!img) continue;
     if (!/^https?:\/\//.test(img)) fail(`${path}: og:image is not absolute (${img}) - scrapers drop it`);
     else {
-      const local = `site${img.replace(/^https?:\/\/[^/]+/, "")}`;
+      const local = urlToFile(img);
       if (!existsSync(local)) fail(`${path}: og:image points at ${img}, and ${local} does not exist`);
     }
   }

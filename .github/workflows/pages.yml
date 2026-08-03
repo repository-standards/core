@@ -64,7 +64,10 @@ jobs:
               continue
             fi
             git clone --depth 1 --quiet "https://github.com/$slug" ".src/$tech"
-            ( cd ".src/$tech" && node tools/docsite.mjs && node tools/site-check.mjs )
+            # The generator is this repository's and a stack carries none - that is what
+            # "one form, many sites" means. It runs with the stack as its working directory,
+            # so it reads the stack's config, the stack's markdown and the stack's page map.
+            ( cd ".src/$tech" && node "$GITHUB_WORKSPACE/tools/docsite.mjs" && node "$GITHUB_WORKSPACE/tools/site-check.mjs" )
             mkdir -p "site/$tech" "site/docs/$tech"
             cp -R ".src/$tech/site/." "site/$tech/"
             rm -rf "site/$tech/docs"

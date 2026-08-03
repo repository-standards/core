@@ -49,10 +49,16 @@ const GITHUB_REPO_URL = CONFIG.repo_url || "https://github.com/repository-standa
 // site does not know where it is served from, and the preview tags are then left out entirely
 // rather than emitted broken.
 const SITE_URL = (CONFIG.site_url || "").replace(/\/+$/, "");
-const OG_IMAGE = CONFIG.og_image || "/og.png";
+// Each surface points at its own card, so a stack shared into a chat shows the stack.
+// SITE_ROOT is where that surface lives - "/" for the core, "/node/" for a stack - which
+// makes the default correct for both without either having to write it down.
+const OG_IMAGE = CONFIG.og_image || `${SITE_ROOT}og.png`;
 const BRAND = CONFIG.brand || "repository-standards";
 // The header wears the released version, read from its one home rather than restated here.
-const VERSION = readFileSync("VERSION", "utf8").trim();
+// A VERSION file is this repository's convention, not the ecosystem's - a stack running this
+// same generator against its own markdown need not have one, and crashing on its absence
+// would make "one form, many sites" true only for the site that owns the generator.
+const VERSION = existsSync("VERSION") ? readFileSync("VERSION", "utf8").trim() : CONFIG.version || "";
 // The header is fixed now - brand, version, ecosystem switcher, one link home - so the
 // only thing a site still configures up there is where the switcher's entries point.
 // The old `topbar` list is read as a fallback so a config written for the previous header
@@ -1245,7 +1251,7 @@ ${preview}
 <header class="topbar"><div class="topbar-in">
 <button class="nav-toggle" type="button" aria-label="Open the navigation" aria-expanded="false" aria-controls="docs-nav"><span></span><span></span><span></span></button>
 <a class="tb-brand" href="${SITE_ROOT}"><img class="tb-mark" src="${SITE_ROOT}logo-mark.png" alt="" width="428" height="512"><span class="tb-word"><b>repository</b><i>Standards</i></span></a>
-<span class="tb-tag">v${escapeHtml(VERSION)}</span>
+${VERSION ? `<span class="tb-tag">v${escapeHtml(VERSION)}</span>` : ""}
 <span class="tb-spacer"></span>
 <nav class="tb-links"><a href="${SITE_ROOT}">Homepage</a><a class="tb-gh" href="${escapeAttr(GITHUB_REPO_URL)}" target="_blank" rel="noopener noreferrer"><svg class="gh-mark" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a></nav>
 <div class="tb-switch" id="ecoswitch">
