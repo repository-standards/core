@@ -7,6 +7,15 @@ description: Use when the plan exists and the work needs breaking into ordered, 
 <!-- PATCHED(repository-standards): ADR-010 clarify gate - mandatory precheck before task generation -->
 **MANDATORY PRECHECK - the clarify gate.** Before anything else in this command, run `scripts/spec/check-spec-clarified.sh <FEATURE_SPEC>` from the repo root (resolve `FEATURE_SPEC` via `scripts/spec/check-prerequisites.sh --json --paths-only`). If it exits non-zero, STOP and run the clarify loop (`/spec-clarify`) - do not generate tasks for a spec that is not ready-to-develop (a spec is ready only when it has a `## Clarifications` section and zero open markers of the `[NEEDS ...` family - CLARIFICATION, DECISION, INPUT and ASSET alike, which is what the gate script counts).
 
+<!-- PATCHED(repository-standards): the feature-resolution engine trusts a persisted
+     pointer over the name in front of you - close that gap before it tasks the wrong spec. -->
+**Also confirm you are breaking down the right feature.** `check-prerequisites.sh`
+resolves `FEATURE_DIR` from `SPECIFY_FEATURE_DIRECTORY` or the persisted
+`specs/feature.json` pointer, never from `$ARGUMENTS`. If `$ARGUMENTS` names a
+capability, confirm the resolved directory actually matches it before running
+`setup-tasks.sh` - a stale pointer from an earlier session silently generates tasks
+for a different spec than the one you were just asked about.
+
 ## User Input
 
 ```text

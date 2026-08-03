@@ -16,6 +16,42 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### An idea had nowhere to land (2026-08-03)
+
+`adr-write` and `bdr-write` both named `docs/ideas/` as where a not-yet-decided
+speculation belongs and pointed away from themselves toward it - neither, nor any of
+the other 18 skills, ever wrote to it. New skill `idea-write` closes the loop: captures
+the idea end-to-end (including its provisional technical/business shape) without
+minting a record, and drives it through `idea -> exploring -> approved | parked |
+dropped -> graduated`, handing off to a real backlog intent, spec and records on
+approval. R14 now names `graduated` alongside the other statuses, matching what the
+template already used.
+
+### spec-plan, spec-tasks and spec-implement could silently act on a stale feature (2026-08-03)
+
+`check-prerequisites.sh` resolves the active feature from a persisted `specs/feature.json`
+pointer or an env var, never from what the user actually asked to plan/task/build - found
+during the promised-prompt audit: "plan X" while the pointer still named a different
+capability from an earlier session would silently operate on the wrong spec, no mismatch
+warning. All three skills now say to confirm the resolved feature matches what was asked
+before proceeding - `spec-implement`'s case is the highest-stakes since it writes code.
+
+### Five smaller gaps found by wave 5's repo sampling (2026-08-03)
+
+The lifecycle-signal check missed a repo that migrated to another forge entirely
+(`archived: false` but the description says "Moved to Codeberg") - un-shallowing the
+clone can't recover a growing edge that stopped existing here, so the signal list now
+also reads for a move/mirror statement. The no-AI-agents red-flag stop was binary
+(forbidden -> halt); a real policy conditionally allows agent involvement if a human
+authors every contribution artifact - now a documented middle case, not silently
+treated as either a full ban or full permission. The archetype-mismatch guidance
+assumed a package/crate boundary to inherit from; a single-package micro-library (one
+header, one build target) has none but can still have real internal capability
+structure one level down. The decision catalog's licensing row had no language for an
+open-core repo split by directory into two licenses, where a capability's code can
+straddle the boundary. `CHANGELOG.md`/backlog/AGENTS.md entries all still called out
+19 shipped skills after `idea-write` made it 20.
+
 ### SPEC.md itself never said Layer 1's guards need a Node runtime (2026-08-03)
 
 The Node-runtime cost was disclosed in `align-to-standards/SKILL.md`'s conversational
