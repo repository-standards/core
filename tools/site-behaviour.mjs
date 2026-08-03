@@ -28,7 +28,13 @@
 
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 
-const SITE = "site/docs";
+const CFG = (() => {
+  const f = ["site/site.config.json", "site.config.json"].find((x) => existsSync(x));
+  return f ? JSON.parse(readFileSync(f, "utf8")) : {};
+})();
+const SITE = CFG.out_dir || "site/docs";
+const ROOT = (CFG.site_root || "/").replace(/\/+$/, "/");
+const BASE = (CFG.base_path || "/" + SITE.split("/").slice(1).join("/") + "/").replace(/\/+$/, "/");
 let failures = 0;
 const fail = (m) => { failures++; console.log(`  FAIL  ${m}`); };
 const ok = (m) => console.log(`  ok    ${m}`);
@@ -66,13 +72,15 @@ const nav = home.split('<div class="nav-links"')[1]?.split("</aside>")[0] ?? "";
 //    and the page can disagree about where you are, silently.
 {
   const rows = [...nav.matchAll(/<a class="([^"]*nav-(?:link|tree-link)[^"]*)" href="([^"#]+)"/g)]
-    .map((m) => m[2].replace(/^\/docs\//, ""))
+    .map((m) => m[2].replace(BASE, ""))
     .filter((h) => h.endsWith(".html"));
   const bad = [];
   for (const target of new Set(rows)) {
     if (!existsSync(`${SITE}/${target}`)) { bad.push(`${target} (missing)`); continue; }
     const html = readFileSync(`${SITE}/${target}`, "utf8");
-    const active = html.match(/<a class="[^"]*active[^"]*" href="\/docs\/([^"#]+)"/);
+    // Against the site's own base, not this repo's: a stack writes /docs/node/x.html and
+    // the whole check reported every page as failing to mark itself.
+    const active = html.match(new RegExp(`<a class="[^"]*active[^"]*" href="${BASE}([^"#]+)"`));
     if (!active || active[1] !== target) bad.push(`${target} (does not mark itself active)`);
   }
   if (bad.length) fail(`${bad.length} nav target(s) that do not light up on arrival: ${bad.slice(0, 4).join(", ")}`);
@@ -115,7 +123,7 @@ const nav = home.split('<div class="nav-links"')[1]?.split("</aside>")[0] ?? "";
 {
   const orphans = pages.filter((p) => {
     const html = readFileSync(`${SITE}/${p}`, "utf8");
-    const inNav = nav.includes(`href="/docs/${p}"`);
+    const inNav = nav.includes(`href="${BASE}${p}"`);
     return !inNav && !html.includes('class="backlink"');
   });
   if (orphans.length) fail(`${orphans.length} page(s) reachable only by link, with no way back: ${orphans.slice(0, 4).join(", ")}`);
@@ -136,8 +144,10 @@ const nav = home.split('<div class="nav-links"')[1]?.split("</aside>")[0] ?? "";
   const tabbed = entries.filter((e) => e.attrs.includes("_blank") && e.href.startsWith("/"));
   if (!entries.length || !base) fail("could not read the ecosystem switcher or the sidebar's base path");
   else if (here.length !== 1) fail(`${here.length} switcher entries claim to be "here" - exactly one must`);
-  else if (here[0].href !== `${base}index.html` && here[0].href !== base) {
-    fail(`the switcher says "here" about ${here[0].href}, but this site is served from ${base}`);
+  // The switcher moves between SURFACES, so its entries are surface roots: the site root
+  // counts as "here" every bit as much as the docs base does.
+  else if (![`${base}index.html`, base, ROOT].includes(here[0].href)) {
+    fail(`the switcher says "here" about ${here[0].href}, but this site is ${ROOT} (docs at ${base})`);
   } else if (tabbed.length) fail(`${tabbed.length} same-domain switcher entry(s) open in a new tab: ${tabbed.map((e) => e.href).join(", ")}`);
   else ok(`the switcher marks this site (${base}) as here, and only it`);
 }
