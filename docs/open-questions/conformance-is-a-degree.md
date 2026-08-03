@@ -15,10 +15,11 @@ some percentage adapted", then the MUST language is describing a bar that does n
 
 ## Why it is not obvious
 
-**The percentage needs a denominator.** Sixty percent of what? If the answer is "of what
-applies to this repository", then something has to decide what applies - and that is either
-a judgment (in which case the number is a self-assessment) or a rule (in which case MUSTs are
-back, scoped to applicability).
+**The percentage needs a denominator, and it turns out to have one.** `self-verify` now
+reports adoption beside drift - adopted over applicable, where applicable is the manifest's
+own entry list. That is not a judgment and not a self-assessment: the same file that says
+what ships says what counts. What remains open is whether the spec's MUST language should
+follow, or whether a threshold and a percentage are both worth having.
 
 **A number without a bar does not act on anyone.** "You are at 62%" is a dashboard. "This
 capability spec names no persona and the guard fails" is a change somebody makes. Part of

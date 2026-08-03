@@ -31,7 +31,7 @@
 //
 // Usage:
 //   node scripts/self-verify.mjs                  # gate: exit 1 on any failure
-//   node scripts/self-verify.mjs --version 0.9.0  # also assert the record equals a target
+//   node scripts/self-verify.mjs --version 0.9.1  # also assert the record equals a target
 //   node scripts/self-verify.mjs --warn           # report only, always exit 0
 //   node scripts/self-verify.mjs --profile core   # core-profile entries only (ADR-011);
 //                                                 # without the flag, the repo's manifest
@@ -248,9 +248,18 @@ for (const r of results) {
 }
 console.log("");
 
+// Drift counts what is unmet; adoption says how much of the standard this repo actually
+// carries. They answer different questions and a repo mid-adoption needs the second one:
+// "17 points of drift" reads as failure at every stage, while "63% adopted, 17 to go"
+// reads as progress - and it is the same measurement. The denominator is what applies to
+// this repo, which is the manifest's own entry list, so neither number is a judgment.
+const applicable = results.filter((r) => !r.isWarning && !r.dim).length;
+const adopted = applicable - drift;
+const pct = applicable ? Math.round((adopted / applicable) * 100) : 100;
+
 if (drift === 0) {
-  console.log(`self-verify: OK - drift 0 - ${results.length} checks, compliant with the standard\n`);
+  console.log(`self-verify: OK - drift 0 - 100% adopted (${adopted}/${applicable}), compliant with the standard\n`);
   process.exit(0);
 }
-console.error(`self-verify: drift ${drift} - ${drift} required entr${drift === 1 ? "y is" : "ies are"} unmet - not compliant\n`);
+console.error(`self-verify: drift ${drift} - ${pct}% adopted (${adopted}/${applicable}) - ${drift} required entr${drift === 1 ? "y is" : "ies are"} unmet\n`);
 process.exit(warn ? 0 : 1);
