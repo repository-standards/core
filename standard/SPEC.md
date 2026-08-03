@@ -1,6 +1,6 @@
 # The repository-standards spec
 
-Version 1.0.9 - the spec is versioned with the standard (`VERSION`). **The standard is
+Version 1.0.10 - the spec is versioned with the standard (`VERSION`). **The standard is
 living and the only target is latest** (ADR-025): a repo complies against the state it
 last aligned to, recorded in its own `.standards-version`. That record is a bookmark -
 it makes an update a delta and self-verify a meaningful assertion, and it never names a
@@ -171,7 +171,7 @@ binds every repo, a solo one included.
   is a judgment, not a trigger**: it says an adopter should look, and it is spent
   sparingly. Do not derive it mechanically from "a rule was added" or "a path
   changed"; that reasoning promotes routine work and inflates the number until it
-  stops meaning anything. The patch position is not a two-digit field: 1.0.9 is
+  stops meaning anything. The patch position is not a two-digit field: 1.0.10 is
   followed by 1.0.10, then 1.0.100 - each larger than the last. Versions mark this
   standard's own development; an adopting repo still tracks latest and never a pin
   (ADR-025).

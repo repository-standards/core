@@ -725,6 +725,13 @@ a:hover { text-decoration: none; }
   height: calc(100vh - var(--tb-h));
   overflow-y: auto;
   overscroll-behavior: contain;
+  /* The platform scrollbar is a light-mode widget sitting in a dark column: a bright
+     track running the full height, louder than any row it sits beside. Thin, trackless,
+     and only visible while the column is actually being used - the sidebar is navigation,
+     not a scrolling surface somebody needs a permanent handle on. */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color .2s ease;
   padding: 1.25rem 18px 2rem 10px;
 }
 /* The sidebar's file tree, styled as part of the nav rather than as a terminal: the
@@ -1081,7 +1088,15 @@ th { background: var(--bg-panel); font-weight: 600; color: var(--fg); white-spac
     background: rgba(0,0,0,.55); opacity: 0; pointer-events: none; transition: opacity .22s ease;
   }
   .nav-scrim.is-open { opacity: 1; pointer-events: auto; }
-  .nav-links { display: block; }
+  .sidebar:hover, .sidebar:focus-within { scrollbar-color: var(--line2) transparent; }
+/* Safari and Chrome ignore scrollbar-color, so the same two states again in their idiom. */
+.sidebar::-webkit-scrollbar { width: 8px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: transparent; border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
+.sidebar:hover::-webkit-scrollbar-thumb, .sidebar:focus-within::-webkit-scrollbar-thumb { background: var(--line2); background-clip: content-box; }
+.sidebar::-webkit-scrollbar-thumb:hover { background: var(--border); background-clip: content-box; }
+
+.nav-links { display: block; }
   .nav-group-title { padding-top: 1.1rem; }
   .content { padding: 1.5rem 1.25rem 3rem; }
 }
