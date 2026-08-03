@@ -44,6 +44,12 @@ const SITE_DIR = OUT_DIR.includes("/") ? OUT_DIR.slice(0, OUT_DIR.lastIndexOf("/
 const SITE_ROOT = (CONFIG.site_root || "/").replace(/\/+$/, "/");
 const BASE = (CONFIG.base_path || "/" + OUT_DIR.split("/").slice(1).join("/") + "/").replace(/\/+$/, "/");
 const GITHUB_REPO_URL = CONFIG.repo_url || "https://github.com/repository-standards/core";
+// Link previews need absolute URLs - a scraper has no page to resolve a relative one against,
+// and every one of them silently drops the card rather than reporting why. Empty means the
+// site does not know where it is served from, and the preview tags are then left out entirely
+// rather than emitted broken.
+const SITE_URL = (CONFIG.site_url || "").replace(/\/+$/, "");
+const OG_IMAGE = CONFIG.og_image || "/og.png";
 const BRAND = CONFIG.brand || "repository-standards";
 // The header wears the released version, read from its one home rather than restated here.
 const VERSION = readFileSync("VERSION", "utf8").trim();
@@ -1201,6 +1207,30 @@ function renderPage(page, contentHtml) {
   const h1 = contentHtml.match(/<h1[^>]*>([\s\S]*?)<\/h1>/);
   const title = escapeHtml(page.nav ?? (h1 ? h1[1].replace(/<[^>]+>/g, "").trim() : page.out));
   const sourceUrl = `${GITHUB_REPO_URL}/blob/main/${page.src}`;
+  const firstPara = contentHtml.match(/<p>([\s\S]*?)<\/p>/);
+  // Cut on a word, not on a character: a preview card ending mid-word reads as broken
+  // rather than as truncated, and the reader blames the site instead of the length.
+  const blurb = (() => {
+    if (!firstPara) return "";
+    const text = firstPara[1].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+    if (text.length <= 200) return text;
+    const cut = text.slice(0, 200);
+    return cut.slice(0, cut.lastIndexOf(" ")).replace(/[,;:]$/, "") + "...";
+  })();
+  const preview = SITE_URL
+    ? [
+        `<meta property="og:type" content="article">`,
+        `<meta property="og:site_name" content="${escapeAttr(BRAND)}">`,
+        `<meta property="og:title" content="${escapeAttr(title)}">`,
+        blurb ? `<meta property="og:description" content="${escapeAttr(blurb)}">` : "",
+        `<meta property="og:url" content="${SITE_URL}${BASE}${page.out}">`,
+        `<meta property="og:image" content="${SITE_URL}${OG_IMAGE}">`,
+        `<meta property="og:image:width" content="1200">`,
+        `<meta property="og:image:height" content="630">`,
+        `<meta name="twitter:card" content="summary_large_image">`,
+        blurb ? `<meta name="description" content="${escapeAttr(blurb)}">` : "",
+      ].filter(Boolean).join("\n")
+    : "";
   const hasMarkdown = existsSync(page.render === "file" ? treeProsePath(page.node.path) : page.src);
   return `<!doctype html>
 <html lang="en">
@@ -1208,6 +1238,7 @@ function renderPage(page, contentHtml) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title} - ${escapeHtml(BRAND)} docs</title>
+${preview}
 <style>${CSS}</style>
 </head>
 <body>
