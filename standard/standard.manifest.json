@@ -1,7 +1,7 @@
 {
   "$about": "The align-engine manifest (ADR-005). The align/update/self-verify skills read THIS to know what an aligned repo must have - instead of hardcoding it in prose or JS. Paths are the client layout - identical to the standard/ tree in this repo. since names the release that first shipped an entry; unreleased rides the next cut. An aligned repo carries a copy of this file matching the state it last aligned to (a bookmark, never a version it stays at - ADR-025); `scripts/self-verify.mjs` checks the repo against it and reports drift as a number. Method docs are adopted BY REFERENCE, never copied: the `references` section names them at their home in the standards repo (ADR-004/023) - self-verify notes them, checks no files. The repo's copy MAY carry a top-level `profile` field (core|scale, ADR-011) written at align time - self-verify uses it as the default profile. The normative source is SPEC.md; each entry cites the rule it enforces (`rule`).",
   "standard": "repository-standards",
-  "version": "0.9.1",
+  "version": "0.8.2",
   "layer": 1,
   "adaptRules": {
     "copy": "ship verbatim; the repo gets a byte-for-byte copy (guards, templates that carry no repo-specific content)",
@@ -25,7 +25,7 @@
       "adapt": "fill-from-repo",
       "required": true,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R2"
     },
     {
@@ -34,7 +34,7 @@
       "adapt": "copy",
       "required": true,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R2"
     },
     {
@@ -43,7 +43,7 @@
       "adapt": "copy",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R2"
     },
     {
@@ -82,7 +82,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R5"
     },
     {
@@ -121,7 +121,7 @@
       "adapt": "copy",
       "required": true,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R16"
     },
     {
@@ -139,7 +139,7 @@
       "adapt": "copy",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R4"
     },
     {
@@ -148,7 +148,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R4"
     },
     {
@@ -157,7 +157,7 @@
       "adapt": "copy",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R4"
     },
     {
@@ -166,7 +166,7 @@
       "adapt": "copy",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R24"
     },
     {
@@ -175,7 +175,7 @@
       "adapt": "copy",
       "required": true,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "altPaths": [
         ".agents/skills"
       ],
@@ -187,7 +187,7 @@
       "adapt": "copy",
       "required": true,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R22"
     },
     {
@@ -196,7 +196,7 @@
       "adapt": "copy",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R19"
     },
     {
@@ -205,7 +205,7 @@
       "adapt": "merge",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R19"
     },
     {
@@ -214,7 +214,7 @@
       "adapt": "merge",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R2"
     },
     {
@@ -223,7 +223,7 @@
       "adapt": "merge",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R19"
     },
     {
@@ -232,7 +232,7 @@
       "adapt": "copy",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R19"
     },
     {
@@ -241,7 +241,7 @@
       "adapt": "copy",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R19"
     },
     {
@@ -250,7 +250,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R1"
     },
     {
@@ -268,7 +268,7 @@
       "adapt": "merge",
       "required": true,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R16"
     },
     {
@@ -277,7 +277,7 @@
       "adapt": "fill-from-repo",
       "required": true,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R10"
     },
     {
@@ -286,7 +286,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R3"
     },
     {
@@ -295,7 +295,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "scale",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R3"
     },
     {
@@ -304,7 +304,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R19"
     },
     {
@@ -313,7 +313,7 @@
       "adapt": "copy",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R21"
     },
     {
@@ -322,7 +322,7 @@
       "adapt": "merge",
       "required": false,
       "profile": "scale",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R5"
     },
     {
@@ -331,7 +331,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R3"
     },
     {
@@ -340,7 +340,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R1"
     },
     {
@@ -349,7 +349,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R3"
     },
     {
@@ -358,7 +358,7 @@
       "adapt": "merge",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R1"
     },
     {
@@ -367,7 +367,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "scale",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R3"
     },
     {
@@ -376,7 +376,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "scale",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R3"
     },
     {
@@ -385,7 +385,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "scale",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R3"
     },
     {
@@ -394,7 +394,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R3"
     },
     {
@@ -403,7 +403,7 @@
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "scale",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R15"
     },
     {
@@ -412,7 +412,7 @@
       "adapt": "copy",
       "required": false,
       "profile": "scale",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R15"
     }
   ],
@@ -421,84 +421,84 @@
       "id": "taxonomy",
       "path": "docs/method/taxonomy.md",
       "purpose": "where each kind of knowledge lands (ends 'ADR or rule?')",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R5"
     },
     {
       "id": "decision-checklist",
       "path": "docs/method/checklist.md",
       "purpose": "the forks every repo consciously decides, with paved-road defaults",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R7"
     },
     {
       "id": "adoption-checkmap",
       "path": "docs/method/adoption.md",
       "purpose": "the gated path from unaligned to aligned + the modernize pass",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R17"
     },
     {
       "id": "repo-assessment",
       "path": "docs/method/repo-assessment.md",
       "purpose": "the read-only assessment the transition agent runs, and the periodic health check",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R17"
     },
     {
       "id": "ways-of-working",
       "path": "docs/method/ways-of-working.md",
       "purpose": "how work flows around the spec (PO -> dev -> AI)",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R3"
     },
     {
       "id": "changelog-process",
       "path": "docs/method/changelog-process.md",
       "purpose": "the two-outputs changelog model teams follow",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R18"
     },
     {
       "id": "working-with-specs",
       "path": "docs/method/working-with-specs.md",
       "purpose": "real situations -> the prompt -> what the standard does (specs day to day)",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R3"
     },
     {
       "id": "discovery",
       "path": "docs/method/discovery.md",
       "purpose": "discovery dossiers: from a meeting to a spec with provenance (ADR-024)",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R5"
     },
     {
       "id": "working-with-ai",
       "path": "docs/method/working-with-ai/README.md",
       "purpose": "evidence-checked practices for driving the agent: context, verification, review load, blast radius",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R3"
     },
     {
       "id": "self-verify",
       "path": "docs/method/self-verify.md",
       "purpose": "what drift 0 does and does not certify - the tiers, the flags, the arithmetic",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R16"
     },
     {
       "id": "prerequisites",
       "path": "docs/method/prerequisites.md",
       "purpose": "what must be installed before an agent starts an adoption",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R17"
     },
     {
       "id": "security-baseline",
       "path": "docs/method/security-baseline.md",
       "purpose": "the axes a repo decides once - a menu, answered in your own security ADR",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R19"
     },
     {
@@ -549,7 +549,7 @@
       "blocks": true,
       "purpose": "declared facts still agree with their source (skips itself where none are declared)",
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R4"
     },
     {
@@ -559,7 +559,7 @@
       "blocks": true,
       "purpose": "the schema and its typed twin have not drifted (skips itself where there is no database)",
       "profile": "core",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R24"
     },
     {
@@ -579,7 +579,7 @@
       "blocks": true,
       "purpose": "an intent is in the backlog pool or in exactly one cycle (skips itself where there are no cycles)",
       "profile": "scale",
-      "since": "0.9.1",
+      "since": "0.8.2",
       "rule": "R15"
     }
   ],
