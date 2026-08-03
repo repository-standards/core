@@ -97,7 +97,12 @@ binds every repo, a solo one included.
 
 - **R16.** Compliance MUST be enforced by tooling, not prose: `self-verify`
   (against the recorded manifest) and `spec-structure` MUST gate CI; *(scale)*
-  `spec-guard` too. Aligned means self-verify reports drift 0.
+  `spec-guard` too. Aligned means self-verify reports drift 0. These guards, and
+  `facts-check`/`schema-pair`, are dependency-free Node scripts (`scripts/*.mjs`) -
+  a Node runtime MUST be present to run them regardless of the repo's own
+  language or stack (`docs/method/prerequisites.md`). This is a real cost for a
+  non-Node repo, not a rounding error, and adoption should say so plainly rather
+  than let it surface as a surprise the first time CI runs.
 - **R17.** Adoption and updates MUST adapt, never blind-copy: align reconciles a
   repo to the standard - always the latest; the record then names the state
   aligned to, and an update applies the delta between that and latest,
