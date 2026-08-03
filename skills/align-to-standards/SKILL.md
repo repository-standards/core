@@ -39,9 +39,12 @@ Before any phase runs, one intake pass:
      - a registered stack: "this repo is <technology> - the registry has a boot-verified
        stack for it, so I'll offer those best practices alongside Layer 1; ok?"
      - no entry: "this repo is <technology>, and the registry has no stack for it yet.
-       Layer 1 applies in full and is unaffected. For the technology layer I can research
-       one and write it into your repo as your own record instead, and offer to file a
-       stack request upstream. Ok?"
+       Layer 1's rules and specs are unaffected - but its guards are dependency-free Node
+       scripts (`self-verify`, `spec-structure`, `spec-guard`, `facts-check`,
+       `schema-pair`), so a Node runtime has to be installed to run them even though the
+       repo itself is <technology> (see `docs/method/prerequisites.md`). For the
+       technology layer I can research best practices and write them into your repo as
+       your own record instead, and offer to file a stack request upstream. Ok?"
 
      Promising "the <technology> best practices from the registry" before the lookup makes
      a promise the registry cannot keep, and the user only finds out when the offer
@@ -168,7 +171,10 @@ npx degit repository-standards/core/standard
    - **Check the prerequisites before the guards, not after.** The `.claude/hooks/` guards
      need `jq`, and without it they deny **every** Bash command by design - an agent that
      suddenly refuses everything, with no explanation the user can connect to this step.
-     Name what is needed (`docs/prerequisites.md`) and confirm it is installed first.
+     Name what is needed - this checkout's
+     [`docs/method/prerequisites.md`](../../docs/method/prerequisites.md), read by
+     reference like the rest of `docs/method/` (it never ships to the target repo) - and
+     confirm it is installed first.
    - Put conventions in `AGENTS.md` (single source). `CLAUDE.md` is a router **plus** the
      one rule that has to be in context before the agent is asked anything: check whether a
      shipped skill covers the request before acting, and again when the work closes. It is
