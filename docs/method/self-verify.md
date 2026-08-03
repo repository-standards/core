@@ -21,7 +21,7 @@ node scripts/self-verify.mjs
 node scripts/self-verify.mjs --warn
 
 # also assert the recorded state equals a given target
-node scripts/self-verify.mjs --version 1.0.3
+node scripts/self-verify.mjs --version 1.0.4
 ```
 
 It is **manifest-driven** (ADR-005). It reads `standard.manifest.json`, the standard

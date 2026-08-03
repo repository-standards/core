@@ -536,11 +536,20 @@ const SPINE =
     (readFileSync(LANDING_PATH, "utf8").match(/--maxw:\s*([0-9.]+px)/) || [])[1]) ||
   "1120px";
 
+// A site may re-tint the whole surface without forking the stylesheet: declare `palette`
+// in the config and the values land after the defaults, overriding only what is named.
+// This is why the accent variables carry role names and a channel triple - a stack whose
+// colour is green should not be setting a variable called orange, or left with orange
+// edges around a green page.
+const PALETTE = CONFIG.palette
+  ? `\n:root{\n${Object.entries(CONFIG.palette).map(([k, v]) => `  ${k.startsWith("--") ? k : `--${k}`}: ${v};`).join("\n")}\n}\n`
+  : "";
+
 const CSS = `
 /* The docs wear the landing's header: same mark, same wordmark, same centred ecosystem
    switcher. Only the right-hand link differs - here it points back to the homepage. */
 .topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px) saturate(140%);
-  background:linear-gradient(180deg,rgba(8,8,11,.82),rgba(8,8,11,.42));
+  background:linear-gradient(180deg,rgba(var(--bg-rgb), .82),rgba(var(--bg-rgb), .42));
   border-bottom:1px solid var(--line2)}
 .topbar-in{max-width:${SPINE};margin:0 auto;display:flex;align-items:center;gap:18px;
   padding:0 var(--tb-pad);height:var(--tb-h);position:relative}
@@ -550,10 +559,10 @@ const CSS = `
 .tb-word b{font-weight:750;font-size:16.5px;letter-spacing:-.025em;color:var(--fg)}
 .tb-word i{font-style:normal;font-weight:700;font-size:9.5px;letter-spacing:.34em;
   text-transform:uppercase;margin-top:4px;
-  background:linear-gradient(96deg,var(--orange) 4%,var(--orange-soft) 34%,var(--violet-soft) 96%);
+  background:linear-gradient(96deg,var(--accent) 4%,var(--accent-soft) 34%,var(--accent-2) 96%);
   -webkit-background-clip:text;background-clip:text;color:transparent}
-.tb-tag{font-family:var(--font-mono);font-size:11px;color:var(--orange);
-  border:1px solid rgba(255,122,47,.34);border-radius:999px;padding:2px 8px;letter-spacing:.04em}
+.tb-tag{font-family:var(--font-mono);font-size:11px;color:var(--accent);
+  border:1px solid rgba(var(--accent-rgb), .34);border-radius:999px;padding:2px 8px;letter-spacing:.04em}
 .tb-spacer{flex:1}
 .tb-links{display:flex;gap:2px;align-items:center}
 .tb-links a{color:var(--muted);font-size:14.5px;font-weight:600;padding:8px 11px;
@@ -562,14 +571,14 @@ const CSS = `
 .tb-links a.tb-gh{display:inline-flex;align-items:center;gap:7px;color:var(--fg);
   background:rgba(255,255,255,.045);border:1px solid var(--border);border-radius:11px;
   padding:8px 12px;margin-left:6px;transition:border-color .18s ease,background .18s ease}
-.tb-links a.tb-gh:hover{border-color:rgba(255,122,47,.5);background:rgba(255,255,255,.07)}
+.tb-links a.tb-gh:hover{border-color:rgba(var(--accent-rgb), .5);background:rgba(255,255,255,.07)}
 .tb-links a.tb-gh .gh-mark{flex:none}
 .tb-switch{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
 .tb-switch>button{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-sans);
   font-size:14px;font-weight:650;color:var(--fg);background:rgba(255,255,255,.045);
   border:1px solid var(--line);border-radius:11px;padding:9px 13px;cursor:pointer;
   transition:border-color .18s ease,background .18s ease}
-.tb-switch>button:hover{border-color:rgba(255,122,47,.5)}
+.tb-switch>button:hover{border-color:rgba(var(--accent-rgb), .5)}
 .tb-switch .pip{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
 .tb-switch .chev{font-size:10px;opacity:.7;transition:transform .2s ease}
 .tb-switch[data-open] .chev{transform:rotate(180deg)}
@@ -613,9 +622,14 @@ const CSS = `
   --border: rgba(255,255,255,.08);
   --line: rgba(255,255,255,.08);
   --line2: rgba(255,255,255,.05);
-  --orange: #ff7a2f;
-  --orange-soft: #ff9a5c;
-  --violet-soft: #a884ff;
+  /* Channels as well as hex: the translucent borders and glows need the same hue, and a
+     site that themes the accent must not be left with the old one around its edges. */
+  --accent-rgb: 255,122,47;
+  --accent-2-rgb: 139,92,246;
+  --bg-rgb: 8,8,11;
+  --accent: #ff7a2f;
+  --accent-soft: #ff9a5c;
+  --accent-2: #a884ff;
   --green: #34d399;
   --link: #ff7a2f;
   --link-visited: #ff9a5c;
@@ -623,7 +637,7 @@ const CSS = `
   /* Masked rather than drawn with borders, so the chevron keeps its shape while its box
      stays big enough to click. Inline, because the site loads no external asset. */
   --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3.2 1.4 L6.8 5 L3.2 8.6' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --active-bg: rgba(255,122,47,.09);
+  --active-bg: rgba(var(--accent-rgb), .09);
   --active-fg: #ff7a2f;
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Inter, system-ui, sans-serif;
   --font-mono: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
@@ -662,8 +676,8 @@ body::before {
   position: absolute; top: 0; left: 0; right: 0; height: 900px;
   z-index: 0; pointer-events: none;
   background:
-    radial-gradient(circle at 16% -180px, rgba(255,122,47,.16), transparent 62%),
-    radial-gradient(circle at 78% -120px, rgba(139,92,246,.15), transparent 62%);
+    radial-gradient(circle at 16% -180px, rgba(var(--accent-rgb), .16), transparent 62%),
+    radial-gradient(circle at 78% -120px, rgba(var(--accent-2-rgb), .15), transparent 62%);
 }
 @media (prefers-color-scheme: light) { body::before { display: none; } }
 /* Lifts the content off the glow. Deliberately not z-index'd alongside .topbar: the
@@ -749,13 +763,13 @@ a.nav-tree-link:hover { background: var(--active-bg); color: var(--fg); }
 .tl-bar { fill: rgba(255,255,255,.06); stroke: var(--border); }
 .tl-done { fill: rgba(52,211,153,.42); }
 .tl-label { fill: var(--fg); font-size: 11px; font-weight: 600; }
-.tl-proj { fill: rgba(255,122,47,.28); stroke: rgba(255,122,47,.6); }
+.tl-proj { fill: rgba(var(--accent-rgb), .28); stroke: rgba(var(--accent-rgb), .6); }
 .tl-proj-label { fill: var(--muted); font-size: 11px; }
 .tl-now line { stroke: var(--fg); stroke-width: 1.5; stroke-dasharray: 2 3; }
 .tl-now text { fill: var(--fg); font-size: 10.5px; font-family: var(--font-sans); }
-.tl-target line { stroke: var(--orange, #ff7a2f); stroke-width: 1.5; }
-.tl-target circle { fill: var(--orange, #ff7a2f); }
-.tl-target text { fill: var(--orange, #ff7a2f); font-size: 10.5px; font-weight: 600; font-family: var(--font-sans); }
+.tl-target line { stroke: var(--accent, #ff7a2f); stroke-width: 1.5; }
+.tl-target circle { fill: var(--accent, #ff7a2f); }
+.tl-target text { fill: var(--accent, #ff7a2f); font-size: 10.5px; font-weight: 600; font-family: var(--font-sans); }
 .tl-risk line, .tl-risk circle { stroke: #e0685f; fill: none; stroke-width: 1.5; }
 .tl-risk text { fill: #e0685f; font-size: 10.5px; font-family: var(--font-sans); }
 /* A board or a queue drawn as a figure: cards, a lane rule in the lane's colour, and the
@@ -789,7 +803,7 @@ a.nav-tree-link:hover { background: var(--active-bg); color: var(--fg); }
 .loop-sub { fill: var(--muted); font-size: 11px; font-family: var(--font-sans); }
 .loop-ring { fill: none; stroke: rgba(255,255,255,.10); stroke-width: 2; }
 /* One dot travels the ring so the diagram reads as a cycle rather than as five boxes. */
-.loop-dot { fill: var(--orange, #ff7a2f); }
+.loop-dot { fill: var(--accent, #ff7a2f); }
 @media (prefers-reduced-motion: reduce) { .loop-dot { display: none; } }
 .backlink { margin: 0 0 1.4rem; font-size: 0.875rem; }
 .backlink a { color: var(--muted); text-decoration: none; }
@@ -1245,7 +1259,7 @@ function renderPage(page, contentHtml) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title} - ${escapeHtml(BRAND)} docs</title>
 ${preview}
-<style>${CSS}</style>
+<style>${CSS}${PALETTE}</style>
 </head>
 <body>
 <header class="topbar"><div class="topbar-in">

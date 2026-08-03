@@ -89,7 +89,9 @@ function urlToFile(u) {
   const path = u.replace(/^https?:\/\/[^/]+/, "");
   if (path.startsWith(PREFIX)) return `${OUT}/${path.slice(PREFIX.length)}`;
   if (ROOT !== "/" && path.startsWith(ROOT)) return `${SITE_TOP}/${path.slice(ROOT.length)}`;
-  return `${SITE_TOP}${path}`;
+  // A landing may write relative hrefs - it is served from the site root, where they
+  // resolve. Root-absolute or not, both end up under the deployed directory.
+  return path.startsWith("/") ? `${SITE_TOP}${path}` : `${SITE_TOP}/${path}`;
 }
 
 const crossSurface = new Set();
@@ -183,7 +185,11 @@ if (failures === beforePages) ok(`${SITE}: ${pages.length} pages present, exactl
 // reader is guaranteed to see was the one page nobody verified.
 const beforeLanding = failures;
 for (const m of landing.matchAll(/href="((?!https?:)[^"#]*\.html)(#[^"]*)?"/g)) {
-  if (!existsSync(`site/${m[1]}`)) fail(`${LANDING}: broken link into the site -> ${m[1]}`);
+  // Through the same translation the docs' own links use. A landing served under a prefix
+  // writes /docs/node/x.html for a file at site/docs/x.html, and joining the two strings
+  // by hand made the check report a page that is right there.
+  if (isForeign(m[1])) crossSurface.add(m[1]);
+  else if (!existsSync(urlToFile(m[1]))) fail(`${LANDING}: broken link into the site -> ${m[1]}`);
 }
 if (failures === beforeLanding) ok(`${LANDING}: every link into the site resolves`);
 
