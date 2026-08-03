@@ -54,12 +54,29 @@ const BLOCKED_BY = /^blocked\s*:\s*([A-Z][A-Z0-9]*-[A-Za-z0-9-]+)$/i;
 // <!-- was PAY-4 --> the export |` opened and closed on one line and deleted a real row,
 // and a `-->` appearing in prose (`migrate A --> B`) inside an example block ended the
 // comment early, resurrecting every example row after it.
-const rowsIn = (file) => {
+//
+// `scopeToIntents` restricts matching to the `## Intents` section - same fix as
+// spec-structure.mjs's persona-roster heading scoping, for the same reason. cycle-close's
+// own documented output is a close table (id / assignee / DoD met? / where it went) shown
+// under `## Outcome`, and its rows start with the same intent ids on purpose - a reader
+// screenshots that table into a channel. Without scoping, this guard read that table as a
+// second copy of every intent it names, reporting the exact "copied, not moved" failure it
+// exists to catch on a cycle that was closed correctly. The pool (`docs/backlog.md`) has no
+// second ID-shaped table to collide with, so it keeps the whole-file scan.
+const rowsIn = (file, scopeToIntents = false) => {
   const found = [];
   let commented = false;
   let fenced = false;
+  let inIntents = !scopeToIntents;
   for (const raw of readFileSync(file, "utf8").split("\n")) {
     const line = raw.trim();
+    if (scopeToIntents && !commented && !fenced) {
+      if (/^##\s+intents\b/i.test(line)) {
+        inIntents = true;
+        continue;
+      }
+      if (inIntents && /^##\s+/.test(line)) inIntents = false;
+    }
     if (!commented && /^(```|~~~)/.test(line)) {
       fenced = !fenced;
       continue;
@@ -83,7 +100,7 @@ const rowsIn = (file) => {
         rest = rest.slice(start + 4);
       }
     }
-    if (fenced) continue;
+    if (fenced || !inIntents) continue;
     const row = visible.trim();
     if (!row.startsWith("|")) continue;
     // Drop the empty strings a leading and trailing `|` produce, so the status is simply
@@ -122,7 +139,7 @@ const where = new Map(); // id -> [file, ...]
 const status = new Map(); // id -> last status cell seen
 const blocks = []; // { id, ref, file }
 for (const f of files) {
-  for (const { id, status: s } of rowsIn(f)) {
+  for (const { id, status: s } of rowsIn(f, f !== pool)) {
     where.set(id, [...(where.get(id) ?? []), f]);
     status.set(id, s);
     const m = s.match(BLOCKED_BY);
