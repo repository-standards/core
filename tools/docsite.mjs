@@ -547,6 +547,11 @@ const CSS = `
 .tb-links a{color:var(--muted);font-size:14.5px;font-weight:600;padding:8px 11px;
   border-radius:9px;text-decoration:none;white-space:nowrap;transition:color .18s ease,background .18s ease}
 .tb-links a:hover,.tb-links a.tb-on{color:var(--fg);background:rgba(255,255,255,.05)}
+.tb-links a.tb-gh{display:inline-flex;align-items:center;gap:7px;color:var(--fg);
+  background:rgba(255,255,255,.045);border:1px solid var(--border);border-radius:11px;
+  padding:8px 12px;margin-left:6px;transition:border-color .18s ease,background .18s ease}
+.tb-links a.tb-gh:hover{border-color:rgba(255,122,47,.5);background:rgba(255,255,255,.07)}
+.tb-links a.tb-gh .gh-mark{flex:none}
 .tb-switch{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
 .tb-switch>button{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-sans);
   font-size:14px;font-weight:650;color:var(--fg);background:rgba(255,255,255,.045);
@@ -1211,7 +1216,7 @@ function renderPage(page, contentHtml) {
 <a class="tb-brand" href="${SITE_ROOT}"><img class="tb-mark" src="${SITE_ROOT}logo-mark.png" alt="" width="428" height="512"><span class="tb-word"><b>repository</b><i>Standards</i></span></a>
 <span class="tb-tag">v${escapeHtml(VERSION)}</span>
 <span class="tb-spacer"></span>
-<nav class="tb-links"><a href="${SITE_ROOT}">Homepage</a><a href="${escapeAttr(GITHUB_REPO_URL)}" target="_blank" rel="noopener noreferrer">GitHub</a></nav>
+<nav class="tb-links"><a href="${SITE_ROOT}">Homepage</a><a class="tb-gh" href="${escapeAttr(GITHUB_REPO_URL)}" target="_blank" rel="noopener noreferrer"><svg class="gh-mark" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a></nav>
 <div class="tb-switch" id="ecoswitch">
 <button type="button" aria-haspopup="true" aria-expanded="false" id="ecobtn"><span class="pip"></span> Repository Standards <span class="chev">&#9662;</span></button>
 <div class="tb-menu" role="menu" aria-label="Ecosystem">
