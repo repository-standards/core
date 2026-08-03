@@ -14,6 +14,112 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > curated sequence and the record of what really happened, is
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 0.8.13 - 2026-08-03
+
+Ten fixes found by acting as an adopting user/agent through the greenfield and
+brownfield flows on eighteen real repositories (own test repos, and eighteen public
+ones spanning Rust, Go, C, PHP, Python, Ruby, Java/Kotlin and Node/TS - flagship,
+mid-size, small, and deliberately weak or abandoned) and by walking the discovery-to-
+spec loop and the work-cycles loop end to end, re-verifying each fix concretely rather
+than trusting it re-read correctly.
+
+### The clarify gate could be walked past by following the template's own wording (2026-08-03)
+
+`capability-spec.template.md`'s Open Questions comment named the open-marker family -
+CLARIFICATION, DECISION, INPUT, ASSET - by bare word only, never showing the literal
+`[NEEDS TYPE: ...]` bracket form `check-spec-clarified.sh` greps for. A spec written to
+the letter of that comment passed the gate with every question still open. The comment
+now spells out the exact bracket form.
+
+### The node stack's starter pointed at a DECISIONS.md that composition strips away (2026-08-03)
+
+The greenfield composition rule degits the node starter into a target repo's root
+first, so six real occurrences of `../DECISIONS.md` / `../../DECISIONS.md` - the
+README, the Docker test-stack comment, vitest config, Next config, the Fastify server
+and env config - resolved outside the composed repo entirely. Now absolute links into
+`repository-standards/node`, with anchors. Caught a stale copy-paste alongside it:
+`config.ts` cited decision #5 (Fastify) for what is actually decision #6 (env config).
+
+### Manifest `since` fields, and the same-day discovery that the first fix was wrong (2026-08-03)
+
+Every past version bump did a blind string replace across `standard.manifest.json`,
+corrupting any entry's `since` whenever it happened to equal the version being bumped
+from. Reconstructed from real git history - twice: the first reconstruction used
+`git log --follow --reverse`, which silently returns one commit instead of the full
+rename-aware history on this git version: it stamped one arbitrary commit's version
+across most of the `files` array, overwriting values that were already correct. Caught
+during self-review before either fix shipped past a single PR; the second, correct
+pass covered the `guards` and `references` arrays too, which the first attempt never
+touched and which carried the original corruption untouched.
+
+### Five places a doc and the mechanism checking it silently disagreed (2026-08-03)
+
+`docs/prerequisites.md` was named twice as if it ships to the target repo; it never
+does. The no-stack offer said Layer 1 is "unaffected" for a non-Node repo, true for
+rules and specs, false for the guards (Node scripts, a real cost regardless of the
+repo's language). `docs/facts.example.json`'s purpose text said to copy it into
+`docs/facts.json` and keep its placeholder content, which fails `facts-check` on the
+example's own paths. `.github/workflows/spec-guard.yml` read as a mandate to use
+GitHub Actions specifically - confirmed on two large real repos that neither does. And
+two `references` manifest entries were missing `id`/`since`/`rule` that every sibling
+carries.
+
+### Five escape hatches the standard was missing for real repo shapes (2026-08-03)
+
+An open-question marker now lives in exactly one place, not optionally echoed in both
+its functional section and Open Questions. A persona roster of one is a named
+legitimate answer, mirroring the decision catalog's existing "does not apply"
+allowance. An existing package/crate boundary can serve directly as a capability map.
+The churn-hotspot assessment pass now says so when a shallow clone makes it
+categorically unrunnable. A repo whose own goal is to stay frozen or deprecated is a
+legitimate intake answer. New decision-catalog category: numerical/semantic
+compatibility policy, for a library whose contract is computed output.
+
+### `cycle-guard` read a correctly-closed cycle's own close table as duplicate intents (2026-08-03)
+
+`cycle-close`'s documented output is a close table under `## Outcome` reusing the same
+intent ids on purpose, so it can be screenshotted into a channel. `cycle-guard.mjs`
+scanned the whole file for id-shaped table rows with no notion of section, so that
+table looked like a second copy of every intent it names - a cycle closed exactly as
+documented reported the "copied, not moved" failure the guard exists to catch. Scoped
+cycle-file row matching to the `## Intents` section, the same fix `spec-structure.mjs`
+already applies to the persona roster, for the same reason.
+
+### Intake now reads a repo's own lifecycle signal before asking for it (2026-08-03)
+
+Four separate repos assessed this round - a neglected small tool, an archived library,
+a defunct product's SDK, a well-resourced org's deliberately-sunset repo - all had
+their lifecycle stated in their own README or CONTRIBUTING already; the intake round
+would have asked anyway. Step 1 now reads for the signal before step 2 asks anything,
+and leads with confirming a strong signal instead of interviewing past it. A repo's own
+explicit no-AI-agents policy (found verbatim in a tested repo's `AI_POLICY.md`) is now
+a red-flag stop, same tier as a committed secret. Fixed a counting error caught during
+self-review (the previous "fifth answer" was actually the sixth) and a real doc-vs-doc
+drift in `adoption.md`'s Gate 0, which still listed four intents after `SKILL.md` grew
+a fifth.
+
+### The technology step accounts for archetype and multi-stack repos (2026-08-03)
+
+A registered stack targets an application archetype; offering it wholesale to a
+66-package library monorepo, or detecting only a root manifest in a repo that actually
+runs three permanently-coexisting stacks, both misfire. The technology step now names
+the archetype mismatch and offers the pieces that transfer, and names every stack a
+repo actually has. `security-baseline.md` gets a "negative scope" axis - what a repo
+deliberately does not treat as a vulnerability, and why - the one axis a tested repo's
+otherwise mature security process had no catalog row for.
+
+### R18 and R25 directly contradicted each other, and the contradiction was live (2026-08-03)
+
+R18: a PR must not bump the version, the maintainer cuts every release from
+`CHANGELOG.md`'s `## Unreleased` heading. R25, as written: a PR that changes what the
+standard ships must move the version. Both governed the same subject and could not
+both be followed. The practical damage was real: this changelog has no entries between
+0.8.0 and 0.8.12 - twelve version bumps with no record, and `scripts/changelog.mjs`,
+described in detail in `docs/method/changelog-process.md` as shipping with the tree,
+does not exist anywhere in it. R25 now describes what the *release* does, not the PR;
+the missing script and the unrecorded twelve versions are logged, not fixed here -
+they're a backfill/tooling task, not a wording fix.
+
 ## 0.8.0 - 2026-08-02
 
 The first stable line. The simplification wave - the standard put on one page, in
