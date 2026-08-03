@@ -502,12 +502,18 @@
       "rule": "R19"
     },
     {
+      "id": "spec-writing",
       "path": "docs/tree/specs.md",
-      "purpose": "how to write a capability spec - the tiers, the contracts, what makes buildable checkable (R8, R9)"
+      "purpose": "how to write a capability spec - the tiers, the contracts, what makes buildable checkable (R8, R9)",
+      "since": "0.8.0",
+      "rule": "R8"
     },
     {
+      "id": "decision-records-guide",
       "path": "docs/tree/docs-decision-records.md",
-      "purpose": "the ADR/BDR streams, the record test and the altitude hierarchy (R5)"
+      "purpose": "the ADR/BDR streams, the record test and the altitude hierarchy (R5)",
+      "since": "0.8.0",
+      "rule": "R5"
     }
   ],
   "sections": [
