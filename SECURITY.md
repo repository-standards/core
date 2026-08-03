@@ -7,6 +7,11 @@ tree ships.
 
 ## Reporting
 
+**Use [a private security advisory](https://github.com/repository-standards/core/security/advisories/new)** -
+it reaches the maintainer without disclosing anything, and it works today. Please do not
+open a public issue for anything exploitable before it is fixed.
+
+
 Found something - a guard that can be tricked into passing, a template that
 lands an unsafe default, a secret-scanning gap? Email
 **bodurkalukasz@gmail.com** with the details (file, scenario, impact). You will
