@@ -11,7 +11,14 @@
 
 **Spec tier:** buildable | behavioral   <!-- declare one -->
 **Serves:** `<persona from docs/personas.md>`   <!-- who this capability is for; required (ADR-006) -->
-**Status:** in-refinement | ready-to-develop | in-development | live   <!-- in-refinement is the draft state -->
+**Status:** in-refinement | ready-to-develop | in-development | live | retired   <!-- in-refinement is the draft state -->
+<!-- Retiring a capability (the product bet is gone, a vendor replaces it, etc.): do not
+     delete this file - it stays as the record of what was built and why (R4). Flip Status
+     to `retired` with a link to the BDR/ADR that decided it (the decision to stop building
+     something is exactly as re-litigable as the decision to build it, R5). Leave the
+     capability-map.json entry in place even though its globs now match nothing - deleting
+     it makes this spec directory read as an unmapped orphan spec-guard --audit would flag,
+     which it is not. -->
 **Success metric:** `<the KPI from PRODUCT's KPI tree this capability moves>`   <!-- PDLC-2; "n/a" needs a why -->
 <!-- ADR-010: ready-to-develop requires the clarify gate - a "## Clarifications" section
      and zero open markers of the NEEDS family. Drafting early (during discovery, ADR-024)

@@ -19,6 +19,15 @@ enough context to name the topic. If the topic is ambiguous - the material
 could belong to more than one existing dossier - ask the user which; never
 guess between dossiers.
 
+**If more than one source landed in the same handover** (a Slack thread and a mail
+pasted together, "here's what Dana said and here's what Marcus said back") - each
+source is still its own entry, written and filed one at a time, in the order given.
+Diff the second against the dossier **and** against the first before it moves on to
+the third: two sources from the same day that disagree with each other are exactly
+the kind of contradiction step 3 exists to catch, and they only surface if each
+entry is diffed against everything already filed, including entries this same
+handover just added.
+
 ## Procedure
 
 1. **Resolve the dossier.** Slugify the topic (`booking-changes`, not a spec

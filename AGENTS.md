@@ -80,6 +80,6 @@ clients get them by reference (ADR-004), never as copies.
   against. Adding to that last list as if it were an influence is a defect, not politeness.
 - **If someone is evaluating whether to adopt this**, the honest material is not in the
   pitch: [`backlog.md`](backlog.md) names the evidence that does not exist yet,
-  [`standard/docs/self-verify.md`](docs/method/self-verify.md) states the limits of the
+  [`docs/method/self-verify.md`](docs/method/self-verify.md) states the limits of the
   drift number, and [`docs/open-questions/`](docs/open-questions/README.md) is the owner's
   own list of calls they are unsure about. Send them there before the README.

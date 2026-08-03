@@ -114,9 +114,10 @@ Before any phase runs, one intake pass:
      - **In the repo.** `docs/backlog.md` is the whole system; at `scale`, work cycles and
        a timeline on top of it (ADR-028). Nothing to buy, nothing to log into, and the
        agent can read the plan the same way it reads the code.
-     - **In a tracker.** The team already lives in Jira, Linear or GitHub Issues. The repo
-       keeps a thin intents list and the tracker holds execution state, assignment and
-       history - the split ADR-010 describes.
+     - **In a tracker.** The team already lives in Jira, Linear, GitHub Issues, GitLab
+       Issues or whatever else holds their execution state. The repo keeps a thin intents
+       list and the tracker holds execution state, assignment and history - the split
+       ADR-010 describes.
      - **Both, bridged.** Intents in the repo, mirrored out for the people who will never
        open it. Honest cost: two places to keep in step, and the standard's own backlog
        doc warns against exactly that unless the team genuinely already lives there.
@@ -133,7 +134,8 @@ Before any phase runs, one intake pass:
      Ask this **before** reconstructing anything, and **suggest rather than
      interrogate** - people do not think of their own wiki when asked an open
      question. Offer the list and let them point:
-     - a tracker with real discussion in it (Jira, Linear, GitHub Issues/Projects)
+     - a tracker with real discussion in it (Jira, Linear, GitHub Issues/Projects,
+       GitLab Issues, ...)
      - a wiki or knowledge base (Confluence, Notion, Slab, Coda, an internal handbook)
      - decisions already written *somewhere*, in some other shape - `DECISIONS.md`,
        `rfcs/`, `adr/`, `design/`, a `docs/` folder nobody maintains, an old README
