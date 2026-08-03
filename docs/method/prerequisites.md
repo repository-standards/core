@@ -7,10 +7,13 @@
 ## You have this case - say this
 
 **You are about to adopt the standard into a repo.** Install the required set first, then
-let the agent proceed:
+let the agent proceed. This page lives in the `repository-standards/core` checkout, not
+in your repo (`docs/method/` is read by reference, never copied - ADR-023), so name it by
+its checkout path or its permanent URL:
 
 ```
-> check the prerequisites in docs/prerequisites.md are installed before you touch anything
+> check the prerequisites in docs/method/prerequisites.md (repository-standards/core) are
+  installed before you touch anything
 ```
 
 **The agent suddenly refuses every shell command.** That is the guards failing closed
