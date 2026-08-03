@@ -15,6 +15,10 @@
 //   6. eight sidebar rows reading README.md, indistinguishable from each other
 //   7. a page reached only from an index, with no way back to it
 //
+// Rule 8 is the exception - it has not shipped broken, it is a defect the layout of ADR-031
+// makes available: the switcher's "here" was hardcoded to the core, which is right on the
+// one site that existed and wrong on every stack site built by this same generator.
+//
 // A real browser would catch layout too (the sidebar sitting under the header, an
 // invisible scrollbar). That needs a dependency and an install step in CI, which is an
 // owner decision - this file deliberately stops at what the DOM and the stylesheet say.
@@ -116,6 +120,26 @@ const nav = home.split('<div class="nav-links"')[1]?.split("</aside>")[0] ?? "";
   });
   if (orphans.length) fail(`${orphans.length} page(s) reachable only by link, with no way back: ${orphans.slice(0, 4).join(", ")}`);
   else ok("every page outside the sidebar carries a link back to its index");
+}
+
+// 8. The ecosystem switcher must say "here" about the site it is actually on. The same
+//    generator builds every site in the ecosystem (ADR-031), so a hardcoded answer is
+//    correct on one of them and quietly wrong on the rest.
+{
+  const entries = [...home.matchAll(/<a role="menuitem" href="([^"]+)"([^>]*)>([\s\S]*?)<\/a>/g)].map((m) => ({
+    href: m[1],
+    attrs: m[2],
+    here: m[3].includes('class="now">here'),
+  }));
+  const base = home.match(/<a class="nav-link[^"]*" href="(\/[^"]*\/)[^"/]+"/)?.[1];
+  const here = entries.filter((e) => e.here);
+  const tabbed = entries.filter((e) => e.attrs.includes("_blank") && e.href.startsWith("/"));
+  if (!entries.length || !base) fail("could not read the ecosystem switcher or the sidebar's base path");
+  else if (here.length !== 1) fail(`${here.length} switcher entries claim to be "here" - exactly one must`);
+  else if (here[0].href !== `${base}index.html` && here[0].href !== base) {
+    fail(`the switcher says "here" about ${here[0].href}, but this site is served from ${base}`);
+  } else if (tabbed.length) fail(`${tabbed.length} same-domain switcher entry(s) open in a new tab: ${tabbed.map((e) => e.href).join(", ")}`);
+  else ok(`the switcher marks this site (${base}) as here, and only it`);
 }
 
 if (failures) {
