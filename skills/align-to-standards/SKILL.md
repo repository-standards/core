@@ -18,7 +18,25 @@ Before any phase runs, one intake pass:
      the repo started aligning informally.
    - Nothing? A true greenfield or an unaligned brownfield - the intent question
      settles which.
-2. **Ask the user - one short round:**
+   - **Read the repo's own lifecycle signals before asking anything** - a README or
+     `CONTRIBUTING.md` banner saying deprecated/archived/legacy/frozen, a
+     host-reported archived flag, a last-commit date years old, an explicit
+     contribution policy. Four separate assessments this standard was tested
+     against (a neglected small tool, an archived library, a defunct product's SDK,
+     and a well-resourced org's deliberately-sunset repo) all had this answer sitting
+     in the README or CONTRIBUTING the whole time - asking the standard intake round
+     blind would have asked what the repo had already, plainly, said. Play the
+     signal back as a confirmation ("this reads as deprecated as of <date> - is that
+     still true?") instead of running the full round unconditionally.
+   - **A repo's own policy can forbid what this skill does.** Some repos' `CONTRIBUTING.md`
+     or a dedicated policy file state outright that autonomous agents may not
+     contribute (found verbatim in `BurntSushi/ripgrep`'s `AI_POLICY.md` during
+     testing). Treat this as a **red-flag stop** (same tier as a committed secret or
+     a remote-database write) - halt and tell the human what the repo's own policy
+     says, rather than proceeding to open a PR the repo's own rules forbid.
+2. **Ask the user - one short round** (skip or compress this round when step 1
+   already surfaced a strong lifecycle signal - confirm it instead of interviewing
+   past it):
    - **Intent.** Start a new repo / bring an existing repo to the standard /
      **assessment only** ("tell me where I stand and give me the plan") / **a check-up on a
      repo already on the standard** ("we adopted a while back - review how we are doing") /
@@ -30,12 +48,15 @@ Before any phase runs, one intake pass:
      chat again, the backlog stops being true - and a user asking for that review is doing
      the thing the product exists for. Never route them to a version bump instead.
 
-     **A fifth answer is legitimate: this repo's own goal is to stay as it is** - deprecated,
+     **A sixth answer is legitimate: this repo's own goal is to stay as it is** - deprecated,
      frozen, or intentionally minimal, with no plan to actively develop it further.
      Assessment-only still applies (the health report and counted plan are useful even
      here), but say plainly that closing the gap to drift 0 is not the point for a repo like
      this, and do not seed a backlog whose entire premise - working the list down - the
-     repo has no intention of acting on.
+     repo has no intention of acting on. **When step 1 already found a strong lifecycle
+     signal, lead with this answer as the likely one and confirm it**, rather than asking
+     appetite, tracked-work location, or profile - all of which presuppose a team coming
+     back to act on what gets produced.
    - **Technology.** Detect from the repo's own evidence first (`package.json`,
      `pyproject.toml`, `go.mod`, `Cargo.toml`, `*.csproj`), then **confirm** with the user.
      Greenfield has no evidence, so ask - but never as a blank question: name what the

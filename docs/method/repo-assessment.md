@@ -95,7 +95,10 @@ The assessment does not fix - it **routes**:
 - **Red-flag stops** - halt and ask the human, do not proceed silently:
   - a **secret committed** to the repo,
   - anything that would **write to a remote database** (deliver a migration instead),
-  - a change that would contradict an existing Accepted ADR.
+  - a change that would contradict an existing Accepted ADR,
+  - **the repo's own policy forbids autonomous agent contribution** (a `CONTRIBUTING.md`
+    or dedicated policy file says so outright) - tell the human what it says rather than
+    opening a PR the repo's own rules disallow.
 
 Onboarding then drains the backlog in small PRs (`spec-impact` -> `spec-update` ->
 implement -> `spec-reconcile`). Re-run this assessment periodically to measure that the
