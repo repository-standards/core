@@ -104,6 +104,14 @@ guards are green - not when every file has a paragraph.
    - Roles the code shows but nobody uses, and users the business has but the code never
      modelled, both surface here. Both are findings worth reporting.
 
+   **A roster of one is a legitimate answer, not a skipped step.** A single-purpose
+   library, a CLI, or a component with one real consumer (the developer importing it) does
+   not need a multi-persona interview manufactured for it - same principle as the decision
+   catalog's "does not apply" (`docs/method/checklist.md`): write the one real persona
+   (e.g. "solo consumer-developer, primary by default"), say in one line why there is only
+   one, and move on. What is not acceptable is silently skipping the gate because the
+   interview felt disproportionate - that is how ADR-006 gets quietly bypassed.
+
    Write `docs/personas.md` with the **primary** marked, and record the target-personas
    **BDR**. **No spec is written before this exists** (ADR-006): every spec seeded below
    names the persona(s) it serves.
@@ -120,6 +128,13 @@ guards are green - not when every file has a paragraph.
    `pricing`) is **one** capability. Write the result to `specs/capability-map.json`
    (capability -> code globs). This is `spec-impact` run in reverse: code first,
    capability out.
+
+   **A library, CLI or framework's existing package/crate boundary is often already the
+   capability map**, not a rival shape to reconcile against - a workspace that already
+   publishes `parser`, `matcher` and `printer` as independent packages has, in effect,
+   already done this step. Confirm the boundary is behavior-shaped (not a layering
+   artifact like `utils` or `common`) rather than re-deriving one from scratch, and write
+   `capability-map.json` from it.
 
    **Play the list back before writing the file.** This map is what the coupling guard
    binds to on every future pull request, so a boundary drawn wrong is friction the repo
