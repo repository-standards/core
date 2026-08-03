@@ -11,7 +11,10 @@ during work" step.
 
 ## Steps
 
-1. From `spec-impact`, take the primary + affected capabilities.
+1. From `spec-impact`, take the primary + affected capabilities. If any of them
+   has `Status: retired`, stop before editing it - `spec-impact` should have
+   already caught this, but do not extend a retired capability just because its
+   spec file is still there to edit.
 
 2. For **each** affected spec, edit it **in place** to the target state: behavior,
    business rules, invariants, lifecycle, edge cases, forbidden scenarios. Describe
