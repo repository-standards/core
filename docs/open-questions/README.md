@@ -17,6 +17,7 @@ outgrew itself - as its own meta entry predicted it would.)
 
 | Topic | Decided | The doubt, in one line |
 |---|---|---|
+| [Conformance: threshold or degree](conformance-is-a-degree.md) | not decided | the spec says MUST, the tooling reports a number - and the number needs a denominator |
 | [One authored tree](one-tree.md) | ADR-014: single `standard/` tree, no source/dist split | template shells and read-as-is docs mix in one tree |
 | [How many rules](twenty-rules.md) | SPEC.md, the numbered rules on one page | the count is past the top of the winners' range and only grew; some rules bundle several MUSTs |
 | [Stacks as satellite repos](stacks-satellite.md) | ADR-016: one repo per technology + registry | two repos to run; registry is a solo-merge gate |
