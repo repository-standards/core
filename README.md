@@ -1,45 +1,77 @@
-# repository-standards
+<div align="center">
 
-> The reference your repository trues up to. A **living, versioned, self-verifying**
-> engineering standard: point a repo at a version and it **aligns**, **guides the
-> build**, and **proves compliance** - `align -> verify -> drift as a number`.
+<img src="site/og.png" alt="Repository Standards" width="760">
 
-Most teams have standards the way they have new-year resolutions: written once,
-drifting ever since. This one is **executable**. It keeps documentation, specifications,
-and technical + business decisions in the repo, versioned with the code - written to be
-*run* by a coding agent, not framed on a wall. It starts new repos right and walks messy
-ones back to health, one guided wave at a time; at every step, compliance is a number,
-not an opinion.
+### The missing layer between business, engineering and AI
 
-Others give you a workflow or a scaffold. This gives your repo a reference to true up
-to - **and walks it there**.
+Product owners, analysts, architects, developers, QA and agents contribute through
+**one workflow and one source of truth** - the repository.
 
-Spec-driven development frameworks standardise **how a change gets specified**. This
-standardises **the repository**, and four things follow that none of them does: the
-**decisions** behind the code are recorded and kept, an existing repo is walked into line
-with **a standard** rather than into a workflow, that standard **keeps moving and your
-repo trues up to it**, and how far you still are from it comes out as **a number your CI
-asserts**. If a spec workflow is what you want, those projects are large, well maintained
-and the better answer - [the FAQ](docs/faq.md) names them and says so.
+[**Documentation**](https://repositorystandards.com/docs/) &nbsp;·&nbsp;
+[Quick start](https://repositorystandards.com/docs/) &nbsp;·&nbsp;
+[The spec](standard/SPEC.md) &nbsp;·&nbsp;
+[Decisions](docs/decision-records/) &nbsp;·&nbsp;
+[Node stack](https://github.com/repository-standards/node)
 
-The whole normative core fits one page: [`standard/SPEC.md`](standard/SPEC.md) -
-numbered MUST/SHOULD rules. Everything else here explains or enforces them. One
-orientation rule for this repo: the root is this project's own life; `standard/`
-is the standard you adopt - the two share names (docs, specs, skills) but never
-content. One exception, and it is the one worth knowing:
-[`docs/method/`](docs/method/README.md) is in the root but belongs to you - the method
-manual is adopted **by reference**, always latest, never copied (ADR-023). The daily
-lifecycle skills ship inside the tree (`standard/.claude/skills/`); the root `skills/`
-holds only the transition router that brings a repo in.
+</div>
 
-Status: 0.8.0, the first stable line, mechanics field-run on the author's production
-repos. **There is no version to pin to: the standard is living and latest is the
-only target** (ADR-025). `.standards-version` records the state your repo last
-aligned to - a bookmark, so an update is a delta rather than a re-scaffold, and
-never a version you are held at. Tags, when the maintainer cuts them, mark the
-standard's own development; they are not something your repo tracks. A degit'd
-tree keeps working offline even if this repo goes quiet - adopt the mechanism,
-not a promise.
+---
+
+## One line to your agent
+
+There is nothing to install and nothing to build.
+
+```
+follow repositorystandards.com - take this repo onto the standard, interview me for what you need
+```
+
+The agent reads the standard, works out whether your repository is new or has ten years of
+history, and asks you what it cannot work out for itself.
+
+## What this is
+
+Most teams have standards the way they have new-year resolutions: written once, drifting
+ever since. This one is **executable**. Documentation, specifications and decisions - technical
+and business - live in the repository, versioned with the code, written to be *run* by a coding
+agent rather than framed on a wall.
+
+It starts new repositories right and walks messy ones back to health, one guided wave at a
+time. At every step, **compliance is a number rather than an opinion**.
+
+Spec-driven development frameworks standardise *how a change gets specified*. This standardises
+*the repository*, and four things follow that none of them does:
+
+- the **decisions** behind the code are recorded and kept
+- an existing repository is walked into line with **a standard**, not into a workflow
+- that standard **keeps moving**, and your repository trues up to it
+- how far you still are from it comes out as **a number your CI asserts**
+
+If a spec workflow is what you actually want, those projects are large, well maintained and the
+better answer - [the FAQ](docs/faq.md) names them and says so.
+
+## How to read this repository
+
+The whole normative core fits one page: [`standard/SPEC.md`](standard/SPEC.md), numbered
+MUST/SHOULD rules. Everything else here explains or enforces them.
+
+One orientation rule: **the root is this project's own life; [`standard/`](standard/) is what
+you adopt.** The two share names - docs, specs, skills - and never content. One exception worth
+knowing: [`docs/method/`](docs/method/README.md) sits in the root but belongs to you, adopted
+**by reference**, always latest, never copied ([ADR-023](docs/decision-records/ADR-023-method-docs-live-beside-the-tree.md)).
+
+The daily lifecycle skills ship inside the tree (`standard/.claude/skills/`); the root
+`skills/` holds only the transition router that brings a repository in.
+
+## Status
+
+**0.8.0** - the first stable line, mechanics field-run on the author's production repositories.
+
+**There is no version to pin to: the standard is living, and latest is the only target**
+([ADR-025](docs/decision-records/ADR-025-the-standard-is-living-latest-is-the-target.md)).
+`.standards-version` records the state your repository last aligned to - a bookmark, so an
+update is a delta rather than a re-scaffold, and never a version you are held at. Tags mark
+this project's own development; they are not something your repository tracks. A degit'd tree
+keeps working offline even if this repository goes quiet - adopt the mechanism, not a promise.
 
 ## Say it to your agent
 
