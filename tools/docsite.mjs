@@ -134,6 +134,7 @@ export const PAGES = CONFIG.pages || [
   { src: "docs/faq.md", out: "faq.html", nav: "FAQ", group: "About this project", sub: "Reference" },
   { src: "docs/decision-records/README.md", out: "decision-records.html", nav: "Decision records", group: "About this project", sub: "Decisions and evidence" },
   { src: "docs/open-questions/README.md", out: "open-questions.html", nav: "Open questions", group: "About this project", sub: "Decisions and evidence" },
+  { src: "docs/ideas/README.md", out: "ideas.html", nav: "Ideas", group: "About this project", sub: "Decisions and evidence" },
   { src: "docs/case-studies/README.md", out: "case-studies.html", nav: "Case studies", group: "About this project", sub: "Decisions and evidence" },
 
 
@@ -186,6 +187,7 @@ PAGES.push(
   ...collectionPages("docs/decision-records", "adr", "About this project", "decision-records.html"),
   ...collectionPages("docs/case-studies", "case", "About this project", "case-studies.html"),
   ...collectionPages("docs/open-questions", "oq", "About this project", "open-questions.html"),
+  ...collectionPages("docs/ideas", "idea", "About this project", "ideas.html"),
   ...ownSpecPages(),
 );
 const PAGES_BY_SRC = new Map(PAGES.map((p) => [p.src, p]));
