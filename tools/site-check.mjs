@@ -188,7 +188,15 @@ for (const m of landing.matchAll(/href="((?!https?:)[^"#]*\.html)(#[^"]*)?"/g)) 
   // Through the same translation the docs' own links use. A landing served under a prefix
   // writes /docs/node/x.html for a file at site/docs/x.html, and joining the two strings
   // by hand made the check report a page that is right there.
-  if (isForeign(m[1])) crossSurface.add(m[1]);
+  // Root-absolute, for the same reason the generated pages are (ADR-031) - and here the
+  // consequence is worse than a stale base. A landing served under a prefix sits in a
+  // different subtree from its docs, so a relative href resolves beside the LANDING and
+  // never reaches them: /node/ + docs/x.html is /node/docs/x.html, which is nowhere. It
+  // passes a naive check because the file exists locally, one directory away from where
+  // the URL actually pointed.
+  if (!m[1].startsWith("/")) {
+    fail(`${LANDING}: relative link -> ${m[1]} (must be root-absolute: under a prefix it resolves beside the landing, not into the docs)`);
+  } else if (isForeign(m[1])) crossSurface.add(m[1]);
   else if (!existsSync(urlToFile(m[1]))) fail(`${LANDING}: broken link into the site -> ${m[1]}`);
 }
 if (failures === beforeLanding) ok(`${LANDING}: every link into the site resolves`);
