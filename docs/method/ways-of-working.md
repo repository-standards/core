@@ -217,6 +217,7 @@ You can still call one directly when you know exactly what you want. Both work.
 | "I think that is done" | `spec-reconcile` | dev |
 | "is this ready to push?" | `pre-pr-review` | dev |
 | "we should fix that too, but not here" | `add-to-backlog` | anyone |
+| "what if we let hosts pre-approve repeat guests?" | `idea-write` | anyone |
 | "we do not have personas" | `personas-write` | product |
 | "let's start a cycle" / "the sprint is over" | `cycle-open` / `cycle-close` | whoever runs the team |
 | "when does billing ship?" | `timeline-update` | anyone |

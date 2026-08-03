@@ -136,6 +136,15 @@ guards are green - not when every file has a paragraph.
    artifact like `utils` or `common`) rather than re-deriving one from scratch, and write
    `capability-map.json` from it.
 
+   **A single-package micro-library has no package boundary to inherit from - look one
+   level down.** A header-only or single-module library (one build target, no internal
+   workspace) can still have real internal capability structure: separate concerns
+   living in separate files or namespaces under the one package (a core data model, a
+   query/patch API, several independent serialization formats). Map those, not the
+   package as a whole - a `capability-map.json` with one entry covering the entire
+   source tree gives the coupling guard nothing to bound and reads as theater on the
+   next PR.
+
    **Play the list back before writing the file.** This map is what the coupling guard
    binds to on every future pull request, so a boundary drawn wrong is friction the repo
    lives with for years - and the person who inherited this codebase knows things the code
