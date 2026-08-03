@@ -97,6 +97,7 @@ picks and rationale live in its DECISIONS).
 | Schema evolution & migrations | Uncontrolled schema drift breaks prod quietly | Versioned, reviewed migrations; **never** write DDL to a remote DB ad hoc - ship a migration | ADR |
 | Async, eventing & background jobs | Sync-by-default hides latency and coupling | Explicit boundary for what is async; a named queue/eventing mechanism, not scattered timers | ADR |
 | Caching | Wrong cache = stale data or thundering herds | No cache until a measured need; when added, a stated invalidation rule per cache | ADR |
+| Numerical / semantic compatibility policy | For a library whose contract *is* its computed output (dtype coercion, rounding, precision, copy-vs-view), silent behavior changes break every consumer at once | A stated policy for what counts as a breaking change in output, and how it is deprecated (mirrors schema evolution, for computation instead of storage) - **does not apply** to most application repos, which is itself the answer | ADR |
 
 ## Interfaces & contracts
 
