@@ -75,6 +75,7 @@ export const PAGES = CONFIG.pages || [
   { src: "docs/what-and-why.md", out: "what-and-why.html", nav: "What this is, and why", group: null },
 
   { src: "docs/method/ways-of-working.md", out: "ways-of-working.html", nav: "Start here", group: "Working with it" },
+  { src: "docs/method/tracking-work.md", out: "tracking-work.html", nav: "Backlog, cycles, timeline", group: "Working with it" },
   { src: "docs/method/product-work.md", out: "product-work.html", nav: "Product Owner", role: "po", group: "Working with it" },
   { src: "docs/method/dev-work.md", out: "dev-work.html", nav: "Developer", role: "dev", group: "Working with it" },
   { src: "docs/method/lead-work.md", out: "lead-work.html", nav: "Consultant", role: "lead", group: "Working with it" },
@@ -711,6 +712,52 @@ a.nav-tree-link:hover { background: var(--active-bg); color: var(--fg); }
 .fig { margin: 1.6rem 0 1.9rem; padding: 0; max-width: 100%; }
 .fig svg { display: block; width: 100%; height: auto; }
 .fig figcaption { margin-top: 0.7rem; font-size: 0.85rem; color: var(--muted); }
+/* A timeline figure. Bars and markers read at a glance; the dashed one is the reading that
+   contradicts the projection, which is the point of showing both. */
+.tl-title { fill: var(--fg); font-size: 14px; font-weight: 650; font-family: var(--font-sans); }
+.tl-meta, .tl-tick text, .tl-label, .tl-proj-label { font-family: var(--font-sans); }
+.tl-meta { fill: var(--muted); font-size: 11.5px; }
+.tl-axis { stroke: var(--line2); stroke-width: 1.5; }
+.tl-tick line { stroke: var(--line2); stroke-width: 1.5; }
+.tl-tick text { fill: var(--muted); font-size: 10.5px; text-anchor: middle; }
+.tl-bar { fill: rgba(255,255,255,.06); stroke: var(--border); }
+.tl-done { fill: rgba(52,211,153,.42); }
+.tl-label { fill: var(--fg); font-size: 11px; font-weight: 600; }
+.tl-proj { fill: rgba(255,122,47,.28); stroke: rgba(255,122,47,.6); }
+.tl-proj-label { fill: var(--muted); font-size: 11px; }
+.tl-now line { stroke: var(--fg); stroke-width: 1.5; stroke-dasharray: 2 3; }
+.tl-now text { fill: var(--fg); font-size: 10.5px; font-family: var(--font-sans); }
+.tl-target line { stroke: var(--orange, #ff7a2f); stroke-width: 1.5; }
+.tl-target circle { fill: var(--orange, #ff7a2f); }
+.tl-target text { fill: var(--orange, #ff7a2f); font-size: 10.5px; font-weight: 600; font-family: var(--font-sans); }
+.tl-risk line, .tl-risk circle { stroke: #e0685f; fill: none; stroke-width: 1.5; }
+.tl-risk text { fill: #e0685f; font-size: 10.5px; font-family: var(--font-sans); }
+/* A board or a queue drawn as a figure: cards, a lane rule in the lane's colour, and the
+   holder named on every card - an empty one is the gap the file exists to make visible. */
+.bd-lane { font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; font-family: var(--font-sans); }
+.bd-rule { stroke-width: 2; }
+.bd-card { fill: var(--bg-panel); stroke: var(--border); }
+.bd-id { font-size: 11px; font-weight: 700; font-family: var(--font-mono); }
+.bd-title { fill: var(--fg); font-size: 12px; font-family: var(--font-sans); }
+.bd-tag, .bd-who { fill: var(--muted); font-size: 10.5px; font-family: var(--font-sans); }
+.bd-size { fill: var(--muted); font-size: 11px; font-weight: 600; font-family: var(--font-mono); text-anchor: end; }
+/* Rendered output, framed as what it is: an answer that came back from a session. The bar
+   carries the sentence that produced it, so the ask and the answer are one object rather
+   than a picture with a caption somewhere above it. */
+.win { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--bg-panel); }
+.win-bar {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+}
+.win-dots { display: flex; gap: 5px; flex: none; }
+.win-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--line2); border: 1px solid var(--border); }
+.win-ask {
+  font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.win-body { padding: 0.85rem 0.7rem 0.5rem; }
+.win-body svg { display: block; width: 100%; height: auto; }
 .loop-node { fill: var(--bg); stroke-width: 2.5; }
 .loop-label { fill: var(--fg); font-size: 13px; font-weight: 650; font-family: var(--font-sans); }
 .loop-sub { fill: var(--muted); font-size: 11px; font-family: var(--font-sans); }

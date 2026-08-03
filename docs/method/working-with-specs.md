@@ -15,8 +15,11 @@ backlog. The spec holds behavior.
 ## "I want the product to do something new" (PO)
 
 ```
-> guests should be able to change their booking dates themselves
+> new feature: guests should be able to change their booking dates themselves
 ```
+
+Saying "new feature" or "new story" first is for your benefit rather than the agent's - it
+makes the line unmistakably an ask. The bare sentence works identically.
 
 The agent starts the loop itself (the standard is AI-led, ADR-010): it checks
 `docs/discovery/` for a related dossier, checks `specs/` for an existing
