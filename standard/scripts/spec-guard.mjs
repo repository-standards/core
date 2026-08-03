@@ -98,12 +98,16 @@ if (audit) {
   process.exit(block ? 1 : 0);
 }
 
+// D (deleted) is included deliberately: removing a capability's code entirely -
+// a retirement, not an edit - is still a change that must land with a spec update
+// (R11). Excluding it let a capability's code disappear with the spec never
+// touched, and spec-guard reported OK on the PR that did it.
 let raw;
-if (staged) raw = sh("git diff --cached --name-only --diff-filter=ACMR");
-else if (base) raw = sh(`git diff --name-only --diff-filter=ACMR ${base}...HEAD`);
+if (staged) raw = sh("git diff --cached --name-only --diff-filter=ACDMR");
+else if (base) raw = sh(`git diff --name-only --diff-filter=ACDMR ${base}...HEAD`);
 // A file not yet added is still a change: locally the guard has to fire before
 // `git add`, not only in CI where everything is tracked.
-else raw = `${sh("git diff --name-only --diff-filter=ACMR HEAD")}\n${sh("git ls-files --others --exclude-standard")}`;
+else raw = `${sh("git diff --name-only --diff-filter=ACDMR HEAD")}\n${sh("git ls-files --others --exclude-standard")}`;
 const files = [...new Set(raw.split("\n").filter(Boolean))];
 
 // minimal glob -> regexp: ** = any path, * = within a segment

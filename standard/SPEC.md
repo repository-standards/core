@@ -91,7 +91,10 @@ binds every repo, a solo one included.
   dropped - and graduates into the normal flow on approval.
 - **R15.** The repo backlog holds intents, each with a definition of done; an item
   leaves only when its DoD is met. Execution state and work history live in the
-  tracker - GitHub Issues by default, Jira or Linear as adapters.
+  tracker - GitHub Issues by default, or an adapter for whatever the team already
+  runs (Jira and Linear are field-proven; GitLab Issues and others follow the same
+  shape). The list is not exhaustive - the tracker is wherever execution state
+  actually lives, not a fixed set of product names.
 
 ## Verification and updates
 
