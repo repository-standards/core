@@ -1,6 +1,6 @@
 # The repository-standards spec
 
-Version 1.0.12 - the spec is versioned with the standard (`VERSION`). **The standard is
+Version 1.0.13 - the spec is versioned with the standard (`VERSION`). **The standard is
 living and the only target is latest** (ADR-025): a repo complies against the state it
 last aligned to, recorded in its own `.standards-version`. That record is a bookmark -
 it makes an update a delta and self-verify a meaningful assertion, and it never names a
@@ -164,17 +164,19 @@ binds every repo, a solo one included.
   squashes instead. A branch MAY be rewritten while it is the author's alone;
   once another person or branch builds on it, it MUST NOT be (ADR-026).
 
-- **R25.** A PR that changes what the standard ships MUST move the version, and the
-  version MUST be one fact restated nowhere unchecked: every surface that carries it
-  is declared and verified against its single home (R4). **Patch is the default and
-  covers nearly everything** - the ordinary PR, however much prose it moves. **Minor
-  is a judgment, not a trigger**: it says an adopter should look, and it is spent
-  sparingly. Do not derive it mechanically from "a rule was added" or "a path
+- **R25.** A PR that changes what the standard ships describes that change under
+  `CHANGELOG.md`'s `## Unreleased` heading (R18) - it MUST NOT move the version itself.
+  The **release that promotes `Unreleased`** MUST move the version, and the version
+  MUST be one fact restated nowhere unchecked: every surface that carries it is
+  declared and verified against its single home (R4). **Patch is the default and
+  covers nearly everything** - the ordinary release, however much prose it moves.
+  **Minor is a judgment, not a trigger**: it says an adopter should look, and it is
+  spent sparingly. Do not derive it mechanically from "a rule was added" or "a path
   changed"; that reasoning promotes routine work and inflates the number until it
   stops meaning anything. The patch position is not a two-digit field: 1.0.12 is
-  followed by 1.0.12, then 1.0.120 - each larger than the last. Versions mark this
-  standard's own development; an adopting repo still tracks latest and never a pin
-  (ADR-025).
+  followed by 1.0.13, then eventually 1.0.99, then 1.0.100 - each larger than the
+  last, never resetting to a two-digit assumption. Versions mark this standard's own
+  development; an adopting repo still tracks latest and never a pin (ADR-025).
 
 
 ## Data and schema
