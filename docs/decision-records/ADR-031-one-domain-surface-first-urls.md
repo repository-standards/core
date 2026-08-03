@@ -84,6 +84,13 @@ correct on exactly one of them.
 rule is mechanical inside a repository. The switcher's "here" is derived rather than written,
 so it cannot disagree with the site it is on.
 
+Publishing belongs to `repository-standards.github.io`, which is the only repository that
+can see the whole layout: GitHub Pages serves one repository at one root, and this layout is
+four paths fed by several repositories. It **pulls** - checking each source out, building it,
+running that source's own site checks, and committing only what moved - so no source
+repository holds write access to the published tree and no token exists for one to leak.
+The cost is latency rather than trust: a merge appears at the next scheduled build.
+
 What is **not** mechanical, and is worth stating rather than implying: nothing checks that
 `/docs/node/` actually serves the stack's build, because no repository can see the deployed
 tree. That is verified by opening it after a deploy.
