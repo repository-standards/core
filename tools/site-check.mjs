@@ -221,7 +221,10 @@ for (const page of pages) {
   // the whole point: a relative href is at the mercy of whatever the browser thinks the base
   // is, and one visit to /docs without the trailing slash turned every link on the page,
   // sidebar included, into a 404.
-  for (const m of html.matchAll(/(?:href|src)="([^"#]+)(#[^"]*)?"/g)) {
+  // Through stripCode, like the prose checks above it: an href written inside code is an
+  // EXAMPLE of a link, not a link. This check flagged a spec that quotes a bad href while
+  // explaining why it is bad - the document was right and the check was reading it wrong.
+  for (const m of stripCode(html).matchAll(/(?:href|src)="([^"#]+)(#[^"]*)?"/g)) {
     const target = m[1];
     if (/^(https?:|mailto:|data:)/.test(target)) continue;
     if (!target.startsWith("/")) fail(`${path}: relative link -> ${target} (internal links must be root-absolute)`);
