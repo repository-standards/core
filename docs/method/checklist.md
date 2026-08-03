@@ -51,6 +51,22 @@ and expected; choosing against it *silently* is what the record exists to preven
 - **Ongoing:** when a change forces one of these forks, this catalog is the prompt that
   it deserves a record, not a silent commit.
 
+## Silence is the one answer you do not get
+
+Most of this catalog will not apply to your repository. A static site decides no datastore,
+a CLI decides no API contract, an internal tool may decide no auth model - and none of that
+is a gap.
+
+What is not allowed is leaving an area that **does** apply undecided, because it gets decided
+anyway - by whoever writes the first file that depends on it, without an argument and without
+a record. So there are two acceptable answers per area, and only two: the decision, or
+**"does not apply here"** written down once. The second costs a line and saves the next person
+from re-opening a question you already closed.
+
+There is deliberately no minimum count and no required subset. Which areas apply is a property
+of what you are building, not of this catalog, and a standard that asserted otherwise would be
+demanding records about things that do not exist.
+
 ## Not every area is an ADR
 
 Apply the record test (see the [record policy](../tree/docs-decision-records.md)): a record is for a

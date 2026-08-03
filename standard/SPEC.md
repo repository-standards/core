@@ -1,6 +1,6 @@
 # The repository-standards spec
 
-Version 1.0.0 - the spec is versioned with the standard (`VERSION`). **The standard is
+Version 1.1.0 - the spec is versioned with the standard (`VERSION`). **The standard is
 living and the only target is latest** (ADR-025): a repo complies against the state it
 last aligned to, recorded in its own `.standards-version`. That record is a bookmark -
 it makes an update a delta and self-verify a meaningful assertion, and it never names a
@@ -60,12 +60,13 @@ binds every repo, a solo one included.
   person will look; the standard's taxonomy (adopted by reference from the living standard - always latest) is the map of where each kind lands.
 - **R6.** An accepted record MUST NOT be edited into a different decision. It is
   superseded by a new record: status flip plus link.
-- **R7.** The eight foundation forks MUST each be consciously decided and recorded:
-  repo topology, domain boundaries, datastore, API contract, auth model, testing
-  strategy, security baseline, release strategy. The decision checklist carries the
-  full menu with a paved-road default for each; accepting a default is a decision.
-
-## Specs
+- **R7.** Every fork in the decision checklist that applies to the repo MUST be
+  consciously decided and recorded; an area that does not apply MUST say so once,
+  in one line. Silence is not an answer - an undecided area gets decided anyway, by
+  whoever writes the first file that depends on it. Which areas apply is a property
+  of what is being built, so this rule names no subset and asserts no count; the
+  checklist owns the areas and carries a paved-road default for each, and accepting
+  a default is a decision.
 
 - **R8.** Behavior MUST be specified by capability - never by ticket, page or
   feature number.
@@ -162,6 +163,16 @@ binds every repo, a solo one included.
   complete, buildable, reviewed change; a repo that will not hold that bar
   squashes instead. A branch MAY be rewritten while it is the author's alone;
   once another person or branch builds on it, it MUST NOT be (ADR-026).
+
+- **R25.** A PR that changes what the standard ships MUST move the version, and the
+  version MUST be one fact restated nowhere unchecked: every surface that carries it
+  is declared and verified against its single home (R4). A change that alters what a
+  repository would receive is a **patch** at least; one that changes what is required
+  of an adopting repo - a rule added, a rule tightened, a shipped path added or
+  removed - is a **minor**. The patch position is not a two-digit field: 1.0.9 is
+  followed by 1.0.10, which is a larger version and not a smaller one. Versions mark
+  this standard's own development; an adopting repo still tracks latest and never a
+  pin (ADR-025).
 
 ## Data and schema
 
