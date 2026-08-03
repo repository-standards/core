@@ -48,13 +48,22 @@ const BRAND = CONFIG.brand || "repository-standards";
 // The header wears the released version, read from its one home rather than restated here.
 const VERSION = readFileSync("VERSION", "utf8").trim();
 // The header is fixed now - brand, version, ecosystem switcher, one link home - so the
-// only thing a site still configures up there is where the switcher's stack entry points.
+// only thing a site still configures up there is where the switcher's entries point.
 // The old `topbar` list is read as a fallback so a config written for the previous header
 // still resolves, but it no longer draws anything.
 const NODE_STACK_URL =
   CONFIG.node_stack_url ||
   (CONFIG.topbar || []).find((l) => l.external)?.href ||
   "https://github.com/repository-standards/node";
+// The switcher moves between docs sites, so its entries are docs URLs. The core's is
+// `core_docs_url`, the stack's `node_docs_url` - both defaulting to whatever the site
+// already knew, so a config written before the ecosystem shared one domain still resolves.
+// Which entry reads "here" is decided by comparing against this site's own BASE rather
+// than hardcoded: the same generator builds both sites, and the core's entry marked
+// "here" on the stack's pages is the one bug this cannot be allowed to have.
+const CORE_DOCS_URL = CONFIG.core_docs_url || `${BASE}index.html`;
+const NODE_DOCS_URL = CONFIG.node_docs_url || NODE_STACK_URL;
+const isHere = (url) => url === `${BASE}index.html` || url === BASE;
 
 // --- the page map (nav order) -----------------------------------------------------
 // group: null renders as a flat top-level link; a string renders a group heading the
@@ -1170,6 +1179,16 @@ function renderNav(currentOut) {
   return html;
 }
 
+// One entry in the ecosystem switcher. A same-domain entry is a normal link; an off-domain
+// one opens in a new tab. The entry for the site you are already on stays a link - clicking
+// it lands on the docs home, which is a reasonable thing to want - and carries the "here" tag.
+function ecoEntry(url, name, blurb) {
+  const here = isHere(url);
+  const offsite = /^[a-z][a-z0-9+.-]*:\/\//i.test(url);
+  const attrs = offsite ? ' target="_blank" rel="noopener noreferrer"' : "";
+  return `<a role="menuitem" href="${escapeAttr(url)}"${attrs}><span>${escapeHtml(name)}<small>${escapeHtml(blurb)}</small></span>${here ? '<span class="now">here</span>' : ""}</a>`;
+}
+
 function renderPage(page, contentHtml) {
   // A page with no sidebar label still needs a browser-tab title, and the document already
   // states one: its own H1. Taking it from the rendered content rather than the page map
@@ -1197,10 +1216,10 @@ function renderPage(page, contentHtml) {
 <button type="button" aria-haspopup="true" aria-expanded="false" id="ecobtn"><span class="pip"></span> Repository Standards <span class="chev">&#9662;</span></button>
 <div class="tb-menu" role="menu" aria-label="Ecosystem">
 <div class="grp">Core</div>
-<a role="menuitem" href="${BASE}index.html"><span>Repository Standards<small>the method - align, verify, drift 0</small></span><span class="now">here</span></a>
+${ecoEntry(CORE_DOCS_URL, "Repository Standards", "the method - align, verify, drift 0")}
 <div class="div"></div>
 <div class="grp">Best practices</div>
-<a role="menuitem" href="${escapeAttr(NODE_STACK_URL)}" target="_blank" rel="noopener noreferrer"><span>Node<small>Next.js + Fastify - starter, decisions, adapting guide</small></span></a>
+${ecoEntry(NODE_DOCS_URL, "Node", "Next.js + Fastify - starter, decisions, adapting guide")}
 </div>
 </div>
 </div></header>
