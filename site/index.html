@@ -382,6 +382,58 @@
   .foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
   .foot a:hover{color:var(--ink)}
 
+
+  /* PRODUCT TRACKING - the three renders, one at a time. The window chrome and the figure
+     classes are the docs site's, copied here on purpose: the landing has no build step, and
+     a reader comparing the two should see the same object rather than a landing-only mock. */
+  #tracking .tslider{position:relative;max-width:860px;margin:0 auto}
+  .tslide{animation:tfade .28s ease}
+  @keyframes tfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .tcap{margin:14px auto 0;max-width:640px;text-align:center;color:var(--muted);font-size:15px}
+  .tcap b{color:var(--ink)}
+  .tnav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px}
+  .tarrow{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:transparent;
+    color:var(--ink);font-size:20px;line-height:1;cursor:pointer;transition:border-color .18s ease,background .18s ease}
+  .tarrow:hover{border-color:var(--orange);background:rgba(255,122,47,.08)}
+  .tdots{display:flex;gap:9px}
+  .tdot{width:9px;height:9px;padding:0;border-radius:50%;border:0;cursor:pointer;
+    background:rgba(255,255,255,.22);transition:background .18s ease,transform .18s ease}
+  .tdot.is-on{background:var(--orange);transform:scale(1.25)}
+  .win{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.02)}
+  .win-bar{display:flex;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,.03)}
+  .win-dots{display:flex;gap:6px;flex:none}
+  .win-dots i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.12)}
+  .win-ask{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .win-body{padding:16px 14px 10px}
+  .win-body svg{display:block;width:100%;height:auto}
+  .bd-lane{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-family:var(--sans)}
+  .bd-rule{stroke-width:2}
+  .bd-card{fill:rgba(255,255,255,.03);stroke:var(--line)}
+  .bd-id{font-size:11px;font-weight:700;font-family:var(--mono)}
+  .bd-title{fill:var(--ink);font-size:12px;font-family:var(--sans)}
+  .bd-tag,.bd-who{fill:var(--muted);font-size:10.5px;font-family:var(--sans)}
+  .bd-size{fill:var(--muted);font-size:11px;font-weight:600;font-family:var(--mono);text-anchor:end}
+  .tl-title{fill:var(--ink);font-size:14px;font-weight:650;font-family:var(--sans)}
+  .tl-meta{fill:var(--muted);font-size:11.5px;font-family:var(--sans)}
+  .tl-axis,.tl-tick line{stroke:var(--line);stroke-width:1.5}
+  .tl-tick text{fill:var(--muted);font-size:10.5px;text-anchor:middle;font-family:var(--sans)}
+  .tl-bar{fill:rgba(255,255,255,.05);stroke:var(--line)}
+  .tl-done{fill:rgba(52,211,153,.42)}
+  .tl-label{fill:var(--ink);font-size:11px;font-weight:600;font-family:var(--sans)}
+  .tl-proj{fill:rgba(255,122,47,.28);stroke:rgba(255,122,47,.6)}
+  .tl-proj-label{fill:var(--muted);font-size:11px;font-family:var(--sans)}
+  .tl-now line{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:2 3}
+  .tl-now text{fill:var(--ink);font-size:10.5px;font-family:var(--sans)}
+  .tl-target line{stroke:var(--orange);stroke-width:1.5}
+  .tl-target circle{fill:var(--orange)}
+  .tl-target text{fill:var(--orange);font-size:10.5px;font-weight:600;font-family:var(--sans)}
+  .tl-risk line,.tl-risk circle{stroke:#e0685f;fill:none;stroke-width:1.5}
+  .tl-risk text{fill:#e0685f;font-size:10.5px;font-family:var(--sans)}
+  @media(prefers-reduced-motion:reduce){.tslide{animation:none}}
+  .closing{padding:54px 0 66px;border-top:1px solid var(--line)}
+  .closing .oneliner{max-width:760px;margin:0 auto 14px;text-align:center;font-size:19px;color:var(--ink)}
+  .closing .disclose{max-width:760px;margin:0 auto;text-align:center;font-size:14px;color:var(--muted);line-height:1.7}
   .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease, transform .6s ease}
   .reveal.in{opacity:1;transform:none}
   @media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none;transition:none}}
@@ -743,25 +795,167 @@
     </div>
   </section>
 
-  <!-- FINAL -->
-  <div class="final">
-    <div class="wrap reveal">
-      <h2>Point it at the standard. <span class="grad">Watch it prove the result.</span></h2>
-      <p class="oneliner">The missing layer between business, engineering and AI: one repository every role contributes to, and a standard that proves it still holds.</p>
-      <p>Open source, MIT, no build step. Bring a fresh repo or your worst one. Version 1.0.0, the
-        first stable line - no release tag until the maintainer cuts one, and no public adopter to
-        point at, because the mechanics have been run on the author's own repositories. Every guard
-        here is dependency-free and runs in a clone, so test the mechanism before you trust it.</p>
-      <div class="cta" style="justify-content:center">
-        <a class="btn btn-primary" href="docs/">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="2.5" y="4" width="19" height="16" rx="2.5"/>
-            <path d="M7 9.5l3 2.5-3 2.5"/><path d="M13 15h4"/>
-          </svg>
-          Quick start with one prompt</a>
-        <a class="btn btn-ghost" href="https://github.com/repository-standards/core">Star on GitHub</a>
+
+  <!-- PRODUCT TRACKING -->
+  <section id="tracking">
+    <div class="wrap">
+      <div class="shead mid reveal">
+        <span class="eyebrow">Included, not sold separately</span>
+        <h2>A product tracking tool <span class="grad">comes with it.</span></h2>
+        <p>The pool, the cycle and the timeline are files in your repository - so you can ask for
+          the state of the work and get it back rendered, not as a file dump. Keep your board and
+          bridge it, or run without one.</p>
       </div>
+      <div class="tslider reveal" id="tslider">
+        <div class="tslide is-on" data-i="0" role="tabpanel" aria-label="The pool">
+          <div class="win">
+            <div class="win-bar"><span class="win-dots"><i></i><i></i><i></i></span><span class="win-ask">&gt; what is in the pool right now?</span></div>
+            <div class="win-body">
+<svg viewBox="0 0 700 214" role="img" aria-label="The backlog pool, ordered - top is next">
+  <text class="bd-lane" x="6" y="14">the pool &#183; ordered by risk x leverage, top is next</text>
+  <rect class="bd-card" x="6" y="30" width="688" height="38" rx="8"/>
+  <rect x="6" y="30" width="3.5" height="38" rx="2" fill="#ff7a2f"/>
+  <text class="bd-id" x="20" y="54" fill="#ff7a2f">INV-3</text>
+  <text class="bd-title" x="106" y="54">Credit note for a job invoiced in error</text>
+  <text class="bd-tag" x="470" y="54">invoicing</text>
+  <text class="bd-tag" x="596" y="54">dev</text>
+  <text class="bd-size" x="676" y="54">M</text>
+  <rect class="bd-card" x="6" y="75" width="688" height="38" rx="8"/>
+  <rect x="6" y="75" width="3.5" height="38" rx="2" fill="#a884ff"/>
+  <text class="bd-id" x="20" y="99" fill="#a884ff">NOTIF-6</text>
+  <text class="bd-title" x="106" y="99">Decide what happens when a customer opts out</text>
+  <text class="bd-tag" x="470" y="99">notifications</text>
+  <text class="bd-tag" x="596" y="99">product</text>
+  <text class="bd-size" x="676" y="99">S</text>
+  <rect class="bd-card" x="6" y="120" width="688" height="38" rx="8"/>
+  <rect x="6" y="120" width="3.5" height="38" rx="2" fill="#ff7a2f"/>
+  <text class="bd-id" x="20" y="144" fill="#ff7a2f">INV-4</text>
+  <text class="bd-title" x="106" y="144">Invoice PDF carries the business's VAT number</text>
+  <text class="bd-tag" x="470" y="144">invoicing</text>
+  <text class="bd-tag" x="596" y="144">product</text>
+  <text class="bd-size" x="676" y="144">S</text>
+  <rect class="bd-card" x="6" y="165" width="688" height="38" rx="8"/>
+  <rect x="6" y="165" width="3.5" height="38" rx="2" fill="#34d399"/>
+  <text class="bd-id" x="20" y="189" fill="#34d399">SCH-9</text>
+  <text class="bd-title" x="106" y="189">Recurring jobs survive a bank holiday</text>
+  <text class="bd-tag" x="470" y="189">scheduling</text>
+  <text class="bd-tag" x="596" y="189">dev</text>
+  <text class="bd-size" x="676" y="189">L</text>
+</svg>
+            </div>
+          </div>
+          <p class="tcap"><b>The pool.</b> Everything the repo still owes itself, ordered - top is next.</p>
+        </div>
+        <div class="tslide" data-i="1" role="tabpanel" aria-label="The cycle" hidden>
+          <div class="win">
+            <div class="win-bar"><span class="win-dots"><i></i><i></i><i></i></span><span class="win-ask">&gt; how is the dispatch cycle going?</span></div>
+            <div class="win-body">
+<svg viewBox="0 0 700 236" role="img" aria-label="Cycle board: two items done, two in progress, two not started">
+  <text class="bd-lane" x="5" y="14" fill="#34d399">done &#183; 2</text>
+  <line class="bd-rule" x1="5" y1="22" x2="223" y2="22" stroke="#34d399"/>
+  <rect class="bd-card" x="5" y="34" width="218" height="78" rx="9"/>
+  <text class="bd-id" x="17" y="55" fill="#34d399">OVR-1</text>
+  <text class="bd-title" x="17" y="74">Expected duration per job</text>
+  <text class="bd-title" x="17" y="88">type</text>
+  <text class="bd-who" x="17" y="103">Ada</text>
+  <rect class="bd-card" x="5" y="126" width="218" height="78" rx="9"/>
+  <text class="bd-id" x="17" y="147" fill="#34d399">OVR-2</text>
+  <text class="bd-title" x="17" y="166">A job is overrunning past</text>
+  <text class="bd-title" x="17" y="180">its end</text>
+  <text class="bd-who" x="17" y="195">Ada</text>
+  <text class="bd-lane" x="238" y="14" fill="#ff7a2f">doing &#183; 2</text>
+  <line class="bd-rule" x1="238" y1="22" x2="456" y2="22" stroke="#ff7a2f"/>
+  <rect class="bd-card" x="238" y="34" width="218" height="78" rx="9"/>
+  <text class="bd-id" x="250" y="55" fill="#ff7a2f">OVR-3</text>
+  <text class="bd-title" x="250" y="74">The day view shows what is</text>
+  <text class="bd-title" x="250" y="88">slipping</text>
+  <text class="bd-who" x="250" y="103">Mira</text>
+  <rect class="bd-card" x="238" y="126" width="218" height="78" rx="9"/>
+  <text class="bd-id" x="250" y="147" fill="#ff7a2f">OVR-4</text>
+  <text class="bd-title" x="250" y="166">Downstream impact: jobs</text>
+  <text class="bd-title" x="250" y="180">now at risk</text>
+  <text class="bd-who" x="250" y="195">Ravi</text>
+  <text class="bd-lane" x="471" y="14" fill="#8a8595">todo &#183; 2</text>
+  <line class="bd-rule" x1="471" y1="22" x2="689" y2="22" stroke="#8a8595"/>
+  <rect class="bd-card" x="471" y="34" width="218" height="78" rx="9"/>
+  <text class="bd-id" x="483" y="55" fill="#8a8595">OVR-5</text>
+  <text class="bd-title" x="483" y="74">`delayed` notification</text>
+  <text class="bd-title" x="483" y="88">fires</text>
+  <text class="bd-who" x="483" y="103">nobody yet</text>
+  <rect class="bd-card" x="471" y="126" width="218" height="78" rx="9"/>
+  <text class="bd-id" x="483" y="147" fill="#8a8595">OVR-6</text>
+  <text class="bd-title" x="483" y="166">Dana can silence a known</text>
+  <text class="bd-title" x="483" y="180">overrun</text>
+  <text class="bd-who" x="483" y="195">nobody yet</text>
+</svg>
+            </div>
+          </div>
+          <p class="tcap"><b>The cycle.</b> What the team picked up, who is holding each item, what is done.</p>
+        </div>
+        <div class="tslide" data-i="2" role="tabpanel" aria-label="The timeline" hidden>
+          <div class="win">
+            <div class="win-bar"><span class="win-dots"><i></i><i></i><i></i></span><span class="win-ask">&gt; when does overrun-detection land? are we on track?</span></div>
+            <div class="win-body">
+<svg viewBox="0 0 700 210" role="img" aria-label="Cycle overrun-detection: opened 20 July, target 14 August, measured projection 13 to 17 August, current pace projects 28 August">
+  <text class="tl-title" x="46" y="18">dispatch / overrun-detection</text>
+  <text class="tl-meta" x="46" y="34">2 of 6 done &#183; 13 days elapsed</text>
+
+  <line class="tl-axis" x1="46" y1="150" x2="646" y2="150"/>
+  <g class="tl-tick">
+    <line x1="46" y1="146" x2="46" y2="154"/><text x="46" y="170">20 Jul</text>
+    <line x1="232" y1="146" x2="232" y2="154"/><text x="232" y="170">2 Aug</text>
+    <line x1="403" y1="146" x2="403" y2="154"/><text x="403" y="170">14 Aug</text>
+    <line x1="603" y1="146" x2="603" y2="154"/><text x="603" y="170">28 Aug</text>
+  </g>
+
+  <rect class="tl-bar" x="46" y="62" width="357" height="20" rx="5"/>
+  <rect class="tl-done" x="46" y="62" width="119" height="20" rx="5"/>
+  <text class="tl-label" x="54" y="77">2 of 6 done</text>
+
+  <rect class="tl-proj" x="389" y="96" width="57" height="14" rx="4"/>
+  <text class="tl-proj-label" x="456" y="107">13-17 Aug &#183; measured, from three closed cycles</text>
+
+  <g class="tl-now">
+    <line x1="232" y1="50" x2="232" y2="150"/>
+    <text x="232" y="46" text-anchor="middle">today</text>
+  </g>
+  <g class="tl-target">
+    <line x1="403" y1="56" x2="403" y2="150"/>
+    <circle cx="403" cy="56" r="4"/>
+    <text x="403" y="46" text-anchor="middle">target</text>
+  </g>
+  <g class="tl-risk">
+    <line x1="603" y1="120" x2="603" y2="150" stroke-dasharray="3 3"/>
+    <circle cx="603" cy="120" r="4"/>
+    <text x="603" y="136" text-anchor="end">28 Aug if today's pace holds</text>
+  </g>
+</svg>
+            </div>
+          </div>
+          <p class="tcap"><b>The timeline.</b> When it lands, and which kind of number that is: measured, or today's pace.</p>
+        </div>
+        <div class="tnav">
+          <button class="tarrow" data-step="-1" aria-label="Previous">&#8249;</button>
+          <div class="tdots"><button class="tdot is-on" data-go="0" aria-label="The pool"></button><button class="tdot" data-go="1" aria-label="The cycle"></button><button class="tdot" data-go="2" aria-label="The timeline"></button></div>
+          <button class="tarrow" data-step="1" aria-label="Next">&#8250;</button>
+        </div>
+      </div>
+      <div class="secmore reveal">
+        <a class="doclink" href="docs/tracking-work.html">backlog, cycles and the timeline in full</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- The two things this page must carry wherever it ends: the positioning one-liner,
+       quoted verbatim, and the maturity disclosure. They were inside a closing section that
+       said nothing the page had not already said; the obligations are not the section. -->
+  <div class="closing">
+    <div class="wrap reveal">
+      <p class="oneliner">The missing layer between business, engineering and AI: one repository every role contributes to, and a standard that proves it still holds.</p>
+      <p class="disclose">Open source, MIT, no build step. Version 1.0.0, the first stable line - no release
+        tag until the maintainer cuts one, and no public adopter to point at, because the mechanics
+        have been run on the author's own repositories. Every guard here is dependency-free and runs
+        in a clone, so test the mechanism before you trust it.</p>
     </div>
   </div>
 </main>
@@ -988,5 +1182,29 @@
   function frame(now){ if(last==null) last=now; var dt=(now-last)/1000; last=now; for(var i=0;i<tokens.length;i++){ tokens[i].t=(tokens[i].t+SPEED*dt)%1; } draw(); requestAnimationFrame(frame); }
   if(reduce){ tokens=nodes.map(function(nd){ return {t:((nd.deg+90)/360+1)%1}; }); draw(); }
   else { requestAnimationFrame(frame); }
+})();
+
+// The tracking slider. Three renders, one at a time, arrows and dots - and keyboard, because
+// a slider you cannot leave with the keyboard is a slider that traps a reader.
+(function(){
+  var root=document.getElementById("tslider"); if(!root) return;
+  var slides=[].slice.call(root.querySelectorAll(".tslide"));
+  var dots=[].slice.call(root.querySelectorAll(".tdot"));
+  var at=0;
+  function show(i){
+    at=(i+slides.length)%slides.length;
+    slides.forEach(function(s,n){ s.classList.toggle("is-on",n===at); if(n===at) s.removeAttribute("hidden"); else s.setAttribute("hidden",""); });
+    dots.forEach(function(d,n){ d.classList.toggle("is-on",n===at); });
+  }
+  root.addEventListener("click",function(e){
+    var step=e.target.closest(".tarrow"), go=e.target.closest(".tdot");
+    if(step) show(at+parseInt(step.getAttribute("data-step"),10));
+    else if(go) show(parseInt(go.getAttribute("data-go"),10));
+  });
+  root.addEventListener("keydown",function(e){
+    if(e.key==="ArrowLeft") show(at-1);
+    else if(e.key==="ArrowRight") show(at+1);
+  });
+  root.setAttribute("tabindex","0");
 })();
 </script>

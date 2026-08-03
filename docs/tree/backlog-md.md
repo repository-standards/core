@@ -33,8 +33,10 @@ pool stays the single place to start reading.
 
 ## What does not go in here
 
-**A second copy of your tracker.** If you run Jira, this is not a mirror of it. This is the
-work the *repository* knows about, in the repository, and the two can point at each other.
+**A mirror of your tracker.** If you run a board as well, these are not two copies of one
+list: the repository holds the intents, the tracker holds execution history, and a one-way
+bridge joins them. Running without a board is also a real option - see
+[backlog, cycles, timeline](../method/tracking-work.md) for where that line actually falls.
 
 **Ideas.** "Should this exist at all" is `docs/ideas/`. A backlog intent is something
 already agreed to be worth doing.
@@ -51,7 +53,7 @@ The most common case, and the one that decides whether the backlog is real or th
 
 ```
 > the booking export has no retry and dies on a timeout
-  - park it, we are not fixing it here
+  - not fixing it in this change, write it down so we do not lose it
 ```
 
 You keep going. The agent files it with its source, the role that has to act, and what done

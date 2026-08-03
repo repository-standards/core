@@ -8,15 +8,37 @@ you will get back.
 
 ## Your first move is always the same
 
-Describe the behaviour. Not the screen, not the implementation, not the ticket:
+Say what you want to exist, and describe it as behaviour - not the screen, not the
+implementation, not the ticket:
 
 ```
+> new feature: guests should be able to change their booking dates themselves
+```
+
+The words **new feature** are there for you, not for the agent - they make it obvious you are
+asking for something rather than thinking aloud. All of these open the same loop, so use
+whichever is how you actually talk:
+
+```
+> new story: a guest can change their dates without calling support
+> write the spec for date changes - guests move their own booking dates
+> we need guests to be able to move their booking dates
 > guests should be able to change their booking dates themselves
 ```
 
-That is a complete instruction. The agent will find out whether this capability already
-exists, read anything from meetings on the subject, draft what it can, and come back with
-questions.
+"Feature", "story" and "spec" are the same request here. The last one is not a command you
+have to learn - a capability's specification is simply what the repository calls the written
+form of a feature, and you will see the word on the file you get back.
+
+That is a complete instruction, whichever form you used. Nothing else is required from you
+yet. The agent works out whether this capability already exists, reads anything from
+meetings on the subject, drafts what it can, and comes back with the questions only you can
+answer.
+
+**What you get back within a minute** is a draft specification at
+`specs/booking-changes/spec.md`, marked as still in refinement, with every gap written into
+it as a named blocker - a question, a missing decision, a missing design, a missing
+credential - each with an owner. Nothing is hidden and nothing is guessed.
 
 **Say what should happen, not how.** "Add a button to the booking page" describes a
 solution. "A guest can move their dates without calling support" describes the thing you
@@ -51,7 +73,8 @@ writing before anything is built is most of the value here.
 **A deferral, with an owner.** Perfectly valid, and it is recorded rather than lost:
 
 ```
-> the cut-off is Maja's call - park it and tell me when it blocks the work
+> the cut-off is Maja's call, not mine - hold that question and tell me when it starts
+> blocking the work
 ```
 
 **"I do not know yet."** Also valid. It becomes a visible open item.
@@ -83,6 +106,20 @@ what, say so - it is routed to the technical side rather than dropped:
 ```
 
 **Remember a command.** There are none. Describe the situation.
+
+## The work itself - backlog, cycles, when it lands
+
+Writing behaviour is half the job. The other half is knowing what is owed, what somebody
+picked up, and when it lands - three files with their own page:
+[backlog, cycles, timeline](tracking-work.md).
+
+The one habit worth forming now: when something surfaces mid-conversation and it is not this
+change, say so and keep going.
+
+```
+> the export dies when it times out, there is no retry - not fixing it in this change,
+> write it down so we do not lose it
+```
 
 ## Checking on things without asking a person
 

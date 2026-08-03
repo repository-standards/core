@@ -156,10 +156,11 @@ agent reads all of it as context and writes back into the same place.
 
 Here is the whole thing with a real example, so the pages above have something to hang on.
 
-**1. Somebody wants something.** They say it plainly:
+**1. Somebody wants something.** They say it plainly. Naming it first - "new feature", "new
+story" - is for the person typing rather than for the agent; the bare sentence works too:
 
 ```
-> guests should be able to change their booking dates themselves
+> new feature: guests should be able to change their booking dates themselves
 ```
 
 **2. The agent finds out what it does not know.** It checks whether a spec for this
@@ -175,7 +176,8 @@ decide:
 answer that gets recorded rather than lost:
 
 ```
-> they pay the difference. the cut-off is a business call - ask Maja, park it for now
+> they pay the difference. the cut-off is Maja's call, not mine - hold that question and
+> tell me when it starts blocking the work
 ```
 
 **4. The spec cannot proceed until nothing is open.** What you parked is now a visible
@@ -244,7 +246,8 @@ they cannot read. That is a rule of the standard, not a courtesy.
 **If you notice something and it is not this change, say so and keep going.**
 
 ```
-> the export has no retry and dies on a timeout - park it, we are not fixing it here
+> the export dies when it times out, there is no retry - not fixing it in this change,
+> write it down so we do not lose it
 ```
 
 It lands in the backlog with its source and what "done" would mean. Noticing and not
