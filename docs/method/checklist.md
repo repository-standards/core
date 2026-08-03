@@ -152,6 +152,7 @@ technical log.
 | GTM / launch process | Launch chaos repeats without a reusable checklist | BDR `-> scale` |
 | Sales / support enablement | Decks fork from reality unless they must quote `positioning.md` + release notes | federation rule, not a copy `-> scale` |
 | Legal & compliance surface | Licenses/ToS/privacy unlinked from the repo get stale | pointers from README/PRODUCT `-> scale` |
+| Open-core / dual-license boundary | A repo split by directory into two licenses (e.g. AGPL core + a commercial `enterprise/` tree) has a real capability whose implementation straddles the boundary - a `capability-map.json` entry with globs spanning both trees erases the licensing split the coupling guard was never told exists. Record which side each capability's globs fall on, or split the capability at the license line if it genuinely spans it | ADR (the split itself) + note in each affected capability's spec |
 
 ---
 

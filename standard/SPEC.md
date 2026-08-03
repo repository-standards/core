@@ -88,7 +88,9 @@ binds every repo, a solo one included.
 
 - **R14.** A speculative idea MUST NOT mint records or specs before it is approved.
   It lives in `docs/ideas/` under a status - idea, exploring, approved, parked,
-  dropped - and graduates into the normal flow on approval.
+  dropped, graduated - and on approval hands off to the normal flow (a backlog
+  intent, a spec, any decision records the shape now demands), with the idea doc
+  itself flipping to `graduated` and pointing at what it became.
 - **R15.** The repo backlog holds intents, each with a definition of done; an item
   leaves only when its DoD is met. Execution state and work history live in the
   tracker - GitHub Issues by default, or an adapter for whatever the team already

@@ -28,12 +28,28 @@ Before any phase runs, one intake pass:
      blind would have asked what the repo had already, plainly, said. Play the
      signal back as a confirmation ("this reads as deprecated as of <date> - is that
      still true?") instead of running the full round unconditionally.
+   - **A repo can be extremely active and still be the wrong place to work** - moved
+     to another forge entirely. The archived flag alone misses this: a repo that
+     migrated (e.g. "Moved to Codeberg" in the description, a README saying "this
+     repository is not mirrored", a permanently frozen history despite an
+     `archived: false` flag) is not declining, it left. Un-shallowing the clone
+     cannot recover its growing edge - the real repo is somewhere else. Read the
+     description and README for a move/mirror statement, not only the archived
+     flag and commit recency.
    - **A repo's own policy can forbid what this skill does.** Some repos' `CONTRIBUTING.md`
      or a dedicated policy file state outright that autonomous agents may not
      contribute (found verbatim in `BurntSushi/ripgrep`'s `AI_POLICY.md` during
      testing). Treat this as a **red-flag stop** (same tier as a committed secret or
      a remote-database write) - halt and tell the human what the repo's own policy
      says, rather than proceeding to open a PR the repo's own rules forbid.
+   - **Not every AI policy is a ban - some are a conditional allow.** A policy can permit
+     agent involvement while requiring every contribution artifact (issues, PRs, commit
+     messages, ADR/BDR text) to be rewritten and submitted by a human, disclosure of
+     tool use, or no verbatim pasted output (found in scala/scala3's `LLM_POLICY.md` /
+     `CONTRIBUTING.md` during testing). This is not the binary stop above - proceed, but
+     say the constraint back plainly and hand every artifact this skill would otherwise
+     submit directly to the human to review and rewrite first, rather than silently
+     opening a PR the policy requires a human to have authored.
 2. **Ask the user - one short round** (skip or compress this round when step 1
    already surfaced a strong lifecycle signal - confirm it instead of interviewing
    past it):
