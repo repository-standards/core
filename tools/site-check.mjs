@@ -72,6 +72,19 @@ const OUT = CFG.out_dir || "site/docs";
 const ROOT = (CFG.site_root || "/").replace(/\/+$/, "/");
 const PREFIX = (CFG.base_path || "/" + OUT.split("/").slice(1).join("/") + "/").replace(/\/+$/, "/");
 const SITE_TOP = OUT.includes("/") ? OUT.slice(0, OUT.indexOf("/")) : ".";
+// A sibling surface on the same domain is joined at DEPLOY, not at build (ADR-031), so
+// this repository cannot look its files up - they are in another repository's tree. The
+// set is read from the registry rather than guessed, because a stack's prefix nests inside
+// this site's own: /docs/node/ starts with /docs/ and would otherwise be hunted for on disk
+// and reported missing. Links into one are counted and reported, never silently passed -
+// silence would be indistinguishable from having checked them.
+const FOREIGN = (() => {
+  if (!existsSync("stacks.json")) return [];
+  const reg = JSON.parse(readFileSync("stacks.json", "utf8"));
+  return (reg.stacks || []).flatMap((st) => [`/${st.technology}/`, `${PREFIX}${st.technology}/`]);
+})();
+const isForeign = (u) => FOREIGN.some((f) => u.replace(/^https?:\/\/[^/]+/, "").startsWith(f));
+
 function urlToFile(u) {
   const path = u.replace(/^https?:\/\/[^/]+/, "");
   if (path.startsWith(PREFIX)) return `${OUT}/${path.slice(PREFIX.length)}`;
@@ -79,6 +92,7 @@ function urlToFile(u) {
   return `${SITE_TOP}${path}`;
 }
 
+const crossSurface = new Set();
 const landing = readFileSync(LANDING, "utf8");
 checkTagBalance(LANDING, landing);
 checkDashes(LANDING, landing);
@@ -197,6 +211,7 @@ for (const page of pages) {
     const target = m[1];
     if (/^(https?:|mailto:|data:)/.test(target)) continue;
     if (!target.startsWith("/")) fail(`${path}: relative link -> ${target} (internal links must be root-absolute)`);
+    else if (isForeign(target)) crossSurface.add(target);
     else if (!existsSync(urlToFile(target))) fail(`${path}: broken internal link -> ${target} (looked for ${urlToFile(target)})`);
   }
 }
@@ -227,6 +242,10 @@ else fail(`${SITE}: dark-first palette missing (expected the landing's ${landing
     }
   }
   if (!failures) ok("both surfaces carry link-preview tags, and the card exists");
+}
+
+if (crossSurface.size) {
+  ok(`${crossSurface.size} link(s) into a sibling surface - joined at deploy, unverifiable here: ${[...crossSurface].join(", ")}`);
 }
 
 // --- verdict ----------------------------------------------------------------------

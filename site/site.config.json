@@ -1,8 +1,9 @@
 {
   "$about": "This repo's site, in the ecosystem's shared form (tools/docsite.mjs). Any repo can carry this file and run the core's generator against its own markdown - one form, many sites, zero copied generators. Omitted fields fall back to the core's defaults.",
-  "$layout": "ADR-031: one domain, surface first. This is the core, so it takes the unprefixed pair - site_root '/' and base_path '/docs/', both defaults, which is why neither is written here. A stack sets site_root '/node/' and base_path '/docs/node/' and changes nothing else. node_docs_url still points at GitHub because /docs/node/ is not deployed yet; it becomes '/docs/node/' the day it is, and that one line is the whole switch.",
+  "$layout": "ADR-031: one domain, surface first. This is the core, so it takes the unprefixed pair - site_root '/' and base_path '/docs/', both defaults, which is why neither is written here. A stack sets site_root '/node/' and base_path '/docs/node/' and changes nothing else.",
   "site_url": "https://repositorystandards.com",
   "brand": "repository-standards",
   "repo_url": "https://github.com/repository-standards/core",
-  "node_stack_url": "https://github.com/repository-standards/node"
+  "node_stack_url": "https://github.com/repository-standards/node",
+  "node_docs_url": "/docs/node/"
 }
