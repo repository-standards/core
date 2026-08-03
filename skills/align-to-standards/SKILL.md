@@ -168,6 +168,15 @@ npx degit repository-standards/core/standard
      accept red CI while the waves run, (b) hold them until the final wave, (c) land them
      now with the self-verify step set to `--warn` and flip it to blocking at drift 0.
      Never land them silently.
+   - `.github/workflows/spec-guard.yml` is a **reference implementation of the R16 gate**
+     (run `self-verify`, block the PR on nonzero drift), written for GitHub Actions because
+     that is the common case - it is not a mandate to use GitHub Actions. If the repo's
+     real CI is somewhere else (CircleCI, Buildkite, GitLab CI, Jenkins, ...), translate the
+     gate's intent into that system's own config instead of running a second, parallel CI
+     product just to host this one workflow. The standard does not ship per-CI-product
+     adapters (that is an unbounded surface); the two commands are the contract:
+     `node scripts/self-verify.mjs --version <pinned>` and, at `scale`, the coupling guard
+     `node scripts/spec-guard.mjs`.
    - **Check the prerequisites before the guards, not after.** The `.claude/hooks/` guards
      need `jq`, and without it they deny **every** Bash command by design - an agent that
      suddenly refuses everything, with no explanation the user can connect to this step.
