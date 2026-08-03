@@ -15,13 +15,16 @@
 **Success metric:** `<the KPI from PRODUCT's KPI tree this capability moves>`   <!-- PDLC-2; "n/a" needs a why -->
 <!-- ADR-010: ready-to-develop requires the clarify gate - a "## Clarifications" section
      and zero open markers of the NEEDS family. Drafting early (during discovery, ADR-024)
-     is encouraged: hold each gap as a typed open marker naming what is missing and who
-     brings it - CLARIFICATION (a question), DECISION (a missing ADR/BDR), INPUT (e.g. a
-     UX design), ASSET (e.g. credentials). The gate blocks the whole family, so the open
-     markers ARE the gap list. Enabling work (tokens, access, agreements) goes
-     in front-matter keys (needs_decision_records-style) mirrored to the tracker as
-     blocking Stories - never in spec prose. At live+reconciled, cleanup removes
-     plan/tasks scaffolding; the spec stays. -->
+     is encouraged: hold each gap as a typed open marker, written EXACTLY in this literal
+     bracket form (the gate greps for it - anything else is invisible to it):
+       `[NEEDS CLARIFICATION: <question>]`
+       `[NEEDS DECISION: <topic>; owner: <who>]`         - a missing ADR/BDR
+       `[NEEDS INPUT: <what>; owner: <who>]`             - e.g. a UX design
+       `[NEEDS ASSET: <what>; owner: <who>]`             - e.g. credentials
+     The gate blocks the whole family, so the open markers ARE the gap list. Enabling work
+     (tokens, access, agreements) goes in front-matter keys (needs_decision_records-style)
+     mirrored to the tracker as blocking Stories - never in spec prose. At live+reconciled,
+     cleanup removes plan/tasks scaffolding; the spec stays. -->
 
 ## Purpose
 
