@@ -77,6 +77,26 @@ Before any phase runs, one intake pass:
      Promising "the <technology> best practices from the registry" before the lookup makes
      a promise the registry cannot keep, and the user only finds out when the offer
      quietly becomes something else.
+
+     **A registered stack targets an application archetype - not a library, CLI or
+     framework repo shipping many packages.** A registered stack is a boot-verified,
+     opinionated *application* (one package manager, one test runner, one deploy shape);
+     a workspace that publishes many independently-versioned packages, or a monorepo
+     that already runs its own hand-built tooling in place of what the stack would offer
+     (a build graph instead of a workspace tool, a suite of build-time-only linters
+     instead of one), is a different archetype the same stack was not built for. Detect
+     the archetype from the repo's own shape (one deployable vs. many published
+     packages) before offering the stack wholesale - offer the pieces that transfer
+     (the decision catalog, the security baseline, individual DECISIONS entries the repo
+     does not already have a stronger answer for) rather than the whole paved road.
+
+     **More than one legitimate stack can coexist in the same repo** - a primary
+     language plus a genuinely separate one for a distinct part (a Rust CLI beside a
+     TS/Node core; a native-build toolchain feeding one CI job while the rest of the repo
+     never touches it). Detecting only the root manifest and stopping there misses this;
+     name each stack found and consent covers each independently - a "no match" for one
+     does not block the other from getting Layer 2 treatment.
+
      Consent is gathered here; the actual stack reconciliation runs later, at its
      phase-defined place (the technology step below).
    - **Appetite.** One focused pull request now - a single reviewable change carrying the
