@@ -44,6 +44,7 @@ already started rotting.
 | how a persona travels the product | **journey** | `docs/journeys/<persona>.md` - stages -> capabilities, coupled to specs (PDLC-5) |
 | how to run, diagnose, or undo a service in production | **runbook** | `docs/runbooks/<service>.md` |
 | what an incident taught us | **postmortem** | `docs/runbooks/postmortems/<date>-<slug>.md` - blameless; every action item becomes a backlog item |
+| how much we test, and where each tier runs | **decision** | the testing-strategy fork in the [decision checklist](checklist.md) - one of the eight R7 forces you to record; the mechanics belong to the stack layer, not here |
 | a deploy / rollback decision pre-made | **decision** | the release-strategy fork in the [decision checklist](checklist.md) - rollback triggers decided before the first deploy, not during the incident |
 | research / analysis that fed a decision | **working doc** | `docs/` (archivable once it has fed its decision) |
 | the story / the narrative rationale | **narrative** | a blog or working doc - not a record |
@@ -78,6 +79,29 @@ beats clever.
   altitude).
 - Sub-scope goes in the record's `Tags`, never in the acronym. Full policy:
   [`decision-records/`](../tree/docs-decision-records.md) (ADR-001).
+
+## Testing lands in four places you already have
+
+Testing looks like it needs a document of its own. It does not, and writing one is how a repo
+ends up with a testing policy that quietly disagrees with its specs. Four homes, all already
+on the map above:
+
+- **How much, and where each tier runs** - a decision, and one of the eight forks R7 forces
+  you to record. Argue it once, in the open; the alternative is arguing it again in every
+  pull request.
+- **What must be true** - the capability spec's acceptance criteria. A test asserts behavior,
+  and behavior is written in the spec. A second document listing what to test is a copy, and
+  the copy is the one that rots.
+- **The mechanics** - runner, file layout, fixtures, coverage thresholds: the stack layer.
+  These are properties of the language, not of the method, which is why a Python repo and a
+  Node repo answering them differently is correct rather than inconsistent.
+- **How to run them** - one line under Commands in `AGENTS.md`. That is the entire contract
+  for a person or an agent arriving cold.
+
+No new gate goes with this, and none is needed. A test sitting next to the code it covers
+already matches that capability's glob in `specs/capability-map.json`, so the coupling guard
+sees it without being told. A gate that demanded a test file be touched would be a gate
+satisfied by touching a test file.
 
 ## Ideas / discovery before a decision
 
