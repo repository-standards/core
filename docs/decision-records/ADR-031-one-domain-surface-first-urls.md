@@ -84,12 +84,20 @@ correct on exactly one of them.
 rule is mechanical inside a repository. The switcher's "here" is derived rather than written,
 so it cannot disagree with the site it is on.
 
-Publishing belongs to `repository-standards.github.io`, which is the only repository that
-can see the whole layout: GitHub Pages serves one repository at one root, and this layout is
-four paths fed by several repositories. It **pulls** - checking each source out, building it,
-running that source's own site checks, and committing only what moved - so no source
-repository holds write access to the published tree and no token exists for one to leak.
-The cost is latency rather than trust: a merge appears at the next scheduled build.
+Publishing belongs to this repository, and it needs no second one to do it. **A project site
+with a custom domain is served at the domain root**, not under its repository name - the
+`/<repo>/` prefix applies only to the default `<org>.github.io` address. So the constraint
+that seemed to force a separate assembling repository does not exist: one repository can
+publish every path in the table above.
+
+The workflow builds this repository's surfaces, then walks `stacks.json` - the registry this
+repository already publishes - and builds each registered stack into its own prefix. One
+list, not two, so a stack cannot be registered and unpublished by disagreement between
+files. A stack whose repository is not reachable yet is **warned about, not skipped
+silently**: a missing surface nobody mentions reads as a surface that was published.
+
+Nothing is committed. The site is uploaded as an artifact, so no repository in the ecosystem
+carries build output, and no repository needs write access to another.
 
 What is **not** mechanical, and is worth stating rather than implying: nothing checks that
 `/docs/node/` actually serves the stack's build, because no repository can see the deployed
