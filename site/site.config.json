@@ -5,5 +5,6 @@
   "brand": "repository-standards",
   "repo_url": "https://github.com/repository-standards/core",
   "node_stack_url": "https://github.com/repository-standards/node",
-  "node_docs_url": "/docs/node/"
+  "node_url": "/node/",
+  "core_url": "/"
 }

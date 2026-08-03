@@ -75,9 +75,14 @@ const NODE_STACK_URL =
 // Which entry reads "here" is decided by comparing against this site's own BASE rather
 // than hardcoded: the same generator builds both sites, and the core's entry marked
 // "here" on the stack's pages is the one bug this cannot be allowed to have.
-const CORE_DOCS_URL = CONFIG.core_docs_url || `${BASE}index.html`;
-const NODE_DOCS_URL = CONFIG.node_docs_url || NODE_STACK_URL;
-const isHere = (url) => url === `${BASE}index.html` || url === BASE;
+// Surface roots, not documentation roots. The switcher is labelled with product names and
+// one-line descriptions, so picking one means "take me to that product" - its front door,
+// where a reader decides whether they want the pitch or the docs. Landing somebody straight
+// in a table of contents answers a question they had not asked yet.
+// The old *_docs_url keys still resolve, so a config written before this keeps working.
+const CORE_URL = CONFIG.core_url || CONFIG.core_docs_url || SITE_ROOT;
+const NODE_URL = CONFIG.node_url || CONFIG.node_docs_url || NODE_STACK_URL;
+const isHere = (url) => url === SITE_ROOT || url === `${BASE}index.html` || url === BASE;
 
 // --- the page map (nav order) -----------------------------------------------------
 // group: null renders as a flat top-level link; a string renders a group heading the
@@ -607,6 +612,9 @@ const TOPBAR_CSS = `
   text-transform:uppercase;margin-top:4px;
   background:linear-gradient(96deg,var(--accent) 4%,var(--accent-soft) 34%,var(--accent-2) 96%);
   -webkit-background-clip:text;background-clip:text;color:transparent}
+/* The tracking that makes STANDARDS sit under repository stops working once a suffix
+   doubles the line: same spacing, twice the width, and the lockup outgrows the mark. */
+.tb-word i.has-suffix{letter-spacing:.19em;font-size:9px}
 .tb-tag{font-family:var(--font-mono);font-size:11px;color:var(--accent);
   border:1px solid rgba(var(--accent-rgb), .34);border-radius:999px;padding:2px 8px;letter-spacing:.04em}
 .tb-spacer{flex:1}
@@ -1021,13 +1029,10 @@ pre code { background: none; padding: 0; border-radius: 0; font-size: 0.85em; }
     radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.45), transparent) left / 1.1rem 100% no-repeat scroll,
     radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.45), transparent) right / 1.1rem 100% no-repeat scroll;
 }
-/* A wide table may borrow the right margin - but only what is actually there. Written as
-   a fixed negative margin it bled past the column on any page whose prose is narrower than
-   this repo's, which is every site that is not this one. max-width pins the overflow to the
-   container so the scroll happens inside the wrapper, which is what the wrapper is for. */
-@media (min-width: 1000px) {
-  .table-wrap { margin-right: -6.5rem; max-width: calc(100% + 6.5rem); }
-}
+/* A wide table scrolls inside its wrapper. It used to borrow the right margin as well -
+   a negative margin of a fixed size, which assumed this repo's column and this repo's
+   window. Anywhere else it ran the last column off the screen, which is worse than a
+   scrollbar because nothing tells the reader there is more. The wrapper's fades do. */
 table { border-collapse: collapse; width: 100%; font-size: 0.9rem; line-height: 1.5; }
 th, td { border: 1px solid var(--border); padding: 0.55rem 0.75rem; text-align: left; vertical-align: top; min-width: 6.5rem; }
 /* A first column that is an index or a short key should stay narrow rather than take a
@@ -1287,7 +1292,7 @@ const SWITCHER_JS = `
 function topbarHtml({ drawer = false, awayLabel = "Homepage", awayHref = SITE_ROOT } = {}) {
   return `<header class="topbar"><div class="topbar-in">
 ${drawer ? `<button class="nav-toggle" type="button" aria-label="Open the navigation" aria-expanded="false" aria-controls="docs-nav"><span></span><span></span><span></span></button>` : ""}
-<a class="tb-brand" href="${SITE_ROOT}"><img class="tb-mark" src="${SITE_ROOT}logo-mark.png" alt="" width="428" height="512"><span class="tb-word"><b>repository</b><i>Standards${WORDMARK_SUFFIX ? ` + ${escapeHtml(WORDMARK_SUFFIX)}` : ""}</i></span></a>
+<a class="tb-brand" href="${SITE_ROOT}"><img class="tb-mark" src="${SITE_ROOT}logo-mark.png" alt="" width="428" height="512"><span class="tb-word"><b>repository</b><i${WORDMARK_SUFFIX ? ' class="has-suffix"' : ""}>Standards${WORDMARK_SUFFIX ? ` + ${escapeHtml(WORDMARK_SUFFIX)}` : ""}</i></span></a>
 ${VERSION ? `<span class="tb-tag">v${escapeHtml(VERSION)}</span>` : ""}
 <span class="tb-spacer"></span>
 <nav class="tb-links"><a href="${awayHref}">${awayLabel}</a><a class="tb-gh" href="${escapeAttr(GITHUB_REPO_URL)}" target="_blank" rel="noopener noreferrer"><svg class="gh-mark" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a></nav>
@@ -1295,10 +1300,10 @@ ${VERSION ? `<span class="tb-tag">v${escapeHtml(VERSION)}</span>` : ""}
 <button type="button" aria-haspopup="true" aria-expanded="false" id="ecobtn"><span class="pip"></span> Repository Standards <span class="chev">&#9662;</span></button>
 <div class="tb-menu" role="menu" aria-label="Ecosystem">
 <div class="grp">Core</div>
-${ecoEntry(CORE_DOCS_URL, "Repository Standards", "the method - align, verify, drift 0")}
+${ecoEntry(CORE_URL, "Repository Standards", "the method - align, verify, drift 0")}
 <div class="div"></div>
 <div class="grp">Best practices</div>
-${ecoEntry(NODE_DOCS_URL, "Node", "Next.js + Fastify - starter, decisions, adapting guide")}
+${ecoEntry(NODE_URL, "Node", "Next.js + Fastify - starter, decisions, adapting guide")}
 </div>
 </div>
 </div></header>`;
@@ -1392,8 +1397,14 @@ ${
 // (or a deep link) centre the page you landed on instead.
 (function(){
   var sb=document.querySelector(".sidebar"); if(!sb) return;
-  var KEY="docs-nav-scroll";
+  // Keyed per site: every surface on this domain shares an origin, so one key meant the
+  // core's sidebar - long enough to scroll a long way - handed its position to a stack's,
+  // which is short. The top entries scrolled out of a column that had no reason to move.
+  var KEY="docs-nav-scroll:"+location.pathname.replace(/[^/]*$/,"");
   try{
+    // Nothing to restore on a column that fits. Setting scrollTop on it is how Quick start
+    // disappeared from a menu of eight.
+    if(sb.scrollHeight<=sb.clientHeight+4) return;
     var y=sessionStorage.getItem(KEY);
     if(y!==null) sb.scrollTop=parseInt(y,10)||0;
     // Expanding a branch shifts everything below it, so the restored position can still
