@@ -96,7 +96,16 @@ const landingNet = landing
 const hosts = new Set(
   [...landingNet.matchAll(/https?:\/\/([^/"'\s)]+)/g)].map((m) => m[1].toLowerCase()),
 );
+// The site's own host is not an external one. Preview tags have to name it absolutely -
+// a scraper has no page to resolve a relative URL against - so it is read off the config
+// rather than written here, and a domain change cannot leave this asserting the old name.
+const OWN_HOST = (() => {
+  const cfg = ["site/site.config.json", "site.config.json"].find((f) => existsSync(f));
+  const url = cfg ? JSON.parse(readFileSync(cfg, "utf8")).site_url : "";
+  return url ? new URL(url).host.toLowerCase() : "";
+})();
 for (const h of hosts) {
+  if (OWN_HOST && (h === OWN_HOST || h.endsWith(`.${OWN_HOST}`))) continue;
   if (h !== "github.com" && !h.endsWith(".github.com")) fail(`${LANDING}: unexpected external host ${h}`);
 }
 if (![...hosts].some((h) => h !== "github.com" && !h.endsWith(".github.com"))) ok(`${LANDING}: external hosts limited to GitHub`);
@@ -164,6 +173,27 @@ const landingInk = (landing.match(/--bg:\s*(#[0-9a-fA-F]{3,8})/) || [])[1];
 if (!landingInk) fail(`${LANDING}: no --bg custom property to read the ink from`);
 else if (anyPage.includes(landingInk)) ok(`${SITE}: dark-first palette shares the landing ink (${landingInk})`);
 else fail(`${SITE}: dark-first palette missing (expected the landing's ${landingInk})`);
+
+// Link previews: a scraper gets one shot at the page and no way to resolve a relative URL,
+// so a card that is wrong is a card that silently does not appear. Every surface must carry
+// the tags, the image must be absolute, and the file it names must exist on disk - the last
+// one is the failure nobody notices, because the tag looks perfectly fine in the source.
+{
+  const surfaces = [[LANDING, landing], ...readdirSync(SITE).filter((f) => f.endsWith(".html")).slice(0, 1).map((f) => [`${SITE}/${f}`, readFileSync(`${SITE}/${f}`, "utf8")])];
+  for (const [path, html] of surfaces) {
+    for (const tag of ["og:title", "og:description", "og:url", "og:image", "twitter:card"]) {
+      if (!html.includes(`"${tag}"`)) fail(`${path}: no ${tag} - a shared link renders as a bare URL`);
+    }
+    const img = (html.match(/property="og:image"\s+content="([^"]+)"/) || [])[1];
+    if (!img) continue;
+    if (!/^https?:\/\//.test(img)) fail(`${path}: og:image is not absolute (${img}) - scrapers drop it`);
+    else {
+      const local = `site${img.replace(/^https?:\/\/[^/]+/, "")}`;
+      if (!existsSync(local)) fail(`${path}: og:image points at ${img}, and ${local} does not exist`);
+    }
+  }
+  if (!failures) ok("both surfaces carry link-preview tags, and the card exists");
+}
 
 // --- verdict ----------------------------------------------------------------------
 
