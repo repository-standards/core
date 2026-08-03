@@ -607,11 +607,6 @@ const TOPBAR_CSS = `
   text-transform:uppercase;margin-top:4px;
   background:linear-gradient(96deg,var(--accent) 4%,var(--accent-soft) 34%,var(--accent-2) 96%);
   -webkit-background-clip:text;background-clip:text;color:transparent}
-/* The stack's name, set against the wordmark rather than inside it: same weight as the
-   line above it, in the accent, so it reads as a qualifier and not as a third brand. */
-.tb-stack{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--accent);
-  align-self:flex-end;padding-bottom:1px;letter-spacing:-.01em}
-.tb-stack::before{content:"/";opacity:.45;margin-right:6px;color:var(--muted)}
 .tb-tag{font-family:var(--font-mono);font-size:11px;color:var(--accent);
   border:1px solid rgba(var(--accent-rgb), .34);border-radius:999px;padding:2px 8px;letter-spacing:.04em}
 .tb-spacer{flex:1}
@@ -1289,13 +1284,13 @@ const SWITCHER_JS = `
 })();
 `;
 
-function topbarHtml({ drawer = false } = {}) {
+function topbarHtml({ drawer = false, awayLabel = "Homepage", awayHref = SITE_ROOT } = {}) {
   return `<header class="topbar"><div class="topbar-in">
 ${drawer ? `<button class="nav-toggle" type="button" aria-label="Open the navigation" aria-expanded="false" aria-controls="docs-nav"><span></span><span></span><span></span></button>` : ""}
-<a class="tb-brand" href="${SITE_ROOT}"><img class="tb-mark" src="${SITE_ROOT}logo-mark.png" alt="" width="428" height="512"><span class="tb-word"><b>repository</b><i>Standards</i></span>${WORDMARK_SUFFIX ? `<span class="tb-stack">${escapeHtml(WORDMARK_SUFFIX)}</span>` : ""}</a>
+<a class="tb-brand" href="${SITE_ROOT}"><img class="tb-mark" src="${SITE_ROOT}logo-mark.png" alt="" width="428" height="512"><span class="tb-word"><b>repository</b><i>Standards${WORDMARK_SUFFIX ? ` + ${escapeHtml(WORDMARK_SUFFIX)}` : ""}</i></span></a>
 ${VERSION ? `<span class="tb-tag">v${escapeHtml(VERSION)}</span>` : ""}
 <span class="tb-spacer"></span>
-<nav class="tb-links"><a href="${SITE_ROOT}">Homepage</a><a class="tb-gh" href="${escapeAttr(GITHUB_REPO_URL)}" target="_blank" rel="noopener noreferrer"><svg class="gh-mark" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a></nav>
+<nav class="tb-links"><a href="${awayHref}">${awayLabel}</a><a class="tb-gh" href="${escapeAttr(GITHUB_REPO_URL)}" target="_blank" rel="noopener noreferrer"><svg class="gh-mark" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a></nav>
 <div class="tb-switch" id="ecoswitch">
 <button type="button" aria-haspopup="true" aria-expanded="false" id="ecobtn"><span class="pip"></span> Repository Standards <span class="chev">&#9662;</span></button>
 <div class="tb-menu" role="menu" aria-label="Ecosystem">
@@ -1822,7 +1817,7 @@ function main() {
     const from = landing.indexOf(START);
     const to = landing.indexOf(END);
     if (from >= 0 && to > from) {
-      const chrome = `${START}\n<style>${TOKENS_CSS}${PALETTE}\n${TOPBAR_CSS}\n${ATMOS_CSS}</style>\n${ATMOS_HTML}\n${topbarHtml()}\n<script>${SWITCHER_JS}</script>\n${END}`;
+      const chrome = `${START}\n<style>${TOKENS_CSS}${PALETTE}\n${TOPBAR_CSS}\n${ATMOS_CSS}</style>\n${ATMOS_HTML}\n${topbarHtml({ awayLabel: "Docs", awayHref: BASE })}\n<script>${SWITCHER_JS}</script>\n${END}`;
       const next = landing.slice(0, from) + chrome + landing.slice(to + END.length);
       if (next !== landing) {
         writeFileSync(LANDING_PATH, next);
