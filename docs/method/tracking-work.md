@@ -88,6 +88,13 @@ matter: **why** it is worth doing, so a row six months old can still justify its
 item nobody picked up is nobody's, and pretending otherwise is how a backlog becomes a list
 of quiet obligations.
 
+**Reading it back:**
+
+```
+> what is in the backlog for payments?
+> what did we write down during the adoption that nobody has picked up?
+```
+
 ### You do not have to use any of this
 
 The in-repo backlog is **optional**. If your team already lives in a tracker, keep it: the
@@ -99,13 +106,6 @@ the intents, joined by a one-way bridge (ADR-010).
   nothing for the board either.
 - **Linear** - the same shape, with a free cap that can bite mid-project.
 
-**The Jira bridge is real and in use**, not a plan: a one-way generator, git to Jira and never
-back, idempotent so an issue is created once and never duplicated, mapping a user story to a
-Story and its tasks to sub-tasks beneath it. The single write in the other direction is the
-new issue key, persisted into the front matter so the next run knows the issue exists. If you
-do not have it yet, take it from the `console` repository, where it has been running against
-a real board.
-
 One honest limit: the convention has been proven against **Jira only**. Linear follows the
 same shape and has not been field-tested, which is one of the project's
 [open questions](../open-questions/default-tracker.md).
@@ -114,12 +114,114 @@ What is offered here is the in-house alternative for teams who would rather not 
 at all. That is a preference, not a requirement, and nothing in the standard breaks if you
 keep your board.
 
-**Reading it back:**
+### How the Jira bridge actually works
 
+It is real and running against a real board, not a plan. Worth reading in full even if you
+use a different tracker, because the shape is the part that transfers.
+
+**It only ever writes forward.** The generator reads the repository and creates issues. It
+never reads Jira back into a spec, a backlog row or a cycle file. There is exactly one write
+in the other direction - a newly created issue key, persisted into front matter - and that
+exists so the next run can tell "already there" from "not yet", which is what makes it safe
+to run repeatedly.
+
+**It never edits an issue it did not just create.** Not the summary, not the description, not
+the status, not the assignee. Somebody moved a card, renamed it, or assigned it to a person
+who is actually free - that is the board doing its job, and a generator that overwrote it
+would be a generator nobody is allowed to run twice.
+
+**It is dry-run by default.** You see the plan, then you pass `--apply`.
+
+#### What becomes what
+
+| In the repository | In Jira | How it is keyed |
+|---|---|---|
+| a capability | an **epic**, named in front matter | referenced, never created - the bridge does not invent structure above itself |
+| a **backlog intent** - a row with a why and a done-when | a **Story** under that epic, one per intent | the key in front matter; created once when absent, written back, reused ever after |
+| a **task** the cycle broke that intent into | a **Sub-task** under that intent's Story | the task id in the summary, `[T003] ...`, plus a label - created only if no sub-task with that id exists |
+| a **decision the intent is waiting on** | its own Story, `Author ADR: <about>`, blocking the intent's | its own front-matter key |
+
+The unit choice is the whole design and it is the thing people get wrong. **A Story is one
+backlog intent** - something with a why, a done-when, and a size that fits inside a cycle.
+Not the capability (that is an epic, and one giant Story per module is a Story nobody can
+close), and not a task (a task is a one-line title, so a Story per task gives you a board of
+empty stories with no acceptance criteria between them).
+
+The last row is the one that surprises people and the one that pays. A missing decision is
+**not** a sub-task - it is somebody else's work, usually somebody who does not read the
+repository, and it blocks the Story rather than sitting inside it. That is exactly the item
+that used to go missing between "the spec is blocked" and anyone outside the team finding out.
+
+#### What a run looks like
+
+```figure
+<div class="win">
+  <div class="win-bar"><span class="win-dots"><i></i><i></i><i></i></span><span class="win-ask">&gt; push the invoicing cycle to jira</span></div>
+  <div class="win-body">
+<svg viewBox="0 0 700 258" role="img" aria-label="Dry-run plan: epic referenced, one story reused, one story created, three sub-tasks, one decision story">
+  <text class="bd-lane" x="6" y="13">dry run &#183; nothing written yet &#183; 4 to create, 2 already there</text>
+
+  <rect class="bd-card" x="6" y="24" width="688" height="32" rx="8"/>
+  <text class="bd-id" x="18" y="44" fill="#8a8595">AT-97</text>
+  <text class="bd-tag" x="82" y="44">epic</text>
+  <text class="bd-title" x="130" y="44">Invoicing</text>
+  <text class="bd-tag" x="596" y="44">referenced</text>
+
+  <rect class="bd-card" x="28" y="64" width="666" height="32" rx="8"/>
+  <text class="bd-id" x="40" y="84" fill="#34d399">AT-181</text>
+  <text class="bd-tag" x="104" y="84">story</text>
+  <text class="bd-title" x="152" y="84">Credit note for a job invoiced in error</text>
+  <text class="bd-tag" x="596" y="84" fill="#34d399">exists &#183; reused</text>
+
+  <rect class="bd-card" x="52" y="104" width="642" height="28" rx="7"/>
+  <text class="bd-id" x="64" y="122" fill="#34d399">[T001]</text>
+  <text class="bd-title" x="176" y="122">Credit-note record and its numbering</text>
+  <text class="bd-tag" x="596" y="122" fill="#34d399">exists</text>
+
+  <rect class="bd-card" x="52" y="140" width="642" height="28" rx="7"/>
+  <text class="bd-id" x="64" y="158" fill="#ff7a2f">[T002]</text>
+  <text class="bd-title" x="176" y="158">Issue a credit note against a paid invoice</text>
+  <text class="bd-tag" x="596" y="158" fill="#ff7a2f">create sub-task</text>
+
+  <rect class="bd-card" x="28" y="176" width="666" height="32" rx="8"/>
+  <text class="bd-id" x="40" y="196" fill="#ff7a2f">&#8212;</text>
+  <text class="bd-tag" x="104" y="196">story</text>
+  <text class="bd-title" x="152" y="196">Invoice PDF carries the business's VAT number</text>
+  <text class="bd-tag" x="596" y="196" fill="#ff7a2f">create &#183; key written back</text>
+
+  <rect class="bd-card" x="28" y="216" width="666" height="32" rx="8"/>
+  <text class="bd-id" x="40" y="236" fill="#a884ff">&#8212;</text>
+  <text class="bd-tag" x="104" y="236">story</text>
+  <text class="bd-title" x="152" y="236">Author BDR: what a customer opting out actually stops</text>
+  <text class="bd-tag" x="596" y="236" fill="#a884ff">blocks INV-4</text>
+</svg>
+  </div>
+</div>
 ```
-> what is in the backlog for payments?
-> what did we write down during the adoption that nobody has picked up?
-```
+
+Run it again five minutes later and every line reads `exists`. That is the property worth
+testing before you trust it with a board other people are looking at, and it is why the keys
+are written back rather than guessed from titles - a title gets edited, and a bridge that
+matches on titles duplicates the issue the first time somebody fixes a typo.
+
+#### Where to get it
+
+Take it from the `console` repository, where it runs as a skill against a live board. It is a
+short skill file plus the tracker's own API - deliberately small, because a bridge you intend
+to retire should not be an integration you have to maintain.
+
+One thing to know before you read it: the running implementation was built against a
+repository using Spec Kit's vocabulary, so in the file the unit is called a user story and it
+is read out of the spec rather than out of a backlog row. The table above is the same mapping
+in this standard's words. What transfers unchanged is the shape - the epic is referenced, the
+sprint-sized thing is the Story, its breakdown is sub-tasks, blockers are their own Stories -
+and that is the part worth copying.
+
+**Why one-way and not sync.** Two-way means conflict resolution - who wins when the repository
+and the board disagree - plus webhooks and state reconciliation. That is real, permanent cost
+for a mechanism whose entire purpose is to be removable. If you later want status flowing
+*out* of the repository, the cheap version is a read-only reflector (branch and pull-request
+state to the board), not a sync.
 
 ## A cycle is what somebody actually picked up
 
