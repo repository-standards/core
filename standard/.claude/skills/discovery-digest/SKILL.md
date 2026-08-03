@@ -69,7 +69,10 @@ handover just added.
    visible) or "still discovering" (name what is still missing). If a spec
    already exists for this topic, say instead: "spec exists - route this
    through `/spec-clarify` / `/spec-impact`" and name the entries newer than
-   the stamp.
+   the stamp - **unless its `Status` is `retired`**, in which case say so and stop:
+   new material about a retired capability is either about the vendor/replacement
+   now doing the job (out of scope here) or a case for a genuinely new capability,
+   not a reason to reopen this one.
 
 ## Hard rules
 

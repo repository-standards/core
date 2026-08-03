@@ -13,6 +13,10 @@ then find the ripple. This is analysis - do not edit code yet.
 1. **Primary capability.** Which `specs/<capability>/` does this change belong to?
    If it is a genuinely new domain (rare), flag it - do not create a new capability
    spec just because a request or ticket exists. Search existing capabilities first.
+   **Check the primary spec's `Status` first.** A `retired` capability stays in the
+   repo as a record, not as something to extend - if the change targets one, stop
+   and say so, and point at the BDR/ADR that retired it. A genuinely new need in
+   that area is a new capability, specced fresh, not a reopening.
 
 2. **Read** the primary spec and the code it maps to (`specs/capability-map.json`).
 

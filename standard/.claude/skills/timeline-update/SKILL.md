@@ -35,11 +35,14 @@ a reader who saw last month's estimate knows why the number moved.
    open if someone wrote it early, and `cycle-close` flips the status as its last act. If the
    two disagree in any cycle, say so in the file rather than picking one silently.
 
-2. **Derive throughput from the closed ones only.** Per cycle: intents finished, days
-   elapsed, unplanned work absorbed. Throughput is finished-per-day, and **unplanned work
-   counts** - a team that finished four planned items while absorbing three emergencies did
-   not move at four items' pace, and a projection built on the planned number alone will
-   under-read them permanently.
+2. **Derive throughput per team, never blended across teams.** `docs/cycles/<team>/` is
+   the scope: the three-closed-cycles threshold and the throughput figure it produces are
+   each team's own, from that team's own closed cycles only. A repo with two teams at two
+   and one closed cycles has **no team at three yet** - do not add the counts together to
+   reach one. Per cycle: intents finished, days elapsed, unplanned work absorbed.
+   Throughput is finished-per-day, and **unplanned work counts** - a team that finished
+   four planned items while absorbing three emergencies did not move at four items' pace,
+   and a projection built on the planned number alone will under-read them permanently.
 
    Report the spread, not just the mean. Three cycles at 0.4, 0.4 and 0.5 items per day
    support a date; 0.2, 0.4 and 1.1 do not, and saying "roughly 0.55" over that spread is

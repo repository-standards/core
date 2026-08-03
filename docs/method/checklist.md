@@ -14,7 +14,8 @@ stream's README: `adr/README.md`, `bdr/README.md`.)
 ## You have this case - say this
 
 **Starting something new and you do not know what you are supposed to decide.** That is
-what a menu is for:
+what a menu is for - this is `align-to-standards`' own greenfield/onboarding pass, not a
+standing capability of an already-aligned repo:
 
 ```
 > walk me through the decisions this project should make consciously - propose the paved road for each
@@ -25,13 +26,16 @@ answer becomes a record. Silence on a fork is also an answer - it just becomes a
 accidental one later.
 
 **You inherited a repo and nobody knows why anything is the way it is.** Reverse the
-checklist: find the decisions already taken and never written down:
+checklist: find the decisions already taken and never written down - again, the
+brownfield side of `align-to-standards`:
 
 ```
 > which of these forks does this repo already have an answer to, in the code but not in a record?
 ```
 
-**One fork is genuinely undecided.** Say so and leave the marker instead of pretending:
+**One fork is genuinely undecided.** Say so and leave the marker instead of pretending -
+this is a backlog item (`add-to-backlog`, source: a missing decision), not a record
+written for a decision nobody made yet:
 
 ```
 > we cannot pick the auth model until legal answers - record the fork as open, with who unblocks it

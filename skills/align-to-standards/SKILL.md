@@ -270,8 +270,10 @@ npx degit repository-standards/core/standard
    gate blocks or advises by it. Use the manifest's `files` / `sections` / `guards` / `decisions` as the coverage
    list, and each entry's `adapt` rule (copy / merge / fill-from-repo / reference) to
    decide *how* it lands - never blind-copy a `fill-from-repo` artifact. Record any
-   deliberate deviation as a manifest `exceptions` entry so a later update does not
-   silently overwrite it.
+   deliberate deviation as a manifest `exceptions` entry - `{ "kind": "file" | "section",
+   "match": "<path>" or "<file>#<heading>", "reason": "..." }` - so a later update does
+   not silently overwrite it and `self-verify` reports it as excepted rather than
+   failing a required entry the repo consciously chose not to carry.
 
 6. **Self-verify, and read the number correctly.** Run
    `node scripts/self-verify.mjs --version <aligned>` (see `docs/self-verify.md`).
