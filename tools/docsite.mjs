@@ -54,6 +54,8 @@ const SITE_URL = (CONFIG.site_url || "").replace(/\/+$/, "");
 // makes the default correct for both without either having to write it down.
 const OG_IMAGE = CONFIG.og_image || `${SITE_ROOT}og.png`;
 const BRAND = CONFIG.brand || "repository-standards";
+// Which surface of the ecosystem this is. Empty on the core, which IS the unqualified one.
+const WORDMARK_SUFFIX = CONFIG.wordmark_suffix || "";
 // The header wears the released version, read from its one home rather than restated here.
 // A VERSION file is this repository's convention, not the ecosystem's - a stack running this
 // same generator against its own markdown need not have one, and crashing on its absence
@@ -545,9 +547,53 @@ const PALETTE = CONFIG.palette
   ? `\n:root{\n${Object.entries(CONFIG.palette).map(([k, v]) => `  ${k.startsWith("--") ? k : `--${k}`}: ${v};`).join("\n")}\n}\n`
   : "";
 
-const CSS = `
-/* The docs wear the landing's header: same mark, same wordmark, same centred ecosystem
-   switcher. Only the right-hand link differs - here it points back to the homepage. */
+// The header is the ecosystem's, not this page's: the docs and every landing wear the
+// same one, differing only in the wordmark's suffix and where the links point. Kept as
+// its own string so a landing can be given the identical chrome at build time instead
+// of carrying a hand-made copy that drifts one improvement at a time.
+// The design tokens. The chrome carries them wherever it goes: a landing has its own
+// stylesheet with its own variable names, and the shared header set against undefined
+// variables renders a wordmark with no second line and a background with no colour.
+const TOKENS_CSS = `
+:root {
+  /* The header's own height, declared once. The sidebar sticks below it and sizes itself
+     against it; hard-coding the number in both places is how the column ends up scrolling
+     under the header with its first entries unreachable. */
+  --tb-h: 66px;
+  --tb-pad: 26px;
+  --bg: #08080b;
+  --bg-panel: #0c0c11;
+  --fg: #f4f2ee;
+  /* Body copy sits a step under the heading ink. Same hue, less glare - the difference
+     between a page you scan and one you can read for ten minutes. */
+  --fg-body: #cbc7d1;
+  --muted: #a7a3b2;
+  --border: rgba(255,255,255,.08);
+  --line: rgba(255,255,255,.08);
+  --line2: rgba(255,255,255,.05);
+  /* Channels as well as hex: the translucent borders and glows need the same hue, and a
+     site that themes the accent must not be left with the old one around its edges. */
+  --accent-rgb: 255,122,47;
+  --accent-2-rgb: 139,92,246;
+  --bg-rgb: 8,8,11;
+  --accent: #ff7a2f;
+  --accent-soft: #ff9a5c;
+  --accent-2: #a884ff;
+  --green: #34d399;
+  --link: #ff7a2f;
+  --link-visited: #ff9a5c;
+  --code-bg: rgba(255,255,255,.045);
+  /* Masked rather than drawn with borders, so the chevron keeps its shape while its box
+     stays big enough to click. Inline, because the site loads no external asset. */
+  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3.2 1.4 L6.8 5 L3.2 8.6' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --active-bg: rgba(var(--accent-rgb), .09);
+  --active-fg: #ff7a2f;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Inter, system-ui, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+}
+`;
+
+const TOPBAR_CSS = `
 .topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px) saturate(140%);
   background:linear-gradient(180deg,rgba(var(--bg-rgb), .82),rgba(var(--bg-rgb), .42));
   border-bottom:1px solid var(--line2)}
@@ -561,6 +607,11 @@ const CSS = `
   text-transform:uppercase;margin-top:4px;
   background:linear-gradient(96deg,var(--accent) 4%,var(--accent-soft) 34%,var(--accent-2) 96%);
   -webkit-background-clip:text;background-clip:text;color:transparent}
+/* The stack's name, set against the wordmark rather than inside it: same weight as the
+   line above it, in the accent, so it reads as a qualifier and not as a third brand. */
+.tb-stack{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--accent);
+  align-self:flex-end;padding-bottom:1px;letter-spacing:-.01em}
+.tb-stack::before{content:"/";opacity:.45;margin-right:6px;color:var(--muted)}
 .tb-tag{font-family:var(--font-mono);font-size:11px;color:var(--accent);
   border:1px solid rgba(var(--accent-rgb), .34);border-radius:999px;padding:2px 8px;letter-spacing:.04em}
 .tb-spacer{flex:1}
@@ -603,45 +654,16 @@ const CSS = `
   .tb-switch[data-open] .tb-menu{transform:none}
   .tb-tag{display:none}
 }
+`;
+
+const CSS = `
+/* The docs wear the landing's header: same mark, same wordmark, same centred ecosystem
+   switcher. Only the right-hand link differs - here it points back to the homepage. */
+${TOPBAR_CSS}
 
 /* One palette with the landing (site/index.html :root) so the two read as one product.
    Light stays as an explicit user-preference override. */
-:root {
-  /* The header's own height, declared once. The sidebar sticks below it and sizes itself
-     against it; hard-coding the number in both places is how the column ends up scrolling
-     under the header with its first entries unreachable. */
-  --tb-h: 66px;
-  --tb-pad: 26px;
-  --bg: #08080b;
-  --bg-panel: #0c0c11;
-  --fg: #f4f2ee;
-  /* Body copy sits a step under the heading ink. Same hue, less glare - the difference
-     between a page you scan and one you can read for ten minutes. */
-  --fg-body: #cbc7d1;
-  --muted: #a7a3b2;
-  --border: rgba(255,255,255,.08);
-  --line: rgba(255,255,255,.08);
-  --line2: rgba(255,255,255,.05);
-  /* Channels as well as hex: the translucent borders and glows need the same hue, and a
-     site that themes the accent must not be left with the old one around its edges. */
-  --accent-rgb: 255,122,47;
-  --accent-2-rgb: 139,92,246;
-  --bg-rgb: 8,8,11;
-  --accent: #ff7a2f;
-  --accent-soft: #ff9a5c;
-  --accent-2: #a884ff;
-  --green: #34d399;
-  --link: #ff7a2f;
-  --link-visited: #ff9a5c;
-  --code-bg: rgba(255,255,255,.045);
-  /* Masked rather than drawn with borders, so the chevron keeps its shape while its box
-     stays big enough to click. Inline, because the site loads no external asset. */
-  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3.2 1.4 L6.8 5 L3.2 8.6' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --active-bg: rgba(var(--accent-rgb), .09);
-  --active-fg: #ff7a2f;
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Inter, system-ui, sans-serif;
-  --font-mono: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
-}
+${TOKENS_CSS}
 @media (prefers-color-scheme: light) {
   :root {
     --bg: #ffffff;
@@ -996,6 +1018,7 @@ pre code { background: none; padding: 0; border-radius: 0; font-size: 0.85em; }
    scrollbar in a dark panel is how a table reads as broken rather than as scrollable. */
 .table-wrap {
   overflow-x: auto;
+  max-width: 100%;
   margin: 0 0 1.25rem;
   background:
     linear-gradient(to right, var(--bg) 30%, transparent) left / 3rem 100% no-repeat local,
@@ -1003,7 +1026,13 @@ pre code { background: none; padding: 0; border-radius: 0; font-size: 0.85em; }
     radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.45), transparent) left / 1.1rem 100% no-repeat scroll,
     radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.45), transparent) right / 1.1rem 100% no-repeat scroll;
 }
-@media (min-width: 1000px) { .table-wrap { margin-right: -6.5rem; } }
+/* A wide table may borrow the right margin - but only what is actually there. Written as
+   a fixed negative margin it bled past the column on any page whose prose is narrower than
+   this repo's, which is every site that is not this one. max-width pins the overflow to the
+   container so the scroll happens inside the wrapper, which is what the wrapper is for. */
+@media (min-width: 1000px) {
+  .table-wrap { margin-right: -6.5rem; max-width: calc(100% + 6.5rem); }
+}
 table { border-collapse: collapse; width: 100%; font-size: 0.9rem; line-height: 1.5; }
 th, td { border: 1px solid var(--border); padding: 0.55rem 0.75rem; text-align: left; vertical-align: top; min-width: 6.5rem; }
 /* A first column that is an index or a short key should stay narrow rather than take a
@@ -1220,6 +1249,66 @@ function ecoEntry(url, name, blurb) {
   return `<a role="menuitem" href="${escapeAttr(url)}"${attrs}><span>${escapeHtml(name)}<small>${escapeHtml(blurb)}</small></span>${here ? '<span class="now">here</span>' : ""}</a>`;
 }
 
+// The header, for any surface in the ecosystem. `drawer` adds the sidebar toggle, which
+// only the docs have; everything else is identical by construction rather than by anyone
+// remembering to copy an improvement across.
+// The background belongs to the chrome as much as the header does - it is what makes a
+// surface recognisable before a word is read. Its hue comes from the palette, so a
+// stack's atmosphere is its own colour without anyone editing a gradient.
+const ATMOS_CSS = `
+  .atmos{position:absolute;top:0;left:0;width:100%;height:960px;z-index:0;pointer-events:none;overflow:hidden}
+  .atmos .glow{position:absolute;border-radius:50%;filter:blur(20px)}
+  .atmos .g1{top:-260px;left:16%;width:1100px;height:900px;transform:translateX(-50%);
+    background:radial-gradient(circle at center, rgba(var(--accent-rgb), .16), transparent 62%);
+    animation:drift1 22s ease-in-out infinite alternate}
+  .atmos .g2{top:-200px;left:78%;width:1100px;height:900px;transform:translateX(-50%);
+    background:radial-gradient(circle at center, rgba(var(--accent-2-rgb), .15), transparent 62%);
+    animation:drift2 26s ease-in-out infinite alternate}
+  .atmos .g3{top:180px;left:50%;width:900px;height:700px;transform:translateX(-50%);
+    background:radial-gradient(circle at center, rgba(var(--accent-2-rgb), .08), transparent 60%);
+    animation:drift3 30s ease-in-out infinite alternate}
+  .grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.04;mix-blend-mode:soft-light;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+  @keyframes drift1{from{transform:translate(-50%,0) scale(1)}to{transform:translate(-46%,3vh) scale(1.08)}}
+  @keyframes drift2{from{transform:translate(-42%,0) scale(1)}to{transform:translate(-48%,4vh) scale(1.12)}}
+  @keyframes drift3{from{transform:translate(-50%,0) scale(1)}to{transform:translate(-54%,-3vh) scale(1.1)}}
+  @media (prefers-reduced-motion: reduce){.atmos .glow{animation:none}}
+`;
+const ATMOS_HTML = `<div class="atmos" aria-hidden="true">\n  <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>\n</div>\n<div class="grain" aria-hidden="true"></div>`;
+
+// The switcher's behaviour travels with its markup - a landing that got the header without
+// the handler would have a control that opens nothing, which is the defect site-behaviour
+// was written to catch on the docs.
+const SWITCHER_JS = `
+(function(){
+  var eco=document.getElementById("ecoswitch"),ecb=document.getElementById("ecobtn");
+  if(!eco||!ecb) return;
+  ecb.addEventListener("click",function(){var o=eco.hasAttribute("data-open");eco.toggleAttribute("data-open");ecb.setAttribute("aria-expanded",String(!o));});
+  document.addEventListener("click",function(e){if(!eco.contains(e.target)){eco.removeAttribute("data-open");ecb.setAttribute("aria-expanded","false");}});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"){eco.removeAttribute("data-open");ecb.setAttribute("aria-expanded","false");}});
+})();
+`;
+
+function topbarHtml({ drawer = false } = {}) {
+  return `<header class="topbar"><div class="topbar-in">
+${drawer ? `<button class="nav-toggle" type="button" aria-label="Open the navigation" aria-expanded="false" aria-controls="docs-nav"><span></span><span></span><span></span></button>` : ""}
+<a class="tb-brand" href="${SITE_ROOT}"><img class="tb-mark" src="${SITE_ROOT}logo-mark.png" alt="" width="428" height="512"><span class="tb-word"><b>repository</b><i>Standards</i></span>${WORDMARK_SUFFIX ? `<span class="tb-stack">${escapeHtml(WORDMARK_SUFFIX)}</span>` : ""}</a>
+${VERSION ? `<span class="tb-tag">v${escapeHtml(VERSION)}</span>` : ""}
+<span class="tb-spacer"></span>
+<nav class="tb-links"><a href="${SITE_ROOT}">Homepage</a><a class="tb-gh" href="${escapeAttr(GITHUB_REPO_URL)}" target="_blank" rel="noopener noreferrer"><svg class="gh-mark" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a></nav>
+<div class="tb-switch" id="ecoswitch">
+<button type="button" aria-haspopup="true" aria-expanded="false" id="ecobtn"><span class="pip"></span> Repository Standards <span class="chev">&#9662;</span></button>
+<div class="tb-menu" role="menu" aria-label="Ecosystem">
+<div class="grp">Core</div>
+${ecoEntry(CORE_DOCS_URL, "Repository Standards", "the method - align, verify, drift 0")}
+<div class="div"></div>
+<div class="grp">Best practices</div>
+${ecoEntry(NODE_DOCS_URL, "Node", "Next.js + Fastify - starter, decisions, adapting guide")}
+</div>
+</div>
+</div></header>`;
+}
+
 function renderPage(page, contentHtml) {
   // A page with no sidebar label still needs a browser-tab title, and the document already
   // states one: its own H1. Taking it from the rendered content rather than the page map
@@ -1262,23 +1351,7 @@ ${preview}
 <style>${CSS}${PALETTE}</style>
 </head>
 <body>
-<header class="topbar"><div class="topbar-in">
-<button class="nav-toggle" type="button" aria-label="Open the navigation" aria-expanded="false" aria-controls="docs-nav"><span></span><span></span><span></span></button>
-<a class="tb-brand" href="${SITE_ROOT}"><img class="tb-mark" src="${SITE_ROOT}logo-mark.png" alt="" width="428" height="512"><span class="tb-word"><b>repository</b><i>Standards</i></span></a>
-${VERSION ? `<span class="tb-tag">v${escapeHtml(VERSION)}</span>` : ""}
-<span class="tb-spacer"></span>
-<nav class="tb-links"><a href="${SITE_ROOT}">Homepage</a><a class="tb-gh" href="${escapeAttr(GITHUB_REPO_URL)}" target="_blank" rel="noopener noreferrer"><svg class="gh-mark" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a></nav>
-<div class="tb-switch" id="ecoswitch">
-<button type="button" aria-haspopup="true" aria-expanded="false" id="ecobtn"><span class="pip"></span> Repository Standards <span class="chev">&#9662;</span></button>
-<div class="tb-menu" role="menu" aria-label="Ecosystem">
-<div class="grp">Core</div>
-${ecoEntry(CORE_DOCS_URL, "Repository Standards", "the method - align, verify, drift 0")}
-<div class="div"></div>
-<div class="grp">Best practices</div>
-${ecoEntry(NODE_DOCS_URL, "Node", "Next.js + Fastify - starter, decisions, adapting guide")}
-</div>
-</div>
-</div></header>
+${topbarHtml({ drawer: true })}
 <div class="layout">
 <nav class="sidebar" aria-label="Documentation">
 <div class="nav-links" id="docs-nav">
@@ -1736,6 +1809,27 @@ function main() {
 
   writeFileSync(`${OUT_DIR}/README.md`, SITE_README);
   console.log(`  wrote  ${OUT_DIR}/README.md`);
+
+  // A landing that marks the spot gets the ecosystem's header written into it. This is the
+  // whole reason the header was extracted: the docs and the landings had drifted apart one
+  // improvement at a time - a switcher pointing at a code host, a button styled differently,
+  // a version tag in the wrong grid cell - and every one of those was found by a reader
+  // rather than by a check. Now there is one header and the landing cannot hold a stale copy.
+  if (existsSync(LANDING_PATH)) {
+    const landing = readFileSync(LANDING_PATH, "utf8");
+    const START = "<!--topbar:start-->";
+    const END = "<!--topbar:end-->";
+    const from = landing.indexOf(START);
+    const to = landing.indexOf(END);
+    if (from >= 0 && to > from) {
+      const chrome = `${START}\n<style>${TOKENS_CSS}${PALETTE}\n${TOPBAR_CSS}\n${ATMOS_CSS}</style>\n${ATMOS_HTML}\n${topbarHtml()}\n<script>${SWITCHER_JS}</script>\n${END}`;
+      const next = landing.slice(0, from) + chrome + landing.slice(to + END.length);
+      if (next !== landing) {
+        writeFileSync(LANDING_PATH, next);
+        console.log(`  wrote  ${LANDING_PATH}  (the shared header)`);
+      }
+    }
+  }
 
   console.log(`\ndocsite: generated ${PAGES.length} page(s) + README into ${OUT_DIR}/\n`);
   process.exit(0);
