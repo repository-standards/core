@@ -52,6 +52,7 @@ silence is not.
 | **Agent boundaries** | What may the coding agent do unattended? The shipped settings baseline write-blocks remote databases, force-push and CI-secret edits - keep it, extend it, or record why not | `.claude/settings.json` + `.claude/hooks/` |
 | **Data at rest** | What is encrypted, what is backed up, who can restore it, and has a restore ever been tested? | stack repo |
 | **Threat model** | One paragraph: who would attack this, what would they want, what would it cost you. Not a document - a paragraph that makes the rows above concrete | the ADR |
+| **Negative scope** | What is deliberately *not* treated as a vulnerability here, and why - a repo that never says this re-litigates the same report every time it arrives. curl's own exclusion list (self-XSS, missing best-practice headers with no exploit, etc.) is the paved-road example: one dated list, referenced instead of re-argued | the ADR |
 
 ## What this page deliberately is not
 
