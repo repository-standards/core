@@ -1211,7 +1211,7 @@ function renderPage(page, contentHtml) {
 <a class="tb-brand" href="${SITE_ROOT}"><img class="tb-mark" src="${SITE_ROOT}logo-mark.png" alt="" width="428" height="512"><span class="tb-word"><b>repository</b><i>Standards</i></span></a>
 <span class="tb-tag">v${escapeHtml(VERSION)}</span>
 <span class="tb-spacer"></span>
-<nav class="tb-links"><a href="${SITE_ROOT}">Homepage</a></nav>
+<nav class="tb-links"><a href="${SITE_ROOT}">Homepage</a><a href="${escapeAttr(GITHUB_REPO_URL)}" target="_blank" rel="noopener noreferrer">GitHub</a></nav>
 <div class="tb-switch" id="ecoswitch">
 <button type="button" aria-haspopup="true" aria-expanded="false" id="ecobtn"><span class="pip"></span> Repository Standards <span class="chev">&#9662;</span></button>
 <div class="tb-menu" role="menu" aria-label="Ecosystem">
