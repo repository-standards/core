@@ -130,7 +130,10 @@ each state transition.
 ## Open questions
 
 <!-- REQUIRED section. If there are genuinely none, write "None known." - do not
-     delete the heading. -->
+     delete the heading. A marker lives in exactly ONE place - its functional section
+     (Requirements, Data contracts, ...) if the gap has one; here only if it does not.
+     Never both: the gate counts every open marker in the file, so echoing one in both
+     places reports twice the real number of open gaps. -->
 Unresolved *current* questions and known gaps (not-yet-wired, unverified,
 undecided). Retrofitting a spec from code, this is where the spec<->code
 discrepancies you find get recorded - each becomes a tracked issue, not a silent

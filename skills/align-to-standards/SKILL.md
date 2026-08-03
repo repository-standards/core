@@ -29,6 +29,13 @@ Before any phase runs, one intake pass:
      without the standard moving at all - specs stop matching code, decisions get made in
      chat again, the backlog stops being true - and a user asking for that review is doing
      the thing the product exists for. Never route them to a version bump instead.
+
+     **A fifth answer is legitimate: this repo's own goal is to stay as it is** - deprecated,
+     frozen, or intentionally minimal, with no plan to actively develop it further.
+     Assessment-only still applies (the health report and counted plan are useful even
+     here), but say plainly that closing the gap to drift 0 is not the point for a repo like
+     this, and do not seed a backlog whose entire premise - working the list down - the
+     repo has no intention of acting on.
    - **Technology.** Detect from the repo's own evidence first (`package.json`,
      `pyproject.toml`, `go.mod`, `Cargo.toml`, `*.csproj`), then **confirm** with the user.
      Greenfield has no evidence, so ask - but never as a blank question: name what the

@@ -76,6 +76,14 @@ Each pass: what to **detect**, what **good** looks like (the paved road), and wh
 | **7. Dependencies & stack** | Detect the stack; outdated / risky / unmaintained deps; does it match a known stack layer? | Current, minimal, justified deps | Map to the stack layer (Node/TS) where it applies; ADR for each risky/heavy dep |
 | **8. Drift & health** | Code<->doc contradictions, dead code, `TODO`/debt density, churn hotspots | Docs match code; no silent drift; hotspots understood | Backlog item per contradiction; spec/ADR the churn hotspots first |
 
+**Pass 8's churn-hotspot check needs real history.** A shallow clone (`git clone --depth
+1`, common when assessing someone else's repo from outside) has exactly one commit -
+`git log` cannot rank hotspots from that, no matter how the rest of the pass goes. When
+this happens, say so explicitly in the health report ("churn analysis unavailable -
+shallow clone") rather than silently reporting the rest of the pass as if it were
+complete; un-shallow the clone or use the host's API for commit stats if the churn signal
+matters enough to be worth the cost.
+
 ## Turn findings into work
 
 The assessment does not fix - it **routes**:
