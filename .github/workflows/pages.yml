@@ -1,0 +1,80 @@
+# Publishes repositorystandards.com - the whole domain, every surface.
+#
+# The layout is ADR-031: surface first, so the core takes the unprefixed pair and each stack
+# takes its own prefix.
+#
+#   /            the core's landing
+#   /docs/       the core's documentation
+#   /node/       the node stack's landing
+#   /docs/node/  the node stack's documentation
+#
+# Those are four paths and several repositories, which reads like it needs a repository of
+# its own to assemble them. It does not: a project site with a custom domain is served at the
+# domain root, not under its repository name, so this repository can publish all of it. What
+# it assembles from is `stacks.json` - the registry it already publishes - rather than a
+# second list that would drift from the first.
+#
+# Nothing is committed. The site is an artifact, so the repository never carries build output.
+name: pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: "24.18.0"
+
+      # The generator has no dependencies, so there is nothing to install.
+      - name: build the core's surfaces
+        run: |
+          node tools/docsite.mjs
+          node tools/site-check.mjs
+          node tools/site-behaviour.mjs
+
+      - name: build every registered stack into its prefix
+        run: |
+          set -euo pipefail
+          for repo in $(node -e "console.log(JSON.parse(require('fs').readFileSync('stacks.json','utf8')).stacks.map(s=>s.technology+':'+s.repo).join(' '))"); do
+            tech="${repo%%:*}"
+            slug="${repo#*:}"
+            # A registered stack whose repository does not exist yet is a normal state while
+            # the ecosystem is being built out. It is reported rather than skipped quietly -
+            # a missing surface that nobody mentions reads as a surface that was published.
+            if ! git ls-remote "https://github.com/$slug" >/dev/null 2>&1; then
+              echo "::warning::stack '$tech' is registered but $slug is not reachable - /$tech/ will not be published"
+              continue
+            fi
+            git clone --depth 1 --quiet "https://github.com/$slug" ".src/$tech"
+            ( cd ".src/$tech" && node tools/docsite.mjs && node tools/site-check.mjs )
+            mkdir -p "site/$tech" "site/docs/$tech"
+            cp -R ".src/$tech/site/." "site/$tech/"
+            rm -rf "site/$tech/docs"
+            cp -R ".src/$tech/site/docs/." "site/docs/$tech/"
+            echo "published $tech at /$tech/ and /docs/$tech/"
+          done
+          rm -rf .src
+
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
