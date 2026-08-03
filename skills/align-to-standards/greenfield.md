@@ -24,7 +24,11 @@ after personas and product.
    nothing.) Instantiate `specs/constitution.md`
    from `specs/constitution.template.md` - the project's non-negotiables the spec skills
    gate on. Choose and add a LICENSE now (an unlicensed repo is unusable, not neutral)
-   and fill `SECURITY.md`'s contact. Empty but valid: `self-verify` passes.
+   and fill `SECURITY.md`'s contact. Empty but valid: `self-verify` passes - including
+   `docs/facts.json` (R4), which is optional and starts **absent**, not scaffolded from
+   `docs/facts.example.json`. That example ships as reference only, to show the shape;
+   create `docs/facts.json` from scratch, in that shape, once the repo has its first fact
+   worth declaring.
 
 2. **Elicit the product (ask, don't assume).** Interview the user - and give them something
    to react to, because "what is this?" asked cold gets a worse answer than the same
