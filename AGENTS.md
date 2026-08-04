@@ -58,6 +58,10 @@ clients get them by reference (ADR-004), never as copies.
   guards still fire where they must), `node standard/scripts/facts-check.mjs` +
   `node tools/facts-check-test.mjs` (a fact restated in prose still agrees with
   its source - the declarations live in [`docs/facts.json`](docs/facts.json)),
+  `node standard/scripts/decision-records-check.mjs --block` +
+  `node tools/decision-records-check-test.mjs` (the ADR/BDR README index and the
+  files on disk agree - no duplicate id, nothing indexed that is not there,
+  nothing there that is not indexed),
   `node tools/file-map.mjs --check` (the file map is generated from the manifest,
   never hand-written), `node tools/docsite.mjs && node tools/site-check.mjs &&
   node tools/site-behaviour.mjs`. The list is the set CI
