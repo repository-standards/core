@@ -73,6 +73,22 @@ Given that feature description, do this:
      Write the actual resolved directory path value (for example, `specs/user-auth`), not the literal string `SPECIFY_FEATURE_DIRECTORY`. <!-- PATCHED(repository-standards): ADR-002 - slug-only example -->
      This allows downstream commands (`/spec-plan`, `/spec-tasks`, etc.) to locate the feature directory without relying on git branch name conventions.
 
+   **Register the capability in `specs/capability-map.json`** when the directory is new
+   <!-- PATCHED(repository-standards): R11 - a spec with no map entry has no coupling -->
+   - Add a key for the capability with the globs its code will occupy, e.g.
+     `"payments": ["packages/payments/**", "apps/*/src/**/payment/**"]`. Propose them from
+     the repo's actual layout (read `specs/capability-map.example.json` for the shape) and
+     say what you added, so the user can correct a wrong guess now rather than after the
+     guard fires.
+   - This is the step that owns it: minting the directory is the moment the map goes stale,
+     and `spec-guard --audit` fails a capability spec with no entry (R11) - which lands as a
+     failed pull request on whoever opens one next. Where the code has no home yet, add the
+     key with the globs it is going to have; a glob matching nothing is reported by the
+     audit, which is the correct, visible state for a capability nobody has built yet.
+   - `/spec-reconcile` reconciles the map against the code that actually landed before the
+     pull request. Both writers exist on purpose: this one keeps a new capability from being
+     unmapped by construction, that one catches a refactor moving code out from under a glob.
+
    **IMPORTANT**:
    - You must only create one feature per `/spec-specify` invocation
    - The spec directory name and the git branch name are independent — they may be the same but that is the user's choice
