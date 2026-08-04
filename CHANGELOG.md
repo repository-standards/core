@@ -16,6 +16,26 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A spec whose open markers were translated passed the clarify gate (2026-08-04)
+
+The gate counted open items by grepping for one literal ASCII string, so a spec written in
+another language whose author translated the marker along with the sentence around it
+printed `ready-to-develop` with every gap still open - reproduced on a Chinese spec with
+four unresolved items, one of them a missing decision. What made it likely rather than
+unlucky is an asymmetry: the missing-`## Clarifications` failure names the exact English
+string, so a team that hits that error reads translating the heading as the fix, and lands
+in the silent pass.
+
+The call, now written where a translating team will meet it (the working-language guide,
+the shipped conventions table, the spec template, `spec-clarify`): the four marker forms
+and the headings the gate reads are **syntax**, they stay ASCII in a spec in any language,
+and the text *inside* a marker is prose that belongs in the spec's own language. The gate
+enforces it instead of trusting it - a bracketed token shaped like a typed marker but not
+one of the four (a translated family name, an invented type, non-ASCII included) fails,
+naming the rule and where it is written down. Markdown links, checkboxes and footnotes are
+not markers, which the new test asserts in both directions. The clarify gate had no test at
+all until now, and it is the mechanism with the worst history here.
+
 ### The coupling guard could not match a capability at the top level (2026-08-04)
 
 Both guards that read globs translated `**` into `.*` without consuming the slash
