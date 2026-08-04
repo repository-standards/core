@@ -53,6 +53,14 @@ the result with `self-verify`.
    carry them forward. Detect the conflict, keep the repo's decision, and record what the
    new version would otherwise have changed so the human can reconcile it consciously.
 
+   **A `copy` file the repo edited will surface here as content drift, and that is the
+   mechanism working**, not a regression: the manifest records what each `copy` entry must
+   hash to, so a locally changed guard, `.nvmrc` or skill is now visible instead of silent.
+   Take the standard's copy where the change was accidental; where it was deliberate, record
+   `{ "kind": "content", "match": "<path>", "reason": "..." }` and leave the repo's file
+   alone. Never resolve it by excepting a guard's script file - that is refused, because it
+   would disable a live check rather than record a difference.
+
 5. **Bump the pin and the manifest.** Write the target version to `.standards-version`,
    and replace `standard.manifest.json` with the target version's manifest (carrying the
    repo's `exceptions` forward). The pin and the manifest move together.

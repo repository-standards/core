@@ -10,9 +10,16 @@ list, so the number is never the whole answer - it is the headline over one.
 
 ## What it checks, in order
 
-The recorded state, then files, then required headings inside them, then the guards, each
-result printed whether it passed or failed. It **never stops at the first failure**: a run
-that told you about one problem at a time would take as many runs as you have problems.
+The recorded state, then files - their names, and for the ones the standard ships verbatim
+their **content** - then the keys a merged file has to keep, then required headings, then the
+guards. Each result is printed whether it passed or failed. It **never stops at the first
+failure**: a run that told you about one problem at a time would take as many runs as you have
+problems.
+
+`copy` entries are hashed against the `sha256` the manifest records, so a file that is present
+but is not the standard's is drift, and the message says *differs* rather than *missing*. If
+you changed one on purpose, record it as a `content` exception - the mechanism exists for
+exactly that, and it keeps the difference visible instead of silent.
 
 | flag | what it changes |
 |---|---|
@@ -25,9 +32,12 @@ number would make the number negotiable.
 
 ## What it does not certify
 
-The **mechanical** tier only: does the file exist, does the heading exist, does the guard
-pass. Whether your decision records record real decisions, or a spec that names a persona
-actually serves them, is judgment and stays at review.
+The **mechanical** tier only: is the file there, is its content the standard's where the
+standard owns it, is the heading there, does the guard pass. Whether your decision records
+record real decisions, or a spec that names a persona actually serves them, is judgment and
+stays at review. A `fill-from-repo` file is your content by definition, so nothing here can
+say whether you filled it well - only whether it is there and whether it still carries
+template markers.
 
 Drift 0 with empty shells is a hollow win. The placeholder scan warns about unfilled
 `<markers>` and deliberately never counts them as drift, because converting judgment into an
