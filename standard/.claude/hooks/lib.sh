@@ -21,7 +21,7 @@ deny() {
 # `[ -n "${CMD}" ]` check and exits 0 - a silent pass on exactly the commands these guards
 # exist to stop, with nothing printed to say the protection is gone. A guard that cannot
 # read the command has not checked it, so it denies instead.
-command -v jq >/dev/null 2>&1 || deny "Blocked by repository policy: the agent guards cannot run because 'jq' is not installed, and a guard that cannot read the command has not checked it. Install jq (macOS: brew install jq; Debian/Ubuntu: apt-get install jq - see docs/prerequisites.md) and retry."
+command -v jq >/dev/null 2>&1 || deny "Blocked by repository policy: the agent guards cannot run because 'jq' is not installed, and a guard that cannot read the command has not checked it. Install jq (macOS: brew install jq; Debian/Ubuntu: apt-get install jq - see https://github.com/repository-standards/core/blob/main/docs/method/prerequisites.md) and retry."
 
 read_command() {
   jq -r '.tool_input.command // ""'
