@@ -50,6 +50,10 @@ jobs:
         run: |
           node standard/scripts/facts-check.mjs
           node tools/facts-check-test.mjs
+      - name: decision-records-check (the ADR/BDR index agrees with the directory) + its test
+        run: |
+          node standard/scripts/decision-records-check.mjs --block
+          node tools/decision-records-check-test.mjs
       - name: file-map is regenerated from the manifest, not hand-written
         run: node tools/file-map.mjs --check
       - name: site (generate + check landing and docs)

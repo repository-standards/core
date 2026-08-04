@@ -170,6 +170,15 @@
       "rule": "R24"
     },
     {
+      "path": "scripts/decision-records-check.mjs",
+      "purpose": "the ADR/BDR README index and the files on disk agree - no duplicate id, nothing indexed that is not there, nothing there that is not indexed",
+      "adapt": "copy",
+      "required": true,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R5"
+    },
+    {
       "path": ".claude/skills",
       "purpose": "the lifecycle skills - the standard as executable procedures (Claude reference form; a non-Claude repo ports them to its agent's own mechanism)",
       "adapt": "copy",
@@ -596,6 +605,16 @@
       "profile": "scale",
       "since": "1.0.0",
       "rule": "R15"
+    },
+    {
+      "id": "decision-records-check",
+      "run": "node scripts/decision-records-check.mjs --block",
+      "kind": "static",
+      "blocks": true,
+      "purpose": "the ADR/BDR index and the directory on disk agree - duplicate id, orphaned index row, or unindexed record all fail",
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R5"
     }
   ],
   "decisions": [

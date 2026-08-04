@@ -54,9 +54,15 @@ decision is not yet made.
 
 ## Then
 
-Number `BDR-NNN` - gapless, never reused, next free as of `main`. Copy
-`docs/decision-records/bdr/_template.md`, add the row to `bdr/README.md`, `Status: Accepted`
-on confirmation. An accepted record is superseded, never edited into a different decision.
+Number `BDR-NNN` - gapless, never reused. Find the next free number by **reading the
+directory** (`ls docs/decision-records/bdr/`), never the README table's row count and never a
+remembered count - the two can disagree, and `scripts/decision-records-check.mjs` exists
+because a stale or missing index row let them (it minted a second `BDR-004` once). Do this as
+of the latest `main`, right before writing: `git fetch` and re-check the number is still free
+immediately before committing - two branches minting the same number from an older `main` is
+a real collision this project has hit. Copy `docs/decision-records/bdr/_template.md`, add the
+row to `bdr/README.md`, `Status: Accepted` on confirmation. An accepted record is superseded,
+never edited into a different decision.
 
 ## Not this
 
