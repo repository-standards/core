@@ -37,13 +37,20 @@ part of this is mechanical; the rest needs an AI pass.
   for whoever opens the file) and `$unclaimed`. Any other `$` key is refused - a
   misspelt `$unclaimed` that exempted nothing would be the same silence again.
 - **Clarify gate (ADR-010; field-proven in production, 2026-07):** a spec may not reach
-  plan / tasks / the tracker mirror unless it has a `## Clarifications` section and
-  **zero** open markers of the `[NEEDS ...` family - CLARIFICATION, DECISION, INPUT and
-  ASSET alike, which is what the gate script counts: a missing decision blocks planning
-  exactly like an open question. Wire it as a mandatory `before_plan` /
-  `before_tasks` hook plus a bridge precondition (abort even dry-run). This is what
-  flips the spec's `Status` to `ready-to-develop` mechanically, not by opinion - and
-  it is why the loop cannot be skipped by simply not invoking a skill.
+  plan / tasks / the tracker mirror unless **all four** hold - it has a `## Clarifications`
+  section; **zero** open markers of the `[NEEDS ...` family - CLARIFICATION, DECISION,
+  INPUT and ASSET alike, which is what the gate script counts, so a missing decision blocks
+  planning exactly like an open question; **nothing merely shaped like a marker** (a
+  translated family name, an invented type - a gap the gate cannot read has to fail, not
+  pass); and a `## Open questions` section that **says there are none**. That last one is
+  structural on purpose: any other content there is an open item however it is phrased, and
+  prose, a statement, a table of gaps and an item answered above but still listed below were
+  all found passing. Wire it as a mandatory `before_plan` / `before_tasks` hook plus a
+  bridge precondition (abort even dry-run). This is what flips the spec's `Status` to
+  `ready-to-develop` mechanically, not by opinion - and it is why the loop cannot be skipped
+  by simply not invoking a skill.
+  The marker forms and both headings are **syntax**: they stay ASCII in a spec written in
+  any language, while the text inside a marker is prose in the spec's own language.
 
 The coupling guard needs a **capability -> code globs** map (in a monorepo a domain
 is spread across app / service / shared). Keep it at `specs/capability-map.json`

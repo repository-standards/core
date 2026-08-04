@@ -109,7 +109,10 @@ Given that feature description, do this:
     6. Generate Requirements, each testable; add Invariants, and Algorithms & rules
        wherever the logic is non-trivial (numbered implementable steps, not prose)
        Reasonable defaults for unspecified details are fine - record each one under
-       Open questions rather than letting it pass silently
+       `## Clarifications` as the assumed answer it is, rather than letting it pass
+       silently. It does not belong under Open questions: a default you took is a
+       decision, not an outstanding question, and that section says whether anything
+       is still outstanding
     7. Write Acceptance criteria as Given/When/Then covering the happy path, every error
        path, every edge case and every state transition. Every Invariant must be covered
        by at least one of them
@@ -228,9 +231,13 @@ Report completion to the user with:
 When creating this spec from a user prompt:
 
 1. **Make informed guesses**: Use context, industry standards, and common patterns to fill gaps
-2. **Document assumptions**: record each reasonable default under `## Open questions` - the
-   template has no Assumptions section, and an undocumented default is the drift that a
-   later reader mistakes for a decision <!-- PATCHED(repository-standards) -->
+2. **Document assumptions**: record each reasonable default under `## Clarifications`, as
+   `- Q: <what was unspecified> -> A: <the default taken> (assumed)` - the template has no
+   Assumptions section, and an undocumented default is the drift a later reader mistakes for
+   a decision. Not under `## Open questions`: the clarify gate reads that section and it
+   passes only as "None known.", because it answers one question - is anything still
+   outstanding. A default worth confirming is a `[NEEDS CLARIFICATION: ...]` marker instead,
+   which is the honest way to make it block <!-- PATCHED(repository-standards) -->
 3. **Limit clarifications**: Maximum 3 [NEEDS CLARIFICATION] markers - use only for critical decisions that:
    - Significantly impact feature scope or user experience
    - Have multiple reasonable interpretations with different implications

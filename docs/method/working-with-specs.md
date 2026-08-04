@@ -98,11 +98,14 @@ spec is the status report - no tracker archaeology.
 > the code caps date changes at 3 per booking but the spec says nothing about it
 ```
 
-That is drift. The agent records it in the spec's `## Open questions` (or
-fixes the spec if the behavior is intended and settled), and it becomes a
-backlog item - never a silent gloss (R13). The backlog is where work waits:
-items arrive from spec deltas, drift, and onboarding, and leave only when
-their definition of done is met.
+That is drift. The agent fixes the spec if the behavior is intended and settled;
+otherwise it records the gap as a typed marker in the section that owns it and the
+item goes to the backlog - never a silent gloss (R13). Recording it in the spec is
+not free, and that is deliberate: the clarify gate counts markers and reads
+`## Open questions`, so a capability with an unresolved gap in its spec cannot be
+planned again until the gap is resolved or moved to the backlog with a link. The
+backlog is where work waits: items arrive from spec deltas, drift, and onboarding,
+and leave only when their definition of done is met.
 
 ## What does NOT go into a spec
 

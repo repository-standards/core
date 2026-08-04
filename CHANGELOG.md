@@ -16,6 +16,27 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The clarify gate never read the template's own open-questions section (2026-08-04)
+
+`## Open questions` is a required section of the shipped capability template, in free
+prose, and the gate ignored it - so a spec could reach `ready-to-develop` with its open
+items written exactly where the template says to write them. Four shapes were reproduced
+passing: prose markers, a question phrased as a statement, a table of open items, and an
+item answered under `## Clarifications` but still listed below. One of them is in this
+repo's own committed fixture spec, whose backlog row says a decision blocks it while the
+gate called it ready to develop.
+
+The rule is structural rather than an attempt to read intent: **the section passes only
+when it says there are none.** HTML comments and fenced blocks are stripped first, because
+that is where the template's guidance lives, and any remaining visible line other than a
+nothing-open statement ("None known.") is an open item. A missing or translated heading
+fails the same way an absent one should - it is indistinguishable from nothing being open.
+So each thing now has one home: an unresolved gap is a typed marker in the section it
+affects, a settled note goes into the section it describes, and a known gap the repo will
+not block on goes to the backlog with a link. `spec-specify` no longer records assumed
+defaults there either - a default you took is an answer, and it belongs under
+`## Clarifications`.
+
 ### A spec whose open markers were translated passed the clarify gate (2026-08-04)
 
 The gate counted open items by grepping for one literal ASCII string, so a spec written in

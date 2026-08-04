@@ -37,8 +37,12 @@ The bar is contracts, quoted verbatim rather than described: real field names, r
 real error codes, real endpoints. **A paraphrased contract is not a contract** - it is a
 description of one, and the difference shows up as a bug six weeks later.
 
-What you cannot pin down goes in `## Open questions`, never glossed over. Honesty about
-gaps is what makes the rest of the document trustworthy.
+What you cannot pin down is never glossed over: it becomes a typed marker in the section it
+belongs to - `[NEEDS CLARIFICATION: ...]`, `[NEEDS DECISION: ...]`, `[NEEDS INPUT: ...]`,
+`[NEEDS ASSET: ...]` - naming what is missing and who brings it. `## Open questions` is the
+section that says whether any of that is outstanding, and the gate reads it: it passes only
+as "None known.". Honesty about gaps is what makes the rest of the document trustworthy, and
+a gate that reads the honest part is what keeps it from costing nothing.
 
 ## Write the decision while you are making it
 
