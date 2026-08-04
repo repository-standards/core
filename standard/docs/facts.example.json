@@ -13,5 +13,11 @@
     "what": "how many services this monorepo deploys",
     "home": { "count": "services/*/service.json" },
     "claims": [{ "file": "ARCHITECTURE.md", "pattern": "(\\d+) deployable services" }]
+  },
+  {
+    "id": "http-error-codes",
+    "what": "how many error codes the API contract declares - a count of what one file says, not of files",
+    "home": { "countMatches": { "file": "specs/api/spec.md", "pattern": "^\\| `E-\\d+`" } },
+    "claims": [{ "file": "docs/integration.md", "pattern": "all (\\d+) error codes" }]
   }
 ]

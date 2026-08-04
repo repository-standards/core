@@ -16,6 +16,20 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The normative page miscounted its own rules (2026-08-04)
+
+`SPEC.md` said "Rules are numbered R1-R24" while defining R25 on the same page. This repo
+built `facts-check` and `docs/facts.json` for exactly this class of drift, and cites
+"twenty rules outlived the twenty-first by weeks" as the cautionary example in the shipped
+conventions - the rule count itself was simply never declared as a fact. It is now, with
+its home a count of the rule definitions in the tree, so the sentence cannot drift from the
+page it describes again.
+
+That needed a fourth home form: `countMatches` - how many times one file declares
+something. `count` counts files and `match` captures a single occurrence, so a count of
+what lives inside one file had no home and stayed hand-written, which is the one thing R4
+exists to prevent.
+
 ### cycle-guard read zero rows and reported OK (2026-08-04)
 
 The guard scopes its scan to a literal `## Intents` H2, which is right - a closed cycle's
