@@ -19,6 +19,16 @@ English commits is a first-class setup, not a workaround.
 | Docs, specs, decision records | repo's choice | one language per artifact type |
 | Commit messages, PR text | English | recommended |
 | User-facing copy | the persona's language | driven by the audience, not the team |
+| Strings a guard greps for | never translated | see below - they are syntax, not prose |
+
+**What a script reads is syntax, and syntax stays as written** in a spec in any language:
+the open-marker family (`[NEEDS CLARIFICATION: ...]`, `[NEEDS DECISION: ...]`,
+`[NEEDS INPUT: ...]`, `[NEEDS ASSET: ...]`), the headings the clarify gate looks for
+(`## Clarifications`, `## Open questions`), the fields the guards read (`**Status:**`,
+`**Serves:**`, `**Spec tier:**`) and intent ids with their `blocked:<id>` status. The text
+*inside* a marker is prose and belongs in your language. Translating the syntax does not
+make a check speak your language, it makes the check find nothing and report PASS - which
+is why the clarify gate fails on a marker-shaped token it does not recognise.
 
 Pick once, record it in `AGENTS.md`, and keep it consistent within an artifact type.
 The reasoning behind the default, the cases where your own language wins, and how to draw

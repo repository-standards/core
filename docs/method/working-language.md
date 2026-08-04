@@ -81,6 +81,38 @@ Two rules make the split survivable:
    convention is not a convention, it is a habit that the newest contributor will break by
    accident within a week.
 
+## Part of a repository is syntax, and syntax is never translated
+
+Not all of the text in a repository is prose. A few strings are **read by a script**, and
+a script does not translate - it looks for the bytes it was written to find. Translate one
+and the check does not object: it stops seeing anything at all, reports PASS, and whatever
+it was holding closed walks straight through.
+
+This is not hypothetical. A capability spec written in Chinese, with its open markers
+translated along with the rest of the sentence, passed the clarify gate carrying four
+unresolved items - one of them a missing decision. And the trap is an asymmetry rather
+than bad luck: the *missing* `## Clarifications` error names the exact English string, so a
+team that hits that error reads translating the heading as the fix.
+
+So these stay exactly as written, in a spec in any language:
+
+| Stays as written | What reads it |
+|---|---|
+| `[NEEDS CLARIFICATION: ...]`, `[NEEDS DECISION: ...]`, `[NEEDS INPUT: ...]`, `[NEEDS ASSET: ...]` | the clarify gate - the marker family is the spec's gap list |
+| `## Clarifications`, `## Open questions` | the clarify gate, which refuses a spec that has neither |
+| `**Status:**`, `**Serves:**`, `**Spec tier:**` | the spec-structure guard, and the status check against the gate |
+| intent ids (`PAY-2`), `blocked:<id>` | the cycle guard, proving one intent lives in one place |
+
+**The text inside is prose, and it belongs in your language.**
+`[NEEDS DECISION: model cenowy dla kont zespolowych; owner: biznes]` is exactly right: the
+marker is syntax, the question is Polish, and the gate holds the spec closed until it is
+answered.
+
+The gate enforces this rather than trusting it. A bracketed token shaped like a marker but
+not one of the four forms - a translated family name, an invented type - fails the gate by
+name, non-ASCII ones included. A check that cannot find what it was written to read has to
+fail, not pass.
+
 ## What this buys the reader
 
 Because the split is declared and the agent can translate on demand, nobody is locked out

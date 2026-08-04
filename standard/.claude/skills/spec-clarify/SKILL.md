@@ -176,7 +176,11 @@ Execution steps:
 5b. **Everything unresolved becomes a marker in the spec, before this skill returns.** Not a
     bullet in a completion report - a `[NEEDS CLARIFICATION: ...]`, `[NEEDS DECISION: ...]`,
     `[NEEDS INPUT: ...]` or `[NEEDS ASSET: ...]` written into the section it belongs to, naming
-    what is missing and who brings it. This is what makes stopping early safe: the gate counts
+    what is missing and who brings it. **Write the four forms and the `## Clarifications`
+    heading in ASCII exactly as shown, whatever language the spec is in** - they are syntax the
+    gate greps for, and a translated marker is invisible to it (a spec whose markers were
+    translated passed the gate with four items still open). The question inside the marker is
+    prose: write that in the spec's language. This is what makes stopping early safe: the gate counts
     those markers, so a spec that was only half settled cannot reach plan or tasks. A question
     that was never asked and never marked is indistinguishable from a question that was answered,
     and that is the failure this step exists to prevent.

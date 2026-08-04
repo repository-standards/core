@@ -1,0 +1,172 @@
+#!/usr/bin/env node
+// clarify-gate-test - drive the shipped clarify gate over real spec files.
+//
+// The gate decides whether a spec may reach plan, tasks and the tracker, which makes it
+// the one guard whose false PASS costs the most: everything downstream believes the spec
+// is settled. It had no test at all, and it has failed open three times - open items
+// recorded as a numbered list instead of brackets, markers translated with the rest of a
+// spec written in another language, and the template's own `## Open questions` section
+// carrying live content the gate never read.
+//
+// So the cases here are mostly the fail-open direction: a spec that is not ready must not
+// pass. The other half matters too and is cheaper to forget - ordinary markdown (links,
+// checkboxes, footnotes) must not be mistaken for an open marker, or the gate becomes the
+// thing people route around.
+//
+// Usage: node tools/clarify-gate-test.mjs   # exit 1 on any failure
+// Zone 1 tooling - never shipped.
+
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
+const GATE = join(process.cwd(), "standard/scripts/spec/check-spec-clarified.sh");
+
+const CLARIFIED = `## Clarifications
+
+### Session 2026-08-04
+
+- Q: which currency does a refund settle in? -> A: the currency of the capture.
+`;
+
+// The shape a spec has when the gate should pass it: the clarify record, and an open
+// questions section that says there are none.
+const clean = (body = "") => `# Payments
+
+${CLARIFIED}
+## Requirements
+
+- The system MUST capture within 7 days.
+${body}
+## Open questions
+
+None known.
+`;
+
+const gate = (file) => {
+  const r = spawnSync("bash", [GATE, file], { encoding: "utf8" });
+  return { code: r.status ?? 1, out: `${r.stdout ?? ""}${r.stderr ?? ""}` };
+};
+
+const run = (body) => {
+  const dir = mkdtempSync(join(tmpdir(), "clarify-gate-test-"));
+  const file = join(dir, "spec.md");
+  writeFileSync(file, body);
+  const result = gate(file);
+  rmSync(dir, { recursive: true, force: true });
+  return result;
+};
+
+// fails = the gate must refuse the spec (exit 1). says = a fragment of the reason, so a
+// case cannot pass by failing for an unrelated reason.
+const CASES = [
+  {
+    name: "a settled spec passes",
+    fails: false,
+    says: "PASS",
+    body: clean(),
+  },
+  {
+    name: "no Clarifications section fails, and says the heading is not translatable",
+    fails: true,
+    says: "SYNTAX",
+    body: "# Payments\n\n## Requirements\n\n- The system MUST capture.\n\n## Open questions\n\nNone known.\n",
+  },
+  {
+    name: "an open marker of the family fails",
+    fails: true,
+    says: "open [NEEDS ...] marker",
+    body: clean("- [NEEDS DECISION: refund window; owner: business]\n"),
+  },
+  {
+    name: "the family written as a numbered list instead of brackets fails",
+    fails: true,
+    says: "instead of the required [NEEDS ...] bracket form",
+    body: clean("- **CLARIFICATION-1 (owner: business).** Which currency?\n"),
+  },
+
+  // The translated-marker false pass: a spec in another language whose author translated
+  // the marker family printed PASS with every gap still open.
+  {
+    name: "a marker translated into Chinese fails instead of passing silently",
+    fails: true,
+    says: "shaped like an open marker",
+    body: clean("- [需要澄清: 退款窗口是几天?]\n"),
+  },
+  {
+    name: "a marker translated into Polish fails",
+    fails: true,
+    says: "shaped like an open marker",
+    body: clean("- [BRAK DECYZJI: model cenowy; wlasciciel: biznes]\n"),
+  },
+  {
+    name: "an invented marker type fails",
+    fails: true,
+    says: "not one of the four forms",
+    body: clean("- [TODO: decide the retry budget]\n"),
+  },
+  {
+    name: "the failure names where the rule is written down",
+    fails: true,
+    says: "working-language.md",
+    body: clean("- [需要决策: 定价; 负责人: 业务]\n"),
+  },
+
+  // The other direction: ordinary markdown is not an open marker. A gate that fires on a
+  // link is a gate people learn to route around.
+  {
+    name: "a markdown link is not a marker",
+    fails: false,
+    says: "PASS",
+    body: clean("- See [the pricing ADR](../docs/decision-records/ADR-004-pricing.md).\n"),
+  },
+  {
+    name: "a link whose text is shouty with a colon is not a marker",
+    fails: false,
+    says: "PASS",
+    body: clean("- See [ADR-004: pricing](../docs/decision-records/ADR-004-pricing.md).\n"),
+  },
+  {
+    name: "a link whose text is not ASCII is not a marker",
+    fails: false,
+    says: "PASS",
+    body: clean("- Zobacz [decyzja: cennik](../docs/decision-records/ADR-004-pricing.md).\n"),
+  },
+  {
+    name: "checkboxes, footnotes and reference links are not markers",
+    fails: false,
+    says: "PASS",
+    body: clean("- [ ] not done\n- [x] done\n- a footnote[^1] and a [reference][ref]\n"),
+  },
+  {
+    name: "prose in a language other than English is not a marker",
+    fails: false,
+    says: "PASS",
+    body: clean("- System MUSI przechwycic platnosc w ciagu 7 dni (kwota w groszach).\n"),
+  },
+
+  // A gate that cannot read its spec must not report on it.
+  { name: "a spec file that does not exist fails", fails: true, says: "not found", absent: true },
+];
+
+let failures = 0;
+for (const c of CASES) {
+  const { code, out } = c.absent ? gate(join(tmpdir(), "clarify-gate-test-absent", "spec.md")) : run(c.body);
+  const want = c.fails ? 1 : 0;
+  if (code !== want) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - expected exit ${want}, got ${code}\n${out.replace(/^/gm, "        ")}`);
+  } else if (c.says && !out.includes(c.says)) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - exit ${code} is right but the output never says "${c.says}"\n${out.replace(/^/gm, "        ")}`);
+  } else {
+    console.log(`  ok    ${c.name}`);
+  }
+}
+
+if (failures) {
+  console.log(`\nclarify-gate-test: FAIL - ${failures} of ${CASES.length} cases`);
+  process.exit(1);
+}
+console.log(`\nclarify-gate-test: OK - ${CASES.length} cases, a spec that is not settled cannot reach plan or tasks`);
