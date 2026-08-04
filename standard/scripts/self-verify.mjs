@@ -471,19 +471,27 @@ if (manifest) {
 // 2b. surviving template placeholders - drift 0 with empty shells is a hollow win.
 // A warning, never drift: substance stays the judgment tier's call.
 if (!skeleton) {
-  // The two shapes the shipped templates actually use, and nothing wider:
+  // The three shapes the shipped templates actually use, and nothing wider:
   //   {{NORTH_STAR}}   mustache, in PRODUCT
   //   <repo>, <team language>, <declare per artifact - default English>   angle, in prose
-  // `:` `/` `=` and a leading `/` stay out, so markdown autolinks (`<https://x>`), HTML
-  // attributes (`<img src="x">`) and closing tags (`</div>`) are not placeholders. That was
-  // not enough on its own: `<picture>`, `<code>` and friends have the same shape as `<repo>`,
-  // and the warning fired on four repos' ordinary README markup - files the standard never
-  // wrote. A single-word angle token that names an HTML element is markup, so it is excluded
-  // by name; a multi-word one is prose and no HTML element looks like that.
+  //   | ... | ... |   a table row whose every cell is an ellipsis, in AGENTS.md/ARCHITECTURE.md
+  // `:` `/` `=` and a leading `/` stay out of the angle form, so markdown autolinks
+  // (`<https://x>`), HTML attributes (`<img src="x">`) and closing tags (`</div>`) are not
+  // placeholders. That was not enough on its own: `<picture>`, `<code>` and friends have the
+  // same shape as `<repo>`, and the warning fired on four repos' ordinary README markup -
+  // files the standard never wrote. A single-word angle token that names an HTML element is
+  // markup, so it is excluded by name; a multi-word one is prose and no HTML element looks
+  // like that.
   //
   // Unicode, not ASCII: the pattern was `[A-Za-z]`-only, so `<角色名>` and
   // `<нужно заполнить>` were invisible and a translated but unfilled shell reached drift 0
   // with a clean bill of health.
+  //
+  // The ellipsis-row form is the other shape a template leaves behind: "your rows go here"
+  // in the shipped AGENTS.md and ARCHITECTURE.md, kept verbatim by a showcase repo's own entry
+  // file and unnoticed by either alternative above. A row of EMPTY cells is deliberately not
+  // matched: an empty table is a legitimate steady state (no cycles in flight yet), and a
+  // warning that state cannot clear is one everybody learns to skip.
   const HTML_ELEMENTS = new Set(
     ("a abbr address area article aside audio b bdi bdo big blockquote body br button canvas caption center cite code col colgroup " +
       "data datalist dd del details dfn dialog div dl dt em embed fieldset figcaption figure font footer form g h1 h2 h3 h4 h5 h6 " +
@@ -492,11 +500,11 @@ if (!skeleton) {
       "slot small source span strong style sub summary sup svg symbol table tbody td template text textarea tfoot th thead time " +
       "title tr track u ul use var video wbr").split(" "),
   );
-  const PLACEHOLDER_RE = /\{\{[^}\n]+\}\}|<(\p{L}[\p{L}\p{N} '._+-]{0,58})>/gu;
+  const PLACEHOLDER_RE = /\{\{[^}\n]+\}\}|<(\p{L}[\p{L}\p{N} '._+-]{0,58})>|^\|(?:\s*(?:\.{3}|…)\s*\|)+\s*$/gmu;
   const hasPlaceholder = (body) => {
     for (const m of body.matchAll(PLACEHOLDER_RE)) {
       const angle = m[1];
-      if (angle === undefined) return true; // the mustache form is never anything else
+      if (angle === undefined) return true; // the mustache and ellipsis-row forms are never anything else
       if (!/\s/.test(angle) && HTML_ELEMENTS.has(angle.toLowerCase())) continue;
       return true;
     }

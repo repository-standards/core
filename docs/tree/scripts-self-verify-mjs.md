@@ -40,8 +40,9 @@ say whether you filled it well - only whether it is there and whether it still c
 template markers.
 
 Drift 0 with empty shells is a hollow win. The placeholder scan warns about unfilled
-`<markers>` and deliberately never counts them as drift, because converting judgment into an
-integer is how a metric starts being gamed.
+`<markers>`, `{{TOKENS}}` and table rows still made of ellipsis cells, and deliberately never
+counts them as drift, because converting judgment into an integer is how a metric starts being
+gamed. A row of *empty* cells is not a marker: an empty table is a legitimate state.
 
 ## The convention that makes the placeholder scan work
 

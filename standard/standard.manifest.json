@@ -45,7 +45,7 @@
       "profile": "core",
       "since": "1.0.0",
       "rule": "R2",
-      "sha256": "b428fb929d182b35ccd3ac3c7a4823631c691764904e4428ceef50e113afa91d"
+      "sha256": "ffe6f4d1b2dd5751a4255493d6ebafd4cf289e6eed8ab8b58c57b09950821d7e"
     },
     {
       "path": "CLAUDE.md",
@@ -136,7 +136,7 @@
       "profile": "core",
       "since": "0.4.0",
       "rule": "R16",
-      "sha256": "2f0fe2cc34e9007050191f90d72d8e2951958a736cb153b7c9540ab2d7f5728e"
+      "sha256": "cceb74ba79146c299cadc9c287ee040a5dfee690df69cf0ca42ea9275af4ac03"
     },
     {
       "path": "scripts/spec-structure.mjs",
@@ -175,7 +175,7 @@
       "profile": "core",
       "since": "1.0.0",
       "rule": "R4",
-      "sha256": "3006c929767845798d25c874670b3c58b160fe7b467ef72f8123a1841a1ead95"
+      "sha256": "b3f62ebbafee008ce1106fc398c754e11abe7f7cc8b2a2ca691decf8da45d9f8"
     },
     {
       "path": "scripts/schema-pair.mjs",
@@ -312,7 +312,7 @@
       "since": "1.0.0",
       "rule": "R19",
       "sha256": {
-        "lib.sh": "0a1781136a271592e7f6217fa0f4d29f28cceae3c1c95e9229c33c3346702dde",
+        "lib.sh": "06f1822d3110e5de9eb68d253bbafae6121326a30815955a48bd78578d428e34",
         "no-ci-secret-writes.sh": "db8381dd7b3e58b7a349c8bb3312a03ac792cffa0a04a781d790f2b14ef61793",
         "no-force-push.sh": "014a38425cf4716a9057183b6c09b68e86960e114645cabaa9e6cccdf9a3eb2a",
         "no-remote-db-writes.sh": "bc15a3be91c420fddad1691efe3a548e3e0487c20acd4214a1fbf544c66ca686"
