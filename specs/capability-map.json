@@ -44,6 +44,7 @@
     "standard/scripts/facts-check.mjs",
     "standard/scripts/schema-pair.mjs",
     "standard/scripts/verifyAgentGuards.sh",
+    "standard/scripts/decision-records-check.mjs",
     "standard/scripts/lib/**"
   ]
 }
