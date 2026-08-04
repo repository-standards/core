@@ -16,6 +16,7 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+<<<<<<< HEAD
 ### Nothing authored the capability map, and the example described a rejected layout (2026-08-04)
 
 Two gaps around the file the whole coupling mechanism reads. `capability-map` appears seven
@@ -177,6 +178,16 @@ path is claimed by nobody; it is bounded by a declared `$unclaimed` list in the 
 paths that intentionally belong to no capability are a recorded decision, and where no
 such list exists the check reports that it is off instead of passing quietly. A retired
 capability's deliberately empty globs stay exempt.
+
+### `pre-pr-review` did not run the gate CI actually blocks on (2026-08-04)
+
+Step 3 named `spec-guard.mjs --audit` without `--block` and never named `--base`
+at all - reproduced: everything the step listed came back green while CI, which
+runs `--base origin/main --block` and `--audit --block`, went red on the same
+branch. The step now names both invocations with their flags, and notes that
+core profile's shipped workflow only blocks on the audit - run both with
+`--block` locally anyway, since a local run stricter than CI costs a moment and
+a local run looser than CI costs a red PR.
 
 ### Record numbering had no source of truth (2026-08-04)
 
