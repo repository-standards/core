@@ -88,8 +88,8 @@ R15 and the align-to-standards tracker questions named three trackers by brand (
 Issues, Jira, Linear); GitLab Issues and mailing-list-plus-Bugzilla workflows are real
 and were outside that list - confirmed independently against two repos in the same
 testing round. Reworded open-ended. Separately, `AGENTS.md`'s own adoption paragraph
-linked `docs/method/self-verify.md` under the visible text `standard/docs/self-verify.md`
-- a path that does not exist - fixed to match the real target.
+linked `docs/method/self-verify.md` under the visible text `standard/docs/self-verify.md`,
+a path that does not exist - fixed to match the real target.
 
 ### The clarify gate could be satisfied by a spec whose open items were never in bracket form (2026-08-03)
 
