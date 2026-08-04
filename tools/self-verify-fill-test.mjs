@@ -96,9 +96,38 @@ check("the shipped AGENTS.md warns for its real markers, not its notation", {
   warnsAbout: [["AGENTS.md", true]],
 });
 
+// Too loose in one direction: ordinary README markup has the same shape as `<repo>`, and
+// the warning fired on it in four foreign repos - files the standard never wrote and an
+// adopter cannot "fill".
+check("HTML markup in a filled README does not warn", {
+  files: {
+    "README.md":
+      `${FILLED_HEAD}<picture><source media="(prefers-color-scheme: dark)" srcset="logo-dark.png"><img src="logo.png" alt="Acme"></picture>\n\n` +
+      "<details>\n<summary>More</summary>\n\nRun it with <code>pnpm dev</code>, then press <kbd>r</kbd>.<br>\n</details>\n",
+  },
+  warnsAbout: [["README.md", false]],
+});
+
+// Too tight in the other: the pattern was ASCII-only, so a translated shell nobody filled
+// reached drift 0 looking complete.
+check("a placeholder in a non-Latin script warns", {
+  files: { "README.md": "# 项目名称\n\n这个仓库属于 <角色名>。\n" },
+  warnsAbout: [["README.md", true]],
+});
+
+check("a multi-word placeholder in Cyrillic warns", {
+  files: { "README.md": "# Проект\n\nВладелец: <нужно заполнить>.\n" },
+  warnsAbout: [["README.md", true]],
+});
+
+check("an autolink is not a placeholder", {
+  files: { "README.md": `${FILLED_HEAD}Report issues at <https://example.com/issues>.\n` },
+  warnsAbout: [["README.md", false]],
+});
+
 console.log();
 if (failures) {
   console.error(`self-verify-fill-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("self-verify-fill-test: OK - 6 cases, the fill warning is clearable and still fires");
+console.log("self-verify-fill-test: OK - the fill warning is clearable, still fires, and reads any script");
