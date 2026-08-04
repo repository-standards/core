@@ -58,13 +58,31 @@ handover just added.
    - Never touch the `Last reconciled:` stamp - only the `spec-*` skills move
      it, when they fold the dossier into a spec.
 
-4. **Route what is already ripe.** If the material contains a *settled*
+4. **Check it against every `Revisit when` (grep, not judgment).** Every ADR/BDR
+   carries a `## Revisit when` field naming the concrete signal that should reopen
+   it - nobody read it back before this step existed, so a decision could sit past
+   its own trigger with only an agent's own unbroken context noticing (a fresh
+   agent, or the same agent on a later date, would not). Pull each record's
+   `Revisit when` line across `docs/decision-records/` (or wherever this repo's
+   records live) and check the new entry's text against it - a textual match ("10k
+   customers", "self-hosting", a named competitor) is a hit; this is a grep, not a
+   semantic read of every record. On a hit, add a row under a `## Revisit signals
+   hit` section (create it if this dossier has never needed one) naming the record
+   and the matching text, and carry it into the readiness report below - resolving
+   it (write the superseding record, or decide the signal does not really apply) is
+   a human call, exactly like a contradiction. **What this catches:** a condition
+   whose wording shows up in the new material. **What it cannot catch:** a signal
+   that is true in the world but never gets written down here, or one worded so
+   differently from the record that no grep finds it - a tripwire, not a monitor.
+
+5. **Route what is already ripe.** If the material contains a *settled*
    decision (a fork was taken, on the record), offer to draft the ADR/BDR now -
    consent-gated, the user says yes or no. If it contains a clear work item,
    offer the backlog. Everything else stays in the dossier as material.
 
-5. **Report readiness.** End with a one-paragraph status: how many entries are
-   `new`/`open` vs consumed, the open contradictions, and a verdict - "ripe
+6. **Report readiness.** End with a one-paragraph status: how many entries are
+   `new`/`open` vs consumed, the open contradictions, any `Revisit when` signal
+   hit (step 4), and a verdict - "ripe
    for `/spec-specify`" (core questions answerable, actors and boundaries
    visible) or "still discovering" (name what is still missing). If a spec
    already exists for this topic, say instead: "spec exists - route this
@@ -88,5 +106,6 @@ handover just added.
 
 - [ ] The entry file exists, provenance-stamped, essence-only, raw linked
 - [ ] The dossier README lists it (`new`), summary current, contradictions diffed
+- [ ] The new material was checked against every decision record's `Revisit when`; any hit is on the record and in the readiness report
 - [ ] Ripe decisions/work items offered onward (consent-gated), not silently taken
 - [ ] Readiness verdict reported ("ripe for spec-specify" / "still discovering" / "route via clarify")

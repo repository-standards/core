@@ -178,6 +178,18 @@ paths that intentionally belong to no capability are a recorded decision, and wh
 such list exists the check reports that it is off instead of passing quietly. A retired
 capability's deliberately empty globs stay exempt.
 
+### `Revisit when` had two writers and no reader (2026-08-04)
+
+`adr-write` and `bdr-write` both write a `Revisit when` field; nothing read it back -
+reproduced: a BDR named exactly the signal that should have reopened a later decision,
+and only an agent's own unbroken context caught it, which a fresh agent or a later
+date would not. `discovery-digest` is now the reader: new material is checked against
+every `Revisit when` condition across the decision records (grep-able condition text
+against each record's `Status`/`Revisit when` line, not semantic judgment), with hits
+recorded in the dossier and carried into the readiness report. Stated plainly what it
+catches (wording that shows up in the new material) and what it cannot (a true signal
+never written down, or worded too differently to grep for).
+
 ### `CHANGELOG.md` was normative (R18/R25) but absent from the manifest entirely (2026-08-04)
 
 Found alongside the decision-record numbering gap: the manifest had no `files` entry
