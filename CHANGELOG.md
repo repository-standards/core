@@ -230,11 +230,11 @@ self-verify reports it as drift.
 `spec-reconcile`'s procedure only checked spec, code and tests against each
 other - reproduced: a real supersession (one BDR superseding another) left five
 stale citations to the superseded record plus a stale code comment, every guard
-green. New step: for each spec in scope, check every ADR/BDR it names or links
-- in the spec's prose and the capability's code comments - against that
-record's current `Status`; a citation to a since-superseded record gets
-repointed and the surrounding prose flagged for a human, never the decision
-text itself rewritten. Grep-able and advisory, not a new mechanical gate.
+green. New step: for each spec in scope, check every ADR/BDR it names or links,
+in the spec's prose and the capability's code comments, against that record's
+current `Status`; a citation to a since-superseded record gets repointed and
+the surrounding prose flagged for a human, never the decision text itself
+rewritten. Grep-able and advisory, not a new mechanical gate.
 
 ### `pre-pr-review` did not run the gate CI actually blocks on (2026-08-04)
 
