@@ -30,6 +30,12 @@ const NOT_A_CYCLE = new Set(["TIMELINE.md", "README.md"]);
 // looks like one.
 const ID = /^[A-Z][A-Z0-9]*-[A-Za-z0-9-]+$/;
 
+// A cell as the author wrote it vs. the value in it: `PAY-2` and **PAY-2** are the same
+// intent as PAY-2. Markup around an id was invisible to the anchored pattern above, so a
+// table that formats its ids - a perfectly ordinary thing to do - read as a table with no
+// intents in it, and the duplicate it held was reported as OK.
+const unwrap = (cell) => (cell ?? "").replace(/^[`*_\s]+/, "").replace(/[`*_\s]+$/, "");
+
 const walk = (dir, acc = []) => {
   for (const e of readdirSync(dir)) {
     // `_` marks a template - as a file or as a directory. Their example rows would
@@ -63,16 +69,26 @@ const BLOCKED_BY = /^blocked\s*:\s*([A-Z][A-Z0-9]*-[A-Za-z0-9-]+)$/i;
 // second copy of every intent it names, reporting the exact "copied, not moved" failure it
 // exists to catch on a cycle that was closed correctly. The pool (`docs/backlog.md`) has no
 // second ID-shaped table to collide with, so it keeps the whole-file scan.
-const rowsIn = (file, scopeToIntents = false) => {
+//
+// Scoping to a heading is also how the check switches itself off, which is why the scan
+// reports what it saw as well as what it found: a cycle file using `### Intents`, `## Work`
+// or the id-and-title-in-one-cell shape that the folder manual documented yielded zero
+// rows, and zero rows is indistinguishable from a clean cycle. Both are errors now, and
+// `sawIntents` / `bodyRows` are what the caller needs to tell them apart.
+const scan = (file, scopeToIntents = false) => {
   const found = [];
   let commented = false;
   let fenced = false;
   let inIntents = !scopeToIntents;
+  let sawIntents = !scopeToIntents;
+  let bodyRows = 0; // table rows under the heading that are neither header nor separator
+  let tableStart = true; // markdown requires a header row: the first row of a table is it
   for (const raw of readFileSync(file, "utf8").split("\n")) {
     const line = raw.trim();
     if (scopeToIntents && !commented && !fenced) {
       if (/^##\s+intents\b/i.test(line)) {
         inIntents = true;
+        sawIntents = true;
         continue;
       }
       if (inIntents && /^##\s+/.test(line)) inIntents = false;
@@ -102,17 +118,27 @@ const rowsIn = (file, scopeToIntents = false) => {
     }
     if (fenced || !inIntents) continue;
     const row = visible.trim();
-    if (!row.startsWith("|")) continue;
+    if (!row.startsWith("|")) {
+      tableStart = true;
+      continue;
+    }
     // Drop the empty strings a leading and trailing `|` produce, so the status is simply
     // the last cell however many columns the table carries.
     const cells = row.split("|").map((c) => c.trim());
     if (cells[0] === "") cells.shift();
     if (cells.length && cells[cells.length - 1] === "") cells.pop();
-    const [id] = cells;
+    if (cells.every((c) => /^:?-+:?$/.test(c))) continue; // the header underline
+    if (tableStart) {
+      tableStart = false; // the header row itself
+      continue;
+    }
+    if (cells.every((c) => c === "")) continue; // the template's blank row
+    bodyRows++;
+    const id = unwrap(cells[0]);
     if (!id || !ID.test(id)) continue;
-    found.push({ id, status: (cells[cells.length - 1] ?? "").toLowerCase() });
+    found.push({ id, status: unwrap(cells[cells.length - 1]).toLowerCase() });
   }
-  return found;
+  return { rows: found, sawIntents, bodyRows };
 };
 
 const pool = POOLS.find(existsSync);
@@ -138,8 +164,20 @@ const files = [pool, ...cycleFiles];
 const where = new Map(); // id -> [file, ...]
 const status = new Map(); // id -> last status cell seen
 const blocks = []; // { id, ref, file }
+const unreadable = []; // { file, why } - a cycle this guard cannot read at all
 for (const f of files) {
-  for (const { id, status: s } of rowsIn(f, f !== pool)) {
+  const { rows, sawIntents, bodyRows } = scan(f, f !== pool);
+  // A cycle whose intents this guard cannot find is not a clean cycle, and the two look
+  // identical from the outside. A real pool-plus-cycle duplicate was reported as
+  // "OK - each in exactly one" for exactly this reason.
+  if (f !== pool) {
+    if (!sawIntents) {
+      unreadable.push({ file: f, why: "no `## Intents` heading - a cycle's rows live under that exact H2 (a deeper level does not count), because a closed cycle's `## Outcome` table names the same ids" });
+    } else if (bodyRows > 0 && rows.length === 0) {
+      unreadable.push({ file: f, why: `${bodyRows} row(s) under \`## Intents\` but no intent id in the first cell - the id is its own cell (\`PAY-2\`), the title goes in the next one` });
+    }
+  }
+  for (const { id, status: s } of rows) {
     where.set(id, [...(where.get(id) ?? []), f]);
     status.set(id, s);
     const m = s.match(BLOCKED_BY);
@@ -165,8 +203,11 @@ for (const { id, ref, file } of stale) {
 for (const { id, file } of selfBlocked) {
   console.error(`  ${id} (${file}) is blocked by itself`);
 }
+for (const { file, why } of unreadable) {
+  console.error(`  ${file}: ${why}`);
+}
 
-const problems = clashes.length + stale.length + selfBlocked.length;
+const problems = clashes.length + stale.length + selfBlocked.length + unreadable.length;
 
 if (!problems) {
   const note = blocks.length ? `, ${blocks.length} live block(s)` : "";
@@ -185,6 +226,11 @@ if (clashes.length) {
 }
 if (stale.length || selfBlocked.length) {
   lines.push("A `blocked:<id>` status must name an intent that exists, is not itself, and is not already done.");
+}
+if (unreadable.length) {
+  lines.push(
+    "A cycle whose intents cannot be read is not a cycle with no problems: the format is the interface. Rows under `## Intents`, the id in its own first cell, the status in the last cell whatever columns sit between - see docs/tree/docs-cycles.md, and `docs/cycles/_template.md` for the shape a cycle starts from.",
+  );
 }
 console.error(lines.join("\n"));
 process.exit(block ? 1 : 0);
