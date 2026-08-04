@@ -95,6 +95,14 @@ of quiet obligations.
 > what did we write down during the adoption that nobody has picked up?
 ```
 
+This is a direct read, not a skill's output - the file already answers it, which is the
+point of it being a file. "Nobody has picked up" is answered trivially, since the pool's
+`assignee` is empty by definition. "During the adoption" specifically is the part that is
+honestly weaker: a row carries no `source` field of its own, so pinning one to onboarding
+relies on which epic the onboarding phase happened to file it under, not a tag that
+survives the row being re-ordered or re-grouped later. That is a real gap in the format,
+not a missing skill - a `source` column would close it if it starts mattering.
+
 ### You do not have to use any of this
 
 The in-repo backlog is **optional**. If your team already lives in a tracker, keep it: the

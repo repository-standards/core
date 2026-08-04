@@ -16,6 +16,19 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Four of the six things `tracking-work.md` promised had no owning skill (2026-08-04)
+
+Reproduced against the real skills: the rendered 3-lane cycle board, moving an item's status
+mid-cycle, and reassigning a holder mid-cycle had no skill behind them, though the page
+claimed "each has a skill that owns it". `cycle-open` now also documents reading an open
+cycle back as a board (a grouping of what the file already stores, no date attached) and
+mid-flight edits (status moves, reassignment) as plain table edits followed by the guard -
+both were previously left to inference. The fourth gap, "what did we write down during
+onboarding that nobody picked up", turned out to be mostly a direct read rather than a
+missing skill; `tracking-work.md` now says so and names the one honest limit (no per-row
+`source` field, so "during onboarding" specifically can only be inferred from which epic a
+row landed under).
+
 ### Nothing authored the capability map, and the example described a rejected layout (2026-08-04)
 
 Two gaps around the file the whole coupling mechanism reads. `capability-map` appears seven
