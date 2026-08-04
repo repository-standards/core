@@ -27,12 +27,26 @@ const write = (rel, body) => {
 };
 const json = (o) => `${JSON.stringify(o, null, 2)}\n`;
 const rules = (o = {}) => json({ version: 1, rules: [{ id: "a", on: true }], ...o });
-const MAP = { widgets: ["src/**", { glob: "data/*.json", couples: "shape" }] };
+// `payments` carries the two glob shapes from the shipped example - a capability whose
+// code sits at the top level, and a file directly inside `shared/`. Both were dead:
+// `**` was translated without consuming the slash beside it, so they only ever matched
+// a path with an extra directory in the middle, and the money path went unguarded.
+const MAP = {
+  widgets: ["src/**", { glob: "data/*.json", couples: "shape" }],
+  payments: ["**/payment/**", "shared/**/payment*"],
+};
 
 write("specs/capability-map.json", json(MAP));
 write("specs/widgets/spec.md", "# Widgets\n");
+write("specs/payments/spec.md", "# Payments\n");
 write("src/index.js", "export const widget = 1;\n");
 write("data/rules.json", rules());
+write("payment/index.ts", "export const capture = 1;\n");
+write("payment/gateway/capture.ts", "export const gateway = 1;\n");
+write("shared/payment.ts", "export const money = 1;\n");
+write("shared/paymob.ts", "export const unrelated = 1;\n");
+// Tracked and claimed by nobody - what the unclaimed-code check is for.
+write("tooling/build.mjs", "export const build = 1;\n");
 git("init", "-q", "-b", "main");
 git("add", "-A");
 git(...IDENT, "commit", "-qm", "seed");
@@ -58,6 +72,82 @@ const CASES = [
   { name: "code with its spec passes", fires: false, act: () => { write("src/index.js", "export const widget = 3;\n"); write("specs/widgets/spec.md", "# Widgets\n\nA widget is 3.\n"); } },
   { name: "a staged data addition does not couple", fires: false, args: ["--staged"], says: "changed as data", act: () => { write("data/rules.json", json({ version: 1, rules: [{ id: "a", on: true }, { id: "c", on: true }] })); git("add", "-A"); }, undo: () => git("reset", "-q") },
   { name: "an unusable map entry stops the guard", fires: true, says: "unusable entry", act: () => write("specs/capability-map.json", json({ widgets: [{ couples: "shape" }] })) },
+
+  // The glob shapes the shipped example leads with. Before the shared translator each
+  // of these passed: `spec-guard: OK` on a change to a money path with no spec edit.
+  { name: "a capability directory at the top level matches `**/payment/**`", fires: true, act: () => write("payment/index.ts", "export const capture = 2;\n") },
+  { name: "a file nested deeper under the same glob matches", fires: true, act: () => write("payment/gateway/capture.ts", "export const gateway = 2;\n") },
+  { name: "`shared/**/payment*` matches a file directly inside shared", fires: true, act: () => write("shared/payment.ts", "export const money = 2;\n") },
+  { name: "a neighbour that only starts like the glob does not match", fires: false, act: () => write("shared/paymob.ts", "export const unrelated = 2;\n") },
+
+  // --audit: the map is what makes the guard mean anything, and it can rot in four ways.
+  {
+    name: "--audit reports a glob that matches no file",
+    fires: true,
+    args: ["--audit"],
+    says: "watching nothing",
+    act: () => write("specs/capability-map.json", json({ ...MAP, widgets: ["src/**", "moved-away/**"] })),
+  },
+  {
+    name: "--audit reports a map entry whose capability has no spec",
+    fires: true,
+    args: ["--audit"],
+    says: "no spec",
+    act: () => write("specs/capability-map.json", json({ ...MAP, checkout: ["src/**"] })),
+  },
+  {
+    name: "--audit says so when the unclaimed-code check is off",
+    fires: false,
+    args: ["--audit"],
+    says: "unclaimed-code check is OFF",
+    act: () => {},
+  },
+  {
+    name: "--audit reports code that belongs to no capability once $unclaimed is declared",
+    fires: true,
+    args: ["--audit"],
+    says: "tooling/build.mjs",
+    act: () => write("specs/capability-map.json", json({ ...MAP, $unclaimed: [] })),
+  },
+  {
+    name: "--audit passes when that code is declared unclaimed",
+    fires: false,
+    args: ["--audit"],
+    says: "each claimed by a capability or declared unclaimed",
+    act: () => write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["tooling/**", "shared/paymob.ts"] })),
+  },
+  {
+    name: "$unclaimed is metadata, not a capability whose spec can never be touched",
+    fires: false,
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["tooling/**", "shared/paymob.ts"] }));
+      write("tooling/build.mjs", "export const build = 2;\n");
+    },
+  },
+  {
+    name: "an unknown $ key is refused instead of silently exempting nothing",
+    fires: true,
+    says: "unknown metadata key",
+    act: () => write("specs/capability-map.json", json({ ...MAP, $unclaimd: ["tooling/**"] })),
+  },
+  {
+    // The spec template tells a retiring capability to keep its map entry: the code is
+    // gone, the spec stays as the record, and dropping the entry would make the spec
+    // read as an orphan instead. Its globs match nothing by design.
+    name: "--audit leaves a retired capability's now-empty globs alone",
+    fires: false,
+    args: ["--audit"],
+    says: "1 retired",
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, legacy: ["legacy/**"] }));
+      write("specs/legacy/spec.md", "# Legacy\n\n**Status:** retired\n");
+      git("add", "-A");
+    },
+    undo: () => {
+      git("reset", "-q");
+      rmSync(join(repo, "specs/legacy"), { recursive: true, force: true });
+    },
+  },
 ];
 
 let failures = 0;

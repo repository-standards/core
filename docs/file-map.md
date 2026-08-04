@@ -47,7 +47,7 @@ copied into your repository as folder READMEs that then age in place.
 | `docs/ideas` | pre-decision ideas - status-driven, graduate into records/specs on approval (ADR-010) | optional, core | `fill-from-repo` | [R14](../standard/SPEC.md) |
 | `docs/discovery` | discovery dossiers - provenance-stamped extracts per topic, never normative (ADR-024) | optional, core | `fill-from-repo` | [R5](../standard/SPEC.md) |
 | `docs/facts.json` | the facts this repo restates: one home each, every restatement declared | optional, core | `fill-from-repo` | [R4](../standard/SPEC.md) |
-| `docs/facts.example.json` | the shape of a declared fact - copy to docs/facts.json and replace with this repo's own | optional, core | `copy` | [R4](../standard/SPEC.md) |
+| `docs/facts.example.json` | the shape of a declared fact, reference only - do not rename or copy its placeholder content into docs/facts.json; write docs/facts.json from scratch, in this shape, once this repo has its first fact worth declaring (R4) | optional, core | `copy` | [R4](../standard/SPEC.md) |
 | `docs/PRINCIPLES.md` | the altitude apex R1 names - optional but expected | optional, core | `fill-from-repo` | [R1](../standard/SPEC.md) |
 | `docs/personas.md` | the persona roster the R10 gate checks specs against - without it the gate has nothing to hold | **required**, core | `fill-from-repo` | [R10](../standard/SPEC.md) |
 | `docs/README.md` | the docs hub table | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
@@ -75,6 +75,7 @@ copied into your repository as folder READMEs that then age in place.
 | `scripts/facts-check.mjs` | a fact restated in prose still agrees with its source - declared homes and claims (R4) | optional, core | `copy` | [R4](../standard/SPEC.md) |
 | `scripts/schema-pair.mjs` | the DDL under database/schema/ and its typed twin stay 1:1 - the declared edge resolves and every name is covered | optional, core | `copy` | [R24](../standard/SPEC.md) |
 | `scripts/spec` | the spec engine runtime the skills invoke (gate, setup, templates, MIT licence) | **required**, core | `copy` | [R22](../standard/SPEC.md) |
+| `scripts/lib` | what more than one guard needs - glob matching, so two guards cannot answer the same question differently | **required**, core | `copy` | [R16](../standard/SPEC.md) |
 | `scripts/verifyAgentGuards.sh` | drives every guard with real commands - they only emit output on a denial, so a broken guard is otherwise silent | optional, core | `copy` | [R19](../standard/SPEC.md) |
 | `scripts/spec-guard.mjs` | code<->spec coupling guard (+ --audit) - the tool ships at core, the blocking CI gate is scale (R11) | **required**, core | `copy` | [R11](../standard/SPEC.md) |
 | `scripts/cycle-guard.mjs` | proves the one-place invariant the pool and the cycles depend on | optional, scale | `copy` | [R15](../standard/SPEC.md) |

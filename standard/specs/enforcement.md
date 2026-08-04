@@ -15,10 +15,27 @@ part of this is mechanical; the rest needs an AI pass.
   `<capability>` code without touching `specs/<capability>/`; update it or state
   why not." This makes source-of-truth rule 5 (same-PR spec coupling) mechanical. It cannot prove
   the spec is correct - it forces the author to touch the spec or acknowledge.
-- **Orphan-spec audit (same guard):** every capability spec MUST have a map entry
-  (source-of-truth rule 4). A `specs/<capability>/` with no key in the map has no
-  coupling and silently rots, so `spec-guard.mjs --audit` fails on it. Run it full-tree
-  in CI, not just on the diff.
+- **Map audit (same guard):** the map is what makes the coupling guard mean anything,
+  and it can rot in four ways - each of them silent, which is why all four are checked
+  by `spec-guard.mjs --audit`, full-tree in CI rather than on the diff:
+  1. a `specs/<capability>/` with **no map entry** has no coupling and silently rots
+     (source-of-truth rule 4);
+  2. a **map entry naming a capability with no spec** - a key nothing can ever satisfy;
+  3. a **glob that matches no file** in the tree: the guard is watching an empty set,
+     which reads exactly like a guard that is working. A retired capability keeps its
+     entry on purpose (its code is gone, its spec stays) and is exempt - `--audit` reads
+     `**Status:** retired` from the spec and says how many it skipped;
+  4. **code that belongs to no capability.** This is the one that survives a refactor:
+     moving a directory leaves the old glob matching nothing *and* the new path claimed
+     by nobody. It needs a bound, because config, scripts, tooling and prose are not
+     capabilities - so the map declares it. `"$unclaimed": ["<glob>", ...]` lists the
+     paths that belong to no capability by decision; `specs/` is never code and is
+     always exempt. Without a `$unclaimed` key the check is **off and says so** in the
+     `--audit` line, rather than passing quietly.
+
+  Keys starting with `$` are metadata about the map, not capabilities: `$about` (a note
+  for whoever opens the file) and `$unclaimed`. Any other `$` key is refused - a
+  misspelt `$unclaimed` that exempted nothing would be the same silence again.
 - **Clarify gate (ADR-010; field-proven in production, 2026-07):** a spec may not reach
   plan / tasks / the tracker mirror unless it has a `## Clarifications` section and
   **zero** open markers of the `[NEEDS ...` family - CLARIFICATION, DECISION, INPUT and
@@ -38,6 +55,14 @@ is spread across app / service / shared). Keep it at `specs/capability-map.json`
   "pricing": ["src/pricing/**", { "glob": "config/tariffs.json", "couples": "shape" }]
 }
 ```
+
+**Glob syntax** - one translator (`scripts/lib/glob.mjs`) for every guard that reads a
+glob, so two guards cannot answer the same question differently. `*` matches within one
+path segment; `**` matches any number of segments **including none**, which is what makes
+`**/payment/**` cover `payment/index.ts` at the top level as well as
+`apps/web/payment/index.ts`, and `shared/**/payment*` cover `shared/payment.ts`. A
+trailing `**` means the contents of a directory: `src/**` matches `src/index.ts`, not a
+file named `src`.
 
 **Map hygiene:** globs bind **behavior-bearing source**. Dependency manifests and
 lockfiles (`package.json`, `pnpm-lock.yaml`, `go.mod`, ...) SHOULD stay out of

@@ -14,16 +14,25 @@
 // change and does. Without that distinction a data edit demands a spec update
 // with nothing to write, and the cheapest way out is a cosmetic one.
 //
+// Two keys in that file are metadata rather than capabilities: `$about` (a note)
+// and `$unclaimed` (globs for the paths that belong to no capability by decision -
+// config, tooling, docs). --audit reads the second to tell code nobody claims from
+// code deliberately claimed by nobody.
+//
+// Globs are translated by scripts/lib/glob.mjs - `**` matches zero segments as well
+// as many, so `**/payment/**` covers `payment/index.ts` at the top level.
+//
 // Usage:
 //   node scripts/spec-guard.mjs --staged          # pre-commit (staged files), warn only
 //   node scripts/spec-guard.mjs --base <ref>      # CI (diff vs base ref)
-//   node scripts/spec-guard.mjs --audit           # full-tree: every specs/<cap>/ has a map entry
+//   node scripts/spec-guard.mjs --audit           # full-tree: the map is sound (see below)
 //   add --block to exit non-zero on a violation (default: warn, exit 0)
 //
 // No dependencies (Node built-ins only). Place at scripts/spec-guard.mjs.
 
 import { execFileSync, execSync } from "node:child_process";
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
+import { globToRegExp } from "./lib/glob.mjs";
 
 const args = process.argv.slice(2);
 const staged = args.includes("--staged");
@@ -39,13 +48,27 @@ if (!existsSync(MAP)) {
 }
 
 const sh = (c) => execSync(c, { encoding: "utf8" }).trim();
-const map = JSON.parse(readFileSync(MAP, "utf8"));
+const declared = JSON.parse(readFileSync(MAP, "utf8"));
 
 const bad = (msg) => {
   console.error(`\nspec-guard: ${MAP} - ${msg}`);
   console.error('  an entry is "<glob>" or { "glob": "<glob>", "couples": "content" | "shape" }\n');
   process.exit(1);
 };
+
+// A key starting with `$` is metadata about the map, not a capability: `$about` is a
+// free note for whoever opens the file, and `$unclaimed` lists the paths that
+// intentionally belong to no capability (read by --audit). An unrecognised one is
+// refused rather than ignored - a misspelt `$unclaimed` that silently exempted
+// nothing, or a metadata key read as a capability whose spec directory can never
+// exist, are both the quiet failure this guard is for.
+const META = new Set(["$about", "$unclaimed"]);
+for (const k of Object.keys(declared)) {
+  if (k.startsWith("$") && !META.has(k)) bad(`unknown metadata key "${k}" - the metadata keys are ${[...META].join(" and ")}`);
+}
+const map = Object.fromEntries(Object.entries(declared).filter(([k]) => !k.startsWith("$")));
+const unclaimedGlobs = declared.$unclaimed ?? null;
+if (unclaimedGlobs !== null && !Array.isArray(unclaimedGlobs)) bad('"$unclaimed" must hold a list of globs');
 const parseEntry = (e, cap) => {
   if (typeof e === "string") return { glob: e, couples: "content" };
   const couples = e?.couples ?? "content";
@@ -60,27 +83,40 @@ const coupling = Object.fromEntries(
   }),
 );
 
-// --audit: every capability spec (a specs/<cap>/ directory) must have a map entry.
-// A spec with no coupling entry silently rots (source-of-truth rule 4).
+// --audit: the map itself is sound, full-tree. Four ways it can stop meaning
+// anything, all of them silent before this:
+//   1. a capability spec with no map entry - it silently rots (source-of-truth rule 4)
+//   2. a map entry naming a capability that has no spec
+//   3. a glob that matches no file at all - the guard watches an empty set, which is
+//      indistinguishable from a guard that is working
+//   4. code that belongs to no capability - what a refactor leaves behind: the old
+//      glob matches nothing and the new path is claimed by nobody
 if (audit) {
   // A fresh degit has no .git yet - fall back to walking the filesystem, like
   // spec-structure does. A shipped guard never dumps a stack trace.
+  const SKIP_DIRS = new Set(["node_modules", ".git"]);
   const fsWalk = (dir, acc = []) => {
     if (!existsSync(dir)) return acc;
     for (const e of readdirSync(dir)) {
+      if (SKIP_DIRS.has(e)) continue;
       const p = `${dir}/${e}`;
       if (statSync(p).isDirectory()) fsWalk(p, acc);
-      else acc.push(p);
+      else acc.push(p.replace(/^\.\//, ""));
     }
     return acc;
   };
-  let specFiles;
-  try {
-    specFiles = sh("git ls-files specs").split("\n").filter(Boolean);
-    if (specFiles.length === 0) specFiles = fsWalk("specs");
-  } catch {
-    specFiles = fsWalk("specs");
-  }
+  const listed = (what) => {
+    try {
+      const out = sh(`git ls-files ${what}`).split("\n").filter(Boolean);
+      if (out.length) return out;
+    } catch {
+      /* no git, or nothing tracked yet */
+    }
+    return fsWalk(what === "." ? "." : what);
+  };
+  const specFiles = listed("specs");
+  const treeFiles = listed(".");
+
   const capDirs = new Set();
   for (const f of specFiles) {
     const parts = f.split("/"); // specs/<cap>/<file> -> a capability directory
@@ -88,12 +124,70 @@ if (audit) {
   }
   const mapped = new Set(Object.keys(map));
   const orphans = [...capDirs].filter((c) => !mapped.has(c)).sort();
-  if (orphans.length === 0) {
-    console.log(`spec-guard --audit: OK (${capDirs.size} capability specs, all mapped)`);
+  const specless = [...mapped].filter((c) => !capDirs.has(c)).sort();
+
+  // A retired capability keeps its entry on purpose (the spec template says so):
+  // the code is gone, the spec stays as the record, and deleting the entry would
+  // make the spec read as an orphan. Its globs match nothing by design.
+  const retired = new Set(
+    [...capDirs].filter((c) =>
+      specFiles
+        .filter((f) => f.startsWith(`specs/${c}/`) && f.endsWith(".md"))
+        .some((f) => /^\*\*Status:\*\*\s*retired\b/im.test(readFileSync(f, "utf8"))),
+    ),
+  );
+
+  const emptyGlobs = [];
+  for (const [cap, entries] of Object.entries(coupling)) {
+    if (retired.has(cap)) continue;
+    for (const e of entries) {
+      const re = globToRegExp(e.glob);
+      if (!treeFiles.some((f) => re.test(f))) emptyGlobs.push({ cap, glob: e.glob });
+    }
+  }
+
+  // specs/ is never code: the specs are the other side of the coupling, and the map
+  // lives there too. Everything else is claimed by a capability or declared.
+  const claims = Object.values(coupling)
+    .flat()
+    .map((e) => globToRegExp(e.glob));
+  const unclaimedRes = (unclaimedGlobs ?? []).map(globToRegExp);
+  const unclaimed =
+    unclaimedGlobs === null
+      ? []
+      : treeFiles.filter((f) => !f.startsWith("specs/") && !claims.some((re) => re.test(f)) && !unclaimedRes.some((re) => re.test(f)));
+
+  const problems = orphans.length + specless.length + emptyGlobs.length + unclaimed.length;
+  if (problems === 0) {
+    const globCount = Object.values(coupling).flat().length;
+    const claimCheck =
+      unclaimedGlobs === null
+        ? 'the unclaimed-code check is OFF - declare "$unclaimed" (the paths that belong to no capability) to turn it on'
+        : `${treeFiles.length} files, each claimed by a capability or declared unclaimed`;
+    const retiredNote = retired.size ? `; ${retired.size} retired capability/ies not checked for empty globs` : "";
+    console.log(`spec-guard --audit: OK (${capDirs.size} capability specs, all mapped; ${globCount} globs, all matching; ${claimCheck}${retiredNote})`);
     process.exit(0);
   }
-  console.error("\nspec-guard --audit: capability specs with no capability-map entry (they silently rot):");
-  for (const c of orphans) console.error(`  - specs/${c}/   (add "${c}": ["<code globs>"] to ${MAP})`);
+
+  console.error(`\nspec-guard --audit: ${problems} problem(s) in ${MAP}`);
+  if (orphans.length) {
+    console.error("\n  capability specs with no map entry (they silently rot):");
+    for (const c of orphans) console.error(`    - specs/${c}/   (add "${c}": ["<code globs>"] to ${MAP})`);
+  }
+  if (specless.length) {
+    console.error("\n  map entries naming a capability that has no spec:");
+    for (const c of specless) console.error(`    - "${c}"   (write specs/${c}/spec.md, or remove the entry)`);
+  }
+  if (emptyGlobs.length) {
+    console.error("\n  globs that match no file in the tree - the guard is watching nothing:");
+    for (const { cap, glob } of emptyGlobs) console.error(`    - "${cap}": "${glob}"   (fix the glob, or drop it if the code moved)`);
+  }
+  if (unclaimed.length) {
+    const shown = unclaimed.slice(0, 20);
+    console.error(`\n  ${unclaimed.length} file(s) belong to no capability - claim them, or declare the path under "$unclaimed":`);
+    for (const f of shown) console.error(`    - ${f}`);
+    if (unclaimed.length > shown.length) console.error(`    ... and ${unclaimed.length - shown.length} more`);
+  }
   console.error("");
   process.exit(block ? 1 : 0);
 }
@@ -109,18 +203,6 @@ else if (base) raw = sh(`git diff --name-only --diff-filter=ACDMR ${base}...HEAD
 // `git add`, not only in CI where everything is tracked.
 else raw = `${sh("git diff --name-only --diff-filter=ACDMR HEAD")}\n${sh("git ls-files --others --exclude-standard")}`;
 const files = [...new Set(raw.split("\n").filter(Boolean))];
-
-// minimal glob -> regexp: ** = any path, * = within a segment
-const toRe = (glob) =>
-  new RegExp(
-    "^" +
-      glob
-        .replace(/[.+^${}()|[\]\\]/g, "\\$&")
-        .replace(/\*\*/g, " ")
-        .replace(/\*/g, "[^/]*")
-        .replace(/ /g, ".*") +
-      "$",
-  );
 
 // The key shape of a JSON value: every key path, array indices collapsed.
 // { "files": [{ "path": "a" }] } -> files, files[].path
@@ -180,7 +262,7 @@ const shapeChanged = (f) => {
 const violations = [];
 const dataOnly = new Set();
 for (const [cap, entries] of Object.entries(coupling)) {
-  const res = entries.map((e) => ({ ...e, re: toRe(e.glob) }));
+  const res = entries.map((e) => ({ ...e, re: globToRegExp(e.glob) }));
   const specTouched = files.some((f) => f.startsWith(`specs/${cap}/`));
   const codeTouched = files.some((f) => {
     if (f.startsWith("specs/")) return false;
