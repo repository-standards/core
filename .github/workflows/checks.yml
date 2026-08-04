@@ -38,6 +38,8 @@ jobs:
           node standard/scripts/spec-guard.mjs --audit --block
       - name: spec-guard test (the coupling guard still fires where it must)
         run: node tools/spec-guard-test.mjs
+      - name: clarify-gate test (a spec that is not settled cannot reach plan or tasks)
+        run: node tools/clarify-gate-test.mjs
       - name: schema-pair test (the R24 pair check catches a drifted twin)
         run: node tools/schema-pair-test.mjs
       - name: cycle-guard test (an intent cannot be in two places)

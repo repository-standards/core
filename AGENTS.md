@@ -48,7 +48,8 @@ clients get them by reference (ADR-004), never as copies.
   `node standard/scripts/spec-guard.mjs --base origin/main --block` **and**
   `node standard/scripts/spec-guard.mjs --audit --block` (code and its capability
   spec move together; every capability spec is mapped),
-  `node tools/spec-guard-test.mjs`, `node tools/schema-pair-test.mjs` and
+  `node tools/spec-guard-test.mjs`, `node tools/clarify-gate-test.mjs`,
+  `node tools/schema-pair-test.mjs` and
   `node tools/cycle-guard-test.mjs` (those
   guards still fire where they must), `node standard/scripts/facts-check.mjs` +
   `node tools/facts-check-test.mjs` (a fact restated in prose still agrees with
