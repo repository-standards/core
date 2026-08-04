@@ -17,11 +17,21 @@
 // Zone 1 tooling - never shipped.
 
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const GATE = join(process.cwd(), "standard/scripts/spec/check-spec-clarified.sh");
+const TEMPLATE = join(process.cwd(), "standard/specs/capability-spec.template.md");
+
+// The shipped template's own `## Open questions` section, read rather than restated - a
+// copy here would pass while the template it stands for had drifted.
+const templateOpenQuestions = () => {
+  const body = readFileSync(TEMPLATE, "utf8");
+  const at = body.indexOf("## Open questions");
+  if (at < 0) throw new Error(`${TEMPLATE} has no '## Open questions' section to test against`);
+  return body.slice(at);
+};
 
 const CLARIFIED = `## Clarifications
 
@@ -144,6 +154,77 @@ const CASES = [
     fails: false,
     says: "PASS",
     body: clean("- System MUSI przechwycic platnosc w ciagu 7 dni (kwota w groszach).\n"),
+  },
+
+  // The template's required `## Open questions` section, which the gate did not read.
+  // Every shape below was reproduced passing with the questions still live.
+  {
+    name: "no Open questions section fails",
+    fails: true,
+    says: "no '## Open questions' section",
+    body: `# Payments\n\n${CLARIFIED}\n## Requirements\n\n- The system MUST capture.\n`,
+  },
+  {
+    name: "a translated Open questions heading fails as a missing one",
+    fails: true,
+    says: "no '## Open questions' section",
+    body: `# Payments\n\n${CLARIFIED}\n## Requirements\n\n- MUSI przechwycic.\n\n## Pytania otwarte\n\nBrak.\n`,
+  },
+  {
+    name: "a question in prose under Open questions fails",
+    fails: true,
+    says: "live line(s) under '## Open questions'",
+    body: clean().replace("None known.", "Do we refund the fee on a partial refund?"),
+  },
+  {
+    name: "a question phrased as a statement fails",
+    fails: true,
+    says: "live line(s) under '## Open questions'",
+    body: clean().replace("None known.", "The refund window is still undecided."),
+  },
+  {
+    name: "a table of open items fails",
+    fails: true,
+    says: "live line(s) under '## Open questions'",
+    body: clean().replace("None known.", "| Gap | Owner |\n|---|---|\n| refund window | business |"),
+  },
+  {
+    name: "an item resolved above but still listed below fails",
+    fails: true,
+    says: "live line(s) under '## Open questions'",
+    body: clean().replace("None known.", "None known.\n\nRefund window: answered in Clarifications, kept here for context."),
+  },
+  {
+    name: "the failure lists the live lines with their line numbers",
+    fails: true,
+    says: "Do we refund the fee",
+    body: clean().replace("None known.", "Do we refund the fee on a partial refund?"),
+  },
+  {
+    name: "'None.' and other plain forms of nothing-open pass",
+    fails: false,
+    says: "PASS",
+    body: clean().replace("None known.", "None."),
+  },
+  {
+    name: "guidance inside an HTML comment is not live content",
+    fails: false,
+    says: "PASS",
+    body: clean().replace("None known.", "<!-- write real gaps here, or leave the line below -->\nNone known."),
+  },
+  {
+    name: "a multi-line HTML comment is not live content",
+    fails: false,
+    says: "PASS",
+    body: clean().replace("None known.", "<!-- an example:\n\n| Gap | Owner |\n|---|---|\n| refund window | business |\n-->\nNone known."),
+  },
+  {
+    // The shipped template's own section, verbatim - the placeholder must not trip the
+    // rule the placeholder teaches.
+    name: "the shipped template's Open questions section does not trip the rule",
+    fails: false,
+    says: "PASS",
+    body: `# Payments\n\n${CLARIFIED}\n## Requirements\n\n- The system MUST capture.\n\n${templateOpenQuestions()}`,
   },
 
   // A gate that cannot read its spec must not report on it.
