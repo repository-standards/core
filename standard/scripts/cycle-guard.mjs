@@ -61,6 +61,10 @@ const walk = (dir, acc = []) => {
 // into the existing cell keeps a wide table from getting wider.
 const BLOCKED_BY = /^blocked\s*:\s*([A-Z][A-Z0-9]*-[A-Za-z0-9-]+)$/i;
 
+// A markdown table separator cell (`---`, `:--`, `--:`, `:-:`). Recognizing it is what lets
+// the row above it be read as a header, rather than assuming the id sits at column 0.
+const SEP_CELL = /^:?-+:?$/;
+
 // Rows from markdown tables, skipping HTML comments and fenced code blocks.
 //
 // Comment state is scanned left to right *within* the line rather than with two
@@ -83,6 +87,13 @@ const BLOCKED_BY = /^blocked\s*:\s*([A-Z][A-Z0-9]*-[A-Za-z0-9-]+)$/i;
 // or the id-and-title-in-one-cell shape that the folder manual documented yielded zero
 // rows, and zero rows is indistinguishable from a clean cycle. Both are errors now, and
 // `sawIntents` / `bodyRows` are what the caller needs to tell them apart.
+//
+// The id cell is found by the header row's `id` column, not by position. A hardcoded column
+// 0 broke the moment a table prepended a column of its own (a priority, a team) ahead of
+// it - the row still had an id, just not where the guard was looking, so it silently stopped
+// counting. `idCol` is re-resolved every time a separator row is seen, from the header row
+// captured just above it (`headerCells`); a table with no column literally named `id` falls
+// back to column 0, which is every table this guard already shipped against.
 const scan = (file, scopeToIntents = false) => {
   const found = [];
   let commented = false;
@@ -90,7 +101,8 @@ const scan = (file, scopeToIntents = false) => {
   let inIntents = !scopeToIntents;
   let sawIntents = !scopeToIntents;
   let bodyRows = 0; // table rows under the heading that are neither header nor separator
-  let tableStart = true; // markdown requires a header row: the first row of a table is it
+  let headerCells = null; // the header row captured for the table currently being read
+  let idCol = 0; // which column holds the id - resolved from the header, column 0 if unnamed
   for (const raw of readFileSync(file, "utf8").split("\n")) {
     const line = raw.trim();
     if (scopeToIntents && !commented && !fenced) {
@@ -127,7 +139,7 @@ const scan = (file, scopeToIntents = false) => {
     if (fenced || !inIntents) continue;
     const row = visible.trim();
     if (!row.startsWith("|")) {
-      tableStart = true;
+      headerCells = null; // a blank line or prose ends the table - the next header is unknown
       continue;
     }
     // Drop the empty strings a leading and trailing `|` produce, so the status is simply
@@ -135,14 +147,20 @@ const scan = (file, scopeToIntents = false) => {
     const cells = row.split("|").map((c) => c.trim());
     if (cells[0] === "") cells.shift();
     if (cells.length && cells[cells.length - 1] === "") cells.pop();
-    if (cells.every((c) => /^:?-+:?$/.test(c))) continue; // the header underline
-    if (tableStart) {
-      tableStart = false; // the header row itself
+    if (cells.length && cells.every((c) => SEP_CELL.test(c))) {
+      // The header underline - lock in the id column from the header row just above it.
+      const named = headerCells ? headerCells.findIndex((h) => unwrap(h).toLowerCase() === "id") : -1;
+      idCol = named >= 0 ? named : 0;
+      continue;
+    }
+    if (headerCells === null) {
+      headerCells = cells; // the header row itself
       continue;
     }
     if (cells.every((c) => c === "")) continue; // the template's blank row
     bodyRows++;
-    const id = unwrap(cells[0]);
+    const idCell = idCol < cells.length ? cells[idCol] : cells[0];
+    const id = unwrap(idCell);
     if (!id || !ID.test(id)) continue;
     found.push({ id, status: unwrap(cells[cells.length - 1]).toLowerCase() });
   }
