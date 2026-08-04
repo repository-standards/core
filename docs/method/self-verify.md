@@ -157,6 +157,11 @@ which is the only thing that turns a required miss into a compliant one:
   zero. Waiving something is a decision the number should show, not hide.
 - **A stale exception is reported.** If the entry is met anyway, the run warns: the repo
   chose otherwise back and the line is now describing nothing.
+- **A `content` match may scope a subtree** by ending in `/**`
+  (`.claude/skills/**`), for a repo that rewrote a whole directory of shipped procedures and
+  should not have to write forty lines. Only `content`: a subtree waiver on presence would let
+  `scripts/**` sweep away every guard's required-file check, which is the rule above. Each
+  member it waives is counted, so a wide waiver costs wide coverage.
 
 ## Judgment tier - confirmed at review
 
