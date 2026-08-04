@@ -41,6 +41,15 @@ written for a decision nobody made yet:
 > we cannot pick the auth model until legal answers - record the fork as open, with who unblocks it
 ```
 
+**You notice something broken while deciding or discussing an unrelated fork.** That is
+not one of these forks - it is work to not lose, not a decision to record. File it and
+keep going (`add-to-backlog`); if you are fixing it right now instead of noting it for
+later, it is just the current change, not a backlog item:
+
+```
+> btw the export is broken - not touching it now, just flagging it
+```
+
 **Corner case - the paved road is a default, not a rule.** Choosing against it is fine
 and expected; choosing against it *silently* is what the record exists to prevent.
 

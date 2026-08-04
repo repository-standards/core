@@ -33,6 +33,7 @@ already started rotting.
 | a fork taken among alternatives, that someone could reopen | **decision** | ADR (technical) / BDR (business) - `decision-records/`, MADR format |
 | the settled way we do a recurring thing | **rule / convention** | the methodology doc (`specs/README`, conventions, `PRINCIPLES.md`) |
 | what the system does now | **behavior** | `specs/<capability>/` (buildable) |
+| a bug or something broken, mentioned in passing while you are doing something else | **backlog item** | `add-to-backlog` files one row (source, owner, done-when) without derailing the current work; actively fixing it right now is just the change, not a backlog item |
 | how the system is built | **structure** | `ARCHITECTURE.md` |
 | what the product is and where it is going | **vision** | `PRODUCT.md` |
 | who we build for (and validate against) | **personas** | `docs/personas.md` - a gate above specs + backlog (ADR-006) |
