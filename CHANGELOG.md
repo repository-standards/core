@@ -24,6 +24,20 @@ deviation recorded in `stack.manifest.json`, exactly where the stack's own `ADAP
 tells an adopter to record it, had no effect. The miss kept counting as drift regardless.
 Now merged along with the other three arrays.
 
+### Four skill descriptions led with the mechanism, not the trigger (2026-08-04)
+
+Blind-routing 20 realistic utterances against every skill's name+description produced
+7 disagreements with the routing docs, always the same direction: the description
+does not fire on the request that needs it. A prior pass had flagged `spec-update`,
+`spec-tasks`, `spec-impact`, `add-to-backlog` and `timeline-update` as the worst five;
+checked against the actual text, `add-to-backlog` and the first three held up and are
+rewritten to quote a concrete trigger phrase instead of only naming the mechanism.
+`timeline-update` already quoted four solid trigger phrases, so it is left alone;
+`spec-clarify` is the substitute - its description carried zero quoted phrases at all,
+purely procedural ("use right after a spec is drafted..."), which is a worse case
+under the same test. `specs/spec-engine/spec.md` gets a new acceptance criterion
+naming the fix (R11 coupling: these are spec-engine's own files).
+
 ### Six method docs were never delivered to an adopting repo (2026-08-04)
 
 `docs/method/agent-work.md`, `dev-work.md`, `lead-work.md`, `product-work.md`,

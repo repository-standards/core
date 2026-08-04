@@ -209,7 +209,7 @@
       ],
       "rule": "R22",
       "sha256": {
-        "add-to-backlog/SKILL.md": "a07e6334f44ab3aeda19aeaa04d0a3639512ff1aceaddcf7118c8f1c724d5b0f",
+        "add-to-backlog/SKILL.md": "151571dfcf9a2aae38db59fff6383000505dc7d8fe753910af6b00edd729ea22",
         "adr-write/SKILL.md": "fc48ce8bc9c48453cb0ed25c2e3c5de54e6fd1dd6afaf50d5df0ca0d5530e239",
         "bdr-write/SKILL.md": "afb5a4de61ff80e0321467b5c8cc8b79f13439751fd3249603a4cf5b9f310035",
         "cycle-close/SKILL.md": "72bad295dd461eebae9bd356ad07db33a76274c7b3011ad1d52d1158f0b82147",
@@ -219,14 +219,14 @@
         "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",
         "pre-pr-review/SKILL.md": "d72bee4edf7979968dc08f2cc493826953a396090a212f36132af557cde55960",
         "product-write/SKILL.md": "21bdc82897281178f915cb0f51dd669d35228d17748977cbacdc1993f2843b98",
-        "spec-clarify/SKILL.md": "db762444e20611e736580568a6553ce2447f4c7743a0d4f64608ea55d37e7f9e",
-        "spec-impact/SKILL.md": "ebd1a06825e4a97e7c80cc01a25e68e57dccb6001c56877a0310a847db7c12f7",
+        "spec-clarify/SKILL.md": "26da90f61886188eec6fc6c4a92c60fd825b6c1bb47bd90c16257f14a4471cdd",
+        "spec-impact/SKILL.md": "e39097cece37df273e9a4b830a9bdeb0ee9b3db119b738c59f100615bf1862fa",
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",
         "spec-plan/SKILL.md": "65173342ed0a247be5bfdf684e1e07c1d67ae14f5bc55649c9441b2b4db371c5",
         "spec-reconcile/SKILL.md": "f43e24a4f0624c34cfa7ec7abfe1e50976c452e3e5883729cf9c22c64f467ef8",
         "spec-specify/SKILL.md": "03335ef089e1937f3be74f757ed7d69e440280407775fb4e25f5efad7001e2be",
-        "spec-tasks/SKILL.md": "5df4796479b547c8361e57e94d17aa94f8ec276c77487568081acc669108c9c6",
-        "spec-update/SKILL.md": "901dffb320ac72ef900f662e892f7057a1b9539516142fc80b619ac6b1de5872",
+        "spec-tasks/SKILL.md": "7322cf9fe166be6515a17f8ec8714d88f26ae5f39ccd1d49f3284c3f7f08c21a",
+        "spec-update/SKILL.md": "c7c8fa09a83d7a8dbacab70ad50a6d7c0ff282e27e091246860c5e82d2e5b8eb",
         "timeline-update/SKILL.md": "e0770d9e33139bbddaa01be6bd59748845ab6d18b34fd9de489910f110cd584c",
         "update-to-version/SKILL.md": "fd906f732f0fe870cca8cad3254e457300e7bce2608c119c0794827cd52aad6a"
       }
