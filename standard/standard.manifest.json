@@ -116,6 +116,15 @@
       "rule": "R15"
     },
     {
+      "path": "CHANGELOG.md",
+      "purpose": "the only home of history (ADR-018); a PR describes its change under `## Unreleased` and never touches the version - R18/R25's one path, at every profile",
+      "adapt": "fill-from-repo",
+      "required": true,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R18"
+    },
+    {
       "path": "scripts/self-verify.mjs",
       "purpose": "the verify step - checks the repo against this manifest",
       "adapt": "copy",
@@ -543,6 +552,15 @@
       "profile": "core",
       "since": "0.2.0",
       "rule": "R1"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "heading": "Unreleased",
+      "purpose": "R18/R25 - a PR describes its change here; nothing else holds history, and drift 0 must not be reachable with no changelog at all",
+      "required": true,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R18"
     }
   ],
   "guards": [

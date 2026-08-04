@@ -178,6 +178,18 @@ paths that intentionally belong to no capability are a recorded decision, and wh
 such list exists the check reports that it is off instead of passing quietly. A retired
 capability's deliberately empty globs stay exempt.
 
+### `CHANGELOG.md` was normative (R18/R25) but absent from the manifest entirely (2026-08-04)
+
+Found alongside the decision-record numbering gap: the manifest had no `files` entry
+for `CHANGELOG.md` and no `sections` entry for its `## Unreleased` heading, so an
+adopting repo could reach self-verify drift 0 with no changelog at all - the general
+case behind a defect an earlier round fixed only as one instance (a repo whose own
+changelog had already drifted). `standard/CHANGELOG.md` now ships a minimal skeleton
+(title, semver blurb, an empty `## Unreleased`), and the manifest carries both a
+required `files` entry and a required `sections` entry checking for the heading -
+verified against a simulated fresh adoption: present, self-verify passes it; removed,
+self-verify reports it as drift.
+
 ### `spec-reconcile` never reconciled decision records (2026-08-04)
 
 `AGENTS.md` places decision records above specs in its altitude order, but
