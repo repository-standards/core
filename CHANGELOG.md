@@ -73,6 +73,23 @@ missing skill; `tracking-work.md` now says so and names the one honest limit (no
 `source` field, so "during onboarding" specifically can only be inferred from which epic a
 row landed under).
 
+### Every run in every adopted repo printed a path that does not exist there (2026-08-04)
+
+`self-verify.mjs` ended its decisions line with "see docs/self-verify.md" - on every run, in
+every adopted repo, where that file is not: the method docs are adopted by reference and the
+page is `docs/method/self-verify.md` in the standard's repo. Third instance of that class of
+bug, so the shipped tree was swept for the rest: the `jq`-missing denial in
+`.claude/hooks/lib.sh` pointed at `docs/prerequisites.md`, `docs/facts.example.json` used the
+same non-existent path as an example claim (a reader copying it gets a facts-check failure on
+day one), and R16 in `SPEC.md` cited `docs/method/prerequisites.md` as though it were a file
+in the reader's repo. All four now use the by-reference form the rest of the tree uses.
+
+Also here: the placeholder scan now catches a table row whose cells are still ellipses - the
+shipped `AGENTS.md` and `ARCHITECTURE.md` use that shape for "your rows go here", and a
+showcase repo carried `| ... | ... |` in its own entry file with nothing saying so. A row of
+*empty* cells is deliberately not flagged: an empty table is a legitimate state, and a warning
+it cannot clear is one everybody learns to skip.
+
 ### `self-verify` never looked at what a file contained (2026-08-04)
 
 The drift number checked that a manifest entry **existed**. For a `copy` entry - shipped

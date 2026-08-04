@@ -88,6 +88,24 @@ check("notation and a real placeholder together still warn", {
   warnsAbout: [["README.md", true]],
 });
 
+// A table row of ellipsis cells is the other shape a template leaves behind, and the one a
+// showcase repo shipped in its own entry file while self-verify said nothing.
+check("a table row of ellipsis cells is an unfilled shell", {
+  files: {
+    "README.md": `${FILLED_HEAD}| Capability | Owner |\n|---|---|\n| ... | ... |\n`,
+  },
+  warnsAbout: [["README.md", true]],
+});
+
+check("a filled table row does not warn, and neither does an empty one", {
+  files: {
+    // Empty cells are deliberately not a placeholder: a table with nothing in it yet is a
+    // legitimate state, and a warning it cannot clear is one everybody learns to skip.
+    "README.md": `${FILLED_HEAD}| Capability | Owner |\n|---|---|\n| booking | platform |\n\n| Team | Cycle |\n|---|---|\n| | |\n`,
+  },
+  warnsAbout: [["README.md", false]],
+});
+
 // The regression in its original form: the shipped entry file carries `specs/<capability>`
 // in its altitude ladder, so before the fix AGENTS.md warned no matter how completely an
 // adopter filled it. Only the genuine markers should keep it warning now.
@@ -130,4 +148,4 @@ if (failures) {
   console.error(`self-verify-fill-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("self-verify-fill-test: OK - the fill warning is clearable, still fires, and reads any script");
+console.log("self-verify-fill-test: OK - the fill warning is clearable, still fires, reads any script, and catches an ellipsis row");

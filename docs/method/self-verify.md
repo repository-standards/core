@@ -9,6 +9,11 @@ Verification has two tiers: a **mechanical** tier that a machine asserts, and a
 **judgment** tier a human confirms at review. Do not pretend the judgment tier is
 mechanical - but do not let the mechanical tier depend on a human either.
 
+One thing the mechanical tier cannot do is judge substance, so it warns instead: a scanned
+file still carrying `{{TOKENS}}`, `<markers>` or a table row of ellipsis cells is reported and
+never counted as drift. Filled shells, not copied ones, are the point - but converting that
+judgment into an integer is how a number starts being gamed.
+
 ## Mechanical tier - the hard gate
 
 Run the shipped checker; it exits non-zero on any failure, so CI can gate on it:
