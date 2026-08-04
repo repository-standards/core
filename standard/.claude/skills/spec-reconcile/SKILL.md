@@ -27,21 +27,21 @@ truth - so the spec, the code, and the tests must agree.
    Data / Interface / Acceptance sections - otherwise the spec keeps describing a
    bug that no longer exists (a fixed defect masquerading as a known gap).
 
-5. **Set the `Status` field, and prove it.** This step owns the status: nothing else in the
-   loop writes it, which is how `ready-to-develop` came to sit on specs whose gate fails.
-   For each spec this change touched, run `bash scripts/spec/check-spec-clarified.sh <spec>`
-   and then set the field to what is true - `live` when the capability is built and this
-   reconcile made spec == code == tests, `in-development` when the work is still open, and
-   back to `in-refinement` when the gate refuses the spec. Never type a status the gate does
-   not grant: `spec-structure` re-runs the gate on every spec claiming `ready-to-develop` or
-   `live` and fails the pull request, so the only thing typing it early buys is a later,
-   more confusing refusal. `retired` is the exception the gate has no opinion about - it is
-   set with the BDR/ADR that ended the capability.
-
-6. **Cross-spec consistency.** Once spec == code == tests, check the affected specs
+5. **Cross-spec consistency.** Once spec == code == tests, check the affected specs
    against each other: shared terms, invariants and contracts must not contradict
    across capabilities. A cross-spec contradiction is a finding - resolve it in this
    change if it belongs here, otherwise file a backlog item for it (`add-to-backlog`).
+
+6. **Decision-record citations stay live (the altitude above the spec, `AGENTS.md`).**
+   For each capability spec in scope, check every ADR/BDR it names or links - in the
+   spec's own prose and in the capability's code comments - against that record's
+   current `Status`. A citation to a record that has since flipped to `Superseded` is
+   stale prose, not a spec defect to silently rewrite: update the citation to point at
+   the superseding record and flag the surrounding prose for a human to resolve - never
+   rewrite the decision text itself (only the record's own author does that, R6). Keep
+   this lightweight: grep the cited record ids against their `Status` lines, not a
+   semantic read of every record - a real supersession once left five stale citations
+   and a stale code comment past every guard, because nothing before this step looked.
 
 7. Re-run the coupling guard (`node scripts/spec-guard.mjs --staged`) - a mapped
    capability's code changed, so its spec must have changed too - **and reconcile the map
@@ -52,7 +52,21 @@ truth - so the spec, the code, and the tests must agree.
    genuinely belongs to no capability. A map whose globs match nothing is a guard watching an
    empty set, and it looks exactly like a guard that is working.
 
-8. **Close the work: delete the scaffolding.** Plan and task files are ephemeral by rule
+8. **Set the `Status` field, and prove it.** This step owns the status: nothing else in the
+   loop writes it, which is how `ready-to-develop` came to sit on specs whose gate fails.
+   Everything above this point can still move a spec's content - cross-spec fixes, citation
+   repoints, a map correction - so status is set last, once spec == code == tests == map ==
+   citations is actually true, not assumed. For each spec this change touched, run
+   `bash scripts/spec/check-spec-clarified.sh <spec>` and then set the field to what is
+   true - `live` when the capability is built and this reconcile made spec == code == tests,
+   `in-development` when the work is still open, and back to `in-refinement` when the gate
+   refuses the spec. Never type a status the gate does not grant: `spec-structure` re-runs
+   the gate on every spec claiming `ready-to-develop` or `live` and fails the pull request,
+   so the only thing typing it early buys is a later, more confusing refusal. `retired` is
+   the exception the gate has no opinion about - it is set with the BDR/ADR that ended the
+   capability.
+
+9. **Close the work: delete the scaffolding.** Plan and task files are ephemeral by rule
    (R13) and this is the step that acts on it - nothing else in the loop does, which is
    why `spec-structure` has been reduced to warning about files it cannot remove. Once
    spec == code == tests, delete `plan.md`, `tasks.md` and any `research.md`,
