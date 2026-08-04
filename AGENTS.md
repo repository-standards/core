@@ -44,18 +44,23 @@ clients get them by reference (ADR-004), never as copies.
 - **Checks before any PR** (the same set CI runs - `.github/workflows/checks.yml`):
   `node tools/tree-check.mjs` (no leaks into the tree, manifest promises present,
   the tree passes its own `self-verify --skeleton`), `node tools/link-check.mjs`,
-  `node standard/scripts/spec-structure.mjs` (the repo's own specs stay shaped),
+  `node tools/prose-check.mjs` + `node tools/prose-check.mjs --self` (no line renders
+  as something it is not),
+  `node standard/scripts/spec-structure.mjs` (the repo's own specs stay shaped, and a
+  spec claiming `ready-to-develop` or `live` still passes the clarify gate),
   `node standard/scripts/spec-guard.mjs --base origin/main --block` **and**
   `node standard/scripts/spec-guard.mjs --audit --block` (code and its capability
-  spec move together; every capability spec is mapped),
+  spec move together; every capability spec is mapped, every glob matches something,
+  every file is claimed or declared unclaimed),
   `node tools/spec-guard-test.mjs`, `node tools/clarify-gate-test.mjs`,
-  `node tools/schema-pair-test.mjs` and
-  `node tools/cycle-guard-test.mjs` (those
+  `node tools/schema-pair-test.mjs`, `node tools/cycle-guard-test.mjs` and
+  `node tools/self-verify-fill-test.mjs` (those
   guards still fire where they must), `node standard/scripts/facts-check.mjs` +
   `node tools/facts-check-test.mjs` (a fact restated in prose still agrees with
   its source - the declarations live in [`docs/facts.json`](docs/facts.json)),
   `node tools/file-map.mjs --check` (the file map is generated from the manifest,
-  never hand-written), `node tools/docsite.mjs && node tools/site-check.mjs`. The list is the set CI
+  never hand-written), `node tools/docsite.mjs && node tools/site-check.mjs &&
+  node tools/site-behaviour.mjs`. The list is the set CI
   runs - if a check is in `checks.yml` and not here, this line is the bug.
 - **Changelog:** a PR describes its change under `CHANGELOG.md`'s `## Unreleased`
   heading - never a version heading, never `VERSION`; the maintainer cuts every
