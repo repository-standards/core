@@ -59,16 +59,22 @@ part of this is mechanical; the rest needs an AI pass.
   The marker forms and both headings are **syntax**: they stay ASCII in a spec written in
   any language, while the text inside a marker is prose in the spec's own language.
 
-The coupling guard needs a **capability -> code globs** map (in a monorepo a domain
-is spread across app / service / shared). Keep it at `specs/capability-map.json`
+The coupling guard needs a **capability -> code globs** map, because a domain is rarely one
+directory: in the paved monorepo shape it spans a package that owns the logic and the
+`apps/*` that expose it. Keep it at `specs/capability-map.json`
 (see [`capability-map.example.json`](capability-map.example.json)):
 
 ```json
 {
-  "payments": ["**/payment/**", "**/payu/**", "shared/**/payment*"],
-  "pricing": ["src/pricing/**", { "glob": "config/tariffs.json", "couples": "shape" }]
+  "payments": ["packages/payments/**", "apps/*/src/**/payment/**"],
+  "pricing": ["packages/pricing/**", { "glob": "config/tariffs.json", "couples": "shape" }]
 }
 ```
+
+A single-package repo writes `src/**/payment/**` and has no `packages/`; nothing about the
+mechanism changes. What matters is that the globs match **the tree you actually have** -
+`--audit` reports one that matches nothing, because a map full of globs matching no files is
+a guard watching an empty set.
 
 **Glob syntax** - one translator (`scripts/lib/glob.mjs`) for every guard that reads a
 glob, so two guards cannot answer the same question differently. `*` matches within one
