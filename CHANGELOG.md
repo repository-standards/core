@@ -27,6 +27,16 @@ English control). Same principle as the clarify gate's headings: a required head
 absent is a failure, and the guard now says so and names the heading rather than checking
 something else instead.
 
+### The placeholder warning was both too loose and too tight (2026-08-04)
+
+`self-verify` warns when a filled-at-adoption file still carries template placeholders. Its
+pattern had the same shape as ordinary HTML, so `<picture>`, `<source>`, `<code>` and
+`<kbd>` in a perfectly finished README tripped it - reproduced on four foreign repos, in
+files the standard never wrote and an adopter cannot "fill". And it was ASCII-only, so
+`<角色名>` and `<нужно заполнить>` were invisible: a translated but unfilled shell reached
+drift 0 with a clean report. It is now the two shapes the templates actually ship, Unicode
+aware, with single-word angle tokens that name an HTML element excluded by name.
+
 ### A spec's Status was decorative (2026-08-04)
 
 No skill and no script read or wrote `**Status:**`, so `ready-to-develop` could sit on a
