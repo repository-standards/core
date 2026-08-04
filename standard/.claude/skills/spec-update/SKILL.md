@@ -30,6 +30,13 @@ during work" step.
 5. Now the spec on this branch describes the **target**; `git diff` against `main`
    is the change delta. This is the source of truth the plan and code are built from.
 
+6. **File the delta this change will not build.** A spec now describes target-state
+   behavior that the current change deliberately will not implement yet - file it via
+   `add-to-backlog`, one item per unbuilt delta, source = the spec diff. This is a
+   named backlog feeder (`docs/backlog.md`'s own "What feeds this backlog"): the spec
+   already says what "done" looks like, so the row costs one line, and skipping it
+   leaves the delta indistinguishable from a gap nobody noticed.
+
 Only after the specs describe the target do you plan and implement - `/spec-plan`,
 then `/spec-tasks` and `/spec-implement`. Cross-spec contradictions are caught by
 `spec-reconcile` at the end of the change; do not knowingly leave one now.

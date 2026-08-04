@@ -12,16 +12,19 @@ silently do it (scope creep) and do not lose it (evaporation). File it in the re
 This operationalizes the rules in `docs/backlog.md` - every item has a **source** and a
 **definition of done**, and the list stays ordered and de-duplicated.
 
-## Two automatic triggers
+## Three automatic triggers
 
-Two moments in the spec workflow file items here without being asked:
+Three moments in the spec workflow file items here without being asked:
 
+- **After `/spec-impact`** - a ripple the analysis found (an affected capability, a
+  needed ADR/BDR, a code area) that the current change deliberately will not
+  address: one item per unaddressed ripple, source = the impact analysis.
 - **After `/spec-update`** - target-state deltas the current change will not build:
   one item per unbuilt delta, source = the spec diff.
 - **After `/spec-reconcile`** - code<->spec drift findings not fixed in the current
   change: one item per finding, source = the drift finding.
 
-In both cases the agent writes well-formed rows itself using the format below,
+In all three cases the agent writes well-formed rows itself using the format below,
 de-duplicating against existing items first.
 
 ## Steps
