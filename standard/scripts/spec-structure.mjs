@@ -88,19 +88,28 @@ const isCapSpec = (f) =>
 
 const personaless = [];
 let rosterMissing = false; // capability specs exist but no roster - the R10 gate has nothing to hold
+let rosterHeadingMissing = false; // a roster file the guard cannot find the roster in
 const personasPath = ["docs/personas.md", "personas.md"].find((p) => existsSync(p));
 if (!personasPath && files.some(isCapSpec)) rosterMissing = true;
 if (personasPath) {
   const roster = new Set();
   const personaLines = readFileSync(personasPath, "utf8").split("\n");
-  // Only the roster section counts. The shipped template also carries a filled worked
-  // example, and scanning the whole file line by line reads those names as live personas -
-  // which would let a spec "serve" someone from the example's domain and pass the gate.
-  // Repos whose personas file has no such heading keep the whole-file scan.
+  // Only the roster section counts. The shipped file also carries a filled worked example,
+  // and scanning the whole file reads those names as live personas - which would let a spec
+  // "serve" someone from the example's domain and pass the gate.
+  //
+  // Scoping to the heading is also how the check switched itself off: the earlier version
+  // fell back to a whole-file scan when the heading was absent, so translating `## The
+  // roster` widened the roster to every name in the file, worked example included - proven
+  // with an English control, where the identical spec failed with the English heading and
+  // passed with a translated one. A required heading that is absent is a failure, not a
+  // reason to check something else instead. The heading is syntax: it stays in English even
+  // when the roster it introduces is written in another language.
   const hasRosterHeading = personaLines.some((l) => /^##\s+the roster\b/i.test(l));
-  let inRoster = !hasRosterHeading;
-  for (const line of personaLines) {
-    if (hasRosterHeading && /^##\s/.test(line)) {
+  if (!hasRosterHeading) rosterHeadingMissing = true;
+  let inRoster = false;
+  for (const line of hasRosterHeading ? personaLines : []) {
+    if (/^##\s/.test(line)) {
       inRoster = /^##\s+the roster\b/i.test(line);
       continue;
     }
@@ -108,7 +117,7 @@ if (personasPath) {
     const m = line.match(/^\|\s*`([^`]+)`\s*\|/); // roster rows: | `Name` | ...
     if (m && !m[1].includes("<")) roster.add(m[1].toLowerCase());
   }
-  for (const f of files.filter(isCapSpec)) {
+  for (const f of hasRosterHeading ? files.filter(isCapSpec) : []) {
     let body;
     try { body = readFileSync(f, "utf8"); } catch { continue; }
     const low = body.toLowerCase();
@@ -178,7 +187,7 @@ if (gateMissing) {
   console.error("so a spec claiming `ready-to-develop` or `live` cannot be checked against it. Ship");
   console.error("`scripts/spec/` with the guards (it is a required manifest entry) to turn the check on.");
 }
-if (numbered.length === 0 && personaless.length === 0 && unearned.length === 0 && !rosterMissing) {
+if (numbered.length === 0 && personaless.length === 0 && unearned.length === 0 && !rosterMissing && !rosterHeadingMissing) {
   const note = personasPath ? "" : " (persona check skipped - no personas.md)";
   console.log(`spec-structure: OK (${files.length} spec paths)${note}`);
   process.exit(0);
@@ -209,6 +218,15 @@ if (unearned.length) {
   console.error("\n`ready-to-develop` and `live` assert that the gate passed. They are earned mechanically,");
   console.error("not typed in: fix what the gate names, or set the status back to `in-refinement` - which is");
   console.error("a healthy state and can last weeks. A status nothing checks is a status nobody can trust.");
+}
+
+if (rosterHeadingMissing) {
+  console.error(`\nspec-structure: ${personasPath} has no '## The roster' section, so the guard cannot tell`);
+  console.error("a live persona from a name in the worked example, and the persona gate (ADR-006) has");
+  console.error("nothing to check against. Add the heading above the roster table. It is syntax - it stays");
+  console.error("'## The roster' even when the personas themselves are written in another language, because");
+  console.error("a translated heading does not make the check speak that language, it makes it read the");
+  console.error("whole file and pass a spec that serves an example.");
 }
 
 if (rosterMissing) {
