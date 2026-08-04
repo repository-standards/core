@@ -22,6 +22,10 @@ who did what, stop - that is the tracker's.
 
 ## Steps
 
+0. **Resolve the backlog path once, the way the guard does.** Check `docs/backlog.md` first,
+   then `backlog.md` (the manifest's primary path, R15) - whichever exists is the pool for
+   every step below.
+
 1. **Check each intent against its own definition of done, and say what you checked.** The
    DoD is in the row. "The spec is buildable", "the ADR is Accepted", "the drift is
    resolved" - these are verifiable, so verify them rather than asking the user whether it
@@ -31,8 +35,8 @@ who did what, stop - that is the tracker's.
    decoration.
 
 2. **Return what did not finish - and split it rather than re-sizing it.** Unfinished rows are
-   **cut** back into `docs/backlog.md` at their risk x leverage position, not appended to the
-   bottom, which quietly demotes work that was important enough to commit to. Clear the
+   **cut** back into the backlog (step 0) at their risk x leverage position, not appended to
+   the bottom, which quietly demotes work that was important enough to commit to. Clear the
    `assignee` on the way out: the pool holds nobody's work (ADR-030).
 
    An item that did not fit is **split into what finished and what remains**, not given a
@@ -53,14 +57,14 @@ who did what, stop - that is the tracker's.
    - planned, finished, returned to the pool
    - **returned to the pool: name the ids**, not only the count (`Returned to the pool: PAY-7,
      PAY-9`, or `Returned to the pool: none`) - `cycle-guard` checks that every id named here
-     actually landed back in `docs/backlog.md`, and it can only do that if the row says which
-     ones
+     actually landed back in the backlog (step 0), and it can only do that if the row says
+     which ones
    - unplanned work absorbed, if any
    - commits in the window: `git log --oneline --since=<opened> --until=<closed> | wc -l`
    - days elapsed, opened to closed
    Flip `Status` to `closed` and record the actual close date, which is often not the target.
 
-6. **Remove the pointer row** from `docs/backlog.md`'s active-cycles table.
+6. **Remove the pointer row** from the backlog's active-cycles table.
 
 7. **Prove it.** `node scripts/cycle-guard.mjs --block` - every returned row must now be in
    exactly one place again.
