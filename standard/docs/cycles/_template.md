@@ -34,6 +34,8 @@ here without one is work the cycle has not really committed to.
 <!-- Written once, by /cycle-close. Left empty while the cycle is open.
 
 Planned N, finished M, returned to the pool K. Unplanned work absorbed: U.
+Returned to the pool: <comma-separated ids, or `none`> - cycle-guard checks that every id
+named here actually lands back in the backlog, so name them, not just the count.
 Commits in the window: C. Days elapsed: D.
 
 This is the only history the repo keeps about execution, and it is kept because it cannot

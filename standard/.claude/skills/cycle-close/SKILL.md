@@ -51,6 +51,10 @@ who did what, stop - that is the tracker's.
 
 5. **Write the outcome block**, once, in the cycle file:
    - planned, finished, returned to the pool
+   - **returned to the pool: name the ids**, not only the count (`Returned to the pool: PAY-7,
+     PAY-9`, or `Returned to the pool: none`) - `cycle-guard` checks that every id named here
+     actually landed back in `docs/backlog.md`, and it can only do that if the row says which
+     ones
    - unplanned work absorbed, if any
    - commits in the window: `git log --oneline --since=<opened> --until=<closed> | wc -l`
    - days elapsed, opened to closed
