@@ -16,6 +16,13 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Two of this repo's own CI checks were failing on main (2026-08-04)
+
+`prose-check` was catching a real stray bullet in this file (a sentence continuation
+that started with a dash on its own line), and `docs/file-map.md` had gone stale
+against the manifest after an unrelated purpose-text edit. Both fixed; regenerated
+the file map.
+
 ### An idea had nowhere to land (2026-08-03)
 
 `adr-write` and `bdr-write` both named `docs/ideas/` as where a not-yet-decided
