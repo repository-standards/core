@@ -16,6 +16,15 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A column prepended before `id` disarmed `cycle-guard` (2026-08-04)
+
+Reproduced live: a table with a column added before `id` (a priority, a team) broke the
+guard's hardcoded assumption that the id sits at column 0 - the row still had an id, just
+not where the guard was looking, so it silently stopped counting. `cycle-guard.mjs` now
+resolves the id column from the header row's `id` label instead of a fixed position,
+falling back to column 0 for a table with no column named that. Added a case to
+`tools/cycle-guard-test.mjs`, plus cases for the returned-to-pool check below.
+
 ### `cycle-guard` checked for too many places, never for zero (2026-08-04)
 
 The one-place invariant has two directions and the guard only ever checked one: an intent
