@@ -139,12 +139,24 @@ each state transition.
 
 ## Open questions
 
-<!-- REQUIRED section. If there are genuinely none, write "None known." - do not
-     delete the heading. A marker lives in exactly ONE place - its functional section
-     (Requirements, Data contracts, ...) if the gap has one; here only if it does not.
-     Never both: the gate counts every open marker in the file, so echoing one in both
-     places reports twice the real number of open gaps. -->
-Unresolved *current* questions and known gaps (not-yet-wired, unverified,
-undecided). Retrofitting a spec from code, this is where the spec<->code
-discrepancies you find get recorded - each becomes a tracked issue, not a silent
-gloss. Honesty here is what keeps a buildable spec trustworthy.
+<!-- REQUIRED section, and the gate READS it: this section passes only when it says
+     there are none. Keep the heading and keep "None known." below until it is not
+     true any more - deleting either does not make the gate quieter, it fails.
+
+     Anything else here is an open item however it is phrased - prose, a question
+     written as a statement, a table row, or one resolved above and still listed
+     below. All four shapes were found passing with the questions still live, which
+     is why the rule is structural rather than a judgement about wording.
+
+     So put each thing where it belongs:
+       - an unresolved gap -> a typed marker in its own functional section
+         (Requirements, Data contracts, ...); the gate holds those, and a marker
+         lives in exactly ONE place. Never echo it here as well: the gate counts
+         every marker in the file, so a duplicate reports twice the real number.
+       - a settled note -> the section it describes.
+       - a known gap the repo will not block on -> the backlog, linked from there.
+     Retrofitting a spec from code, the spec<->code discrepancies you find are the
+     first kind: mark them, do not narrate them here. Honesty is what keeps a
+     buildable spec trustworthy, and a gate that reads this section is what keeps
+     the honesty from costing nothing. -->
+None known.
