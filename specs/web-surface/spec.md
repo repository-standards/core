@@ -9,6 +9,17 @@
 
 One source, two surfaces: [`tools/docsite.mjs`](../../tools/docsite.mjs) renders a curated set of the repo's own markdown into a static docs site; [`tools/site-check.mjs`](../../tools/site-check.mjs) gates the landing (`site/index.html`) and that generated site as shippable. Nothing is authored twice.
 
+## Clarifications
+
+### Session 2026-08-04
+
+Retrofitted spec: this capability was built before its spec existed, so there is no clarify
+session to record. Every contract here was read off the shipped implementation and the
+decisions it cites, and the questions were settled by what already ran rather than by
+asking. Written down because the status is now checked against this section, and a `live`
+capability with no record of what settled it is the gap that check exists to expose. New
+work on this capability goes through the loop.
+
 ## Scope
 
 The docsite generator, the site-check gate, and the `site/` directory they operate on. Repo-own tooling - never shipped.
@@ -123,3 +134,7 @@ The prose of the rendered pages (owned by their source files); markdown link int
 - **A prefixed site rewrites every path it emits.** GIVEN a config with `site_root: "/node/"` and `base_path: "/docs/node/"` WHEN docsite renders THEN every sidebar and in-page link is prefixed `/docs/node/`, and the brand and Homepage links point at `/node/` - the two knobs of [ADR-031](../../docs/decision-records/ADR-031-one-domain-surface-first-urls.md) are the whole of what a site knows about where it is served.
 - **The switcher derives "here" rather than being told.** GIVEN a site whose `base_path` matches the switcher's core entry WHEN docsite renders THEN "here" marks the core entry and the stack entry is a plain link; GIVEN a stack's `base_path` THEN "here" moves to the stack entry. The same generator builds every site in the ecosystem, so a hardcoded answer would be right on exactly one of them.
 - **A same-domain switcher entry stays in the tab.** GIVEN `node_docs_url` is a path (`/docs/node/`) rather than a URL WHEN docsite renders THEN the entry carries no `target="_blank"`; GIVEN it is an off-domain URL THEN it opens in a new tab. Moving a stack onto the domain must not leave the switcher spawning tabs inside one site.
+
+## Open questions
+
+None known.

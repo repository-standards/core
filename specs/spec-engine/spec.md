@@ -9,6 +9,17 @@
 
 The execution engine of the spec-first loop, shipped in the tree as five skills plus their shared scripts and templates: [`standard/.claude/skills/spec-*`](../../standard/.claude/skills/) and [`standard/scripts/spec/`](../../standard/scripts/spec/) (client paths `.claude/skills/spec-*` and `scripts/spec/`). Extracted from github/spec-kit v0.13.2 (ADR-015).
 
+## Clarifications
+
+### Session 2026-08-04
+
+Retrofitted spec: the engine was extracted and patched before its spec existed, so there is
+no clarify session to record. Every contract here was read off the shipped scripts and
+skills and the decisions they cite, and the questions were settled by what already ran
+rather than by asking. Written down because the status is now checked against this section,
+and a `live` capability with no record of what settled it is the gap that check exists to
+expose. New work on this capability goes through the loop.
+
 ## Scope
 
 The loop, its state file, the clarify gate, the setup scripts, the templates, and the provenance duty.
@@ -59,6 +70,7 @@ Template copies source `scripts/spec/*.md` through the `resolve_template` stack:
 - The clarify loop MUST be AI-led: propose answers, ask the user only what needs their call, and record every deferral under `## Clarifications` instead of dropping it.
 - **A question MUST be a question.** Each asked item leads with a full interrogative that can be answered as written, never a topic label, section heading or requirement id (an id MAY trail the question), and carries one plain-language line on what changes depending on the answer. A label is a subject; answering it means guessing what was meant, which is how a clarify round returns nothing usable.
 - **Provenance duty.** The upstream MIT licence MUST ship at `scripts/spec/LICENSE` (Copyright GitHub, Inc.); every extracted file MUST carry a provenance line naming github/spec-kit v0.13.2, with standard-authored hunks and files marked `PATCHED(repository-standards)`. A hunk taken from upstream **after** the extraction point MUST be marked `CHERRY-PICKED` with the upstream commit it came from - the baseline stays v0.13.2, and every deviation from it is readable in place.
+- **Staying current with upstream is a manual, per-release scan** and MUST stay one: the prompts are ours (ADR-015), so at each release the maintainer reads github/spec-kit's prompt changes since v0.13.2 and cherry-picks what earns it. No mechanical sync exists by design - it would overwrite the patches that make the engine speak this standard's spec shape.
 - **Never run upstream specify.** Never install or run upstream spec-kit's own `specify` here - it mints `specs/NNN-feature/` directories that violate the capability layout. The shipped, patched skills are the sanctioned form of the engine.
 - **The engine speaks the standard's spec shape.** Every skill that reads or writes a spec MUST address the sections `specs/capability-spec.template.md` declares, and MUST NOT introduce upstream's User Scenarios, Functional Requirements, Success Criteria or Key Entities. No skill MAY gate a spec on "no implementation details": the buildable tier is the default and its contracts quote real field names, enums, endpoints and error codes verbatim. What stays out of a spec is the *implementation* - which library, which framework - never the contract.
 - **Tests follow the repo's recorded testing strategy**, never a per-feature request. `/spec-tasks` MUST emit the tiers that decision names, and MUST treat money, security, external-contract and data-integrity paths as non-negotiable; where no such record exists, the missing decision is itself emitted as a task. Every acceptance criterion MUST have a task that verifies it.
@@ -110,8 +122,3 @@ Template copies source `scripts/spec/*.md` through the `resolve_template` stack:
 ## Open questions
 
 None known.
-
-Staying current with upstream: the prompts are ours (ADR-015); at each release
-the maintainer scans github/spec-kit's prompt changes since v0.13.2 and
-cherry-picks what earns it (backlog UPSTREAM-1). No mechanical sync exists by
-design.

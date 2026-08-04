@@ -17,7 +17,7 @@
 // Zone 1 tooling - never shipped.
 
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -246,8 +246,79 @@ for (const c of CASES) {
   }
 }
 
+// --- the status that depends on the gate ---------------------------------------------
+// `**Status:** ready-to-develop` is what the rest of the method reads as "settled", and
+// nothing read or wrote it - so it sat on specs whose gate fails, with every other guard
+// green. spec-structure re-runs the real gate on any spec claiming it, which is the half
+// that can be mechanical; these cases assert it in both directions, including the one that
+// matters most for adoption - an honest draft must not be a violation.
+const STRUCTURE = join(process.cwd(), "standard/scripts/spec-structure.mjs");
+
+const structure = (specBody) => {
+  const dir = mkdtempSync(join(tmpdir(), "spec-status-test-"));
+  mkdirSync(join(dir, "specs", "payments"), { recursive: true });
+  mkdirSync(join(dir, "docs"), { recursive: true });
+  // A roster, so the persona check has something to hold and these cases are only about
+  // the status. The spec below names one.
+  writeFileSync(join(dir, "docs", "personas.md"), "# Personas\n\n## The roster\n\n| Persona | Cares about |\n|---|---|\n| `Owner-operator Olga` | money arriving |\n");
+  writeFileSync(join(dir, "specs", "payments", "spec.md"), specBody);
+  const r = spawnSync("node", [STRUCTURE, "--block"], { cwd: dir, encoding: "utf8" });
+  rmSync(dir, { recursive: true, force: true });
+  return { code: r.status ?? 1, out: `${r.stdout ?? ""}${r.stderr ?? ""}` };
+};
+
+const withStatus = (status, body) => `# Payments\n\n**Serves:** \`Owner-operator Olga\`\n**Status:** ${status}\n\n${body}`;
+
+const STATUS_CASES = [
+  {
+    name: "a spec claiming live while the gate fails is reported",
+    fails: true,
+    says: "claiming a status the clarify gate does not grant",
+    body: withStatus("live", "## Requirements\n\n- The system MUST capture.\n"),
+  },
+  {
+    name: "a spec claiming ready-to-develop with a live open question is reported",
+    fails: true,
+    says: "says `ready-to-develop`",
+    body: withStatus("ready-to-develop", `${CLARIFIED}\n## Open questions\n\nThe refund window is undecided.\n`),
+  },
+  {
+    name: "an honest in-refinement draft with open questions is not a violation",
+    fails: false,
+    says: "OK",
+    body: withStatus("in-refinement", "## Requirements\n\n- [NEEDS DECISION: refund window; owner: business]\n"),
+  },
+  {
+    name: "a spec that earns its status passes",
+    fails: false,
+    says: "OK",
+    body: withStatus("live", `${CLARIFIED}\n## Requirements\n\n- The system MUST capture.\n\n## Open questions\n\nNone known.\n`),
+  },
+  {
+    name: "the template's unfilled list of statuses is not a claim",
+    fails: false,
+    says: "OK",
+    body: withStatus("in-refinement | ready-to-develop | in-development | live | retired", "## Requirements\n\n- The system MUST capture.\n"),
+  },
+];
+
+for (const c of STATUS_CASES) {
+  const { code, out } = structure(c.body);
+  const want = c.fails ? 1 : 0;
+  if (code !== want) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - expected exit ${want}, got ${code}\n${out.replace(/^/gm, "        ")}`);
+  } else if (!out.includes(c.says)) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - exit ${code} is right but the output never says "${c.says}"\n${out.replace(/^/gm, "        ")}`);
+  } else {
+    console.log(`  ok    ${c.name}`);
+  }
+}
+
+const total = CASES.length + STATUS_CASES.length;
 if (failures) {
-  console.log(`\nclarify-gate-test: FAIL - ${failures} of ${CASES.length} cases`);
+  console.log(`\nclarify-gate-test: FAIL - ${failures} of ${total} cases`);
   process.exit(1);
 }
-console.log(`\nclarify-gate-test: OK - ${CASES.length} cases, a spec that is not settled cannot reach plan or tasks`);
+console.log(`\nclarify-gate-test: OK - ${total} cases, a spec that is not settled cannot reach plan or tasks or claim it did`);
