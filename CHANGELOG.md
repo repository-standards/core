@@ -16,6 +16,14 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A stack's own recorded deviation had nowhere that read it (2026-08-04)
+
+`self-verify.mjs` folds a Layer 2 stack manifest's `files`, `sections` and `guards` into
+the check it runs against the primary manifest - but never its `exceptions`, so a
+deviation recorded in `stack.manifest.json`, exactly where the stack's own `ADAPTING.md`
+tells an adopter to record it, had no effect. The miss kept counting as drift regardless.
+Now merged along with the other three arrays.
+
 ### A cycle-boundary split had no status value, and cold-start timelines promised a number ADR-029 forbids (2026-08-04)
 
 Two gaps in the same neighborhood. `cycle-close`'s documented split - an item spans the
