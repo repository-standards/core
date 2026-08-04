@@ -39,6 +39,10 @@ const statusTable = (...pairs) =>
 const cycle = (...ids) => `# Cycle\n\n## Intents\n\n${table(...ids)}`;
 const cycleStatus = (...pairs) => `# Cycle\n\n## Intents\n\n${statusTable(...pairs)}`;
 
+// A closed cycle carrying an `## Outcome` block, for the returned-id checks.
+const closedCycle = (ids, outcome) =>
+  `# Cycle\n\n| | |\n| --- | --- |\n| **Status** | closed |\n\n## Intents\n\n${table(...ids)}\n## Outcome\n\n${outcome}\n`;
+
 // spawnSync, not execFileSync: the guard reports violations on stderr and advisory runs
 // still exit 0, so a success-only capture loses exactly the output the advisory case is
 // asserting. The first version of this test did that and reported a false failure.
@@ -333,9 +337,53 @@ check("a blocked status in backticks is still read", {
   }
 }
 
+check("an id written in backticks is still read", {
+  files: { [POOL]: "| id | title |\n|----|-------|\n| `PAY-2` | something |\n", [CYC_A]: cycle("PAY-2") },
+  code: 1,
+  expect: ["PAY-2 is in 2 places"],
+});
+
+check("a column prepended before id does not disarm the guard", {
+  files: {
+    [POOL]: "| priority | id | title |\n|----|----|-------|\n| P1 | PAY-2 | something |\n",
+    [CYC_A]: cycle("PAY-2"),
+  },
+  code: 1,
+  expect: ["PAY-2 is in 2 places"],
+});
+
+check("a returned-to-pool id missing from the backlog is caught", {
+  files: {
+    [POOL]: table("PAY-1"),
+    [CYC_A]: closedCycle(["PAY-2"], "Planned 1, finished 0, returned to the pool 1.\nReturned to the pool: PAY-9"),
+  },
+  code: 1,
+  expect: ["says PAY-9 was returned to the pool", `not in ${POOL}`],
+});
+
+check("a returned-to-pool id that is actually in the backlog passes", {
+  files: {
+    [POOL]: table("PAY-1", "PAY-9"),
+    [CYC_A]: closedCycle(["PAY-2"], "Planned 1, finished 0, returned to the pool 1.\nReturned to the pool: PAY-9"),
+  },
+  code: 0,
+  expect: ["OK"],
+});
+
+check("a returned-to-pool line only matters when the cycle is closed", {
+  files: {
+    [POOL]: table("PAY-1"),
+    [CYC_A]: `# Cycle\n\n| | |\n| --- | --- |\n| **Status** | open |\n\n## Intents\n\n${table("PAY-2")}\n## Outcome\n\nReturned to the pool: PAY-9\n`,
+  },
+  code: 0,
+  expect: ["OK"],
+});
+
 console.log();
 if (failures) {
   console.error(`cycle-guard-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("cycle-guard-test: OK - one intent lives in exactly one place, blocks point at something real, and a cycle the guard cannot read is an error");
+console.log(
+  "cycle-guard-test: OK - one intent lives in exactly one place, blocks point at something real, a cycle the guard cannot read is an error, and a return actually lands",
+);
