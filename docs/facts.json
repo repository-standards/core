@@ -1,5 +1,21 @@
 [
   {
+    "id": "spec-rules",
+    "what": "how many numbered rules SPEC.md defines - the page said R1-R24 while defining R25",
+    "home": {
+      "countMatches": {
+        "file": "standard/SPEC.md",
+        "pattern": "^- \\*\\*R\\d+\\.\\*\\*"
+      }
+    },
+    "claims": [
+      {
+        "file": "standard/SPEC.md",
+        "pattern": "Rules are numbered R1-R(\\d+)"
+      }
+    ]
+  },
+  {
     "id": "shipped-skills",
     "what": "how many lifecycle skills ship in the tree",
     "home": {
