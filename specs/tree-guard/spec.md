@@ -31,6 +31,7 @@ Verifying an adopted repo ([verify-engine](../verify-engine/spec.md)); checking 
 ## Core concepts
 
 - **The tree** - `standard/`; files sit at their real client paths, there is no second source.
+- **Recorded hash** - the `sha256` a `copy` entry carries in the manifest: generated from the tree by `tools/manifest-hashes.mjs`, asserted here, read by `self-verify` in an adopted repo. The manifest itself is deliberately unhashed - a file cannot contain its own hash, and an adopter's copy legitimately differs by `profile` and `exceptions`.
 - **Leak** - repo-own material (this repo's ADRs, transition skills, retired engine layouts) inside the tree.
 - **Manifest promise** - a `standard/standard.manifest.json` entry a client expects at its path.
 - **Client-only file** - a manifest path the client authors from nothing; absent from the tree by design.
@@ -48,6 +49,7 @@ Verifying an adopted repo ([verify-engine](../verify-engine/spec.md)); checking 
 2b. **References resolve.** Every `manifest.references[]` path must exist at this repo's root (the method docs clients adopt by reference, ADR-023) - a dead reference FAILs.
 2c. **Tree -> manifest coverage.** The reverse direction: every file under `standard/` must be covered by a manifest entry - an exact `path`/`altPaths` match or a prefix match under a directory entry - or listed in the explicit `EXEMPT` set (empty today; an exemption needs a recorded reason). A shipped-but-unlisted file FAILs: self-verify cannot see it and `update-to-version`'s delta cannot carry it.
 3. **Skeleton self-verify.** `node scripts/self-verify.mjs --skeleton` executed with cwd `standard/` must exit 0; on failure its captured output is indented under the FAIL line.
+3b. **Recorded content hashes are the tree's own.** `node tools/manifest-hashes.mjs --check` must exit 0: every `copy`-class entry carries a `sha256` matching what the tree ships, and no other entry carries one. The hashes are generated (`node tools/manifest-hashes.mjs`), never hand-written, and they are what lets an adopted repo detect a file whose content stopped being the standard's - so a stale one is a lie shipped to every aligned repo. The skeleton run above proves the same thing for the entries it reaches; only this check distinguishes *no hash recorded* from *hash recorded and matching*, and an unhashed copy entry is silently unverified downstream.
 4. **Version surface.** `VERSION` is read; `standard/SPEC.md` must contain `Version <V>`. The README is deliberately **not** checked for `@<V>`: that assertion required the quick start to instruct an adopter to pin a version, which is the model [ADR-025](../../docs/decision-records/ADR-025-the-standard-is-living-latest-is-the-target.md) removed. A guard that demands phrasing a decision deleted keeps reinstating it, and this one did - it failed the moment the README was corrected.
 4b. **Derived facts stay derived.** The surfaces in `FACT_SURFACES` (`README.md`, `llms.txt`, `AGENTS.md`, `docs/ecosystem.md`, `site/index.html`, `standard/README.md`) must not hand-write a rule range (`R1-R<n>`) or a rule count (`<number|word> [numbered] rules`); a match FAILs, quoting the offending text. Facts derivable from `SPEC.md` are stated as "the numbered rules" or derived, never restated by hand. **Markup is stripped (`<[^>]+>` -> a space) before matching**: one of the surfaces is HTML, and a count split across a tag - `20<small>rules` - reads as a count to a human and as two unrelated tokens to a naive regex, which is exactly how a stale number survived on the landing page while this check reported green.
 5. **Workflow pins are exact (R21/ADR-017).** Every workflow under `.github/workflows/` and `standard/.github/workflows/`: each `uses:` names a full 40-hex commit SHA (local `./` actions exempt; comment-only lines - first non-space char `#` - are skipped), no `runs-on` label containing `-latest`, no bare-major `node-version`, and `standard/.nvmrc` (when present) is an exact `x.y.z`.
@@ -67,7 +69,7 @@ Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-c
 | Tool | Exit | Condition |
 |---|---|---|
 | tree-check | 0 | every check clean |
-| tree-check | 1 | any check above failing: a leak, an unmet manifest promise, an unresolved reference, a shipped file no manifest entry covers, a skeleton self-verify failure, a spec version mismatch, a hand-written derived fact, or a loose workflow pin (count in the verdict) |
+| tree-check | 1 | any check above failing: a leak, an unmet manifest promise, an unresolved reference, a shipped file no manifest entry covers, a skeleton self-verify failure, a stale or missing recorded hash, a spec version mismatch, a hand-written derived fact, or a loose workflow pin (count in the verdict) |
 | link-check | 0 | every relative link resolves |
 | link-check | 1 | one or more dead relative links (count in the verdict) |
 
@@ -82,12 +84,15 @@ Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-c
 - A file matching a leak pattern MUST NOT exist under `standard/`.
 - A manifest `files[]` path outside `CLIENT_ONLY` MUST exist in the tree at `path` or at an `altPaths` entry.
 - The pristine tree MUST pass its own `self-verify --skeleton`.
+- Every `copy`-class manifest entry MUST carry a hash of what the tree actually ships, and no hash may be authored by hand.
 
 ## Acceptance criteria
 
 - **Leak.** GIVEN `standard/docs/decision-records/ADR-001-x.md` exists WHEN tree-check runs THEN a FAIL names the file and the reason, and exit code is 1.
 - **Client-only pass.** GIVEN the manifest promises `.standards-version` and the tree does not contain it WHEN tree-check runs THEN the promises check still passes.
 - **Missing promise.** GIVEN a manifest file exists at neither `path` nor any `altPaths` under `standard/` WHEN tree-check runs THEN a FAIL names `standard/<path>` and the entry's `purpose`, exit 1.
+- **Stale hash.** GIVEN a shipped `copy` file is edited and the manifest is not regenerated WHEN tree-check runs THEN a FAIL names the entry and says to run `tools/manifest-hashes.mjs`, exit 1.
+- **Hash on the wrong class.** GIVEN a `merge` or `fill-from-repo` entry carries a `sha256` WHEN the hash check runs THEN it FAILs - only copy-class content is the standard's to fix.
 - **Broken skeleton.** GIVEN `self-verify --skeleton` exits non-zero inside `standard/` WHEN tree-check runs THEN its output appears indented under a FAIL and tree-check exits 1.
 - **Dead link.** GIVEN `docs/a.md` line 7 links a relative target `missing.md` and `docs/missing.md` does not exist WHEN link-check runs THEN it prints `docs/a.md:7 -> missing.md` and exits 1. (The literal pattern is not reproduced here - it would fail this very check.)
 - **Placeholder skip.** GIVEN a line contains `{{project}}` and a dead relative link WHEN link-check runs THEN the line is skipped and does not fail.
