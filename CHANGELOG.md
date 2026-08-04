@@ -16,6 +16,16 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### `cycle-guard` checked for too many places, never for zero (2026-08-04)
+
+The one-place invariant has two directions and the guard only ever checked one: an intent
+in two places fails, but an intent a closed cycle's outcome names as "returned to the pool"
+that never actually lands in `docs/backlog.md` passed silently - reproduced live, guard said
+`OK`. `cycle-guard.mjs` now reads each closed cycle's `## Outcome` block for a `Returned to
+the pool: <ids>` line and fails naming the specific id and cycle file if any of them is not
+in the backlog. The template and `cycle-close` now say to name the ids there, not only the
+count, since the guard can only check what the block actually names.
+
 ### Four of the six things `tracking-work.md` promised had no owning skill (2026-08-04)
 
 Reproduced against the real skills: the rendered 3-lane cycle board, moving an item's status

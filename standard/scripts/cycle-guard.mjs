@@ -6,6 +6,14 @@
 // already in flight is a backlog nobody believes, and a convention held by discipline
 // stops being held. So it is checked rather than asked for.
 //
+// Three directions, all checked: an id in more than one place (the clash check below), an
+// id a closed cycle's outcome names as "returned to the pool" that never actually lands
+// there (the "at least one" check further down), and a cycle file whose rows this guard
+// cannot find at all - no `## Intents` heading, or rows under it with no id in the first
+// cell (`unreadable`, also below). The first catches too many places, the second catches
+// zero, the third catches a cycle that reads as empty when it is actually unparseable -
+// which looks identical to a clean cycle from the outside.
+//
 // Usage:
 //   node scripts/cycle-guard.mjs            # report, exit 0 (advisory)
 //   node scripts/cycle-guard.mjs --block    # exit 1 on a violation (CI, scale profile)
@@ -141,6 +149,71 @@ const scan = (file, scopeToIntents = false) => {
   return { rows: found, sawIntents, bodyRows };
 };
 
+// Status is declared once, in the header table (`| **Status** | closed |`) - never inside
+// `## Intents`, never commented out, so a direct scan is enough.
+const STATUS_CELL = /\*\*status\*\*\s*\|\s*([^|]+?)\s*\|/i;
+const readCycleStatus = (file) => {
+  for (const raw of readFileSync(file, "utf8").split("\n")) {
+    const m = raw.match(STATUS_CELL);
+    if (m) return m[1].trim().toLowerCase();
+  }
+  return null;
+};
+
+// `Returned to the pool: PAY-7, PAY-9` in a closed cycle's `## Outcome` block - the ids
+// cycle-close says went back to the backlog. The clash check above only ever notices an id
+// in *two* places; it cannot notice one that ended up in *zero*, because a name in prose
+// that nothing points back to just looks like nothing was checked. Same comment/fence
+// stripping as `scan`, scoped to `## Outcome` instead of `## Intents`.
+const RETURNED_LINE = /^returned to the pool\s*:\s*(.*)$/i;
+const returnedIdsIn = (file) => {
+  const ids = [];
+  let commented = false;
+  let fenced = false;
+  let inOutcome = false;
+  for (const raw of readFileSync(file, "utf8").split("\n")) {
+    const line = raw.trim();
+    if (!commented && !fenced) {
+      if (/^##\s+outcome\b/i.test(line)) {
+        inOutcome = true;
+        continue;
+      }
+      if (inOutcome && /^##\s+/.test(line)) inOutcome = false;
+    }
+    if (!commented && /^(```|~~~)/.test(line)) {
+      fenced = !fenced;
+      continue;
+    }
+    let rest = line;
+    let visible = "";
+    while (rest) {
+      if (commented) {
+        const end = rest.indexOf("-->");
+        if (end === -1) break;
+        commented = false;
+        rest = rest.slice(end + 3);
+      } else {
+        const start = rest.indexOf("<!--");
+        if (start === -1) {
+          visible += rest;
+          break;
+        }
+        visible += rest.slice(0, start);
+        commented = true;
+        rest = rest.slice(start + 4);
+      }
+    }
+    if (fenced || !inOutcome) continue;
+    const m = visible.trim().match(RETURNED_LINE);
+    if (!m) continue;
+    for (const tok of m[1].split(",")) {
+      const id = unwrap(tok);
+      if (ID.test(id)) ids.push(id);
+    }
+  }
+  return ids;
+};
+
 const pool = POOLS.find(existsSync);
 const cycleFiles = existsSync(CYCLES) ? walk(CYCLES) : [];
 
@@ -193,6 +266,17 @@ const clashes = [...where.entries()].filter(([, fs]) => fs.length > 1);
 const stale = blocks.filter(({ ref }) => !where.has(ref) || status.get(ref) === "done");
 const selfBlocked = blocks.filter(({ id, ref }) => id === ref);
 
+// The "at least one" direction: an id a closed cycle says it returned, but which is not
+// actually sitting in the pool - the outcome block asserted a move that never happened.
+const poolIds = new Set(scan(pool, false).rows.map((r) => r.id));
+const unreturned = [];
+for (const f of cycleFiles) {
+  if (readCycleStatus(f) !== "closed") continue;
+  for (const id of returnedIdsIn(f)) {
+    if (!poolIds.has(id)) unreturned.push({ id, file: f });
+  }
+}
+
 for (const [id, fs] of clashes) {
   console.error(`  ${id} is in ${fs.length} places: ${fs.join(", ")}`);
 }
@@ -206,8 +290,11 @@ for (const { id, file } of selfBlocked) {
 for (const { file, why } of unreadable) {
   console.error(`  ${file}: ${why}`);
 }
+for (const { id, file } of unreturned) {
+  console.error(`  ${file} says ${id} was returned to the pool, but ${id} is not in ${pool}`);
+}
 
-const problems = clashes.length + stale.length + selfBlocked.length + unreadable.length;
+const problems = clashes.length + stale.length + selfBlocked.length + unreadable.length + unreturned.length;
 
 if (!problems) {
   const note = blocks.length ? `, ${blocks.length} live block(s)` : "";
@@ -231,6 +318,9 @@ if (unreadable.length) {
   lines.push(
     "A cycle whose intents cannot be read is not a cycle with no problems: the format is the interface. Rows under `## Intents`, the id in its own first cell, the status in the last cell whatever columns sit between - see docs/tree/docs-cycles.md, and `docs/cycles/_template.md` for the shape a cycle starts from.",
   );
+}
+if (unreturned.length) {
+  lines.push(`An id a closed cycle's outcome names as returned must actually be in ${pool} - write it back, or fix the outcome block.`);
 }
 console.error(lines.join("\n"));
 process.exit(block ? 1 : 0);
