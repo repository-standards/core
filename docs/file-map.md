@@ -121,6 +121,12 @@ them rather than checking files.
 | [`docs/method/security-baseline.md`](#) | the axes a repo decides once - a menu, answered in your own security ADR |
 | [`docs/tree/specs.md`](#) | how to write a capability spec - the tiers, the contracts, what makes buildable checkable (R8, R9) |
 | [`docs/tree/docs-decision-records.md`](#) | the ADR/BDR streams, the record test and the altitude hierarchy (R5) |
+| [`docs/method/agent-work.md`](#) | what the agent starts on its own, what it refuses, and what it never decides for you |
+| [`docs/method/dev-work.md`](#) | the dev's job when building: intent in, a buildable spec plus its records out |
+| [`docs/method/lead-work.md`](#) | rolling the standard out across more than one repo, consistently |
+| [`docs/method/product-work.md`](#) | the product owner's job: what should be true, and for whom |
+| [`docs/method/tracking-work.md`](#) | the three files that answer what is still owed, what is happening now, and when it lands |
+| [`docs/method/working-language.md`](#) | language is a configuration, not a constraint - the reasoning and the guidance for a non-English team |
 
 ## Required headings
 
@@ -130,3 +136,5 @@ A file can exist and still be a shell. These headings are checked by name.
 |---|---|---|
 | `AGENTS.md` | `Altitude` | the precedence order wins-on-conflict must be stated |
 | `CHANGELOG.md` | `Unreleased` | R18/R25 - a PR describes its change here; nothing else holds history, and drift 0 must not be reachable with no changelog at all |
+| `AGENTS.md` | `The loop runs itself (unprompted)` | the unprompted-behaviour contract survives deletion or a thin rewrite - it is what makes the loop self-triggering rather than merely documented |
+| `AGENTS.md` | `Volunteer, don't wait to be asked` | an ambiguous mention of a bug, a decision, or scope creep gets named and asked about, not silently actioned or silently dropped |
