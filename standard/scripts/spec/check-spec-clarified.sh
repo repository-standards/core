@@ -7,8 +7,15 @@
 #   2. it contains zero open markers of the "[NEEDS ..." family (ADR-024):
 #      CLARIFICATION (a question), DECISION (a missing ADR/BDR), INPUT (e.g. a
 #      UX design), ASSET (e.g. credentials) - each names what is missing and
-#      who brings it, so the open markers double as the spec's gap list.
+#      who brings it, so the open markers double as the spec's gap list, and
+#   3. nothing in it is merely SHAPED like a marker - a translated family name or
+#      an invented type is a gap the gate cannot read, so it fails instead, and
+#   4. it contains a "## Open questions" section that says there are none.
 # Passing this gate is what earns the spec "Status: ready-to-develop".
+#
+# Every check fails CLOSED, and that is the point of the file: three separate
+# fail-open bugs got a spec to ready-to-develop with its questions still live,
+# and each one looked exactly like a passing gate.
 #
 # Usage: check-spec-clarified.sh <path-to-spec.md>
 # Exit codes: 0 = gate passed; 1 = gate failed (message on stderr).
@@ -93,5 +100,104 @@ if [ "$UNKNOWN" -gt 0 ]; then
     exit 1
 fi
 
-echo "clarify gate: PASS - $SPEC_FILE has a '## Clarifications' section and no open [NEEDS ...] markers (ready-to-develop)."
+# --- the spec's own open-questions section -------------------------------------------
+# The capability template makes "## Open questions" a REQUIRED section, in free prose, and
+# the gate never read it. Four shapes were reproduced passing with questions live: prose
+# markers, a question phrased as a statement, a table of open items, and an item resolved
+# above but still listed here. Reading intent out of free text is not the answer; the rule
+# is structural, and it is the whole rule:
+#
+#   this section passes only when it says there are none.
+#
+# So an unresolved gap goes where it belongs - a typed marker in its functional section,
+# which the checks above hold closed - a settled note goes into the section it describes,
+# and anything worth keeping but not worth blocking on goes to the backlog with a link.
+# HTML comments and fenced blocks are stripped first: that is where the template's own
+# guidance lives, and the template must not trip the rule it teaches.
+#
+# Pure bash and grep, per this engine's dependency rule. grep runs only on the handful of
+# lines inside the section, not per line of the file.
+OQ_FOUND=0
+OQ_LIVE=""
+OQ_COUNT=0
+in_section=0
+in_comment=0
+in_fence=0
+lineno=0
+while IFS= read -r raw || [ -n "$raw" ]; do
+    lineno=$((lineno + 1))
+    line="$raw"
+
+    # HTML comments, scanned within the line: an example block that opens and closes on
+    # one line must not swallow the rest of the file.
+    if [ "$in_comment" -eq 1 ]; then
+        case "$line" in
+            *"-->"*)
+                line="${line#*-->}"
+                in_comment=0
+                ;;
+            *) continue ;;
+        esac
+    fi
+    case "$line" in
+        *"<!--"*)
+            before="${line%%<!--*}"
+            rest="${line#*<!--}"
+            case "$rest" in
+                *"-->"*) line="$before${rest#*-->}" ;;
+                *)
+                    line="$before"
+                    in_comment=1
+                    ;;
+            esac
+            ;;
+    esac
+
+    case "$line" in
+        '```'* | '~~~'*)
+            if [ "$in_fence" -eq 1 ]; then in_fence=0; else in_fence=1; fi
+            continue
+            ;;
+    esac
+    [ "$in_fence" -eq 1 ] && continue
+
+    case "$line" in
+        "## Open questions"*)
+            OQ_FOUND=1
+            in_section=1
+            continue
+            ;;
+        "## "* | "# "*)
+            in_section=0
+            continue
+            ;;
+    esac
+
+    [ "$in_section" -eq 0 ] && continue
+    printf '%s' "$line" | grep -q '[^[:space:]]' || continue
+    # The only content that reads as "nothing is open".
+    printf '%s' "$line" | grep -qiE '^[[:space:]]*(none|none known|none at this time|no open questions|no known gaps)\.?[[:space:]]*$' && continue
+    OQ_COUNT=$((OQ_COUNT + 1))
+    OQ_LIVE="${OQ_LIVE}${lineno}:${line}
+"
+done < "$SPEC_FILE"
+
+if [ "$OQ_FOUND" -eq 0 ]; then
+    echo "clarify gate: FAIL - $SPEC_FILE has no '## Open questions' section (the capability template requires it)." >&2
+    echo "clarify gate: add it, and write 'None known.' under it when there genuinely are none - an absent section is indistinguishable from nothing being open, which is the difference this gate exists to hold." >&2
+    echo "clarify gate: that heading is SYNTAX and stays exactly '## Open questions' in a spec written in any language (docs/method/working-language.md)." >&2
+    echo "clarify gate: do not plan or generate tasks for a spec that is not ready-to-develop." >&2
+    exit 1
+fi
+
+if [ "$OQ_COUNT" -gt 0 ]; then
+    echo "clarify gate: FAIL - $SPEC_FILE has $OQ_COUNT live line(s) under '## Open questions':" >&2
+    printf '%s' "$OQ_LIVE" >&2
+    echo "clarify gate: that section passes only when it says there are none ('None known.'). Anything else there is an open item, however it is phrased - prose, a statement, a table row, or one resolved above and still listed below." >&2
+    echo "clarify gate: move each one: an unresolved gap becomes a typed [NEEDS ...] marker in the section it belongs to (this gate holds those), a settled note goes into the section it describes, and a known gap the repo will not block on goes to the backlog with a link from there." >&2
+    echo "clarify gate: do not plan or generate tasks for a spec that is not ready-to-develop." >&2
+    exit 1
+fi
+
+echo "clarify gate: PASS - $SPEC_FILE has a '## Clarifications' section, no open [NEEDS ...] markers, and nothing live under '## Open questions' (ready-to-develop)."
 exit 0

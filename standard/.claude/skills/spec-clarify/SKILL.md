@@ -212,6 +212,7 @@ Execution steps:
 7. Validation (performed after EACH write plus final pass):
    - Clarifications session contains exactly one bullet per accepted answer (no duplicates).
    - Every open item is either answered in `## Clarifications` or present as a typed marker - nothing unresolved exists only in the conversation.
+   - `## Open questions` exists and reads `None known.` unless something is genuinely outstanding. The gate reads that section and passes only on that line, so live content there - prose, a statement, a table, or an item answered above and still listed below - keeps the spec out of ready-to-develop. Each open thing belongs in exactly one place: a typed marker in the section it affects.
    - Updated sections contain no lingering vague placeholders the new answer was meant to resolve.
    - No contradictory earlier statement remains (scan for now-invalid alternative choices removed).
    - Markdown structure valid; only allowed new headings: `## Clarifications`, `### Session YYYY-MM-DD`.
