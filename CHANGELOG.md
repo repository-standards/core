@@ -16,6 +16,22 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A cycle-boundary split had no status value, and cold-start timelines promised a number ADR-029 forbids (2026-08-04)
+
+Two gaps in the same neighborhood. `cycle-close`'s documented split - an item spans the
+cycle boundary, part done, part returned - had no status value in the vocabulary
+`_template.md` declares; adopters were reproduced inventing their own (`split -> IMPL-3`).
+Added `split:<id>` to the template's status vocabulary, matching the existing `blocked:<id>`
+shape, and told `cycle-close` to write it.
+
+Separately, `timeline-update`'s cold-start branch said it would "project from sizes" and
+"label the result an estimate" - which reads as a fabricated date, and directly contradicts
+ADR-029 and `standard/docs/backlog.md`, both of which forbid ever converting a size letter
+into a number. Reworded the skill (and the matching passage in `tracking-work.md` and
+`docs-cycles.md`) to say precisely what a cold start is allowed to produce: a size-based
+**shape** ("heavier than usual"), never a duration or a date. Both cold-start branches - sized
+or not - now consistently give no date; the only difference is whether a shape comes with it.
+
 ### `cycle-open` and `cycle-close` assumed the backlog's primary path (2026-08-04)
 
 `cycle-guard.mjs` already accepts either manifest path for the backlog file
