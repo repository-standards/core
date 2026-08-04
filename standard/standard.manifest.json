@@ -45,7 +45,7 @@
       "profile": "core",
       "since": "1.0.0",
       "rule": "R2",
-      "sha256": "ffe6f4d1b2dd5751a4255493d6ebafd4cf289e6eed8ab8b58c57b09950821d7e"
+      "sha256": "6c66189918688382bbab7350acfec5ac07a714e696145b03c9efa20e5a928ba3"
     },
     {
       "path": "CLAUDE.md",
@@ -136,7 +136,7 @@
       "profile": "core",
       "since": "0.4.0",
       "rule": "R16",
-      "sha256": "344eea927cee47e6fa3390fe89804a28821f8de0376908ecc7a410ddf1a4f4ef"
+      "sha256": "5b00e706a94ab14223c889a6ee31324f0337a0dc13144368015c64f519ef957b"
     },
     {
       "path": "scripts/spec-structure.mjs",
@@ -146,7 +146,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R16",
-      "sha256": "3c264472db993cd4754b6bdbb9ef827032227bf8a55907eba25bc34f44063f4c"
+      "sha256": "67f463a1d4296bbd62243c09c2999bfe03fef5bfebdc96d218f40702b2f4609a"
     },
     {
       "path": "scripts/facts-check.mjs",
@@ -156,7 +156,7 @@
       "profile": "core",
       "since": "1.0.0",
       "rule": "R4",
-      "sha256": "7e2d1a39ea88366bfc1dc26be9a50a2bbe0992eb98920d7f1f1742c9d8dfc43a"
+      "sha256": "0d6b2a4017cfe8e1d527df9b828efa30602e3e74b9df823976003c81a3f9565f"
     },
     {
       "path": "docs/facts.json",
@@ -175,7 +175,7 @@
       "profile": "core",
       "since": "1.0.0",
       "rule": "R4",
-      "sha256": "b3f62ebbafee008ce1106fc398c754e11abe7f7cc8b2a2ca691decf8da45d9f8"
+      "sha256": "731111df7fc0e770348ed868427fda9dadd32beaa78e2f94c8a219ae1fb41d1e"
     },
     {
       "path": "scripts/schema-pair.mjs",
@@ -194,7 +194,8 @@
       "required": true,
       "profile": "core",
       "since": "unreleased",
-      "rule": "R5"
+      "rule": "R5",
+      "sha256": "8b08b51c5d8a8eb97e803208684937c683f6b7ea8c2b881ec5758036eb15469a"
     },
     {
       "path": ".claude/skills",
@@ -208,25 +209,25 @@
       ],
       "rule": "R22",
       "sha256": {
-        "add-to-backlog/SKILL.md": "a9d25d5d9f1a2cb85596b0d1c7e01d4577b70fb5f78ac16c3cc2e80a9d221b31",
-        "adr-write/SKILL.md": "05e2137c82c5ec5d75d4f72c55a9fb42faae4bf8823ccaa326ff346704eaa77b",
-        "bdr-write/SKILL.md": "8c6474250f4f1147d366e2772694637c02a2a06c34334b6c127927bfab98c692",
-        "cycle-close/SKILL.md": "2fdb07f52cbcedbb746b972ae964f7c491e2039f8c39862678408effc2d24323",
-        "cycle-open/SKILL.md": "e3d833db1055d6c431a012e1f46872c9cc076884b28a4ba6b8d19e82763aac60",
-        "discovery-digest/SKILL.md": "a37f27dd23b00bdd399ff0dce97ce502b9ab0695d02a55a021b42335b6cd9b83",
+        "add-to-backlog/SKILL.md": "a07e6334f44ab3aeda19aeaa04d0a3639512ff1aceaddcf7118c8f1c724d5b0f",
+        "adr-write/SKILL.md": "fc48ce8bc9c48453cb0ed25c2e3c5de54e6fd1dd6afaf50d5df0ca0d5530e239",
+        "bdr-write/SKILL.md": "afb5a4de61ff80e0321467b5c8cc8b79f13439751fd3249603a4cf5b9f310035",
+        "cycle-close/SKILL.md": "72bad295dd461eebae9bd356ad07db33a76274c7b3011ad1d52d1158f0b82147",
+        "cycle-open/SKILL.md": "2e9f3b417584523cd56c8763a20aa4667db366905110c3719a9087f4910d19c4",
+        "discovery-digest/SKILL.md": "bc7f25b8a7eb9be3adaa0917febb5c2b452d378e1d5836c5b1bf47add2094d09",
         "idea-write/SKILL.md": "01f74cf692bb7941d24118928080e16519c78c683a374a69aad81695036e02ae",
         "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",
-        "pre-pr-review/SKILL.md": "a772ed772f4463f726bc67950732e9b1c995ed61458a13c1859bcf401dbc2e0c",
+        "pre-pr-review/SKILL.md": "d72bee4edf7979968dc08f2cc493826953a396090a212f36132af557cde55960",
         "product-write/SKILL.md": "21bdc82897281178f915cb0f51dd669d35228d17748977cbacdc1993f2843b98",
-        "spec-clarify/SKILL.md": "28eaf382e05153cdc8d2abfdf8a2961d1e8c7402cfaa180728602eaea126e267",
-        "spec-impact/SKILL.md": "06c7048f85c0ef416bab5e60cfaa9ffd1e65e8f066d000ec5402ac17ff7e1bfd",
+        "spec-clarify/SKILL.md": "db762444e20611e736580568a6553ce2447f4c7743a0d4f64608ea55d37e7f9e",
+        "spec-impact/SKILL.md": "ebd1a06825e4a97e7c80cc01a25e68e57dccb6001c56877a0310a847db7c12f7",
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",
         "spec-plan/SKILL.md": "65173342ed0a247be5bfdf684e1e07c1d67ae14f5bc55649c9441b2b4db371c5",
-        "spec-reconcile/SKILL.md": "fcd15f29dcd08d26d6ee7077e8a82b2ebefd596372350b9b72c13d22cb7bd73c",
-        "spec-specify/SKILL.md": "8bd929229b445fc1819f94541c84cefe5e0f21716c74a31599bcf3e512d42b66",
+        "spec-reconcile/SKILL.md": "f43e24a4f0624c34cfa7ec7abfe1e50976c452e3e5883729cf9c22c64f467ef8",
+        "spec-specify/SKILL.md": "03335ef089e1937f3be74f757ed7d69e440280407775fb4e25f5efad7001e2be",
         "spec-tasks/SKILL.md": "5df4796479b547c8361e57e94d17aa94f8ec276c77487568081acc669108c9c6",
-        "spec-update/SKILL.md": "87feb637bdf10af91e049756f4b5e50a46a4e4bd6668f347e8f80bd39437b9e5",
-        "timeline-update/SKILL.md": "6320bc8ec513da9727e6d77bd304f38022d76fd7c9ad6d21c4eea7bd24e7c8c8",
+        "spec-update/SKILL.md": "901dffb320ac72ef900f662e892f7057a1b9539516142fc80b619ac6b1de5872",
+        "timeline-update/SKILL.md": "e0770d9e33139bbddaa01be6bd59748845ab6d18b34fd9de489910f110cd584c",
         "update-to-version/SKILL.md": "fd906f732f0fe870cca8cad3254e457300e7bce2608c119c0794827cd52aad6a"
       }
     },
@@ -241,7 +242,7 @@
       "sha256": {
         "LICENSE": "2510b446bc1f0cf9702453075d20cd88631e20e5642658edb7325d9c1eb534f7",
         "check-prerequisites.sh": "7ef96d9112ad2c4b3b713855bc133b433cfda77a2b2669c6e2d5a2b142cdfe29",
-        "check-spec-clarified.sh": "2c730139395f8f9a663bcb4329fef3ba6d9e4be27f58528eba5389ad4180d37b",
+        "check-spec-clarified.sh": "414c28837b93e0b9c2c342b230f7f09c2c2b24fe7a0e804e3ab4b1e5add55229",
         "common.sh": "51ae5e92db67f1a62fdb788730a7c7d56097b0f747ae2f427ddf6c20ae272aee",
         "plan-template.md": "c8a345b6a586d54125a95ce9bb6d90e5fc8870ee90c4a4bbc5c3edd904130c03",
         "setup-plan.sh": "4469b22960f43c07c33dca00de6dedb252145e9a9ce8fbb0e63be82e02b082ab",
@@ -256,7 +257,10 @@
       "required": true,
       "profile": "core",
       "since": "1.0.14",
-      "rule": "R16"
+      "rule": "R16",
+      "sha256": {
+        "glob.mjs": "eb9b6075b0cab654039d18b8b643b0b58e7e9a182413434051e82a7ee9eeb3ca"
+      }
     },
     {
       "path": ".gitleaks.toml",
@@ -345,7 +349,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R11",
-      "sha256": "8915e03e666ca7c5f19fa2d4f22ca92acdcf29ad8504d365e943437f84abdc72"
+      "sha256": "eac82889fdc92feeb22541f1cab02f048d76b5d6c1cc03d36748f7f92d49790e"
     },
     {
       "path": ".github/workflows/spec-guard.yml",
@@ -503,7 +507,7 @@
       "profile": "scale",
       "since": "1.0.0",
       "rule": "R15",
-      "sha256": "e51f9fa86e121fa4a7eb4284367ce3a8c0a50c64608e1fa7d4cb63ada7a48d47"
+      "sha256": "2d01c193d687b931b987c37065231842e7b01f2af52caf6f63fb42d54dfebd65"
     }
   ],
   "references": [
