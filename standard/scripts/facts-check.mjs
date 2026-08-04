@@ -18,7 +18,10 @@
 //
 // Declare facts in docs/facts.json (R4):
 //   [{ "id": "...", "what": "...",
-//      "home":   { "count": "<glob>" } | { "read": "<file>" } | { "match": { "file": "...", "pattern": "...(capture)..." } },
+//      "home":   { "count": "<glob>" }                                   how many files match
+//              | { "countMatches": { "file": "...", "pattern": "..." } }  how many times one file declares it
+//              | { "read": "<file>" }                                     the file's whole content
+//              | { "match": { "file": "...", "pattern": "...(capture)..." } },
 //      "claims": [{ "file": "...", "pattern": "...(capture)..." }] }]
 //
 // Usage:
@@ -69,7 +72,16 @@ const homeValue = (fact) => {
     if (!m) throw new Error(`the home pattern matches nothing in ${home.match.file}`);
     return m[1];
   }
-  throw new Error("home must be one of: count, read, match");
+  // How many times a file declares the thing - rules in a spec, rows in a table. Neither
+  // of the forms above can say it: `count` counts files, and `match` captures one
+  // occurrence when the number wanted is how many there are. Without it, a count of
+  // something declared inside one file has no home and goes back to being hand-written.
+  if (home.countMatches) {
+    const hits = [...readFileSync(home.countMatches.file, "utf8").matchAll(new RegExp(home.countMatches.pattern, "gm"))].length;
+    if (hits === 0) throw new Error(`the home pattern matches nothing in ${home.countMatches.file}`);
+    return String(hits);
+  }
+  throw new Error("home must be one of: count, countMatches, read, match");
 };
 
 const facts = JSON.parse(readFileSync(CONFIG, "utf8"));
