@@ -608,6 +608,48 @@
       "purpose": "the ADR/BDR streams, the record test and the altitude hierarchy (R5)",
       "since": "1.0.0",
       "rule": "R5"
+    },
+    {
+      "id": "agent-work",
+      "path": "docs/method/agent-work.md",
+      "purpose": "what the agent starts on its own, what it refuses, and what it never decides for you",
+      "since": "1.0.0",
+      "rule": "R3"
+    },
+    {
+      "id": "dev-work",
+      "path": "docs/method/dev-work.md",
+      "purpose": "the dev's job when building: intent in, a buildable spec plus its records out",
+      "since": "1.0.0",
+      "rule": "R3"
+    },
+    {
+      "id": "lead-work",
+      "path": "docs/method/lead-work.md",
+      "purpose": "rolling the standard out across more than one repo, consistently",
+      "since": "1.0.0",
+      "rule": "R17"
+    },
+    {
+      "id": "product-work",
+      "path": "docs/method/product-work.md",
+      "purpose": "the product owner's job: what should be true, and for whom",
+      "since": "1.0.0",
+      "rule": "R3"
+    },
+    {
+      "id": "tracking-work",
+      "path": "docs/method/tracking-work.md",
+      "purpose": "the three files that answer what is still owed, what is happening now, and when it lands",
+      "since": "1.0.0",
+      "rule": "R15"
+    },
+    {
+      "id": "working-language",
+      "path": "docs/method/working-language.md",
+      "purpose": "language is a configuration, not a constraint - the reasoning and the guidance for a non-English team",
+      "since": "1.0.0",
+      "rule": "R3"
     }
   ],
   "sections": [
