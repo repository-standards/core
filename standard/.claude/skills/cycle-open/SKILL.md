@@ -1,6 +1,6 @@
 ---
 name: cycle-open
-description: Use when a team is picking up work for the next stretch - "let's start a cycle", "what are we doing this month", "pull the top three payment items into a sprint". Creates the cycle with its goal and agreed end date, and moves the chosen intents out of the backlog pool so each one lives in exactly one place.
+description: Use when a team is picking up work for the next stretch - "let's start a cycle", "what are we doing this month", "pull the top three payment items into a sprint". Creates the cycle with its goal and agreed end date, and moves the chosen intents out of the backlog pool so each one lives in exactly one place. Also owns reading an open cycle back as a status board ("how is the dispatch cycle going?") and mid-cycle edits - moving a status, reassigning a holder - that happen between opening and closing.
 ---
 
 # cycle-open
@@ -80,3 +80,31 @@ This is how one is opened.
   that assigns work has quietly become a queue of orders.
 - **Do not set a length policy.** Two-week cycles are a choice a team may make; the standard
   has no opinion and should not grow one.
+
+## Reading a cycle back
+
+A cycle is a markdown file - read it directly for one row's answer. For "how is the dispatch
+cycle going", render it as a board instead, because a person acts on the shape faster than on
+a table: group every row under `## Intents` by its status cell into three lanes, `done`,
+`doing` (a `blocked:<id>` row stays in `doing` and says what it is waiting on), and `todo`.
+Show id, title and holder (`assignee`) per row - the three things the file exists to answer.
+An empty `assignee` is worth naming, the same way the file itself calls that a gap.
+
+This is a grouping of what the row already stores, nothing computed and no date attached -
+that is `timeline-update`'s job, and it correctly refuses to project an open cycle. This only
+shows what the file says right now.
+
+## Editing a cycle mid-flight
+
+Between opening and closing, a cycle changes hands and status without either boundary skill
+running. These are plain table edits - say so precisely rather than leaving it to inference:
+
+- **Moving a status** ("PAY-3 is done now", "start on PAY-4"): edit that row's status cell in
+  place - the last cell, whatever the column count. Use `blocked:<id>` when it is waiting on
+  another intent named by id, plain `todo` / `doing` / `done` otherwise.
+- **Reassigning a holder** ("give PAY-3 to Ravi"): overwrite the `assignee` cell in place. It
+  is present-tense state, not a log (ADR-030) - the previous holder is not kept here; a team
+  that needs that trail needs a tracker.
+- **Prove it after either edit.** `node scripts/cycle-guard.mjs --block` - a status edit that
+  invents a `blocked:<id>` pointing at nothing, or an edit that duplicates the row instead of
+  changing it in place, is exactly what the guard exists to catch.
