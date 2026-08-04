@@ -33,6 +33,7 @@ copied into your repository as folder READMEs that then age in place.
 | `CLAUDE.md` <br><small>or `AGENTS.md`</small> | the file Claude Code loads first - points at AGENTS.md and carries the rule to check the skills before acting (R1); a non-Claude repo carries the same content in whatever its agent loads first | optional, core | `merge` | [R1](../standard/SPEC.md) |
 | `specs` | living capability specs | **required**, core | `fill-from-repo` | [R8](../standard/SPEC.md) |
 | `backlog.md` <br><small>or `docs/backlog.md`</small> | the work ledger; items leave only when their DoD is met | **required**, core | `fill-from-repo` | [R15](../standard/SPEC.md) |
+| `CHANGELOG.md` | the only home of history (ADR-018); a PR describes its change under `## Unreleased` and never touches the version - R18/R25's one path, at every profile | **required**, core | `fill-from-repo` | [R18](../standard/SPEC.md) |
 | `.gitleaks.toml` | secret-scan config (the shipped scan SHOULD gate CI) | optional, core | `copy` | [R19](../standard/SPEC.md) |
 | `README.md` | the repo's front door - authored from this repo's reality | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `CONTRIBUTING.md` | contribution mechanics pointer - defers to AGENTS.md | optional, scale | `fill-from-repo` | [R3](../standard/SPEC.md) |
@@ -128,3 +129,4 @@ A file can exist and still be a shell. These headings are checked by name.
 | File | Heading | Why it must be there |
 |---|---|---|
 | `AGENTS.md` | `Altitude` | the precedence order wins-on-conflict must be stated |
+| `CHANGELOG.md` | `Unreleased` | R18/R25 - a PR describes its change here; nothing else holds history, and drift 0 must not be reachable with no changelog at all |
