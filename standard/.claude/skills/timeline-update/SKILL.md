@@ -18,11 +18,15 @@ So: below **three closed cycles** there is no measured throughput, and this must
 one. Three is not a magic number; it is the point below which one unusual cycle dominates the
 average, and the file says so rather than hiding it.
 
-What it does instead is the **cold-start mode** (ADR-029): if items carry `size`, project from
-sizes and **label the result an estimate, in the file, next to the number**. If they do not,
-report what is in flight and give no date at all. The distinction the reader needs is not
-"date or no date" but *which kind of number this is*, and that must survive being screenshotted
-out of context.
+What it does instead is the **cold-start mode** (ADR-029): if items carry `size`, describe the
+**shape** of what is left - "two `L`s and three `M`s remain, heavier than the last cycle's mix" -
+and say plainly that this is a ranking, not a date. ADR-029 is explicit that sizes are "never
+summed, never converted to numbers, and never fed into a projection", cold start included, so
+no duration is manufactured from a size letter under any circumstance - there is no such thing
+as an "estimated date" here, only a size-based read of how heavy the remaining work looks. If
+items carry no size either, report what is in flight and give no date at all. Both cold-start
+branches end the same way - **no date** - the only difference is whether the reader also gets
+a shape.
 
 **There is no blended mode.** At three closed cycles the projection switches to measured
 durations and sizes stop feeding it entirely - say so in the file the first time it happens, so
@@ -81,8 +85,8 @@ table second, not a report to hunt through.
 ## Done when
 
 - [ ] `docs/cycles/TIMELINE.md` regenerated whole, with its evidence block
-- [ ] Every open cycle projected, or the refusal stated with its reason
-- [ ] Every projection labelled **measured** or **estimated**, in the file, next to the number
+- [ ] Every open cycle projected from measured throughput, or given a size-based shape with
+      no date, or given neither with the refusal stated - never a date manufactured from sizes
 - [ ] Cycles past their target named with the overrun
 - [ ] No date given that the evidence does not support
 - [ ] A readable summary shown in the reply, not only written to the file
@@ -98,9 +102,12 @@ table second, not a report to hunt through.
   question open.
 - **Do not treat a missed target as a failure.** The date is agreed and movable by design
   (ADR-028). Report the overrun; the judgement is the owner's.
-- **Do not sum sizes into a velocity.** Sizes are a cold-start estimate and a splitting
-  signal, not a currency (ADR-029). If they are being added up, the practice this standard
+- **Do not sum sizes into a velocity.** Sizes are a cold-start ranking signal and a splitting
+  trigger, not a currency (ADR-029). If they are being added up, the practice this standard
   deliberately left behind has been rebuilt.
+- **Do not turn a size letter into a date, ever - cold start included.** ADR-029 forbids
+  converting sizes to numbers outright, not only once measured cycles exist. A size-based
+  cold-start read is a shape ("heavier than usual"), never a duration or a projected date.
 - **Do not blend an estimate with a measurement.** Once three cycles have closed, sizes are
   out of the projection entirely. A number that is half measured and half guessed cannot be
   labelled honestly, which is the whole point of labelling it.

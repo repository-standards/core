@@ -18,6 +18,12 @@ One column fills on the way in: **`assignee`**, the person doing it. In the pool
 by definition - an item nobody has picked up is not yet anyone's - and a row that arrives
 here without one is work the cycle has not really committed to.
 
+Statuses: `todo` / `doing` / `blocked:<id>` / `done` / **`split:<id>`** - the last one is a
+cycle-boundary answer only, written by `/cycle-close`: the row leaving this cycle finished
+*part* of itself, and `<id>` names the new backlog row you cut for what remains. Do not
+invent your own spelling for this (`split -> IMPL-3` and similar have been seen) - the
+guard's `blocked:<id>` shape is the model, and this is the same shape for the same reason.
+
 | id | title | cap | persona | owner | assignee | size | why | DoD | status |
 |----|-------|-----|---------|-------|----------|------|-----|-----|--------|
 | | | | | | | | | | |
