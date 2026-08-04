@@ -234,7 +234,16 @@ const failOrExcept = (kind, key, name, msg) => {
 // the one from the version it aligned to - which is why it needs no network, no shipped
 // tree beside it, and no second source of truth. CRLF is normalized to LF first so a
 // Windows checkout is not permanent drift.
-const contentHash = (p) => createHash("sha256").update(readFileSync(p, "utf8").replace(/\r\n/g, "\n")).digest("hex");
+// A read that fails is a difference, not a crash: a directory where the standard ships a
+// file, an unreadable mode, a dangling symlink. A verifier that throws stops reporting the
+// other sixty checks, which is the one thing it must never do.
+const contentHash = (p) => {
+  try {
+    return createHash("sha256").update(readFileSync(p, "utf8").replace(/\r\n/g, "\n")).digest("hex");
+  } catch {
+    return null;
+  }
+};
 const CONTENT_HINT = "run update-to-version to take the standard's copy, or record the change as an exception: { \"kind\": \"content\", \"match\": \"<path>\", \"reason\": \"...\" }";
 
 // A ported directory (`.agents/skills` standing in for `.claude/skills`, R22) is a
@@ -378,7 +387,7 @@ const verifyKeys = (f) => {
   }
   for (const key of f.requiredKeys) {
     if (has(key)) pass("key", `${p} > "${key}"`);
-    else failOrExcept("key", `${f.path}#${key}`, "key", `${p} is missing the "${key}" key - a merge keeps what the repo already has AND what the standard brings; this key is the part of ${f.path} the standard is asking for (${f.purpose})`);
+    else failOrExcept("key", `${f.path}#${key}`, "key", `${p} is missing the "${key}" key - a merge keeps what the repo already has AND what the standard brings; this key is the part of ${f.path} the standard is asking for (${f.purpose || f.rule || "required by the manifest entry"})`);
   }
 };
 
