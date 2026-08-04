@@ -90,6 +90,16 @@ showcase repo carried `| ... | ... |` in its own entry file with nothing saying 
 *empty* cells is deliberately not flagged: an empty table is a legitimate state, and a warning
 it cannot clear is one everybody learns to skip.
 
+### A deleted script was still promised in two places (2026-08-04)
+
+Two live surfaces still described `scripts/changelog.mjs` - the method page in detail, as
+shipping with the tree, and the shipped `README.md` listed it among the guards - two months
+after it went out with the per-PR fragments folder. Both now say what is true, and why the
+script is not coming back: promoting one prose `## Unreleased` section is a copy, a heading
+and a date, and a tool for that is a tool to keep in step for nothing. Found while giving
+R18 and R25 their manifest projection, which is the check that now holds the discipline the
+script used to be credited with.
+
 ### `self-verify` never looked at what a file contained (2026-08-04)
 
 The drift number checked that a manifest entry **existed**. For a `copy` entry - shipped

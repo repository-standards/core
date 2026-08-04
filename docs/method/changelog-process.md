@@ -96,11 +96,13 @@ tool, Layer 2). The **release-notes half is deliberately human** - or an agent t
 *write*, not assemble: the curation and the plain-language framing are the whole value,
 and they cannot be generated from commit lines.
 
-`scripts/changelog.mjs` (dependency-free, Layer 1) ships with the tree and does
-exactly this split:
+**No script ships for this, deliberately.** One did - `scripts/changelog.mjs`, which
+assembled the block and scaffolded the notes - and it went out with the per-PR fragments
+folder on 2026-08-02: with one `## Unreleased` section written in prose, promoting it is a
+copy, a heading and a date, and a tool for that is a tool to keep in step for nothing. This
+page described it as shipping for two months after it stopped existing, which is the
+failure mode the standard is otherwise loud about.
 
-- `node scripts/changelog.mjs` - assemble: print the **complete** `CHANGELOG.md` block
-  (grouped by `type`, verbatim) plus a **draft scaffold** for the release notes from the
-  `stakeholder`/`both` headlines. It prints to stdout and never writes a version heading
-  or touches `VERSION` - the maintainer cuts the release and *writes* the notes from the
-  draft.
+What the manifest does check is that the record exists and has somewhere to write: the file
+is a required entry and `## Unreleased` a required section, so a repo cannot lose the heading
+and quietly start writing version headings per PR.
