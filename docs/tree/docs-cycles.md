@@ -45,8 +45,12 @@ same ids under `## Outcome`, and counting that one reported every correctly clos
 a duplicate. Exactly that H2: a deeper level is not the same heading. A cycle file without
 it is an error, not an empty cycle.
 
-**The id is its own first cell** - `INV-2`, with the title in the next column, never
-`INV-2 Reassign an active route` in one cell. Backticks or bold around the id are fine.
+**The id is its own first cell, matched by its column's name.** `INV-2`, with the title in
+the next column - never `INV-2 Reassign an active route` in one cell, and a row like that is
+reported as unreadable rather than silently skipped. The guard reads whichever column the
+header row calls `id`, so putting something ahead of it - a priority column, a team column -
+does not disarm the check; a table with no column named `id` falls back to the first one.
+Backticks or bold around the id are fine either way - the guard strips them before comparing.
 
 **The status is the last cell**, whatever columns you add in between. Blocking gets no
 column of its own: `blocked:INV-2` goes in the status cell, and the guard fails when that
