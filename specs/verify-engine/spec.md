@@ -137,11 +137,15 @@ When `stack.manifest.json` exists beside `standard.manifest.json` (a repo that
 adopted a registered stack - ADR-016), self-verify notes it (`stack` row naming
 the technology only - the linkage is the registry pointer; nothing version-shaped
 is read or reported, ADR-022) and concatenates its `files`,
-`sections` and `guards` entries into the core manifest's before checking - one
-drift number across both layers. An unparseable stack manifest is a FAIL, like
-the core one. Absent, nothing changes.
+`sections`, `guards` **and `exceptions`** entries into the core manifest's before
+checking - one drift number across both layers, and one exception mechanism: a
+deviation recorded in the stack manifest (which is what a stack's own adaptation
+guide tells an adopter to do) is honoured exactly like one recorded in the core
+manifest, bounded by the same rules (11). An unparseable stack manifest is a
+FAIL, like the core one. Absent, nothing changes.
 
 - GIVEN `stack.manifest.json` declares a required file the repo lacks WHEN self-verify runs THEN the miss counts in the same drift number as core entries.
+- GIVEN `stack.manifest.json` declares an `exceptions` entry waiving one of its own required misses WHEN self-verify runs THEN the miss is excepted, not counted as drift, exactly as a core-manifest exception would be.
 - GIVEN no `stack.manifest.json` WHEN self-verify runs THEN output is identical to the pre-stack behavior.
 
 ## Open questions
