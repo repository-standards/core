@@ -30,6 +30,27 @@ after personas and product.
    create `docs/facts.json` from scratch, in that shape, once the repo has its first fact
    worth declaring.
 
+   **Write `specs/capability-map.json` now, even though there is nothing to map yet.** It is
+   a required entry (R11) and the whole coupling mechanism reads it, so a repo that reaches
+   the end of this phase without it fails `self-verify` on a file nobody thought to author -
+   and `spec-guard --audit` blocks the moment the first capability spec exists. On day one it
+   holds no capabilities, because guessing globs for code that does not exist would be worse
+   than nothing:
+
+   ```json
+   {
+     "$about": [
+       "capability -> the code globs that must move with its spec (R11). Keys starting with $ are metadata, not capabilities.",
+       "Empty at scaffold time: /spec-specify adds a capability's globs when it mints the spec.",
+       "Declare $unclaimed - the paths that belong to no capability - once there is code, so `spec-guard --audit` can report code nobody claims. Until then it reports that the check is off."
+     ]
+   }
+   ```
+
+   Leave `$unclaimed` out until the tree has code: on an empty repo the honest answer is
+   unknown, and the audit says on every run that the check is off rather than passing
+   silently. `specs/capability-map.example.json` shows the filled shape to grow into.
+
 2. **Elicit the product (ask, don't assume).** Interview the user - and give them something
    to react to, because "what is this?" asked cold gets a worse answer than the same
    question with three shapes beside it:

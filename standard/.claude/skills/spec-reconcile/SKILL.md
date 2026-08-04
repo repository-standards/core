@@ -44,7 +44,13 @@ truth - so the spec, the code, and the tests must agree.
    change if it belongs here, otherwise file a backlog item for it (`add-to-backlog`).
 
 7. Re-run the coupling guard (`node scripts/spec-guard.mjs --staged`) - a mapped
-   capability's code changed, so its spec must have changed too.
+   capability's code changed, so its spec must have changed too - **and reconcile the map
+   itself** with `node scripts/spec-guard.mjs --audit`. This is where a refactor gets caught:
+   moving or renaming a directory leaves the old glob matching nothing and the new path
+   claimed by nobody, and both halves are silent until something reads them. Fix what the
+   audit names - repoint the glob, claim the new path, or declare it under `$unclaimed` if it
+   genuinely belongs to no capability. A map whose globs match nothing is a guard watching an
+   empty set, and it looks exactly like a guard that is working.
 
 8. **Close the work: delete the scaffolding.** Plan and task files are ephemeral by rule
    (R13) and this is the step that acts on it - nothing else in the loop does, which is
