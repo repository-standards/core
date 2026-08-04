@@ -191,6 +191,15 @@
       "rule": "R22"
     },
     {
+      "path": "scripts/lib",
+      "purpose": "what more than one guard needs - glob matching, so two guards cannot answer the same question differently",
+      "adapt": "copy",
+      "required": true,
+      "profile": "core",
+      "since": "0.8.14",
+      "rule": "R16"
+    },
+    {
       "path": ".gitleaks.toml",
       "purpose": "secret-scan config (the shipped scan SHOULD gate CI)",
       "adapt": "copy",
