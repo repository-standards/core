@@ -381,6 +381,26 @@ check(
 );
 
 check(
+  "a content exception may scope a subtree, and a file exception may not",
+  (dir) => {
+    writeFileSync(join(dir, ".claude/skills/adr-write/SKILL.md"), "# ours\n");
+    writeFileSync(join(dir, ".claude/skills/bdr-write/SKILL.md"), "# ours too\n");
+    unlinkSync(join(dir, "scripts/spec-structure.mjs"));
+    patchManifest(dir, (m) => {
+      m.exceptions = [
+        { kind: "content", match: ".claude/skills/**", reason: "this repo ported the procedures to its own house style" },
+        { kind: "file", match: "scripts/**", reason: "and we would like the guards gone too" },
+      ];
+    });
+  },
+  (r, expect) => {
+    expect(says(r, ".claude/skills/adr-write/SKILL.md is changed"), "the subtree waiver did not cover a member");
+    expect(r.excepted === 2, `expected both changed members counted as excepted, got ${r.excepted}`);
+    expect(says(r, "scripts/spec-structure.mjs missing"), "a file exception reached into a subtree and waived a guard's script");
+  },
+);
+
+check(
   "an exception the repo no longer needs is reported as stale",
   (dir) =>
     patchManifest(dir, (m) => {
@@ -397,4 +417,4 @@ if (failures) {
   console.error(`self-verify-drift-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("self-verify-drift-test: OK - 18 cases, the drift number moves when the content does");
+console.log("self-verify-drift-test: OK - 19 cases, the drift number moves when the content does");
