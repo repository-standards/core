@@ -212,6 +212,51 @@ check(
 );
 
 check(
+  "a stack manifest's own exceptions are honoured, not only the primary manifest's",
+  (dir) => {
+    // The Layer 2 manifest is the one an adopter of the stack is told to record a
+    // deviation in - files/sections/guards from it were already folded into the check;
+    // exceptions were not, so a repo doing exactly what ADAPTING.md instructs got the
+    // miss counted anyway.
+    writeFileSync(join(dir, "pnpm-workspace.yaml"), "packages:\n  - 'apps/*'\nminimumReleaseAge: 10080\nsaveExact: true\n");
+    writeFileSync(
+      join(dir, "stack.manifest.json"),
+      `${JSON.stringify(
+        {
+          standard: "repository-standards-node",
+          technology: "node",
+          layer: 2,
+          files: [
+            {
+              path: "pnpm-workspace.yaml",
+              purpose: "the workspace and its supply-chain policy",
+              adapt: "merge",
+              required: true,
+              profile: "core",
+              rule: "R21",
+              requiredKeys: ["minimumReleaseAge", "saveExact", "enablePrePostScripts"],
+            },
+          ],
+          exceptions: [
+            {
+              kind: "key",
+              match: "pnpm-workspace.yaml#enablePrePostScripts",
+              reason: "this repo does not run pre/post install scripts by any means the key would gate",
+            },
+          ],
+        },
+        null,
+        2,
+      )}\n`,
+    );
+  },
+  (r, expect) => {
+    expect(r.drift === base.drift, `a stack-declared exception must clear its drift: expected ${base.drift}, got ${r.drift}`);
+    expect(r.excepted === 1, `expected 1 excepted from the stack manifest, got ${r.excepted}`);
+  },
+);
+
+check(
   "a merge-class file that carries its declared keys among the repo's own content passes",
   (dir) => {
     writeFileSync(join(dir, "pnpm-workspace.yaml"), "packages:\n  - 'apps/*'\nminimumReleaseAge: 10080\nsaveExact: true\nenablePrePostScripts: false\n");
