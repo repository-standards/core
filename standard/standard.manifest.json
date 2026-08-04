@@ -123,6 +123,9 @@
       "required": true,
       "profile": "core",
       "since": "unreleased",
+      "altPaths": [
+        "docs/CHANGELOG.md"
+      ],
       "rule": "R18"
     },
     {
