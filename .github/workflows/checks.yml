@@ -44,7 +44,7 @@ jobs:
         run: node tools/schema-pair-test.mjs
       - name: cycle-guard test (an intent cannot be in two places)
         run: node tools/cycle-guard-test.mjs
-      - name: self-verify fill test (the placeholder warning is clearable and still fires)
+      - name: self-verify fill + drift test (placeholder warning clearable; removed skill/section is drift)
         run: node tools/self-verify-fill-test.mjs
       - name: self-verify drift test (content, declared keys and the bounds on exceptions)
         run: node tools/self-verify-drift-test.mjs
