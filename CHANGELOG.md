@@ -16,6 +16,15 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### `cycle-open` and `cycle-close` assumed the backlog's primary path (2026-08-04)
+
+`cycle-guard.mjs` already accepts either manifest path for the backlog file
+(`docs/backlog.md` or `backlog.md`), but the two skills that move rows into and out of it
+still hardcoded `docs/backlog.md`. Both now resolve the path the same way the guard does -
+`docs/backlog.md` first, then `backlog.md` - as an explicit first step, rather than assuming
+a repo that satisfies the manifest at its primary path has the file the skill went looking
+for.
+
 ### A column prepended before `id` disarmed `cycle-guard` (2026-08-04)
 
 Reproduced live: a table with a column added before `id` (a priority, a team) broke the
