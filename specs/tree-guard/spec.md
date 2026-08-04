@@ -9,6 +9,17 @@
 
 Guard the single authored shipped tree (`standard/`, ADR-014): nothing repo-own leaks in, everything the manifest promises is present, every shipped file is a manifest entry, workflow pins stay exact, derived facts stay derived, and the tree passes its own verifier. Plus: no relative markdown link anywhere in the repo is dead.
 
+## Clarifications
+
+### Session 2026-08-04
+
+Retrofitted spec: this capability was built before its spec existed, so there is no clarify
+session to record. Every contract here was read off the shipped implementation and the
+decisions it cites, and the questions were settled by what already ran rather than by
+asking. Written down because the status is now checked against this section, and a `live`
+capability with no record of what settled it is the gap that check exists to expose. New
+work on this capability goes through the loop.
+
 ## Scope
 
 [`tools/tree-check.mjs`](../../tools/tree-check.mjs) (tree integrity) and [`tools/link-check.mjs`](../../tools/link-check.mjs) (link integrity). Repo-own tooling - never shipped.
