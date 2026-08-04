@@ -1,7 +1,10 @@
 # CLAUDE.md
 
-Read [`AGENTS.md`](./AGENTS.md) first - it is the single entry point and source of
-truth for conventions, structure, and the spec-first workflow.
+@AGENTS.md
+
+Imported above, not linked, so it is always in context rather than read only if an
+agent happens to open it. It is the single entry point and source of truth for
+conventions, structure, and the spec-first workflow.
 
 This repo follows repository-standards. `.standards-version` records the state it last
 aligned to - a bookmark the next update measures from, never a version it is held at; the

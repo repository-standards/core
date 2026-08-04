@@ -24,6 +24,14 @@ deviation recorded in `stack.manifest.json`, exactly where the stack's own `ADAP
 tells an adopter to record it, had no effect. The miss kept counting as drift regardless.
 Now merged along with the other three arrays.
 
+### CLAUDE.md pointed at the unprompted-behaviour rule instead of loading it (2026-08-04)
+
+`enforcement.md` claimed the loop is gated by "loaded context" among other layers, but
+`CLAUDE.md` only linked `AGENTS.md` as `[AGENTS.md](./AGENTS.md)` - a markdown link an
+agent can leave unread, not something actually in context. It now imports the file with
+`@AGENTS.md`, so the section that makes the loop self-triggering loads on every turn
+instead of only when an agent happens to click through.
+
 ### A cycle-boundary split had no status value, and cold-start timelines promised a number ADR-029 forbids (2026-08-04)
 
 Two gaps in the same neighborhood. `cycle-close`'s documented split - an item spans the
