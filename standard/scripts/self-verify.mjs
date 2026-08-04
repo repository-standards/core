@@ -202,9 +202,18 @@ for (const e of manifest?.exceptions || []) {
     exceptions.push(e);
   }
 }
+// A `content` match MAY end in `/**` to waive a subtree - a repo that rewrote a whole
+// directory of shipped procedures records one line instead of forty. Deliberately limited to
+// `content`: a subtree waiver on `file` presence would let `scripts/**` sweep away every
+// guard script's required-file check, which is the hole the guard-script rule above closes.
+// Each member it actually waives is still counted and printed, so a wide waiver costs wide
+// coverage.
 const usedExceptions = new Set();
+const covers = (e, kind, key) =>
+  e.kind === kind &&
+  (e.match === key || (kind === "content" && e.match.endsWith("/**") && key.startsWith(e.match.slice(0, -2))));
 const exceptionFor = (kind, key) => {
-  const hit = exceptions.find((e) => e.kind === kind && e.match === key);
+  const hit = exceptions.find((e) => covers(e, kind, key));
   if (hit) usedExceptions.add(hit);
   return hit;
 };

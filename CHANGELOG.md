@@ -144,6 +144,11 @@ claim that comparing two repos' numbers is sound** - the denominator is each rep
 manifest, version, profile, stack and exception list, so the comparison that holds is a repo
 against itself over time.
 
+A `content` match may end in `/**` to scope a subtree - a repo that rewrote a whole directory
+of shipped procedures records one line rather than forty, and every member it waives is still
+counted. Only `content`: a subtree waiver on presence would let `scripts/**` sweep away every
+guard's required-file check, which is the hole the guard-script rule closes.
+
 Also here: `self-verify`'s built-in fallback skeleton was announced in one dim line, so an
 unaligned repo printed `drift 4-5` where the shipped manifest gives `13-15`, same format,
 nothing to tell them apart (reproduced on three real repos). The warning and the verdict
