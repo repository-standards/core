@@ -29,13 +29,23 @@ const FACTS = [
     home: { match: { file: "README.md", pattern: "npx degit (\\S+)" } },
     claims: [{ file: "docs/adopt.md", pattern: "npx degit (\\S+)" }],
   },
+  {
+    // A count of what one file declares. The rule count is the case that needed it: the
+    // spec said "R1-R24" while defining R25, and neither of the other home forms can
+    // express "how many of these does this file declare".
+    id: "rules",
+    what: "how many numbered rules the spec declares",
+    home: { countMatches: { file: "SPEC.md", pattern: "^- \\*\\*R\\d+\\.\\*\\*" } },
+    claims: [{ file: "README.md", pattern: "rules are numbered R1-R(\\d+)" }],
+  },
 ];
 
 const BASE = {
   "tree/skills/one/SKILL.md": "# one\n",
   "tree/skills/two/SKILL.md": "# two\n",
-  "README.md": "the 2 shipped skills\n\nnpx degit owner/repo\n",
+  "README.md": "the 2 shipped skills\n\nnpx degit owner/repo\n\nrules are numbered R1-R2\n",
   "docs/adopt.md": "run npx degit owner/repo to start\n",
+  "SPEC.md": "# Spec\n\n- **R1.** a rule\n- **R2.** another rule\n",
 };
 
 const run = (dir, args = ["--facts", "facts.json"]) => {
@@ -53,6 +63,18 @@ const CASES = [
   { name: "a reworded surface fails instead of going quiet", fails: true, says: "matches nothing", files: { "docs/adopt.md": "clone it from GitHub to start\n" } },
   { name: "a claim pointing at a file that is gone fails", fails: true, says: "does not exist", files: {}, drop: ["docs/adopt.md"] },
   { name: "a home pattern that matches nothing fails", fails: true, says: "matches nothing", files: { "README.md": "the 2 shipped skills\n" } },
+  {
+    name: "a rule added to the file moves the count, and the restatement fails",
+    fails: true,
+    says: 'says "2", the source says "3"',
+    files: { "SPEC.md": "# Spec\n\n- **R1.** a rule\n- **R2.** another rule\n- **R3.** a third rule\n" },
+  },
+  {
+    name: "a counted home whose pattern matches nothing fails rather than counting zero",
+    fails: true,
+    says: "matches nothing",
+    files: { "SPEC.md": "# Spec\n\nno rules here any more\n" },
+  },
   // A repo that declares no facts is not a repo with drift - the shipped guard runs
   // in every adopting repo and must stay quiet where nothing was declared.
   { name: "a repo with no declared facts passes", fails: false, says: "skipping", files: {}, args: [] },
