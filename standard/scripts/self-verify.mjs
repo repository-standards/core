@@ -114,7 +114,7 @@ if (manifest && exists("stack.manifest.json")) {
   try {
     const stack = JSON.parse(readFileSync("stack.manifest.json", "utf8"));
     note("stack", `stack manifest present: ${stack.technology || "unnamed"} - technology layer counted in the same drift number (ADR-016/022)`);
-    for (const k of ["files", "sections", "guards"]) {
+    for (const k of ["files", "sections", "guards", "exceptions"]) {
       manifest[k] = [...(manifest[k] || []), ...(stack[k] || [])];
     }
   } catch (e) {
