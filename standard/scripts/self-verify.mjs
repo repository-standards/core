@@ -211,10 +211,37 @@ if (manifest) {
 // 2b. surviving template placeholders - drift 0 with empty shells is a hollow win.
 // A warning, never drift: substance stays the judgment tier's call.
 if (!skeleton) {
-  // Case-insensitive and broader than it was: the entry file ships `<repo>` in lower case,
-  // so the one file this check exists for was the one it could not see. The angle-bracket
-  // form excludes `:` and `/` so markdown autolinks are not mistaken for placeholders.
-  const PLACEHOLDER = /\{\{[^}]+\}\}|<[A-Za-z][A-Za-z0-9 +_-]{1,30}>/;
+  // The two shapes the shipped templates actually use, and nothing wider:
+  //   {{NORTH_STAR}}   mustache, in PRODUCT
+  //   <repo>, <team language>, <declare per artifact - default English>   angle, in prose
+  // `:` `/` `=` and a leading `/` stay out, so markdown autolinks (`<https://x>`), HTML
+  // attributes (`<img src="x">`) and closing tags (`</div>`) are not placeholders. That was
+  // not enough on its own: `<picture>`, `<code>` and friends have the same shape as `<repo>`,
+  // and the warning fired on four repos' ordinary README markup - files the standard never
+  // wrote. A single-word angle token that names an HTML element is markup, so it is excluded
+  // by name; a multi-word one is prose and no HTML element looks like that.
+  //
+  // Unicode, not ASCII: the pattern was `[A-Za-z]`-only, so `<角色名>` and
+  // `<нужно заполнить>` were invisible and a translated but unfilled shell reached drift 0
+  // with a clean bill of health.
+  const HTML_ELEMENTS = new Set(
+    ("a abbr address area article aside audio b bdi bdo big blockquote body br button canvas caption center cite code col colgroup " +
+      "data datalist dd del details dfn dialog div dl dt em embed fieldset figcaption figure font footer form g h1 h2 h3 h4 h5 h6 " +
+      "head header hgroup hr html i iframe img input ins kbd label legend li li main map mark menu meta meter nav noscript object " +
+      "ol optgroup option output p param path picture polygon polyline pre progress q rect rp rt ruby s samp script section select " +
+      "slot small source span strong style sub summary sup svg symbol table tbody td template text textarea tfoot th thead time " +
+      "title tr track u ul use var video wbr").split(" "),
+  );
+  const PLACEHOLDER_RE = /\{\{[^}\n]+\}\}|<(\p{L}[\p{L}\p{N} '._+-]{0,58})>/gu;
+  const hasPlaceholder = (body) => {
+    for (const m of body.matchAll(PLACEHOLDER_RE)) {
+      const angle = m[1];
+      if (angle === undefined) return true; // the mustache form is never anything else
+      if (!/\s/.test(angle) && HTML_ELEMENTS.has(angle.toLowerCase())) continue;
+      return true;
+    }
+    return false;
+  };
 
   // Code spans and fenced blocks are stripped first, because generic notation lives there and
   // a *correctly filled* repo keeps it: `specs/<capability>`, `docs/discovery/<topic>/`,
@@ -230,7 +257,7 @@ if (!skeleton) {
   for (const p of ["AGENTS.md", "README.md", "SECURITY.md", "docs/PRINCIPLES.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md"]) {
     if (!existsSync(p)) continue;
     const body = stripCode(readFileSync(p, "utf8"));
-    if (PLACEHOLDER.test(body)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
+    if (hasPlaceholder(body)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
   }
 }
 
