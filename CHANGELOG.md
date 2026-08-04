@@ -24,6 +24,20 @@ deviation recorded in `stack.manifest.json`, exactly where the stack's own `ADAP
 tells an adopter to record it, had no effect. The miss kept counting as drift regardless.
 Now merged along with the other three arrays.
 
+### Removing a required skill or the unprompted-behaviour section changed no drift number (2026-08-04)
+
+`self-verify` treated `.claude/skills` as a bare directory - present or absent, nothing
+inside it checked - so deleting a required lifecycle skill (`spec-clarify` included)
+left drift unchanged, and the `AGENTS.md` heading that makes the loop self-trigger had
+no `sections` entry at all. The manifest's `.claude/skills` entry already carries a
+`sha256` map naming every shipped skill (added for content verification); self-verify now
+also checks each of those names exists inside the entry's resolved path (`path` or a
+matching `altPath`), so a missing skill is its own FAIL, independent of the parent
+directory's own PASS - one mechanism, not a second `contains` field alongside it. Two new
+`sections` entries cover the unprompted-behaviour heading and the new volunteer
+section. `tools/self-verify-fill-test.mjs` gained cases proving both are now drift, and
+`specs/verify-engine/spec.md` documents the mechanism and its acceptance criteria.
+
 ### A bug mentioned in passing reached no skill and no row (2026-08-04)
 
 Found by blind-routing realistic utterances against the skills' name+description

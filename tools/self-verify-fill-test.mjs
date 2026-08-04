@@ -1,23 +1,34 @@
 #!/usr/bin/env node
-// self-verify-fill-test - the placeholder warning must be clearable.
+// self-verify-fill-test - manifest-driven checks that must be enforceable, not just present.
 //
-// Found by building a real adopting repo and filling it in properly: the warning would not
-// go away. The pattern matched generic notation - `specs/<capability>`,
-// `docs/discovery/<topic>/`, `blocked:<id>` - which a *correctly filled* repo keeps, and
-// which the shipped AGENTS.md carries in its own altitude ladder. So the one file the check
-// exists for could never clear it, and a warning nobody can clear is one everybody learns
-// to skip.
+// Two regressions, both found by the same failure mode: a check that reports green no
+// matter what actually happened to the tree.
 //
-// The fix strips code spans and fenced blocks first, on the convention that angle brackets
-// in prose mean "replace me" and angle brackets in code are notation. Both halves are
-// asserted here: notation must not warn, and a real prose placeholder must still warn -
-// a fix that silenced the check entirely would pass the first assertion alone.
+// 1. The placeholder warning must be clearable. Found by building a real adopting repo and
+//    filling it in properly: the warning would not go away. The pattern matched generic
+//    notation - `specs/<capability>`, `docs/discovery/<topic>/`, `blocked:<id>` - which a
+//    *correctly filled* repo keeps, and which the shipped AGENTS.md carries in its own
+//    altitude ladder. So the one file the check exists for could never clear it, and a
+//    warning nobody can clear is one everybody learns to skip. The fix strips code spans
+//    and fenced blocks first, on the convention that angle brackets in prose mean "replace
+//    me" and angle brackets in code are notation. Both halves are asserted: notation must
+//    not warn, and a real prose placeholder must still warn - a fix that silenced the check
+//    entirely would pass the first assertion alone.
+//
+// 2. The AGENTS.md section that makes the loop self-trigger had no `sections` entry at all,
+//    so deleting it changed nothing self-verify reported. (The sibling regression - a
+//    required lifecycle skill removed from `.claude/skills` - turned out to need no new
+//    mechanism: that directory is already a copy-class entry with one recorded hash per
+//    skill, so a missing member is a named content FAIL. See
+//    tools/self-verify-drift-test.mjs.) Two new `sections` entries close the AGENTS.md gap,
+//    asserted here the same way: delete the heading, expect a FAIL naming it; leave the
+//    shipped tree alone, expect none.
 //
 // Usage: node tools/self-verify-fill-test.mjs   # exit 1 on any failure
 // Zone 1 tooling - never shipped.
 
 import { spawnSync } from "node:child_process";
-import { cpSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -143,9 +154,65 @@ check("an autolink is not a placeholder", {
   warnsAbout: [["README.md", false]],
 });
 
+// Regression 2: a required sections[] entry must turn "removed" into a reported FAIL, not
+// stay silently green because the file the heading lived in is still there. (The sibling
+// regression - a required lifecycle skill deleted from .claude/skills - turned out to be the
+// same gap self-verify's copy-class content check already closes: each shipped skill is a
+// member of that directory entry's sha256 map, so a missing one is a named content FAIL;
+// see tools/self-verify-drift-test.mjs for that coverage.)
+const fixtureTree = () => {
+  const dir = mkdtempSync(join(tmpdir(), "drift-check-"));
+  cpSync(TREE, dir, { recursive: true });
+  return dir;
+};
+
+const checkDrift = (name, { editAgents, failsAbout }) => {
+  const dir = fixtureTree();
+  if (editAgents) {
+    const p = join(dir, "AGENTS.md");
+    writeFileSync(p, editAgents(readFileSync(p, "utf8")));
+  }
+  const r = spawnSync("node", [join(dir, "scripts/self-verify.mjs"), "--skeleton"], { cwd: dir, encoding: "utf8" });
+  const out = `${r.stdout ?? ""}${r.stderr ?? ""}`;
+  rmSync(dir, { recursive: true, force: true });
+
+  const failLines = out.split("\n").filter((l) => l.trim().startsWith("FAIL"));
+  const named = (needle) => failLines.some((l) => l.includes(needle));
+  const wrong = failsAbout.some(([needle, expected]) => named(needle) !== expected);
+
+  if (wrong) {
+    failures++;
+    const got = failLines.map((l) => l.trim()).join("\n       ") || "(no FAIL lines)";
+    console.error(`  FAIL ${name}\n       expected FAIL containing ${JSON.stringify(failsAbout)}\n       ${got}`);
+  } else {
+    console.log(`  ok    ${name}`);
+  }
+};
+
+const dropSection = (heading, nextHeading) => (body) => {
+  const start = body.indexOf(`## ${heading}`);
+  const end = body.indexOf(`## ${nextHeading}`);
+  return body.slice(0, start) + body.slice(end);
+};
+
+checkDrift("removing the unprompted-behaviour section is drift", {
+  editAgents: dropSection("The loop runs itself (unprompted)", "What you must not do"),
+  failsAbout: [
+    ['missing the "The loop runs itself (unprompted)" section', true],
+    ["missing the \"Volunteer, don't wait to be asked\" section", true],
+  ],
+});
+
+checkDrift("the shipped tree carries every required section - no false positive", {
+  failsAbout: [
+    ['missing the "The loop runs itself (unprompted)" section', false],
+    ["missing the \"Volunteer, don't wait to be asked\" section", false],
+  ],
+});
+
 console.log();
 if (failures) {
   console.error(`self-verify-fill-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("self-verify-fill-test: OK - the fill warning is clearable, still fires, reads any script, and catches an ellipsis row");
+console.log("self-verify-fill-test: OK - the fill warning is clearable, still fires, reads any script, catches an ellipsis row, and a removed required AGENTS.md section is reported as drift");
