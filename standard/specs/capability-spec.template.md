@@ -11,7 +11,7 @@
 
 **Spec tier:** buildable | behavioral   <!-- declare one -->
 **Serves:** `<persona from docs/personas.md>`   <!-- who this capability is for; required (ADR-006) -->
-**Status:** in-refinement | ready-to-develop | in-development | live | retired   <!-- in-refinement is the draft state -->
+**Status:** in-refinement | ready-to-develop | in-development | live | retired   <!-- in-refinement is the draft state; `/spec-reconcile` sets this field, and the structure guard re-runs the clarify gate on any spec claiming ready-to-develop or live - so typing one early buys a failed PR, not a head start -->
 <!-- Retiring a capability (the product bet is gone, a vendor replaces it, etc.): do not
      delete this file - it stays as the record of what was built and why (R4). Flip Status
      to `retired` with a link to the BDR/ADR that decided it (the decision to stop building

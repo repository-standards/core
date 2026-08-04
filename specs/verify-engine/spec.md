@@ -9,6 +9,17 @@
 
 [`standard/scripts/self-verify.mjs`](../../standard/scripts/self-verify.mjs) (client path `scripts/self-verify.mjs`) proves a repo still complies with the standard version it is pinned to and reports DRIFT as a number. Mechanical tier only; the judgment tier (are catalogued decisions actually recorded?) stays at PR review.
 
+## Clarifications
+
+### Session 2026-08-04
+
+Retrofitted spec: this capability was built before its spec existed, so there is no clarify
+session to record. Every contract here was read off the shipped implementation and the
+decisions it cites, and the questions were settled by what already ran rather than by
+asking. Written down because the status is now checked against this section, and a `live`
+capability with no record of what settled it is the gap that check exists to expose. New
+work on this capability goes through the loop.
+
 ## Scope
 
 The shipped verifier: manifest loading, version pin, file/section/guard checks, profiles, skeleton mode, drift accounting, exit codes.

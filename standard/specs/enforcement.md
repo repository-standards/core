@@ -5,6 +5,13 @@ part of this is mechanical; the rest needs an AI pass.
 
 ## What is mechanically enforceable (hard gate)
 
+- **Status check (shipped, in the structure lint):** a spec whose `**Status:**` claims
+  `ready-to-develop` or `live` MUST pass the clarify gate - the structure lint re-runs the
+  real gate script on it and fails the PR when it does not. The status is what the rest of
+  the method reads as "this is settled", and nothing read or wrote it: `ready-to-develop`
+  sat on specs whose gate fails with every other guard green. `spec-reconcile` owns writing
+  it; this owns proving it. A gate that cannot be run is not a gate that passed, so that
+  case fails too.
 - **Structure lint (shipped):** no ticket-numbered spec paths - `specs/<capability>/`,
   never `specs/NNN-feature/` or `specs/<cap>/NNN-*` (a common leak from upstream
   Spec Kit's native specify). Shipped as `spec-structure.mjs`, runs standalone (no

@@ -27,15 +27,26 @@ truth - so the spec, the code, and the tests must agree.
    Data / Interface / Acceptance sections - otherwise the spec keeps describing a
    bug that no longer exists (a fixed defect masquerading as a known gap).
 
-5. **Cross-spec consistency.** Once spec == code == tests, check the affected specs
+5. **Set the `Status` field, and prove it.** This step owns the status: nothing else in the
+   loop writes it, which is how `ready-to-develop` came to sit on specs whose gate fails.
+   For each spec this change touched, run `bash scripts/spec/check-spec-clarified.sh <spec>`
+   and then set the field to what is true - `live` when the capability is built and this
+   reconcile made spec == code == tests, `in-development` when the work is still open, and
+   back to `in-refinement` when the gate refuses the spec. Never type a status the gate does
+   not grant: `spec-structure` re-runs the gate on every spec claiming `ready-to-develop` or
+   `live` and fails the pull request, so the only thing typing it early buys is a later,
+   more confusing refusal. `retired` is the exception the gate has no opinion about - it is
+   set with the BDR/ADR that ended the capability.
+
+6. **Cross-spec consistency.** Once spec == code == tests, check the affected specs
    against each other: shared terms, invariants and contracts must not contradict
    across capabilities. A cross-spec contradiction is a finding - resolve it in this
    change if it belongs here, otherwise file a backlog item for it (`add-to-backlog`).
 
-6. Re-run the coupling guard (`node scripts/spec-guard.mjs --staged`) - a mapped
+7. Re-run the coupling guard (`node scripts/spec-guard.mjs --staged`) - a mapped
    capability's code changed, so its spec must have changed too.
 
-7. **Close the work: delete the scaffolding.** Plan and task files are ephemeral by rule
+8. **Close the work: delete the scaffolding.** Plan and task files are ephemeral by rule
    (R13) and this is the step that acts on it - nothing else in the loop does, which is
    why `spec-structure` has been reduced to warning about files it cannot remove. Once
    spec == code == tests, delete `plan.md`, `tasks.md` and any `research.md`,
