@@ -27,15 +27,31 @@ at once; the folder per team keeps them from colliding.
 **Ends:** 2026-08-15
 **Owner:** Maja
 
-| Intent | Holder | Status | Blocked by | Size |
+## Intents
+
+| id | title | assignee | size | status |
 |---|---|---|---|---|
-| INV-2 Reassign an active route | Maja | done | | M |
-| INV-3 Notify the original courier | Piotr | in progress | INV-2 | S |
+| INV-2 | Reassign an active route | Maja | M | doing |
+| INV-3 | Notify the original courier | Piotr | S | blocked:INV-2 |
 ```
 
-The status is read from the **last** cell of the row, so adding a column of your own does
-not switch the guard off. `Blocked by` names another intent by its id, and the guard
-fails if that id does not exist - a stale block is the most common way a board lies.
+Three things in that shape are the guard's interface rather than a matter of taste, and an
+earlier version of this page got all three wrong - which is how a real duplicate came to be
+reported as `OK - each in exactly one`:
+
+**The rows live under `## Intents`.** That heading is what tells `cycle-guard` where the
+intents are, and it reads nothing outside it - `cycle-close` writes a second table of the
+same ids under `## Outcome`, and counting that one reported every correctly closed cycle as
+a duplicate. Exactly that H2: a deeper level is not the same heading. A cycle file without
+it is an error, not an empty cycle.
+
+**The id is its own first cell** - `INV-2`, with the title in the next column, never
+`INV-2 Reassign an active route` in one cell. Backticks or bold around the id are fine.
+
+**The status is the last cell**, whatever columns you add in between. Blocking gets no
+column of its own: `blocked:INV-2` goes in the status cell, and the guard fails when that
+id does not exist, is already done, or is the row itself - a stale block is the most common
+way a board lies.
 
 `Size` is a cold-start estimate and nothing else. Once the repo has closed cycles, the
 forecast comes from what actually took how long, and the size column stops being an input

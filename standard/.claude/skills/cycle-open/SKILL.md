@@ -50,6 +50,11 @@ This is how one is opened.
    at `docs/cycles/<team>/<slug>.md` - lowercase kebab-case, a slug that will still mean
    something in six months (`2026-08-checkout`, not `sprint-4`).
 
+   Keep the template's structure: the rows sit under the `## Intents` H2, the id is the first
+   cell and the status is the last. That is `cycle-guard`'s interface, not a house style - it
+   reads intents only from that section, and a file that renames or drops the heading yields
+   no rows at all, which is indistinguishable from a cycle with nothing wrong in it.
+
 7. **Add the pointer row** to `docs/backlog.md`'s active-cycles table: team, goal, target,
    link, item count. The pool stays the single entry point without duplicating a row.
 

@@ -13,7 +13,7 @@
 // Zone 1 tooling - never shipped.
 
 import { spawnSync } from "node:child_process";
-import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -31,6 +31,13 @@ const statusTable = (...pairs) =>
   `| id | title | owner | status |\n|----|-------|-------|--------|\n${pairs
     .map(([id, s]) => `| ${id} | something | dev | ${s} |`)
     .join("\n")}\n`;
+
+// A cycle file, as `cycle-open` writes one: the rows live under `## Intents`, because that
+// heading is what the guard scopes to. A file without it yields no rows, and no rows reads
+// exactly like a clean cycle - so these helpers exist to keep the fixtures honest about the
+// shape, and the cases below assert that the missing heading is an error rather than a pass.
+const cycle = (...ids) => `# Cycle\n\n## Intents\n\n${table(...ids)}`;
+const cycleStatus = (...pairs) => `# Cycle\n\n## Intents\n\n${statusTable(...pairs)}`;
 
 // spawnSync, not execFileSync: the guard reports violations on stderr and advisory runs
 // still exit 0, so a success-only capture loses exactly the output the advisory case is
@@ -76,31 +83,31 @@ check("a repo with no cycles directory is not using cycles", {
 });
 
 check("pool and one cycle, no overlap", {
-  files: { [POOL]: table("SPEC-1", "SPEC-2"), [CYC_A]: table("PAY-9") },
+  files: { [POOL]: table("SPEC-1", "SPEC-2"), [CYC_A]: cycle("PAY-9") },
   code: 0,
   expect: ["OK", "3 intent(s)"],
 });
 
 check("an intent in the pool and a cycle at once fails", {
-  files: { [POOL]: table("SPEC-1", "PAY-9"), [CYC_A]: table("PAY-9") },
+  files: { [POOL]: table("SPEC-1", "PAY-9"), [CYC_A]: cycle("PAY-9") },
   code: 1,
   expect: ["PAY-9 is in 2 places", "belongs to the pool or to one cycle"],
 });
 
 check("the same intent in two teams' cycles fails", {
-  files: { [POOL]: table("SPEC-1"), [CYC_A]: table("PAY-9"), [CYC_B]: table("PAY-9") },
+  files: { [POOL]: table("SPEC-1"), [CYC_A]: cycle("PAY-9"), [CYC_B]: cycle("PAY-9") },
   code: 1,
   expect: ["PAY-9 is in 2 places"],
 });
 
 check("every violation is reported, not just the first", {
-  files: { [POOL]: table("A-1", "B-2"), [CYC_A]: table("A-1", "B-2") },
+  files: { [POOL]: table("A-1", "B-2"), [CYC_A]: cycle("A-1", "B-2") },
   code: 1,
   expect: ["A-1 is in 2 places", "B-2 is in 2 places"],
 });
 
 check("advisory without --block: reports and exits 0", {
-  files: { [POOL]: table("PAY-9"), [CYC_A]: table("PAY-9") },
+  files: { [POOL]: table("PAY-9"), [CYC_A]: cycle("PAY-9") },
   block: false,
   code: 0,
   expect: ["PAY-9 is in 2 places"],
@@ -109,20 +116,20 @@ check("advisory without --block: reports and exits 0", {
 check("rows inside an HTML comment do not count", {
   files: {
     [POOL]: table("PAY-9"),
-    [CYC_A]: `# Cycle\n\n<!-- an example, not real rows:\n${table("PAY-9")}-->\n`,
+    [CYC_A]: `# Cycle\n\n## Intents\n\n<!-- an example, not real rows:\n${table("PAY-9")}-->\n`,
   },
   code: 0,
   expect: ["OK"],
 });
 
 check("prose in the first cell is not mistaken for an id", {
-  files: { [POOL]: `| Doc | For |\n|---|---|\n| something | else |\n`, [CYC_A]: table("PAY-9") },
+  files: { [POOL]: `| Doc | For |\n|---|---|\n| something | else |\n`, [CYC_A]: cycle("PAY-9") },
   code: 0,
   expect: ["OK", "1 intent(s)"],
 });
 
 check("a cycle with no rows yet is valid", {
-  files: { [POOL]: table("SPEC-1"), [CYC_A]: "# Cycle\n\nnothing pulled in yet.\n" },
+  files: { [POOL]: table("SPEC-1"), [CYC_A]: "# Cycle\n\n## Intents\n\nnothing pulled in yet.\n" },
   code: 0,
   expect: ["OK"],
 });
@@ -130,7 +137,7 @@ check("a cycle with no rows yet is valid", {
 // The shipped backlog template, verbatim - its in-flight pointer table lists cycles, not
 // intents, and its example row must not read as one.
 {
-  const dir = fixture({ [CYC_A]: table("PAY-2", "PAY-3") });
+  const dir = fixture({ [CYC_A]: cycle("PAY-2", "PAY-3") });
   cpSync(join(process.cwd(), "standard/docs/backlog.md"), join(dir, POOL));
   const { code, out } = run(dir, true);
   rmSync(dir, { recursive: true, force: true });
@@ -143,19 +150,19 @@ check("a cycle with no rows yet is valid", {
 }
 
 check("the backlog at its primary manifest path is still read", {
-  files: { "backlog.md": table("PAY-9"), [CYC_A]: table("PAY-9") },
+  files: { "backlog.md": table("PAY-9"), [CYC_A]: cycle("PAY-9") },
   code: 1,
   expect: ["PAY-9 is in 2 places"],
 });
 
 check("cycles with no backlog anywhere is reported, not passed", {
-  files: { [CYC_A]: table("PAY-9") },
+  files: { [CYC_A]: cycle("PAY-9") },
   code: 1,
   expect: ["no backlog at", "cannot be checked"],
 });
 
 check("the derived timeline is not a cycle", {
-  files: { [POOL]: table("SPEC-1"), [CYC_A]: table("PAY-9"), "docs/cycles/TIMELINE.md": table("PAY-9") },
+  files: { [POOL]: table("SPEC-1"), [CYC_A]: cycle("PAY-9"), "docs/cycles/TIMELINE.md": table("PAY-9") },
   code: 0,
   expect: ["OK"],
 });
@@ -172,7 +179,7 @@ check("a template directory is skipped like a template file", {
 check("an inline comment inside a row does not delete the row", {
   files: {
     [POOL]: `| id | title |\n|----|-------|\n| PAY-7 | fix <!-- was PAY-4 --> the export |\n`,
-    [CYC_A]: table("PAY-7"),
+    [CYC_A]: cycle("PAY-7"),
   },
   code: 1,
   expect: ["PAY-7 is in 2 places"],
@@ -187,14 +194,14 @@ check("an inline comment inside a row does not delete the row", {
 check("an arrow in commented prose ends the comment, exactly as a renderer would", {
   files: {
     [POOL]: table("PAY-9"),
-    [CYC_A]: `# Cycle\n\n<!-- example:\nmigrate A --> B\n${table("PAY-9")}-->\n`,
+    [CYC_A]: `# Cycle\n\n## Intents\n\n<!-- example:\nmigrate A --> B\n${table("PAY-9")}-->\n`,
   },
   code: 1,
   expect: ["PAY-9 is in 2 places"],
 });
 
 check("a table inside a fenced block is illustration, not rows", {
-  files: { [POOL]: table("PAY-9"), [CYC_A]: "# Cycle\n\n```\n" + table("PAY-9") + "```\n" },
+  files: { [POOL]: table("PAY-9"), [CYC_A]: "# Cycle\n\n## Intents\n\n```\n" + table("PAY-9") + "```\n" },
   code: 0,
   expect: ["OK"],
 });
@@ -245,7 +252,7 @@ check("an intent blocked by itself fails", {
 check("a block reaches across the pool into a cycle", {
   files: {
     [POOL]: statusTable(["PAY-2", "blocked:PAY-1"]),
-    [CYC_A]: statusTable(["PAY-1", "doing"]),
+    [CYC_A]: cycleStatus(["PAY-1", "doing"]),
   },
   code: 0,
   expect: ["OK"],
@@ -257,9 +264,78 @@ check("plain `blocked` with no reference stays legal", {
   expect: ["OK"],
 });
 
+// Scoping the scan to `## Intents` is also how the check switches itself off. Every case
+// below produced zero rows and a green `OK - each in exactly one` over a real duplicate.
+check("a cycle with no Intents heading is an error, not an empty cycle", {
+  files: { [POOL]: table("PAY-9"), [CYC_A]: `# Cycle\n\n${table("PAY-9")}` },
+  code: 1,
+  expect: ["no `## Intents` heading", "the format is the interface"],
+});
+
+check("a deeper heading level is not the Intents heading", {
+  files: { [POOL]: table("PAY-9"), [CYC_A]: `# Cycle\n\n### Intents\n\n${table("PAY-9")}` },
+  code: 1,
+  expect: ["no `## Intents` heading"],
+});
+
+check("another heading over the same table is an error", {
+  files: { [POOL]: table("PAY-9"), [CYC_A]: `# Cycle\n\n## Work\n\n${table("PAY-9")}` },
+  code: 1,
+  expect: ["no `## Intents` heading"],
+});
+
+check("rows carrying the id and title in one cell are reported, not skipped", {
+  files: {
+    [POOL]: table("SPEC-1"),
+    [CYC_A]: "# Cycle\n\n## Intents\n\n| Intent | Holder | Status |\n|---|---|---|\n| INV-2 Reassign an active route | Maja | doing |\n",
+  },
+  code: 1,
+  expect: ["no intent id in the first cell"],
+});
+
+check("an id in backticks is the same intent", {
+  files: { [POOL]: table("PAY-9"), [CYC_A]: "# Cycle\n\n## Intents\n\n| id | title |\n|---|---|\n| `PAY-9` | something |\n" },
+  code: 1,
+  expect: ["PAY-9 is in 2 places"],
+});
+
+check("a bold id is the same intent", {
+  files: { [POOL]: table("PAY-9"), [CYC_A]: "# Cycle\n\n## Intents\n\n| id | title |\n|---|---|\n| **PAY-9** | something |\n" },
+  code: 1,
+  expect: ["PAY-9 is in 2 places"],
+});
+
+check("a blocked status in backticks is still read", {
+  files: { [POOL]: statusTable(["PAY-2", "`blocked:PAY-9`"]) },
+  code: 1,
+  expect: ["PAY-9 exists nowhere"],
+});
+
+// The folder manual is what an author reads before writing a cycle by hand, and it
+// documented a shape this guard cannot read - the defect and its documentation agreeing
+// would have made the whole check decoration. Asserted against the page itself, not a copy.
+{
+  const manual = readFileSync(join(process.cwd(), "docs/tree/docs-cycles.md"), "utf8");
+  const example = manual.match(/```markdown\n([\s\S]*?)```/);
+  if (!example) {
+    failures++;
+    console.error("  FAIL docs/tree/docs-cycles.md has no ```markdown cycle example to check");
+  } else {
+    const dir = fixture({ [POOL]: table("SPEC-1"), [CYC_A]: example[1] });
+    const { code, out } = run(dir, true);
+    rmSync(dir, { recursive: true, force: true });
+    if (code !== 0 || !out.includes("3 intent(s)")) {
+      failures++;
+      console.error(`  FAIL the documented cycle format is what the guard reads\n       exit ${code}: ${out.trim()}`);
+    } else {
+      console.log("  ok    the documented cycle format is what the guard reads");
+    }
+  }
+}
+
 console.log();
 if (failures) {
   console.error(`cycle-guard-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("cycle-guard-test: OK - 24 cases, one intent lives in exactly one place and blocks point at something real");
+console.log("cycle-guard-test: OK - one intent lives in exactly one place, blocks point at something real, and a cycle the guard cannot read is an error");

@@ -76,7 +76,8 @@ The outcome block is written once and holds: planned, finished, returned, unplan
 
 1. If there is neither a cycle file nor a backlog, print the note and exit 0. Testing the cycles directory alone would never fire for an adopter, because the tree ships files into it. No cycles **but** a backlog still runs the block checks - exiting there would skip the only check a `core` repo gets.
 1b. If cycle files exist but no backlog does, report that and stop: the pool half of the invariant cannot be checked, and printing OK would claim that it was.
-2. Collect rows from `docs/backlog.md`, then from each cycle file, skipping `_`-prefixed basenames and rows inside HTML comments. Each row yields its id (first cell) and its status (last cell).
+2. Collect rows from `docs/backlog.md`, then from each cycle file, skipping `_`-prefixed basenames and rows inside HTML comments. In a cycle file only the `## Intents` section is read (a closed cycle's `## Outcome` table names the same ids); the pool is read whole. Each row yields its id (first cell) and its status (last cell), with surrounding backticks, bold or italic markers stripped from both - markup around an id is formatting, not a different intent.
+2b. Report a cycle file the guard cannot read rather than counting zero rows in it: no `## Intents` H2 at all, or rows under it whose first cell holds no id. Zero rows is indistinguishable from a clean cycle, which is how a real duplicate was reported as OK - the header row, the header underline and the template's blank row are not rows for this purpose.
 3. A row contributes its id once per file even if the file repeats it; the invariant is about *files*, not occurrences.
 4. Group by id. Any id with more than one distinct file is a violation.
 5. For each `blocked:<ref>` status: a violation if `ref` is the row's own id, if `ref` appears in no file, or if `ref`'s status is `done`.
@@ -88,6 +89,7 @@ The outcome block is written once and holds: planned, finished, returned, unplan
 - The guard MUST NOT fail a repo that has no cycles directory.
 - Template files (`_`-prefixed) MUST NOT contribute ids, or the shipped example would violate the invariant on arrival.
 - A `blocked:<id>` reference MUST name an existing intent that is neither the row itself nor already `done`.
+- A cycle file MUST carry its rows under the `## Intents` H2, with the id in the first cell - and the guard MUST fail a cycle file that does not, instead of reading it as empty. The documented format and what the guard reads MUST be the same shape; they were not, and the folder manual's own example produced zero rows.
 - `assignee` MUST be empty on pool rows, and MUST NOT accumulate: one current holder, overwritten on reassignment (ADR-030).
 - `size` MUST NOT be summed, converted to a number, or used in a projection once three cycles have closed (ADR-029). Neither of these last two is script-enforced - they are review rules, and the records say so rather than implying a guard that does not exist.
 
@@ -96,7 +98,7 @@ The outcome block is written once and holds: planned, finished, returned, unplan
 - A repo with cycles but an empty pool - valid; everything is in flight.
 - The same id in two cycles of *different* teams - still a violation. Two teams believing they own the same intent is the failure this exists to catch.
 - An id inside an HTML comment (the shipped examples) - ignored, so an example block cannot trip the guard.
-- A cycle file with no rows - valid; a cycle can be opened before anything is pulled in.
+- A cycle file with no rows under `## Intents` - valid; a cycle can be opened before anything is pulled in. A cycle file with no `## Intents` section at all is not the same thing, and is an error.
 
 ## Acceptance criteria
 
@@ -122,6 +124,10 @@ The outcome block is written once and holds: planned, finished, returned, unplan
 - **A block reaches across files.** GIVEN `PAY-2` in the pool blocked by `PAY-1` held in a cycle WHEN the guard runs THEN it exits 0 - the reference is repo-wide, not per-file.
 - **Plain `blocked` stays legal.** GIVEN a row whose status is `blocked` with no reference WHEN the guard runs THEN it exits 0; the reference is a MAY, and requiring it would fail every repo on the day it upgraded.
 - **The status is the last cell, not a fixed column.** GIVEN tables of differing widths WHEN the guard reads them THEN the status is taken from the final cell of each row, so an adopter adding a column does not silently disable the block checks.
+- **A cycle the guard cannot read is an error.** GIVEN a cycle file whose intents sit under `### Intents`, under `## Work`, or under no heading at all WHEN the guard runs with `--block` THEN it names the file, names the required heading and exits 1 - it does not report the duplicate the file holds as OK.
+- **An unreadable row is an error.** GIVEN a cycle file with rows under `## Intents` whose first cell carries the id and the title together WHEN the guard runs with `--block` THEN it reports rows with no id in the first cell and exits 1.
+- **Markup around an id is not a different id.** GIVEN `` `PAY-9` `` in a cycle and `PAY-9` in the pool WHEN the guard runs THEN it reports the duplicate; the same holds for `**PAY-9**` and for a `blocked:` status written in backticks.
+- **The documentation is the format.** GIVEN the cycle example in `docs/tree/docs-cycles.md` WHEN the guard runs over a repo carrying it verbatim THEN it reads every intent in it - a page documenting a shape the guard cannot read makes the guard decoration.
 - **A core repo still gets the block checks.** GIVEN a backlog and no `docs/cycles/` at all WHEN the guard runs with `--block` on a stale block THEN it exits 1 rather than skipping as not-using-cycles.
 
 ## Open questions

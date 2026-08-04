@@ -16,6 +16,27 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### cycle-guard read zero rows and reported OK (2026-08-04)
+
+The guard scopes its scan to a literal `## Intents` H2, which is right - a closed cycle's
+`## Outcome` table names the same ids, and counting it reported correctly closed cycles as
+duplicates. But scoping is also how the check switched itself off: a cycle file using
+`### Intents`, `## Work`, or no heading at all yielded zero rows, and zero rows is
+indistinguishable from a cycle with nothing wrong in it. A real pool-plus-cycle duplicate
+was reported as `OK - each in exactly one`. Ids in backticks or bold were invisible for the
+same reason - markup around an id read as a different string.
+
+Both halves now fail closed: a cycle file with no `## Intents` heading is an error naming
+the heading, as are rows under it whose first cell holds no id (the header row, the
+underline and the template's blank row are not rows for this purpose), and `` `PAY-2` `` is
+the same intent as `PAY-2`.
+
+The folder manual documented a shape the guard cannot read - no heading, the id and title
+in one cell, the status in the middle and a `Blocked by` column the guard never looks at -
+so the page and the guard agreed on nothing. Rewritten to the real format, with the three
+load-bearing parts named as the interface they are, and the test now runs the guard over
+that page's own example rather than a copy of it.
+
 ### The clarify gate never read the template's own open-questions section (2026-08-04)
 
 `## Open questions` is a required section of the shipped capability template, in free
