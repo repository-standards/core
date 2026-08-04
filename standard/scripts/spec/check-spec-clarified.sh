@@ -31,6 +31,7 @@ fi
 if ! grep -q '^## Clarifications' "$SPEC_FILE"; then
     echo "clarify gate: FAIL - $SPEC_FILE has no '## Clarifications' section." >&2
     echo "clarify gate: run the clarify loop first (/spec-clarify); record answers and deferrals under '## Clarifications'." >&2
+    echo "clarify gate: that heading is SYNTAX, not prose - it stays exactly '## Clarifications' in a spec written in any language (see docs/method/working-language.md). Translating it does not satisfy this check, it hides the spec from it." >&2
     echo "clarify gate: do not plan or generate tasks for a spec that is not ready-to-develop." >&2
     exit 1
 fi
@@ -59,6 +60,35 @@ if [ "$UNBRACKETED" -gt 0 ]; then
     echo "clarify gate: FAIL - $SPEC_FILE has $UNBRACKETED open marker(s) written as a numbered list item instead of the required [NEEDS ...] bracket form (invisible to the check above otherwise):" >&2
     grep -nE '^[[:space:]]*-[[:space:]]*\*\*(CLARIFICATION|DECISION|INPUT|ASSET)-[0-9]+' "$SPEC_FILE" >&2
     echo "clarify gate: rewrite each as [NEEDS CLARIFICATION: ...] / [NEEDS DECISION: ...; owner: ...] / [NEEDS INPUT: ...; owner: ...] / [NEEDS ASSET: ...; owner: ...], then resolve or defer it." >&2
+    echo "clarify gate: do not plan or generate tasks for a spec that is not ready-to-develop." >&2
+    exit 1
+fi
+
+# Reaching here means the file holds zero markers of the four known forms - the check
+# above counts them literally and exits on the first one. So any remaining token that is
+# SHAPED like a typed marker is one the gate cannot read: a translated family name
+# ("[BRAK DECYZJI: ...]", "[需要澄清: ...]"), or an invented type. That is the fail-open
+# this catches, and it was reproduced: a spec written in Chinese, its markers translated
+# with the family, printed PASS with four unresolved items including a missing decision.
+#
+# The asymmetry is what made it inevitable rather than unlucky. The '## Clarifications'
+# check above fails CLOSED and names the exact English string, so a team that hits it
+# "fixes" the error by translating the heading and lands in a silent pass.
+#
+# Marker-shaped, structurally: [<ALL-CAPS words>: ...] or [<anything containing a
+# non-ASCII character>: ...], where the closing bracket is not followed by ( or [ - a
+# markdown link is not a marker. Byte semantics (LC_ALL=C) so the non-ASCII class is
+# predictable whatever the locale.
+ASCII_SHOUT='\[[A-Z][A-Z0-9_-]*([ _-]+[A-Z0-9_-]+)*[[:space:]]*:[^]]*\]([^([]|$)'
+NON_ASCII='\[[^]]*[^ -~][^]]*(:|：)[^]]*\]([^([]|$)'
+UNKNOWN=$(LC_ALL=C grep -ncE "$ASCII_SHOUT|$NON_ASCII" "$SPEC_FILE") || true
+UNKNOWN=${UNKNOWN:-0}
+
+if [ "$UNKNOWN" -gt 0 ]; then
+    echo "clarify gate: FAIL - $SPEC_FILE has $UNKNOWN bracketed token(s) shaped like an open marker but not one of the four forms the gate can read:" >&2
+    LC_ALL=C grep -nE "$ASCII_SHOUT|$NON_ASCII" "$SPEC_FILE" >&2
+    echo "clarify gate: the four marker forms and the structural headings ('## Clarifications', '## Open questions') are SYNTAX, not prose - they stay ASCII, exactly as written, in a spec authored in any language (docs/method/working-language.md). The gate greps for those literal strings; a translated marker is invisible to it, so the gate would pass a spec with every gap still open." >&2
+    echo "clarify gate: write each as [NEEDS CLARIFICATION: ...] / [NEEDS DECISION: ...; owner: ...] / [NEEDS INPUT: ...; owner: ...] / [NEEDS ASSET: ...; owner: ...] - the text INSIDE the marker is prose and may be in any language - then resolve or defer it." >&2
     echo "clarify gate: do not plan or generate tasks for a spec that is not ready-to-develop." >&2
     exit 1
 fi

@@ -23,7 +23,10 @@
 <!-- ADR-010: ready-to-develop requires the clarify gate - a "## Clarifications" section
      and zero open markers of the NEEDS family. Drafting early (during discovery, ADR-024)
      is encouraged: hold each gap as a typed open marker, written EXACTLY in this literal
-     bracket form (the gate greps for it - anything else is invisible to it):
+     bracket form (the gate greps for it - anything else is invisible to it), including in
+     a spec written in another language: these four forms and the `## ...` headings below
+     are SYNTAX, and the gate fails a bracketed token it does not recognise. The text
+     inside a marker is prose - write it in the spec's own language:
        `[NEEDS CLARIFICATION: <question>]`
        `[NEEDS DECISION: <topic>; owner: <who>]`         - a missing ADR/BDR
        `[NEEDS INPUT: <what>; owner: <who>]`             - e.g. a UX design
