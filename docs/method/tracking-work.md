@@ -324,13 +324,16 @@ What comes back depends on what the repository can honestly support:
 actually finished, not what anyone estimated.
 
 **Below three** there is no measured throughput, and it will not invent one. If items carry a
-size it projects from sizes and **labels the number an estimate, in the file, beside the
-number**. If they do not, it reports what is in flight and gives no date.
+size it describes the **shape** of what is left instead - heavier or lighter than the last
+cycle's mix - and says plainly that this is a ranking, not a date: a size letter is never
+converted into a duration, cold start included. If items carry no size either, it reports
+what is in flight and gives no date. Either way, the cold start gets **no date** - the only
+question is whether it also gets a shape.
 
 Three is not a magic number. It is the point below which one unusual cycle dominates the
 average, and the file says so rather than hiding it.
 
-That labelling is the whole design. A projection presented without its confidence is what
+That refusal is the whole design. A projection presented without its confidence is what
 teaches people to distrust plans, and once they do they stop reading the timeline and start
 asking in meetings - which is the state this replaced.
 

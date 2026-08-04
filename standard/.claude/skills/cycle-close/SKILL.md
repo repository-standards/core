@@ -40,9 +40,11 @@ who did what, stop - that is the tracker's.
    `assignee` on the way out: the pool holds nobody's work (ADR-030).
 
    An item that did not fit is **split into what finished and what remains**, not given a
-   bigger size (ADR-029). Propose the split; the user confirms it. This is what keeps item
-   counts comparable without an estimation currency, and skipping it is how throughput
-   quietly stops meaning anything.
+   bigger size (ADR-029). Propose the split; the user confirms it. Cut a **new** backlog row
+   for what remains (its own id, its own DoD for the remainder), and set the original row's
+   status in this cycle to **`split:<new-id>`** - the template's status vocabulary, not a
+   spelling invented per repo. This is what keeps item counts comparable without an
+   estimation currency, and skipping it is how throughput quietly stops meaning anything.
 
 3. **Report rows whose status never moved.** An item that entered the cycle `todo` and left it
    `todo` is the one worth naming - usually blocked without a `blocked:` reference, or

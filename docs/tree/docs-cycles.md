@@ -57,9 +57,10 @@ column of its own: `blocked:INV-2` goes in the status cell, and the guard fails 
 id does not exist, is already done, or is the row itself - a stale block is the most common
 way a board lies.
 
-`Size` is a cold-start estimate and nothing else. Once the repo has closed cycles, the
-forecast comes from what actually took how long, and the size column stops being an input
-to anything ([ADR-029](../decision-records/ADR-029-measurement-forecasts-sizes-only-cold-start.md)).
+`Size` is a cold-start ranking signal and nothing else - it is never converted into a duration,
+even before the repo has any closed cycles. Once it does, the forecast comes from what
+actually took how long, and the size column stops being an input to anything
+([ADR-029](../decision-records/ADR-029-measurement-forecasts-sizes-only-cold-start.md)).
 An intent that does not finish inside its cycle gets **split**, never re-sized.
 
 ## What does not go in here
