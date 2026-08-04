@@ -16,6 +16,26 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A spec's Status was decorative (2026-08-04)
+
+No skill and no script read or wrote `**Status:**`, so `ready-to-develop` could sit on a
+spec whose clarify gate fails - reproduced with all four guards green. Two documents promise
+otherwise: ways of working says the status "cannot be typed in by someone who is impatient",
+and working with specs says it flips to `live` when the work lands, while `spec-reconcile`
+never mentioned it.
+
+Both halves now exist. The structure lint - which CI already runs full-tree on every PR -
+re-runs the real gate script on every spec claiming `ready-to-develop` or `live` and fails
+the PR when the gate refuses it; a gate that cannot be run counts as unproven, not as
+passed. And `spec-reconcile` owns writing the field, with the statuses spelled out, because
+it is the step that establishes spec == code == tests.
+
+It found four instances in this repo's own specs on the first run: four `live` capabilities
+with no `## Clarifications` section, one of them missing `## Open questions` entirely, and
+one whose open-questions section carried an upstream-sync note that belonged in Requirements.
+The specs now carry an honest record of what settled them - they were retrofitted from the
+shipped implementation, and that is what the section says.
+
 ### The normative page miscounted its own rules (2026-08-04)
 
 `SPEC.md` said "Rules are numbered R1-R24" while defining R25 on the same page. This repo

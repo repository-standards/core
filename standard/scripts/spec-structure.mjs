@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Spec-structure guard.
 //
-// Two mechanical structure checks on capability specs:
+// Three mechanical structure checks on capability specs:
 //   1. No ticket-numbered spec paths (`specs/<NNN-feature>/`, `specs/<cap>/<NNN-...>`) -
 //      e.g. a leaked GitHub Spec Kit `specs/001-core/` folder. Capability specs live at
 //      `specs/<capability>/spec.md` (or named sub-specs `specs/<capability>/<name>.md`) -
@@ -9,6 +9,10 @@
 //   2. Every capability spec names a **persona** it serves (ADR-006), when the repo has a
 //      `docs/personas.md` roster - a spec that serves no one is incomplete. Checked by a
 //      `**Serves:** \`<persona>\`` field, a roster-name mention, or a personas.md reference.
+//   3. A spec's `**Status:**` is earned, not typed: one claiming `ready-to-develop` or
+//      `live` must pass the clarify gate. Nothing read or wrote that field, so the status
+//      the whole method reads as "this is settled" was decorative - a spec with four
+//      guards green and a failing gate still said ready-to-develop.
 //
 // This is the "structure lint" half of specs/enforcement.md, made mechanical - the
 // complement to the coupling guard (spec-guard.mjs).
@@ -23,6 +27,7 @@
 
 import { execSync } from "node:child_process";
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 const args = process.argv.slice(2);
 const staged = args.includes("--staged");
@@ -120,7 +125,44 @@ if (personasPath) {
   }
 }
 
-// --- check 3 (warn only): committed engine scaffolding - ephemeral by rule -------
+// --- check 3: a claimed status is earned, not typed -----------------------------
+// `**Status:** ready-to-develop` is what plan, tasks and the tracker read as "settled",
+// and nothing checked it against the gate that is supposed to grant it. The gate script
+// is the single implementation - shelling out to it keeps this from becoming a second,
+// drifting copy of the same rules. It sits next to this file in both layouts (the tree's
+// `standard/scripts/` and an adopted repo's `scripts/`), so it is resolved relative to
+// this module, never to the working directory.
+const EARNED = new Set(["ready-to-develop", "live"]); // statuses that assert the gate passed
+const gatePath = fileURLToPath(new URL("spec/check-spec-clarified.sh", import.meta.url));
+const statusOf = (body) => {
+  const m = body.match(/^\*\*Status:\*\*\s*(.+)$/m);
+  if (!m) return null;
+  const value = m[1].replace(/<!--[\s\S]*$/, "").trim();
+  if (value.includes("|")) return null; // the template's unfilled list of options
+  return value.replace(/[`*.]/g, "").trim();
+};
+
+const unearned = [];
+let gateMissing = false;
+if (!existsSync(gatePath)) {
+  gateMissing = true;
+} else {
+  for (const f of files.filter(isCapSpec)) {
+    let body;
+    try { body = readFileSync(f, "utf8"); } catch { continue; }
+    const status = statusOf(body);
+    if (!status || !EARNED.has(status)) continue;
+    try {
+      execSync(`bash ${JSON.stringify(gatePath)} ${JSON.stringify(f)}`, { stdio: "pipe" });
+    } catch (e) {
+      // A gate that cannot run is not a gate that passed - the status stays unproven.
+      const out = ((e.stdout?.toString() || "") + (e.stderr?.toString() || "")).trim();
+      unearned.push({ file: f, status, why: out || `the clarify gate could not be run (exit ${e.status ?? "?"}); it needs bash` });
+    }
+  }
+}
+
+// --- check 4 (warn only): committed engine scaffolding - ephemeral by rule -------
 // plan.md/tasks.md are working scaffolds the engine writes and the close removes.
 // Full-tree mode only (mid-work diffs legitimately carry them); never a violation.
 const staleScaffolding = !staged && !base ? files.filter((f) => ENGINE_ARTIFACTS.test(f)) : [];
@@ -131,7 +173,12 @@ if (staleScaffolding.length) {
   for (const f of staleScaffolding) console.error(`  - ${f}`);
   console.error("");
 }
-if (numbered.length === 0 && personaless.length === 0 && !rosterMissing) {
+if (gateMissing) {
+  console.error(`\nspec-structure: note - the clarify gate is not installed at ${gatePath},`);
+  console.error("so a spec claiming `ready-to-develop` or `live` cannot be checked against it. Ship");
+  console.error("`scripts/spec/` with the guards (it is a required manifest entry) to turn the check on.");
+}
+if (numbered.length === 0 && personaless.length === 0 && unearned.length === 0 && !rosterMissing) {
   const note = personasPath ? "" : " (persona check skipped - no personas.md)";
   console.log(`spec-structure: OK (${files.length} spec paths)${note}`);
   process.exit(0);
@@ -151,6 +198,17 @@ if (personaless.length) {
   console.error("\nspec-structure: capability specs with no persona named (ADR-006 - a spec serves someone):");
   for (const f of personaless) console.error(`  - ${f}`);
   console.error('\nAdd a `**Serves:** `<persona>`` field (from docs/personas.md) - or name the persona in the spec.');
+}
+
+if (unearned.length) {
+  console.error("\nspec-structure: specs claiming a status the clarify gate does not grant:");
+  for (const { file, status, why } of unearned) {
+    console.error(`  - ${file}   says \`${status}\``);
+    console.error(why.split("\n").map((l) => `        ${l}`).join("\n"));
+  }
+  console.error("\n`ready-to-develop` and `live` assert that the gate passed. They are earned mechanically,");
+  console.error("not typed in: fix what the gate names, or set the status back to `in-refinement` - which is");
+  console.error("a healthy state and can last weeks. A status nothing checks is a status nobody can trust.");
 }
 
 if (rosterMissing) {

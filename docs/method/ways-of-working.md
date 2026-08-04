@@ -269,6 +269,12 @@ in-refinement  ->  ready-to-develop  ->  in-development  ->  live
 it cannot be typed in by someone who is impatient. `live` means the spec, the code and the
 tests have been reconciled and the scaffolding is gone.
 
+The status is written by one step, `spec-reconcile`, and **checked by another**: the
+structure guard re-runs the clarify gate on every spec claiming `ready-to-develop` or
+`live` and fails the pull request when the gate refuses it. That check is what makes the
+sentence above true rather than aspirational - before it existed nothing read or wrote the
+field, so an impatient status was exactly as green as an earned one.
+
 ## When it does not fit
 
 **A one-line fix.** No spec round. Change it, and if behaviour moved even slightly, the
