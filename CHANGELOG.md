@@ -24,6 +24,15 @@ deviation recorded in `stack.manifest.json`, exactly where the stack's own `ADAP
 tells an adopter to record it, had no effect. The miss kept counting as drift regardless.
 Now merged along with the other three arrays.
 
+### A bug mentioned in passing reached no skill and no row (2026-08-04)
+
+Found by blind-routing realistic utterances against the skills' name+description
+fields: "btw the export is broken" matched nothing, because no description mentions a
+bug and `taxonomy.md`/`checklist.md` - the two "say this, get routed" docs - had no row
+for it either. Both now name the case, routing to `add-to-backlog` by default (actively
+fixing it right now is just the change, not a backlog item), and `add-to-backlog`'s own
+description now quotes the same trigger phrase so the routing surface and the docs agree.
+
 ### Checking whether a skill fits never covered an ambiguous mention (2026-08-04)
 
 `AGENTS.md`'s unprompted-behaviour section told the agent to check whether a skill
