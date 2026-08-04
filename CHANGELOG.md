@@ -178,6 +178,16 @@ paths that intentionally belong to no capability are a recorded decision, and wh
 such list exists the check reports that it is off instead of passing quietly. A retired
 capability's deliberately empty globs stay exempt.
 
+### `AGENTS.md`'s own "Checks before any PR" list had drifted from `checks.yml` (2026-08-04)
+
+Found while reproducing the `pre-pr-review` gap below: this line names itself as "the
+set CI runs" and warns that a check missing from it is a bug, yet `prose-check.mjs`
+(+ `--self`), `self-verify-fill-test.mjs` and `site-behaviour.mjs` were all in
+`checks.yml` and not listed here. Fixed independently on both sides of this merge -
+`clarify-gate-test.mjs` also needed adding by the time they reconciled, since it landed
+in `checks.yml` after this fix was first drafted - closing the same category of drift
+`pre-pr-review` had, in the document that gap already cited as ground truth.
+
 ### Two of four documented backlog feeders wrote nothing (2026-08-04)
 
 `docs/backlog.md`'s own "What feeds this backlog" names `spec-update` and
