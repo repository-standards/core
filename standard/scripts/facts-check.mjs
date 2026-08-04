@@ -68,7 +68,12 @@ const homeValue = (fact) => {
   }
   if (home.read) return readFileSync(home.read, "utf8").trim();
   if (home.match) {
-    const m = readFileSync(home.match.file, "utf8").match(new RegExp(home.match.pattern));
+    // Multiline, exactly like a claim's pattern below. The two were compiled with different
+    // flags, so `^Version: (\d+...)` worked as a claim and matched nothing as a home - the
+    // same string meaning two things depending on which field it sat in. (`g` belongs to the
+    // claims path only: with `String.match` it would return the matches and drop the capture
+    // group this line reads.)
+    const m = readFileSync(home.match.file, "utf8").match(new RegExp(home.match.pattern, "m"));
     if (!m) throw new Error(`the home pattern matches nothing in ${home.match.file}`);
     return m[1];
   }
