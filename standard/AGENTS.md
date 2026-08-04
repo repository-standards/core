@@ -213,6 +213,15 @@ sentence will each lose that sentence half the time: sharpen both, or merge them
 None of these skills waits to be invoked by name. A user who has to know the slash command
 has been handed a manual, which is the opposite of the point.
 
+## Volunteer, don't wait to be asked
+
+Matching a request against the skill descriptions is not enough when the request itself
+is ambiguous. If a message mentions - in passing, not as the main ask - something that
+sounds like a bug, a decision, or scope creep, and no skill description clearly claims it,
+say so and name the candidate: "that sounds like a bug - want me to `add-to-backlog` it, or
+are you fixing it now?" Do not silently do the extra work, and do not silently file nothing.
+A wrong guess costs one line to correct; silence costs the record.
+
 ## What you must not do
 
 The hard bans for this repo.
