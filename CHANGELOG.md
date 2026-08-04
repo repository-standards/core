@@ -16,6 +16,17 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Translating a heading switched the persona check off (2026-08-04)
+
+`spec-structure` reads the persona roster from `docs/personas.md`'s `## The roster` section,
+because the file also carries a worked example and a whole-file scan would let a spec
+"serve" a name from it. When that heading was absent it fell back to exactly that whole-file
+scan - so translating the heading widened the roster instead of narrowing it, and a spec that
+failed the gate with an English roster passed with a translated one (proven against an
+English control). Same principle as the clarify gate's headings: a required heading that is
+absent is a failure, and the guard now says so and names the heading rather than checking
+something else instead.
+
 ### A spec's Status was decorative (2026-08-04)
 
 No skill and no script read or wrote `**Status:**`, so `ready-to-develop` could sit on a

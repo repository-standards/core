@@ -254,13 +254,15 @@ for (const c of CASES) {
 // matters most for adoption - an honest draft must not be a violation.
 const STRUCTURE = join(process.cwd(), "standard/scripts/spec-structure.mjs");
 
-const structure = (specBody) => {
+const ROSTER = "# Personas\n\n## The roster\n\n| Persona | Cares about |\n|---|---|\n| `Owner-operator Olga` | money arriving |\n";
+
+const structure = (specBody, personas = ROSTER) => {
   const dir = mkdtempSync(join(tmpdir(), "spec-status-test-"));
   mkdirSync(join(dir, "specs", "payments"), { recursive: true });
   mkdirSync(join(dir, "docs"), { recursive: true });
   // A roster, so the persona check has something to hold and these cases are only about
   // the status. The spec below names one.
-  writeFileSync(join(dir, "docs", "personas.md"), "# Personas\n\n## The roster\n\n| Persona | Cares about |\n|---|---|\n| `Owner-operator Olga` | money arriving |\n");
+  writeFileSync(join(dir, "docs", "personas.md"), personas);
   writeFileSync(join(dir, "specs", "payments", "spec.md"), specBody);
   const r = spawnSync("node", [STRUCTURE, "--block"], { cwd: dir, encoding: "utf8" });
   rmSync(dir, { recursive: true, force: true });
@@ -300,10 +302,20 @@ const STATUS_CASES = [
     says: "OK",
     body: withStatus("in-refinement | ready-to-develop | in-development | live | retired", "## Requirements\n\n- The system MUST capture.\n"),
   },
+  {
+    // The same silent-disable shape, one check over: scoping the roster scan to a heading
+    // meant a translated heading fell back to reading the whole file, worked example
+    // included, and widened the roster instead of narrowing it.
+    name: "a translated roster heading fails instead of widening the roster",
+    fails: true,
+    says: "no '## The roster' section",
+    personas: "# Persony\n\n## Zespol\n\n| Persona | Zalezy jej na |\n|---|---|\n| `Owner-operator Olga` | pieniadze |\n",
+    body: withStatus("in-refinement", "## Requirements\n\n- The system MUST capture.\n"),
+  },
 ];
 
 for (const c of STATUS_CASES) {
-  const { code, out } = structure(c.body);
+  const { code, out } = structure(c.body, c.personas);
   const want = c.fails ? 1 : 0;
   if (code !== want) {
     failures++;
