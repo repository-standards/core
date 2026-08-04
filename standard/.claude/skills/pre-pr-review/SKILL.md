@@ -31,9 +31,15 @@ tightening the loop early, not being the gate. (The gate is CI + human review.)
 3. **Run the repo's local checks** (whatever this repo defines - do not invent):
    format, lint, typecheck, and the unit tests the repo expects before a PR.
    That includes the repo's **full audits**, not only diff-scoped checks - in a
-   repo on the standard: `node scripts/self-verify.mjs` and
-   `node scripts/spec-guard.mjs --audit`. The PR gate runs the full audit too;
-   a diff-only local loop just moves the failure to CI.
+   repo on the standard, run the exact invocation the PR gate runs, flags
+   included: `node scripts/self-verify.mjs`, `node scripts/spec-guard.mjs --base
+   origin/main --block` **and** `node scripts/spec-guard.mjs --audit --block`.
+   Naming `--audit` without `--block`, or dropping `--base` entirely, makes the
+   local run advisory where CI is not - everything this step names can come back
+   green while CI goes red on the same branch. (At core profile the shipped
+   workflow template only blocks on the audit, not the base-diff check - run both
+   with `--block` here anyway; a local run stricter than CI costs a moment, a
+   local run looser than CI costs a red PR.)
    Fix anything red before continuing. Do not open a PR with red local checks.
 
 4. **Independent diff review (the important part).** Review the diff as if a
