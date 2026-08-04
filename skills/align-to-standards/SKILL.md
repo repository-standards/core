@@ -286,13 +286,19 @@ npx degit repository-standards/core/standard
    gate blocks or advises by it. Use the manifest's `files` / `sections` / `guards` / `decisions` as the coverage
    list, and each entry's `adapt` rule (copy / merge / fill-from-repo / reference) to
    decide *how* it lands - never blind-copy a `fill-from-repo` artifact. Record any
-   deliberate deviation as a manifest `exceptions` entry - `{ "kind": "file" | "section",
-   "match": "<path>" or "<file>#<heading>", "reason": "..." }` - so a later update does
+   deliberate deviation as a manifest `exceptions` entry - `{ "kind": "file" | "section" |
+   "content" | "key", "match": "<path>", "<file>#<heading>" or "<file>#<key.path>",
+   "reason": "..." }` - so a later update does
    not silently overwrite it and `self-verify` reports it as excepted rather than
-   failing a required entry the repo consciously chose not to carry.
+   failing a required entry the repo consciously chose not to carry. Use `content` for a
+   `copy` file the repo deliberately changed (a different `.nvmrc`, an edited guard) and
+   `key` for a declared key it will not carry. The reason is required, an exception never
+   raises the adoption percentage, and a guard's own script cannot be excepted at all -
+   waiving a live check removes it rather than recording a deviation from it.
 
 6. **Self-verify, and read the number correctly.** Run
-   `node scripts/self-verify.mjs --version <aligned>` (see `docs/self-verify.md`).
+   `node scripts/self-verify.mjs --version <aligned>` (see
+   [`docs/method/self-verify.md`](../../docs/method/self-verify.md)).
    - **Greenfield: drift 0 before the PR.** Nothing legitimate is missing from a repo you
      just scaffolded, so a red run means something is genuinely wrong.
    - **Brownfield: wave one closes red, by design.** A multi-year repo does not reach drift
