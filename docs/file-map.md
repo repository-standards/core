@@ -74,6 +74,7 @@ copied into your repository as folder READMEs that then age in place.
 | `scripts/spec-structure.mjs` | spec layout guard | **required**, core | `copy` | [R16](../standard/SPEC.md) |
 | `scripts/facts-check.mjs` | a fact restated in prose still agrees with its source - declared homes and claims (R4) | optional, core | `copy` | [R4](../standard/SPEC.md) |
 | `scripts/schema-pair.mjs` | the DDL under database/schema/ and its typed twin stay 1:1 - the declared edge resolves and every name is covered | optional, core | `copy` | [R24](../standard/SPEC.md) |
+| `scripts/decision-records-check.mjs` | the ADR/BDR README index and the files on disk agree - no duplicate id, nothing indexed that is not there, nothing there that is not indexed | **required**, core | `copy` | [R5](../standard/SPEC.md) |
 | `scripts/spec` | the spec engine runtime the skills invoke (gate, setup, templates, MIT licence) | **required**, core | `copy` | [R22](../standard/SPEC.md) |
 | `scripts/lib` | what more than one guard needs - glob matching, so two guards cannot answer the same question differently | **required**, core | `copy` | [R16](../standard/SPEC.md) |
 | `scripts/verifyAgentGuards.sh` | drives every guard with real commands - they only emit output on a denial, so a broken guard is otherwise silent | optional, core | `copy` | [R19](../standard/SPEC.md) |

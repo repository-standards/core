@@ -178,6 +178,19 @@ paths that intentionally belong to no capability are a recorded decision, and wh
 such list exists the check reports that it is off instead of passing quietly. A retired
 capability's deliberately empty globs stay exempt.
 
+### Record numbering had no source of truth (2026-08-04)
+
+Following `bdr-write`'s numbering step literally minted a second `BDR-004`, and an
+Accepted `BDR-004` was separately found missing from `bdr/README.md`'s own index -
+both at self-verify drift 0, because nothing cross-checked the index against the files
+on disk. `adr-write`/`bdr-write` now find the next free number by reading the
+directory, never the README row count or a remembered count, and re-check immediately
+before committing (a stale `main` is still a real collision window - the one this
+project has already hit). New guard `scripts/decision-records-check.mjs`, wired into
+self-verify and this repo's own checks, fails on a duplicate id, a file with no index
+row, or an index row with no file - layout-agnostic across the shipped `adr/` + `bdr/`
+split and this repo's own flat `docs/decision-records/`.
+
 ### An idea had nowhere to land (2026-08-03)
 
 `adr-write` and `bdr-write` both named `docs/ideas/` as where a not-yet-decided

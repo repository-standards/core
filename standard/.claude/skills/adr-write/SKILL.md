@@ -52,8 +52,14 @@ instead of re-typing a right one.
 
 ## Then
 
-Number it `ADR-NNN` - gapless, never reused, next free number **as of `main`** (two branches
-minting the same number is a real collision this project has hit). Copy
+Number it `ADR-NNN` - gapless, never reused. Find the next free number by **reading the
+directory** (`ls docs/decision-records/adr/` or wherever this repo's ADRs actually live),
+never the README table's row count and never a remembered count - the two can disagree, and
+`scripts/decision-records-check.mjs` exists because a stale or missing index row let them.
+Do this **as of the latest `main`**, right before you write the file: `git fetch` and
+re-check the number is still free immediately before committing, not only when you started -
+two branches minting the same number from an older `main` is a real collision this project
+has hit, and rebasing late narrows the window but does not close it. Copy
 `docs/decision-records/adr/_template.md`, add the row to `adr/README.md`, set
 `Status: Accepted` when the user confirms.
 
