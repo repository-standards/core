@@ -5,7 +5,7 @@
     "home": { "match": { "file": ".nvmrc", "pattern": "^(\\d+\\.\\d+\\.\\d+)" } },
     "claims": [
       { "file": "README.md", "pattern": "requires Node (\\d+\\.\\d+\\.\\d+)" },
-      { "file": "docs/prerequisites.md", "pattern": "install Node (\\d+\\.\\d+\\.\\d+)" }
+      { "file": "CONTRIBUTING.md", "pattern": "install Node (\\d+\\.\\d+\\.\\d+)" }
     ]
   },
   {
