@@ -1,12 +1,34 @@
 {
+  "$about": [
+    "capability -> the code globs that must move with its spec (R11). Copy this to specs/capability-map.json and replace the capabilities with yours.",
+    "Keys starting with $ are metadata rather than capabilities: this note, and $unclaimed below.",
+    "The paths are the paved monorepo shape - apps/* for anything deployed, packages/* for what is never deployed on its own. A single-package repo writes src/** and has no packages; the mechanism is identical.",
+    "Glob syntax: * stays inside one path segment; ** spans any number of segments including none, so apps/*/src/**/payment/** covers apps/api/src/payment/capture.ts as well as apps/api/src/routes/v2/payment/capture.ts."
+  ],
   "payments": [
-    "**/payment/**",
-    "**/payu/**",
-    "shared/**/payment*"
+    "packages/payments/**",
+    "apps/*/src/**/payment/**",
+    "packages/**/payment*",
+    { "glob": "config/payment-providers.json", "couples": "shape" }
   ],
   "bookings": [
-    "**/booking/**",
-    "**/api/booking/**",
+    "packages/bookings/**",
+    "apps/*/src/**/booking/**",
+    "e2e/booking/**",
     { "glob": "config/booking-rules.json", "couples": "shape" }
+  ],
+  "$unclaimed": [
+    "*",
+    ".github/**",
+    ".claude/**",
+    "docs/**",
+    "scripts/**",
+    "perf/**",
+    "e2e/*",
+    "apps/*/package.json",
+    "apps/*/tsconfig.json",
+    "apps/*/*.config.ts",
+    "packages/*/package.json",
+    "packages/*/tsconfig.json"
   ]
 }

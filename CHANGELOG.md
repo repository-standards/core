@@ -16,6 +16,27 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Nothing authored the capability map, and the example described a rejected layout (2026-08-04)
+
+Two gaps around the file the whole coupling mechanism reads. `capability-map` appears seven
+times in the brownfield onboarding path and **zero** times in greenfield or the router
+itself, so a new repo was left to discover a required file through a drift count - and
+`spec-guard --audit` blocks the moment its first capability spec exists. Greenfield now
+writes it during scaffolding, holding no capabilities and no `$unclaimed`: on an empty repo
+both would be guesses, and the audit says on every run that the unclaimed check is off
+rather than passing quietly. And none of the lifecycle skills touched the map at all, so a
+capability minted by `spec-specify` was unmapped by construction. Two writers now, and only
+two: `spec-specify` registers the capability when it mints the directory, `spec-reconcile`
+reconciles the map before the pull request - the second is what catches a refactor, where the
+old glob matches nothing and the new path is claimed by nobody.
+
+The shipped example also explained the mechanism with a tree this project rejected -
+root-level `**/payment/**` shapes, and prose about "app / service / shared" - while the paved
+monorepo shape is `apps/*` and `packages/*` with `services/` explicitly turned down.
+Rewritten to globs an adopter on the paved road would actually write, exercising the shapes
+the fixed translator supports, with the `couples: "shape"` entry kept and a `$unclaimed`
+starting list. A single-package repo writes `src/**/payment/**` and nothing else changes.
+
 ### Translating a heading switched the persona check off (2026-08-04)
 
 `spec-structure` reads the persona roster from `docs/personas.md`'s `## The roster` section,
