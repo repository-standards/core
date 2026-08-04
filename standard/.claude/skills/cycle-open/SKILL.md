@@ -13,6 +13,11 @@ This is how one is opened.
 
 ## Steps
 
+0. **Resolve the backlog path once, the way the guard does.** Check `docs/backlog.md` first,
+   then `backlog.md` (the manifest's primary path, R15) - whichever exists is the pool for
+   every step below. Do not assume `docs/backlog.md`; a repo that satisfies the manifest at
+   its primary path has no other file to read.
+
 1. **Which team, and is there already an open cycle for them?** Look under `docs/cycles/`.
    A team with one already open is the common case worth catching: ask whether this is a
    second parallel cycle (legitimate - a team can run two threads) or whether the open one
@@ -28,13 +33,13 @@ This is how one is opened.
    it. If the user has no date in mind, propose one from the last closed cycle's length -
    and say that is where it came from.
 
-4. **Propose the intents, do not ask for a list.** Read `docs/backlog.md` and offer the top
+4. **Propose the intents, do not ask for a list.** Read the backlog (step 0) and offer the top
    items by the order already there (risk x leverage), grouped by capability, with the count
    the team can realistically hold if past cycles give any evidence. The user corrects a
    proposal far faster than they assemble one. Confirm before moving anything.
 
-5. **Move the rows, do not copy them.** Each chosen row is **cut** from `docs/backlog.md`
-   and pasted into the cycle file unchanged - same columns, same values. An intent lives in
+5. **Move the rows, do not copy them.** Each chosen row is **cut** from the backlog and
+   pasted into the cycle file unchanged - same columns, same values. An intent lives in
    the pool or in exactly one cycle, and copying is how that stops being true.
 
    One cell fills on the way in: **`assignee`**, the person taking it (ADR-030). Ask for the
@@ -55,7 +60,7 @@ This is how one is opened.
    reads intents only from that section, and a file that renames or drops the heading yields
    no rows at all, which is indistinguishable from a cycle with nothing wrong in it.
 
-7. **Add the pointer row** to `docs/backlog.md`'s active-cycles table: team, goal, target,
+7. **Add the pointer row** to the backlog's active-cycles table: team, goal, target,
    link, item count. The pool stays the single entry point without duplicating a row.
 
 8. **Prove it.** Run `node scripts/cycle-guard.mjs --block`. A failure here means a row was
@@ -64,7 +69,7 @@ This is how one is opened.
 ## Done when
 
 - [ ] The cycle file exists with a goal that is an outcome, a target date, and its rows
-- [ ] Every moved row is **gone** from `docs/backlog.md`
+- [ ] Every moved row is **gone** from the backlog (whichever path resolved in step 0)
 - [ ] The pool carries a pointer row for the new cycle
 - [ ] `cycle-guard --block` passes
 
