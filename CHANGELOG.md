@@ -16,6 +16,30 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The coupling guard could not match a capability at the top level (2026-08-04)
+
+Both guards that read globs translated `**` into `.*` without consuming the slash
+beside it, so `**/payment/**` compiled to a pattern that needed an extra directory in
+front of `payment/`: it did not match `payment/index.ts` or `payment/x/y.ts`, and
+`shared/**/payment*` did not match `shared/payment.ts`. Those two globs are the first
+entries of the shipped `capability-map.example.json`, so an adopter who copied the
+example and kept their capability's code at the top level got `spec-guard: OK` on a
+money-path change that never touched the spec. It survived because the guard's own test
+and this repo's map only ever used a trailing `**` - the one shape that worked. There is
+now one translator (`scripts/lib/glob.mjs`) instead of two copies that had already
+drifted in their internals, `**` matches zero segments as well as many, and the test
+drives both broken shapes.
+
+`--audit` could not have caught it either: it validated the map's keys and never asked
+whether a glob matched anything. It now checks four things, because each of them is
+silent - a capability spec with no map entry (as before), a map entry naming a capability
+with no spec, a glob that matches no file at all, and code that belongs to no capability.
+The last one is what survives a refactor, where the old glob matches nothing and the new
+path is claimed by nobody; it is bounded by a declared `$unclaimed` list in the map, so
+paths that intentionally belong to no capability are a recorded decision, and where no
+such list exists the check reports that it is off instead of passing quietly. A retired
+capability's deliberately empty globs stay exempt.
+
 ### An idea had nowhere to land (2026-08-03)
 
 `adr-write` and `bdr-write` both named `docs/ideas/` as where a not-yet-decided
