@@ -24,6 +24,16 @@ deviation recorded in `stack.manifest.json`, exactly where the stack's own `ADAP
 tells an adopter to record it, had no effect. The miss kept counting as drift regardless.
 Now merged along with the other three arrays.
 
+### Six method docs were never delivered to an adopting repo (2026-08-04)
+
+`docs/method/agent-work.md`, `dev-work.md`, `lead-work.md`, `product-work.md`,
+`tracking-work.md` and `working-language.md` are adopter-normative (by reference,
+ADR-023) but were absent from `standard.manifest.json`'s `references[]`, so
+self-verify never counted them and an adopting repo had no pointer to them at all.
+Added in the same shape as the existing fourteen. `docs/file-map.md` is regenerated to
+match (also picking up an unrelated stale `docs/facts.example.json` entry that had
+drifted from the manifest before this change).
+
 ### Removing a required skill or the unprompted-behaviour section changed no drift number (2026-08-04)
 
 `self-verify` treated `.claude/skills` as a bare directory - present or absent, nothing
