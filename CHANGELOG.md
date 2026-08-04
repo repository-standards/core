@@ -24,6 +24,15 @@ deviation recorded in `stack.manifest.json`, exactly where the stack's own `ADAP
 tells an adopter to record it, had no effect. The miss kept counting as drift regardless.
 Now merged along with the other three arrays.
 
+### Checking whether a skill fits never covered an ambiguous mention (2026-08-04)
+
+`AGENTS.md`'s unprompted-behaviour section told the agent to check whether a skill
+covers a request, but said nothing about what to do when a message mentions - in
+passing, not as the ask - something that sounds like a bug, a decision, or scope creep
+without clearly invoking one. A new "Volunteer, don't wait to be asked" section says to
+name the candidate skill and ask, rather than silently doing the extra work or silently
+filing nothing.
+
 ### CLAUDE.md pointed at the unprompted-behaviour rule instead of loading it (2026-08-04)
 
 `enforcement.md` claimed the loop is gated by "loaded context" among other layers, but
