@@ -178,6 +178,18 @@ paths that intentionally belong to no capability are a recorded decision, and wh
 such list exists the check reports that it is off instead of passing quietly. A retired
 capability's deliberately empty globs stay exempt.
 
+### Two of four documented backlog feeders wrote nothing (2026-08-04)
+
+`docs/backlog.md`'s own "What feeds this backlog" names `spec-update` and
+`spec-impact` alongside onboarding and `spec-reconcile` - but only the latter two
+actually filed anything; neither `spec-impact/SKILL.md` nor `spec-update/SKILL.md`
+mentioned the backlog at all, so an agent driving from either one filed nothing and
+no guard noticed. Both now file via `add-to-backlog` when the analysis/diff surfaces
+real work the current change will not address - `add-to-backlog`'s own "automatic
+triggers" section grows from two to three to match. (`docs/method/tracking-work.md`
+discusses the backlog only in general terms and does not itself name these two
+skills - the reproduced gap traces to `backlog.md`'s text, not that page.)
+
 ### `Revisit when` had two writers and no reader (2026-08-04)
 
 `adr-write` and `bdr-write` both write a `Revisit when` field; nothing read it back -
