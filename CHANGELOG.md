@@ -341,7 +341,10 @@ changelog had already drifted). `standard/CHANGELOG.md` now ships a minimal skel
 (title, semver blurb, an empty `## Unreleased`), and the manifest carries both a
 required `files` entry and a required `sections` entry checking for the heading -
 verified against a simulated fresh adoption: present, self-verify passes it; removed,
-self-verify reports it as drift.
+self-verify reports it as drift. `backlog.md` accepts `docs/backlog.md` as an alternate
+path; `CHANGELOG.md` now does the same for `docs/CHANGELOG.md`, and
+`docs/tree/changelog-md.md` writes up what belongs in the file, what does not, and the
+decisions (R4/R18/R25) behind the split.
 
 ### `spec-reconcile` never reconciled decision records (2026-08-04)
 
