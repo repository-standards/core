@@ -16,7 +16,6 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
-<<<<<<< HEAD
 ### Nothing authored the capability map, and the example described a rejected layout (2026-08-04)
 
 Two gaps around the file the whole coupling mechanism reads. `capability-map` appears seven
@@ -178,6 +177,18 @@ path is claimed by nobody; it is bounded by a declared `$unclaimed` list in the 
 paths that intentionally belong to no capability are a recorded decision, and where no
 such list exists the check reports that it is off instead of passing quietly. A retired
 capability's deliberately empty globs stay exempt.
+
+### `spec-reconcile` never reconciled decision records (2026-08-04)
+
+`AGENTS.md` places decision records above specs in its altitude order, but
+`spec-reconcile`'s procedure only checked spec, code and tests against each
+other - reproduced: a real supersession (one BDR superseding another) left five
+stale citations to the superseded record plus a stale code comment, every guard
+green. New step: for each spec in scope, check every ADR/BDR it names or links
+- in the spec's prose and the capability's code comments - against that
+record's current `Status`; a citation to a since-superseded record gets
+repointed and the surrounding prose flagged for a human, never the decision
+text itself rewritten. Grep-able and advisory, not a new mechanical gate.
 
 ### `pre-pr-review` did not run the gate CI actually blocks on (2026-08-04)
 
