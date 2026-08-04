@@ -29,3 +29,17 @@ is exactly what the file lets you notice.
 - **It ships as `copy` rather than `fill-from-repo`.** The standard's guards were tested
   against a specific runtime, so shipping a version is more useful than shipping a blank -
   and changing it is one line in a pull request that says why.
+
+## If your repository runs a different Node
+
+Then this file is the clearest example of a `copy` file you are meant to change, and because
+`copy` files are content-checked, changing it is drift until you say it was deliberate:
+
+```json
+"exceptions": [
+  { "kind": "content", "match": ".nvmrc", "reason": "this repo runs Node 22; the shipped guards are dependency-free and pass on it" }
+]
+```
+
+That is one line in your manifest copy, it survives updates, and it is what the next agent
+reads instead of guessing whether the difference was a mistake.

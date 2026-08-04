@@ -46,6 +46,8 @@ jobs:
         run: node tools/cycle-guard-test.mjs
       - name: self-verify fill test (the placeholder warning is clearable and still fires)
         run: node tools/self-verify-fill-test.mjs
+      - name: self-verify drift test (content, declared keys and the bounds on exceptions)
+        run: node tools/self-verify-drift-test.mjs
       - name: facts-check (a restated fact agrees with its source) + its test
         run: |
           node standard/scripts/facts-check.mjs

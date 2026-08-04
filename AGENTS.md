@@ -43,7 +43,8 @@ clients get them by reference (ADR-004), never as copies.
 
 - **Checks before any PR** (the same set CI runs - `.github/workflows/checks.yml`):
   `node tools/tree-check.mjs` (no leaks into the tree, manifest promises present,
-  the tree passes its own `self-verify --skeleton`), `node tools/link-check.mjs`,
+  the recorded content hashes are the tree's own, the tree passes its own
+  `self-verify --skeleton`), `node tools/link-check.mjs`,
   `node tools/prose-check.mjs` + `node tools/prose-check.mjs --self` (no line renders
   as something it is not),
   `node standard/scripts/spec-structure.mjs` (the repo's own specs stay shaped, and a
@@ -53,9 +54,12 @@ clients get them by reference (ADR-004), never as copies.
   spec move together; every capability spec is mapped, every glob matches something,
   every file is claimed or declared unclaimed),
   `node tools/spec-guard-test.mjs`, `node tools/clarify-gate-test.mjs`,
-  `node tools/schema-pair-test.mjs`, `node tools/cycle-guard-test.mjs` and
-  `node tools/self-verify-fill-test.mjs` (those
-  guards still fire where they must), `node standard/scripts/facts-check.mjs` +
+  `node tools/schema-pair-test.mjs` and `node tools/cycle-guard-test.mjs` (those
+  guards still fire where they must),
+  `node tools/self-verify-fill-test.mjs` and `node tools/self-verify-drift-test.mjs`
+  (the placeholder warning is clearable, and the drift number moves when a copy-class
+  file's content, a declared key or an exception does),
+  `node standard/scripts/facts-check.mjs` +
   `node tools/facts-check-test.mjs` (a fact restated in prose still agrees with
   its source - the declarations live in [`docs/facts.json`](docs/facts.json)),
   `node standard/scripts/decision-records-check.mjs --block` +
@@ -66,6 +70,10 @@ clients get them by reference (ADR-004), never as copies.
   never hand-written), `node tools/docsite.mjs && node tools/site-check.mjs &&
   node tools/site-behaviour.mjs`. The list is the set CI
   runs - if a check is in `checks.yml` and not here, this line is the bug.
+- **Changed anything under `standard/`?** Run `node tools/manifest-hashes.mjs` and
+  commit the manifest: every `copy` entry records the hash of what it ships, and that
+  is what lets an adopted repo notice a file whose content stopped being the
+  standard's. `tree-check` fails on a stale one, so this is a step, not a habit.
 - **Changelog:** a PR describes its change under `CHANGELOG.md`'s `## Unreleased`
   heading - never a version heading, never `VERSION`; the maintainer cuts every
   release. One mechanism at every profile - the per-PR fragments folder was
