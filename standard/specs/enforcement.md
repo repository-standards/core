@@ -1,7 +1,8 @@
 # Spec policy enforcement
 
-Goal: nothing merges that silently violates the spec policy. Honest scope - only
-part of this is mechanical; the rest needs an AI pass.
+Goal: nothing merges that silently violates the spec policy stated in
+[`README.md`](README.md) - structure, spec depth, coupling, and the loop that keeps a
+spec honest. Honest scope - only part of this is mechanical; the rest needs an AI pass.
 
 ## What is mechanically enforceable (hard gate)
 
@@ -52,10 +53,21 @@ part of this is mechanical; the rest needs an AI pass.
   pass); and a `## Open questions` section that **says there are none**. That last one is
   structural on purpose: any other content there is an open item however it is phrased, and
   prose, a statement, a table of gaps and an item answered above but still listed below were
-  all found passing. Wire it as a mandatory `before_plan` / `before_tasks` hook plus a
-  bridge precondition (abort even dry-run). This is what flips the spec's `Status` to
-  `ready-to-develop` mechanically, not by opinion - and it is why the loop cannot be skipped
-  by simply not invoking a skill.
+  all found passing. Wired in twice, on purpose: `/spec-plan` and `/spec-tasks`'s own
+  prompts document it as a "MANDATORY PRECHECK" before anything else in the command, and
+  `setup-plan.sh` / `setup-tasks.sh` call the gate script themselves and abort on any
+  non-zero exit (a bridge precondition - even a `--json` dry run cannot skip it). The
+  first layer is a request an agent could still fail to read; the second is what makes it
+  mechanical - a spec cannot reach `plan.md` or `tasks.md` by the script refusing, not by
+  an instruction being followed. Note this is not a Claude Code `hooks/`-mechanism check
+  (those three shipped guards in `.claude/hooks/` cover unrelated risky Bash commands -
+  remote-database writes, force-pushes, CI secret writes); a per-request judgment call
+  like "does a skill cover this" is not something a hook can make, which is why the
+  self-triggering loop instead leans on loaded context (`AGENTS.md`'s "the loop runs
+  itself" section, imported so it is present on every turn) for noticing the request at
+  all, and on this gate plus its bridge precondition for not skipping the step once
+  started. This is what flips the spec's `Status` to `ready-to-develop` mechanically, not
+  by opinion - and it is why the loop cannot be skipped by simply not invoking a skill.
   The marker forms and both headings are **syntax**: they stay ASCII in a spec written in
   any language, while the text inside a marker is prose in the spec's own language.
 

@@ -1,7 +1,9 @@
 # Capability specs - this repo's own
 
 The repo's own capability specs, dogfooding the shipped method (the method doc is
-[`standard/specs/README.md`](../docs/tree/specs.md)): by capability, buildable, coupled to code.
+[`standard/specs/README.md`](../standard/specs/README.md), and
+[`docs/tree/specs.md`](../docs/tree/specs.md) explains why this folder is shaped that
+way): by capability, buildable, coupled to code.
 
 - [tree-guard](tree-guard/spec.md) - the shipped tree stays complete, leak-free, self-verifying; every relative link resolves.
 - [verify-engine](verify-engine/spec.md) - the shipped self-verify: manifest-driven compliance, drift as a number.
