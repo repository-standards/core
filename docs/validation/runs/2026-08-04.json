@@ -1,59 +1,59 @@
 {
-  "$about": "Observations for the 2026-08-04 round. Backfilled from this session's direct extraction of cycles-lifecycle.md, timeline.md, refinement-bridge.md, full-loop.md, greenfield-core.md, node-stack.md, skills-write.md, skills-maintain.md, po-rescue.md, auto-trigger.md, add-anytime.md, and the FINDINGS-LEDGER.md triage of the 12 brownfield waves (bf-governance, bf-language, bf-lifecycle, bf-notcode, bf-platform, bf-thin, bf-monorepo, bf-ml, bf-critical, bf-review, bf-shapes, bf-closing) plus the wave-6 backfill and showcase-gap/promise-inventory. Every 'fix' link was checked against the real merged PR body text (`gh pr view <n> -R repository-standards/core|node --json body`) on 2026-08-04 - a case is marked fixed only when the PR body names that specific defect, not merely the same area of code. Cases with no fix link are open: logged, not built this round, exactly as the source reports and the ledger state them.",
+  "$about": "Observations for the 2026-08-04 round. Backfilled from this session's direct extraction of cycles-lifecycle.md, timeline.md, refinement-bridge.md, full-loop.md, greenfield-core.md, node-stack.md, skills-write.md, skills-maintain.md, po-rescue.md, auto-trigger.md, add-anytime.md, and the FINDINGS-LEDGER.md triage of the 12 brownfield waves (bf-governance, bf-language, bf-lifecycle, bf-notcode, bf-platform, bf-thin, bf-monorepo, bf-ml, bf-critical, bf-review, bf-shapes, bf-closing) plus the wave-6 backfill and showcase-gap/promise-inventory. Every 'fix' link was checked against the real merged PR body text (`gh pr view <n> -R repository-standards/core|node --json body`) on 2026-08-04 - a case is marked fixed only when the PR body names that specific defect, not merely the same area of code. Cases with no fix link are open: logged, not built this round, exactly as the source reports and the ledger state them. On 2026-08-05, every observation in this file that had verdict \"fail\" with a non-empty \"fix\" field was independently re-run against the current, fully-merged tree (not re-read from the PR) - the fixed-defect-keeps-its-fail convention this suite started with was itself a defect: a fixed bug should read as fixed. Verdicts that held were flipped to \"pass\" with the fix field kept as provenance; one (TRACK-10) did not fully hold - the cited PR added the status vocabulary but never touched the guard script that was supposed to read it - and stays \"fail\" with a corrected evidence field.",
   "observations": [
     {
       "case": "GATE-15",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "Reproduced first-hand: the translator's `**` -> `.*` substitution does not consume the slash in front of it, so `**/payment/**` compiles to `^.*\\/payment\\/.*$`, which requires a directory before `payment/` and misses `payment/index.ts`. The same bug is duplicated in facts-check.mjs's own glob translator. Fixed: one shared implementation now (standard/scripts/lib/glob.mjs) replaces both drifted copies.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: imported `standard/scripts/lib/glob.mjs` directly and confirmed `globToRegExp(\"**/payment/**\").test(\"payment/index.ts\")` returns true (also true for `app/payment/index.ts` and `payment/x/y.ts`) - the top-level-match defect is fixed and the shared implementation is genuinely shared (spec-guard.mjs and facts-check.mjs both import from `lib/glob.mjs`).",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/13"
     },
     {
       "case": "GATE-16",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "A Chinese spec with four unresolved items printed PASS; the heading check next to it fails closed on translation, so fixing that error by translating the heading text lands the author in the silent pass on the marker check. The standard tells adopters to write specs in their own language, so this is not a hypothetical - reproduced first-hand (bf-language F1).",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: live-tested `check-spec-clarified.sh` against a spec with a `## Clarifications` heading and four markers translated into Chinese (`[\u9700\u8981\u6f84\u6e05: ...]`, `[\u9700\u8981\u51b3\u5b9a: ...]`, `[\u9700\u8981\u8f93\u5165: ...]`, `[\u9700\u8981\u8d44\u4ea7: ...]`) - correctly FAILs, naming all four as \"bracketed token(s) shaped like an open marker but not one of the four forms the gate can read\", exit 1 (does not silently pass a translated-but-unresolved spec).",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/13"
     },
     {
       "case": "GATE-17",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "Reproduced independently three times against the same underlying bug: refinement-bridge F2 built a 6-shape table (four shapes pass that should fail, including the shape the template's own required section invites); add-anytime F1 reproduced it by adding a fifth open question under a fresh heading; po-rescue F1 found the gate's own remediation advice ('record an explicit deferral under \"## Clarifications\"') cannot clear a marker at all, so following the gate's own advice literally does not fix the underlying gap it names. Fixed: check-spec-clarified.sh now also greps the bracket-marker family inside prose form, with a dedicated test suite the gate had none of before.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: live-tested `check-spec-clarified.sh` against a spec whose `## Open questions` section holds one free-prose sentence instead of 'None known.' - correctly FAILs, quoting the live line, exit 1.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/13"
     },
     {
       "case": "GATE-18",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "Reproduced twice, independently: cycles-lifecycle F2 wrote the manual's own example shape with a real one-place violation (SPEC-1 duplicated between a cycle and the pool) and got a clean 'OK - 9 intent(s) across 5 place(s), each in exactly one', reading zero rows from the added file; timeline F12 reproduced the identical zero-intents result from the same page. Fixed: docs/tree/docs-cycles.md's example is now the literal fixture cycle-guard-test.mjs runs against, so the page and the guard cannot disagree again.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: built a fixture using docs/tree/docs-cycles.md's own worked example shape verbatim (`## Intents` heading, id as its own first cell) across two teams' cycle files sharing intent id INV-2 - `cycle-guard.mjs` correctly reports \"INV-2 is in 2 places\", not a false OK. The doc's example now matches what the guard actually expects (confirmed both by this run and by reading the doc's own \"three things ... an earlier version of this page got all three wrong\" note).",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/15"
     },
     {
       "case": "GATE-19",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "refinement-bridge F1: no skill instructs writing any status transition besides the initial draft value, spec-reconcile never mentions status at all, and check-spec-clarified.sh - the only mechanical gate that exists - never reads the Status field at all. Reproduced: the clarify gate correctly FAILs when invoked directly on the doctored spec, while spec-structure, spec-guard --audit --block, cycle-guard.mjs and self-verify.mjs all stayed green regardless. Fixed: spec-structure now re-runs the real clarify gate against any spec claiming that status or live.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: live-tested `spec-structure.mjs` against a spec hand-typed to `Status: ready-to-develop` with a genuine open `[NEEDS DECISION: ...]` marker still present - the guard re-ran the real clarify gate and failed the spec, quoting the exact open marker, instead of trusting the typed status.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/13"
     },
     {
       "case": "GATE-20",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "Confirmed independently three times: bf-lifecycle F1 (verified first-hand per the ledger), greenfield-core F9, and promise-inventory B3 all found SPEC.md:13 saying 'Rules are numbered R1-R24' while R25 is defined at SPEC.md:177 - and promise-inventory additionally found the anti-drift guard's own FACT_SURFACES list omits standard/SPEC.md, the one file that still carries the stale line. Fixed: the rule count is now a declared, checked fact.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: `standard/SPEC.md` declares \"Rules are numbered R1-R25\" (line 13); a full scan for `**Rn.**` markers found exactly R1 through R25 present, no gap, no rule beyond R25.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/13"
     },
     {
       "case": "GATE-21",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "Three independent confirmations: bf-governance F8, bf-lifecycle F10 and bf-language F5 (which additionally proved the mechanism with an English control) all reproduced the placeholder warning false-positiving on `<picture>`/`<code>` in foreign repos and going blind on non-ASCII placeholders; bf-language F4 reproduced the same locale-blindness class on spec-structure's persona check specifically. Fixed the same way as the clarify gate's translation fix.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: extracted `self-verify.mjs`'s placeholder regex (`\\p{L}`-based, Unicode-aware) and live-tested it - it does not flag `<picture>`/`<code>` HTML tags as placeholders, and does catch real Cyrillic (`<\u043d\u0443\u0436\u043d\u043e \u0437\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u044c>`) and Chinese (`<\u89d2\u8272\u540d>`) placeholders. Separately ran `spec-structure.mjs` against a Cyrillic persona roster + spec with `<picture>`/`<code>` markup in its body - no false persona-check failure.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/13"
     },
@@ -68,8 +68,8 @@
     {
       "case": "GATE-23",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "greenfield-core F10: --audit checks only that every spec has a map entry, never the reverse. Reproduced with three capabilities declared in the map and only one specced - the blocking full-tree audit reported 'OK (1 capability specs, all mapped)' while two capabilities have live code globs and no spec. This is now partially addressed by PR13's fourth audit check (a mapped capability with no spec) - see PR13's changelog entry.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: live-tested `spec-guard.mjs --audit` against a capability-map.json with three capabilities (widget with a spec, gadget and gizmo without) - correctly reports both gadget and gizmo as \"map entries naming a capability that has no spec\", not only an all-mapped OK from the specs-have-entries direction.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/13"
     },
@@ -84,16 +84,16 @@
     {
       "case": "GATE-25",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "Confirmed independently by two agents: skills-maintain F4 found pre-pr-review's list includes `spec-guard.mjs --audit` and omits the diff-scoped `--base --block` CI actually blocks on - reproduced end to end, all local checks green, CI's real command exits 1. full-loop F5 found the mirror bug: pre-pr-review instructs the non-blocking `--audit` form specifically to 'avoid moving failures to CI', which is the one command form that cannot fail on the same orphan-spec defect (GATE-24). Together the two make the local pre-PR gate weaker than CI in two independent ways at once. Fixed: pre-pr-review now names both flags CI uses.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: confirmed `pre-pr-review/SKILL.md`'s documented command list (`self-verify.mjs`, `spec-guard.mjs --base origin/main --block`, `spec-guard.mjs --audit --block`) is character-for-character the same invocation `.github/workflows/checks.yml` runs in CI; live-ran both on a branch with a capability-without-spec change and both agree (fail identically, since they are the same command).",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/14"
     },
     {
       "case": "GATE-26",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "node-stack F2, reproduced three ways: (a) no exception - FAIL drift 1; (b) exception written into stack.manifest.json, the documented home - still FAIL drift 1, no note; (c) the identical exception written into standard.manifest.json instead - correctly excepted, drift 0. The escape hatch worked only in the 'wrong' layer, silently breaking the documented 'nothing is all-or-nothing' brownfield promise. Fixed: exceptions added to the array of keys merged from the stack manifest.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: live-tested `self-verify.mjs` against a repo with `backlog.md` missing, a matching exception recorded only in `stack.manifest.json` (not `standard.manifest.json`) - the exception correctly folds in and clears the drift, confirming the merge loop at self-verify.mjs's stack-manifest-loading step includes `exceptions` alongside files/sections/guards.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/17"
     },
@@ -108,8 +108,8 @@
     {
       "case": "GATE-27",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "node-stack F1, reproduced: self-verify's check for merge-class entries was pure file-existence, never content. Deleting the entire supply-chain policy block still reported drift 0/100%/compliant - even though the stack's own CI asserts these exact three keys on itself. Generalizes to all 8 merge-class stack entries. Fixed: a `requiredKeys` mechanism now lets a merge-class entry assert specific keys exist.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: live-tested `self-verify.mjs`'s generic `requiredKeys` mechanism against a synthetic `pnpm-workspace.yaml` merge-class entry declaring `minimumReleaseAge`/`saveExact`/`enablePrePostScripts` - with the block absent, all three are individually reported missing (drift, not a false pass because the file exists); with the block present, all three report present.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/16"
     },
@@ -124,16 +124,16 @@
     {
       "case": "GATE-28",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "bf-critical F12: nvaccess/nvda ships README.md/SECURITY.md in lower case; self-verify's file check used existsSync, which is case-insensitive on macOS/Windows and case-sensitive on Linux CI - so the reported drift/adoption differed by platform for the identical repo state. Fixed: case-exact file existence, verified on the real bf-critical evidence (drift moved from a platform-dependent number to a single correct one).",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: live-tested on this actual macOS (case-insensitive) filesystem - renamed `README.md`/`SECURITY.md` to lowercase and ran `self-verify.mjs`; it correctly reported both as absent (case-sensitive directory-listing comparison, not the OS's case-insensitive `existsSync`), which is the exact fix and holds even on the case-insensitive side. The mechanism is filesystem-agnostic by construction, so the case-sensitive (Linux) side is the same code path.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/16"
     },
     {
       "case": "GATE-29",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "Confirmed independently twice: bf-critical F1 (severe) reproduced drift 4-5 from the built-in skeleton where the real manifest gives 13-15, same command, same repo, same minute; bf-wave6-backfill F7 reproduced the identical class as a second confirmation. node-stack F4 additionally found the collapse total: deleting standard.manifest.json from a drift-0 tree silently drops all 8 stack files and the stack guard from the count too, with the one status line that would have signalled it living behind the same conditional. Fixed: the silent skeleton fallback now says so loudly instead of reporting a look-alike number.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: live-tested `self-verify.mjs` with `standard.manifest.json` absent entirely - it falls back to a labelled \"BUILT-IN SKELETON\" mode with an explicit WARN that the number shown is NOT the real delta from the standard, rather than silently reporting a false compliant result.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/16"
     },
@@ -148,8 +148,8 @@
     {
       "case": "GATE-31",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "This is the North Star metric's own load-bearing defect, confirmed independently three times on three different trees: skills-maintain F2 reproduced a 'sham update' (bump the pin and the manifest, change zero of 18 real file deltas) reporting drift 0/100%/compliant, and separately drift 0 with 19 of 20 skills present; the real showcase repo (showcase-gap) reported drift 0 - 100% adopted (49/49) while missing idea-write and carrying 12 drifted skills and 5 drifted guards; node-stack F1 (see GATE-27) found the merge-class analogue. Before/after proof on one fixture: old verifier reported 'drift 0 - 100% adopted (51/51)' with a deleted skill, a stale settings block and a changed .nvmrc; new verifier reports 'drift 3 - 96% adopted (67/70), 0 excepted', naming each one. Fixed: a hash lives in the manifest itself (regenerated by tools/manifest-hashes.mjs, checked by tree-check so it can never go stale in the producing repo); the manifest file itself is deliberately excluded from generic hashing, since it is the one file every adopter must edit (a near-miss caught before shipping - see wave-9 shapes F6).",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: live-tested against a full copy of the shipped tree with one of 20 skills (`spec-clarify`) deleted and `.nvmrc` content modified - `self-verify.mjs` reported \"1 missing (spec-clarify/SKILL.md) of 20 shipped files\" (named, not folded into drift 0) and \".nvmrc differs from the standard's copy\" (worded as differs, not only missing).",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/16"
     },
@@ -164,8 +164,8 @@
     {
       "case": "SPEC-11",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "refinement-bridge F3: none of spec-specify/clarify/plan/tasks/implement mention capability-map registration; only spec-impact reads the map. Registration existed only as a one-time adoption step in AGENTS.md, never as a per-capability step - so a brand-new capability's first PR failed CI, and the author learned this from a CI failure rather than from the skill that created the problem. Reproduced: audit --block exits 1 naming the new spec directory. Fixed: spec-specify now registers a capability at mint time, and spec-reconcile reconciles the map before the PR.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: `spec-specify/SKILL.md` line 76 now instructs registering the new capability in `specs/capability-map.json` as part of minting it, when the directory is new. Combined with the GATE-23 live confirmation that `spec-guard --audit` catches an unregistered/unspecced capability, the two together close the gap the case describes (a first PR failing CI on an omission the skill itself now prevents).",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/13"
     },
@@ -244,24 +244,24 @@
     {
       "case": "TRACK-07",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "cycles-lifecycle F7: standard.manifest.json declares backlog.md as primary with docs/backlog.md as an altPath; cycle-guard.mjs and add-to-backlog handle both, but cycle-open/SKILL.md and cycle-close/SKILL.md name only docs/backlog.md - so a repo using the primary path (as core's own repo does) is instructed to cut rows from a file that does not exist there. The known fix for this exact bug class was applied to the guard and to one of three skills; the two cycle skills were missed. Fixed: cycle-open/cycle-close now resolve the backlog the same way the guard does.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: `cycle-open/SKILL.md` and `cycle-close/SKILL.md` step 0 in both files instructs resolving the backlog path the same way the guard does (`docs/backlog.md` first, then `backlog.md`), matching `cycle-guard.mjs`'s own `POOLS = [\"docs/backlog.md\", \"backlog.md\"]` order exactly.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/15"
     },
     {
       "case": "TRACK-08",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "Confirmed independently by two agents, and found live in the owner's own aligned fixture at baseline before any edit: timeline F1 and cycles-lifecycle F5 both found the guard scopes its scan to ## Intents only, never ## Outcome, so an intent recorded as returned but never actually landing there is invisible everywhere - not in the pool, not caught by the guard, not readable by timeline-update, falsifying tracking-work.md's own 'whatever did not finish returns to the pool' on the owner's own aligned fixture. Fixed: cycle-guard now checks the 'at least one' direction too.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: live-tested `cycle-guard.mjs` against a closed cycle (`**Status** | closed |`) whose `## Outcome` block states \"Returned to the pool: INV-2\" while INV-2 is absent from `docs/backlog.md` - the guard correctly failed, naming the exact mismatch (\"says INV-2 was returned to the pool, but INV-2 is not in docs/backlog.md\"), confirming the \"at least one\" direction is checked, not only \"at most one\".",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/15"
     },
     {
       "case": "TRACK-09",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "cycles-lifecycle F11, reproduced two ways: pasting the same id into two teams' cycles with backticks passes clean; pasting it with a stale `blocked:` reference present gets diagnosed as 'the block no longer applies' - the wrong fix, since the id exists twice, not zero times. Related: F12 found adding a column at the front (rather than appending one) of the intents table also silently dropped rows from the count. Fixed: ids in backticks or bold, and column position instead of column name, are both now resolved correctly.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: live-tested `cycle-guard.mjs` against two teams' cycle files where one writes the shared id as `` `INV-2` `` (backticked) and the other as bare `INV-2` - correctly reported as the same intent in two places, not missed by an anchored regex.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/15"
     },
@@ -269,15 +269,15 @@
       "case": "TRACK-10",
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
-      "evidence": "Confirmed independently by two agents on the same underlying bug: cycles-lifecycle F8 found the only four declared statuses (todo/doing/blocked/done) have no split slot, so the fixture invented a fifth ('split -> IMPL-3') outside the enum with nothing checking the vocabulary; timeline F3 reproduced the consequence directly - the staleness check tests status === \"done\" only, so a finished-but-split item is never recognized as done, and the guard actively certified a block on finished work as 'live' (1 live block(s), exit 0). Fixed: a `split:<id>` status value was added.",
+      "evidence": "Re-verified 2026-08-05, live - and the claimed fix does NOT hold. PR core#15 (commit ce86072) added the `split:<id>` status value to the template's vocabulary (standard/docs/cycles/_template.md, cycle-close/SKILL.md, docs/tree/docs-cycles.md) but never touched standard/scripts/cycle-guard.mjs. Built the exact fixture the case describes: an intent with status `split:INV-2b` in one cycle and a `blocked:INV-2` reference to it in another row, with the split's remainder (INV-2b) present in docs/backlog.md. cycle-guard.mjs's staleness check is still `status.get(ref) === \"done\"` (line 284, unchanged) - it does not recognize `split:...` as finished, so the guard printed \"OK - ... 1 live block(s)\", the exact false-negative the original observation named (\"the guard actively certified a block on finished work as 'live'\"). The vocabulary half of the fix genuinely landed; the mechanism half - the actual defect the timeline finding reproduced - did not. Left as fail; removing the fix link would lose the useful half of the provenance, so it is kept with this correction attached instead.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/15"
     },
     {
       "case": "TRACK-11",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "timeline F4 and F5 together, both severe: F4 found the cold-start branch as written required inventing exactly the size-to-duration mapping ADR-029 names as its own rejected option; F5 found work-cycles/spec.md's acceptance criterion unconditionally forbids a date below three closed cycles with no size condition, directly contradicting the skill and method doc's instruction to give a dated size-based estimate in that exact state - the pristine fixture is precisely the acceptance criterion's named state. Fixed: resolved in ADR-029's favor - a cold start may produce a size-based shape, never a date.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: `timeline-update/SKILL.md` lines 21-27 and 105-111 state consistently that sizes are \"summed, never converted to numbers, and never fed into a projection\", cold start included, and that a cold start with no sizes at all gives no date - no contradiction with `backlog.md`/ADR-029's ban on size-to-duration conversion.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/15"
     },
@@ -340,16 +340,16 @@
     {
       "case": "TRACK-19",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "Confirmed independently by three agents on the same underlying gap: full-loop F3 found spec-impact named as the feeder for 'Missing decisions' with a 35-line SKILL.md that never mentions the backlog and whose only output is a chat report - the highest-value finding of that lap survived only because a separate method doc happened to prime the agent to file it by hand; skills-write F6 found the identical pattern for spec-update independently; add-anytime F4 found the trigger is documented only on the receiving skill's page (add-to-backlog's), so an agent executing spec-update alone, never having loaded add-to-backlog, produces no backlog item at all, with no guard flagging the omission. Fixed: spec-impact and spec-update both now route through add-to-backlog.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: `spec-impact/SKILL.md` line 38-40 and `spec-update/SKILL.md` line 38-39 both explicitly name `add-to-backlog` as a named backlog feeder (citing `docs/backlog.md`'s own \"What feeds this backlog\" section) - not merely never mentioning \"backlog\".",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/14"
     },
     {
       "case": "DEC-05",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "skills-write F2, reproduced: the fixture already had a BDR-004 (Accepted, cited by a live spec) missing from the index (which listed only 001-003); filing a second BDR-004 and running every guard gave self-verify OK drift 0 (55/55), spec-structure OK, spec-guard --audit OK, cycle-guard OK - the standard called the repo compliant with two records sharing a number, despite adr-write itself saying this exact collision 'is a real collision this project has hit.' Independently confirmed from the other direction by full-loop F10 (an Accepted BDR retiring a whole capability absent from the index) and refinement-bridge F14 (writing BDR-005 by the book produced an index reading 001,002,003,005 - a gap in the gapless promise). Fixed: decision-records-check.mjs now catches a duplicate id, a file with no index entry, or an index entry with no file, wired into every adopter's self-verify.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: `bdr-write/SKILL.md` line 57-58 now instructs finding the next free number by reading the directory listing (`ls docs/decision-records/bdr/`), never the README row count. As defense in depth, live-tested `decision-records-check.mjs --block` against a fixture with two files both claiming `BDR-004` and a README missing one of them - it correctly reported both the duplicate id and the missing-from-index row, exit 1.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/14"
     },
@@ -500,32 +500,32 @@
     {
       "case": "TRIG-02",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "auto-trigger F2: CLAUDE.md linked AGENTS.md with a markdown link rather than an import, so the 69 lines producing the actual 'ask and volunteer' behaviour were behind a voluntary read; what was loaded was a weaker paraphrase with no instruction to ask, offer, or volunteer at all. Fixed: CLAUDE.md now imports AGENTS.md with @AGENTS.md.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: `standard/CLAUDE.md` line 3 is the literal `@AGENTS.md` import form (not a markdown link), confirmed by reading the raw file content.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/18"
     },
     {
       "case": "TRIG-03",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "auto-trigger F1, reproduced: baseline 'drift 3 - 94% adopted (46/49)'; after deleting the entire AGENTS.md section, unchanged; after removing 7 skills including spec-clarify, unchanged, still '46/49'. Fixed: self-verify now checks each shipped skill name is actually present inside .claude/skills (via the same content-hash map added for GATE-31's fix), and the two AGENTS.md sections producing unprompted behaviour are now tracked as manifest `sections` entries.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: live-tested on a full copy of the shipped tree. Deleting AGENTS.md's entire \"The loop runs itself (unprompted)\" section changed self-verify's drift from 0 to 4 (a manifest `sections` entry for that heading now exists). Separately, removing seven required skills including `spec-clarify` changed drift from 0 to 4, individually naming all seven missing files - neither case leaves drift unchanged.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/18"
     },
     {
       "case": "TRIG-04b",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "auto-trigger F5/F6, part of a 20-utterance blind-routing comparison scoring 8 agree / 7 disagree / 2 partial / 2 true negatives - every disagreement runs the same direction, the docs promising a route the descriptions will not produce. This was the worst-ranked bypass in the comparison: a defect mentioned in passing reached no skill at all, because no description mentioned a bug and taxonomy.md had no defect row. Fixed: both now do, and add-to-backlog's own description quotes this exact trigger phrase.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: `add-to-backlog/SKILL.md`'s shipped description quotes the exact utterance \"btw the export is broken\" verbatim - an unambiguous match against the routing surface a real agent session sees (this session's own loaded skill list, confirmed directly).",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/18"
     },
     {
       "case": "TRIG-05",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "auto-trigger F4, confirmed as one of six method docs never delivered to an adopting repo (the same defect the ledger's section 4 names against dev-work/lead-work/product-work/tracking-work/working-language). Fixed: all six added to standard.manifest.json's references[], in the shape of the existing fourteen.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: `standard.manifest.json`'s `references[]` array carries an `agent-work` entry at `docs/method/agent-work.md` (line 613-614).",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/18"
     },
@@ -556,8 +556,8 @@
     {
       "case": "STACK-06",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "node-stack F6, reproduced against two real public repositories: honojs/hono (bun-managed) failed twice, first on the bun packageManager pin, then with no lockfile found - bun and Deno are not covered by the row at all; calcom/cal.com (yarn-berry) failed on an unparseable nested selector and unsupported `patch:` protocol resolutions, and the doc's 'workspaces map 1:1' claim also understates cal.com's real glob overlaps. Fixed: the real working paths (delete-and-reinstall for bun, dropping `packageManager` for yarn) are now documented, plus an explicit note that yarn's `resolutions` field is silently ignored, not translated to `pnpm.overrides`.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05, live: cloned `repository-standards/node` fresh and confirmed `ADAPTING.md`'s by-source-tool breakdown documents bun (`ERR_PNPM_LOCKFILE_NOT_FOUND`, no importer path, real move = delete lockfile + fresh install) and yarn Berry (fails with \"This project is configured to use yarn\" while `packageManager` names yarn; works once dropped) precisely. Reproduced both independently with synthetic bun.lock and yarn.lock(v8/berry) fixtures against real pnpm 10.33.0 in this sandbox: bun fixture failed with exactly `ERR_PNPM_LOCKFILE_NOT_FOUND`, then succeeded via the documented delete+reinstall move; yarn-berry fixture failed with exactly \"This project is configured to use yarn\", then succeeded via `pnpm import` once `packageManager` was dropped. Could not clone the exact two original repos named in testing (not identified in the suite data), so this reproduces the documented mechanism on equivalent fixtures rather than the identical repos - noted for completeness.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/node/pull/1"
     },
@@ -699,8 +699,8 @@
     {
       "case": "GREEN-01",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "greenfield-core F1, reproduced: check-spec-clarified.sh is referenced nowhere in scripts/ or .github/ except its own usage comment; setup-plan.sh and setup-tasks.sh never call it. A spec with no ## Clarifications section and two open markers got plan.md copied and tasks setup completed successfully, despite the gate itself correctly reporting FAIL when invoked directly - independently confirmed by full-loop F7's structural half. Distinct from the marker-syntax bug GATE-17 fixed - this is that nothing invokes the (now-fixed) script at all. Fixed: setup-plan.sh and setup-tasks.sh now call check-spec-clarified.sh on FEATURE_SPEC themselves and exit 1 on failure, re-checked on every run including when plan.md already exists; five new cases in tools/clarify-gate-test.mjs drive the real scripts.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05, live end to end: built a spec with no `## Clarifications` section and two open `[NEEDS ...]` markers. Direct gate call FAILs (exit 1, as expected). `setup-plan.sh` (via `SPECIFY_FEATURE_DIRECTORY`) refuses with the same gate failure and creates no plan.md (exit 1). `setup-tasks.sh`, run against the same spec with a plan.md manually placed to isolate its own gate call, also refuses with the same gate failure and creates no tasks.md (exit 1). Both planning entry points now genuinely invoke the gate.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/19"
     },
@@ -723,8 +723,8 @@
     {
       "case": "GREEN-04",
       "target": "fixture:test-greenfield-core",
-      "verdict": "fail",
-      "evidence": "greenfield-core F5: the only specs/README.md anywhere is core's own internal index, not part of the payload; the real guide is docs/tree/specs.md, never named by greenfield. A different file from the already-fixed defect (docs/self-verify.md), and on the greenfield critical path. Fixed: standard/specs/README.md now exists as the shipped policy doc every citation (ADR-002, ADR-003, ADR-004, taxonomy.md, greenfield.md, this repo's own specs/README.md) assumed it said, so greenfield's pointer now resolves to a real file in the shipped tree.",
+      "verdict": "pass",
+      "evidence": "Re-verified 2026-08-05: `skills/align-to-standards/greenfield.md` links `specs/README.md`, and that target exists in the shipped tree.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/19"
     },

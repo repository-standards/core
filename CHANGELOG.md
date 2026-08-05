@@ -16,6 +16,45 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A fixed defect now reads as fixed - 76 observations re-verified against the live tree, not relabelled (2026-08-05)
+
+The validation suite's own convention - "a fixed defect keeps its fail verdict and gains a
+`fix` field rather than flipping to pass" - was itself the defect the owner named: the
+punch list mixed real, currently-open bugs with ones already fixed, so `fail` stopped
+meaning "broken today." Every observation in `runs/2026-08-03.json` and `runs/2026-08-04.json`
+that read `fail` with a non-empty `fix` (76 of them) was actually re-run against the current,
+fully-merged tree - live script executions (`spec-guard.mjs`, `self-verify.mjs`,
+`cycle-guard.mjs`, `check-spec-clarified.sh`, `spec-structure.mjs`, `decision-records-check.mjs`,
+`setup-plan.sh`/`setup-tasks.sh`, `pnpm import` against synthetic bun and yarn-berry lockfiles)
+against synthetic fixtures reproducing each case's `given`, not a re-read of the citing PR.
+
+74 held and flipped to `pass`, keeping their `fix` field as provenance. Two did not:
+
+- **`DOC-01`** (`standard.manifest.json`'s `since` fields): the original mass-corruption bug
+  (a version bump blindly stamping every entry) does not recur, but a fresh instance of the
+  same class exists today - `scripts/lib`'s entry declares `since: "0.8.14"`, a version that
+  does not exist yet (`VERSION` is still 0.8.13), inconsistent with the `"unreleased"`
+  convention this same manifest uses correctly elsewhere.
+- **`TRACK-10`** (a cycle-boundary split's stale-block check): the cited PR added the
+  `split:<id>` status value to the template's vocabulary but never touched
+  `cycle-guard.mjs`'s staleness check, which still only recognizes literal `status === "done"`.
+  Live-reproduced the exact original failure - a finished-but-split intent's `blocked:` reference
+  still reports as a live block, not stale.
+
+Both stay `fail`, with corrected evidence explaining what the re-run actually found, rather
+than being flipped to match the PR's claim.
+
+`tools/validation.mjs` no longer treats `fail`+`fix` as "resolved" for display: the punch
+list (`README.md`'s "The punch list" / `benchmark.md`) is filtered on the raw `verdict`
+alone, with a fail that still carries a `fix` worded as "attempted, still open" rather than
+"fixed". A new "Fixed and re-verified this round" section carries the 78 confirmed-fixed
+observations (74 from this pass plus 4 pre-existing) separately, so the credibility claim
+("N bugs found, M fixed, confirmed") stays visible without being mixed into the list of what
+still needs attention. `--check` now also requires every observation to carry non-empty
+`evidence`. `docs/facts.json`, `docs/validation/counts.json`, `README.md`, `benchmark.md` and
+`backlog.md`'s `FIELD-1` row are regenerated/updated to the corrected counts (78 fixed across
+18 merged pull requests, 84 still open, 2 of them an attempted fix that did not fully hold).
+
 ### Five spec-engine files carried no provenance marker, and nothing checked for one (2026-08-05)
 
 `specs/spec-engine/spec.md`'s Provenance duty requires every file under `scripts/spec/` or a
