@@ -6,8 +6,10 @@
      this standard can run the same idea against their own. -->
 
 Twenty-something checks - **114**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **95** of them at least once and has fixed **50** so far; the rest are logged as open. The runs are in [`runs/`](runs/), and the full
-catalogue (including the cases specific to this project's own paths) is in [`README.md`](README.md).
+claiming to be agent-operable should survive. This project failed **46** of them at least once and has fixed-and-re-verified **49** so far; the rest are logged as open (which includes any case where an attempted fix
+was itself re-verified and found not to fully hold - see `README.md` for that distinction).
+The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
+this project's own paths) is in [`README.md`](README.md).
 
 If you maintain a different standard: pick a case below, translate "given" into your own
 fixture and "when"/"then" into your own tooling's command, and see whether it holds. That is
@@ -33,7 +35,7 @@ node standard/scripts/spec-guard.mjs --audit, on a branch that edits code under 
 - **Given:** a capability with a capability-map.json entry and a live spec
 - **When:** a PR deletes every file the capability's glob matches, and nothing else in the spec changes
 - **Then:** spec-guard.mjs fails and names the capability, instead of reporting OK
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -46,7 +48,7 @@ node standard/scripts/spec-guard.mjs --audit, on a branch that deletes every fil
 - **Given:** an aligned repo with a capability spec at Status: in-refinement
 - **When:** the spec records three unresolved items as `- **CLARIFICATION-1 (owner: ...).**` .. `-3.` list entries (no `[NEEDS ...]` bracket) and the clarify gate runs
 - **Then:** the gate fails and names the unresolved items
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -72,7 +74,7 @@ node standard/scripts/cycle-guard.mjs against docs/backlog.md plus the closed an
 - **Given:** a cycle closed exactly as cycle-close/SKILL.md documents it - a close table under `## Outcome` reusing the same intent ids on purpose
 - **When:** cycle-guard.mjs runs against the closed cycle file
 - **Then:** the guard does not report the close table's rows as duplicates of the `## Intents` table
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -85,7 +87,7 @@ node standard/scripts/cycle-guard.mjs against a cycle file closed with the docum
 - **Given:** a spec authored to the letter of capability-spec.template.md's Open Questions comment
 - **When:** the comment names the marker family (CLARIFICATION, DECISION, INPUT, ASSET) by bare word only, without showing the `[NEEDS TYPE: ...]` bracket form
 - **Then:** a spec written to that comment can pass the gate with every question still open, because check-spec-clarified.sh only recognizes the bracket form
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -98,7 +100,7 @@ grep the Open Questions comment in standard/specs/capability-spec.template.md fo
 - **Given:** a repo whose real CI is not GitHub Actions (e.g. CircleCI, Buildkite)
 - **When:** the repo reads `.github/workflows/spec-guard.yml` and align-to-standards/SKILL.md's guidance about it
 - **Then:** the guidance states plainly that the workflow is a reference implementation to translate, not a requirement to run GitHub Actions specifically
-- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -150,7 +152,7 @@ node standard/scripts/spec-guard.mjs --audit on a branch whose diff spans two ca
 - **Given:** a capability-map.json entry using `**/payment/**` or `shared/**/payment*` - the first two entries of the shipped example map
 - **When:** a file at `payment/index.ts` or `shared/payment.ts` changes and spec-guard --audit runs
 - **Then:** the glob is translated to a regex that requires an extra path segment in front of the match, so the coupling guard misses the file entirely
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -163,7 +165,7 @@ node standard/scripts/spec-guard.mjs --audit against a capability-map.json entry
 - **Given:** a spec written in Chinese, per the method's own instruction that specs may be authored in the team's working language
 - **When:** the spec has four genuinely unresolved items and the clarify gate runs
 - **Then:** the gate reads the translated content and still fails, instead of passing because the marker happens not to be in English
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -176,7 +178,7 @@ bash standard/scripts/spec/check-spec-clarified.sh <spec.md> against a Chinese-l
 - **Given:** an aligned repo with a capability spec whose `## Open questions` section (a section the template requires) records genuinely open items as free prose, a statement-phrased question, or a table row - not the bracket marker
 - **When:** the clarify gate runs
 - **Then:** the gate passes with the section's real open items still unanswered, because it only ever counted the literal string `[NEEDS `
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -189,7 +191,7 @@ bash standard/scripts/spec/check-spec-clarified.sh <spec.md> against a spec whos
 - **Given:** a cycle file written in the shape docs/tree/docs-cycles.md's own worked example shows (no `## Intents` heading, a compound id+title first cell)
 - **When:** cycle-guard.mjs runs against a real one-place violation written in that exact shape
 - **Then:** the guard reads zero rows and reports OK, instead of catching the violation
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -202,7 +204,7 @@ node standard/scripts/cycle-guard.mjs against a cycle file shaped like docs/tree
 - **Given:** a spec whose Status field was typed to `ready-to-develop` by hand, with one open `[NEEDS DECISION: ...]` marker still present
 - **When:** spec-structure.mjs (or another repo-wide guard) runs
 - **Then:** the guard re-runs the real clarify gate against any spec claiming ready-to-develop or live and fails it, instead of treating the typed value as authoritative
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -215,7 +217,7 @@ node standard/scripts/spec-structure.mjs against a spec typed Status: ready-to-d
 - **Given:** a spec or template file in a non-English repo, with a real (non-placeholder) persona name or a real placeholder written in the local script
 - **When:** spec-structure.mjs's persona check or self-verify's placeholder-fill warning runs
 - **Then:** the check does not false-fail on `<picture>`/`<code>` constructs in a foreign repo, and does not go blind on a non-ASCII placeholder
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -254,7 +256,7 @@ node standard/scripts/spec-guard.mjs --audit against a repo with one tracked spe
 - **Given:** a PR that changes capability code without updating its spec, on a branch
 - **When:** pre-pr-review's documented local-check list is followed literally, then the same branch runs through CI
 - **Then:** the local checks and CI agree on pass/fail, instead of pre-pr-review reporting green on the exact violation CI's diff-scoped `--base --block` run catches
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -267,7 +269,7 @@ run pre-pr-review's documented command list, then `node standard/scripts/spec-gu
 - **Given:** a Layer-2 stack's merge-class entry (e.g. pnpm-workspace.yaml's supply-chain policy block: minimumReleaseAge, saveExact, enablePrePostScripts)
 - **When:** the entire policy block is deleted from the file, leaving only unrelated content, and self-verify.mjs runs
 - **Then:** the entry is reported as drift, because a declared set of required keys is checked inside it - not merely that the file exists
-- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -280,7 +282,7 @@ node standard/scripts/self-verify.mjs against a repo whose pnpm-workspace.yaml h
 - **Given:** a repo that ships readme.md/security.md in lower case
 - **When:** self-verify.mjs runs on macOS or Windows, then the identical repo state runs on Linux CI
 - **Then:** the two platforms report the same drift number for that entry, instead of the case-insensitive filesystem passing a check the case-sensitive one fails
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -329,7 +331,7 @@ node standard/scripts/spec-structure.mjs against a spec with two `## Clarificati
 - **Given:** a spec whose open marker sits in both its functional section and again in Open Questions
 - **When:** check-spec-clarified.sh (or a human reader) counts the open markers
 - **Then:** the marker is counted once, per the documented single-location rule, not doubled
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -342,7 +344,7 @@ grep the spec's `## Open Questions` and functional sections for the same `[NEEDS
 - **Given:** specs/feature.json's persisted pointer names capability A, and the user says 'plan capability B'
 - **When:** spec-plan (or spec-tasks / spec-implement) runs check-prerequisites.sh --paths-only
 - **Then:** the resolved feature is confirmed against what was asked before the skill proceeds, instead of silently operating on capability A
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -355,7 +357,7 @@ read standard/.claude/skills/spec-plan (and spec-tasks, spec-implement) for a st
 - **Given:** a capability retired as a product bet (a vendor platform replaces it)
 - **When:** its spec's Status is updated to reflect that it is no longer being built
 - **Then:** the template has a terminal `retired` status, with the convention: flip status, link the retiring BDR/ADR, leave the now-empty capability-map.json entry in place
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -368,7 +370,7 @@ read standard/specs/capability-spec.template.md's Status enum for a `retired` va
 - **Given:** a capability whose spec Status is `retired`
 - **When:** spec-impact, spec-update or discovery-digest is invoked for that capability
 - **Then:** the skill recognizes the retired status and does not proceed as if the capability were still live
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -405,7 +407,7 @@ read standard/.claude/skills/spec-impact, spec-update, discovery-digest for a re
 - **Given:** a user describes a brand-new capability that spec-specify mints
 - **When:** the first PR for that capability is opened, with `spec-guard --audit --block` running on every PR
 - **Then:** the capability is already registered in the map by the time the PR is opened, instead of the first PR failing CI on a problem the author did not cause
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -493,7 +495,7 @@ run spec-specify against a request whose generated slug does not exact-string-ma
 - **Given:** a backlog item whose target capability is retired before the item's DoD could ever be satisfied
 - **When:** the backlog template's escape hatches are checked for this case
 - **Then:** there is a documented corner-case bullet for a DoD that can now never be met
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -522,7 +524,7 @@ read docs/backlog.md's escape-hatch bullets for a retired-target corner case
 - **Given:** a repo with two teams, one at 3 closed cycles and one at 1
 - **When:** timeline-update runs
 - **Then:** the threshold is applied per team, never blended, and the skill says so explicitly
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -556,7 +558,7 @@ node standard/scripts/cycle-guard.mjs against a cycle file with a genuinely dupl
 - **Given:** a repo satisfying the manifest at its primary backlog path (docs/backlog.md as an altPath of backlog.md, or vice versa)
 - **When:** cycle-open or cycle-close is run
 - **Then:** both skills resolve the same altPath cycle-guard.mjs already resolves, instead of hardcoding one path and instructing edits to a file that does not exist there
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -569,7 +571,7 @@ run cycle-open/cycle-close against a repo whose backlog lives only at the manife
 - **Given:** a closed cycle whose Outcome block claims an item was returned to the pool
 - **When:** cycle-guard.mjs runs, and the item is nowhere in the pool or anywhere else in the repo
 - **Then:** the guard fails, because it checks 'at least one' as well as 'at most one' - not only the duplicate-detection direction
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -582,7 +584,7 @@ node standard/scripts/cycle-guard.mjs against a closed cycle whose Outcome block
 - **Given:** an id written as `` `SPEC-1` `` or `**SPEC-1**` (every doc backtick-quotes ids in prose) in two teams' cycle tables
 - **When:** cycle-guard.mjs runs
 - **Then:** the backticked/bold id is recognized as the same intent as its bare form and a genuine duplicate is caught - instead of an anchored regex silently never matching it
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -608,7 +610,7 @@ node standard/scripts/cycle-guard.mjs against a cycle recording a split row with
 - **Given:** a team with fewer than three closed cycles (the branch every adopter is in on day one)
 - **When:** timeline-update is asked when work will land
 - **Then:** the skill and the backlog template agree that no date is produced, and any number given is explicitly labelled an estimate - instead of the skill instructing 'project from sizes' while three other documents forbid ever converting a size letter into a duration
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -686,7 +688,7 @@ node standard/scripts/cycle-guard.mjs against a pool-and-cycle pair created by c
 - **Given:** backlog.md's own claim that spec-impact and spec-update automatically feed backlog rows for their documented cases
 - **When:** either skill runs to completion on a case it claims to feed
 - **Then:** a backlog row is actually filed, instead of the skill's own SKILL.md never mentioning 'backlog' at all
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -701,7 +703,7 @@ grep -n backlog across standard/.claude/skills/spec-update and spec-impact's SKI
 - **Given:** a Slack thread and a same-day email pasted into the same handover, contradicting each other but not the existing dossier
 - **When:** discovery-digest files both
 - **Then:** each is diffed against the other, not only against entries filed in earlier sessions
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -779,7 +781,7 @@ read standard/.claude/skills/onboard.md (or align-to-standards) for a defer-to-e
 - **Given:** a speculative idea with no decision made yet
 - **When:** adr-write or bdr-write points at docs/ideas/ as where it belongs
 - **Then:** a skill actually exists that writes to docs/ideas/ and drives the idea through its status lifecycle
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -792,7 +794,7 @@ ls standard/.claude/skills/ for idea-write, and confirm adr-write/bdr-write's do
 - **Given:** a bdr/README.md index missing one record that is on disk (an Accepted BDR retiring a capability, cited by a live spec)
 - **When:** bdr-write follows its own documented numbering instruction ('gapless, never reused, next free as of main') against that stale index
 - **Then:** the collision is caught before a duplicate ships, instead of a second record sharing an existing number passing every guard as compliant
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -872,7 +874,7 @@ read spec-update, spec-reconcile and spec-impact's SKILL.md files for their reti
 - **Given:** a repo that is archived, frozen, or explicitly deprecated in its own README/CONTRIBUTING
 - **When:** intake step 1 (measure) runs
 - **Then:** it reads for the deprecated/archived/frozen signal before step 2 asks anything, and leads with confirming the signal instead of an appetite interview that presupposes a team coming back
-- **Result:** **failed at least once** (3 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (3/3)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -885,7 +887,7 @@ read docs/method/adoption.md's intake step ordering for a lifecycle-signal read 
 - **Given:** a repo whose own policy file explicitly forbids autonomous agent contributions
 - **When:** intake reads that policy
 - **Then:** it stops as a red-flag, the same tier as a committed secret, instead of proceeding to open a PR against the repo's own stated wishes
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -898,7 +900,7 @@ read docs/method/adoption.md's red-flag list for an explicit no-AI-agents policy
 - **Given:** a repo whose policy conditionally allows agent involvement if a human authors every contribution artifact
 - **When:** intake reads that policy
 - **Then:** it is recognized as a middle case, not silently treated as either a full ban or full permission
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -911,7 +913,7 @@ read docs/method/adoption.md's red-flag/AI-policy handling for a conditional-all
 - **Given:** a repo like request/request whose own goal is to stay as it is (frozen)
 - **When:** intake's appetite question is asked
 - **Then:** 'stay frozen' is a legitimate fifth (now sixth) answer, with a terminal intake state for it
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -924,7 +926,7 @@ read docs/method/adoption.md's Gate 0 answer list for a frozen/stay-as-is option
 - **Given:** a repo with archived: false but whose description states it moved to another forge entirely
 - **When:** intake's lifecycle-signal check runs
 - **Then:** it also reads for a move/mirror statement, not only the archived flag and commit recency
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -978,7 +980,7 @@ run intake's lifecycle-signal check against ziglang/zig's real state (archived: 
 - **Given:** a shallow-cloned repo assessed with the 8-pass brownfield methodology
 - **When:** pass 8 (churn-hotspot) runs
 - **Then:** it states the shallow-clone limitation instead of silently under-reporting hotspots it cannot see
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -991,7 +993,7 @@ read docs/method/repo-assessment.md pass 8 for a stated shallow-clone limitation
 - **Given:** a repo with more than one permanently-coexisting stack (microsoft/vscode: TS/npm, a Rust CLI, Electron-native) or a mismatched archetype (symfony/symfony: 66-package library monorepo)
 - **When:** the technology step runs
 - **Then:** it names every stack found, not just the one the root manifest names, and names an archetype mismatch explicitly instead of offering the whole paved road
-- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1004,7 +1006,7 @@ read skills/align-to-standards/stack.md's technology-detection step for multi-st
 - **Given:** a repo whose existing package/crate boundary already separates its capabilities
 - **When:** capability-map guidance is checked for whether that boundary can be used directly
 - **Then:** the guidance names this as a legitimate shortcut, not requiring a fresh capability map authored from scratch
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1017,7 +1019,7 @@ read skills/align-to-standards or docs/method guidance for a package/crate-bound
 - **Given:** a single-header, single-build-target micro-library (nlohmann/json) with no internal workspace boundary
 - **When:** capability-map guidance for archetype gaps is checked
 - **Then:** guidance exists for finding real internal capability structure one level down, even with no package/crate boundary to inherit from
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1058,7 +1060,7 @@ run stack detection against denoland/deno and check whether the 715 package.json
 - **Given:** a solo-consumer library (rit3zh/expo-coverflow-carousel) with one real user archetype
 - **When:** the persona interview runs
 - **Then:** a roster of one is named as legitimate, mirroring the decision catalog's existing 'does not apply' allowance, instead of running the full multi-persona interview
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1203,7 +1205,7 @@ read capability-spec.template.md's required buildable-tier sections and docs/met
 - **Given:** a repo (curl/curl) whose real security process publishes a negative-scope list
 - **When:** security-baseline.md's axis catalog is checked for a place to record that
 - **Then:** a negative-scope axis exists in the catalog
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1244,7 +1246,7 @@ read SPEC.md R9's behavioral-tier justification text against a manual/hardware/c
 - **Given:** a technical reader going straight to SPEC.md as ground truth, on a non-Node repo (Swift, Elixir, C#)
 - **When:** they look for the Node-runtime requirement in SPEC.md itself, not in align-to-standards/SKILL.md's conversational prose
 - **Then:** SPEC.md's R16 states the requirement directly
-- **Result:** **failed at least once** (3 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (3/3)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1257,7 +1259,7 @@ grep standard/SPEC.md for 'Node runtime' near its R16 bullet
 - **Given:** a repo with no registered Layer-2 stack, in a non-Node language
 - **When:** align-to-standards/SKILL.md's no-stack offer is read
 - **Then:** it says the guards (Node scripts) still carry a real cost, not only that rules and specs are 'unaffected'
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1272,7 +1274,7 @@ grep skills/align-to-standards/SKILL.md's no-stack-entry offer for a statement a
 - **Given:** a repo using a tracker outside GitHub Issues/Jira/Linear (GitLab Issues, or a mailing-list-plus-Bugzilla workflow)
 - **When:** the tracker question in align-to-standards is asked
 - **Then:** the question is open-ended, not a closed pick-list of three brands
-- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1285,7 +1287,7 @@ read SPEC.md R15 and skills/align-to-standards' tracker question for an open-end
 - **Given:** CHANGELOG.md after two PRs (the session's own #7 and #8) merged following the 1.0.13 release
 - **When:** CHANGELOG.md is read for an Unreleased heading and entries for those two PRs
 - **Then:** the heading exists and both PRs have entries under it
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1298,7 +1300,7 @@ grep CHANGELOG.md for `## Unreleased` and entries dated after the 1.0.13 release
 - **Given:** SPEC.md's R18 and R25 text
 - **When:** both are read together for what a PR may do to the version
 - **Then:** they agree - R25 does not, as written, require what R18 forbids
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1355,7 +1357,7 @@ run the prescribed cycle-close commit-count command against each of the showcase
 - **Given:** CLAUDE.md's own line 3, which links AGENTS.md
 - **When:** the harness starts a session and CLAUDE.md is auto-loaded
 - **Then:** AGENTS.md's real behaviour-producing text loads with it via an `@AGENTS.md` import, instead of a markdown `[text](./path)` link that Claude Code auto-loads CLAUDE.md but does not follow
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1368,7 +1370,7 @@ read CLAUDE.md's opening lines for `@AGENTS.md` versus a markdown link, and comp
 - **Given:** AGENTS.md's entire 'the loop runs itself (unprompted)' section, and separately, seven required skills including spec-clarify moved out of .claude/skills/
 - **When:** each is deleted or removed in turn, and self-verify.mjs runs
 - **Then:** the drift number changes in each case, instead of both leaving it unchanged because .claude/skills was checked as a bare directory with no contents check, and the manifest's `sections` array had no entry for the unprompted-behaviour heading at all
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1381,7 +1383,7 @@ delete AGENTS.md's whole unprompted-behaviour section and run self-verify.mjs; s
 - **Given:** the sentence "btw the export is broken", one of 20 blind-routed realistic utterances tested against every skill's name+description
 - **When:** the utterance is matched against the routing docs' own promised route (add-to-backlog, per the standard's own taxonomy) versus what the descriptions alone would catch
 - **Then:** the utterance reaches add-to-backlog, instead of matching none of the 20 descriptions because taxonomy.md had no defect row and no description mentions a bug
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1432,7 +1434,7 @@ node standard/scripts/self-verify.mjs against a fixture with node_modules/ track
 - **Given:** a spec with no `## Clarifications` section and two genuinely open markers
 - **When:** setup-plan.sh and setup-tasks.sh, the scripts that actually begin planning and tasking, run against it
 - **Then:** at least one of them refuses to proceed, instead of both copying plan.md / completing tasks setup and exiting 0 - despite the gate itself correctly reporting FAIL when invoked directly
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
