@@ -6,8 +6,8 @@
      this standard can run the same idea against their own. -->
 
 Twenty-something checks - **114**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **95** of them at least once and has fixed **49** so far; the rest are logged as open. The runs are in [`runs/`](runs/), the full catalogue
-- including the cases specific to this project's own paths - is in [`README.md`](README.md).
+claiming to be agent-operable should survive. This project failed **95** of them at least once and has fixed **49** so far; the rest are logged as open. The runs are in [`runs/`](runs/), and the full
+catalogue (including the cases specific to this project's own paths) is in [`README.md`](README.md).
 
 If you maintain a different standard: pick a case below, translate "given" into your own
 fixture and "when"/"then" into your own tooling's command, and see whether it holds. That is

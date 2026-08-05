@@ -314,8 +314,8 @@ claiming to be agent-operable should survive. This project failed **${
   new Set(observations.filter((o) => o.verdict === "fail" && portableCases.some((c) => c.id === o.case)).map((o) => o.case)).size
 }** of them at least once and has fixed **${
   new Set(observations.filter((o) => o.verdict === "fail" && o.fix && portableCases.some((c) => c.id === o.case)).map((o) => o.case)).size
-}** so far; the rest are logged as open. The runs are in [\`runs/\`](runs/), the full catalogue
-- including the cases specific to this project's own paths - is in [\`README.md\`](README.md).
+}** so far; the rest are logged as open. The runs are in [\`runs/\`](runs/), and the full
+catalogue (including the cases specific to this project's own paths) is in [\`README.md\`](README.md).
 
 If you maintain a different standard: pick a case below, translate "given" into your own
 fixture and "when"/"then" into your own tooling's command, and see whether it holds. That is
