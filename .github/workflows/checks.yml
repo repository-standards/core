@@ -27,6 +27,10 @@ jobs:
           node tools/prose-check.mjs --self
       - name: spec-structure (the repo's own specs stay shaped and owned)
         run: node standard/scripts/spec-structure.mjs
+      - name: provenance-check (every spec-engine file names where it came from) + its cases
+        run: |
+          node tools/provenance-check.mjs
+          node tools/provenance-check.mjs --self
       - name: spec coupling (diff-gated on PRs, audited in full on every run)
         # The full audit is the PR gate, not a release ritual - a change that
         # breaks spec<->code coupling fails here, never in a later sweep.

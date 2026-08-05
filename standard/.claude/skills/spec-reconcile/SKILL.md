@@ -3,6 +3,9 @@ name: spec-reconcile
 description: Use when a change is finished, before opening the pull request - "I think that's done". Makes the spec, the code and the tests agree, resolves any drift rather than merging around it, and deletes the plan and task scaffolding the work no longer needs.
 ---
 
+<!-- PATCHED(repository-standards): this skill is NOT vendored from github/spec-kit - ADR-015
+     extracted only five prompts (specify, clarify, plan, tasks, implement); spec-reconcile has
+     no upstream equivalent. -->
 # spec-reconcile
 
 Run before completing a change. After merge, `specs/` must be current production
