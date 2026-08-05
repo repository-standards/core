@@ -58,7 +58,7 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 | Observations recorded | **176** across 2 rounds (2026-08-03, 2026-08-04) |
 | Targets assessed | **105** (103 real repositories, 2 synthetic fixtures) |
 | Verdicts | 15 pass, 158 fail, 1 not-applicable, 2 partial |
-| Failures found | **158** - **74 fixed** (across 17 merged pull requests), **84 still open**, logged and named below, not hidden |
+| Failures found | **158** - **76 fixed** (across 18 merged pull requests), **82 still open**, logged and named below, not hidden |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -243,10 +243,10 @@ Every case that has ever failed at least once, with the pull request that fixed 
 | `SEC-02` | the standard has vocabulary for embargoed or confidential work-in-progress, so R3/R11/R15 followed literally do not force publishing an unfixed vulnerability | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SEC-03` | a decision record has an authority/vote field, so a chartered-committee decision (a TSC vote with quorum) has somewhere to record what actually made it valid | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SEC-04` | R9's 'rebuild and verify from the spec alone' escape hatch (the behavioral tier) is reachable for a capability whose correctness oracle is a person or piece of hardware, not only for the shapes onboard.md already forbids using it for | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `GREEN-01` | the clarify gate is actually invoked by the scripts that begin planning, so an unclarified spec cannot be planned or tasked just because nothing calls the gate that would stop it | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
+| `GREEN-01` | the clarify gate is actually invoked by the scripts that begin planning, so an unclarified spec cannot be planned or tasked just because nothing calls the gate that would stop it | `fixture:test-greenfield-core` | fixed - [core/pull/19](https://github.com/repository-standards/core/pull/19) |
 | `GREEN-02` | reaching self-verify drift 0 on a fresh greenfield walk requires at least one real capability spec to exist, not only the three declarative files (`.standards-version`, a profile key, an empty capability-map.json) | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `GREEN-03` | the self-verify placeholder-fill check can fire on every file it lists, including ones whose fill-in marker sits inside backticks or has no recognized marker form at all | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `GREEN-04` | the greenfield spec-writing step points a newcomer at a file that actually ships, for the single hardest artifact they will write | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
+| `GREEN-04` | the greenfield spec-writing step points a newcomer at a file that actually ships, for the single hardest artifact they will write | `fixture:test-greenfield-core` | fixed - [core/pull/19](https://github.com/repository-standards/core/pull/19) |
 | `GREEN-05` | self-verify's own runtime output points an adopter at a file that exists in their repo, not a docs/self-verify.md path that is adopted by reference and never copied | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `GREEN-06` | the four skills that touch `checklists/requirements.md` (create it, read and block on it, classify it, clean it up) agree on what the file is | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `GREEN-07` | the greenfield intake has a legitimate answer for 'we have not chosen the technology yet', and the fallback document it names has a real template and manifest entry | `fixture:test-greenfield-core` | **open** (logged, not fixed) |

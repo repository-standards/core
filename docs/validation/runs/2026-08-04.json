@@ -700,9 +700,9 @@
       "case": "GREEN-01",
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
-      "evidence": "greenfield-core F1, reproduced: check-spec-clarified.sh is referenced nowhere in scripts/ or .github/ except its own usage comment; setup-plan.sh and setup-tasks.sh never call it. A spec with no ## Clarifications section and two open markers got plan.md copied and tasks setup completed successfully, despite the gate itself correctly reporting FAIL when invoked directly - independently confirmed by full-loop F7's structural half. Distinct from the marker-syntax bug GATE-17 fixed - this is that nothing invokes the (now-fixed) script at all. Not fixed this round.",
+      "evidence": "greenfield-core F1, reproduced: check-spec-clarified.sh is referenced nowhere in scripts/ or .github/ except its own usage comment; setup-plan.sh and setup-tasks.sh never call it. A spec with no ## Clarifications section and two open markers got plan.md copied and tasks setup completed successfully, despite the gate itself correctly reporting FAIL when invoked directly - independently confirmed by full-loop F7's structural half. Distinct from the marker-syntax bug GATE-17 fixed - this is that nothing invokes the (now-fixed) script at all. Fixed: setup-plan.sh and setup-tasks.sh now call check-spec-clarified.sh on FEATURE_SPEC themselves and exit 1 on failure, re-checked on every run including when plan.md already exists; five new cases in tools/clarify-gate-test.mjs drive the real scripts.",
       "at": "2026-08-04",
-      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+      "fix": "https://github.com/repository-standards/core/pull/19"
     },
     {
       "case": "GREEN-02",
@@ -724,9 +724,9 @@
       "case": "GREEN-04",
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
-      "evidence": "greenfield-core F5: the only specs/README.md anywhere is core's own internal index, not part of the payload; the real guide is docs/tree/specs.md, never named by greenfield. A different file from the already-fixed defect (docs/self-verify.md), and on the greenfield critical path. Not fixed this round.",
+      "evidence": "greenfield-core F5: the only specs/README.md anywhere is core's own internal index, not part of the payload; the real guide is docs/tree/specs.md, never named by greenfield. A different file from the already-fixed defect (docs/self-verify.md), and on the greenfield critical path. Fixed: standard/specs/README.md now exists as the shipped policy doc every citation (ADR-002, ADR-003, ADR-004, taxonomy.md, greenfield.md, this repo's own specs/README.md) assumed it said, so greenfield's pointer now resolves to a real file in the shipped tree.",
       "at": "2026-08-04",
-      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+      "fix": "https://github.com/repository-standards/core/pull/19"
     },
     {
       "case": "GREEN-05",
