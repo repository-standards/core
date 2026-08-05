@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# PATCHED(repository-standards): based on github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE).
+# The clarify-gate call below (ADR-010) is this standard's addition; the rest is upstream.
+
 set -e
 
 # Parse command line arguments

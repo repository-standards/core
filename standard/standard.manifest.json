@@ -220,13 +220,13 @@
         "pre-pr-review/SKILL.md": "d72bee4edf7979968dc08f2cc493826953a396090a212f36132af557cde55960",
         "product-write/SKILL.md": "21bdc82897281178f915cb0f51dd669d35228d17748977cbacdc1993f2843b98",
         "spec-clarify/SKILL.md": "26da90f61886188eec6fc6c4a92c60fd825b6c1bb47bd90c16257f14a4471cdd",
-        "spec-impact/SKILL.md": "e39097cece37df273e9a4b830a9bdeb0ee9b3db119b738c59f100615bf1862fa",
+        "spec-impact/SKILL.md": "557be97a4f0e6fb3cc232e4b5bc8bc16c820bb3314b33ac047ff09efdde94441",
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",
         "spec-plan/SKILL.md": "65173342ed0a247be5bfdf684e1e07c1d67ae14f5bc55649c9441b2b4db371c5",
-        "spec-reconcile/SKILL.md": "f43e24a4f0624c34cfa7ec7abfe1e50976c452e3e5883729cf9c22c64f467ef8",
+        "spec-reconcile/SKILL.md": "2df8cf62c9df25ac4d165908f8a7345531006381aef1a841f82447d37a3d460a",
         "spec-specify/SKILL.md": "03335ef089e1937f3be74f757ed7d69e440280407775fb4e25f5efad7001e2be",
         "spec-tasks/SKILL.md": "7322cf9fe166be6515a17f8ec8714d88f26ae5f39ccd1d49f3284c3f7f08c21a",
-        "spec-update/SKILL.md": "c7c8fa09a83d7a8dbacab70ad50a6d7c0ff282e27e091246860c5e82d2e5b8eb",
+        "spec-update/SKILL.md": "737a9a862f7ed0ea441fe72f0855ddca5dbfcee7284b8343e82ef6c8f967b980",
         "timeline-update/SKILL.md": "e0770d9e33139bbddaa01be6bd59748845ab6d18b34fd9de489910f110cd584c",
         "update-to-version/SKILL.md": "fd906f732f0fe870cca8cad3254e457300e7bce2608c119c0794827cd52aad6a"
       }
@@ -241,13 +241,13 @@
       "rule": "R22",
       "sha256": {
         "LICENSE": "2510b446bc1f0cf9702453075d20cd88631e20e5642658edb7325d9c1eb534f7",
-        "check-prerequisites.sh": "7ef96d9112ad2c4b3b713855bc133b433cfda77a2b2669c6e2d5a2b142cdfe29",
+        "check-prerequisites.sh": "24f398770a52ae6b73ae0d4601fe3fd2a81491c51463f53a956c4d98d49b9f25",
         "check-spec-clarified.sh": "414c28837b93e0b9c2c342b230f7f09c2c2b24fe7a0e804e3ab4b1e5add55229",
-        "common.sh": "51ae5e92db67f1a62fdb788730a7c7d56097b0f747ae2f427ddf6c20ae272aee",
+        "common.sh": "814ec1d965c536b8806324f5050ad75e521b6e2aa3ff241510d316b4bd779e13",
         "plan-template.md": "c8a345b6a586d54125a95ce9bb6d90e5fc8870ee90c4a4bbc5c3edd904130c03",
-        "setup-plan.sh": "ffa3150be23eaff221915b83290fa7b5210b3c1e745dfe04ae4722f279a2c42d",
-        "setup-tasks.sh": "6a980b56cbdefc1b5ca06332b5a281e7d1e0167a9a9c17d6a6f9ea8b26b54f45",
-        "tasks-template.md": "ccf3ec0f14086d4dbde661878bcd8761799cfd818c7ed565d04c85c4a2663993"
+        "setup-plan.sh": "2ea9e784b283f66aac7c92fead8810a9809adbbdd2091036800a8dd287085a88",
+        "setup-tasks.sh": "0e14f3d03e71479fc20cc15cef42d57ab50ad10b08d7dd1613c0b98bd85d3433",
+        "tasks-template.md": "55b784e4b1e1c1295cc748e72f00b913105bfe45774228ecd1b86f91f648336e"
       }
     },
     {

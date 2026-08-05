@@ -29,6 +29,17 @@ was prose only. No question to ask: the fix is mechanical (wire the call, matchi
 scripts' existing exit-code conventions) and settled by inspection of what the scripts
 already do on every other precondition (missing `plan.md`, missing `spec.md`).
 
+### Session 2026-08-05 (later)
+
+The Provenance duty and its acceptance criterion already existed in this spec, but nothing
+checked them: `setup-plan.sh`, `setup-tasks.sh`, `common.sh`, `check-prerequisites.sh` and
+`tasks-template.md` carried no provenance marker at all, and `spec-impact`, `spec-reconcile`
+and `spec-update` - standard-authored skills with no upstream equivalent - carried none
+either. Neither gap was a design question: each file's real provenance was read off its own
+git history (which hunks came from the ADR-014/ADR-015 extraction versus this week's
+ADR-010 bridge-precondition fix) rather than templated, and the missing enforcement is now
+`tools/provenance-check.mjs`.
+
 ## Scope
 
 The loop, its state file, the clarify gate, the setup scripts, the templates, and the provenance duty.
@@ -62,6 +73,12 @@ The spec model itself - capability specs, tiers, personas (documented at [`docs/
 `scripts/spec/setup-tasks.sh [--json]` - requires `plan.md` and `spec.md` to exist; runs the clarify gate on `spec.md`, exiting 1 on failure; resolves the tasks template; emits `FEATURE_DIR`, `TASKS_TEMPLATE`, `AVAILABLE_DOCS` (whichever of research.md, data-model.md, contracts/, quickstart.md exist).
 
 Template copies source `scripts/spec/*.md` through the `resolve_template` stack: `overrides/` -> `presets/<id>/templates/` (priority-ordered) -> `extensions/<id>/templates/` -> core `scripts/spec/<name>.md`. The shipped core templates are `plan-template.md` and `tasks-template.md`; the spec itself is instantiated from `specs/capability-spec.template.md` (the standard's shape), never a vendored spec-template.
+
+`tools/provenance-check.mjs` (this repo's own CI, never shipped) - the mechanical check for
+the Provenance duty below. Scans every file directly under `standard/scripts/spec/` (except
+`LICENSE`, which is the upstream licence text itself) and every `standard/.claude/skills/spec-*/SKILL.md`;
+fails naming each one that carries neither the substring `github/spec-kit v0.13.2` nor
+`PATCHED(repository-standards)`. `--self` runs its built-in cases.
 
 ### Errors and exit codes
 
@@ -125,6 +142,7 @@ Template copies source `scripts/spec/*.md` through the `resolve_template` stack:
 - **Plan idempotent.** GIVEN `plan.md` already exists WHEN setup-plan.sh runs THEN the template copy is skipped and the existing file is untouched.
 - **Tasks precondition.** GIVEN no `plan.md` WHEN setup-tasks.sh runs THEN it errors "Run /spec-plan first" and exits 1.
 - **Provenance.** GIVEN any file under `scripts/spec/` or a `spec-*` skill WHEN inspected THEN it carries an upstream provenance line or a PATCHED marker, and `scripts/spec/LICENSE` is present.
+- **Provenance is checked, not only stated.** GIVEN a file under `scripts/spec/` or a `spec-*` skill carrying neither marker WHEN `tools/provenance-check.mjs` runs THEN it fails naming that file - the case that shipped undetected until this check existed.
 - **The sections are the standard's.** GIVEN `/spec-specify` completes for a new capability WHEN `spec.md` is read THEN it carries the template's sections (Purpose, Scope, Data contracts, Interface contracts, Requirements, Acceptance criteria, Open questions among them) and none of User Scenarios, Functional Requirements, Success Criteria or Key Entities.
 - **Specify marks, clarify asks.** GIVEN a feature description that leaves two gaps WHEN `/spec-specify` completes THEN it has asked the user nothing and left two typed markers, and the following `/spec-clarify` raises them one at a time.
 - **A contract is not an implementation detail.** GIVEN a buildable spec quoting real endpoints, field names and error codes WHEN the specify quality checklist runs THEN it passes - the checklist gates on the declared tier, not on the absence of technical detail.

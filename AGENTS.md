@@ -49,6 +49,9 @@ clients get them by reference (ADR-004), never as copies.
   as something it is not),
   `node standard/scripts/spec-structure.mjs` (the repo's own specs stay shaped, and a
   spec claiming `ready-to-develop` or `live` still passes the clarify gate),
+  `node tools/provenance-check.mjs` + `node tools/provenance-check.mjs --self` (every
+  file under `standard/scripts/spec/` or a `spec-*` skill names github/spec-kit v0.13.2
+  or carries a `PATCHED(repository-standards)` marker),
   `node standard/scripts/spec-guard.mjs --base origin/main --block` **and**
   `node standard/scripts/spec-guard.mjs --audit --block` (code and its capability
   spec move together; every capability spec is mapped, every glob matches something,

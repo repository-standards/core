@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# PATCHED(repository-standards): based on github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE).
+# The three "Run ..." hints below are hardcoded to this standard's /spec-* skill names
+# instead of calling the removed format_speckit_command helper (ADR-015).
+
 # Consolidated prerequisite checking script
 #
 # This script provides unified prerequisite checking for Spec-Driven Development workflow.

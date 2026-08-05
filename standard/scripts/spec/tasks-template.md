@@ -5,6 +5,11 @@ description: "Task list template for feature implementation"
 
 # Tasks: [FEATURE NAME]
 
+<!-- PATCHED(repository-standards): based on github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE)
+     templates/tasks-template.md. The wholesale "user story" -> "requirement slice" rename
+     (2026-08-02, matching spec.md's Requirement slice concept) is adapted throughout rather
+     than marked hunk-by-hunk given its extent; the ADR-002 and testing-strategy hunks below
+     are marked individually. -->
 <!-- PATCHED(repository-standards): ADR-002 capability paths - [###-feature-name] placeholder replaced with slug-only [feature-name]; feature dirs carry no numeric prefix -->
 **Input**: Design documents from `/specs/[feature-name]/`
 
