@@ -3,6 +3,9 @@ name: spec-impact
 description: Use before changing how something already works - "what breaks if we change the refund window?", "who else depends on this before I touch it?". Finds everything the change ripples to across other capability specs, decision records and code, so the change does not land having updated only the obvious file.
 ---
 
+<!-- PATCHED(repository-standards): this skill is NOT vendored from github/spec-kit - ADR-015
+     extracted only five prompts (specify, clarify, plan, tasks, implement); spec-impact has
+     no upstream equivalent. -->
 # spec-impact
 
 Run when you are about to change how a capability works. Start from the **spec**,

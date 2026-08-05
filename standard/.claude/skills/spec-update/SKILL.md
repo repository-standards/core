@@ -3,6 +3,9 @@ name: spec-update
 description: Use when behaviour is about to change and the spec needs to say how it will work afterwards, before the code moves - "we're changing how cancellations work, spec it first", "this branch changes X, make the spec match". On a branch the spec is the target and the git diff is the delta; updates every affected spec, not only the one that came to mind.
 ---
 
+<!-- PATCHED(repository-standards): this skill is NOT vendored from github/spec-kit - ADR-015
+     extracted only five prompts (specify, clarify, plan, tasks, implement); spec-update has
+     no upstream equivalent. -->
 # spec-update
 
 The spec is the driver. Change it **first** - describe how the capability should

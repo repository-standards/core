@@ -16,6 +16,22 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Five spec-engine files carried no provenance marker, and nothing checked for one (2026-08-05)
+
+`specs/spec-engine/spec.md`'s Provenance duty requires every file under `scripts/spec/` or a
+`spec-*` skill to carry a line naming `github/spec-kit v0.13.2` or a `PATCHED(repository-standards)`
+marker - but `setup-plan.sh`, `setup-tasks.sh`, `common.sh`, `check-prerequisites.sh` and
+`tasks-template.md` carried neither, and no CI job or `tools/*-test.mjs` asserted the rule, so the
+drift was silent. Each file's real provenance was read off its own git history rather than
+templated - `setup-plan.sh` and `setup-tasks.sh` are upstream scripts patched this week with the
+ADR-010 clarify-gate call; `common.sh` and `check-prerequisites.sh` carry older, smaller patches
+from the ADR-014/ADR-015 extraction; `tasks-template.md` already carried two `PATCHED` markers but
+none covering its wholesale "user story" -> "requirement slice" rename. The same sweep found
+`spec-impact`, `spec-reconcile` and `spec-update` - standard-authored skills with no upstream
+equivalent - carrying no marker either, and gave them one. `tools/provenance-check.mjs` is the new
+mechanical check: it fails naming any spec-engine file that carries neither marker, wired into
+`checks.yml` and `AGENTS.md`'s check list.
+
 ### The clarify gate's bridge precondition was prose, not code, and its policy doc did not exist (2026-08-05)
 
 Three of the five layers `enforcement.md` and the silently-skipped-clarify case study
