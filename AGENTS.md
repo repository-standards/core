@@ -67,7 +67,10 @@ clients get them by reference (ADR-004), never as copies.
   files on disk agree - no duplicate id, nothing indexed that is not there,
   nothing there that is not indexed),
   `node tools/file-map.mjs --check` (the file map is generated from the manifest,
-  never hand-written), `node tools/docsite.mjs && node tools/site-check.mjs &&
+  never hand-written), `node tools/validation.mjs --check` (the validation suite's
+  rendered pages match `docs/validation/suite.json`/`targets.json`/`runs/*.json`, every
+  case has a verdict, and every open failure carries an explicit waiver rather than a
+  silent gap), `node tools/docsite.mjs && node tools/site-check.mjs &&
   node tools/site-behaviour.mjs`. The list is the set CI
   runs - if a check is in `checks.yml` and not here, this line is the bug.
 - **Changed anything under `standard/`?** Run `node tools/manifest-hashes.mjs` and
