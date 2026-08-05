@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# PATCHED(repository-standards): based on github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE).
+# The clarify-gate call below (ADR-010) is this standard's addition; the "Run /spec-*" hints
+# and template-stack paths are adapted from spec-kit's .specify/ layout (ADR-014).
+
 set -e
 
 # Parse command line arguments
