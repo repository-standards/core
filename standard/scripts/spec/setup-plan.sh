@@ -32,6 +32,21 @@ _paths_output=$(get_feature_paths) || { echo "ERROR: Failed to resolve feature p
 eval "$_paths_output"
 unset _paths_output
 
+if [[ ! -f "$FEATURE_SPEC" ]]; then
+    echo "ERROR: spec.md not found at $FEATURE_SPEC" >&2
+    echo "Run /spec-specify first to create the feature structure." >&2
+    exit 1
+fi
+
+# ADR-010 clarify gate, enforced here rather than only documented as a precheck in the
+# /spec-plan prompt: a skill can only refuse to call this script, it cannot stop an agent
+# that skips reading its own MANDATORY PRECHECK instruction. This call is what makes that
+# instruction a bridge precondition instead of a request - re-run every time, including
+# when plan.md already exists, since a spec can regain open markers after it was planned.
+if ! "$SCRIPT_DIR/check-spec-clarified.sh" "$FEATURE_SPEC"; then
+    exit 1
+fi
+
 # Ensure the feature directory exists
 mkdir -p "$FEATURE_DIR"
 

@@ -16,6 +16,38 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The clarify gate's bridge precondition was prose, not code, and its policy doc did not exist (2026-08-05)
+
+Three of the five layers `enforcement.md` and the silently-skipped-clarify case study
+described as gating the self-triggering loop did not hold up:
+
+- **The bridge precondition was aspirational.** `enforcement.md` described the clarify
+  gate as wired via a "before_plan / before_tasks hook plus a bridge precondition", but
+  neither `setup-plan.sh` nor `setup-tasks.sh` called `check-spec-clarified.sh` - only
+  the skills' own prompts documented it, as a "MANDATORY PRECHECK" an agent could skip by
+  never reading it. Both scripts now call the gate themselves on `FEATURE_SPEC` and exit
+  1 on failure, re-checked on every run (including when `plan.md` already exists, since a
+  spec can regain open markers after it was planned). `specs/spec-engine/spec.md` gets
+  the new invariant, exit codes and acceptance criteria; `tools/clarify-gate-test.mjs`
+  gets five new cases driving the real scripts from a copy of the shipped engine.
+- **The policy doc did not exist.** `standard/specs/README.md` was cited by ADR-002,
+  ADR-003, ADR-004, `docs/method/taxonomy.md`, the `align-to-standards` greenfield skill,
+  this repo's own `specs/README.md` and the case study - never once created, so every
+  citation either dead-linked or was quietly re-pointed at `docs/tree/specs.md` (a
+  different document, written for people reading this repo's own tree, not for an
+  adopting client). Written now: structure, spec depth, coupling and the loop layers,
+  matching what those citations already assumed it said. The stale re-pointed links in
+  `specs/README.md` and the case study now point at the real file.
+- **"Hook" did not mean what it reads as.** `enforcement.md`'s own wording used "hook" for
+  the skill-level MANDATORY PRECHECK - a workflow hook point, not this repo's `.claude/hooks/`
+  mechanism (three shipped guards over specific risky Bash commands, unrelated to the spec
+  loop). A `UserPromptSubmit` hook that nags on every prompt was considered and rejected: it
+  cannot make the judgment call "does a skill cover this request", only the model can, and
+  that job already belongs to loaded context (`AGENTS.md`'s "the loop runs itself" section,
+  imported via `@AGENTS.md`). Reworded to name the two real layers precisely (the skill
+  prompt's precheck, the scripts' bridge precondition) instead of a word that reads as a
+  claim about a mechanism that was never built for this.
+
 ### A stack's own recorded deviation had nowhere that read it (2026-08-04)
 
 `self-verify.mjs` folds a Layer 2 stack manifest's `files`, `sections` and `guards` into

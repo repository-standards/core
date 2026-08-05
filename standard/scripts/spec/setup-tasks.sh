@@ -40,6 +40,14 @@ if [[ ! -f "$FEATURE_SPEC" ]]; then
     exit 1
 fi
 
+# ADR-010 clarify gate, enforced here rather than only documented as a precheck in the
+# /spec-tasks prompt: a skill can only refuse to call this script, it cannot stop an agent
+# that skips reading its own MANDATORY PRECHECK instruction. This call is what makes that
+# instruction a bridge precondition instead of a request.
+if ! "$SCRIPT_DIR/check-spec-clarified.sh" "$FEATURE_SPEC"; then
+    exit 1
+fi
+
 # Build available docs list
 docs=()
 [[ -f "$RESEARCH" ]] && docs+=("research.md")
