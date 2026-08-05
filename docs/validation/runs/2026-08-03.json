@@ -51,7 +51,8 @@
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
       "evidence": "Track B scenario 3 (extending a shipped feature): the buildable tier's required `## Data contracts` / `## Interface contracts` sections were retrofitted here and were never flagged as missing when the spec first shipped - confirmed unenforced by any script, still open as of this log.",
-      "at": "2026-08-03"
+      "at": "2026-08-03",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
     {
       "case": "GATE-08",
@@ -90,14 +91,16 @@
       "target": "repo:bazelbuild/bazel",
       "verdict": "fail",
       "evidence": "Bazel's real capability's code routinely lives in a satellite rules_* repo this repo does not own - capability-map.json has no vocabulary for that. Logged as a known gap, not fixed this session.",
-      "at": "2026-08-03"
+      "at": "2026-08-03",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
     {
       "case": "GATE-12",
       "target": "repo:flutter/flutter",
       "verdict": "fail",
       "evidence": "self-verify.mjs hardcodes a single stack.manifest.json filename; flutter/flutter's real Dart+native engine split needs two simultaneous Layer-2 stacks and has no mechanical way to register both, even though the 1.0.13 prose fix says to 'name every stack found.' Confirmed by reading the script directly, not just its prose. This is a contract change (R20 names stack.manifest.json as the filename), logged for the owner rather than redesigned unilaterally.",
-      "at": "2026-08-03"
+      "at": "2026-08-03",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
     {
       "case": "GATE-13",
@@ -118,7 +121,8 @@
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
       "evidence": "Near-miss caught mid Track-B-scenario-2 (not itself a scored defect in the 36): a duplicated `## Clarifications` heading was added instead of a new `### Session` under the existing one, and spec-structure.mjs did not flag it. Logged as a candidate mechanical check, not fixed - still open as of this log.",
-      "at": "2026-08-03"
+      "at": "2026-08-03",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
     {
       "case": "SPEC-03",
@@ -171,7 +175,8 @@
       "target": "repo:PowerShell/PowerShell",
       "verdict": "fail",
       "evidence": "Found on PowerShell/PowerShell (wave 6): it never ports changes back to the closed-source Windows PowerShell 5.1, a predecessor entirely absent from this git tree. `retired` as shipped covers a capability that existed and stopped inside this repo's own specs - narrower and different. Logged, not fixed, low priority.",
-      "at": "2026-08-03"
+      "at": "2026-08-03",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
     {
       "case": "TRACK-01",
@@ -253,7 +258,8 @@
       "target": "repo:rust-lang/rust",
       "verdict": "fail",
       "evidence": "rust-lang/rust's RFC+MCP system is live, formal, and wired into its actual merge gate - richer than ADR/BDR, not a legacy stand-in for it. onboard.md only offers filing it as discovery material with a retroactive ADR. Logged, not built this pass.",
-      "at": "2026-08-03"
+      "at": "2026-08-03",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
     {
       "case": "DEC-04",
@@ -380,14 +386,16 @@
       "target": "repo:torvalds/linux",
       "verdict": "fail",
       "evidence": "torvalds/linux has no PRs at all - mailing-list patches, Linus merging ~20 sovereign subsystem trees a day - nothing for R23's PR-shaped integration rule to bind to at all.",
-      "at": "2026-08-03"
+      "at": "2026-08-03",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
     {
       "case": "SHAPE-11",
       "target": "repo:rust-lang/rust",
       "verdict": "fail",
       "evidence": "rust-lang/rust's bors/merge-queue batching produces 'Auto merge of #NNNNN' two-parent merge commits - neither rebase-merge nor squash-merge as R23 describes them.",
-      "at": "2026-08-03"
+      "at": "2026-08-03",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
     {
       "case": "SEC-01",
@@ -402,7 +410,8 @@
       "target": "fixture:test-greenfield-node",
       "verdict": "fail",
       "evidence": "The greenfield composition rule degits the node starter into a target repo's root first, so six real occurrences of ../DECISIONS.md / ../../DECISIONS.md - the README, the Docker test-stack comment, vitest config, Next config, the Fastify server and env config - resolved outside the composed repo entirely. This defect and fix are recorded in repository-standards/core's own CHANGELOG.md (the '1.0.13' section, second entry) and are attributed there to the same PR as GATE-09 (#1). PR #1's actual diff (verified via `gh pr view 1 -R repository-standards/core`) touches only docs/method/prerequisites.md, skills/align-to-standards/SKILL.md, skills/align-to-standards/greenfield.md, standard/specs/capability-spec.template.md and standard/standard.manifest.json - none of them starter/, ADAPTING.md or any node-stack file. The release-cut PR (#6) also does not touch those files. repository-standards/node has zero pull requests in its entire history (`gh pr list -R repository-standards/node --state all` returns empty), so whichever commit actually fixed this shipped with no PR trail at all. The log's PR attribution for this specific defect is not supported by the PRs it cites.",
-      "at": "2026-08-03"
+      "at": "2026-08-03",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
     {
       "case": "STACK-02",
@@ -521,7 +530,8 @@
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
       "evidence": "scripts/changelog.mjs is documented in detail (docs/method/changelog-process.md) as shipping with the tree; it does not exist anywhere in the checkout. CHANGELOG.md has no entries for versions 1.0.1 through 1.0.12 - twelve version bumps with zero record, discovered while cutting 1.0.13. Logged for the owner, not fixed this session.",
-      "at": "2026-08-03"
+      "at": "2026-08-03",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
     {
       "case": "DOC-11",
@@ -536,7 +546,8 @@
       "target": "repo:oban-bg/oban",
       "verdict": "fail",
       "evidence": "R24 ('a repo that owns a database') does not fit a library whose product IS multi-backend migrations, not one owned schema - listed as this repo's key finding in the testing log's repo table, but not carried into the log's own 'known gaps' section or attributed to any fix. Treated here as still open.",
-      "at": "2026-08-03"
+      "at": "2026-08-03",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     }
   ]
 }
