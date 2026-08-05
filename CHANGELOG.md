@@ -48,6 +48,38 @@ described as gating the self-triggering loop did not hold up:
   prompt's precheck, the scripts' bridge precondition) instead of a word that reads as a
   claim about a mechanism that was never built for this.
 
+### A published validation suite - real cases, run against real repositories (2026-08-04)
+
+The claim that this standard has been executed against real work, with failures published
+alongside passes, previously lived only in prose (the testing logs, the findings ledger) -
+none of it in the repo, none of it re-runnable, none of it guarded against drifting out of
+step with what actually happened.
+
+- **`docs/validation/`**: `suite.json` (174 cases), `targets.json` (105 assessed targets -
+  103 real public repositories plus 2 synthetic fixtures) and `runs/` (176 observations
+  across the 2026-08-03 and 2026-08-04 rounds). Every fixed failure names the merged pull
+  request whose body was checked directly against the finding before the link was written;
+  every still-open failure carries an explicit waiver rather than a silent gap.
+- **`tools/validation.mjs`** renders `README.md` (headline numbers, coverage by area and by
+  rule - including which carry zero cases - and the failures with their fix) and
+  `benchmark.md` (the `portable: true` subset, framed for a reader who has never used this
+  standard). `--check` fails on a stale render, an observation pointing at an unknown case
+  or target, a case with no verdict at all, or a fail with neither a fix nor a waiver. Wired
+  into `checks.yml` and `AGENTS.md`'s check list.
+- Both pages state what this does not prove, in the reader's path rather than a footnote:
+  assessment is not adoption (103 of 105 targets are depth **L1**, read-only); both fixtures
+  share an author with the standard being tested; and agent-executed observations carry
+  agent error, published together with this round's own disconfirmed hypotheses (a
+  "maintenance mode" misread on two repos, a version-string red herring, the showcase
+  repo's own unchecked outcome-block commit counts).
+- Five headline numbers registered in `docs/facts.json` via a small generated
+  `docs/validation/counts.json`, so a future hand-written restatement of any of them (in the
+  front-door `README.md` or elsewhere) is checked against the real data rather than typed
+  from memory.
+- `backlog.md`'s `FIELD-1` and `EXHIBIT-1` updated to name what this now covers (a large L1
+  read/dry-adoption evidence base) and what it still does not (a real L3/L4 adoption of a
+  repo nobody on this project wrote - `FIELD-1`'s own gap, unchanged).
+
 ### A stack's own recorded deviation had nowhere that read it (2026-08-04)
 
 `self-verify.mjs` folds a Layer 2 stack manifest's `files`, `sections` and `guards` into
