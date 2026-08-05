@@ -19,11 +19,21 @@
 //   observation.waiver   present on a "fail" observation with no fix - an explicit note
 //                        that the gap is logged and open by choice, not silently dropped
 //
+// Corrected 2026-08-05: a fixed-and-re-verified defect is a "pass" that keeps its "fix"
+// field as provenance - it no longer stays "fail" forever. The punch list ("Failures,
+// and their fix" below) is filtered on the raw verdict alone: "fail" means it is on the
+// table today, full stop, whether or not a "fix" field is attached. A "fail" that still
+// carries a "fix" is not resolved - it means a real attempt landed and a later re-run
+// found it did not actually hold; the evidence field says what was found. That is rarer
+// than an untried gap, and it is the most useful thing this suite can surface, so it is
+// never treated as equivalent to a waiver.
+//
 // Usage:
 //   node tools/validation.mjs           # write docs/validation/{README,benchmark}.md
 //   node tools/validation.mjs --check   # exit 1 if the rendered pages are stale, if any
-//                                        # case has never been observed at all, or if any
-//                                        # "fail" observation has neither a fix nor a waiver
+//                                        # case has never been observed at all, if any
+//                                        # observation has no evidence, or if any "fail"
+//                                        # observation has neither a fix nor a waiver
 //
 // Zone 1 tooling - this feature is evidence ABOUT the product, not part of the shipped
 // tree, so it lives entirely outside standard/. Dependency-free (Node built-ins only),
@@ -72,6 +82,14 @@ if (dupCaseIds.length) fail(`duplicate case id(s): ${[...new Set(dupCaseIds)].jo
 for (const o of observations) {
   if (!caseById.has(o.case)) fail(`${o.round}: observation references unknown case "${o.case}"`);
   if (!targetKeys.has(o.target)) fail(`${o.round}: observation "${o.case}" references unknown target "${o.target}"`);
+  if (!o.evidence || !o.evidence.trim()) {
+    fail(`${o.round}: "${o.case}" against ${o.target} has no evidence - a verdict with nothing behind it is a claim, not a finding`);
+  }
+  // A "fail" with no explanation at all is the silent gap this suite exists to rule out.
+  // "waiver" covers the untried case (logged, not built this round); "fix" alone still
+  // counts here too - a fail carrying a fix is an attempted defect a re-run found did not
+  // hold, which is explained by definition (the evidence field says what was found), not
+  // silent. What it is NOT is grounds to call the defect resolved - see the render below.
   if (o.verdict === "fail" && !o.fix && !o.waiver) {
     fail(`${o.round}: "${o.case}" against ${o.target} is a fail with no fix and no waiver - a silent, unpublished gap`);
   }
@@ -124,9 +142,17 @@ const localCount = cases.length - portableCount;
 const byVerdict = {};
 for (const o of observations) byVerdict[o.verdict] = (byVerdict[o.verdict] ?? 0) + 1;
 
-const fixedFailures = observations.filter((o) => o.verdict === "fail" && o.fix);
-const openFailures = observations.filter((o) => o.verdict === "fail" && !o.fix);
-const distinctFixPRs = new Set(fixedFailures.map((o) => o.fix));
+// The punch list is every observation currently reading "fail" - full stop. A fail that
+// still carries a "fix" field is not a fixed defect wearing a stale label; it is an
+// attempted fix that a re-run showed did not actually hold (kept, corrected, rather than
+// silently dropped - the finding is worth more than the tidy number). "Confirmed fixed"
+// is the opposite shape: a "pass" that carries a "fix" field, meaning it used to fail,
+// something merged to address it, and a later run actually re-verified it holds now -
+// never inferred from the verdict flipping alone.
+const openFailures = observations.filter((o) => o.verdict === "fail");
+const attemptedNotHolding = observations.filter((o) => o.verdict === "fail" && o.fix);
+const confirmedFixed = observations.filter((o) => o.verdict === "pass" && o.fix);
+const distinctFixPRs = new Set(confirmedFixed.map((o) => o.fix));
 
 const byDepth = {};
 for (const t of targets) byDepth[t.depth] = (byDepth[t.depth] ?? 0) + 1;
@@ -148,12 +174,28 @@ const areaTable = DECLARED_AREAS.map((a) => {
   return `| \`${a}\` | ${s.total} | ${s.run} | ${s.planned + s.needsProcedure} | ${s.portable} |`;
 }).join("\n");
 
-const failuresTable = observations
-  .filter((o) => o.verdict === "fail")
+// The punch list: everything reading "fail" right now, no ambiguity, no "resolved but
+// still labelled fail" mixed in - that convention is exactly what this table stopped
+// doing (2026-08-05). A fail that still carries a "fix" is not fixed - it is an attempted
+// fix a re-run found insufficient, and it is worded as such rather than "fixed".
+const failuresTable = openFailures
   .map((o) => {
     const c = caseById.get(o.case);
-    const status = o.fix ? `fixed - [${o.fix.split("/").slice(-3).join("/")}](${o.fix})` : "**open** (logged, not fixed)";
+    const status = o.fix
+      ? `attempted, still open - [${o.fix.split("/").slice(-3).join("/")}](${o.fix}) did not fully hold (see evidence in \`runs/${o.round}.json\`)`
+      : "**open** (logged, not fixed)";
     return `| \`${o.case}\` | ${c ? c.title : "(unknown case)"} | \`${o.target}\` | ${status} |`;
+  })
+  .join("\n");
+
+// The credibility half of the same claim: passes that used to fail, with the PR that
+// fixed them and a later round's re-run confirming the fix actually holds today - kept
+// visibly separate from the punch list above, never blended into one bucket where "fail"
+// stopped meaning "currently broken".
+const fixedTable = confirmedFixed
+  .map((o) => {
+    const c = caseById.get(o.case);
+    return `| \`${o.case}\` | ${c ? c.title : "(unknown case)"} | \`${o.target}\` | [${o.fix.split("/").slice(-3).join("/")}](${o.fix}) |`;
   })
   .join("\n");
 
@@ -173,7 +215,13 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
   own history contains a prior commit that already tried once to fix its outcome-block commit counts,
   replacing one set of wrong numbers with another set that was itself never checked against the real
   \`git log\` output (see \`DOC-16\`) - a defect this suite is itself the mechanism meant to catch, so it
-  is named here rather than left for a fourth round to find.`;
+  is named here rather than left for a fourth round to find.
+- **From the 2026-08-05 re-verification pass:** every "fail" observation carrying a "fix" field was
+  re-run against the current tree rather than trusted from the PR that claimed it. \`TRACK-10\`'s
+  cited PR added the \`split:<id>\` status value to the template's vocabulary but never touched
+  \`cycle-guard.mjs\`'s staleness check, so a live re-run reproduced the exact original failure (a
+  finished-but-split item's block still reads "live") - the fix was real and half-landed, and it
+  stays \`fail\` rather than being counted as resolved because it read as landed.`;
 
 const readme = `# Validation - proving the standard's claims with data, not prose
 
@@ -219,7 +267,7 @@ ${disconfirmedNote}
 | Observations recorded | **${observations.length}** across ${runs.length} rounds (${runFiles.map((f) => f.replace(".json", "")).join(", ")}) |
 | Targets assessed | **${targets.length}** (${repoTargets.length} real repositories, ${fixtureTargets.length} synthetic fixtures) |
 | Verdicts | ${Object.entries(byVerdict).map(([v, n]) => `${n} ${v}`).join(", ")} |
-| Failures found | **${openFailures.length + fixedFailures.length}** - **${fixedFailures.length} fixed** (across ${distinctFixPRs.size} merged pull requests), **${openFailures.length} still open**, logged and named below, not hidden |
+| Failures found | **${openFailures.length + confirmedFixed.length}** - **${confirmedFixed.length} fixed and re-verified** (across ${distinctFixPRs.size} merged pull requests), **${openFailures.length} still open right now** (of which ${attemptedNotHolding.length} were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden |
 
 These are counts of what is actually written to \`suite.json\`/\`targets.json\`/\`runs/\`, recomputed
 by this script every time it runs - not estimates, and \`--check\` fails CI the moment a rendered
@@ -246,14 +294,27 @@ ${rulesWithZeroCases.length ? `**Rules with zero cases (of R1-R${highestRule}):*
 | L3 | the standard actually applied to a working copy, drift measured | ${byDepth.L3 ?? 0} |
 | L4 | the repo then lived the loop for at least one full cycle of real work | ${byDepth.L4 ?? 0} |
 
-## Failures, and their fix
+## The punch list - what is actually still broken
 
-Every case that has ever failed at least once, with the pull request that fixed it, or
-**open** where none has, yet:
+Filtered on \`verdict === "fail"\` alone, nothing else - this is the real, current set of
+open defects, the thing a sceptic (or the maintainer) actually wants from this page. A row
+that also names a PR was attempted and a later re-run found the attempt did not fully hold
+(see that observation's evidence in \`runs/\`) - it is still broken, not "fixed":
 
 | Case | What it tests | Where it failed | Status |
 |---|---|---|---|
 ${failuresTable}
+
+## Fixed and re-verified this round
+
+The other half of the same credibility claim, kept in its own table so it is never read as
+part of the list above: cases that used to fail, a merged PR that addressed the defect, and
+a later round's independent re-run confirming the fix actually holds today - not inferred
+from the PR merging, not inferred from the verdict flipping:
+
+| Case | What it tests | Target | Fix |
+|---|---|---|---|
+${fixedTable}
 
 ## How to run it yourself
 
@@ -312,10 +373,12 @@ const benchmark = `# Benchmark - checks any agent-operated repository standard s
 Twenty-something checks - **${portableCases.length}**, precisely - that any repository standard
 claiming to be agent-operable should survive. This project failed **${
   new Set(observations.filter((o) => o.verdict === "fail" && portableCases.some((c) => c.id === o.case)).map((o) => o.case)).size
-}** of them at least once and has fixed **${
-  new Set(observations.filter((o) => o.verdict === "fail" && o.fix && portableCases.some((c) => c.id === o.case)).map((o) => o.case)).size
-}** so far; the rest are logged as open. The runs are in [\`runs/\`](runs/), and the full
-catalogue (including the cases specific to this project's own paths) is in [\`README.md\`](README.md).
+}** of them at least once and has fixed-and-re-verified **${
+  new Set(observations.filter((o) => o.verdict === "pass" && o.fix && portableCases.some((c) => c.id === o.case)).map((o) => o.case)).size
+}** so far; the rest are logged as open (which includes any case where an attempted fix
+was itself re-verified and found not to fully hold - see \`README.md\` for that distinction).
+The runs are in [\`runs/\`](runs/), and the full catalogue (including the cases specific to
+this project's own paths) is in [\`README.md\`](README.md).
 
 If you maintain a different standard: pick a case below, translate "given" into your own
 fixture and "when"/"then" into your own tooling's command, and see whether it holds. That is
