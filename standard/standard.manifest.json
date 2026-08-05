@@ -245,8 +245,8 @@
         "check-spec-clarified.sh": "414c28837b93e0b9c2c342b230f7f09c2c2b24fe7a0e804e3ab4b1e5add55229",
         "common.sh": "51ae5e92db67f1a62fdb788730a7c7d56097b0f747ae2f427ddf6c20ae272aee",
         "plan-template.md": "c8a345b6a586d54125a95ce9bb6d90e5fc8870ee90c4a4bbc5c3edd904130c03",
-        "setup-plan.sh": "4469b22960f43c07c33dca00de6dedb252145e9a9ce8fbb0e63be82e02b082ab",
-        "setup-tasks.sh": "d4482645000fdf5c89f38625edeba9e6ed105dd75a77e38bb601fda290228f06",
+        "setup-plan.sh": "ffa3150be23eaff221915b83290fa7b5210b3c1e745dfe04ae4722f279a2c42d",
+        "setup-tasks.sh": "6a980b56cbdefc1b5ca06332b5a281e7d1e0167a9a9c17d6a6f9ea8b26b54f45",
         "tasks-template.md": "ccf3ec0f14086d4dbde661878bcd8761799cfd818c7ed565d04c85c4a2663993"
       }
     },

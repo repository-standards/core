@@ -20,6 +20,15 @@ rather than by asking. Written down because the status is now checked against th
 and a `live` capability with no record of what settled it is the gap that check exists to
 expose. New work on this capability goes through the loop.
 
+### Session 2026-08-05
+
+The clarify gate was documented as a "MANDATORY PRECHECK" in `/spec-plan` and
+`/spec-tasks`'s own prompts but never called by `setup-plan.sh` / `setup-tasks.sh`
+themselves - the bridge precondition `enforcement.md` already described as existing
+was prose only. No question to ask: the fix is mechanical (wire the call, matching the
+scripts' existing exit-code conventions) and settled by inspection of what the scripts
+already do on every other precondition (missing `plan.md`, missing `spec.md`).
+
 ## Scope
 
 The loop, its state file, the clarify gate, the setup scripts, the templates, and the provenance duty.
@@ -46,11 +55,11 @@ The spec model itself - capability specs, tiers, personas (documented at [`docs/
 
 ## Interface contracts
 
-`scripts/spec/check-spec-clarified.sh <path-to-spec.md>` - the mechanical clarify gate (standard-authored, not upstream). PASS requires all of: a line matching `^## Clarifications`; zero occurrences of the family's bracket prefix (`[NEEDS` followed by a space - the whole family, ADR-024); zero occurrences of the family names written as a numbered list item instead of the bracket form; zero bracketed tokens shaped like a marker the gate does not recognise (an all-caps or non-ASCII word followed by a colon inside brackets, excluding markdown links); and a line matching `^## Open questions` whose section, once HTML comments and fenced blocks are stripped, holds nothing but a nothing-open statement (`none`, `none known`, `none at this time`, `no open questions`, `no known gaps`, case-insensitive, optional full stop). A fail lists every offending line with its number, so the output doubles as the gap list. Baked as a MANDATORY PRECHECK into `/spec-plan` and `/spec-tasks`: they run it first and STOP on non-zero.
+`scripts/spec/check-spec-clarified.sh <path-to-spec.md>` - the mechanical clarify gate (standard-authored, not upstream). PASS requires all of: a line matching `^## Clarifications`; zero occurrences of the family's bracket prefix (`[NEEDS` followed by a space - the whole family, ADR-024); zero occurrences of the family names written as a numbered list item instead of the bracket form; zero bracketed tokens shaped like a marker the gate does not recognise (an all-caps or non-ASCII word followed by a colon inside brackets, excluding markdown links); and a line matching `^## Open questions` whose section, once HTML comments and fenced blocks are stripped, holds nothing but a nothing-open statement (`none`, `none known`, `none at this time`, `no open questions`, `no known gaps`, case-insensitive, optional full stop). A fail lists every offending line with its number, so the output doubles as the gap list. Enforced twice: `/spec-plan` and `/spec-tasks`'s own prompts document it as a MANDATORY PRECHECK, and `setup-plan.sh` / `setup-tasks.sh` call it themselves on `FEATURE_SPEC` before doing anything else, aborting on any non-zero exit - the script-level call is what makes the precheck a bridge precondition rather than an instruction an agent could skip by never invoking it.
 
-`scripts/spec/setup-plan.sh [--json]` - resolves feature paths via `common.sh`, `mkdir -p` the feature directory, and copies the plan template to `plan.md` unless it already exists (then: skip note). Prints/emits `FEATURE_SPEC`, `IMPL_PLAN`, `SPECS_DIR`, `BRANCH`.
+`scripts/spec/setup-plan.sh [--json]` - resolves feature paths via `common.sh`; errors if `spec.md` does not exist yet (run `/spec-specify` first); runs the clarify gate on `spec.md`, exiting 1 on failure with the gate's own message; `mkdir -p` the feature directory; and copies the plan template to `plan.md` unless it already exists (then: skip note). The gate re-runs on every invocation, including when `plan.md` already exists - a spec can regain open markers after it was planned. Prints/emits `FEATURE_SPEC`, `IMPL_PLAN`, `SPECS_DIR`, `BRANCH`.
 
-`scripts/spec/setup-tasks.sh [--json]` - requires `plan.md` and `spec.md` to exist; resolves the tasks template; emits `FEATURE_DIR`, `TASKS_TEMPLATE`, `AVAILABLE_DOCS` (whichever of research.md, data-model.md, contracts/, quickstart.md exist).
+`scripts/spec/setup-tasks.sh [--json]` - requires `plan.md` and `spec.md` to exist; runs the clarify gate on `spec.md`, exiting 1 on failure; resolves the tasks template; emits `FEATURE_DIR`, `TASKS_TEMPLATE`, `AVAILABLE_DOCS` (whichever of research.md, data-model.md, contracts/, quickstart.md exist).
 
 Template copies source `scripts/spec/*.md` through the `resolve_template` stack: `overrides/` -> `presets/<id>/templates/` (priority-ordered) -> `extensions/<id>/templates/` -> core `scripts/spec/<name>.md`. The shipped core templates are `plan-template.md` and `tasks-template.md`; the spec itself is instantiated from `specs/capability-spec.template.md` (the standard's shape), never a vendored spec-template.
 
@@ -60,8 +69,8 @@ Template copies source `scripts/spec/*.md` through the `resolve_template` stack:
 |---|---|---|
 | check-spec-clarified.sh | 0 | `## Clarifications` present and zero open markers (PASS line on stdout) |
 | check-spec-clarified.sh | 1 | no argument; spec file not found; no `## Clarifications`; >0 open `NEEDS`-family markers; >0 family names written as a list item instead of brackets; >0 marker-shaped tokens the gate does not recognise; no `## Open questions`; or >0 live lines under it (each listed with line numbers, stderr) |
-| setup-plan.sh | 1 | feature paths unresolvable (no env var and no usable feature.json) |
-| setup-tasks.sh | 1 | paths unresolvable; `plan.md` missing (run /spec-plan first); `spec.md` missing; tasks template unresolvable through the stack |
+| setup-plan.sh | 1 | feature paths unresolvable (no env var and no usable feature.json); `spec.md` missing (run /spec-specify first); `spec.md` fails the clarify gate |
+| setup-tasks.sh | 1 | paths unresolvable; `plan.md` missing (run /spec-plan first); `spec.md` missing; `spec.md` fails the clarify gate; tasks template unresolvable through the stack |
 
 ## Requirements
 
@@ -80,6 +89,7 @@ Template copies source `scripts/spec/*.md` through the `resolve_template` stack:
 - **The gate's own strings are syntax and MUST NOT be translated.** The four marker forms and the headings the gate reads (`## Clarifications`, `## Open questions`) stay ASCII in a spec written in any language; the text inside a marker is prose and belongs in the spec's language. The gate MUST enforce this rather than trust it: a bracketed token shaped like a typed marker but not one of the four - an all-caps or non-ASCII word followed by a colon, markdown links excluded - MUST fail the gate naming the rule and where it is written down. Trusting it was tried and it fails silently in the worst direction: the translated spec reads as ready.
 - **The capability map has exactly two writers, and they are both in this engine.** `/spec-specify` MUST register a new capability in `specs/capability-map.json` when it mints the directory, and `/spec-reconcile` MUST reconcile the map (`spec-guard --audit`) before the pull request. No other skill carries the instruction: none of the twenty mentioned the map at all, so every capability was unmapped by construction and `--audit` failed whoever opened the next PR. The split is deliberate - creation is when the map goes stale, reconcile is when a refactor has moved code out from under a glob - and the audit, not prose in more skills, is what makes either stick.
 - **The clarify gate has no bypass.** No skill MAY offer to skip clarification. A spike is a reason to *defer* an answer, and a recorded deferral is an answer; it is not a reason to leave the question unwritten.
+- **The clarify gate MUST be called by the scripts, not only documented in the skills.** `setup-plan.sh` and `setup-tasks.sh` MUST call `check-spec-clarified.sh` on `FEATURE_SPEC` themselves and exit 1 on failure. A "MANDATORY PRECHECK" instruction in a skill's prompt is a request an agent can skip by never invoking it - the case this whole engine's clarify gate exists to stop, one layer up: a spec that reaches `plan.md` or `tasks.md` unclarified because a human, or an agent, never ran the step. The two calls are independent: a prompt that never gets read still cannot produce `plan.md` or `tasks.md` for a spec that fails the gate.
 - **The engine's shell scripts MUST ship executable** (mode `100755`). Every skill invokes them by path, not through `bash`, so a non-executable bit makes the clarify gate exit 126 - and `/spec-plan` and `/spec-tasks` are told to STOP on any non-zero exit, so a permissions problem is reported to the user as a spec that failed clarification.
 - **`/spec-reconcile` MUST remove the plan and task scaffolding when the work closes** (R13). It is the only step positioned to do so - it is where spec == code == tests is established - and without an owner the rule was a MUST that nothing performed and only `spec-structure` warned about. Anything the scaffolding recorded that is still true moves first: a decision to a record, an unfinished thread to the backlog, an open question to the spec. Unfinished work keeps its scaffolding.
 - **`/spec-reconcile` MUST check every ADR/BDR a capability's spec or code comments cite against that record's current `Status`.** A citation is spec content like any other, so a supersession the citing prose never learned about is drift - reproduced once as five stale citations plus a stale code comment, every guard green. A citation to a since-superseded record is repointed to the superseding record; the surrounding prose is flagged for a human, and the decision record's own text is never rewritten (R6).
@@ -89,7 +99,7 @@ Template copies source `scripts/spec/*.md` through the `resolve_template` stack:
 
 ## Invariants
 
-- `/spec-plan` and `/spec-tasks` MUST NOT proceed on a spec that fails the clarify gate.
+- `/spec-plan` and `/spec-tasks` MUST NOT proceed on a spec that fails the clarify gate - enforced both by the skills' own MANDATORY PRECHECK and mechanically inside `setup-plan.sh` / `setup-tasks.sh`.
 - `specs/feature.json` MUST always point at the capability directory the loop is operating on.
 - No shipped engine file MUST lack provenance (LICENSE reference or PATCHED marker).
 
@@ -107,6 +117,8 @@ Template copies source `scripts/spec/*.md` through the `resolve_template` stack:
 - **Dossier precedence.** GIVEN a dossier entry marked `folded-into-spec` that differs from the spec WHEN `/spec-clarify` runs THEN no question is asked about it - a dossier is never normative.
 - **A question, not a label.** GIVEN the retention rules in `FR-023` are unclear WHEN `/spec-clarify` asks about them THEN the asked item reads as an interrogative ending in `?` with the id trailing it, not as `Retention policy` or `FR-023`, and one plain line says what the answer changes.
 - **Gate wired in.** GIVEN a spec failing the gate WHEN `/spec-plan` or `/spec-tasks` starts THEN the precheck exits non-zero and the skill stops, directing to `/spec-clarify`.
+- **Gate enforced in the script, not just the prompt.** GIVEN a spec failing the gate WHEN `setup-plan.sh` or `setup-tasks.sh` is run directly, bypassing the skill's own prose precheck, THEN it exits 1 with the gate's failure output on stderr - an agent that never reads the skill's "MANDATORY PRECHECK" instruction still cannot produce `plan.md` or `tasks.md` for a spec that is not ready-to-develop.
+- **The gate re-runs even when the plan already exists.** GIVEN `plan.md` already exists and the spec has since regained an open marker WHEN `setup-plan.sh` runs again THEN it exits 1 on the gate failure before reaching the idempotent template-copy check - the gate is not a one-time cost paid only when `plan.md` is first created.
 - **State file.** GIVEN `/spec-specify user-auth` completes WHEN `specs/feature.json` is read THEN `feature_directory` is `specs/user-auth` (no numeric or timestamp prefix).
 - **Existing capability.** GIVEN `specs/user-auth/` already exists WHEN specify runs for the same capability THEN the existing spec is updated in place, no sibling directory is minted.
 - **A new capability is mapped when it is minted.** GIVEN `/spec-specify` mints `specs/payments/` WHEN it completes THEN `specs/capability-map.json` carries a `payments` key with proposed globs and the user is told what was added, so `spec-guard --audit` does not fail the next pull request on an unmapped spec.

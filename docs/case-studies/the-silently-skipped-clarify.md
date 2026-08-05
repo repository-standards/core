@@ -13,11 +13,15 @@ recalls its name will be skipped, and the artifacts downstream will look done wh
 carrying the gap. The user cannot be blamed - they never knew the step existed.
 
 **What the standard does about it.** The loop is **AI-led and gated in layers** (five of
-them - hook, gate, policy, loaded context, bridge precondition): clarify chains
-automatically after specify; plan/tasks/mirror are mechanically blocked unless the spec
-has a `## Clarifications` section and zero open `[NEEDS CLARIFICATION]`; the gate is what
-earns `Status: ready-to-develop`.
+them - a skill-level precheck, the gate script, the policy doc that states the rule, loaded
+context, and a script-level bridge precondition): clarify chains automatically after
+specify; plan/tasks/mirror are mechanically blocked unless the spec has a
+`## Clarifications` section and zero open `[NEEDS CLARIFICATION]`; the gate is what earns
+`Status: ready-to-develop`. None of the five is a Claude Code `hooks/`-mechanism hook -
+this repo's three shipped hooks guard unrelated risky Bash commands, and "does a skill
+cover this request" is a judgment call no hook can make.
 
-**Where it lives now.** [`standard/specs/README.md`](../tree/specs.md)
+**Where it lives now.** [`standard/specs/README.md`](../../standard/specs/README.md)
 ("Make the loop self-triggering"), [`standard/specs/enforcement.md`](../../standard/specs/enforcement.md)
-(the clarify gate), ADR-010, the "loop runs itself" section of the AGENTS template.
+(the clarify gate, and the scripts that call it as a bridge precondition), ADR-010, the
+"loop runs itself" section of the AGENTS template.

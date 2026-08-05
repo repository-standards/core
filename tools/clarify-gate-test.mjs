@@ -17,12 +17,13 @@
 // Zone 1 tooling - never shipped.
 
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const GATE = join(process.cwd(), "standard/scripts/spec/check-spec-clarified.sh");
 const TEMPLATE = join(process.cwd(), "standard/specs/capability-spec.template.md");
+const SPEC_ENGINE_DIR = join(process.cwd(), "standard/scripts/spec");
 
 // The shipped template's own `## Open questions` section, read rather than restated - a
 // copy here would pass while the template it stands for had drifted.
@@ -328,7 +329,85 @@ for (const c of STATUS_CASES) {
   }
 }
 
-const total = CASES.length + STATUS_CASES.length;
+// --- the bridge precondition -----------------------------------------------------------
+// The gate is only as good as what calls it. It was documented as a "MANDATORY PRECHECK"
+// in /spec-plan and /spec-tasks's own prompts, but neither setup-plan.sh nor
+// setup-tasks.sh called it - a prose instruction an agent could skip by never invoking it,
+// exactly the failure mode this whole gate exists to close one layer up. These cases run
+// the real scripts, from a copy of the shipped engine, against a spec that fails the gate
+// and one that passes it.
+const runScript = (script, specBody, { planExists = false } = {}) => {
+  const dir = mkdtempSync(join(tmpdir(), "bridge-precondition-test-"));
+  cpSync(SPEC_ENGINE_DIR, join(dir, "scripts/spec"), { recursive: true });
+  mkdirSync(join(dir, "specs/payments"), { recursive: true });
+  writeFileSync(join(dir, "specs/payments/spec.md"), specBody);
+  if (planExists) writeFileSync(join(dir, "specs/payments/plan.md"), "# existing plan\n");
+  const env = { ...process.env, SPECIFY_FEATURE_DIRECTORY: "specs/payments" };
+  const r = spawnSync("bash", [join(dir, "scripts/spec", script), "--json"], { cwd: dir, env, encoding: "utf8" });
+  const out = `${r.stdout ?? ""}${r.stderr ?? ""}`;
+  rmSync(dir, { recursive: true, force: true });
+  return { code: r.status ?? 1, out };
+};
+
+const UNCLARIFIED = "# Payments\n\n## Requirements\n\n- The system MUST capture.\n\n## Open questions\n\nThe refund window is undecided.\n";
+const CLARIFIED_SPEC = `# Payments\n\n${CLARIFIED}\n## Requirements\n\n- The system MUST capture within 7 days.\n\n## Open questions\n\nNone known.\n`;
+
+const BRIDGE_CASES = [
+  {
+    name: "setup-plan.sh refuses an unclarified spec",
+    script: "setup-plan.sh",
+    body: UNCLARIFIED,
+    fails: true,
+    says: "no '## Clarifications' section",
+  },
+  {
+    name: "setup-plan.sh proceeds on a clarified spec",
+    script: "setup-plan.sh",
+    body: CLARIFIED_SPEC,
+    fails: false,
+    says: "FEATURE_SPEC",
+  },
+  {
+    name: "setup-plan.sh re-checks the gate even when plan.md already exists",
+    script: "setup-plan.sh",
+    body: UNCLARIFIED,
+    fails: true,
+    says: "no '## Clarifications' section",
+    planExists: true,
+  },
+  {
+    name: "setup-tasks.sh refuses an unclarified spec",
+    script: "setup-tasks.sh",
+    body: UNCLARIFIED,
+    fails: true,
+    says: "no '## Clarifications' section",
+    planExists: true,
+  },
+  {
+    name: "setup-tasks.sh proceeds on a clarified spec",
+    script: "setup-tasks.sh",
+    body: CLARIFIED_SPEC,
+    fails: false,
+    says: "FEATURE_DIR",
+    planExists: true,
+  },
+];
+
+for (const c of BRIDGE_CASES) {
+  const { code, out } = runScript(c.script, c.body, { planExists: c.planExists });
+  const want = c.fails ? 1 : 0;
+  if (code !== want) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - expected exit ${want}, got ${code}\n${out.replace(/^/gm, "        ")}`);
+  } else if (!out.includes(c.says)) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - exit ${code} is right but the output never says "${c.says}"\n${out.replace(/^/gm, "        ")}`);
+  } else {
+    console.log(`  ok    ${c.name}`);
+  }
+}
+
+const total = CASES.length + STATUS_CASES.length + BRIDGE_CASES.length;
 if (failures) {
   console.log(`\nclarify-gate-test: FAIL - ${failures} of ${total} cases`);
   process.exit(1);
