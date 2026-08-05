@@ -1,0 +1,779 @@
+{
+  "$about": "Observations for the 2026-08-04 round. Backfilled from this session's direct extraction of cycles-lifecycle.md, timeline.md, refinement-bridge.md, full-loop.md, greenfield-core.md, node-stack.md, skills-write.md, skills-maintain.md, po-rescue.md, auto-trigger.md, add-anytime.md, and the FINDINGS-LEDGER.md triage of the 12 brownfield waves (bf-governance, bf-language, bf-lifecycle, bf-notcode, bf-platform, bf-thin, bf-monorepo, bf-ml, bf-critical, bf-review, bf-shapes, bf-closing) plus the wave-6 backfill and showcase-gap/promise-inventory. Every 'fix' link was checked against the real merged PR body text (`gh pr view <n> -R repository-standards/core|node --json body`) on 2026-08-04 - a case is marked fixed only when the PR body names that specific defect, not merely the same area of code. Cases with no fix link are open: logged, not built this round, exactly as the source reports and the ledger state them.",
+  "observations": [
+    {
+      "case": "GATE-15",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Reproduced first-hand: the translator's `**` -> `.*` substitution does not consume the slash in front of it, so `**/payment/**` compiles to `^.*\\/payment\\/.*$`, which requires a directory before `payment/` and misses `payment/index.ts`. The same bug is duplicated in facts-check.mjs's own glob translator. Fixed: one shared implementation now (standard/scripts/lib/glob.mjs) replaces both drifted copies.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/13"
+    },
+    {
+      "case": "GATE-16",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "A Chinese spec with four unresolved items printed PASS; the heading check next to it fails closed on translation, so fixing that error by translating the heading text lands the author in the silent pass on the marker check. The standard tells adopters to write specs in their own language, so this is not a hypothetical - reproduced first-hand (bf-language F1).",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/13"
+    },
+    {
+      "case": "GATE-17",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Reproduced independently three times against the same underlying bug: refinement-bridge F2 built a 6-shape table (four shapes pass that should fail, including the shape the template's own required section invites); add-anytime F1 reproduced it by adding a fifth open question under a fresh heading; po-rescue F1 found the gate's own remediation advice ('record an explicit deferral under \"## Clarifications\"') cannot clear a marker at all, so following the gate's own advice literally does not fix the underlying gap it names. Fixed: check-spec-clarified.sh now also greps the bracket-marker family inside prose form, with a dedicated test suite the gate had none of before.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/13"
+    },
+    {
+      "case": "GATE-18",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Reproduced twice, independently: cycles-lifecycle F2 wrote the manual's own example shape with a real one-place violation (SPEC-1 duplicated between a cycle and the pool) and got a clean 'OK - 9 intent(s) across 5 place(s), each in exactly one', reading zero rows from the added file; timeline F12 reproduced the identical zero-intents result from the same page. Fixed: docs/tree/docs-cycles.md's example is now the literal fixture cycle-guard-test.mjs runs against, so the page and the guard cannot disagree again.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/15"
+    },
+    {
+      "case": "GATE-19",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "refinement-bridge F1: no skill instructs writing any status transition besides the initial draft value, spec-reconcile never mentions status at all, and check-spec-clarified.sh - the only mechanical gate that exists - never reads the Status field at all. Reproduced: the clarify gate correctly FAILs when invoked directly on the doctored spec, while spec-structure, spec-guard --audit --block, cycle-guard.mjs and self-verify.mjs all stayed green regardless. Fixed: spec-structure now re-runs the real clarify gate against any spec claiming that status or live.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/13"
+    },
+    {
+      "case": "GATE-20",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed independently three times: bf-lifecycle F1 (verified first-hand per the ledger), greenfield-core F9, and promise-inventory B3 all found SPEC.md:13 saying 'Rules are numbered R1-R24' while R25 is defined at SPEC.md:177 - and promise-inventory additionally found the anti-drift guard's own FACT_SURFACES list omits standard/SPEC.md, the one file that still carries the stale line. Fixed: the rule count is now a declared, checked fact.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/13"
+    },
+    {
+      "case": "GATE-21",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Three independent confirmations: bf-governance F8, bf-lifecycle F10 and bf-language F5 (which additionally proved the mechanism with an English control) all reproduced the placeholder warning false-positiving on `<picture>`/`<code>` in foreign repos and going blind on non-ASCII placeholders; bf-language F4 reproduced the same locale-blindness class on spec-structure's persona check specifically. Fixed the same way as the clarify gate's translation fix.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/13"
+    },
+    {
+      "case": "GATE-22",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Two independent reproductions of the same underlying gap, both explicitly noted as NOT covered by PR13's locale/placeholder fix (a different bug in the same script): skills-write F1 found the check is a three-way OR whose first arm (hasServes) passes any non-placeholder string without ever consulting docs/personas.md - three reproductions all exit 0, including a spec containing the phrase 'for whom' (a phrase idea-write itself instructs writing) and a spec with backticks stripped from both roster rows (emptying the parsed roster). greenfield-core F4 independently confirmed the roster-membership direction is unenforced, contradicting personas-write's own claim that a persona missing from the roster 'does not exist as far as R10 is concerned.' Not fixed this round - logged for a future pass.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "GATE-23",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "greenfield-core F10: --audit checks only that every spec has a map entry, never the reverse. Reproduced with three capabilities declared in the map and only one specced - the blocking full-tree audit reported 'OK (1 capability specs, all mapped)' while two capabilities have live code globs and no spec. This is now partially addressed by PR13's fourth audit check (a mapped capability with no spec) - see PR13's changelog entry.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/13"
+    },
+    {
+      "case": "GATE-24",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed independently by three agents on the same underlying bug (the fsWalk fallback only fires when the tracked spec list is entirely empty, so any repo with even one already-tracked spec makes new untracked directories invisible): refinement-bridge F4, skills-write F5, and full-loop F4, plus showcase-gap noting the same class. Reproduced identically three times: before `git add`, `--audit` reports OK; after, it correctly fails naming the orphan. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "GATE-25",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed independently by two agents: skills-maintain F4 found pre-pr-review's list includes `spec-guard.mjs --audit` and omits the diff-scoped `--base --block` CI actually blocks on - reproduced end to end, all local checks green, CI's real command exits 1. full-loop F5 found the mirror bug: pre-pr-review instructs the non-blocking `--audit` form specifically to 'avoid moving failures to CI', which is the one command form that cannot fail on the same orphan-spec defect (GATE-24). Together the two make the local pre-PR gate weaker than CI in two independent ways at once. Fixed: pre-pr-review now names both flags CI uses.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/14"
+    },
+    {
+      "case": "GATE-26",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "node-stack F2, reproduced three ways: (a) no exception - FAIL drift 1; (b) exception written into stack.manifest.json, the documented home - still FAIL drift 1, no note; (c) the identical exception written into standard.manifest.json instead - correctly excepted, drift 0. The escape hatch worked only in the 'wrong' layer, silently breaking the documented 'nothing is all-or-nothing' brownfield promise. Fixed: exceptions added to the array of keys merged from the stack manifest.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/17"
+    },
+    {
+      "case": "GATE-26",
+      "target": "fixture:test-greenfield-node",
+      "verdict": "pass",
+      "evidence": "Confirmed fixed from the node side: ADAPTING.md now points at the real, working mechanism after the core-side fix landed; the node repo's own workaround (recording the exception in standard.manifest.json instead) is no longer needed.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/node/pull/1"
+    },
+    {
+      "case": "GATE-27",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "node-stack F1, reproduced: self-verify's check for merge-class entries was pure file-existence, never content. Deleting the entire supply-chain policy block still reported drift 0/100%/compliant - even though the stack's own CI asserts these exact three keys on itself. Generalizes to all 8 merge-class stack entries. Fixed: a `requiredKeys` mechanism now lets a merge-class entry assert specific keys exist.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/16"
+    },
+    {
+      "case": "GATE-27",
+      "target": "fixture:test-greenfield-node",
+      "verdict": "pass",
+      "evidence": "Verified end to end on the real starter after the fix shipped: the node stack switched to declaring the three keys directly on the manifest entry, deleted the now-redundant custom guard script that had been the workaround, and confirmed the substitution passes when the keys are present and fails by name individually when any one is stripped.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/node/pull/1"
+    },
+    {
+      "case": "GATE-28",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-critical F12: nvaccess/nvda ships README.md/SECURITY.md in lower case; self-verify's file check used existsSync, which is case-insensitive on macOS/Windows and case-sensitive on Linux CI - so the reported drift/adoption differed by platform for the identical repo state. Fixed: case-exact file existence, verified on the real bf-critical evidence (drift moved from a platform-dependent number to a single correct one).",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/16"
+    },
+    {
+      "case": "GATE-29",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed independently twice: bf-critical F1 (severe) reproduced drift 4-5 from the built-in skeleton where the real manifest gives 13-15, same command, same repo, same minute; bf-wave6-backfill F7 reproduced the identical class as a second confirmation. node-stack F4 additionally found the collapse total: deleting standard.manifest.json from a drift-0 tree silently drops all 8 stack files and the stack guard from the count too, with the one status line that would have signalled it living behind the same conditional. Fixed: the silent skeleton fallback now says so loudly instead of reporting a look-alike number.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/16"
+    },
+    {
+      "case": "GATE-30",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Built and proved as part of the same content-verification pass that fixed GATE-27/29: excepting a failure moves one point from drift to excepted, never inflates the numerator (proved directly); a guard's own script cannot be excepted by presence (kind:\"guard\" removed rather than half-implemented, closing node-stack F9 and the parallel bf-notcode F9 finding that the same kind was documented in code comments and never implemented); the exception count is always printed, including zero; content exceptions may now scope to a subtree via a `/**` suffix, closing the wave-9 shapes finding that no per-locale waiver granularity existed (tldr-pages' real `--ignore TLDR003,TLDR004,TLDR015` shape).",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/16"
+    },
+    {
+      "case": "GATE-31",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "This is the North Star metric's own load-bearing defect, confirmed independently three times on three different trees: skills-maintain F2 reproduced a 'sham update' (bump the pin and the manifest, change zero of 18 real file deltas) reporting drift 0/100%/compliant, and separately drift 0 with 19 of 20 skills present; the real showcase repo (showcase-gap) reported drift 0 - 100% adopted (49/49) while missing idea-write and carrying 12 drifted skills and 5 drifted guards; node-stack F1 (see GATE-27) found the merge-class analogue. Before/after proof on one fixture: old verifier reported 'drift 0 - 100% adopted (51/51)' with a deleted skill, a stale settings block and a changed .nvmrc; new verifier reports 'drift 3 - 96% adopted (67/70), 0 excepted', naming each one. Fixed: a hash lives in the manifest itself (regenerated by tools/manifest-hashes.mjs, checked by tree-check so it can never go stale in the producing repo); the manifest file itself is deliberately excluded from generic hashing, since it is the one file every adopter must edit (a near-miss caught before shipping - see wave-9 shapes F6).",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/16"
+    },
+    {
+      "case": "GATE-32",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed on three independent repos, the most severe instance zeroing out an entire required directory: bf-monorepo F1 found kibana's `.claude/skills -> ../.agents/skills` symlink (its own unrelated 31-skill system) pre-satisfies the manifest's altPath check, reporting drift 0/compliant on a repo with zero of the 20 lifecycle skills. bf-shapes F4 (svelte) and bf-thin F3/F12 (GacUI, openvino) reproduced the milder version - an unrelated skills directory or SECURITY.md satisfying the entry by coincidence rather than content. Logged with the wt-drift work as a gap, not built this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SPEC-11",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "refinement-bridge F3: none of spec-specify/clarify/plan/tasks/implement mention capability-map registration; only spec-impact reads the map. Registration existed only as a one-time adoption step in AGENTS.md, never as a per-capability step - so a brand-new capability's first PR failed CI, and the author learned this from a CI failure rather than from the skill that created the problem. Reproduced: audit --block exits 1 naming the new spec directory. Fixed: spec-specify now registers a capability at mint time, and spec-reconcile reconciles the map before the PR.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/13"
+    },
+    {
+      "case": "SPEC-12",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "refinement-bridge F6: the glob compiler requires a path segment matching the capability's domain name exactly. Reproduced: implementation under src/services/proxy-swap.ts + src/models/swap-audit.ts (the template's own default) gave 'spec-guard: OK' with zero coupling detection; moving the identical code under a domain folder (src/swap/proxy.ts) triggered it correctly. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SPEC-13",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "refinement-bridge F7, reproduced in three steps: (a) unmapped - the wrong capability is demanded; (b) a narrow entry added - both capabilities fire simultaneously; (c) the only escape is hand-enumerating files with no overlap warning, and --audit forces an entry to exist so leaving it unmapped is not an option either. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SPEC-14",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "refinement-bridge F8: no marked section exists among the template's 16 headings for spec-clarify's instruction to anchor against, so two runs can legitimately place the section differently, causing diff churn, while spec-specify separately demands section order be preserved. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SPEC-15",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "greenfield-core F8, independently confirmed with a real-world repo count in bf-ml F15: all eight manifest decision entries (including datastore/api-contract/auth-model) are marked required:true and self-verify prints '8 catalogued decisions to confirm recorded at review' on every run, directly contradicting checklist.md's own repeated 'deliberately no minimum count and no required subset.' bf-ml F15 found none of five real ML repos assessed has any of the three most commonly-required entries, evidence the asserted subset does not generalize. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SPEC-16",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed independently twice, at the same severity: refinement-bridge F5 and skills-maintain F8 both reproduced spec-structure --block failing on data-model.md/quickstart.md/research.md between plan and reconcile, in exactly the CI invocation form used in practice (--base main --block), exit 1 naming all four files each time. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SPEC-17",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "po-rescue F2: spec-specify's documented instruction for an existing directory is 'update the existing spec in place' with zero mentions of 'retired' anywhere in the skill (versus 2 mentions each in spec-update, spec-impact, discovery-digest). Reproduced against the fixture's own shift-notifications spec (Status: retired per BDR-004, which states future reminder needs must be 'specced fresh - not a reopening of this one') - the PO's own request is exactly that case. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SPEC-18",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "po-rescue F3: both skills name docs/discovery/ as the sole pre-user answer source; neither reads ADRs/BDRs, even though both acknowledge records can 'already win.' The only backstop (AGENTS.md:113) names ADRs only, not BDRs - the product-side stream a PO's requests actually collide with. In the test run, the colliding BDR surfaced only because the tester read it out of band and flagged the turn as beyond the documented procedure; a faithful run would not have seen it. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SPEC-19",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "po-rescue F4: spec-specify is explicitly barred from asking the user ('specify does not ask - it hands off... Do not ask the user here'), yet has no guidance for a sentence describing two capabilities in one; collision detection is exact-string on the generated slug. Reproduced: a request slug (manager-shift-reassignment) did not string-match the existing shift-swap-request capability it overlapped, so no collision fired - 'the exact ADR-002 failure the standard exists to prevent.' Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SPEC-21",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-write F13: adr-write requires a Confirmation section, calling it 'what stops the record being decoration'; the BDR template has no such section, and bdr-write explicitly forbids naming the technical enforcement in the record ('Do not write the technical consequence here'). Writing a real BDR (a privacy constraint) recorded how the team would know they were wrong (a detection field) but not how they would stop being wrong - on exactly the class of decision where it matters most. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "TRACK-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "cycles-lifecycle F7: standard.manifest.json declares backlog.md as primary with docs/backlog.md as an altPath; cycle-guard.mjs and add-to-backlog handle both, but cycle-open/SKILL.md and cycle-close/SKILL.md name only docs/backlog.md - so a repo using the primary path (as core's own repo does) is instructed to cut rows from a file that does not exist there. The known fix for this exact bug class was applied to the guard and to one of three skills; the two cycle skills were missed. Fixed: cycle-open/cycle-close now resolve the backlog the same way the guard does.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/15"
+    },
+    {
+      "case": "TRACK-08",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed independently by two agents, and found live in the owner's own aligned fixture at baseline before any edit: timeline F1 and cycles-lifecycle F5 both found the guard scopes its scan to ## Intents only, never ## Outcome, so an intent recorded as returned but never actually landing there is invisible everywhere - not in the pool, not caught by the guard, not readable by timeline-update, falsifying tracking-work.md's own 'whatever did not finish returns to the pool' on the owner's own aligned fixture. Fixed: cycle-guard now checks the 'at least one' direction too.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/15"
+    },
+    {
+      "case": "TRACK-09",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "cycles-lifecycle F11, reproduced two ways: pasting the same id into two teams' cycles with backticks passes clean; pasting it with a stale `blocked:` reference present gets diagnosed as 'the block no longer applies' - the wrong fix, since the id exists twice, not zero times. Related: F12 found adding a column at the front (rather than appending one) of the intents table also silently dropped rows from the count. Fixed: ids in backticks or bold, and column position instead of column name, are both now resolved correctly.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/15"
+    },
+    {
+      "case": "TRACK-10",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed independently by two agents on the same underlying bug: cycles-lifecycle F8 found the only four declared statuses (todo/doing/blocked/done) have no split slot, so the fixture invented a fifth ('split -> IMPL-3') outside the enum with nothing checking the vocabulary; timeline F3 reproduced the consequence directly - the staleness check tests status === \"done\" only, so a finished-but-split item is never recognized as done, and the guard actively certified a block on finished work as 'live' (1 live block(s), exit 0). Fixed: a `split:<id>` status value was added.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/15"
+    },
+    {
+      "case": "TRACK-11",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "timeline F4 and F5 together, both severe: F4 found the cold-start branch as written required inventing exactly the size-to-duration mapping ADR-029 names as its own rejected option; F5 found work-cycles/spec.md's acceptance criterion unconditionally forbids a date below three closed cycles with no size condition, directly contradicting the skill and method doc's instruction to give a dated size-based estimate in that exact state - the pristine fixture is precisely the acceptance criterion's named state. Fixed: resolved in ADR-029's favor - a cold start may produce a size-based shape, never a date.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/15"
+    },
+    {
+      "case": "TRACK-12",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed independently by two agents: cycles-lifecycle F4 found the actual row schema (id/title/cap/persona/owner/assignee/size/why/DoD/status) has no source column at all, and the doc's own flagship example item doesn't fit any of the ledger's four declared source categories either; skills-write F17 independently found the same gap and the same undocumented workaround (folding provenance into `why`) reproduced by a different agent filing different rows. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "TRACK-13",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "cycles-lifecycle F9: the rendered board shows exactly three lanes; backlog.md declares a fourth status, blocked, that takes a reference to what blocks it - but a blocked item has no lane: it is either dropped or crammed into todo, so the one fact worth seeing ('blocked, by X') has nowhere to render. Everything else about the board IS derivable from stored columns, a genuine positive noted alongside the gap. This is the concrete mechanical shape of what PR15's new cycle-read-back skill (fixing TRACK-08's sibling finding, cycles-lifecycle F1) inherited - not confirmed fixed as a rendering detail, so left open.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "TRACK-14",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "cycles-lifecycle F10: the prescribed command has no pathspec, author filter, or team scoping. Reproduced: the fixture recorded 'Commits in the window: 4' and '6' for two teams' overlapping windows by hand, while the command as written actually returns 0 for both (all 9 real commits fell outside both windows) - it also fails silently to 0 rather than flagging empty history. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "TRACK-15",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "cycles-lifecycle F13: all three violated simultaneously and both guards still reported full compliance. Separately noted: an assignee missing on a cycle row IS a deliberately unenforced gap per ADR-030's own Confirmation section - that half is not a defect; the pool-row-with-assignee half is not stated anywhere as unenforced, so it reads as an oversight rather than a choice. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "TRACK-16",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "cycles-lifecycle F16: the only precedent for an internal item, \"(infra)\", exists solely inside a commented-out template row, never in prose, and nothing checks backlog personas at all - so the escape hatch a careful author might use is invisible to anyone who does not read the raw template file. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "TRACK-17",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "cycles-lifecycle F17: add-to-backlog documents type-scoped ids; the product's own worked examples throughout the method docs use capability-scoped ids; backlog.md itself mixes both in one sentence. The id is the only thing joining the pool to cycles, so the ambiguity is load-bearing, not cosmetic. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "TRACK-18",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "cycles-lifecycle F18, reproduced: 'OK - 10 intent(s) across 4 place(s), each in exactly one', exit 0, with both rows carrying an identical title cell. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "TRACK-19",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed independently by three agents on the same underlying gap: full-loop F3 found spec-impact named as the feeder for 'Missing decisions' with a 35-line SKILL.md that never mentions the backlog and whose only output is a chat report - the highest-value finding of that lap survived only because a separate method doc happened to prime the agent to file it by hand; skills-write F6 found the identical pattern for spec-update independently; add-anytime F4 found the trigger is documented only on the receiving skill's page (add-to-backlog's), so an agent executing spec-update alone, never having loaded add-to-backlog, produces no backlog item at all, with no guard flagging the omission. Fixed: spec-impact and spec-update both now route through add-to-backlog.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/14"
+    },
+    {
+      "case": "DEC-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-write F2, reproduced: the fixture already had a BDR-004 (Accepted, cited by a live spec) missing from the index (which listed only 001-003); filing a second BDR-004 and running every guard gave self-verify OK drift 0 (55/55), spec-structure OK, spec-guard --audit OK, cycle-guard OK - the standard called the repo compliant with two records sharing a number, despite adr-write itself saying this exact collision 'is a real collision this project has hit.' Independently confirmed from the other direction by full-loop F10 (an Accepted BDR retiring a whole capability absent from the index) and refinement-bridge F14 (writing BDR-005 by the book produced an index reading 001,002,003,005 - a gap in the gapless promise). Fixed: decision-records-check.mjs now catches a duplicate id, a file with no index entry, or an index entry with no file, wired into every adopter's self-verify.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/14"
+    },
+    {
+      "case": "DEC-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-write F3: `grep -rn \"idea-write\" standard/.claude/skills/` returns only idea-write's own name/heading; adr-write and bdr-write both say 'it is an idea (docs/ideas/)' - a folder, not a skill reference - and discovery-digest/add-to-backlog never name it either. Not on the 2026-08-03 known-gaps list because idea-write postdates that round's wave. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DEC-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-write F18, reproduced: graduating a fixture idea that changes shift-swap-request's approval logic produced a new specs/swap-approval-rules/ directory instead of an edit to the existing spec, and R11's capability-map entry was never created by either skill - the author had to add it by hand for spec-guard --audit --block to pass. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DEC-08",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-maintain F6, described in the report as 'the skill's entire reason to exist': the ripple checklist bullet says 'ADRs' only, despite SPEC.md and the same skill elsewhere distinguishing ADRs from BDRs. Executed literally on a change forbidden by an Accepted BDR (auto-approval, ruled out by BDR-001-manager-is-the-primary-persona.md), the output was 'ADR impact: none' - never opening the one document that answers the question. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DEC-09",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-maintain F7: the same test change falsified fixture/docs/runbooks/swap-approval-queue.md, docs/personas.md:49-53, docs/PRODUCT.md:39, and docs/backlog.md:101 (IMPL-3), and none was flagged - described as 'a real adopter hits it early.' Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DEC-10",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-maintain F9, described as 'the gap that shipped with' the very retirement-aware skills that created it: spec-update instructs stopping before editing any spec with Status: retired; spec-reconcile's no-silent-drift rule requires resolving cross-spec contradictions; spec-impact's retired check is scoped only to the primary capability, not ripple targets. No third instruction exists for 'correct a now-false statement in a retired spec' - reproduced against the fixture's own retired shift-notifications spec, whose data-model is now factually wrong under an unrelated later change. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DEC-11",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-write F16: no generator, skill, or doc fills `{{AUTHOR}}`; self-verify.mjs's placeholder list omits docs/decision-records/ entirely. Three of the fixture's four BDRs list 'Manager Priya' (a persona, not a person) as Author, since nothing catches an unfilled or wrongly-filled record author. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DISC-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-write F9, executed against a real awkward handover: a mail thread where two participants contradict each other (one verifiably wrong against the spec's own open marker) was filed as one entry, and the Contradictions table stayed empty - the author had to fill the rows and note the conflict by hand, describing both as 'my invention, not the skill's instruction.' This is the same underlying gap logged in the 2026-08-03 round as DISC-01 (same-handover cross-diff) - not a duplicate case, since DISC-01 is already recorded as fixed by PR #8 in the prior round; this reproduction post-dates that fix and shows the same-handover gap persisting for the specific two-people-in-one-thread shape. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DISC-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-write F10: the skill instructs building the README dossier by hand rather than from the shipped template; the template's own `| Date | Source | State |` table and specific 'Last reconciled' stamp form are parsed by no script at all. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DISC-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed independently by two agents: full-loop F8 found discovery/dossier/'Last reconciled' mention counts of 0 across spec-update, spec-impact, spec-reconcile, spec-tasks and spec-implement - the documented route for changing an existing capability (impact -> update) never advances the stamp on either end, so old material is re-raised as fresh material forever on that path; add-anytime F3 independently reproduced the exact consequence end to end (README.md still said 'Last reconciled: never', entry still 'new', contradiction row still listed unresolved, even though the spec was changed in the same session to resolve it). Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "LOOP-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "full-loop F1, described as 'the mechanism the whole multi-lap claim rests on': dev-work.md says the revisit-when field is what makes a decision record more than an opinion; grep across all 20 skills found exactly two hits, both writers (adr-write, bdr-write) - zero readers, and no script reads 'revisit' at all. Reproduced live across two laps: a BDR's revisit trigger fired only because the same agent remembered writing it a lap earlier; discovery-digest's own instructions only diff new material against earlier discovery entries, never against accepted records' revisit triggers. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "LOOP-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed independently by two agents on the same underlying gap: full-loop F9 found .gitignore appears nowhere in the manifest, SPEC.md, method docs, or AGENTS.md, and the fixture reported 100% compliant with node_modules/ tracked - a 4-line pnpm cache-state diff rode unasked into a real PR, caught only because a human-equivalent read the diff, not by any guard; add-anytime F7 independently confirmed the mechanical consequence (a `**/swap/**` glob compiles to `^.*\\/swap\\/.*$`, verified to match `node_modules/pkg/swap/a.js`), meaning a dependency bump could trip the blocking coupling guard for a capability nobody touched. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "LOOP-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "full-loop F6: the shipped manifest's top-level keys have no profile field at all, so a real aligned fixture reporting drift 0/100%/compliant silently defaults to 'scale', contradicting the pitch that a solo repo carries core and nothing else, and making SPEC.md's own (scale)-scoping of R11 dead text. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "UPD-02",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-maintain F1, reproduced exactly: manifest-keyed diff output was ADDED: 0, REMOVED: 0, CHANGED: 52 entries (since field only); the real delta via git diff --stat was idea-write/SKILL.md (new, 88 lines), 7 skill procedure changes, 3 guard bug fixes, plus SPEC.md/template/AGENTS.md/conventions.md/backlog.md/the clarify-gate script. Not on the 2026-08-03 known-gaps list (which covers the changelog, a different half of the same step). Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "UPD-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-maintain F2, reproduced as a real 'sham update': self-verify reported 'OK - drift 0 - 100% adopted (55/55), compliant with the standard' while SPEC.md was still the prior version's (a disclosure section absent) and the skill count was 19, not 20 - because self-verify.mjs checks existsSync/heading-substring/guard-exit-codes only, never content against the target version. This is the same class of defect GATE-31 fixed for a within-version content check; whether the same fix also closes this specific across-version sham-update case was not independently re-verified this round, so left open rather than assumed closed.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "UPD-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-maintain F3, reproduced at both released versions: recording a realistic exception at 1.0.12 gave 'drift 1 - 98% adopted (54/55)'; `git show` at both the 1.0.12 commit and the 1.0.13 release commit found zero occurrences of 'exception' in self-verify.mjs. The contradiction (step 4 instructs recording deviations, step 6 demands drift 0, and no released version can satisfy both) is 'live in every repo aligned at 1.0.12', per the report. The exceptions mechanism the general drift work fixed this round (GATE-30/31) ships under this same round's `## Unreleased` heading, so the specific already-released-version gap this case names is unchanged until the next tagged release.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "UPD-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-maintain F10, reproduced against a real merge-class file the release actually changed: docs/conventions.md (with a planted local paragraph), AGENTS.md and docs/backlog.md (fill-from-repo) were all skipped silently under the current step-3 wording, leaving upstream additions unapplied while self-verify stayed unaffected - and this is the shape of 29 of 44 manifest `files` entries (merge/fill-from-repo adaptRules), not an edge case. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "UPD-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-maintain F12: neither the skill, AGENTS.md, nor the adopter's watch-issue text contains a fetch step for obtaining 'the standard's checkout' - the only documented fetch command lives in the standard's own README, distinct from the known changelog gap. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "UPD-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "skills-maintain F13: `git tag | wc -l` returns 0 for node; ADAPTING.md/SHIPPED.md/DECISIONS.md headings are topical, not version-keyed. Could not be exercised further in the report since the test fixture's node version happened to match with zero real delta. Independently, node-stack F5 found the stack manifest's own version field is written and carried but read, noted, or printed by nothing - so even a real Layer-2 update leaves no record of what version was moved from. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "TRIG-02",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "auto-trigger F2: CLAUDE.md linked AGENTS.md with a markdown link rather than an import, so the 69 lines producing the actual 'ask and volunteer' behaviour were behind a voluntary read; what was loaded was a weaker paraphrase with no instruction to ask, offer, or volunteer at all. Fixed: CLAUDE.md now imports AGENTS.md with @AGENTS.md.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/18"
+    },
+    {
+      "case": "TRIG-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "auto-trigger F1, reproduced: baseline 'drift 3 - 94% adopted (46/49)'; after deleting the entire AGENTS.md section, unchanged; after removing 7 skills including spec-clarify, unchanged, still '46/49'. Fixed: self-verify now checks each shipped skill name is actually present inside .claude/skills (via the same content-hash map added for GATE-31's fix), and the two AGENTS.md sections producing unprompted behaviour are now tracked as manifest `sections` entries.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/18"
+    },
+    {
+      "case": "TRIG-04b",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "auto-trigger F5/F6, part of a 20-utterance blind-routing comparison scoring 8 agree / 7 disagree / 2 partial / 2 true negatives - every disagreement runs the same direction, the docs promising a route the descriptions will not produce. This was the worst-ranked bypass in the comparison: a defect mentioned in passing reached no skill at all, because no description mentioned a bug and taxonomy.md had no defect row. Fixed: both now do, and add-to-backlog's own description quotes this exact trigger phrase.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/18"
+    },
+    {
+      "case": "TRIG-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "auto-trigger F4, confirmed as one of six method docs never delivered to an adopting repo (the same defect the ledger's section 4 names against dev-work/lead-work/product-work/tracking-work/working-language). Fixed: all six added to standard.manifest.json's references[], in the shape of the existing fourteen.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/18"
+    },
+    {
+      "case": "STACK-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "node-stack F3, reproduced both ways: with pnpm off PATH, 'FAIL guard stack-check-all failed: pnpm: command not found' -> drift 2 on a structurally unchanged repo; with pnpm present but no node_modules, self-verify installed 670 MB of dependencies ('Packages: +376... Done in 3.2s') as a side effect. Contradicts core's own R16 ('Node runtime MUST be present' for dependency-free scripts), self-verify's own 'no dependencies (Node built-ins only)' claim, and prerequisites.md's stated design goal ('scores the repo's structure, not the machine it runs on').",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "STACK-04",
+      "target": "fixture:test-greenfield-node",
+      "verdict": "pass",
+      "evidence": "The stack-side half of this defect (an opaque failure with no prerequisite message) is fixed: the stack-check-all guard now checks for pnpm first and fails with an explicit prerequisite message. The self-verify-side half (drift indistinguishable from a lint failure, and the 670 MB side-effect install) is a core-repo change and remains open.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/node/pull/1"
+    },
+    {
+      "case": "STACK-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "node-stack F5, reproduced: stack version set to 0.1.0 against a shipped 0.3.1 produced 'drift 0 - 100% adopted (49/49)', no note at all. A real reference repo (test-greenfield-node) has .standards-version recording only the core version despite carrying a different stack version, and the weekly standards-update-watch workflow hardcodes only the core repo slug with no stack awareness. Compounds with STACK-04's own fix boundary: after a stack update there is still no record of what version was moved from.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "STACK-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "node-stack F6, reproduced against two real public repositories: honojs/hono (bun-managed) failed twice, first on the bun packageManager pin, then with no lockfile found - bun and Deno are not covered by the row at all; calcom/cal.com (yarn-berry) failed on an unparseable nested selector and unsupported `patch:` protocol resolutions, and the doc's 'workspaces map 1:1' claim also understates cal.com's real glob overlaps. Fixed: the real working paths (delete-and-reinstall for bun, dropping `packageManager` for yarn) are now documented, plus an explicit note that yarn's `resolutions` field is silently ignored, not translated to `pnpm.overrides`.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/node/pull/1"
+    },
+    {
+      "case": "STACK-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "node-stack F7: grep -c capability-map greenfield.md = 0 vs onboard.md = 7. A literal greenfield walk hits a FAIL for the missing file exactly at the step the doc calls 'genuinely wrong'; secondarily, greenfield also sends the author to a nonexistent specs/README.md (independently confirmed as greenfield-core F5). Partially addressed by PR13's capability-map-on-greenfield fix (spec-specify now registers a capability at mint time) - whether the exit-gate walk itself now names the file explicitly was not re-verified this round, so left open rather than assumed closed.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "STACK-08",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "node-stack F8, confirmed partially (the Docker-daemon half could not be cleared in the reporting agent's own sandbox, but the missing bootstrap step in the script chain is confirmed present, not attributable to the test environment): the test:all chain (unit && integration && e2e) omits the Docker bootstrap step integration tests need, and the README omits the manual Playwright-install step e2e needs - unlike CI, which gets both right. A pristine clone + install run fails test:integration with ECONNREFUSED and fails test:e2e with a missing browser binary. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SHAPE-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-review F1/F2, described as severe: LibreOffice's only PR-triggered workflow auto-closes every PR; postgres and openjdk run GitHub Actions with no pull_request trigger by design, stated in a code comment for postgres. The manifest's CI entry passes on file existence, so drift falls by one while the gate never runs - and a repo with a 2-line stub CONTRIBUTING.md/SECURITY.md scored a higher adopted percentage (25% vs 12%) than one with none, on identical real drift. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SHAPE-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-review F4: `.jcheck/conf` (openjdk) and `.gitreview` (qtbase, LibreOffice) declare role, reviewer count, issue tracker and review host in a few lines each; zero of the 8 passes open them. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SHAPE-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-review F7, independently corroborated by postgres's own written release-compatibility policy: qtbase's compat shim files hold real function bodies with no header, the previous release's binary as the source of truth; spec-reconcile as written would document them as current behaviour. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SHAPE-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "The single most-repeated finding of this round across five independent confirmations: bf-monorepo F9 (dotnet's servicing branches with backport rules), bf-review F6 (FFmpeg's Changelog already uses an Unreleased-equivalent idea per version, independent validation the R18 mechanism is right for one line - the defect is one heading for N concurrent lines, not the mechanism itself), bf-critical F4, bf-wave6-backfill (PowerShell's changelog directory, opentofu/erlang's own release composition), and bf-shapes F9 (odoo's 98 branches, 4 supported lines, a fourth independent confirmation). Not fixed this round - named by the ledger as a strong candidate for a dedicated design pass, since introducing release-branch vocabulary is a bigger call than a mechanical fix.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SHAPE-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-review F8: the security baseline has no fuzzing axis at all - zero hits for 'fuzz' anywhere in the standard, despite FFmpeg's primary security control being six in-tree fuzz targets. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SHAPE-08",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-shapes F1, reproduced twice with scripts on a real repo (microsoft/PowerToys) that ships exactly this .gitattributes line: all 10 shipped .sh guard scripts check out CRLF and then exit 127 with empty stdout - not a deny message - against a real destructive command. No .gitattributes ships with the standard at all, so a Windows-only team's safety hooks are silently absent, not merely inconvenient. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SHAPE-09",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "wave-9 shapes F2/F3 (bf-shapes.md's Windows-focused wave): R16 names only the Node runtime cost and omits jq, whose absence 'denies every Bash command' per the agent's own testing; the R19 settings baseline is entirely a macOS/Linux command vocabulary with zero Windows equivalents (sudo, diskutil, launchctl, crontab). Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SHAPE-10",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "partial",
+      "evidence": "wave-9 shapes F5, logged as a gap rather than built this round in the original triage. This round's own content-exception work (GATE-30/GATE-31) added a `/**` subtree-suffix scope to content exceptions specifically - closing the file/section half of this gap for content, but not extending to a per-locale lint-rule waiver of the kind tldr-pages actually needs (a named check waived on a named subtree, not a whole file/section waived). Marked partial rather than fixed or open.",
+      "at": "2026-08-04",
+      "fix": "https://github.com/repository-standards/core/pull/16"
+    },
+    {
+      "case": "SHAPE-12",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "partial",
+      "evidence": "Two opposite results from the same wave, both worth recording: bf-governance's 'Held' section confirmed the guidance worked correctly on kafka's Gradle modules and kubernetes' 33 staging modules; bf-closing F3 (tensorflow) found the opposite - the repo's build graph (BUILD for Bazel, a separately-maintained CMakeLists.txt for embedded cross-compiles) is a second, independently-authored source of truth about dependencies that a directory-boundary capability map cannot see, and R4's 'a fact has one home' has no declared-restatement mechanism for a build graph. Marked partial: the guidance holds for the common case and has a real, demonstrated gap for the build-graph case.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SHAPE-13",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-closing F3 (tensorflow/lite) and F9 (nimletter) independently surfaced the same shape from opposite directions - two authored descriptions of one dependency/schema fact, neither a straightforward code/spec pair. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SHAPE-14",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Three independent confirmations of the same class of gap, each a distinct sub-shape: bf-closing F2 (i7/counterfeit-monkey - the decision checklist's ADR/BDR split has no third axis for authorial/craft decisions, the actual re-litigated forks in a content repo), bf-closing F7 (alpinelinux/aports - ~9,500 already-atomized single-file packages share one repo, and the APKBUILD is itself a more exact buildable spec than any prose could be), bf-notcode F1 (w3c/csswg-drafts - the normative artefact lives exactly where spec-guard hard-excludes 'code', so the coupling guard is structurally inert). Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SHAPE-15",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-notcode F3 (google/fonts): canonical facts (font version, licence string) live inside the TTF binary name table; facts-check.mjs's home mechanisms are all utf8-text-only, so it cannot bind the repo's highest-risk restatement at all, and no security axis exists for artefacts a repo merely publishes rather than executes. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SEC-02",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-critical F3: R3/R15/R11 followed literally would publish an unfixed vulnerability; exceptions has no kind for it. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SEC-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-critical F5: a chartered-committee vote with quorum has nowhere to be recorded as what made the decision valid. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "SEC-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-critical F8: no tier shape exists for manual/hardware/community verification, and the only escape hatch (the behavioral tier) is the one onboard.md forbids using here. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "GREEN-01",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "greenfield-core F1, reproduced: check-spec-clarified.sh is referenced nowhere in scripts/ or .github/ except its own usage comment; setup-plan.sh and setup-tasks.sh never call it. A spec with no ## Clarifications section and two open markers got plan.md copied and tasks setup completed successfully, despite the gate itself correctly reporting FAIL when invoked directly - independently confirmed by full-loop F7's structural half. Distinct from the marker-syntax bug GATE-17 fixed - this is that nothing invokes the (now-fixed) script at all. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "GREEN-02",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "greenfield-core F2, measured with exact numbers for the first time: raw degit gave 'drift 3 - 94% adopted (46/49)'; after two declarative fixes, 'drift 1 - 98% (40/41)'; after adding an empty capability-map.json, 'drift 0 - 100% adopted (41/41)' with spec-guard --audit reporting 'OK (0 capability specs, all mapped)' - the placeholder skeleton files produce WARN lines that do not count toward drift by design. Described in the report as landing directly on the product's headline claim ('compliance is a number rather than an opinion'). Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "GREEN-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "greenfield-core F3, reproduced against the script's own regex: a per-file raw/after-stripCode table showed SECURITY.md, docs/personas.md and docs/PRINCIPLES.md all false after stripCode; a real run emitted exactly 5 WARN fill lines, none for these three. Named for the first time. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "GREEN-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "greenfield-core F5: the only specs/README.md anywhere is core's own internal index, not part of the payload; the real guide is docs/tree/specs.md, never named by greenfield. A different file from the already-fixed defect (docs/self-verify.md), and on the greenfield critical path. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "GREEN-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "greenfield-core F6: found live in the tool's own runtime output (standard/scripts/self-verify.mjs:183) and once more in align-to-standards/SKILL.md:295 - three separate live occurrences of the same broken reference, one of them emitted by the tool itself on every run. Same class as an already-fixed defect from the 2026-08-03 round, but these three specific instances are new. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "GREEN-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "greenfield-core F7, reproduced: the WARN fired immediately after following spec-specify's own documented step, about a file the standard's own skill had just told the author to create. Distinct from the already-fixed scaffolding-cleanup gap, which covers only plan.md/tasks.md - reconcile does handle those two correctly. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "GREEN-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "greenfield-core F12: the intake question presupposes a named technology with no legal answer for genuinely undecided; the no-match fallback document has no template anywhere, no manifest entry, and is described only as 'shaped like the node stack's DECISIONS' - a file in a different repo the core-only adopter was never told to clone. Reproduced: the document was skipped entirely and self-verify still reported drift 0. Independently, this is the mechanical shape wave-9 shapes F7/F8 found from the opposite direction (the honest-miss path's only deliverable exists in no manifest entry, no SPEC rule, no taxonomy row). Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DOC-12",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "promise-inventory B1, reproduced live against the real deployed site: four places said '1.0.12', one place said '1.0.13', matching the real VERSION. Both guards designed to catch this reported green because site-check.mjs only asserts the current version appears somewhere on the page, never that no other version also appears, and facts.json declares only one pattern for that file - so the check that exists cannot see this specific failure mode. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DOC-13",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "promise-inventory B2: docs/faq.md:117, README.md:67, llms.txt:22, site/llms.txt:22 all state the standard is at 1.0.0; it is at 1.0.13 - none of the four is a surface facts-check currently covers. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DOC-14",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "promise-inventory B5/F17: spec-guard.yml's `on:` block is `pull_request:` only. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DOC-15",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "promise-inventory B6/F7: the guidance shown at the exact moment every Bash command is denied points nowhere real, while the same file's two other references correctly use the full URL - so the fix, once found, is a one-line copy of a pattern already present two lines away. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DOC-16",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "showcase-gap's headline finding, per the ledger: the outcome blocks claim 9/6/3 commits; the prescribed command returns 2/1/1 (25 commits in the whole repo). A commit in the showcase's own history, titled to state that a previous round's claimed commit counts (63/51/88) did not match the history either, replaced them with these equally unchecked numbers - so this is a documented, repeated self-correction that itself was never verified. All nine external URLs in the showcase 404 after the org split. Everything else in the timeline reconciles - 14 other figures were recomputed correctly, a genuine positive worth stating alongside the failure. Not fixed this round; the ledger's own recommendation (implement only the scheduling capability, leave notifications/invoicing deliberately unimplemented, and use that partial state to demo the audit honestly) is logged but not executed.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "DOC-17",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Carried forward from the 2026-08-03 round's DOC-05, re-confirmed as still unresolved by this round's auto-trigger F4/F9 work on the same files (taxonomy.md gaining a defect row and checklist.md's examples being partially addressed by this round's PR13/PR18 changes to skill descriptions and taxonomy content, without the underlying link-from-template gap itself being closed). Marked failing, no new fix.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "INTAKE-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed independently on three separate real repositories, the clearest repeated pattern of the whole round: bf-governance F3 (sqlite/sqlite's AGENTS.md:18, 'SQLite does not accept agentic code' - self-verify still reports 'PASS file AGENTS.md' on the hostile content); bf-language F7 (alibaba/arthas ships a Chinese AGENTS.md that forbids CI and orders all security design deleted, invisible to the same check); bf-wave6-backfill F8, severe (OpenTofu's AGENTS.md itself is an outright LLM-contribution ban for licence-contamination reasons, invisible to a scan that only checks CONTRIBUTING.md/named policy files). Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "INTAKE-08",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-wave6-backfill F10, severe: a third AI-policy shape (ban / conditional-allow / mandatory-disclosure) with only two branches built into the standard's red-flag detection. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "INTAKE-09",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Confirmed as INTAKE-05 in the 2026-08-03 round (fixed, PR #11 per that round's own record) - not re-opened. This case is retained only to record that no repository in this round's 71 new targets reproduced a fresh instance of the fixed defect, a genuine held result worth stating rather than silently omitting; see the README's coverage notes.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "ADOPT-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-monorepo (zephyr): the standard has no per-workspace adoption unit for a repo whose real dependency graph is 79 sibling repos wide. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "ADOPT-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "bf-shapes F8 (deno): stack detection has no evidence-quality rule at all - a raw file-count signal treats hundreds of test-fixture files the same as one real manifest. Not fixed this round.",
+      "at": "2026-08-04"
+    },
+    {
+      "case": "ADOPT-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "wave-9 shapes F7/F8 (denoland/deno's honest-miss assessment), and independently reproduced from the greenfield side by greenfield-core F12: the deliverable does not mechanically exist despite being documented as the answer. Not fixed this round.",
+      "at": "2026-08-04"
+    }
+  ]
+}
