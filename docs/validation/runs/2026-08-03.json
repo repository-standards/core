@@ -1,0 +1,542 @@
+{
+  "$about": "Observations for the 2026-08-03 round, backfilled on 2026-08-04 from research/testing-log-2026-08-03.md. Every 'fix' link was independently re-verified via `gh pr view <n> -R repository-standards/core --json number,title,state,mergedAt,body` on 2026-08-04, not copied from the log. PR #10 is confirmed CLOSED (not merged) per the log's own account. One observation (case STACK-01) is a real, verified mismatch: the log attributes its fix to PR #1, but PR #1's actual diff does not contain it - see the evidence field and the codify report.",
+  "observations": [
+    {
+      "case": "GATE-01",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "self-verify.mjs re-run on the aligned test repo after PR #1's manifest fix reported drift 0, unchanged, matching the prior run - cited in PR #1's own test plan ('Re-ran self-verify.mjs with the corrected manifest against an existing passing test repo - drift 0, 55/55, unchanged').",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "GATE-02",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Held throughout the session - PR #8's own test plan confirms the guard still catches a genuinely moved-without-spec change after the deletion fix landed ('Confirmed the guard still catches a genuinely duplicated row' is the cycle-guard analogue; spec-guard's basic move-without-spec case is unchanged by the deletion fix and continued to fire correctly in every scenario that touched it, e.g. scenario 4's cross-capability check in Track B).",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "GATE-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Reproduced against a real capability deletion during Track B scenario 7 (vendor platform replaces in-house shift reminders): spec-guard.mjs reported OK with the capability's code fully removed and the spec untouched. Root cause confirmed by reading the script: --diff-filter=ACMR omits D (deleted). Verified fixed: standard/scripts/spec-guard.mjs:106-110 in the current tree reads --diff-filter=ACDMR.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/8"
+    },
+    {
+      "case": "GATE-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Reproduced independently by two different background agents against the same fixture: an empty `## Clarifications` heading plus three unbracketed CLARIFICATION-N bullets flipped the gate from FAIL to PASS with every real question still open. Verified fixed: standard/scripts/spec/check-spec-clarified.sh now greps `^[[:space:]]*-[[:space:]]*\\*\\*(CLARIFICATION|DECISION|INPUT|ASSET)-[0-9]+` in addition to the literal `[NEEDS ` string.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/9"
+    },
+    {
+      "case": "GATE-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Verified end to end with a synthetic manifest: a required-file failure read as permanent drift even with a matching `exceptions` entry present, because self-verify.mjs never read the `exceptions` array at all. Verified fixed: self-verify.mjs now checks each required files/sections failure against exceptions first (patched: excepted, drift 0).",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/9"
+    },
+    {
+      "case": "GATE-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Track B scenario 8: cycle-guard.mjs correctly held the one-place invariant (6 intents across 3 places, each in exactly one) across the pool plus both the old closed cycle and the new one in the same pass - the scenario found no defect, logged as a genuine positive result.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "GATE-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Track B scenario 3 (extending a shipped feature): the buildable tier's required `## Data contracts` / `## Interface contracts` sections were retrofitted here and were never flagged as missing when the spec first shipped - confirmed unenforced by any script, still open as of this log.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "GATE-08",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Opened a real cycle, closed it following cycle-close/SKILL.md's own documented output shape; cycle-guard.mjs reported every intent in the close table as duplicated - the exact 'copied, not moved' failure the guard exists to catch - on a cycle closed correctly. Root cause: the guard scanned the whole file for id-shaped rows with no notion of section. Verified fixed: matching is now scoped to the `## Intents` section, and the guard still catches a genuinely duplicated row and a stale `blocked:` reference.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/2"
+    },
+    {
+      "case": "GATE-09",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Reproduced the false pass with the old template wording, confirmed the fix makes the gate correctly fail on genuinely open markers. Verified fixed: standard/specs/capability-spec.template.md now spells out the exact bracket form for all four marker types.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/1"
+    },
+    {
+      "case": "GATE-10",
+      "target": "repo:nestjs/nest",
+      "verdict": "fail",
+      "evidence": "nestjs/nest's real gate is CircleCI, not GitHub Actions - the workflow read as a mandate to adopt GitHub Actions specifically, confirmed by reading the SKILL.md guidance available at the time.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/1"
+    },
+    {
+      "case": "GATE-10",
+      "target": "repo:rails/rails",
+      "verdict": "fail",
+      "evidence": "rails/rails's real CI is Buildkite - same gap, independently confirmed.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/1"
+    },
+    {
+      "case": "GATE-11",
+      "target": "repo:bazelbuild/bazel",
+      "verdict": "fail",
+      "evidence": "Bazel's real capability's code routinely lives in a satellite rules_* repo this repo does not own - capability-map.json has no vocabulary for that. Logged as a known gap, not fixed this session.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "GATE-12",
+      "target": "repo:flutter/flutter",
+      "verdict": "fail",
+      "evidence": "self-verify.mjs hardcodes a single stack.manifest.json filename; flutter/flutter's real Dart+native engine split needs two simultaneous Layer-2 stacks and has no mechanical way to register both, even though the 1.0.13 prose fix says to 'name every stack found.' Confirmed by reading the script directly, not just its prose. This is a contract change (R20 names stack.manifest.json as the filename), logged for the owner rather than redesigned unilaterally.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "GATE-13",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "not-applicable",
+      "evidence": "Deliberate scope decision, not an oversight: a guard failing is a live check, judged riskier to except than a missing declarative file/section. Noted in the log specifically so it reads as a choice if it resurfaces, not treated as an open defect.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "GATE-14",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Track B scenario 4: capability-map.json's independent-per-capability coupling check correctly required both specs touched when the code spanned both globs - no defect found.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "SPEC-01",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Near-miss caught mid Track-B-scenario-2 (not itself a scored defect in the 36): a duplicated `## Clarifications` heading was added instead of a new `### Session` under the existing one, and spec-structure.mjs did not flag it. Logged as a candidate mechanical check, not fixed - still open as of this log.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "SPEC-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Found during round-3 brownfield testing: nothing previously said an open marker lives in exactly one place, and echoing it in both its functional section and Open Questions doubled the gate's reported count.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/3"
+    },
+    {
+      "case": "SPEC-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Found live in the promised-prompt audit: check-prerequisites.sh --paths-only resolves FEATURE_SPEC purely from the persisted pointer file, never from the capability name in $ARGUMENTS - 'plan shift-notifications' while feature.json still pointed at shift-swap-request would silently gate/plan the wrong spec, no mismatch warning. Verified fixed: all three skills now say to confirm the resolved feature matches what was asked before proceeding.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/11"
+    },
+    {
+      "case": "SPEC-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Track B scenario 7: capability-spec.template.md had no terminal Status for a capability that stops being built. Verified fixed: `retired` added, with the convention that removing the capability-map.json entry would make --audit misread the spec directory as an unmapped orphan, so it is left in place.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/8"
+    },
+    {
+      "case": "SPEC-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "spec-impact/spec-update/discovery-digest never checked a capability's retired status before proceeding - this closed the loop the retired-status fix (PR #8) opened.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/9"
+    },
+    {
+      "case": "SPEC-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Track B scenario 3: routed correctly through spec-impact (no new capability, no ADR) then spec-update.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "SPEC-08",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Track B scenario 5: spec-reconcile caught a retry-logic claim the spec made that the reference implementation never had; the spec was corrected to match real, shipped behavior rather than inventing an undecided policy.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "SPEC-10",
+      "target": "repo:PowerShell/PowerShell",
+      "verdict": "fail",
+      "evidence": "Found on PowerShell/PowerShell (wave 6): it never ports changes back to the closed-source Windows PowerShell 5.1, a predecessor entirely absent from this git tree. `retired` as shipped covers a capability that existed and stopped inside this repo's own specs - narrower and different. Logged, not fixed, low priority.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "TRACK-01",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "backlog.md's escape hatches did not cover an item whose target capability retired before its DoD was met - a DoD that can now never be satisfied. Added a corner-case bullet.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/8"
+    },
+    {
+      "case": "TRACK-02",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Track B scenario 8: split per ADR-029 into IMPL-2 (happy path, done) and a new IMPL-3 (edge cases, returned to the pool) rather than re-sized - no defect found.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "TRACK-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "timeline-update never said whether its three-closed-cycles threshold is per-team or global - a repo with two teams at 1-2 cycles each could read as 'at 3, blend them.'",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/9"
+    },
+    {
+      "case": "TRACK-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "PR #2's own test plan: 'Confirmed the guard still catches a genuinely duplicated row (copied instead of moved between the pool and a cycle)' and 'Confirmed the guard still catches a stale blocked: reference.'",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "DISC-01",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Track B scenario 6's documented procedure ('diff against every earlier entry') worked when two contradicting sources arrived in separate sessions, but the skill never said what to do when both arrive in the same handover pasted together - could silently skip the cross-diff.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/8"
+    },
+    {
+      "case": "DISC-02",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Track B scenario 1: discovery-digest correctly routed to spec-impact -> spec-update when a spec already existed, and spec-impact correctly judged no new decision record was needed.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "DISC-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Track B scenario 2: confirmed the superseding-record lifecycle end to end; the gate is not a one-way ratchet.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "DISC-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Track B scenario 6 (the sequential-filing half): the documented procedure worked correctly for sources arriving in separate sessions - the near-miss was specifically the same-handover case (DISC-01), not this one.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "DEC-01",
+      "target": "repo:pandas-dev/pandas",
+      "verdict": "fail",
+      "evidence": "pandas-dev/pandas's decision catalog had no category for numerical/dtype-semantics decisions.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/3"
+    },
+    {
+      "case": "DEC-02",
+      "target": "repo:metabase/metabase",
+      "verdict": "fail",
+      "evidence": "metabase/metabase's AGPL-core + commercial-enterprise/ split showed a real capability whose code can straddle two licenses, invisible to the coupling guard as shipped.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/11"
+    },
+    {
+      "case": "DEC-03",
+      "target": "repo:rust-lang/rust",
+      "verdict": "fail",
+      "evidence": "rust-lang/rust's RFC+MCP system is live, formal, and wired into its actual merge gate - richer than ADR/BDR, not a legacy stand-in for it. onboard.md only offers filing it as discovery material with a retroactive ADR. Logged, not built this pass.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "DEC-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "adr-write and bdr-write both named docs/ideas/ as where a not-yet-decided idea belongs; nothing among the (then) 19 skills ever wrote to it - a user following the documented routing hit a dead end that looked, from the outside, like a working system. Verified fixed: new idea-write skill is the 20th, driving idea -> exploring -> approved|parked|dropped -> graduated; R14 now names graduated.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/11"
+    },
+    {
+      "case": "INTAKE-01",
+      "target": "repo:jwilder/docker-squash",
+      "verdict": "fail",
+      "evidence": "Confirmed lifecycle signal (archived, 'EOL' commit) sat unread in the repo's own README; default intake would have interviewed it anyway.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/4"
+    },
+    {
+      "case": "INTAKE-01",
+      "target": "repo:tildeio/helix",
+      "verdict": "fail",
+      "evidence": "Confirmed archived, a real Ruby 3.2 break in the issue tracker; intake would ask 'appetite' to nobody.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/4"
+    },
+    {
+      "case": "INTAKE-01",
+      "target": "repo:github/github-services",
+      "verdict": "fail",
+      "evidence": "The repo's own README/CONTRIBUTING already answered every intake question (deliberately sunset by a well-resourced org) - unread, would have asked anyway.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/4"
+    },
+    {
+      "case": "INTAKE-02",
+      "target": "repo:BurntSushi/ripgrep",
+      "verdict": "fail",
+      "evidence": "AI_POLICY.md explicitly forbids autonomous agent contributions - direct conflict with the standard's operating model; no red-flag stop existed for this before the fix.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/4"
+    },
+    {
+      "case": "INTAKE-03",
+      "target": "repo:scala/scala3",
+      "verdict": "fail",
+      "evidence": "scala/scala3's LLM_POLICY.md conditionally allows agent involvement if a human authors every contribution artifact - not a ban, not full permission; the binary red-flag stop had no branch for this.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/11"
+    },
+    {
+      "case": "INTAKE-04",
+      "target": "repo:request/request",
+      "verdict": "fail",
+      "evidence": "No terminal intake state existed for 'this repo's own goal is to stay as it is.'",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/3"
+    },
+    {
+      "case": "INTAKE-05",
+      "target": "repo:ziglang/zig",
+      "verdict": "fail",
+      "evidence": "ziglang/zig had moved to Codeberg entirely with archived: false still set - not decline, departure; the signal list did not read for a move/mirror statement.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/11"
+    },
+    {
+      "case": "INTAKE-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "adoption.md's Gate 0 row still listed four intents after SKILL.md added 'check-up' as a fifth - real doc-vs-doc drift, plus a counting error in the prior round's text ('fifth answer' when five were already listed - it is the sixth).",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/4"
+    },
+    {
+      "case": "ADOPT-01",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Round-3 brownfield testing: pass 8's churn-hotspot check silently under-reported on a shallow clone with no stated limitation.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/3"
+    },
+    {
+      "case": "ADOPT-02",
+      "target": "repo:microsoft/vscode",
+      "verdict": "fail",
+      "evidence": "Three permanently-coexisting stacks (TS, Rust CLI, Electron-native) - detecting only the root manifest missed two of three.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/5"
+    },
+    {
+      "case": "ADOPT-02",
+      "target": "repo:symfony/symfony",
+      "verdict": "fail",
+      "evidence": "A 66-package library monorepo broke the assumption that a registered stack targets one application archetype.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/5"
+    },
+    {
+      "case": "ADOPT-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Round-3 brownfield testing found no guidance saying an existing package/crate boundary can serve directly as a capability map.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/3"
+    },
+    {
+      "case": "ADOPT-04",
+      "target": "repo:nlohmann/json",
+      "verdict": "fail",
+      "evidence": "Single-capability micro-library archetype gap - no package/crate boundary to inherit a capability map from, but real internal structure exists one level down.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/11"
+    },
+    {
+      "case": "SHAPE-01",
+      "target": "repo:rit3zh/expo-coverflow-carousel",
+      "verdict": "fail",
+      "evidence": "Persona-roster interview was oversized for a solo-consumer library, with no named allowance for a roster of one.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/3"
+    },
+    {
+      "case": "SHAPE-11",
+      "target": "repo:torvalds/linux",
+      "verdict": "fail",
+      "evidence": "torvalds/linux has no PRs at all - mailing-list patches, Linus merging ~20 sovereign subsystem trees a day - nothing for R23's PR-shaped integration rule to bind to at all.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "SHAPE-11",
+      "target": "repo:rust-lang/rust",
+      "verdict": "fail",
+      "evidence": "rust-lang/rust's bors/merge-queue batching produces 'Auto merge of #NNNNN' two-parent merge commits - neither rebase-merge nor squash-merge as R23 describes them.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "SEC-01",
+      "target": "repo:curl/curl",
+      "verdict": "fail",
+      "evidence": "curl/curl's security process has a negative-scope list (what's deliberately not a vulnerability, and why) that the security-baseline axis catalog had nowhere to hang.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/5"
+    },
+    {
+      "case": "STACK-01",
+      "target": "fixture:test-greenfield-node",
+      "verdict": "fail",
+      "evidence": "The greenfield composition rule degits the node starter into a target repo's root first, so six real occurrences of ../DECISIONS.md / ../../DECISIONS.md - the README, the Docker test-stack comment, vitest config, Next config, the Fastify server and env config - resolved outside the composed repo entirely. This defect and fix are recorded in repository-standards/core's own CHANGELOG.md (the '1.0.13' section, second entry) and are attributed there to the same PR as GATE-09 (#1). PR #1's actual diff (verified via `gh pr view 1 -R repository-standards/core`) touches only docs/method/prerequisites.md, skills/align-to-standards/SKILL.md, skills/align-to-standards/greenfield.md, standard/specs/capability-spec.template.md and standard/standard.manifest.json - none of them starter/, ADAPTING.md or any node-stack file. The release-cut PR (#6) also does not touch those files. repository-standards/node has zero pull requests in its entire history (`gh pr list -R repository-standards/node --state all` returns empty), so whichever commit actually fixed this shipped with no PR trail at all. The log's PR attribution for this specific defect is not supported by the PRs it cites.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "STACK-02",
+      "target": "repo:JohnSundell/Publish",
+      "verdict": "fail",
+      "evidence": "One of three independent confirmations that SPEC.md itself never stated the Node-runtime requirement (only SKILL.md's prose did).",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/7"
+    },
+    {
+      "case": "STACK-02",
+      "target": "repo:oban-bg/oban",
+      "verdict": "fail",
+      "evidence": "Independent confirmation of the same SPEC.md gap.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/7"
+    },
+    {
+      "case": "STACK-02",
+      "target": "repo:Tyrrrz/CliWrap",
+      "verdict": "fail",
+      "evidence": "Second independent confirmation of the same SPEC.md gap.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/7"
+    },
+    {
+      "case": "STACK-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "The non-Node-stack offer said 'Layer 1 applies in full and is unaffected' - true for rules and specs, false for the guards, which are Node scripts and need a Node runtime regardless of the target repo's language. This is the SKILL.md-level fix that PR #7 (STACK-02) later completed at the SPEC.md level.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/1"
+    },
+    {
+      "case": "DOC-01",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Every past version bump did a blind string replace across standard.manifest.json, corrupting any entry's since whenever it happened to equal the version being bumped from. Reconstructed from real git history - twice, because the first reconstruction used `git log --follow --reverse`, which silently returns one commit instead of full rename-aware history on this git version, and stamped one arbitrary commit's version across most of the files array. Caught during self-review before either fix shipped past a single PR.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/1"
+    },
+    {
+      "case": "DOC-02",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "docs/prerequisites.md was referenced twice as if it ships to the target repo; it never does (docs/method/ is adopted by reference, ADR-023). docs/facts.example.json's purpose text said to copy it into docs/facts.json and keep its placeholder content, which fails facts-check on the example's own paths.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/1"
+    },
+    {
+      "case": "DOC-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Two references entries were missing id/since/rule that every sibling entry carries - backfilled from the commit that actually added them.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/1"
+    },
+    {
+      "case": "DOC-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "AGENTS.md linked docs/method/self-verify.md under the visible text standard/docs/self-verify.md - a path that does not exist.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/8"
+    },
+    {
+      "case": "DOC-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "docs/method/taxonomy.md and checklist.md - the two files whose entire content is 'say this and the agent routes it' - were never linked from the shipped AGENTS.md/conventions.md template, unlike every neighboring method doc.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/9"
+    },
+    {
+      "case": "DOC-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "checklist.md's three example prompts misrouted: two are align-to-standards-only (never shipped to an aligned repo) unlabeled as such, one implied adr-write handles an undecided fork instead of add-to-backlog.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/9"
+    },
+    {
+      "case": "DOC-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "prerequisites.md's guard enumeration was missing cycle-guard.mjs, and its gitleaks trade-off claimed local pre-commit scanning is lost without it - no pre-commit hook actually ships with the tree yet, so nothing is lost either way.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/9"
+    },
+    {
+      "case": "DOC-08",
+      "target": "repo:gitlab-org/gitlab",
+      "verdict": "fail",
+      "evidence": "GitLab Issues, not GitHub/Jira/Linear, confirmed the tracker-list gap independently.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/8"
+    },
+    {
+      "case": "DOC-08",
+      "target": "repo:torvalds/linux",
+      "verdict": "fail",
+      "evidence": "Mailing-list-plus-Bugzilla workflow is outside R15's named trackers.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/8"
+    },
+    {
+      "case": "DOC-09",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "CHANGELOG.md had no ## Unreleased heading, and the two PRs merged since the 1.0.13 release (#7, #8) had not added entries - the standard's own R18 rule, unfollowed by its own maintainer's tooling in the same session, with nothing mechanical catching it.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/9"
+    },
+    {
+      "case": "DOC-10",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "scripts/changelog.mjs is documented in detail (docs/method/changelog-process.md) as shipping with the tree; it does not exist anywhere in the checkout. CHANGELOG.md has no entries for versions 1.0.1 through 1.0.12 - twelve version bumps with zero record, discovered while cutting 1.0.13. Logged for the owner, not fixed this session.",
+      "at": "2026-08-03"
+    },
+    {
+      "case": "DOC-11",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "R18 said a PR must not bump the version (the maintainer cuts every release); R25, as written, said a PR that changes what the standard ships must move the version - both govern the same subject and could not both be followed. Plausibly the root cause of the whole since-field corruption saga (DOC-01): a version-bump process that never went through the documented mechanism. Also fixed a stray '1.0.12 is followed by 1.0.12' typo in R25's own patch-position example.",
+      "at": "2026-08-03",
+      "fix": "https://github.com/repository-standards/core/pull/6"
+    },
+    {
+      "case": "SHAPE-02",
+      "target": "repo:oban-bg/oban",
+      "verdict": "fail",
+      "evidence": "R24 ('a repo that owns a database') does not fit a library whose product IS multi-backend migrations, not one owned schema - listed as this repo's key finding in the testing log's repo table, but not carried into the log's own 'known gaps' section or attributed to any fix. Treated here as still open.",
+      "at": "2026-08-03"
+    }
+  ]
+}
