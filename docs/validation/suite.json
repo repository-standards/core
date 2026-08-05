@@ -1,0 +1,2812 @@
+{
+  "$about": "The regression-case catalogue backfilled from the 2026-08-03 testing round. Every case traces to research/testing-log-2026-08-03.md (defect rows, the 8 Track B lifecycle scenarios, or the known-gaps list) or to VALIDATION-PLAN.md's own 15 exemplar cases. 'tests' cites SPEC.md rule numbers (R1-R25) or a docs/PRODUCT.md anchor where no rule fits. Eight of VALIDATION-PLAN.md's 15 exemplar cases cited a rule number that does not match their own description once checked against standard/SPEC.md (GATE-01: R17->R16; GATE-02/GATE-03: R13->R11; GATE-06: R14->R15; GATE-07: R12->R9; TRACK-03/TRACK-06: R14->R15; UPD-01: R19->R17) - corrected here; see the codify report for the detail. status: run = executed at least once with a recorded verdict in runs/2026-08-03.json; planned = specified, not yet executed; needs-procedure = the log describes a real finding but not enough to reconstruct a reproduction, so procedure is left empty rather than invented.",
+  "cases": [
+    {
+      "id": "GATE-01",
+      "title": "self-verify reports drift as a count of unmet required entries, and the count is reproducible on a clean clone",
+      "area": "gates",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Aligned means self-verify reports drift 0 - SPEC.md R16",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": "an aligned repo with a copy of standard.manifest.json matching its .standards-version",
+      "when": "node standard/scripts/self-verify.mjs is run twice against two independent clean clones of the same commit",
+      "then": "both runs report the identical drift count",
+      "procedure": "node standard/scripts/self-verify.mjs (run twice, on two fresh clones of the same commit; diff the two outputs)",
+      "status": "run"
+    },
+    {
+      "id": "GATE-02",
+      "title": "the coupling guard fails a PR that moves a capability's code without its spec",
+      "area": "gates",
+      "tests": [
+        "R11"
+      ],
+      "promise": "A change to a capability's code MUST land in the same PR as its spec update; the coupling guard blocks any PR that breaks this - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a capability with a capability-map.json entry binding it to a code glob, and a spec at Status: live",
+      "when": "a PR changes code inside that glob without touching the capability's spec file",
+      "then": "node standard/scripts/spec-guard.mjs (or --audit) exits non-zero and names the capability",
+      "procedure": "node standard/scripts/spec-guard.mjs --audit, on a branch that edits code under a mapped glob without touching the mapped spec",
+      "status": "run"
+    },
+    {
+      "id": "GATE-03",
+      "title": "the coupling guard sees a deletion - removing 100% of a capability's code cannot pass",
+      "area": "gates",
+      "tests": [
+        "R11"
+      ],
+      "promise": "A change to a capability's code MUST land in the same PR as its spec update, including removing it - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a capability with a capability-map.json entry and a live spec",
+      "when": "a PR deletes every file the capability's glob matches, and nothing else in the spec changes",
+      "then": "spec-guard.mjs fails and names the capability, instead of reporting OK",
+      "procedure": "node standard/scripts/spec-guard.mjs --audit, on a branch that deletes every file under a mapped capability's glob without touching its spec (before the fix: --diff-filter=ACMR excludes deleted files; after: --diff-filter=ACDMR)",
+      "status": "run"
+    },
+    {
+      "id": "GATE-04",
+      "title": "the clarify gate rejects open items written as a numbered list, not only the bracket marker",
+      "area": "gates",
+      "tests": [
+        "R12"
+      ],
+      "promise": "A spec cannot reach ready-to-develop with open questions - PRODUCT.md, SPEC.md R12",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "an aligned repo with a capability spec at Status: in-refinement",
+      "when": "the spec records three unresolved items as `- **CLARIFICATION-1 (owner: ...).**` .. `-3.` list entries (no `[NEEDS ...]` bracket) and the clarify gate runs",
+      "then": "the gate fails and names the unresolved items",
+      "procedure": "bash standard/scripts/spec/check-spec-clarified.sh <spec.md>, on a spec with a `## Clarifications` heading and three CLARIFICATION-N/DECISION-N/INPUT-N bullets in that exact unbracketed numbered form",
+      "status": "run"
+    },
+    {
+      "id": "GATE-05",
+      "title": "a recorded deviation (manifest exceptions) stops counting as drift",
+      "area": "gates",
+      "tests": [
+        "R17"
+      ],
+      "promise": "an update applies the delta... preserving the repo's recorded deviations (the manifest's exceptions) - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": "a manifest with an `exceptions` array recording a deliberate deviation from a required file or section",
+      "when": "self-verify.mjs runs against a repo that honestly recorded why that required entry does not apply",
+      "then": "the excepted entry is reported as excepted, not as drift, and overall drift is 0",
+      "procedure": "node standard/scripts/self-verify.mjs against a synthetic manifest with one required file missing but recorded under exceptions (kind: file, match: <path>, reason: ...)",
+      "status": "run"
+    },
+    {
+      "id": "GATE-06",
+      "title": "the cycle guard fails when one intent sits in the pool and in a cycle, and when it sits in two cycles",
+      "area": "gates",
+      "tests": [
+        "R15"
+      ],
+      "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "6 intents distributed across the backlog pool, one closed cycle and one open cycle",
+      "when": "cycle-guard.mjs runs after a backlog item is split at a cycle boundary (ADR-029: happy path stays done in the closed cycle, edge cases return to the pool as a new intent)",
+      "then": "the guard holds the one-place invariant across all three locations in the same pass, with no duplicate and no orphan",
+      "procedure": "node standard/scripts/cycle-guard.mjs against docs/backlog.md plus the closed and open cycle files, after a split-at-boundary edit",
+      "status": "run"
+    },
+    {
+      "id": "GATE-07",
+      "title": "a spec's required buildable-tier sections are enforced by a script, not only by the template",
+      "area": "gates",
+      "tests": [
+        "R9"
+      ],
+      "promise": "A capability spec MUST be buildable by default... the behavioral tier is an escape hatch that MUST be justified - SPEC.md R9",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "a capability spec at the buildable tier, missing its `## Data contracts` and `## Interface contracts` sections",
+      "when": "spec-structure.mjs (or the equivalent structure guard) runs against it",
+      "then": "the guard fails and names the missing required sections",
+      "procedure": "node standard/scripts/spec-structure.mjs against a buildable-tier spec missing `## Data contracts` / `## Interface contracts`",
+      "status": "run"
+    },
+    {
+      "id": "GATE-08",
+      "title": "cycle-guard reads a correctly-closed cycle's own close table as a report, not as a second copy of live intents",
+      "area": "gates",
+      "tests": [
+        "R15"
+      ],
+      "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a cycle closed exactly as cycle-close/SKILL.md documents it - a close table under `## Outcome` reusing the same intent ids on purpose",
+      "when": "cycle-guard.mjs runs against the closed cycle file",
+      "then": "the guard does not report the close table's rows as duplicates of the `## Intents` table",
+      "procedure": "node standard/scripts/cycle-guard.mjs against a cycle file closed with the documented `## Outcome` close table",
+      "status": "run"
+    },
+    {
+      "id": "GATE-09",
+      "title": "the clarify-gate template shows the literal bracket syntax the gate greps for, not only the marker family's name",
+      "area": "gates",
+      "tests": [
+        "R12"
+      ],
+      "promise": "A spec MUST pass the clarify gate before planning or implementation - SPEC.md R12",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a spec authored to the letter of capability-spec.template.md's Open Questions comment",
+      "when": "the comment names the marker family (CLARIFICATION, DECISION, INPUT, ASSET) by bare word only, without showing the `[NEEDS TYPE: ...]` bracket form",
+      "then": "a spec written to that comment can pass the gate with every question still open, because check-spec-clarified.sh only recognizes the bracket form",
+      "procedure": "grep the Open Questions comment in standard/specs/capability-spec.template.md for the literal string `[NEEDS TYPE:` or an equivalent bracket example",
+      "status": "run"
+    },
+    {
+      "id": "GATE-10",
+      "title": "the shipped CI guard workflow is presented as a reference implementation of the gate's intent, not a mandate to use that CI product",
+      "area": "gates",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose... self-verify and spec-structure MUST gate CI - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo whose real CI is not GitHub Actions (e.g. CircleCI, Buildkite)",
+      "when": "the repo reads `.github/workflows/spec-guard.yml` and align-to-standards/SKILL.md's guidance about it",
+      "then": "the guidance states plainly that the workflow is a reference implementation to translate, not a requirement to run GitHub Actions specifically",
+      "procedure": "grep skills/align-to-standards/SKILL.md for 'reference implementation' language describing spec-guard.yml, confirmed on two large real repos whose CI is not GitHub Actions (nestjs/nest: CircleCI; rails/rails: Buildkite)",
+      "status": "run"
+    },
+    {
+      "id": "GATE-11",
+      "title": "the coupling guard and capability-map have vocabulary for a capability whose code lives in a satellite repo this repo does not own",
+      "area": "gates",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo (e.g. bazelbuild/bazel) whose real rule implementations for several languages live in satellite `rules_*` repos it does not own",
+      "when": "an agent tries to bind one of those capabilities to a glob in capability-map.json",
+      "then": "there is no glob in this repo that can reach the capability's real code",
+      "procedure": "read specs/capability-map.json's schema/docs for any provision for an external-repo capability binding",
+      "status": "run"
+    },
+    {
+      "id": "GATE-12",
+      "title": "self-verify can register more than one simultaneous Layer-2 stack manifest for a repo that genuinely needs two",
+      "area": "gates",
+      "tests": [
+        "R20"
+      ],
+      "promise": "one standard with two profiles... a repo that adopted one stack carries it, and self-verify counts one drift across both - SPEC.md R20",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo with two permanently-coexisting technology stacks (e.g. flutter/flutter's Dart framework + native engine)",
+      "when": "self-verify.mjs is asked to register and check drift for both stacks at once",
+      "then": "the script has a mechanical way to track two simultaneous stack.manifest.json registrations",
+      "procedure": "read standard/scripts/self-verify.mjs for how it locates the stack manifest, confirmed by reading the script directly against a repo with two real, permanently-coexisting stacks",
+      "status": "run"
+    },
+    {
+      "id": "GATE-13",
+      "title": "the manifest exceptions mechanism excepts a missing required file or section, and its scope stopping short of guard failures is a documented choice",
+      "area": "gates",
+      "tests": [
+        "R17"
+      ],
+      "promise": "an update applies the delta... preserving the repo's recorded deviations (the manifest's exceptions) - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "a repo whose guard (e.g. spec-guard.mjs) is failing for a reason the repo wants to except rather than fix",
+      "when": "an agent looks for an `exceptions` entry that would silence a guard failure the way it silences a missing required file",
+      "then": "no such provision exists - exceptions cover files/sections only, and the standard documents this as deliberate (a live guard failure is riskier to except than a missing declarative file)",
+      "procedure": "read standard/standard.manifest.json's $about field and self-verify.mjs for the exceptions schema; confirm it only matches kind: file|section",
+      "status": "run"
+    },
+    {
+      "id": "GATE-14",
+      "title": "the coupling guard requires every spec whose capability-map glob the changed code actually spans, with no separate cross-capability graph",
+      "area": "gates",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "two capabilities (shift-notifications, shift-swap-request) that connect via real cross-capability code",
+      "when": "a PR changes shift ownership (a swap) and cancels the old owner's reminder, with code spanning both capabilities' globs",
+      "then": "spec-guard.mjs requires both specs touched, with no explicit cross-capability graph needed - each capability's own independent glob match is enough",
+      "procedure": "node standard/scripts/spec-guard.mjs --audit on a branch whose diff spans two capabilities' mapped globs but updates only one spec",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-01",
+      "title": "a duplicated section heading (e.g. two `## Clarifications` headings) is mechanically flagged, not only conventionally avoided",
+      "area": "spec",
+      "tests": [
+        "R12"
+      ],
+      "promise": "A spec MUST pass the clarify gate before planning or implementation - SPEC.md R12",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a spec that already has a `## Clarifications` heading",
+      "when": "a second `## Clarifications` heading is added instead of a new `### Session` subsection under the existing one",
+      "then": "spec-structure.mjs (or an equivalent check) flags the duplicate heading",
+      "procedure": "node standard/scripts/spec-structure.mjs against a spec with two `## Clarifications` headings",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-02",
+      "title": "clarify chains automatically after specify without the user naming it",
+      "area": "spec",
+      "tests": [
+        "R12"
+      ],
+      "promise": "The loop is AI-led and gated in layers: clarify chains automatically after specify - docs/case-studies/the-silently-skipped-clarify.md, SPEC.md R12",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a user describes a new capability (spec-specify's trigger)",
+      "when": "spec-specify finishes drafting the spec",
+      "then": "spec-clarify starts without the user separately invoking it",
+      "procedure": null,
+      "status": "planned"
+    },
+    {
+      "id": "SPEC-03",
+      "title": "an open-question marker lives in exactly one place - its functional section, or Open Questions only if it has none",
+      "area": "spec",
+      "tests": [
+        "R12"
+      ],
+      "promise": "A spec MUST pass the clarify gate before planning or implementation - SPEC.md R12",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a spec whose open marker sits in both its functional section and again in Open Questions",
+      "when": "check-spec-clarified.sh (or a human reader) counts the open markers",
+      "then": "the marker is counted once, per the documented single-location rule, not doubled",
+      "procedure": "grep the spec's `## Open Questions` and functional sections for the same `[NEEDS ...]` marker text",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-04",
+      "title": "spec-plan, spec-tasks and spec-implement confirm the resolved feature matches what was actually asked before proceeding",
+      "area": "spec",
+      "tests": [
+        "R12"
+      ],
+      "promise": "the loop is AI-led and gated... plan/tasks/implement is mechanically blocked unless the spec is ready-to-develop - SPEC.md R12",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "specs/feature.json's persisted pointer names capability A, and the user says 'plan capability B'",
+      "when": "spec-plan (or spec-tasks / spec-implement) runs check-prerequisites.sh --paths-only",
+      "then": "the resolved feature is confirmed against what was asked before the skill proceeds, instead of silently operating on capability A",
+      "procedure": "read standard/.claude/skills/spec-plan (and spec-tasks, spec-implement) for a step confirming the resolved feature against the request, with a stale specs/feature.json pointer as the fixture",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-05",
+      "title": "a capability spec can reach a terminal `retired` status when the capability stops being built",
+      "area": "spec",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a capability retired as a product bet (a vendor platform replaces it)",
+      "when": "its spec's Status is updated to reflect that it is no longer being built",
+      "then": "the template has a terminal `retired` status, with the convention: flip status, link the retiring BDR/ADR, leave the now-empty capability-map.json entry in place",
+      "procedure": "read standard/specs/capability-spec.template.md's Status enum for a `retired` value",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-06",
+      "title": "spec-impact, spec-update and discovery-digest check a capability's retired status before proceeding",
+      "area": "spec",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a capability whose spec Status is `retired`",
+      "when": "spec-impact, spec-update or discovery-digest is invoked for that capability",
+      "then": "the skill recognizes the retired status and does not proceed as if the capability were still live",
+      "procedure": "read standard/.claude/skills/spec-impact, spec-update, discovery-digest for a retired-status check before proceeding",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-07",
+      "title": "extending a working, shipped capability routes through spec-impact then spec-update without minting an unneeded capability or decision record",
+      "area": "spec",
+      "tests": [
+        "R8"
+      ],
+      "promise": "Behavior MUST be specified by capability - never by ticket, page or feature number - SPEC.md R8",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a shipped capability (shift-notifications) and a request to extend it (delivery stats)",
+      "when": "the request is routed",
+      "then": "it reaches spec-impact then spec-update, with no new capability and no ADR/BDR minted for a same-capability extension",
+      "procedure": null,
+      "status": "run"
+    },
+    {
+      "id": "SPEC-08",
+      "title": "spec-reconcile corrects a spec to match the code's real, shipped behavior rather than inventing an undecided policy",
+      "area": "spec",
+      "tests": [
+        "R4"
+      ],
+      "promise": "Documents are living: they MUST be updated in place. The current version is the truth - SPEC.md R4",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a spec claiming a retry-logic behavior the reference implementation never actually had",
+      "when": "spec-reconcile runs before the PR that shipped the real behavior",
+      "then": "the spec is corrected to match the real, shipped behavior, not left claiming an invented policy",
+      "procedure": null,
+      "status": "run"
+    },
+    {
+      "id": "SPEC-09",
+      "title": "spec-specify offers a semantically-overlapping extension of an existing capability instead of always minting a new sibling directory",
+      "area": "spec",
+      "tests": [
+        "R8"
+      ],
+      "promise": "Behavior MUST be specified by capability - never by ticket, page or feature number - SPEC.md R8",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "an existing capability directory and a differently-worded description of an extension to it",
+      "when": "spec-specify checks whether this is the same capability or a new one",
+      "then": "the check goes beyond literal directory-name equality to notice the semantic overlap",
+      "procedure": null,
+      "status": "needs-procedure"
+    },
+    {
+      "id": "SPEC-10",
+      "title": "the `retired` status (or an adjacent field) has vocabulary for a capability that supersedes a different, external predecessor product with no history in this repo",
+      "area": "spec",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "a repo whose product supersedes an external predecessor that never had a spec or any history inside this git tree (PowerShell/PowerShell vs. closed-source Windows PowerShell 5.1)",
+      "when": "an agent tries to record that relationship using the shipped `retired` status or capability-map vocabulary",
+      "then": "there is no vocabulary for a capability whose predecessor's history is entirely absent from this repo - this is positioning/BDR territory, not a capability-spec field",
+      "procedure": "read standard/specs/capability-spec.template.md's Status enum and specs/capability-map.json's schema for any predecessor/external-product field",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-01",
+      "title": "the backlog has an escape hatch for an item whose target capability retired before its definition of done could be met",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "an item leaves the backlog pool only when its DoD is met - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a backlog item whose target capability is retired before the item's DoD could ever be satisfied",
+      "when": "the backlog template's escape hatches are checked for this case",
+      "then": "there is a documented corner-case bullet for a DoD that can now never be met",
+      "procedure": "read docs/backlog.md's escape-hatch bullets for a retired-target corner case",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-02",
+      "title": "a backlog item that spans a cycle boundary splits into a done slice and a returned slice, rather than being re-sized",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "an item leaves the backlog pool only when its DoD is met - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a backlog item (size L) that ships its happy path but not its edge cases by the cycle's target date",
+      "when": "the cycle closes",
+      "then": "it is split per ADR-029 into a done item (happy path) and a new item returned to the pool (edge cases), not re-sized in place",
+      "procedure": null,
+      "status": "run"
+    },
+    {
+      "id": "TRACK-03",
+      "title": "an intent carries a named current holder, and an empty holder is visible as a gap",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "the repo backlog holds intents, each with a definition of done - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "an intent in the backlog pool or a cycle",
+      "when": "its holder field is read",
+      "then": "an empty holder is visibly flagged as a gap, not silently treated as assigned",
+      "procedure": null,
+      "status": "planned"
+    },
+    {
+      "id": "TRACK-04",
+      "title": "timeline-update states whether its three-closed-cycles threshold is per-team or global",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "the repo backlog holds intents... execution state and work history live in the tracker - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a repo with two teams, one at 3 closed cycles and one at 1",
+      "when": "timeline-update runs",
+      "then": "the threshold is applied per team, never blended, and the skill says so explicitly",
+      "procedure": "read standard/.claude/skills/timeline-update/SKILL.md for a per-team vs. global statement of the three-cycle threshold",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-05",
+      "title": "cycle-guard still catches a genuinely duplicated intent row and a stale `blocked:` reference after the close-table scoping fix",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "an intent copied (not moved) between the pool and a cycle, or a stale `blocked:` reference",
+      "when": "cycle-guard.mjs runs after the close-table scoping fix (GATE-08)",
+      "then": "the guard still fails on the genuine duplicate and the stale reference - the fix narrowed the false positive without opening a false negative",
+      "procedure": "node standard/scripts/cycle-guard.mjs against a cycle file with a genuinely duplicated intent row",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-06",
+      "title": "the timeline refuses a measured date below three closed cycles and labels the estimate in the file",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "execution state and work history live in the tracker - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a team with fewer than three closed cycles",
+      "when": "timeline-update is asked when work will land",
+      "then": "it gives no measured date, and the output labels any number it does give as estimated rather than measured",
+      "procedure": null,
+      "status": "planned"
+    },
+    {
+      "id": "DISC-01",
+      "title": "two sources landing in the same handover are diffed against each other, not only against the pre-existing dossier",
+      "area": "discovery",
+      "tests": [
+        "docs/method/discovery.md"
+      ],
+      "promise": "discovery-digest files raw material into the topic's dossier and flags contradictions - docs/method/discovery.md",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a Slack thread and a same-day email pasted into the same handover, contradicting each other but not the existing dossier",
+      "when": "discovery-digest files both",
+      "then": "each is diffed against the other, not only against entries filed in earlier sessions",
+      "procedure": "read standard/.claude/skills/discovery-digest/SKILL.md for same-handover cross-diff guidance",
+      "status": "run"
+    },
+    {
+      "id": "DISC-02",
+      "title": "a mail that changes an already-shipped spec routes to spec-impact then spec-update, and only mints a new decision record when one is actually needed",
+      "area": "discovery",
+      "tests": [
+        "docs/method/discovery.md"
+      ],
+      "promise": "discovery-digest... says whether the topic is ready to be specced - docs/method/discovery.md",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a shipped spec and a mail describing a change to it",
+      "when": "discovery-digest files the mail",
+      "then": "it routes to spec-impact then spec-update (a spec already exists), and spec-impact correctly judges whether a new decision record is needed",
+      "procedure": null,
+      "status": "run"
+    },
+    {
+      "id": "DISC-03",
+      "title": "a decision reopened by real data regresses the spec's Status and supersedes the record without editing the original record's text",
+      "area": "discovery",
+      "tests": [
+        "R6"
+      ],
+      "promise": "An accepted record MUST NOT be edited into a different decision. It is superseded by a new record - SPEC.md R6",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a settled BDR and a meeting that reopens it with real data",
+      "when": "the decision is superseded",
+      "then": "the original BDR's text is never edited (only its Status flips with a pointer), and the spec's Status correctly regresses from ready-to-develop back to in-refinement, then returns once resolved",
+      "procedure": null,
+      "status": "run"
+    },
+    {
+      "id": "DISC-04",
+      "title": "two same-day discovery entries filed sequentially are diffed correctly because the first becomes 'earlier' the instant it is filed",
+      "area": "discovery",
+      "tests": [
+        "docs/method/discovery.md"
+      ],
+      "promise": "discovery-digest... flags where it contradicts what is already recorded - docs/method/discovery.md",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "two same-day sources (a Slack thread, then a same-day mail) that contradict each other, filed in separate sessions",
+      "when": "the second is filed",
+      "then": "it is diffed against the first and the contradiction is flagged, because the first became 'earlier' the moment it was filed",
+      "procedure": null,
+      "status": "run"
+    },
+    {
+      "id": "DEC-01",
+      "title": "the decision catalog has a category for numerical/semantic compatibility policy, for a library whose contract is computed output",
+      "area": "decisions",
+      "tests": [
+        "R5",
+        "R7"
+      ],
+      "promise": "Every fork in the decision checklist that applies to the repo MUST be consciously decided and recorded - SPEC.md R7",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "a numerical/dtype-semantics library (pandas-dev/pandas) whose contract is computed output, not an API/datastore shape",
+      "when": "the decision-checklist catalog is checked for a category covering that contract",
+      "then": "a numerical/semantic compatibility policy category exists",
+      "procedure": "read docs/decision-records/README.md's catalog for a numerical/semantic compatibility policy category",
+      "status": "run"
+    },
+    {
+      "id": "DEC-02",
+      "title": "the decision catalog has a row for an open-core/dual-license repo whose capability code can straddle the licensing boundary",
+      "area": "decisions",
+      "tests": [
+        "R7"
+      ],
+      "promise": "Every fork in the decision checklist that applies to the repo MUST be consciously decided and recorded - SPEC.md R7",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "an open-core repo (metabase/metabase) split by directory into an AGPL core and a commercial enterprise/ tier",
+      "when": "the decision catalog and capability-map guidance are checked for this shape",
+      "then": "a licensing-boundary decision-catalog row exists, naming that a capability's code can straddle two licenses invisible to the coupling guard as shipped",
+      "procedure": "read docs/decision-records/README.md's catalog for an open-core/dual-license row",
+      "status": "run"
+    },
+    {
+      "id": "DEC-03",
+      "title": "the standard offers a way to defer to an existing, richer decision process instead of only filing legacy discovery material",
+      "area": "decisions",
+      "tests": [
+        "R5"
+      ],
+      "promise": "A contestable, re-litigable choice MUST be recorded as a decision record - SPEC.md R5",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo with its own live, formal decision system wired into its real merge gate (rust-lang/rust's RFCs + MCPs, wired into bors)",
+      "when": "onboard.md's decision-record guidance is checked for a 'point at the upstream record instead of duplicating it' path",
+      "then": "only 'file it as discovery material, write a retroactive ADR' exists - no defer-to-upstream mode",
+      "procedure": "read standard/.claude/skills/onboard.md (or align-to-standards) for a defer-to-existing-process option",
+      "status": "run"
+    },
+    {
+      "id": "DEC-04",
+      "title": "an idea can be captured end-to-end and driven through idea -> exploring -> approved/parked/dropped -> graduated by a dedicated skill",
+      "area": "decisions",
+      "tests": [
+        "R14"
+      ],
+      "promise": "A speculative idea MUST NOT mint records or specs before it is approved. It lives in docs/ideas/ under a status... on approval hands off to the normal flow - SPEC.md R14",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a speculative idea with no decision made yet",
+      "when": "adr-write or bdr-write points at docs/ideas/ as where it belongs",
+      "then": "a skill actually exists that writes to docs/ideas/ and drives the idea through its status lifecycle",
+      "procedure": "ls standard/.claude/skills/ for idea-write, and confirm adr-write/bdr-write's docs/ideas/ pointer resolves to a real skill, not a dead end",
+      "status": "run"
+    },
+    {
+      "id": "INTAKE-01",
+      "title": "intake reads a repo's own lifecycle signal (archived, frozen, deprecated) before running the appetite/tracker/profile interview",
+      "area": "intake",
+      "tests": [
+        "docs/method/adoption.md"
+      ],
+      "promise": "the standard reads the repo before asking - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repo that is archived, frozen, or explicitly deprecated in its own README/CONTRIBUTING",
+      "when": "intake step 1 (measure) runs",
+      "then": "it reads for the deprecated/archived/frozen signal before step 2 asks anything, and leads with confirming the signal instead of an appetite interview that presupposes a team coming back",
+      "procedure": "read docs/method/adoption.md's intake step ordering for a lifecycle-signal read before the interview questions",
+      "status": "run"
+    },
+    {
+      "id": "INTAKE-02",
+      "title": "an explicit repo policy forbidding autonomous agent contributions is a red-flag stop, the same tier as a committed secret",
+      "area": "intake",
+      "tests": [
+        "docs/method/adoption.md"
+      ],
+      "promise": "does it decline when it should - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repo whose own policy file explicitly forbids autonomous agent contributions",
+      "when": "intake reads that policy",
+      "then": "it stops as a red-flag, the same tier as a committed secret, instead of proceeding to open a PR against the repo's own stated wishes",
+      "procedure": "read docs/method/adoption.md's red-flag list for an explicit no-AI-agents policy stop",
+      "status": "run"
+    },
+    {
+      "id": "INTAKE-03",
+      "title": "a policy that conditionally allows agent work (a human must author every artifact) is a documented middle case, not forced into ban-or-full-permission",
+      "area": "intake",
+      "tests": [
+        "docs/method/adoption.md"
+      ],
+      "promise": "does it decline when it should - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo whose policy conditionally allows agent involvement if a human authors every contribution artifact",
+      "when": "intake reads that policy",
+      "then": "it is recognized as a middle case, not silently treated as either a full ban or full permission",
+      "procedure": "read docs/method/adoption.md's red-flag/AI-policy handling for a conditional-allow middle case",
+      "status": "run"
+    },
+    {
+      "id": "INTAKE-04",
+      "title": "a repo whose own stated goal is to stay frozen or deprecated is a legitimate intake answer, not an intake failure",
+      "area": "intake",
+      "tests": [
+        "docs/method/adoption.md"
+      ],
+      "promise": "does it decline when it should - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo like request/request whose own goal is to stay as it is (frozen)",
+      "when": "intake's appetite question is asked",
+      "then": "'stay frozen' is a legitimate fifth (now sixth) answer, with a terminal intake state for it",
+      "procedure": "read docs/method/adoption.md's Gate 0 answer list for a frozen/stay-as-is option",
+      "status": "run"
+    },
+    {
+      "id": "INTAKE-05",
+      "title": "lifecycle-signal detection reads for a forge migration (moved but archived: false), not only the archived flag and commit recency",
+      "area": "intake",
+      "tests": [
+        "docs/method/adoption.md"
+      ],
+      "promise": "the standard reads the repo before asking - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo with archived: false but whose description states it moved to another forge entirely",
+      "when": "intake's lifecycle-signal check runs",
+      "then": "it also reads for a move/mirror statement, not only the archived flag and commit recency",
+      "procedure": "read docs/method/adoption.md's lifecycle-signal list for a move/mirror check",
+      "status": "run"
+    },
+    {
+      "id": "INTAKE-06",
+      "title": "the standard's own stated count of intake answers agrees between adoption.md and SKILL.md",
+      "area": "intake",
+      "tests": [
+        "R4"
+      ],
+      "promise": "A fact has one home... a restatement nobody declared is drift waiting for a reader to notice - SPEC.md R4",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "adoption.md's Gate 0 row and SKILL.md's intent-count list",
+      "when": "both are read together",
+      "then": "they agree on the number of intake answers",
+      "procedure": "grep docs/method/adoption.md Gate 0 and skills/align-to-standards/SKILL.md for their stated intent counts",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-01",
+      "title": "the churn-hotspot assessment pass states when a shallow clone makes it categorically unrunnable, instead of silently under-reporting",
+      "area": "adoption",
+      "tests": [
+        "docs/method/repo-assessment.md"
+      ],
+      "promise": "the 8 assessment passes, drift as a number - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a shallow-cloned repo assessed with the 8-pass brownfield methodology",
+      "when": "pass 8 (churn-hotspot) runs",
+      "then": "it states the shallow-clone limitation instead of silently under-reporting hotspots it cannot see",
+      "procedure": "read docs/method/repo-assessment.md pass 8 for a stated shallow-clone limitation",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-02",
+      "title": "the technology step names every stack a repo actually runs and names an archetype mismatch explicitly, instead of detecting only the root manifest",
+      "area": "adoption",
+      "tests": [
+        "R20"
+      ],
+      "promise": "The standard is two layers... a stack declares what adopting it means in its own manifest - SPEC.md R20",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo with more than one permanently-coexisting stack (microsoft/vscode: TS/npm, a Rust CLI, Electron-native) or a mismatched archetype (symfony/symfony: 66-package library monorepo)",
+      "when": "the technology step runs",
+      "then": "it names every stack found, not just the one the root manifest names, and names an archetype mismatch explicitly instead of offering the whole paved road",
+      "procedure": "read skills/align-to-standards/stack.md's technology-detection step for multi-stack and archetype-mismatch handling",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-03",
+      "title": "an existing package/crate boundary can serve directly as a capability map",
+      "area": "adoption",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a repo whose existing package/crate boundary already separates its capabilities",
+      "when": "capability-map guidance is checked for whether that boundary can be used directly",
+      "then": "the guidance names this as a legitimate shortcut, not requiring a fresh capability map authored from scratch",
+      "procedure": "read skills/align-to-standards or docs/method guidance for a package/crate-boundary-as-capability-map allowance",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-04",
+      "title": "a single-package micro-library with no package/crate boundary still has guidance for mapping its real internal capability structure",
+      "area": "adoption",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a single-header, single-build-target micro-library (nlohmann/json) with no internal workspace boundary",
+      "when": "capability-map guidance for archetype gaps is checked",
+      "then": "guidance exists for finding real internal capability structure one level down, even with no package/crate boundary to inherit from",
+      "procedure": "read onboard.md's archetype guidance for a single-package micro-library case",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-01",
+      "title": "a persona roster of one is a named, legitimate answer for a solo-consumer library",
+      "area": "shape",
+      "tests": [
+        "R10"
+      ],
+      "promise": "Every capability spec MUST name the persona it serves - SPEC.md R10",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a solo-consumer library (rit3zh/expo-coverflow-carousel) with one real user archetype",
+      "when": "the persona interview runs",
+      "then": "a roster of one is named as legitimate, mirroring the decision catalog's existing 'does not apply' allowance, instead of running the full multi-persona interview",
+      "procedure": "read docs/method's persona-roster guidance for a roster-of-one allowance",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-11",
+      "title": "a repo whose governance has no pull requests at all, or batches many PRs into one merge-queue commit, can still satisfy the integration rule",
+      "area": "shape",
+      "tests": [
+        "R23"
+      ],
+      "promise": "The mainline's history MUST read as one finished unit of work per PR - SPEC.md R23",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo governed by mailing-list patches with no PRs at all (torvalds/linux), or by a merge-queue that batches many PRs into two-parent merge commits (rust-lang/rust's bors)",
+      "when": "R23's rebase-merge/squash-merge integration rule is checked against that repo's real mainline history",
+      "then": "the rule is written entirely in pull-request terms and has nothing to bind to, or bindsto a shape (batched merge-queue commits) that is neither rebase nor squash",
+      "procedure": "read SPEC.md R23 for any non-PR-based or merge-queue-batched governance provision",
+      "status": "run"
+    },
+    {
+      "id": "SEC-01",
+      "title": "the security-baseline axis catalog has a negative-scope axis - what is deliberately not a vulnerability, and why",
+      "area": "security",
+      "tests": [
+        "R19"
+      ],
+      "promise": "the security baseline R7 requires as a recorded decision MUST state... including the ones answered not applicable - SPEC.md R19",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a repo (curl/curl) whose real security process publishes a negative-scope list",
+      "when": "security-baseline.md's axis catalog is checked for a place to record that",
+      "then": "a negative-scope axis exists in the catalog",
+      "procedure": "read docs/method/security-baseline.md's axis catalog for a negative-scope entry",
+      "status": "run"
+    },
+    {
+      "id": "STACK-01",
+      "title": "the node stack's starter composes into a target repo with working links to DECISIONS.md, not relative links that resolve outside the composed repo",
+      "area": "stack",
+      "tests": [
+        "R20"
+      ],
+      "promise": "Layer 2, optional technology best practices living in per-technology stack repos - SPEC.md R20",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "a fresh repo composed by degit-ing the node starter into its root",
+      "when": "the composed repo's README, Docker test-stack comment, vitest config, Next config, Fastify server and env config are read",
+      "then": "every `../DECISIONS.md` / `../../DECISIONS.md` reference resolves inside the composed repo, not outside it",
+      "procedure": "npx degit repository-standards/node/starter into a fresh directory, then grep for `../DECISIONS.md` / `../../DECISIONS.md` and confirm each target file exists relative to the composed root",
+      "status": "run"
+    },
+    {
+      "id": "STACK-02",
+      "title": "SPEC.md's own normative text (not only the onboarding skill's prose) states that the shipped guards need a Node runtime regardless of the target repo's stack",
+      "area": "stack",
+      "tests": [
+        "R16"
+      ],
+      "promise": "these guards... are dependency-free Node scripts... a Node runtime MUST be present to run them regardless of the repo's own language or stack - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a technical reader going straight to SPEC.md as ground truth, on a non-Node repo (Swift, Elixir, C#)",
+      "when": "they look for the Node-runtime requirement in SPEC.md itself, not in align-to-standards/SKILL.md's conversational prose",
+      "then": "SPEC.md's R16 states the requirement directly",
+      "procedure": "grep standard/SPEC.md for 'Node runtime' near its R16 bullet",
+      "status": "run"
+    },
+    {
+      "id": "STACK-03",
+      "title": "the no-registered-stack offer states plainly that Layer 1's guards (not just its rules and specs) carry a real Node-runtime cost for a non-Node repo",
+      "area": "stack",
+      "tests": [
+        "R16"
+      ],
+      "promise": "This is a real cost for a non-Node repo, not a rounding error - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo with no registered Layer-2 stack, in a non-Node language",
+      "when": "align-to-standards/SKILL.md's no-stack offer is read",
+      "then": "it says the guards (Node scripts) still carry a real cost, not only that rules and specs are 'unaffected'",
+      "procedure": "grep skills/align-to-standards/SKILL.md's no-stack-entry offer for a statement about guard cost distinct from rules/specs being unaffected",
+      "status": "run"
+    },
+    {
+      "id": "DOC-01",
+      "title": "standard.manifest.json's `since` field per entry reflects the entry's real first-shipped version, reconstructed from git history",
+      "area": "docs",
+      "tests": [
+        "R4"
+      ],
+      "promise": "A fact has one home: a count, a version, a path or a command restated in another document MUST either link to its home or be a declared restatement - SPEC.md R4",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "every entry in standard.manifest.json's files/guards/references arrays",
+      "when": "each entry's `since` value is checked against the git history of when that entry actually first appeared",
+      "then": "every value matches real history, not the top-level version at whatever commit a blind string-replace last touched",
+      "procedure": "for each manifest entry's path, `git log --follow --diff-filter=A -- <path>` and compare the commit's shipped VERSION to the manifest's `since`",
+      "status": "run"
+    },
+    {
+      "id": "DOC-02",
+      "title": "doc-to-doc cross-references inside docs/method/ name the real checkout-relative path, not a path that only exists once shipped to a target repo",
+      "area": "docs",
+      "tests": [
+        "R4"
+      ],
+      "promise": "A fact has one home... MUST either link to its home or be a declared restatement - SPEC.md R4",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "docs/method/prerequisites.md and docs/facts.example.json's purpose text",
+      "when": "an adopting agent follows the paths those docs name",
+      "then": "the named paths are real and correct: docs/method/prerequisites.md is named as read-by-reference (never shipped to the target repo), and docs/facts.example.json is named as reference-only, not something to copy/rename into docs/facts.json",
+      "procedure": "grep docs/method/prerequisites.md and standard/standard.manifest.json's docs/facts.example.json entry for their purpose text",
+      "status": "run"
+    },
+    {
+      "id": "DOC-03",
+      "title": "every entry in standard.manifest.json's `references` array carries the same id/since/rule fields every sibling entry carries",
+      "area": "docs",
+      "tests": [
+        "R2"
+      ],
+      "promise": "A repo MUST record the standard's state it last aligned to... and MUST carry the matching copy of standard.manifest.json - SPEC.md R2",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "standard.manifest.json's references array",
+      "when": "each entry is checked for id/since/rule fields",
+      "then": "no entry is missing a field every sibling carries",
+      "procedure": "grep standard/standard.manifest.json's references array entries for missing id/since/rule keys",
+      "status": "run"
+    },
+    {
+      "id": "DOC-04",
+      "title": "AGENTS.md's own onboarding paragraph links a path that actually exists in the shipped tree",
+      "area": "docs",
+      "tests": [
+        "R4"
+      ],
+      "promise": "A fact has one home... a restatement nobody declared is drift waiting for a reader to notice - SPEC.md R4",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "AGENTS.md's onboarding paragraph",
+      "when": "the linked path is followed",
+      "then": "it resolves to a real file, not a plausible-looking path that does not exist",
+      "procedure": "grep AGENTS.md for its self-verify.md link and confirm the target path exists in the tree",
+      "status": "run"
+    },
+    {
+      "id": "DOC-05",
+      "title": "taxonomy.md and checklist.md are linked from the shipped AGENTS.md/conventions.md template, like every neighboring method doc",
+      "area": "docs",
+      "tests": [
+        "R1"
+      ],
+      "promise": "A repo MUST carry AGENTS.md at its root... where each kind of knowledge lives - SPEC.md R1",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "the shipped AGENTS.md/conventions.md template",
+      "when": "its links to docs/method/ are checked",
+      "then": "taxonomy.md and checklist.md are linked, not only their neighboring method docs",
+      "procedure": "grep the shipped AGENTS.md/conventions.md template for links to docs/method/taxonomy.md and docs/method/checklist.md",
+      "status": "run"
+    },
+    {
+      "id": "DOC-06",
+      "title": "checklist.md's example prompts are labelled by which flow they belong to and name the skill that actually handles them",
+      "area": "docs",
+      "tests": [
+        "R1"
+      ],
+      "promise": "A repo MUST carry AGENTS.md at its root... how work flows - SPEC.md R1",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "checklist.md's three example prompts",
+      "when": "each is checked against real skill routing",
+      "then": "the two align-to-standards-only prompts are labelled as such, and the third names add-to-backlog rather than implying adr-write for an undecided fork",
+      "procedure": "read docs/method/checklist.md's three example prompts against skills/align-to-standards and standard/.claude/skills/add-to-backlog's actual triggers",
+      "status": "run"
+    },
+    {
+      "id": "DOC-07",
+      "title": "prerequisites.md names every shipped guard and does not claim a pre-commit mechanism that does not exist",
+      "area": "docs",
+      "tests": [
+        "R16"
+      ],
+      "promise": "these guards... are dependency-free Node scripts - SPEC.md R16",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "docs/method/prerequisites.md's guard enumeration and its gitleaks trade-off claim",
+      "when": "the enumeration is checked against standard/scripts/ and the gitleaks claim against the shipped tree",
+      "then": "cycle-guard.mjs is named, and the gitleaks trade-off does not claim a local pre-commit hook that does not ship",
+      "procedure": "diff docs/method/prerequisites.md's guard list against `ls standard/scripts/*.mjs`",
+      "status": "run"
+    },
+    {
+      "id": "DOC-08",
+      "title": "R15 and the tracker pick-list name trackers open-endedly, not as a closed list of three brands",
+      "area": "docs",
+      "tests": [
+        "R15"
+      ],
+      "promise": "Execution state and work history live in the tracker - GitHub Issues by default, or an adapter for whatever the team already runs... the list is not exhaustive - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo using a tracker outside GitHub Issues/Jira/Linear (GitLab Issues, or a mailing-list-plus-Bugzilla workflow)",
+      "when": "the tracker question in align-to-standards is asked",
+      "then": "the question is open-ended, not a closed pick-list of three brands",
+      "procedure": "read SPEC.md R15 and skills/align-to-standards' tracker question for an open-ended (not closed-brand-list) phrasing",
+      "status": "run"
+    },
+    {
+      "id": "DOC-09",
+      "title": "CHANGELOG.md has an `## Unreleased` heading and every merged PR - including this session's own - adds an entry under it",
+      "area": "docs",
+      "tests": [
+        "R18"
+      ],
+      "promise": "A PR describes its change under the changelog's Unreleased heading - at every profile, with no second mechanism - SPEC.md R18",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "CHANGELOG.md after two PRs (the session's own #7 and #8) merged following the 0.8.13 release",
+      "when": "CHANGELOG.md is read for an Unreleased heading and entries for those two PRs",
+      "then": "the heading exists and both PRs have entries under it",
+      "procedure": "grep CHANGELOG.md for `## Unreleased` and entries dated after the 0.8.13 release commit",
+      "status": "run"
+    },
+    {
+      "id": "DOC-10",
+      "title": "CHANGELOG.md has a recorded entry for every past version bump, and the documented scripts/changelog.mjs exists in the tree",
+      "area": "docs",
+      "tests": [
+        "R18"
+      ],
+      "promise": "the maintainer cuts every release... a PR describes its change under the Unreleased heading - SPEC.md R18",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": "versions 0.8.1 through 0.8.12 and docs/method/changelog-process.md's description of scripts/changelog.mjs",
+      "when": "CHANGELOG.md is checked for entries at those versions, and the tree is checked for the script",
+      "then": "every historical version has an entry, and the script exists where documented",
+      "procedure": "grep CHANGELOG.md for headings 0.8.1 through 0.8.12; find standard/scripts or scripts/ for changelog.mjs",
+      "status": "run"
+    },
+    {
+      "id": "DOC-11",
+      "title": "R18 and R25 agree on whether a PR may bump the version",
+      "area": "docs",
+      "tests": [
+        "R18",
+        "R25"
+      ],
+      "promise": "A PR MUST NOT add a version heading to the changelog and MUST NOT bump a version; the maintainer cuts every release - SPEC.md R18",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "SPEC.md's R18 and R25 text",
+      "when": "both are read together for what a PR may do to the version",
+      "then": "they agree - R25 does not, as written, require what R18 forbids",
+      "procedure": "read SPEC.md R18 and R25 side by side for a contradiction on PR-level version bumps",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-02",
+      "title": "R24's 'a repo that owns a database' framing has room for a library whose product IS the migration mechanism, not one owned schema",
+      "area": "shape",
+      "tests": [
+        "R24"
+      ],
+      "promise": "A repo that owns a database MUST carry that schema as executable DDL... complete enough to rebuild the database from a checkout alone - SPEC.md R24",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a library whose product is itself multi-backend database migrations (oban-bg/oban), not an application with one owned schema",
+      "when": "R24's database-ownership framing is checked against that shape",
+      "then": "the rule's 'a repo that owns a database' framing does not fit a repo whose product is the migration mechanism itself",
+      "procedure": "read SPEC.md R24 against oban-bg/oban's real shape (a migrations library with no single owned schema of its own)",
+      "status": "run"
+    },
+    {
+      "id": "TRIG-01",
+      "title": "an ordinary sentence that belongs in a record reaches the right skill without the user naming it",
+      "area": "trigger",
+      "tests": [
+        "PRODUCT.md:12"
+      ],
+      "promise": "does ordinary speech reach the right skill - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a user describing something in plain language that matches a shipped skill's trigger (e.g. a technical choice getting made)",
+      "when": "they say it without naming any skill or command",
+      "then": "the right skill (e.g. adr-write) activates anyway",
+      "procedure": null,
+      "status": "planned"
+    },
+    {
+      "id": "TRIG-04",
+      "title": "a non-technical PO reaches ready-to-develop with zero developer rescues",
+      "area": "trigger",
+      "tests": [
+        "PRODUCT.md:39"
+      ],
+      "promise": "the PO leg without developer rescue - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a non-technical product owner working the discovery-to-spec loop alone",
+      "when": "they drive a capability from idea to ready-to-develop",
+      "then": "they reach it without a developer intervening to unblock a step the PO could not perform",
+      "procedure": null,
+      "status": "planned"
+    },
+    {
+      "id": "LOOP-02",
+      "title": "a fresh agent on lap 2 inherits lap 1's conclusions from a file the standard tells it to read",
+      "area": "loop",
+      "tests": [
+        "R1"
+      ],
+      "promise": "does a fresh agent pick up state - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a completed lap of the product/tech/AI loop, with its conclusions recorded where AGENTS.md points",
+      "when": "a fresh agent (no memory of lap 1) starts lap 2",
+      "then": "it inherits lap 1's conclusions from the recorded file, not by being told them in the prompt",
+      "procedure": null,
+      "status": "planned"
+    },
+    {
+      "id": "UPD-01",
+      "title": "update-to-version applies only the delta and preserves recorded deviations, ending at drift 0",
+      "area": "update",
+      "tests": [
+        "R17"
+      ],
+      "promise": "an update applies the delta between that and latest, preserving the repo's recorded deviations - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "a repo aligned to an older standard version, with at least one recorded manifest exception",
+      "when": "update-to-version runs against the latest standard",
+      "then": "only the delta is applied (no re-scaffold), the recorded exception survives, and self-verify ends at drift 0",
+      "procedure": null,
+      "status": "planned"
+    },
+    {
+      "id": "GATE-15",
+      "title": "the coupling guard's glob translator consumes a directory segment for every `**`, so a top-level capability glob matches",
+      "area": "gates",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a capability-map.json entry using `**/payment/**` or `shared/**/payment*` - the first two entries of the shipped example map",
+      "when": "a file at `payment/index.ts` or `shared/payment.ts` changes and spec-guard --audit runs",
+      "then": "the glob is translated to a regex that requires an extra path segment in front of the match, so the coupling guard misses the file entirely",
+      "procedure": "node standard/scripts/spec-guard.mjs --audit against a capability-map.json entry `**/payment/**` and a changed file `payment/index.ts`",
+      "status": "run"
+    },
+    {
+      "id": "GATE-16",
+      "title": "the clarify gate fails a spec whose open-question markers are written in a non-English language, not only the English literal string",
+      "area": "gates",
+      "tests": [
+        "R12"
+      ],
+      "promise": "A spec cannot reach ready-to-develop with open questions - PRODUCT.md, SPEC.md R12",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a spec written in Chinese, per the method's own instruction that specs may be authored in the team's working language",
+      "when": "the spec has four genuinely unresolved items and the clarify gate runs",
+      "then": "the gate reads the translated content and still fails, instead of passing because the marker happens not to be in English",
+      "procedure": "bash standard/scripts/spec/check-spec-clarified.sh <spec.md> against a Chinese-language spec with four unresolved items",
+      "status": "run"
+    },
+    {
+      "id": "GATE-17",
+      "title": "the clarify gate reads the template's own required `## Open questions` section, not only the `[NEEDS ...]` bracket form",
+      "area": "gates",
+      "tests": [
+        "R12"
+      ],
+      "promise": "A spec cannot reach ready-to-develop with open questions - PRODUCT.md, SPEC.md R12",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "an aligned repo with a capability spec whose `## Open questions` section (a section the template requires) records genuinely open items as free prose, a statement-phrased question, or a table row - not the bracket marker",
+      "when": "the clarify gate runs",
+      "then": "the gate passes with the section's real open items still unanswered, because it only ever counted the literal string `[NEEDS `",
+      "procedure": "bash standard/scripts/spec/check-spec-clarified.sh <spec.md> against a spec whose Open questions section uses free prose",
+      "status": "run"
+    },
+    {
+      "id": "GATE-18",
+      "title": "cycle-guard reads intents from the exact table shape the adopter-facing manual itself demonstrates, not only a table under a literal `## Intents` H2",
+      "area": "gates",
+      "tests": [
+        "R15"
+      ],
+      "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a cycle file written in the shape docs/tree/docs-cycles.md's own worked example shows (no `## Intents` heading, a compound id+title first cell)",
+      "when": "cycle-guard.mjs runs against a real one-place violation written in that exact shape",
+      "then": "the guard reads zero rows and reports OK, instead of catching the violation",
+      "procedure": "node standard/scripts/cycle-guard.mjs against a cycle file shaped like docs/tree/docs-cycles.md's own example, with a real duplicated intent",
+      "status": "run"
+    },
+    {
+      "id": "GATE-19",
+      "title": "a spec's `Status: ready-to-develop` (or `live`) is verified by re-running the clarify gate, not left as a value nothing checks",
+      "area": "gates",
+      "tests": [
+        "R12"
+      ],
+      "promise": "A spec cannot reach ready-to-develop with open questions - PRODUCT.md, SPEC.md R12",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a spec whose Status field was typed to `ready-to-develop` by hand, with one open `[NEEDS DECISION: ...]` marker still present",
+      "when": "spec-structure.mjs (or another repo-wide guard) runs",
+      "then": "the guard re-runs the real clarify gate against any spec claiming ready-to-develop or live and fails it, instead of treating the typed value as authoritative",
+      "procedure": "node standard/scripts/spec-structure.mjs against a spec typed Status: ready-to-develop with a genuinely open marker still present",
+      "status": "run"
+    },
+    {
+      "id": "GATE-20",
+      "title": "SPEC.md's own stated rule range agrees with the rule it actually defines last, and the count is a declared, checked fact",
+      "area": "gates",
+      "tests": [
+        "R4"
+      ],
+      "promise": "A fact has one home... a restatement nobody declared is drift waiting for a reader to notice - SPEC.md R4",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "SPEC.md's own line stating its rule range",
+      "when": "the file is read against the rule actually defined last in it",
+      "then": "the stated range matches, and the count is registered in docs/facts.json rather than left as an unguarded fact",
+      "procedure": "grep standard/SPEC.md for its stated rule range against its highest-numbered rule",
+      "status": "run"
+    },
+    {
+      "id": "GATE-21",
+      "title": "the persona-roster check and the placeholder-drift warning are locale-aware, not silently blind on a translated repo",
+      "area": "gates",
+      "tests": [
+        "R10",
+        "R4"
+      ],
+      "promise": "Every capability spec MUST name the persona it serves - SPEC.md R10",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a spec or template file in a non-English repo, with a real (non-placeholder) persona name or a real placeholder written in the local script",
+      "when": "spec-structure.mjs's persona check or self-verify's placeholder-fill warning runs",
+      "then": "the check does not false-fail on `<picture>`/`<code>` constructs in a foreign repo, and does not go blind on a non-ASCII placeholder",
+      "procedure": "run standard/scripts/spec-structure.mjs and self-verify.mjs against a repo whose specs and templates carry non-ASCII placeholder text",
+      "status": "run"
+    },
+    {
+      "id": "GATE-22",
+      "title": "the persona check verifies a `**Serves:**` value against the actual roster in docs/personas.md, not merely that the field is non-empty and non-placeholder",
+      "area": "gates",
+      "tests": [
+        "R10"
+      ],
+      "promise": "Every capability spec MUST name the persona it serves - SPEC.md R10",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a capability spec declaring `**Serves:** \\`Whoever I like\\`` (a name absent from docs/personas.md), or a spec with no roster at all",
+      "when": "spec-structure.mjs's persona gate runs",
+      "then": "the check fails, because the roster is the constraint, not merely an alternative satisfier a non-empty string can bypass",
+      "procedure": "node standard/scripts/spec-structure.mjs against a spec whose `**Serves:**` value is not in docs/personas.md's roster, and against a spec containing the phrase 'for whom' with no persona named",
+      "status": "run"
+    },
+    {
+      "id": "GATE-23",
+      "title": "spec-guard --audit sees a capability the map declares with no spec, not only a spec with no map entry",
+      "area": "gates",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "a capability-map.json with three declared capabilities, only one of which has a spec.md on disk",
+      "when": "spec-guard.mjs --audit runs",
+      "then": "the audit reports the two mapped-but-unspecced capabilities, not only 'OK, all mapped' from the specs-have-entries direction",
+      "procedure": "node standard/scripts/spec-guard.mjs --audit against a capability-map.json with two entries that have no corresponding spec.md",
+      "status": "run"
+    },
+    {
+      "id": "GATE-24",
+      "title": "spec-guard --audit sees a spec directory the moment it is created, not only after it is `git add`-ed",
+      "area": "gates",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo with at least one already-tracked spec, and a brand-new untracked capability directory",
+      "when": "spec-guard.mjs --audit runs locally, before `git add`",
+      "then": "the audit sees the untracked directory and reports it as unmapped, the same result CI will give after it is staged - not a false OK that flips to a failure only once staged",
+      "procedure": "node standard/scripts/spec-guard.mjs --audit against a repo with one tracked spec and one untracked, unmapped spec directory",
+      "status": "run"
+    },
+    {
+      "id": "GATE-25",
+      "title": "the CI-facing gate a repo actually blocks on is the one pre-pr-review names, so a local green run never precedes a CI-red one",
+      "area": "gates",
+      "tests": [
+        "R11"
+      ],
+      "promise": "A change to a capability's code MUST land in the same PR as its spec update; the coupling guard blocks any PR that breaks this - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a PR that changes capability code without updating its spec, on a branch",
+      "when": "pre-pr-review's documented local-check list is followed literally, then the same branch runs through CI",
+      "then": "the local checks and CI agree on pass/fail, instead of pre-pr-review reporting green on the exact violation CI's diff-scoped `--base --block` run catches",
+      "procedure": "run pre-pr-review's documented command list, then `node standard/scripts/spec-guard.mjs --base origin/main --block` on the same branch with a real capability-without-spec change",
+      "status": "run"
+    },
+    {
+      "id": "GATE-26",
+      "title": "the manifest's `exceptions` mechanism honours a deviation recorded in a Layer-2 stack manifest, not only one recorded in the core manifest",
+      "area": "gates",
+      "tests": [
+        "R17",
+        "R20"
+      ],
+      "promise": "an update applies the delta... preserving the repo's recorded deviations (the manifest's exceptions) - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": "a repo carrying the node stack, with a documented exception recorded in stack.manifest.json - exactly where ADAPTING.md tells an adopter to record one",
+      "when": "self-verify.mjs runs",
+      "then": "the exception clears the drift it targets, instead of being silently discarded because self-verify only folds files/sections/guards from the stack manifest, never its exceptions array",
+      "procedure": "node standard/scripts/self-verify.mjs against a repo whose stack.manifest.json (not standard.manifest.json) records a matching exception",
+      "status": "run"
+    },
+    {
+      "id": "GATE-27",
+      "title": "a merge-class manifest entry's required content (not only its filename) is checked, so deleting the substance behind a config key still shows as drift",
+      "area": "gates",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a Layer-2 stack's merge-class entry (e.g. pnpm-workspace.yaml's supply-chain policy block: minimumReleaseAge, saveExact, enablePrePostScripts)",
+      "when": "the entire policy block is deleted from the file, leaving only unrelated content, and self-verify.mjs runs",
+      "then": "the entry is reported as drift, because a declared set of required keys is checked inside it - not merely that the file exists",
+      "procedure": "node standard/scripts/self-verify.mjs against a repo whose pnpm-workspace.yaml has had minimumReleaseAge/saveExact/enablePrePostScripts deleted",
+      "status": "run"
+    },
+    {
+      "id": "GATE-28",
+      "title": "self-verify's file-existence check is case-exact, so a lowercase README.md on a case-insensitive filesystem is not silently treated the same as the required README.md",
+      "area": "gates",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo that ships readme.md/security.md in lower case",
+      "when": "self-verify.mjs runs on macOS or Windows, then the identical repo state runs on Linux CI",
+      "then": "the two platforms report the same drift number for that entry, instead of the case-insensitive filesystem passing a check the case-sensitive one fails",
+      "procedure": "node standard/scripts/self-verify.mjs against a repo whose README.md/SECURITY.md are shipped as readme.md/security.md, once on a case-insensitive filesystem and once on a case-sensitive one",
+      "status": "run"
+    },
+    {
+      "id": "GATE-29",
+      "title": "an unpinned repo's self-verify run states loudly that it fell back to the built-in skeleton, instead of printing a drift number that looks like the real one",
+      "area": "gates",
+      "tests": [
+        "R16",
+        "R2"
+      ],
+      "promise": "A repo MUST record the standard's state it last aligned to... and MUST carry the matching copy of standard.manifest.json - SPEC.md R2",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": "a repo with no standard.manifest.json (never aligned, or the manifest was deleted)",
+      "when": "self-verify.mjs runs",
+      "then": "the tool states plainly that it fell back to a 5-entry built-in skeleton, instead of reporting a drift number (4-5) that reads as comparable to a real manifest's 13-15",
+      "procedure": "node standard/scripts/self-verify.mjs against a repo with no standard.manifest.json at all",
+      "status": "run"
+    },
+    {
+      "id": "GATE-30",
+      "title": "a repo's `exceptions` count cannot inflate its reported adoption percentage: excepting a failure moves one point from drift to excepted, never into the numerator",
+      "area": "gates",
+      "tests": [
+        "R17"
+      ],
+      "promise": "an update applies the delta... preserving the repo's recorded deviations (the manifest's exceptions) - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "a repo with one required entry that genuinely fails, recorded under `exceptions`",
+      "when": "self-verify.mjs runs and reports its adopted percentage",
+      "then": "the excepted entry is reported as excepted (with the exception count always printed, including zero), and the percentage does not read as higher adoption than an identical repo with the same failure left undeclared",
+      "procedure": "node standard/scripts/self-verify.mjs against two otherwise-identical repos, one recording the failure as an exception and one leaving it unrecorded",
+      "status": "run"
+    },
+    {
+      "id": "GATE-31",
+      "title": "content-verification for `copy`-class manifest entries hashes the shipped content, so a locally modified or deleted file cannot report as adopted",
+      "area": "gates",
+      "tests": [
+        "R16",
+        "R2"
+      ],
+      "promise": "repos passing self-verify at the standard's current version - PRODUCT.md North Star; Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": "a `copy`-class manifest entry the manifest itself glosses as byte-for-byte, with 19 of 20 skills present and one deleted, or an entry whose content has been silently edited",
+      "when": "self-verify.mjs runs",
+      "then": "the missing skill or the modified content is reported as drift, worded as 'differs' rather than only 'missing' - not folded into a reported drift 0",
+      "procedure": "node standard/scripts/self-verify.mjs against a repo missing one of 20 required skills, and against one with a modified `.nvcrc` under an otherwise-untouched copy-class entry",
+      "status": "run"
+    },
+    {
+      "id": "GATE-32",
+      "title": "self-verify tracks a package-manager or workspace-composition entry that a repo satisfies only by coincidence, requiring a content match inside the matched path - not merely that the altPath resolves to something that exists",
+      "area": "gates",
+      "tests": [
+        "R22"
+      ],
+      "promise": "a ported location for a shipped skill is accepted, provided it carries the standard's own content - SPEC.md R22",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo whose altPath resolves to a directory that exists for an unrelated reason (an existing 31-skill system, an unrelated SECURITY.md, an unrelated altPath skills folder)",
+      "when": "self-verify.mjs checks whether the altPath is satisfied",
+      "then": "the check requires the standard's own content to actually be found inside the matched directory, not merely that a path with the right name exists",
+      "procedure": "node standard/scripts/self-verify.mjs against a repo whose altPath target directory exists for an unrelated reason and contains none of the standard's real content",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-11",
+      "title": "a capability's own registration in specs/capability-map.json happens as part of minting it, not as a separate step no skill owns",
+      "area": "spec",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a user describes a brand-new capability that spec-specify mints",
+      "when": "the first PR for that capability is opened, with `spec-guard --audit --block` running on every PR",
+      "then": "the capability is already registered in the map by the time the PR is opened, instead of the first PR failing CI on a problem the author did not cause",
+      "procedure": "run spec-specify to mint a new capability, then node standard/scripts/spec-guard.mjs --audit --block on its first PR",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-12",
+      "title": "spec-guard's coupling check binds to the domain-folder convention regardless of which source-layout option a spec's plan chose",
+      "area": "spec",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "the plan template's default source-layout option (layer folders: src/models, src/services, src/cli, src/lib)",
+      "when": "a capability is implemented under that default layout and spec-guard.mjs runs",
+      "then": "the coupling guard fires on a real code change, the same as it does under the domain-folder convention",
+      "procedure": "implement a capability under the plan template's default layer-folder layout and run node standard/scripts/spec-guard.mjs",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-13",
+      "title": "capability-map.json can express two capabilities that legitimately share one domain folder, not only a flat glob that fires on both or neither",
+      "area": "spec",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "two genuinely separate capabilities whose code necessarily lives inside one already-claimed domain folder",
+      "when": "one capability's glob entry is added, then narrowed, then the audit is run at each step",
+      "then": "the map can bind one file to the correct capability without also always firing on the sibling, unlike a glob-only scheme with no exclusion or negation syntax",
+      "procedure": "add a narrow capability-map.json entry for a second capability inside an already-mapped domain folder and run spec-guard.mjs --audit",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-14",
+      "title": "the clarify session marker section has a defined position in the template, so two independently-run sessions place it in the same spot",
+      "area": "spec",
+      "tests": [
+        "R12"
+      ],
+      "promise": "A spec MUST pass the clarify gate before planning or implementation - SPEC.md R12",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "the capability spec template's 16 headings, none of which is `## Clarifications`",
+      "when": "spec-clarify is run twice, possibly by two different agents",
+      "then": "both runs place the `## Clarifications` section in the same location, instead of the instruction ('just after the highest-level contextual section') resolving differently each time",
+      "procedure": "read standard/specs/capability-spec.template.md's heading list for a marked anchor point for `## Clarifications`",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-15",
+      "title": "R7's own text and the manifest's own required-decisions list agree on whether the standard asserts a count or subset of required decisions",
+      "area": "spec",
+      "tests": [
+        "R7"
+      ],
+      "promise": "Every fork in the decision checklist that applies to the repo MUST be consciously decided and recorded - SPEC.md R7",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "SPEC.md's R7 text ('names no subset and asserts no count') and standard.manifest.json's decisions array",
+      "when": "both are read together, and self-verify.mjs's printed summary line is checked against them",
+      "then": "the manifest does not mark any decision required:true, and self-verify's summary line does not print a count contradicting R7's own text",
+      "procedure": "grep standard.manifest.json's decisions array for required:true entries and standard/SPEC.md's R7 text for its no-count claim",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-16",
+      "title": "a spec's engine-artifact scaffolding is excluded from the persona/structure guards for every path spec-plan is documented to produce, not only plan.md/tasks.md",
+      "area": "spec",
+      "tests": [
+        "R9"
+      ],
+      "promise": "A capability spec MUST be buildable by default - SPEC.md R9",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "the four Phase 0/1 outputs spec-plan is documented to also produce - research.md, data-model.md, quickstart.md, contracts/*.md",
+      "when": "spec-structure.mjs --block runs on a PR opened between /spec-plan and /spec-reconcile",
+      "then": "all four are excluded from the persona gate the same way plan.md and tasks.md already are, instead of failing CI on a mid-workflow state the guard's own comment calls legitimate",
+      "procedure": "node standard/scripts/spec-structure.mjs --base main --block on a branch that has run /spec-plan but not yet /spec-reconcile",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-17",
+      "title": "extending a capability that a different capability's Accepted BDR explicitly retires is caught before it is specced, not routed through the ordinary spec-specify path",
+      "area": "spec",
+      "tests": [
+        "R6",
+        "R8"
+      ],
+      "promise": "Behavior MUST be specified by capability - never by ticket, page or feature number - SPEC.md R8; a superseded/retired decision governs new work in its scope - SPEC.md R6",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a request that would extend a capability an Accepted BDR has retired, routed through spec-specify (the PO's documented entry point)",
+      "when": "spec-specify runs",
+      "then": "the request is recognized as governed by the retiring BDR before a spec is drafted for it, instead of proceeding because spec-specify is the only spec-lifecycle skill with no retired-status check",
+      "procedure": "grep -c -i retired across every standard/.claude/skills/*/SKILL.md, and reproduce a request extending a BDR-retired capability through spec-specify",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-18",
+      "title": "spec-specify and spec-clarify read docs/decision-records/ for a record that already governs the request, before asking the user anything",
+      "area": "spec",
+      "tests": [
+        "R6"
+      ],
+      "promise": "An accepted record binds future work in its scope until superseded - SPEC.md R6",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a request that collides with an Accepted BDR neither skill has been told to check",
+      "when": "spec-specify or spec-clarify runs, using docs/discovery/ as the documented sole pre-user answer source",
+      "then": "the relevant BDR is read and surfaces before the user is asked, instead of only being found if a human happens to read it out of band",
+      "procedure": "grep -n decision-record across standard/.claude/skills/spec-specify and spec-clarify's SKILL.md files",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-19",
+      "title": "spec-specify has explicit guidance for a sentence that describes two capabilities at once, so the capability-split decision is not made silently by the one skill forbidden from asking",
+      "area": "spec",
+      "tests": [
+        "R8"
+      ],
+      "promise": "Behavior MUST be specified by capability - never by ticket, page or feature number - SPEC.md R8",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a request describing behaviour that spans two capabilities, one of which (under a different name) already has a spec",
+      "when": "spec-specify runs, which is explicitly instructed never to ask the user at this step",
+      "then": "the collision is caught and surfaced, instead of silently minting a new sibling capability because collision detection is exact-string on the generated slug",
+      "procedure": "run spec-specify against a request whose generated slug does not exact-string-match an existing capability directory it functionally overlaps with",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-20",
+      "title": "the offer to extend an existing, semantically-overlapping capability is checked beyond literal directory-name equality",
+      "area": "spec",
+      "tests": [
+        "R8"
+      ],
+      "promise": "Behavior MUST be specified by capability - never by ticket, page or feature number - SPEC.md R8",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "an existing capability directory and a differently-worded description of an extension to it",
+      "when": "spec-specify checks whether this is the same capability or a new one",
+      "then": "the check goes beyond literal directory-name equality to notice the semantic overlap",
+      "procedure": null,
+      "status": "needs-procedure"
+    },
+    {
+      "id": "SPEC-21",
+      "title": "a business decision written as a BDR has a Confirmation section stating how compliance is verified, the same as an ADR",
+      "area": "spec",
+      "tests": [
+        "R5",
+        "R6"
+      ],
+      "promise": "A contestable, re-litigable choice MUST be recorded as a decision record, with a stated way to confirm it is being followed - SPEC.md R5",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "a business decision with a technical enforcement point (a privacy constraint on data retention)",
+      "when": "the record is written using bdr-write's template",
+      "then": "the record states how compliance is verified, the same way an ADR's required Confirmation section does",
+      "procedure": "read standard/.claude/skills/bdr-write's template for a Confirmation - how compliance is verified section",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-07",
+      "title": "cycle-open, cycle-close and every mid-cycle prompt promised by tracking-work.md resolve the backlog at the manifest's declared altPath, the same way cycle-guard does",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "the repo backlog holds intents, each with a definition of done - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo satisfying the manifest at its primary backlog path (docs/backlog.md as an altPath of backlog.md, or vice versa)",
+      "when": "cycle-open or cycle-close is run",
+      "then": "both skills resolve the same altPath cycle-guard.mjs already resolves, instead of hardcoding one path and instructing edits to a file that does not exist there",
+      "procedure": "run cycle-open/cycle-close against a repo whose backlog lives only at the manifest's declared altPath",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-08",
+      "title": "cycle-guard checks that an intent a closed cycle's outcome block declares 'returned to the pool' is actually there, not only that no intent appears in more than one place",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a closed cycle whose Outcome block claims an item was returned to the pool",
+      "when": "cycle-guard.mjs runs, and the item is nowhere in the pool or anywhere else in the repo",
+      "then": "the guard fails, because it checks 'at least one' as well as 'at most one' - not only the duplicate-detection direction",
+      "procedure": "node standard/scripts/cycle-guard.mjs against a closed cycle whose Outcome block names an item as returned to the pool, with that item absent from the pool",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-09",
+      "title": "an id written in backticks or bold in a cycle or backlog table still resolves to the same intent as its bare form, and the id column is found by its header label rather than assumed to be column zero",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "an id written as `` `SPEC-1` `` or `**SPEC-1**` (every doc backtick-quotes ids in prose) in two teams' cycle tables",
+      "when": "cycle-guard.mjs runs",
+      "then": "the backticked/bold id is recognized as the same intent as its bare form and a genuine duplicate is caught - instead of an anchored regex silently never matching it",
+      "procedure": "node standard/scripts/cycle-guard.mjs against two teams' cycles both containing the identical id written with backticks",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-10",
+      "title": "the vocabulary for a cycle-boundary split (ADR-029) includes a real status value, so the fixture does not have to invent one outside the declared enum",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a backlog item split at a cycle boundary per ADR-029 into a done slice and a returned slice",
+      "when": "cycle-close records the split and cycle-guard.mjs's staleness check runs against a `blocked:` reference to the split item",
+      "then": "a declared status value exists for the split row, and the staleness check recognizes a split-but-finished item as done - instead of a fifth status invented outside the enum defeating the check that a finished item's block is stale",
+      "procedure": "node standard/scripts/cycle-guard.mjs against a cycle recording a split row with a stale `blocked:` reference to it",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-11",
+      "title": "timeline-update's cold-start behaviour and the backlog template's ban on converting a size to a duration agree with each other",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "measured time supersedes sizes only after three closed cycles; before that, a size is a splitting trigger, never a duration - ADR-029",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a team with fewer than three closed cycles (the branch every adopter is in on day one)",
+      "when": "timeline-update is asked when work will land",
+      "then": "the skill and the backlog template agree that no date is produced, and any number given is explicitly labelled an estimate - instead of the skill instructing 'project from sizes' while three other documents forbid ever converting a size letter into a duration",
+      "procedure": "read standard/.claude/skills/timeline-update/SKILL.md's cold-start branch against backlog.md, ADR-029 and work-cycles/spec.md's own bans on size-to-duration conversion",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-12",
+      "title": "the backlog's ledger row carries a source field, so 'every item has a source' is a schema guarantee rather than an undocumented convention folded into `why`",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "the repo backlog holds intents, each with a definition of done - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "tracking-work.md's and add-to-backlog's own claim that every backlog item has a source",
+      "when": "a real backlog row's ten declared columns are read",
+      "then": "one of them is a source column, instead of the claim being true only if the author folds provenance into `why` as an undocumented convention",
+      "procedure": "grep docs/backlog.md's column header for a source column",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-13",
+      "title": "the promised three-lane board has a place to render a `blocked` item, the fourth status the backlog schema itself declares",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "the repo backlog holds intents, each with a definition of done - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "an open cycle with a `blocked:SPEC-1` item",
+      "when": "tracking-work.md's rendered board is produced",
+      "then": "the blocked item's reference is visible on the board, instead of the board's three lanes (done/doing/todo) having nowhere to render the fourth declared status at all",
+      "procedure": "render the promised board against a real open cycle with a blocked:SPEC-1 item",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-14",
+      "title": "cycle-close's prescribed commit-count measurement is scoped to the team and window it is measuring, not a repo-wide count two overlapping teams both silently share",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "execution state and work history live in the tracker - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "two teams whose cycles overlap in time, each closing a cycle with cycle-close's prescribed `git log --oneline --since=<opened> --until=<closed> | wc -l`",
+      "when": "both teams record their cycle's commit count",
+      "then": "the two counts are genuinely different, scoped to each team's own work, instead of both recording the identical repo-wide blended number - contradicting timeline-update's own rule to never blend throughput across teams",
+      "procedure": "run cycle-close's prescribed git log command for two teams' overlapping cycle windows on the same repo history",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-15",
+      "title": "backlog and cycle hygiene - a done row removed from the pool, a stale cycle pointer removed, a cycle's declared item count matching its real rows - is checked mechanically, not left to the aligner's memory",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "a pool with a done row still present, a 3-month-stale pointer row for a closed cycle, and a cycle whose declared item count does not match its rows",
+      "when": "cycle-guard.mjs and self-verify.mjs both run",
+      "then": "at least one of the three hygiene violations is flagged, instead of all three passing as '100% adopted, compliant with the standard'",
+      "procedure": "node standard/scripts/cycle-guard.mjs against a pool with a done row, a stale closed-cycle pointer, and a mismatched item count, all three planted at once",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-16",
+      "title": "internal or documentation-debt backlog items have a persona to name, so the Definition of Ready's persona requirement does not park the doc's own headline content category by design",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "the repo backlog holds intents, each with a definition of done - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "an internal/documentation-debt backlog item, the doc's own headline content category",
+      "when": "add-to-backlog's Definition of Ready check runs",
+      "then": "the item can name a persona (an internal-work persona, or an explicit non-user-facing allowance), instead of being 'parked, not queued' because the persona roster holds only end-user personas",
+      "procedure": "file an internal/documentation-debt item through add-to-backlog and check whether a legitimate persona can be named",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-17",
+      "title": "the backlog's id convention (type-scoped vs. capability-scoped) is stated once and used consistently across every method doc and worked example, since the id is the only field joining the pool to a cycle",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "a fact has one home - SPEC.md R4; the repo backlog holds intents - SPEC.md R15",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "add-to-backlog's documented id convention (type-scoped: SPEC-3, ADR-auth) and the method docs' own worked examples (capability-scoped: INV-3, PAY-2)",
+      "when": "both are read together",
+      "then": "they agree on one convention, instead of backlog.md itself mixing both forms in one sentence",
+      "procedure": "grep add-to-backlog/SKILL.md and docs/method/tracking-work.md for their id-naming convention and compare",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-18",
+      "title": "cycle-guard's one-place invariant is keyed on the intent, not only on its id, so a copy-then-renumber does not pass as compliant",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "an intent copied into a cycle without being cut from the pool, with the pool row's id then renumbered while its title is kept identical",
+      "when": "cycle-guard.mjs runs",
+      "then": "the guard recognizes the two rows as one piece of work duplicated, instead of reporting the one-place invariant holding because it keys entirely on the first-cell id and never compares titles",
+      "procedure": "node standard/scripts/cycle-guard.mjs against a pool-and-cycle pair created by copying an intent, then renumbering only the pool copy's id",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-19",
+      "title": "spec-impact and spec-update are among the skills add-to-backlog documents as automatic backlog feeders, and each actually files what it claims to",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "the repo backlog holds intents - SPEC.md R15",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "backlog.md's own claim that spec-impact and spec-update automatically feed backlog rows for their documented cases",
+      "when": "either skill runs to completion on a case it claims to feed",
+      "then": "a backlog row is actually filed, instead of the skill's own SKILL.md never mentioning 'backlog' at all",
+      "procedure": "grep -n backlog across standard/.claude/skills/spec-update and spec-impact's SKILL.md files",
+      "status": "run"
+    },
+    {
+      "id": "DEC-05",
+      "title": "a decision record's number is assigned from a real enumeration of the records on disk, not from a stale index a guard would have caught",
+      "area": "decisions",
+      "tests": [
+        "R5",
+        "R6"
+      ],
+      "promise": "A contestable, re-litigable choice MUST be recorded as a decision record - SPEC.md R5",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a bdr/README.md index missing one record that is on disk (an Accepted BDR retiring a capability, cited by a live spec)",
+      "when": "bdr-write follows its own documented numbering instruction ('gapless, never reused, next free as of main') against that stale index",
+      "then": "the collision is caught before a duplicate ships, instead of a second record sharing an existing number passing every guard as compliant",
+      "procedure": "write a new BDR following bdr-write's numbering instruction against an index missing one real record, then run self-verify.mjs, spec-structure.mjs, spec-guard.mjs --audit and cycle-guard.mjs",
+      "status": "run"
+    },
+    {
+      "id": "DEC-06",
+      "title": "idea-write is reachable by handoff from the two skills that claim to point at it, not only by name recognition",
+      "area": "decisions",
+      "tests": [
+        "R14"
+      ],
+      "promise": "A speculative idea MUST NOT mint records or specs before it is approved. It lives in docs/ideas/ under a status - SPEC.md R14",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "adr-write's and bdr-write's own claim that both 'refuse to write a record for a maybe and point here instead'",
+      "when": "either skill is run against a genuine maybe",
+      "then": "the handoff names idea-write by skill name, instead of pointing only at the docs/ideas/ folder - which an agent can write to directly, bypassing the template, persona check, and graduation contract",
+      "procedure": "grep -rn idea-write across standard/.claude/skills/ for a reference from adr-write or bdr-write",
+      "status": "run"
+    },
+    {
+      "id": "DEC-07",
+      "title": "graduating an approved idea that changes an existing capability routes to spec-update, not to spec-specify's new-capability path",
+      "area": "decisions",
+      "tests": [
+        "R11",
+        "R14"
+      ],
+      "promise": "on approval hands off to the normal flow - SPEC.md R14",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "an approved idea that changes an existing capability's behaviour (an approval-rule change to an already-shipped capability)",
+      "when": "idea-write's graduation instructions are followed",
+      "then": "the change reaches the existing capability's spec via spec-update, instead of spec-specify's own logic minting a sibling capability directory from the idea's slug",
+      "procedure": "graduate an approved idea that changes an existing capability, following idea-write's documented routing literally",
+      "status": "run"
+    },
+    {
+      "id": "DEC-08",
+      "title": "a decision that a request would extend a licensing- or contract-forbidden capability is caught by the ripple search that names itself the reason spec-impact exists",
+      "area": "decisions",
+      "tests": [
+        "R6"
+      ],
+      "promise": "An accepted record MUST NOT be edited into a different decision. It is superseded by a new record - SPEC.md R6",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a proposed change an Accepted BDR explicitly rules out for the affected capability",
+      "when": "spec-impact's step 3 ripple checklist runs literally",
+      "then": "the BDR is opened and the conflict is surfaced, instead of the checklist bullet saying 'ADRs' only, so the check never opens docs/decision-records/bdr/ at all",
+      "procedure": "run spec-impact's documented ripple-search step against a change an Accepted BDR explicitly forbids",
+      "status": "run"
+    },
+    {
+      "id": "DEC-09",
+      "title": "spec-impact's ripple search covers every artifact type the manifest requires, not only specs, ADRs and code",
+      "area": "decisions",
+      "tests": [
+        "R6"
+      ],
+      "promise": "An accepted record binds future work in its scope - SPEC.md R6",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "runbooks, personas, PRODUCT.md and analytics docs - all required by the manifest - alongside a real change that contradicts four of them at once",
+      "when": "spec-impact's ripple search runs",
+      "then": "at least one of the four contradicted artifacts is flagged, instead of the search only ever naming 'other capability specs,' 'ADRs,' and 'Code/files'",
+      "procedure": "run spec-impact against a real change contradicting a runbook, a persona description, a PRODUCT.md line and a backlog row simultaneously",
+      "status": "run"
+    },
+    {
+      "id": "DEC-10",
+      "title": "a stale, now-false sentence in a spec whose Status is retired has a documented procedure to correct it, instead of every documented rule pointing a different, mutually-exclusive way",
+      "area": "decisions",
+      "tests": [
+        "R4",
+        "R6"
+      ],
+      "promise": "Documents are living: they MUST be updated in place. The current version is the truth - SPEC.md R4",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a retired spec (Status: retired per an Accepted BDR) whose contract section is now factually wrong under an unrelated change elsewhere",
+      "when": "spec-update (stop before editing anything retired), spec-reconcile (resolve cross-spec contradictions) and spec-impact (retired check scoped to the primary capability only) are each checked against this exact case",
+      "then": "at least one of the three names a legal path to the correction, instead of all three rules contradicting each other with none actually usable",
+      "procedure": "read spec-update, spec-reconcile and spec-impact's SKILL.md files for their retired-spec handling against a spec whose retired content is now provably false",
+      "status": "run"
+    },
+    {
+      "id": "DEC-11",
+      "title": "the decision-record templates' author field is filled by the same convention self-verify's placeholder check already recognizes, not a second, uncovered mustache token",
+      "area": "decisions",
+      "tests": [
+        "R4"
+      ],
+      "promise": "A fact has one home... a restatement nobody declared is drift waiting for a reader to notice - SPEC.md R4",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "adr/_template.md and bdr/_template.md's `| **Author** | {{AUTHOR}} |` row",
+      "when": "self-verify.mjs's placeholder-fill warning runs against a record whose Author field was never substituted",
+      "then": "the unfilled token is flagged, the same way an unfilled `<angle bracket>` placeholder is elsewhere - instead of a second, mustache-syntax convention nothing generates, fills, or checks",
+      "procedure": "grep -rn '{{AUTHOR}}' across the standard's templates and self-verify.mjs's placeholder pattern list",
+      "status": "run"
+    },
+    {
+      "id": "DISC-05",
+      "title": "discovery-digest diffs a contradiction between two people inside one pasted handover, not only between two separately-filed entries",
+      "area": "discovery",
+      "tests": [
+        "docs/method/discovery.md"
+      ],
+      "promise": "discovery-digest files raw material into the topic's dossier and flags contradictions - docs/method/discovery.md",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a single mail thread pasted as one handover, in which two people contradict each other",
+      "when": "discovery-digest's step 3 (diff against every earlier entry) runs",
+      "then": "the contradiction is recorded in the `## Contradictions to resolve` table, instead of counting as one entry with an empty set of earlier entries to diff against",
+      "procedure": "file a mail thread containing an internal contradiction as one discovery-digest entry and check the Contradictions table afterward",
+      "status": "run"
+    },
+    {
+      "id": "DISC-06",
+      "title": "discovery-digest builds the dossier from the standard's own shipped template, not a hand-built shape that diverges from what spec-clarify and spec-specify actually read",
+      "area": "discovery",
+      "tests": [
+        "docs/method/discovery.md"
+      ],
+      "promise": "discovery-digest files raw material into the topic's dossier - docs/method/discovery.md",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "docs/discovery/_template.md, shipped with the tree specifically to be copied per its own first line",
+      "when": "discovery-digest's instructions are read for whether they reference it",
+      "then": "the skill instructs copying the shipped template, instead of building the dossier by hand in a shape no script (including the 'Last reconciled' stamp parser) actually reads",
+      "procedure": "grep -n template standard/.claude/skills/discovery-digest/SKILL.md, and grep -rn 'Last reconciled' standard/scripts/",
+      "status": "run"
+    },
+    {
+      "id": "DISC-07",
+      "title": "discovery entries filed through discovery-digest advance the same 'Last reconciled' stamp regardless of which spec skill actually folds them in, including spec-update",
+      "area": "discovery",
+      "tests": [
+        "docs/method/discovery.md"
+      ],
+      "promise": "discovery-digest... says whether the topic is ready to be specced - docs/method/discovery.md",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "new material that changes an already-shipped spec, routed discovery-digest -> spec-impact -> spec-update (the documented path for this exact case)",
+      "when": "the spec is changed in the same session specifically to resolve the discovery entry's contradiction",
+      "then": "the dossier's 'Last reconciled' stamp advances and the entry's state updates, instead of permanently reading 'never' and 'new' because spec-update is not one of the 'spec-*' skills discovery.md names as moving the stamp",
+      "procedure": "follow discovery-digest -> spec-impact -> spec-update end to end and check the dossier's Last reconciled stamp afterward",
+      "status": "run"
+    },
+    {
+      "id": "LOOP-03",
+      "title": "a decision record's `Revisit when` trigger is checked against incoming evidence by something other than the same agent remembering having written it a lap earlier",
+      "area": "loop",
+      "tests": [
+        "R6"
+      ],
+      "promise": "a decision record states when it should be revisited, and that condition is checked, not only recorded - docs/method/dev-work.md",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a decision record with a stated revisit-when trigger, written in one lap",
+      "when": "evidence matching that trigger exactly arrives in a later lap, run by a fresh or the same agent",
+      "then": "something reads the trigger and flags the match, instead of the mechanism firing only because the same agent happened to remember writing it",
+      "procedure": "grep -rn -i revisit across every standard/.claude/skills/*/SKILL.md file and every scripts/*.mjs file",
+      "status": "run"
+    },
+    {
+      "id": "LOOP-04",
+      "title": "self-verify certifies a repo compliant only if it also carries the version-control hygiene (a .gitignore excluding dependency trees) the manifest's own capability globs assume",
+      "area": "loop",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a Node repo with node_modules/ tracked in git and no .gitignore at all",
+      "when": "self-verify.mjs runs, and a `**/`-prefixed capability glob is checked against paths inside the tracked dependency tree",
+      "then": "the repo is not certified 100% compliant, and the glob is not shown to match paths inside a committed dependency tree",
+      "procedure": "node standard/scripts/self-verify.mjs against a fixture with node_modules/ tracked and no .gitignore, and verify a `**/swap/**` capability glob against a path inside it",
+      "status": "run"
+    },
+    {
+      "id": "LOOP-05",
+      "title": "the CI-facing `profile` key self-verify's shipped workflow reads actually exists on the manifest it reads it from, so the core/solo advisory branch is reachable",
+      "area": "loop",
+      "tests": [
+        "R20"
+      ],
+      "promise": "one standard with two profiles - SPEC.md R20",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "the shipped standard.manifest.json's full top-level key list, and the shipped CI workflow's PROFILE computation (defaulting to \"scale\" when the key is absent)",
+      "when": "self-verify.mjs and the workflow both run against a real aligned fixture",
+      "then": "the manifest carries the profile key the workflow reads, so a solo/core repo is not silently defaulted into the scale-tier gate",
+      "procedure": "grep standard.manifest.json for a top-level profile key, and .github/workflows/spec-guard.yml for its PROFILE default",
+      "status": "run"
+    },
+    {
+      "id": "UPD-02",
+      "title": "the delta between two versions is computed from the real file changes between them, not only from a keyed manifest-entry diff that can report zero added/removed across an 18-file release",
+      "area": "update",
+      "tests": [
+        "R17"
+      ],
+      "promise": "an update applies the delta between that and latest - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": "the manifest-keyed diff update-to-version's step 2 designates as 'the precise delta', run across a real release (0.8.12 to 0.8.13) that changed 18 payload files including a whole new skill and three guard bug fixes",
+      "when": "the diff is compared against the real payload delta (git diff --stat)",
+      "then": "the two agree in substance, instead of the designated delta source reporting 0 added, 0 removed, 52 entries changed (every one only the `since` field) for a release that shipped a new skill",
+      "procedure": "diff standard.manifest.json between two real tagged/released commits, keyed by entry path, and separately run git diff --stat between the same two commits' standard/ tree",
+      "status": "run"
+    },
+    {
+      "id": "UPD-03",
+      "title": "self-verify's drift-0 result after an update distinguishes an actually-applied update from a sham one that only bumped the pin and copied the manifest",
+      "area": "update",
+      "tests": [
+        "R17"
+      ],
+      "promise": "an update applies the delta - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": "a \"sham update\": bump .standards-version and copy the new manifest, apply zero of the release's real file deltas",
+      "when": "self-verify --version <target> runs, the way update-to-version's own step 6 nominates as proof of completion",
+      "then": "the sham is distinguished from a real update - reported drift greater than 0, instead of 'drift 0 - 100% adopted' on a repo still one skill short and still carrying the old SPEC.md's text",
+      "procedure": "perform a sham update (pin bump + manifest copy only, zero real file changes applied) and run self-verify --version against it",
+      "status": "run"
+    },
+    {
+      "id": "UPD-04",
+      "title": "recording a local deviation as a manifest `exceptions` entry and reaching self-verify drift 0 are simultaneously satisfiable at the version an adopter is actually on, not only at a version still under `## Unreleased`",
+      "area": "update",
+      "tests": [
+        "R17"
+      ],
+      "promise": "an update applies the delta... preserving the repo's recorded deviations (the manifest's exceptions) - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": "a repo aligned at 0.8.12 or the released 0.8.13, with a realistic recorded exception (a CI-substitute for spec-guard.yml)",
+      "when": "self-verify.mjs runs at that repo's actual version",
+      "then": "the exception clears the drift it targets, instead of self-verify.mjs having no exceptions-reading code at either released version - support arrives only under `## Unreleased`",
+      "procedure": "record a realistic exception at 0.8.12 and 0.8.13 (git show <release-commit>:standard/scripts/self-verify.mjs | grep -c exception) and run self-verify at each",
+      "status": "run"
+    },
+    {
+      "id": "UPD-05",
+      "title": "update-to-version has a documented branch for a manifest `files` entry that changed upstream and also diverged locally - the actual shape of most merge- and fill-class entries, not only 'unchanged' or 'removed'",
+      "area": "update",
+      "tests": [
+        "R17"
+      ],
+      "promise": "an update applies the delta, adapted to this repo - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "a merge-class file (docs/conventions.md) with a planted local paragraph, changed upstream by the release being applied",
+      "when": "update-to-version's step 3 is followed literally",
+      "then": "the skill has an instruction for this exact case, instead of covering only 'not diverged' and 'removed' - silently skipping the file while self-verify still reports drift 0",
+      "procedure": "read update-to-version/SKILL.md's step 3 for a changed-upstream-and-diverged-locally branch, and reproduce against a merge-class file matching that shape",
+      "status": "run"
+    },
+    {
+      "id": "UPD-06",
+      "title": "the update path names where to fetch the standard's own checkout from, on the surface an adopter actually reads - not only inside the standard's own README, a file the adopter is told to gitignore",
+      "area": "update",
+      "tests": [
+        "R17"
+      ],
+      "promise": "an update applies the delta - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "AGENTS.md, update-to-version/SKILL.md, and the adopter-facing update-watch issue text",
+      "when": "an adopter looks for the fetch command needed before the skill's steps can run at all",
+      "then": "at least one of the three names the command, instead of the only documented fetch step living inside core/README.md:203 - a file the adopter does not carry and is told to .gitignore",
+      "procedure": "grep -rn 'npx degit repository-standards/core' across update-to-version/SKILL.md, AGENTS.md and the standards-update-watch workflow's issue template",
+      "status": "run"
+    },
+    {
+      "id": "UPD-07",
+      "title": "a Layer-2 stack's own release history carries the version-keyed delta source (tags, a changelog, or `since` fields) that update-to-version's step 2 requires - not only the core layer's",
+      "area": "update",
+      "tests": [
+        "R17",
+        "R20"
+      ],
+      "promise": "the standard is two layers - SPEC.md R20; an update applies the delta - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "the node stack's own git history: no tags, no CHANGELOG.md/RELEASE-NOTES.md, and 0 of 12 stack.manifest.json files entries carrying a `since` field",
+      "when": "update-to-version's stop condition ('if you cannot determine the delta, stop and say so') is checked against the stack layer specifically",
+      "then": "at least one version-keyed delta source exists for the stack, instead of the stop condition firing permanently for every Layer-2 update",
+      "procedure": "git tag | wc -l against the node repo, and grep -c since node/stack.manifest.json's files entries",
+      "status": "run"
+    },
+    {
+      "id": "TRIG-02",
+      "title": "the section of AGENTS.md that produces unprompted ask-and-volunteer behaviour is actually loaded into context on every turn, not left behind a markdown link an agent can leave unread",
+      "area": "trigger",
+      "tests": [
+        "PRODUCT.md:12"
+      ],
+      "promise": "does ordinary speech reach the right skill - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "CLAUDE.md's own line 3, which links AGENTS.md",
+      "when": "the harness starts a session and CLAUDE.md is auto-loaded",
+      "then": "AGENTS.md's real behaviour-producing text loads with it via an `@AGENTS.md` import, instead of a markdown `[text](./path)` link that Claude Code auto-loads CLAUDE.md but does not follow",
+      "procedure": "read CLAUDE.md's opening lines for `@AGENTS.md` versus a markdown link, and compare the loaded content's ask/offer/volunteer instructions against AGENTS.md's own text",
+      "status": "run"
+    },
+    {
+      "id": "TRIG-03",
+      "title": "deleting the section of AGENTS.md that produces unprompted behaviour, or removing a required lifecycle skill, changes the reported drift number",
+      "area": "trigger",
+      "tests": [
+        "R2",
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "AGENTS.md's entire 'the loop runs itself (unprompted)' section, and separately, seven required skills including spec-clarify moved out of .claude/skills/",
+      "when": "each is deleted or removed in turn, and self-verify.mjs runs",
+      "then": "the drift number changes in each case, instead of both leaving it unchanged because .claude/skills was checked as a bare directory with no contents check, and the manifest's `sections` array had no entry for the unprompted-behaviour heading at all",
+      "procedure": "delete AGENTS.md's whole unprompted-behaviour section and run self-verify.mjs; separately remove 7 required skills including spec-clarify and run it again",
+      "status": "run"
+    },
+    {
+      "id": "TRIG-04b",
+      "title": "an ordinary utterance that names a bug in passing (\"btw the export is broken\") reaches a skill, instead of matching none of the 20 shipped descriptions",
+      "area": "trigger",
+      "tests": [
+        "PRODUCT.md:12"
+      ],
+      "promise": "does ordinary speech reach the right skill - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "the sentence \"btw the export is broken\", one of 20 blind-routed realistic utterances tested against every skill's name+description",
+      "when": "the utterance is matched against the routing docs' own promised route (add-to-backlog, per the standard's own taxonomy) versus what the descriptions alone would catch",
+      "then": "the utterance reaches add-to-backlog, instead of matching none of the 20 descriptions because taxonomy.md had no defect row and no description mentions a bug",
+      "procedure": "blind-route the utterance \"btw the export is broken\" against every one of the 20 shipped skill descriptions",
+      "status": "run"
+    },
+    {
+      "id": "TRIG-05",
+      "title": "the document that states the unprompted-behaviour contract (agent-work.md) is delivered to an adopting repo, not left as a page that exists only on the standard's own website",
+      "area": "trigger",
+      "tests": [
+        "R1"
+      ],
+      "promise": "A repo MUST carry AGENTS.md at its root - SPEC.md R1",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "docs/method/agent-work.md, whose title and table state exactly the unprompted-behaviour promise",
+      "when": "standard.manifest.json's references[] array and AGENTS.md's linked method docs are checked",
+      "then": "the file is listed and delivered by reference, instead of being absent from both - existing only on the product's own website, never in an adopted repo",
+      "procedure": "grep -rn agent-work standard.manifest.json's references array",
+      "status": "run"
+    },
+    {
+      "id": "STACK-04",
+      "title": "self-verify depends only on Node built-ins to check a Layer-2 stack's compliance, so a missing pnpm reads as a missing prerequisite, not as drift indistinguishable from a real lint failure",
+      "area": "stack",
+      "tests": [
+        "R16"
+      ],
+      "promise": "these guards... are dependency-free Node scripts - SPEC.md R16",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": "a repo carrying the node stack, assessed on a machine with no pnpm on PATH",
+      "when": "self-verify.mjs runs its stack guard (`pnpm check:all`)",
+      "then": "the tool states plainly that a required tool is missing, instead of reporting a drift number indistinguishable from a genuine lint failure - and does not, on a machine that does have pnpm but no node_modules, silently install 670 MB of dependencies from the network as a side effect of a compliance check",
+      "procedure": "run self-verify.mjs against the node stack once with pnpm off PATH, and once with pnpm present but node_modules absent",
+      "status": "run"
+    },
+    {
+      "id": "STACK-05",
+      "title": "a Layer-2 stack manifest's own `version` field is checked and printed by self-verify, so a stale carried stack version produces a visible note, not silence",
+      "area": "stack",
+      "tests": [
+        "R20"
+      ],
+      "promise": "a stack declares what adopting it means in its own manifest - SPEC.md R20",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "a carried stack.manifest.json whose version field is set to a stale value against the shipped version",
+      "when": "self-verify.mjs runs",
+      "then": "a note or warning is produced, instead of the stack's own version-pin check applying only to the core layer and producing nothing at all",
+      "procedure": "set a carried node stack.manifest.json's version to a stale value and run self-verify.mjs",
+      "status": "run"
+    },
+    {
+      "id": "STACK-06",
+      "title": "the one documented package-manager migration path (`pnpm import`) is verified against real bun- and yarn-managed repositories before being offered as the escape hatch",
+      "area": "stack",
+      "tests": [
+        "R20"
+      ],
+      "promise": "a stack declares what adopting it means, adaptable to the target repo - SPEC.md R20",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "ADAPTING.md's only documented migration row (pnpm import), run against a real bun-managed repo and a real yarn-berry-managed repo",
+      "when": "the migration is attempted exactly as documented",
+      "then": "it succeeds, or the documentation names the real escape hatch for each package manager - instead of failing on both of the two real repositories tested",
+      "procedure": "run `pnpm import` against a cloned bun-managed repo and a cloned yarn-berry-managed repo, following ADAPTING.md's documented row exactly",
+      "status": "run"
+    },
+    {
+      "id": "STACK-07",
+      "title": "the greenfield path's drift-0 exit gate is reachable without silently missing the one manifest-required file the brownfield path names seven times and the greenfield path names zero",
+      "area": "stack",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "greenfield.md's own exit gate text ('drift 0... a red run means something is genuinely wrong')",
+      "when": "a literal greenfield walk is performed through to that gate",
+      "then": "specs/capability-map.json is named as part of the walk, instead of the greenfield doc never naming it once (versus 7 times in the brownfield onboard.md) - hitting a FAIL at exactly the step the doc calls 'genuinely wrong'",
+      "procedure": "grep -c capability-map skills/align-to-standards/greenfield.md versus onboard.md, then walk greenfield.md literally through to its drift-0 gate",
+      "status": "run"
+    },
+    {
+      "id": "STACK-08",
+      "title": "the node starter's own documented one-command proof (`pnpm test:all` on a fresh clone) actually passes on a fresh clone, the same as CI runs it",
+      "area": "stack",
+      "tests": [
+        "R16"
+      ],
+      "promise": "these guards... are dependency-free Node scripts - SPEC.md R16",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "node/README.md's claim that `pnpm test:all` proves the starter works with no setup",
+      "when": "a pristine clone + install runs that exact command",
+      "then": "it passes, the same way CI (which performs both the Docker bootstrap and the Playwright install first) does",
+      "procedure": "clone the node starter fresh, install, and run pnpm test:all without any manual setup steps",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-03",
+      "title": "a CI workflow existing and passing is not read as evidence the PR gate actually fires, when the workflow itself never triggers on pull_request",
+      "area": "shape",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repo whose only PR-triggered workflow auto-closes every PR opened against it (LibreOffice/core), or whose real CI runs with no pull_request trigger by design (postgres/postgres, openjdk/jdk)",
+      "when": "the CI-workflow-exists check runs as part of an assessment pass",
+      "then": "the pass distinguishes 'a workflow file exists' from 'the PR gate fires', instead of scoring drift down by one for a workflow that structurally cannot gate a PR",
+      "procedure": "read the CI-workflow check's logic against LibreOffice/core's lockdown.yml (auto-closes every PR) and postgres/postgres's push-only workflow",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-04",
+      "title": "intake reads a repo's own machine-readable governance file (`.jcheck/conf`, `.gitreview`) for the role/reviewer-count/tracker/host answers it already declares, before asking the interview questions those answers would settle",
+      "area": "shape",
+      "tests": [
+        "docs/method/adoption.md"
+      ],
+      "promise": "the standard reads the repo before asking - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo whose own machine-readable config already declares role, reviewer count, issue tracker and review host in a few lines (openjdk's `.jcheck/conf`, qtbase's and LibreOffice's `.gitreview`)",
+      "when": "any of the 8 assessment passes runs",
+      "then": "at least one pass opens the file and reads the pre-answered questions, instead of zero passes opening it",
+      "procedure": "grep the 8 assessment passes for any reference to .jcheck/conf or .gitreview, then check whether either file is opened during a real assessment of openjdk/jdk or qt/qtbase",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-05",
+      "title": "the standard has vocabulary for a binary-compatibility contract whose source of truth is a previously-compiled binary, so spec-reconcile does not document a compatibility shim as current, intended behaviour",
+      "area": "shape",
+      "tests": [
+        "R9",
+        "R4"
+      ],
+      "promise": "A capability spec MUST be buildable by default; the current version is the truth - SPEC.md R9, R4",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "qt/qtbase's compat/removed_api.cpp shim files - real function bodies with no header, existing because the previous release's binary is the contract, not because they are current design",
+      "when": "spec-reconcile is run against a spec covering the module those shims live in",
+      "then": "the shims are recognized as a compatibility artifact rather than current behaviour to document, instead of the skill's ordinary rule ('correct the spec to match what actually ships') actively corrupting the record",
+      "procedure": "read spec-reconcile/SKILL.md for a compatibility-shim exception, and check it against qtbase's own compat/removed_api.cpp files and written release-compatibility policy",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-06",
+      "title": "R23's mainline-integration rule, and the manifest's release-process vocabulary generally, has a place for a maintained parallel release branch - the shape that makes an ordinary security backport possible",
+      "area": "shape",
+      "tests": [
+        "R23",
+        "R18"
+      ],
+      "promise": "The mainline's history MUST read as one finished unit of work per PR - SPEC.md R23; a PR describes its change under the Unreleased heading - SPEC.md R18",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repo with multiple maintained, concurrently-supported release branches (odoo's 98 branches/4 supported lines; openssl's 5 maintained REL branches; FFmpeg's per-version Changelog sections)",
+      "when": "a security fix needs to ship in more than one supported release line at once",
+      "then": "the standard has a way to express it, instead of R23's 'every PR MUST be based on the mainline' forbidding the ordinary act of a security backport outright, and R18's single `## Unreleased` heading having one slot for a fix shipping in five releases at once",
+      "procedure": "read SPEC.md R23 and R18 against a repo with more than one concurrently-maintained release branch needing the identical security fix",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-07",
+      "title": "the security-baseline axis catalog has an adversarial/fuzz-testing axis, for a repo whose primary security control is fuzzing rather than a disclosure process",
+      "area": "shape",
+      "tests": [
+        "R19"
+      ],
+      "promise": "the security baseline requires a recorded decision - SPEC.md R19",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "FFmpeg's 6 in-tree fuzz targets as its primary security control",
+      "when": "docs/method/security-baseline.md's axis catalog is checked for a fuzzing/adversarial-testing axis",
+      "then": "an axis exists, instead of grep -rni fuzz over the whole standard returning 0 hits",
+      "procedure": "grep -rni fuzz across the entire standard checkout",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-08",
+      "title": "the standard's shipped bash guard scripts run correctly on a Windows checkout with Git's default `autocrlf=true`, or with a real `.gitattributes` normalizing line endings, instead of exiting 127 with no denial message on the exact command they exist to stop",
+      "area": "shape",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a Windows checkout with Git's autocrlf default, or a real .gitattributes like PowerToys ships (`* text=auto`)",
+      "when": "one of the 10 shipped bash guard scripts is invoked against a real dangerous command (e.g. a destructive database command, a force-push)",
+      "then": "the script denies the command with its normal message, instead of exiting 127 with empty stdout because it checked out CRLF line endings",
+      "procedure": "check out one of the shipped .sh guard scripts on a repo with `* text=auto` in .gitattributes (or autocrlf=true), then invoke it against a command it is meant to deny",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-09",
+      "title": "the R19 settings baseline and R16's runtime-cost disclosure name a real command vocabulary for Windows, not only macOS/Linux tools (`sudo`, `diskutil`, `launchctl`, `crontab`) and the one dependency (`jq`) R16 currently omits",
+      "area": "shape",
+      "tests": [
+        "R16",
+        "R19"
+      ],
+      "promise": "these guards... MUST be present regardless of the repo's own language or stack - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "R16's stated runtime-cost list and R19's settings baseline, read by a Windows-only team",
+      "when": "the guards are run for real and jq's absence is tested",
+      "then": "both name a real, complete cost/prerequisite list for that platform, instead of R16 omitting jq (whose absence denies every Bash command, per direct testing) and R19 being written entirely in a macOS/Linux command vocabulary with zero Windows equivalents",
+      "procedure": "read SPEC.md R16's stated dependency list against a real jq-absent environment, and R19's settings baseline against a Windows-only tool vocabulary",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-10",
+      "title": "the manifest's `exceptions` mechanism can scope a waiver to a subtree (a locale, a directory), not only a single named file or section",
+      "area": "shape",
+      "tests": [
+        "R17"
+      ],
+      "promise": "an update... preserving the repo's recorded deviations - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "tldr-pages' real per-locale lint suppression (`--ignore TLDR003,TLDR004,TLDR015` for specific locales only)",
+      "when": "the manifest exceptions schema (kind: file|section) is checked against that shape",
+      "then": "a subtree-scoped exception can express it, instead of none of file/section/guard being able to",
+      "procedure": "read standard.manifest.json's exceptions schema against tldr-pages' real per-locale waiver shape",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-12",
+      "title": "an existing package/crate boundary counts as a legitimate capability map only after checking that it actually separates capabilities, not merely that a boundary of some kind exists",
+      "area": "shape",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo with a real package/crate boundary that maps cleanly to capabilities (kafka's Gradle modules, kubernetes' 33 staging modules) versus one whose boundary does not (a Bazel polyglot monorepo whose build graph, not its directory layout, is the real dependency structure)",
+      "when": "onboard.md's 'the existing boundary is often already the capability map' guidance is applied to both",
+      "then": "the guidance distinguishes the two cases, instead of applying uniformly to a boundary shape it was never checked against",
+      "procedure": "read onboard.md's package/crate-boundary guidance against kafka's Gradle modules (held) and tensorflow/lite's dual Bazel+CMake build graph (breaks)",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-13",
+      "title": "the decision checklist or capability-map guidance has a category for a repo whose real coupling edge is a build-system graph independent of its directory layout",
+      "area": "shape",
+      "tests": [
+        "R7",
+        "R11"
+      ],
+      "promise": "Every fork in the decision checklist that applies to the repo MUST be consciously decided and recorded - SPEC.md R7",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "a repo with two independently-authored build-graph descriptions of the same code (tensorflow/lite's Bazel BUILD files and CMakeLists.txt for embedded cross-compiles), or two hand-forked DDL dialects of one schema (nimletter's Postgres/SQLite pair)",
+      "when": "the decision catalog and capability-map guidance are checked for a category covering a build-graph or schema-dialect duplication",
+      "then": "a category exists",
+      "procedure": "read docs/decision-records/README.md's catalog for a build-graph or DDL-dialect duplication category",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-14",
+      "title": "the standard names a persona-and-content vocabulary for a content-only repo whose product is narrative, translation, or packaging-recipe text, not application behaviour",
+      "area": "shape",
+      "tests": [
+        "R9",
+        "R10"
+      ],
+      "promise": "Every capability spec MUST name the persona it serves; a capability spec MUST be buildable by default - SPEC.md R10, R9",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a narrative-content repo (i7/counterfeit-monkey), a packaging-recipe repo (alpinelinux/aports), or a spec-only repo (w3c/csswg-drafts) - none of whose 'capabilities' are application behavioural slices",
+      "when": "the buildable-tier template's Data contracts/Interface contracts requirement, and the persona interview, are applied",
+      "then": "at least one of the two has a named alternate path for a content-only product, instead of both assuming one product's behavioural slices",
+      "procedure": "read capability-spec.template.md's required buildable-tier sections and docs/method's persona-roster guidance against a narrative-content or packaging-recipe repo's real shape",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-15",
+      "title": "self-verify's file-existence and text-based fact-checking mechanisms have a stated boundary for a repo whose canonical artefacts are binary (font files, compiled binaries), not a silent gap that reads as coverage",
+      "area": "shape",
+      "tests": [
+        "R4",
+        "R19"
+      ],
+      "promise": "A fact has one home - SPEC.md R4",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "google/fonts, whose canonical version/licence facts live inside binary TTF name tables, unreadable by any of facts-check.mjs's four home mechanisms (all utf8-text-only)",
+      "when": "facts-check.mjs's home mechanisms are checked against a binary-artefact repo's real highest-risk restatement",
+      "then": "the boundary is stated, instead of the check silently having nothing to bind to",
+      "procedure": "read standard/scripts/facts-check.mjs's four home mechanisms (count/read/match/countMatches) against a font repo's binary version fact",
+      "status": "run"
+    },
+    {
+      "id": "SEC-02",
+      "title": "the standard has vocabulary for embargoed or confidential work-in-progress, so R3/R11/R15 followed literally do not force publishing an unfixed vulnerability",
+      "area": "security",
+      "tests": [
+        "R3",
+        "R11",
+        "R15"
+      ],
+      "promise": "the security baseline requires a recorded decision, including negative scope - SPEC.md R19",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a real security vulnerability under active embargo, with R3 (living docs), R11 (spec/code coupling on every PR) and R15 (backlog transparency) all read literally",
+      "when": "the fix is developed following the standard's ordinary rules",
+      "then": "at least one rule has an embargo/confidentiality exception, instead of all three, followed literally, publishing an unfixed vulnerability before it can be fixed",
+      "procedure": "read SPEC.md R3, R11 and R15 for an embargoed/confidential-work exception, and check the manifest exceptions schema for an embargo kind",
+      "status": "run"
+    },
+    {
+      "id": "SEC-03",
+      "title": "a decision record has an authority/vote field, so a chartered-committee decision (a TSC vote with quorum) has somewhere to record what actually made it valid",
+      "area": "security",
+      "tests": [
+        "R5",
+        "R7"
+      ],
+      "promise": "A contestable, re-litigable choice MUST be recorded as a decision record - SPEC.md R5",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "a chartered-committee vote with quorum (hyperledger/fabric's TSC, per its own legally binding technical charter)",
+      "when": "the ADR/BDR template is checked for a field recording who/what made the decision valid",
+      "then": "a field exists",
+      "procedure": "read standard/docs/decision-records/adr/_template.md and bdr/_template.md for an authority/vote/quorum field",
+      "status": "run"
+    },
+    {
+      "id": "SEC-04",
+      "title": "R9's 'rebuild and verify from the spec alone' escape hatch (the behavioral tier) is reachable for a capability whose correctness oracle is a person or piece of hardware, not only for the shapes onboard.md already forbids using it for",
+      "area": "security",
+      "tests": [
+        "R9"
+      ],
+      "promise": "the behavioral tier is an escape hatch that MUST be justified - SPEC.md R9",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a capability whose correctness oracle is a human sense (a braille user), an absent sensor, or a corpus of reference images (38 in one real case)",
+      "when": "the buildable-tier requirement and its one escape hatch (the behavioral tier) are checked against that shape",
+      "then": "the behavioral tier is available for exactly this shape, instead of being the one escape hatch onboard.md forbids using for it",
+      "procedure": "read SPEC.md R9's behavioral-tier justification text against a manual/hardware/community-verification shape, and onboard.md's guidance for whether it forbids using that tier there",
+      "status": "run"
+    },
+    {
+      "id": "GREEN-01",
+      "title": "the clarify gate is actually invoked by the scripts that begin planning, so an unclarified spec cannot be planned or tasked just because nothing calls the gate that would stop it",
+      "area": "greenfield",
+      "tests": [
+        "R12"
+      ],
+      "promise": "the loop is AI-led and gated in layers: clarify chains automatically after specify - docs/case-studies/the-silently-skipped-clarify.md, SPEC.md R12",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a spec with no `## Clarifications` section and two genuinely open markers",
+      "when": "setup-plan.sh and setup-tasks.sh, the scripts that actually begin planning and tasking, run against it",
+      "then": "at least one of them refuses to proceed, instead of both copying plan.md / completing tasks setup and exiting 0 - despite the gate itself correctly reporting FAIL when invoked directly",
+      "procedure": "bash standard/scripts/spec/check-spec-clarified.sh against an unclarified spec (correctly FAILs), then run setup-plan.sh and setup-tasks.sh against the identical spec",
+      "status": "run"
+    },
+    {
+      "id": "GREEN-02",
+      "title": "reaching self-verify drift 0 on a fresh greenfield walk requires at least one real capability spec to exist, not only the three declarative files (`.standards-version`, a profile key, an empty capability-map.json)",
+      "area": "greenfield",
+      "tests": [
+        "R16",
+        "R11"
+      ],
+      "promise": "repos passing self-verify at the standard's current version - PRODUCT.md North Star",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a raw degit'd tree, with only .standards-version, a `\"profile\":\"core\"` key, and an empty specs/capability-map.json written on top",
+      "when": "self-verify.mjs runs",
+      "then": "drift is not reported as 0/100%/compliant, since the repo has no capability spec at all and AGENTS.md/README.md/ARCHITECTURE.md still ship as unfilled skeletons",
+      "procedure": "measure self-verify.mjs's drift progression on a raw degit'd greenfield tree after writing only the three declarative files named above, with zero specs written",
+      "status": "run"
+    },
+    {
+      "id": "GREEN-03",
+      "title": "the self-verify placeholder-fill check can fire on every file it lists, including ones whose fill-in marker sits inside backticks or has no recognized marker form at all",
+      "area": "greenfield",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "SECURITY.md and docs/personas.md, whose unfilled placeholders sit inside backticks, and docs/PRINCIPLES.md, which carries no placeholder marker of either recognized form despite its own banner warning against shipping it unread",
+      "when": "self-verify.mjs's placeholder-fill check runs against a fresh greenfield tree with all three genuinely unfilled",
+      "then": "all three fire a WARN, instead of the placeholder regex stripping code spans before matching and silently passing three specific files - a fake security contact and an empty persona roster shipping at drift 0",
+      "procedure": "run self-verify.mjs against a fresh greenfield tree and check whether SECURITY.md, docs/personas.md and docs/PRINCIPLES.md's unfilled state produces a WARN",
+      "status": "run"
+    },
+    {
+      "id": "GREEN-04",
+      "title": "the greenfield spec-writing step points a newcomer at a file that actually ships, for the single hardest artifact they will write",
+      "area": "greenfield",
+      "tests": [
+        "R1"
+      ],
+      "promise": "A repo MUST carry AGENTS.md at its root... where each kind of knowledge lives - SPEC.md R1",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "greenfield.md's own pointer, specs/README.md, for how to write a capability spec",
+      "when": "a newcomer follows the link",
+      "then": "it resolves to a real file, instead of standard/specs/ having no such file at all (only capability-map.example.json, capability-spec.template.md, constitution.template.md, enforcement.md exist there)",
+      "procedure": "grep skills/align-to-standards/greenfield.md for its specs/README.md pointer and confirm the target exists in the shipped tree",
+      "status": "run"
+    },
+    {
+      "id": "GREEN-05",
+      "title": "self-verify's own runtime output points an adopter at a file that exists in their repo, not a docs/self-verify.md path that is adopted by reference and never copied",
+      "area": "greenfield",
+      "tests": [
+        "R4"
+      ],
+      "promise": "A fact has one home... a restatement nobody declared is drift waiting for a reader to notice - SPEC.md R4",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "self-verify.mjs's own printed line ('see docs/self-verify.md'), and align-to-standards/SKILL.md's identical reference",
+      "when": "the tool is run in a real adopted repo",
+      "then": "the printed path resolves to a real file in that repo, instead of pointing at a path that exists in neither the adopting repo nor standard/ - the real file is adopted by reference per ADR-023 and never copied",
+      "procedure": "run self-verify.mjs in a real adopted repo and check whether docs/self-verify.md exists there",
+      "status": "run"
+    },
+    {
+      "id": "GREEN-06",
+      "title": "the four skills that touch `checklists/requirements.md` (create it, read and block on it, classify it, clean it up) agree on what the file is",
+      "area": "greenfield",
+      "tests": [
+        "R9"
+      ],
+      "promise": "A capability spec MUST be buildable by default - SPEC.md R9",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "checklists/requirements.md, created by spec-specify's own documented step 7a",
+      "when": "spec-structure.mjs runs immediately afterward, following the documented workflow in order",
+      "then": "the file is not flagged, instead of spec-structure classifying it as ephemeral 'engine scaffolding' to WARN-and-remove immediately after the standard's own skill told the author to create it - while spec-reconcile, the only skill that deletes scaffolding, never lists it among what it removes",
+      "procedure": "follow spec-specify's step 7a to create checklists/requirements.md, then run spec-structure.mjs immediately afterward",
+      "status": "run"
+    },
+    {
+      "id": "GREEN-07",
+      "title": "the greenfield intake has a legitimate answer for 'we have not chosen the technology yet', and the fallback document it names has a real template and manifest entry",
+      "area": "greenfield",
+      "tests": [
+        "R20"
+      ],
+      "promise": "the standard is two layers... a stack declares what adopting it means in its own manifest - SPEC.md R20",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "greenfield.md's own insistence that the process is 'not stack-first', against the intake question's assumption of a named technology",
+      "when": "a genuinely undecided stack is walked through greenfield intake",
+      "then": "a legal answer exists, and its fallback deliverable (docs/stack-decisions.md) has a template, a manifest entry, and a taxonomy row - instead of the document being skippable with self-verify still reporting drift 0",
+      "procedure": "walk greenfield intake with no technology decided yet, and check whether self-verify.mjs's drift number changes if docs/stack-decisions.md is skipped entirely",
+      "status": "run"
+    },
+    {
+      "id": "DOC-12",
+      "title": "the published landing page states the current version consistently, so a reader does not see 0.8.12 in four places and 0.8.13 in a fifth on the same page",
+      "area": "docs",
+      "tests": [
+        "R4"
+      ],
+      "promise": "A fact has one home - SPEC.md R4",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": "the live published landing page (site/index.html)",
+      "when": "the page is fetched and every version string on it is compared",
+      "then": "all of them agree, instead of four places stating 0.8.12 while the header pill and the real VERSION both say 0.8.13",
+      "procedure": "curl -s https://repositorystandards.com/ and grep for every version-shaped string on the page",
+      "status": "run"
+    },
+    {
+      "id": "DOC-13",
+      "title": "every surface that states the standard's current version is covered by facts-check, so a page saying '0.8.0' when the real version has moved on eleven times since is caught rather than shipped",
+      "area": "docs",
+      "tests": [
+        "R4"
+      ],
+      "promise": "A fact has one home - SPEC.md R4",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "docs/faq.md, README.md, llms.txt and site/llms.txt, all stating the standard is at 0.8.0",
+      "when": "facts-check.mjs runs against the real current version (0.8.13)",
+      "then": "at least one of the four is flagged, instead of facts-check's five covered version surfaces excluding all four",
+      "procedure": "grep the four named files for '0.8.0' and cross-check against docs/facts.json's covered claims for the standard-version fact",
+      "status": "run"
+    },
+    {
+      "id": "DOC-14",
+      "title": "the workflow that says compliance is gated 'from the first push' actually triggers on a push, not only on a pull_request",
+      "area": "docs",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "site/index.html's claim that compliance is gated 'from the first push'",
+      "when": "the real spec-guard.yml workflow's trigger list is read",
+      "then": "it fires on push, the same as the sibling gitleaks.yml (which carries a push trigger with documented reasoning that was never applied here) - instead of firing only on pull_request, so a direct push to main, including the very first one, is never checked",
+      "procedure": "grep .github/workflows/spec-guard.yml's `on:` block and compare against gitleaks.yml's",
+      "status": "run"
+    },
+    {
+      "id": "DOC-15",
+      "title": "the denial message a Bash-tooling guard prints when `jq` is missing points at a path that actually exists in the surface the reader is on",
+      "area": "docs",
+      "tests": [
+        "R4"
+      ],
+      "promise": "A fact has one home - SPEC.md R4",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "lib.sh's jq-missing denial message, shown at the exact moment every Bash command is denied",
+      "when": "the referenced path (docs/prerequisites.md) is checked against an adopted repo's real tree",
+      "then": "it resolves, instead of naming a path that never ships to an adopted repo at all (the real page is docs/method/prerequisites.md in core, adopted by reference per ADR-023, never copied) - while two sibling references in the very same surface correctly use the full GitHub URL",
+      "procedure": "grep the jq-missing denial message in lib.sh for its referenced path, and confirm whether it exists in an adopted repo",
+      "status": "run"
+    },
+    {
+      "id": "DOC-16",
+      "title": "showcase-gap's headline honesty claim - the outcome blocks' stated commit counts - agrees with the repo's own real history when the prescribed command is actually run",
+      "area": "docs",
+      "tests": [
+        "R4"
+      ],
+      "promise": "A fact has one home - SPEC.md R4",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "the showcase repo's own cycle-close outcome blocks, claiming 9 / 6 / 3 commits landed for three cycles",
+      "when": "the prescribed measurement command (git log --oneline --since=<opened> --until=<closed> | wc -l) is actually run against the repo's real history",
+      "then": "the numbers agree, instead of the real commands returning 2 / 1 / 1 against a total of 25 commits in the whole repo's history",
+      "procedure": "run the prescribed cycle-close commit-count command against each of the showcase's three closed cycles and compare to the stated outcome-block numbers",
+      "status": "run"
+    },
+    {
+      "id": "DOC-17",
+      "title": "the shipped documentation-and-tooling surface (the workflow, taxonomy, checklist) is delivered in the same file the routing logic actually reads, so a repo that satisfies R1's 'single entry point' also satisfies the pages that make routing legible",
+      "area": "docs",
+      "tests": [
+        "R1"
+      ],
+      "promise": "A repo MUST carry AGENTS.md at its root - SPEC.md R1",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "taxonomy.md and checklist.md, the two pages whose entire content is 'say this and the agent routes it'",
+      "when": "the shipped AGENTS.md/conventions.md template's links to docs/method/ are checked",
+      "then": "both are linked, the same as every neighboring method doc",
+      "procedure": null,
+      "status": "run"
+    },
+    {
+      "id": "INTAKE-07",
+      "title": "a policy stated inside AGENTS.md itself - the file the standard treats as the most authoritative artifact in the repo - is read by the same red-flag scan that reads CONTRIBUTING.md and named policy files",
+      "area": "intake",
+      "tests": [
+        "docs/method/adoption.md"
+      ],
+      "promise": "does it decline when it should - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a policy forbidding autonomous agent contributions, or forbidding CI outright, stated inside the repo's own AGENTS.md rather than in CONTRIBUTING.md or a dedicated policy file",
+      "when": "the red-flag detection list runs",
+      "then": "the policy is caught, instead of the scan only checking CONTRIBUTING.md/named policy files and missing a ban stated in the one file the standard itself calls authoritative",
+      "procedure": "grep docs/method/adoption.md's red-flag detection list for a check against AGENTS.md's own content, then test it against sqlite/sqlite's AGENTS.md:18 ('SQLite does not accept agentic code') and OpenTofu's AGENTS.md-embedded LLM-contribution ban",
+      "status": "run"
+    },
+    {
+      "id": "INTAKE-08",
+      "title": "a disclosure mandate (a policy requiring AI co-authorship and disclosure, the opposite of the standard's own conventions.md rule that merges into the very file stating the mandate) produces a visible stop, not silent, permanent per-PR non-compliance",
+      "area": "intake",
+      "tests": [
+        "docs/method/adoption.md"
+      ],
+      "promise": "does it decline when it should - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repo whose AGENTS.md requires AI co-authorship on commits and mandatory AI-disclosure on every PR (JuliaLang/julia)",
+      "when": "the standard's own conventions.md, which forbids AI attribution outright, merges into that same AGENTS.md at adoption",
+      "then": "the contradiction produces a stop or a visible drift signal, instead of every subsequent PR becoming silently non-compliant with no signal anywhere",
+      "procedure": "align JuliaLang/julia's AGENTS.md (a disclosure mandate) against the standard's conventions.md (a disclosure ban) and check for any stop, warning, or drift change",
+      "status": "run"
+    },
+    {
+      "id": "INTAKE-09",
+      "title": "the intake's lifecycle-signal read distinguishes a repo that migrated to another forge entirely from one that is merely quiet, using more than the archived flag and commit recency",
+      "area": "intake",
+      "tests": [
+        "docs/method/adoption.md"
+      ],
+      "promise": "the standard reads the repo before asking - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo with `archived: false` that has moved its real development to another forge entirely (ziglang/zig, moved to Codeberg)",
+      "when": "intake's lifecycle-signal check runs",
+      "then": "the move is caught, instead of the signal list checking only the archived flag and commit recency and missing a repo that departed rather than declined",
+      "procedure": "run intake's lifecycle-signal check against ziglang/zig's real state (archived: false, but development moved to Codeberg)",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-05",
+      "title": "the technology-detection step names a repo's second, workspace-composing layer (a west/repo manifest pulling in dozens of sibling repositories), not only the single root package manifest",
+      "area": "adoption",
+      "tests": [
+        "R20"
+      ],
+      "promise": "a stack declares what adopting it means in its own manifest - SPEC.md R20",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "zephyrproject-rtos/zephyr's west.yml, composing 79 external repositories into one workspace",
+      "when": "the technology-detection step runs",
+      "then": "the composed workspace is named as its own adoption unit, instead of the standard having no per-workspace adoption unit for a repo whose real dependency graph is 79 sibling repos wide",
+      "procedure": "read skills/align-to-standards/stack.md's technology-detection step against a west.yml-composed workspace",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-06",
+      "title": "stack detection has an evidence-quality rule, so 715 `package.json` matches inside npm-compat test fixtures do not read as 'maybe Node' on a repo whose real build system is something else entirely",
+      "area": "adoption",
+      "tests": [
+        "R20"
+      ],
+      "promise": "a stack declares what adopting it means - SPEC.md R20",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "denoland/deno: 715 package.json + 243 node_modules/ paths + 62 tsconfig.json files, all npm-compat test fixtures, against just 1 real Cargo.toml",
+      "when": "stack detection runs",
+      "then": "the Rust stack is identified as the real build system, instead of the sheer count of Node-shaped files reading as evidence for a Node stack with no quality check on what kind of file is doing the counting",
+      "procedure": "run stack detection against denoland/deno and check whether the 715 package.json matches are weighted the same as a build-system-defining manifest",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-07",
+      "title": "the honest-miss path's one deliverable (docs/stack-decisions.md, for a technology with no registered Layer-2 stack) exists in the manifest, a SPEC rule, and the taxonomy - the three places every other required deliverable exists in",
+      "area": "adoption",
+      "tests": [
+        "R20"
+      ],
+      "promise": "a stack declares what adopting it means in its own manifest - SPEC.md R20",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "docs/stack-decisions.md, named as the honest-miss path's answer for a repo with no registered stack",
+      "when": "the manifest, SPEC.md and taxonomy.md are each checked for it",
+      "then": "at least one names it as a real, tracked deliverable, instead of it existing in none of the three despite being documented as the answer",
+      "procedure": "grep standard.manifest.json, SPEC.md and docs/method/taxonomy.md for stack-decisions",
+      "status": "run"
+    }
+  ]
+}
