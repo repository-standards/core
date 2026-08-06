@@ -21,7 +21,10 @@
      a NEW capability if they still want it. Leave the
      capability-map.json entry in place even though its globs now match nothing - deleting
      it makes this spec directory read as an unmapped orphan spec-guard --audit would flag,
-     which it is not. -->
+     which it is not. A retired spec is frozen against gaining behaviour, not against being
+     true: when a later change elsewhere makes one of the statements below false, that change
+     corrects it in its own pull request - saying what this capability did and naming what
+     superseded it, with Status left at `retired` (R4, ADR-036). -->
 **Success metric:** `<the KPI from PRODUCT's KPI tree this capability moves>`   <!-- PDLC-2; "n/a" needs a why -->
 <!-- ADR-010: ready-to-develop requires the clarify gate - a "## Clarifications" section
      and zero open markers of the NEEDS family. Drafting early (during discovery, ADR-024)
