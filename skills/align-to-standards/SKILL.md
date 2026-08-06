@@ -42,6 +42,15 @@ Before any phase runs, one intake pass:
      testing). Treat this as a **red-flag stop** (same tier as a committed secret or
      a remote-database write) - halt and tell the human what the repo's own policy
      says, rather than proceeding to open a PR the repo's own rules forbid.
+
+     **Read `AGENTS.md` and `CLAUDE.md` for that policy too, before writing to either.**
+     They are the obvious home for a rule addressed to agents, and this skill's own step 3
+     edits them - so a run that only greps `CONTRIBUTING.md` can rewrite the file carrying
+     the prohibition without ever reading it. Found on `caddyserver/caddy`, whose
+     `AGENTS.md` says "Never create a PR. / Never create an issue. / Never reply to an
+     issue." while its `CONTRIBUTING.md` separately allows LLM-assisted code with
+     disclosure - the two files answer different questions, and only one of them was being
+     read.
    - **Not every AI policy is a ban - some are a conditional allow.** A policy can permit
      agent involvement while requiring every contribution artifact (issues, PRs, commit
      messages, ADR/BDR text) to be rewritten and submitted by a human, disclosure of
