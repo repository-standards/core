@@ -16,6 +16,38 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The human-prompting corpus gets its first field run, and it found the machinery lying (2026-08-07)
+
+Three repositories that had already been adopted mechanically - a Node/Express boilerplate, the
+Caddy web server and Matomo - were driven a second way: prompts typed at a pre-adoption base,
+loop prompts against the adopted branch, and situations built to see what the agent says
+without being asked. The run is
+[`runs/2026-08-07-b-field.json`](docs/validation/human-prompting/runs/2026-08-07-b-field.json).
+
+The headline is what the runs found in the adoptions the mechanical suite had already passed:
+
+- Matomo's own `.gitignore` excludes `/docs/`, so its adoption committed no `docs/` tree at
+  all - while its specs cite `docs/PRODUCT.md` and an ADR-004 that are not in the repository.
+  `self-verify` reported them present because it asks the filesystem rather than the index.
+  A gitignored directory satisfies an adoption check while being absent from the repository,
+  and no mechanical gate can see it.
+- The Node repo's `spec-guard.yml` reads `node-version-file: ".nvmrc"` and the adoption never
+  wrote a `.nvmrc`, so the job dies at `setup-node` before a guard runs. It had stayed
+  invisible because the workflow only fires `on: pull_request` and none had been opened.
+- The same repo's `standard.manifest.json` carries no top-level `profile`, and the workflow
+  computes `manifest.profile || 'scale'` - so the blocking coupling gate runs by omission
+  rather than by choice, on a repository whose every nested profile field says `core`.
+
+Two entry prompts were also found to be unanswerable cold rather than badly handled: `A19` and
+`A20` name no product unambiguously, and against a repository that does not mention the standard
+they resolve to questions about the repository itself. Both are kept - the rows are the
+regression test - and `A28` is added for the turn where the user corrects the referent.
+
+New rows: `A26` and `A27` (kept from the wave that ran before the shipped lines were known),
+`A28`, `A29`, and `V11` for a spec that links to a file the adoption never committed. The
+renumbering of part 1 had left the "where this corpus is weakest" section pointing at the old
+ids; corrected.
+
 ### Validation splits into two named halves, and the second one is new (2026-08-06)
 
 The proof-of-work suite measured the machinery: do the guards fire, does drift mean something,
