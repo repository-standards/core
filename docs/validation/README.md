@@ -64,10 +64,10 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 |---|---|
 | Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **205** across 14 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-k-shape, 2026-08-06-n-vocab) |
+| Observations recorded | **207** across 15 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-k-shape, 2026-08-06-l-dochonesty, 2026-08-06-n-vocab) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 110 pass, 90 fail, 2 not-applicable, 3 partial |
-| Failures found | **161** - **89 fixed and re-verified** (across 24 merged pull requests), **72 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 18 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 111 pass, 91 fail, 2 not-applicable, 3 partial |
+| Failures found | **160** - **89 fixed and re-verified** (across 24 merged pull requests), **71 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 20 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -179,7 +179,6 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `DOC-13` | every surface that states the standard's current version is covered by facts-check, so a page saying '0.8.0' when the real version has moved on eleven times since is caught rather than shipped | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DOC-14` | the workflow that says compliance is gated 'from the first push' actually triggers on a push, not only on a pull_request | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DOC-15` | the denial message a Bash-tooling guard prints when `jq` is missing points at a path that actually exists in the surface the reader is on | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `DOC-16` | showcase-gap's headline honesty claim - the outcome blocks' stated commit counts - agrees with the repo's own real history when the prescribed command is actually run | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DOC-17` | the shipped documentation-and-tooling surface (the workflow, taxonomy, checklist) is delivered in the same file the routing logic actually reads, so a repo that satisfies R1's 'single entry point' also satisfies the pages that make routing legible | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `INTAKE-09` | the intake's lifecycle-signal read distinguishes a repo that migrated to another forge entirely from one that is merely quiet, using more than the archived flag and commit recency | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `ADOPT-05` | the technology-detection step names a repo's second, workspace-composing layer (a west/repo manifest pulling in dozens of sibling repositories), not only the single root package manifest | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
