@@ -634,17 +634,25 @@ if (manifest) {
     else if (f.required) failOrExcept("file", f.path, "file", `${f.path} missing - ${f.purpose}`);
     else note("file", `${f.path} absent (optional) - ${f.purpose}`);
   }
-  // required sections within files
+  // required sections within files.
+  // A section names a file the files list may already allow somewhere else: reading only
+  // s.file made a repo carrying its changelog at the entry's OWN declared alternate
+  // (docs/CHANGELOG.md) pass the file entry and then fail the section with "CHANGELOG.md
+  // missing" - about a file that was not missing, and with no way to close the drift
+  // except moving the file to the path the altPath exists to avoid. The exception key
+  // stays on s.file so a recorded deviation keeps working wherever the file resolves.
+  const altsOf = new Map((manifest.files || []).map((f) => [f.path, f.altPaths || []]));
   for (const s of manifest.sections || []) {
     if (coreOnly && !isCore(s)) { scaleSkipped++; continue; }
-    if (!exists(s.file)) {
+    const at = [s.file, ...(altsOf.get(s.file) || [])].find((x) => exists(x));
+    if (!at) {
       if (s.required) failOrExcept("section", `${s.file}#${s.heading}`, "section", `${s.file} missing, so "${s.heading}" cannot be checked`);
       continue;
     }
-    const body = readFileSync(s.file, "utf8");
+    const body = readFileSync(at, "utf8");
     const re = new RegExp(`^#{1,6}\\s+.*${escapeRe(s.heading)}`, "mi");
-    if (re.test(body)) pass("section", `${s.file} > "${s.heading}"`);
-    else if (s.required) failOrExcept("section", `${s.file}#${s.heading}`, "section", `${s.file} is missing the "${s.heading}" section - ${s.purpose}`);
+    if (re.test(body)) pass("section", `${at} > "${s.heading}"`);
+    else if (s.required) failOrExcept("section", `${s.file}#${s.heading}`, "section", `${at} is missing the "${s.heading}" section - ${s.purpose}`);
   }
   // static guards (skip self to avoid recursion; diff guards run in CI on the PR diff)
   if (skeleton) note("guard", "guards run in an adopted repo, not on the skeleton - skipped (--skeleton)");

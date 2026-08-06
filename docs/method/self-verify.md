@@ -87,7 +87,11 @@ It checks:
   and `enablePrePostScripts` used to pass on the filename alone. Presence only - the value
   is yours to choose.
 - **Sections** - every required section heading is present in its file (e.g. `AGENTS.md`
-  must state `Altitude`).
+  must state `Altitude`). A section follows its file: where the file entry declares
+  `altPaths` and the repo used one, the heading is read there. Reading only the primary
+  name let a repo pass the `CHANGELOG.md` entry through `docs/CHANGELOG.md` and then fail
+  its `Unreleased` section with "CHANGELOG.md missing" - a drift with no legitimate way to
+  close it.
 - **Names, case included** - the check reads directory listings rather than asking the
   filesystem whether a path exists, because `existsSync` is case-insensitive on macOS and
   Windows. `readme.md` used to satisfy `README.md` on a contributor's Mac and fail on Linux
