@@ -5,8 +5,8 @@
      agent-operated repository standard would claim, phrased so a reader who has never used
      this standard can run the same idea against their own. -->
 
-Twenty-something checks - **125**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **69** so far; the rest are logged as open (which includes any case where an attempted fix
+Twenty-something checks - **132**, precisely - that any repository standard
+claiming to be agent-operable should survive. This project failed **57** of them at least once and has fixed-and-re-verified **69** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -313,6 +313,45 @@ node standard/scripts/self-verify.mjs against a repo whose altPath target direct
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 node scripts/spec-guard.mjs --audit with and without $unclaimed present
+```
+
+
+**GATE-33 - schema-pair skips precisely the repos that have not complied with R24, and no manifest entry requires database/schema/ at all**
+
+- **Given:** a repo that owns a database and carries no database/schema/ directory
+- **When:** self-verify runs the schema-pair guard
+- **Then:** R24 is reported as unmet - the absence of the directory the rule demands is the non-compliance, not evidence that the rule does not apply
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+run `node scripts/schema-pair.mjs --block` in a repo with CREATE TABLE statements and no database/schema/ directory, and grep standard.manifest.json for a files entry whose rule is R24
+```
+
+
+**GATE-34 - spec-guard --audit's unclaimed report is actionable at repository scale, not a 20-line alphabetical truncation with the count conflated**
+
+- **Given:** a repo of over ten thousand tracked files whose capability map declares $unclaimed
+- **When:** spec-guard --audit runs and finds hundreds or thousands of unclaimed files
+- **Then:** the output tells the adopter where the work is - a per-directory rollup, and unclaimed files counted separately from map defects - instead of the first twenty paths in git order
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+declare $unclaimed in a >10,000-file repo's capability-map.json and run `node scripts/spec-guard.mjs --audit`; compare its output against a per-directory rollup of the same unclaimed set
+```
+
+
+**GATE-37 - the shipped guards stay cheap enough to run on every pull request at repository scale**
+
+- **Given:** an adopted repository of over ten thousand tracked files
+- **When:** each shipped guard is timed, best of three runs, on the adopted tree
+- **Then:** no guard takes long enough that a team turns it off - a guard measured in minutes is a guard nobody runs
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+time `node scripts/self-verify.mjs`, `spec-structure.mjs --block`, `facts-check.mjs`, `schema-pair.mjs --block`, `cycle-guard.mjs --block`, `decision-records-check.mjs --block`, `spec-guard.mjs --audit --block` and `spec-guard.mjs --block` on a >10,000-file adopted repo, three runs each, and report the best wall time
 ```
 
 
@@ -1071,7 +1110,7 @@ run intake's lifecycle-signal check against ziglang/zig's real state (archived: 
 - **Given:** a shallow-cloned repo assessed with the 8-pass brownfield methodology
 - **When:** pass 8 (churn-hotspot) runs
 - **Then:** it states the shallow-clone limitation instead of silently under-reporting hotspots it cannot see
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1149,7 +1188,7 @@ run stack detection against denoland/deno and check whether the 715 package.json
 - **Given:** a real repo nobody on this project wrote, with no pin and no skeleton (hagopj13/node-express-boilerplate)
 - **When:** the align router's brownfield path is run end to end and self-verify is measured before and after
 - **Then:** a real drift number is produced at the start, every entry it names is closeable by authoring rather than by exception, and the run ends at drift 0
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1162,11 +1201,50 @@ node scripts/self-verify.mjs before landing anything, then again after the waves
 - **Given:** a layered codebase (controllers/ services/ models/ routes/ validations/) where every capability cuts across every directory
 - **When:** onboard.md's capability-mapping step is applied, whose shortcut is 'an existing package/crate boundary is often already the capability map'
 - **Then:** the shortcut correctly does not apply, a per-file map is produced instead, and the audit passes
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 node scripts/spec-guard.mjs --audit after authoring specs/capability-map.json
+```
+
+
+**ADOPT-11 - self-verify measures the working tree, so an artifact the repo's own .gitignore excludes is still counted as adopted**
+
+- **Given:** a repo whose .gitignore excludes a directory the manifest places required entries under (16 of the manifest's 48 file entries live under docs/)
+- **When:** the standard's docs/ artifacts are authored there and node scripts/self-verify.mjs runs
+- **Then:** the ignored artifacts are reported as drift or as a warning, not as PASS - a file git will never carry is not knowledge that lives in the repo
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+in a clone whose .gitignore contains `/docs/`, author docs/personas.md and docs/decision-records/, run `node scripts/self-verify.mjs`, then `git status --porcelain` and `git add -A && git commit` and count the committed paths under docs/
+```
+
+
+**ADOPT-12 - the drift number is bounded by the manifest's entry count, so it says the same thing about a 78-file boilerplate and a 13,591-file multi-year platform**
+
+- **Given:** a brownfield repo far larger than any the manifest was written against
+- **When:** one adoption sitting authors the required entries and self-verify runs
+- **Then:** the reported number reflects how much of the repo is aligned, not how many manifest entries were satisfied - or the standard says plainly that it does not, where an adopter reads it
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+adopt a >10,000-file repo to the point where every required manifest entry is met, run `node scripts/self-verify.mjs`, and compare the drift number against the count of capabilities without specs (`node scripts/spec-guard.mjs --audit`) and against the adoption backlog's own total
+```
+
+
+**ADOPT-14 - the three offered options for landing the CI workflow cover the self-verify step only, and the full-tree audit it also lands is unconditionally blocking**
+
+- **Given:** a brownfield repo mid-adoption whose capability map names more capabilities than it has specs
+- **When:** the shipped .github/workflows/spec-guard.yml lands as written
+- **Then:** the adopter has a stated option for the audit step too, so unrelated pull requests do not go red for the months the remaining specs take
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+land standard/.github/workflows/spec-guard.yml in a repo whose capability-map has entries without specs, and run its last step: `node scripts/spec-guard.mjs --audit --block`
 ```
 
 
@@ -1315,6 +1393,19 @@ read capability-spec.template.md's required buildable-tier sections and docs/met
 ```
 
 
+**SHAPE-16 - the intake has a step for a repo that already carries an AGENTS.md whose operational rules live in a different repository**
+
+- **Given:** a target repo whose AGENTS.md already exists, is substantive, and routes agents to skills held in a separate repository
+- **When:** the align router's step 3 ('Put conventions in AGENTS.md (single source)') is followed literally
+- **Then:** the procedure says how to reconcile the two - the existing file is the repo's real conventions and the external skills are the R3 violation to name, and neither is resolved by writing sections underneath
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+run the align router's intake and step 3 against a repo carrying an AGENTS.md that delegates to an external skills repository, and check whether any step addresses the existing file or the out-of-repo rules
+```
+
+
 ### security
 
 **SEC-01 - the security-baseline axis catalog has a negative-scope axis - what is deliberately not a vulnerability, and why**
@@ -1456,7 +1547,7 @@ run the prescribed cycle-close commit-count command against each of the showcase
 - **Given:** three retroactive ADRs authored into docs/decision-records/adr/ during a real adoption, with the shipped index untouched
 - **When:** decision-records-check runs
 - **Then:** it names each unindexed record and fails, rather than passing because the files exist
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
