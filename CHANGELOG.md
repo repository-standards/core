@@ -16,6 +16,28 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The capability map had no way to say "that code is not in this repository" (2026-08-06)
+
+R11 binds every capability to code globs, which assumes the code is here. Plenty of real
+repositories do not work that way: the shape this was found on is `bazelbuild/bazel`, whose
+rule implementations for several languages live in satellite `rules_*` repos it does not
+own, and the same applies to a plugin architecture or a vendor SDK. The capability is real
+and its spec belongs here; no glob written here can reach a line of its code.
+
+An author therefore had two moves, both of which the audit reports as defects: a glob that
+matches nothing, or no map entry at all. Being wrong about an ordinary situation in a way
+you have to route around is worse than a gap - a map people argue with stops being
+maintained, and every capability in it loses its guard together.
+
+An entry may now be `{ "external": "<repo>", "reason": "<why no glob here reaches it>" }`
+([ADR-036](docs/decision-records/ADR-036-capabilities-whose-code-is-not-here.md)). Both
+fields are required - an external binding with no reason is refused with the map unusable,
+because without the reason this is a way out of the guard rather than a record of where the
+code lives. Nothing is enforced for such a capability, it is never counted as a glob or
+reported as one matching nothing, it still has to have a spec here, and it is named on every
+audit run and counted in the verdict line, so the hatch cannot widen quietly. A capability
+that holds both globs and an external binding still couples on the part that lives here.
+
 ### An alternate path satisfied a shipped file on its name alone (2026-08-06)
 
 Half of this was already closed and was re-run before anything was changed: a *directory* at

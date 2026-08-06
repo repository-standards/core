@@ -47,6 +47,8 @@ one settled.
 | [035](ADR-035-maintained-release-lines-are-integration-targets.md) | A maintained release line is an integration target | a declared, protected, never-rewritten release branch is a legal PR base exactly as the mainline is, and every R23 requirement binds it identically; a multi-line fix lands on the mainline first and reaches each supported line as its own PR, with that line's own `## Unreleased` entry - narrowing R23's "based on the mainline" to what it was written for, another open PR's branch | Accepted |
 | [036](ADR-036-a-retired-spec-is-frozen-against-extension-not-against-correction.md) | A retired spec is frozen against extension, not against correction | three shipped rules met a retired spec whose content a later change had falsified and each pointed a different way - stop, resolve, and never detect it at all - so the case had no legal path. `retired` freezes behaviour: the spec never gains behaviour, and it is corrected to say what it did whenever a change makes one of its sentences false, in that change's own pull request | Accepted |
 
+| [036](ADR-036-capabilities-whose-code-is-not-here.md) | A capability may be bound to a repository this one does not own | a capability whose implementation lives in a satellite repo, plugin or vendor SDK declares `{ external, reason }` in the capability map instead of a glob that matches nothing; nothing is enforced for it, the spec still lives here, and every audit run names it | Accepted |
+
 Add one row per record; the template ships in the tree
 (`standard/docs/decision-records/adr/_template.md`). Numbers are gapless and never
 reused.
