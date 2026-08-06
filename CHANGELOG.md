@@ -16,6 +16,62 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Three adoptions of code older than the conventions the standard uses (2026-08-07)
+
+git/git, vim/vim and vdukhovni/postfix, taken to drift 0 on local branches: 21, 35 and 28
+years of accumulated convention, and two of the three do not accept pull requests at all.
+Nothing was pushed to any of them and no issue or pull request was opened. The numbers:
+git 19 -> 0 (96% adopted, 2 excepted), vim 18 -> 0 (97%, 2 excepted), postfix 20 -> 0
+(96%, 2 excepted); every guard passed and none took longer than 0.22 s on trees of 4,845,
+8,425 and 2,522 files.
+
+**Fixed here.** The template-placeholder warning fired on prose the standard never wrote,
+in two of the three repositories, because `stripCode` knew two of markdown's four code
+forms. Git's `README.md:26-27` wraps a code span across a line break
+(`` `git help\n<commandname>` ``) and the span pattern refused to cross one, so
+`<commandname>` read as an unfilled placeholder; Vim's own `AGENTS.md:92` carries
+`Signed-off-by: Author Name <email>` inside a four-space-indented code block, which was
+never stripped at all. Fixing the second exposed a third: once spans could cross lines, the
+double-backtick form `` `` `:cmd` `` `` left an odd backtick behind and every following span
+paired one position out, exposing the notation on the next lines. Spans are now matched by
+their delimiter run, may cross a newline but never a blank line, and indented blocks are
+stripped unless the line introducing them is a list item - a continuation paragraph is not
+code, and a real placeholder in a nested bullet must still warn.
+`tools/self-verify-fill-test.mjs` gains five cases covering both directions of each shape;
+all three adopted trees now report zero fill warnings.
+
+**Found and left open, with the options written into the cases.** The intake has no
+question about where a change would actually land, and the router's close is "Open one
+focused PR" - on git/git, 2,005 pull requests have been opened and 4 merged, and on the
+postfix mirror there have been none in thirteen years, with issues disabled on both
+(`INTAKE-11`). The required `.github/workflows/spec-guard.yml` entry pins the key
+`on.pull_request`: rewriting the trigger to the only event a mirror can emit makes
+self-verify report the key missing, measured (`GATE-40`). The decision machinery has no
+route for a repository that already keeps decisions in another shape - Git's
+`Documentation/BreakingChanges.adoc` records rejected proposals as well as accepted ones,
+and Vim's design policy lives in a user-facing help file - so a retroactive pass adds a
+second home for a fact that has one (`DEC-14`). All three repositories keep history under
+another name (542 RelNotes files; a 916-entry C array plus `version9.txt`; a 31,888-line
+`HISTORY`), and the only mechanism available - a manifest exception - leaves drift 0
+reachable with no changelog at all, which is exactly what that entry's own purpose says
+must not happen (`SHAPE-17`). Each of the three needed a `runtime-library` capability for
+the project's own replacement for libc, which `onboard.md` warns against as a layering
+artifact and which is 37% of the tracked files in postfix (`SHAPE-18`). And drift 0 arrived
+in one sitting on all three, with the adoption percentage moving 24% -> 62% -> 77% on
+git/git before a single sentence was authored, purely from copying files the standard
+itself ships (`ADOPT-17`).
+
+**Held.** The persona gate produces something real where there is no product owner to
+interview: Git classifies its own 185 commands into audience categories in
+`command-list.txt`, Postfix states its tie-break in code (`compatibility_level`), and
+`onboard.md`'s "mark it inferred and unconfirmed, put the interview in the backlog" branch
+is exactly the right move rather than an excuse (`ADOPT-16`). The capability map came out
+behaviour-shaped on a repository with 244 C files at its root, and the audit's empty-glob
+check named seven globs watching nothing before anything was committed (`ADOPT-09`). The
+unclaimed check, once declared, found 477 files on Vim (`ADOPT-10`). And the decision-record
+index guard was reproduced deliberately on postfix: an unindexed record is named, with exit
+code 1 (`DOC-18`).
+
 ### A committed dependency tree read as this repo's code (2026-08-06)
 
 `**/swap/**` compiles to `(?:[^/]+/)*swap/.+`, which matches `node_modules/pkg/swap/a.js`.
