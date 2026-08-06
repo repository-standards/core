@@ -79,6 +79,16 @@ stop:** when the intake's intent is "tell me where I stand and give me the plan"
 run ends after Gate 2 plus the counted plan - the health report and the number, no
 changes made.
 
+**Gate 0 can also end the adoption.** Before anything is proposed, the intake reads the
+repo's own contribution policy - which a repo may state anywhere it keeps rules, `AGENTS.md`
+included, not only `CONTRIBUTING.md` or a file named for the purpose. A policy forbidding
+agent contributions is a red-flag stop, and not always the end of the run: a ban on
+submitting code is not a ban on reading, so the assessment above is usually still on offer.
+A policy *mandating* what this standard's own conventions forbid - an AI-attribution
+trailer, say - is a conflict put to the human with both obligations named, never settled
+silently by the merge that installs those conventions. The shapes and what each one does are
+in the align skill's intake ([step 0](../../skills/align-to-standards/SKILL.md)).
+
 ## Rigid vs. the agent's discretion
 
 - **Rigid (the framework enforces):** the per-direction gate order, that each gate
