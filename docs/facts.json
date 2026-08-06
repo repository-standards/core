@@ -224,5 +224,33 @@
         "pattern": "node-version: \"(\\d+\\.\\d+\\.\\d+)\""
       }
     ]
+  },
+  {
+    "id": "scale-profile-entries",
+    "what": "how many manifest entries the scale profile adds - the size of the discount the profile picker offers a core adopter (ADR-040). The home pattern is anchored at entry indentation so the manifest's own top-level profile key is not counted as one of them",
+    "home": {
+      "countMatches": {
+        "file": "standard/standard.manifest.json",
+        "pattern": "^      \"profile\": \"scale\",$"
+      }
+    },
+    "claims": [
+      {
+        "file": "docs/method/adoption.md",
+        "pattern": "many entries it skipped, and today the answer is (\\d+)"
+      },
+      {
+        "file": "docs/faq.md",
+        "pattern": "it is (\\d+) manifest entries, not a different standard"
+      },
+      {
+        "file": "docs/open-questions/profiles.md",
+        "pattern": "on the tree: (\\d+) entries are `scale`"
+      },
+      {
+        "file": "docs/open-questions/README.md",
+        "pattern": "too weak to carry the weight - (\\d+) entries"
+      }
+    ]
   }
 ]
