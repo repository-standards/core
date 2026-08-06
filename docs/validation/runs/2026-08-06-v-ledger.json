@@ -1,0 +1,12 @@
+{
+  "$about": "One case, found while reconciling two conventions that had appeared across the day's in-flight branches: some run files cited the pull request carrying the fix, some deliberately did not because the pull request had not merged. Reconciling them exposed a defect in the renderer rather than in either convention. Verified on this branch, not on the mainline - the failures-found total was computed on real data both ways before anything was changed.",
+  "observations": [
+    {
+      "case": "VAL-01",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "at": "2026-08-06",
+      "evidence": "Reproduced against the real data before the change. `confirmedFixed` was `current.filter(o => o.verdict === 'pass' && o.fix)`, so a pass with no `fix` field counted as neither open nor fixed. Folding two branches' run files into the mainline data and recomputing gave open=80 fixed=84 TOTAL=164, against 167 on the mainline alone: three findings left the published record entirely, and the 'Failures found' headline shrank with no line saying anything had gone. Adding a `fix` URL to the same three restored 167, which is what identified the gate rather than the data as the cause. The renderer now counts a pass as fixed when that case+target ever recorded a fail, with `fix` demoted to provenance: the pull-request count reports only the fixes that cite one, the headline names the rest separately, and the fixed table prints the run file that re-verified them instead of an empty link. `tools/validation-test.mjs` is new and runs the real renderer against fixture trees via a new `--root`; reverting the counting rule turns 6 of its 9 cases red, and the three that stay green are the ones asserting the opposite direction (a pass that never failed is not a fix, an unfixed failure stays open, a cited fix still counts)."
+    }
+  ]
+}

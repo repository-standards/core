@@ -62,8 +62,10 @@ jobs:
           node tools/decision-records-check-test.mjs
       - name: file-map is regenerated from the manifest, not hand-written
         run: node tools/file-map.mjs --check
-      - name: validation suite (render matches the data; no unwaived open failure)
-        run: node tools/validation.mjs --check
+      - name: validation suite (render matches the data; no unwaived open failure) + its test
+        run: |
+          node tools/validation.mjs --check
+          node tools/validation-test.mjs
       - name: site (generate + check landing and docs) + the landing gate's test
         run: |
           node tools/docsite.mjs
