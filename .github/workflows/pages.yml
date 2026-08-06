@@ -50,6 +50,13 @@ jobs:
           node tools/site-check.mjs
           node tools/site-behaviour.mjs
 
+      # /work/ is this repository's own work state, rendered by the shipped generator run
+      # against ourselves. It is published because this repository is public and its backlog
+      # already is: the page shows nothing a reader could not read in the tree. An adopter
+      # decides this separately, which is what the shipped workflow's visibility gate is for.
+      - name: build /work/ - the standard's own work state
+        run: node standard/scripts/work-dashboard.mjs . --out site/work/index.html
+
       - name: build every registered stack into its prefix
         run: |
           set -euo pipefail
