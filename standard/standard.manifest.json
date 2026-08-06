@@ -369,7 +369,8 @@
       "since": "1.0.0",
       "rule": "R16",
       "requiredKeys": [
-        "on.pull_request"
+        "on.pull_request",
+        "on.push"
       ]
     },
     {
