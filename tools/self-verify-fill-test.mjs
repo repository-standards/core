@@ -156,9 +156,11 @@ check("an autolink is not a placeholder", {
 
 // The decision records were outside the scanned set entirely, so the one placeholder the
 // record templates ship - `| **Author** | {{AUTHOR}} |` - reached drift 0 on every record
-// ever written. All three directions are asserted: the unfilled row warns, a filled record
-// does not, and the template it was copied from is still allowed to carry placeholders (a
-// warning on the template is one nobody can clear, so it is one everybody learns to skip).
+// ever written. Four directions are asserted: the unfilled row warns, a filled record does
+// not, the template it was copied from is still allowed to carry placeholders (a warning on
+// the template is one nobody can clear, so it is one everybody learns to skip), and prose
+// angle notation inside a record does not warn - records are the repo's own writing, and the
+// last case is a real one, taken from this project's own log.
 const RECORD = (author) =>
   "# ADR-001: use Postgres\n\n| | |\n| --- | --- |\n| **Status** | Accepted |\n" +
   `| **Date** | 2026-08-06 |\n| **Author** | ${author} |\n| **Tags** | datastore |\n\n` +
@@ -185,6 +187,21 @@ check("the record template itself is not a shell to fill", {
 check("a record directly under docs/decision-records/ is scanned as well", {
   files: { "docs/decision-records/BDR-004-target-personas.md": RECORD("{{AUTHOR}}") },
   warnsAbout: [["BDR-004-target-personas.md", true]],
+});
+
+// Both angle tokens below are lifted verbatim from this project's own records, where they are
+// notation inside a quoted utterance. Scanning records with the full pattern warned on 2 of
+// this repo's 33 records for exactly this, so records get the two forms that are never
+// anything else - and this case is what stops the angle form being added back.
+check("prose angle notation in a record does not warn", {
+  files: {
+    "docs/decision-records/adr/ADR-002-transition-skills.md":
+      "# ADR-002: transition skills run from the standard\n\n| | |\n| --- | --- |\n" +
+      "| **Status** | Accepted |\n| **Date** | 2026-08-06 |\n| **Author** | adrienne |\n\n" +
+      "## Context\n\nThe agent says \"I'll align you to <standard>@<version>\", and the intake\n" +
+      "asks: your stack is <technology> - shall I offer the <technology> best practices?\n",
+  },
+  warnsAbout: [["ADR-002-transition-skills.md", false]],
 });
 
 // Regression 2: a required sections[] entry must turn "removed" into a reported FAIL, not
