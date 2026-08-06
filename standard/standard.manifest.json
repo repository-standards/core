@@ -210,25 +210,25 @@
       "rule": "R22",
       "sha256": {
         "add-to-backlog/SKILL.md": "e5aacb7fc264fcc077a6b268e68575ba0410efc99f057ece3c9bad7bc36d4ef1",
-        "adr-write/SKILL.md": "663276a872c658cefa8db89dbdf2679b8d8d0c006ce652f528ea92b81bf366df",
-        "bdr-write/SKILL.md": "c357fe5fedffaa4565337cee03f5608ba0926054d20355ffbaa02c21e68d60a2",
+        "adr-write/SKILL.md": "1543b4e60709e906ff26e88dc0fd88359ee78e833f6612c8f5ba81035dae41cf",
+        "bdr-write/SKILL.md": "200f8f5ab1085009eb15f4cbac8c36ad58146a41a5aa870fdc2087429371ff69",
         "cycle-close/SKILL.md": "2b3ec7e05dce507bfc6e5ee17fc1d9640e50c0146f8e76c7453f7b961940a0f4",
         "cycle-open/SKILL.md": "d02e573e06d05ef05e38e5d7a1d11872b286e5c1b7c4dcc9de6dbdf12bc65186",
-        "discovery-digest/SKILL.md": "bc7f25b8a7eb9be3adaa0917febb5c2b452d378e1d5836c5b1bf47add2094d09",
+        "discovery-digest/SKILL.md": "208c0ee5265cd820d64267ccfc5cbf60746e3f9f697755ff76e823c4161907c4",
         "idea-write/SKILL.md": "0c6bf300123b8b7b2be4b9d5d757158bd3a8524be95b858876cfd35e532c68fd",
         "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",
         "pre-pr-review/SKILL.md": "aa43d020310c9c684720c58ec9e0efbeca4abf78fcce23b7dc2ec78544a0ce4f",
         "product-write/SKILL.md": "21bdc82897281178f915cb0f51dd669d35228d17748977cbacdc1993f2843b98",
         "spec-clarify/SKILL.md": "042ec5e0153d9e62d7f9be86af7205d44c0b278c2aea626aa5167672cd2f2d8e",
-        "spec-impact/SKILL.md": "9d583c7b37b4bcf11a052c6bdaf13ec92ce8ad725f974a06c5cba91f6d366728",
+        "spec-impact/SKILL.md": "1751db1ac3e5cc0c085e107625b39370f0c9d451813e02544aa0b31fd461ea9a",
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",
         "spec-plan/SKILL.md": "00d877467e5d5f971fbdcce2cc5b20afb03e6645198363c92cbc57f13a4e3ae3",
         "spec-reconcile/SKILL.md": "d5b123a8ae57c1c0ac003d3c338e27badbdb3bdf0b13edf5275fd007a07f03ef",
         "spec-specify/SKILL.md": "58f00c7f3b47e3a7fb1c4cb57d85a5219923ff0159ae92417746db50c02e185a",
         "spec-tasks/SKILL.md": "59cdabc8e4e8f3656d245c1aa20213f0d89cd5e7fc9915e05d3e7fa1af98b9f1",
-        "spec-update/SKILL.md": "04ddb59820a62b53de5c7d2ce6862ee622dbc60f1fb7fe8dac353ac751db82cd",
+        "spec-update/SKILL.md": "e23fc97fac2ed3c61e6d88bb3d9ce7b7a36cc52d1540e9632381ce38f314ad8e",
         "timeline-update/SKILL.md": "e0770d9e33139bbddaa01be6bd59748845ab6d18b34fd9de489910f110cd584c",
-        "update-to-version/SKILL.md": "c82cf671eb56b53e8846c75237787f3e2408ec352ab43b82bfff5a30aa90ec75"
+        "update-to-version/SKILL.md": "db5ad5411d49c0ce1555af082afb5ad03ae2ce4197906bb91f84bb33b0b0dea4"
       }
     },
     {
@@ -358,7 +358,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R11",
-      "sha256": "ba7023112b3a148c70b6bd31752bc8a0c82e295fe393d541c74000bd6f2ccf53"
+      "sha256": "14fc8efd8567792ee2c681552133e49c77b6e202478ed9d2325e13c5560bec02"
     },
     {
       "path": ".github/workflows/spec-guard.yml",

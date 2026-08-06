@@ -67,6 +67,15 @@ if (!existsSync(MAP)) {
 }
 
 const sh = (c) => execSync(c, { encoding: "utf8" }).trim();
+
+// A dependency tree that got committed is not this repo's code, and the audit's filesystem
+// walk already knew that - but every other path list here comes from git, which does not.
+// In a repo with node_modules/ tracked, `**/swap/**` compiles to `(?:[^/]+/)*swap/.+` and
+// matches `node_modules/pkg/swap/a.js`, so a dependency bump broke the blocking coupling
+// gate for a capability nobody touched, and the audit read thousands of vendored files as
+// code nobody claims. One answer, applied wherever a path list enters this guard.
+const VENDORED = new Set(["node_modules", ".git"]);
+const isVendored = (f) => f.split("/").some((s) => VENDORED.has(s));
 const declared = JSON.parse(readFileSync(MAP, "utf8"));
 
 const bad = (msg) => {
@@ -161,11 +170,10 @@ const compiled = Object.fromEntries(
 if (audit) {
   // A fresh degit has no .git yet - fall back to walking the filesystem, like
   // spec-structure does. A shipped guard never dumps a stack trace.
-  const SKIP_DIRS = new Set(["node_modules", ".git"]);
   const fsWalk = (dir, acc = []) => {
     if (!existsSync(dir)) return acc;
     for (const e of readdirSync(dir)) {
-      if (SKIP_DIRS.has(e)) continue;
+      if (VENDORED.has(e)) continue;
       const p = `${dir}/${e}`;
       if (statSync(p).isDirectory()) fsWalk(p, acc);
       else acc.push(p.replace(/^\.\//, ""));
@@ -196,7 +204,7 @@ if (audit) {
     const out = [
       ...collect(`git ls-files${target}`),
       ...collect(`git ls-files --others --exclude-standard${target ? ` --${target}` : ""}`),
-    ].filter((f) => !f.split("/").some((seg) => SKIP_DIRS.has(seg)));
+    ].filter((f) => !isVendored(f));
     if (out.length) return [...new Set(out)];
     return fsWalk(what === "." ? "." : what);
   };
@@ -304,7 +312,13 @@ else if (base) raw = sh(`git diff --name-only --diff-filter=ACDMR ${base}...HEAD
 // A file not yet added is still a change: locally the guard has to fire before
 // `git add`, not only in CI where everything is tracked.
 else raw = `${sh("git diff --name-only --diff-filter=ACDMR HEAD")}\n${sh("git ls-files --others --exclude-standard")}`;
-const files = [...new Set(raw.split("\n").filter(Boolean))];
+const changed = [...new Set(raw.split("\n").filter(Boolean))];
+const files = changed.filter((f) => !isVendored(f));
+// Say when the guard dropped paths, for the same reason it says when it decided not to
+// fire: a silent skip reads exactly like a guard that stopped working.
+const vendoredChanges = changed.length - files.length;
+if (vendoredChanges)
+  console.log(`spec-guard: note - ${vendoredChanges} changed path(s) inside a committed dependency tree ignored - not this repo's code`);
 
 // The key shape of a JSON value: every key path, array indices collapsed.
 // { "files": [{ "path": "a" }] } -> files, files[].path
