@@ -2807,6 +2807,40 @@
       "then": "at least one names it as a real, tracked deliverable, instead of it existing in none of the three despite being documented as the answer",
       "procedure": "grep standard.manifest.json, SPEC.md and docs/method/taxonomy.md for stack-decisions",
       "status": "run"
+    },
+    {
+      "id": "DEC-12",
+      "title": "the decision catalog has a category for a repo whose release gate is owned by a third party, not by its own CI or maintainer",
+      "area": "decisions",
+      "tests": [
+        "R7",
+        "R18"
+      ],
+      "promise": "Every fork in the decision checklist that applies to the repo MUST be consciously decided and recorded - SPEC.md R7",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo whose published releases are gated by an external body that can reject or archive them on its own policy, independent of the repo's CI and maintainers (Rdatatable/data.table, gated by CRAN)",
+      "when": "the decision catalog's delivery/release axis is checked for a category covering an externally-owned gate",
+      "then": "a category exists for it, rather than the axis defaulting to 'the maintainer cuts releases' as though the repo controlled the gate",
+      "procedure": "grep -ri 'cran\\|external release gate\\|gatekeep' docs/method/checklist.md docs/method/changelog-process.md standard/SPEC.md",
+      "status": "run"
+    },
+    {
+      "id": "DEC-13",
+      "title": "the retroactive-decision reconstruction has a path for a founding decision that left no trace in the code or in the repo at all",
+      "area": "decisions",
+      "tests": [
+        "R5",
+        "R7"
+      ],
+      "promise": "A contestable, re-litigable choice MUST be recorded as a decision record - SPEC.md R5",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo whose existence is itself the largest decision it embodies, made before its first commit and documented only outside it (opentofu/opentofu, forked from Terraform over a license change)",
+      "when": "onboard.md's retroactive-decision step - which reconstructs decisions 'already chosen' by reading the code - is applied to that decision",
+      "then": "a documented path exists for a decision with no code fingerprint and no in-repo trace, rather than only the code-archaeology route plus docs/discovery/, which ADR-024 makes explicitly non-normative and so unable to hold the record",
+      "procedure": "read skills/align-to-standards/onboard.md's decisions step; grep the target repo's README/CONTRIBUTING/docs for the founding rationale",
+      "status": "run"
     }
   ]
 }

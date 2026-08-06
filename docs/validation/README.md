@@ -13,6 +13,10 @@ that fixed it, or stating plainly that it has not been fixed yet. A subset of th
 should hold, not only this one; that subset is offered as a benchmark in
 [`benchmark.md`](benchmark.md) for a reader who has never heard of this project.
 
+What counts as a case, what a depth level means, and which claims this data is **not**
+permitted to support are defined in [`method.md`](method.md) - the one page here that is
+written rather than generated.
+
 ## What this does not prove - read this before the numbers
 
 - **Assessment is not adoption.** 103 of 105 targets were assessed at
@@ -59,12 +63,12 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 
 | | |
 |---|---|
-| Cases in the catalogue | **174** (`165` executed at least once, `9` specified but not yet run) |
-| Portable cases (the benchmark subset) | **114** (66% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **176** across 2 rounds (2026-08-03, 2026-08-04) |
+| Cases in the catalogue | **176** (`167` executed at least once, `9` specified but not yet run) |
+| Portable cases (the benchmark subset) | **116** (66% of the catalogue); local (tests a path only this tree has): 60 |
+| Observations recorded | **178** across 3 rounds (2026-08-03, 2026-08-04, 2026-08-06) |
 | Targets assessed | **105** (103 real repositories, 2 synthetic fixtures) |
-| Verdicts | 89 pass, 84 fail, 1 not-applicable, 2 partial |
-| Failures found | **162** - **78 fixed and re-verified** (across 18 merged pull requests), **84 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden |
+| Verdicts | 89 pass, 86 fail, 1 not-applicable, 2 partial |
+| Failures found | **164** - **78 fixed and re-verified** (across 18 merged pull requests), **86 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -80,7 +84,7 @@ number stops matching the data behind it.
 | `spec` | 21 | 18 | 3 | 16 |
 | `gates` | 32 | 32 | 0 | 22 |
 | `track` | 19 | 17 | 2 | 17 |
-| `decisions` | 11 | 11 | 0 | 8 |
+| `decisions` | 13 | 13 | 0 | 10 |
 | `discovery` | 7 | 7 | 0 | 6 |
 | `trigger` | 6 | 4 | 2 | 5 |
 | `docs` | 17 | 17 | 0 | 5 |
@@ -196,6 +200,8 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `ADOPT-05` | the technology-detection step names a repo's second, workspace-composing layer (a west/repo manifest pulling in dozens of sibling repositories), not only the single root package manifest | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `ADOPT-06` | stack detection has an evidence-quality rule, so 715 `package.json` matches inside npm-compat test fixtures do not read as 'maybe Node' on a repo whose real build system is something else entirely | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `ADOPT-07` | the honest-miss path's one deliverable (docs/stack-decisions.md, for a technology with no registered Layer-2 stack) exists in the manifest, a SPEC rule, and the taxonomy - the three places every other required deliverable exists in | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
+| `DEC-12` | the decision catalog has a category for a repo whose release gate is owned by a third party, not by its own CI or maintainer | `repo:Rdatatable/data.table` | **open** (logged, not fixed) |
+| `DEC-13` | the retroactive-decision reconstruction has a path for a founding decision that left no trace in the code or in the repo at all | `repo:opentofu/opentofu` | **open** (logged, not fixed) |
 
 ## Fixed and re-verified this round
 

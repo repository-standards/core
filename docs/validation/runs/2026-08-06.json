@@ -1,0 +1,21 @@
+{
+  "$about": "2026-08-06 round: two findings from the wave-6 brownfield agents that completed after the 2026-08-04 round had already been codified, so they had no case and no observation in the suite. Both targets were already present in targets.json from the wave-6 backfill; only the cases and these observations are new. Both are logged-not-fixed.",
+  "observations": [
+    {
+      "case": "DEC-12",
+      "target": "repo:Rdatatable/data.table",
+      "verdict": "fail",
+      "evidence": "Full-tree search for 'CRAN', 'release gate' and 'gatekeep' across the standard returns nothing outside R21's own supply-chain text; docs/method/checklist.md's delivery axis defaults to 'the maintainer cuts releases', which assumes the repo owns its own gate. It does not here: CRAN re-checks published packages against current dependency versions and archives the ones that fail, on its own schedule. Concrete evidence the gap is load-bearing rather than theoretical - the maintainers built .github/workflows/cran-status-check.yaml, which polls CRAN's deadline API on a schedule and opens a GitHub issue when the package is flagged for archival: bespoke tooling to track a gate their own CI and merge process do not control.",
+      "at": "2026-08-06",
+      "waiver": "Open by design, not a silent gap: logged this round, not built. Adding a catalog row is cheap; deciding what the standard should say a repo does about a gate it does not own is the part that needs the owner, so it is named rather than guessed at."
+    },
+    {
+      "case": "DEC-13",
+      "target": "repo:opentofu/opentofu",
+      "verdict": "fail",
+      "evidence": "The assessing agent's headline finding, and a shape no other target in the catalogue has produced. onboard.md's decisions step reconstructs decisions by detecting 'what the code already chose' - which assumes a decision leaves a fingerprint in the diff. OpenTofu's founding decision (forking Terraform over HashiCorp's BSL relicensing) leaves none: the code is a diverged copy, not an architectural choice. Grepping the repo's own README, CONTRIBUTING and docs for 'BSL', 'HashiCorp license' and the fork rationale returns nothing - the story lives entirely on the website and in Linux Foundation material, outside the tree. The nearest shipped mechanism, docs/discovery/, is explicitly never normative (ADR-024), so it cannot hold the record either.",
+      "at": "2026-08-06",
+      "waiver": "Open by design, not a silent gap: logged this round, not built. The fix is a documented route for a founding/identity decision that must be written from outside knowledge rather than reconstructed from the tree - a real addition to onboard.md, not a wording tweak, so it is queued rather than improvised."
+    }
+  ]
+}
