@@ -331,6 +331,12 @@ h2.section:first-of-type { margin-top: 0; }
 /* board ------------------------------------------------------------------- */
 
 .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 20px; }
+/* Thirty-nine records outlive the fold: the search follows the reader down the list rather
+   than being a thing they have to scroll back up to remember exists. */
+.controls.searchrow {
+  position: sticky; top: 44px; z-index: 10; margin: 0 -8px 20px; padding: 10px 8px;
+  background: color-mix(in srgb, var(--ground) 94%, transparent); backdrop-filter: blur(8px);
+}
 .search {
   flex: 1 1 220px; min-width: 200px; font: inherit; font-size: 14px; color: var(--ink);
   background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px;
