@@ -24,9 +24,11 @@ One-liner. What/why: [PRODUCT.md](docs/PRODUCT.md). How: [ARCHITECTURE.md](docs/
 
 This repo follows repository-standards. `.standards-version` records the state it
 last aligned to - a bookmark, never a version it stays at; the target is always
-the latest. If a `stack.manifest.json` is present, it also carries a
-technology layer (Layer 2): `self-verify` counts one drift number across both,
-and the rationale behind every stack entry lives in that stack repo's DECISIONS.
+the latest. If a `stack.manifest.json` is present (or one
+`stack.<technology>.manifest.json` per stack, where more than one coexists), it
+also carries a technology layer (Layer 2): `self-verify` counts one drift number
+across every layer, and the rationale behind every stack entry lives in that
+stack repo's DECISIONS.
 
 The rules it is measured against are the numbered rules in [`SPEC.md`](SPEC.md) -
 where this file cites R11 or R24, that is what it means.
