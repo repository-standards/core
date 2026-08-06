@@ -123,7 +123,36 @@ is written and a correction after.
 
 ---
 
-## ## A trap the shipped guards walk into
+## ## A number is not an answer
+
+A probe assessed Caddy and produced a count: 45-60 capability specs, 22 files to copy, 7 to
+merge, 21 documents to author. All true, all measured. The simulated user's reaction was that
+a raw count is not actionable, and that was right.
+
+The agent's second attempt is the shape the first should have had:
+
+- **The 45-60 specs are the whole project.** Everything else - the copies, the merges, the
+  authored documents - is one to two weeks. The specs are months. One line separates a
+  fortnight from a year, and the flat count hid it.
+- **A Go repository must carry Node and jq or every shipped guard is inert**, leaving prose -
+  which is the exact thing the standard exists to prevent. That is a go/no-go input, not a
+  task.
+- **A changelog entry per pull request** lands on every external contributor, not just the
+  maintainers.
+- And the recommendation that follows: take Layer 1 first and let the coupling rule accrete
+  specs as capabilities are touched, so the dominant cost rides work already happening rather
+  than blocking it.
+
+**The finding is that the count arrived without any of that.** A number with no decomposition
+reads as a wall, and a wall is where somebody stops. The assessment ends with a measurement,
+which is honest, but a measurement handed over without saying which part of it is the whole
+project is a measurement the reader cannot use.
+
+| id | prompt | source | what it tests |
+|---|---|---|---|
+| A24 | `score this repo against repositorystandards.com - count the work, do not do it` **on a large repository** | reported | whether the count comes with the one line that makes it a decision - which part dominates, what the prerequisites cost, and what the cheapest honest path is - or lands as a bare number the reader reads as a refusal |
+
+## A trap the shipped guards walk into
 
 Found while landing a first wave on an Express boilerplate, and it generalises to any
 repository whose lint config predates ES modules.
