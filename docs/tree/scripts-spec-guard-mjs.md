@@ -19,7 +19,14 @@ whose code matched and whose `specs/<capability>/` did not is a failure.
 
 A qualified entry narrows it: `{"glob": "config/rules.json", "couples": "shape"}` fires on a
 change to the file's **key structure** rather than to its values, so editing a number is not
-a behaviour change while adding a field is.
+a behaviour change while adding a field is. A glob starting with `!` excludes, which is how a
+sibling capability living inside an already-claimed folder gets a coupling of its own instead
+of both specs being demanded on every edit.
+
+Where the map declares `$unclaimed` - the paths that belong to no capability by decision -
+the diff mode also reports **changed files that neither claims nor declares**. That is the
+state a map is in when the code went somewhere its globs do not look: every glob matches
+nothing, and a guard watching an empty set reports OK forever.
 
 ## What it cannot catch
 
@@ -28,8 +35,9 @@ limit of any coupling check, and it is why review still reads the spec diff.
 
 **An unmapped capability**, in diff mode - hence the audit.
 
-**Changes outside the map.** Code no capability claims is unguarded by construction, which
-is a signal about the map rather than about the guard.
+**Changes outside the map, in a repo that declares no `$unclaimed`.** Without that
+declaration the map never claimed to cover everything, so the guard has no basis to call
+anything unclaimed - and code no capability claims stays unguarded by construction.
 
 ## The one that surprises people
 
