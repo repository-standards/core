@@ -2972,6 +2972,22 @@
       "then": "nothing matches work by task id; each item is matched by a fingerprint of its own content, so changed work is reported rather than skipped and new work is created rather than swallowed",
       "procedure": "read docs/method/tracker-sync.md's fingerprint table and spec-tasks/SKILL.md step 1a; confirm no shipped file keys on a task id across rounds",
       "status": "run"
+    },
+    {
+      "id": "VAL-01",
+      "title": "a defect recorded as fixed stays in the failures-found total even when no pull request is cited",
+      "area": "docs",
+      "tests": [
+        "R25"
+      ],
+      "promise": "every failure this suite ever found is published, none silently dropped",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "an observation that reads fail in one round and pass in a later round, with no `fix` URL on the pass - the shape produced when a fix is verified on its own branch before the pull request merges",
+      "when": "tools/validation.mjs renders the headline numbers",
+      "then": "the finding is counted as fixed and the failures-found total is unchanged, instead of leaving the punch list because it passes and never entering the fixed count because it carries no link",
+      "procedure": "add a fail observation and a later pass observation for the same case+target with no `fix` field, run `node tools/validation.mjs`, and read the 'Failures found' row; then run `node tools/validation-test.mjs`",
+      "status": "run"
     }
   ]
 }

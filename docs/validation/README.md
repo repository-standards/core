@@ -62,12 +62,12 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 
 | | |
 |---|---|
-| Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
-| Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **219** across 17 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-k-shape, 2026-08-06-l-dochonesty, 2026-08-06-m-drift, 2026-08-06-n-vocab, 2026-08-06-p-shape) |
+| Cases in the catalogue | **185** (`176` executed at least once, `9` specified but not yet run) |
+| Portable cases (the benchmark subset) | **125** (68% of the catalogue); local (tests a path only this tree has): 60 |
+| Observations recorded | **220** across 18 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-k-shape, 2026-08-06-l-dochonesty, 2026-08-06-m-drift, 2026-08-06-n-vocab, 2026-08-06-p-shape, 2026-08-06-v-ledger) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 120 pass, 94 fail, 2 not-applicable, 3 partial |
-| Failures found | **160** - **98 fixed and re-verified** (across 26 merged pull requests), **62 still open right now** (of which 3 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 32 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 121 pass, 94 fail, 2 not-applicable, 3 partial |
+| Failures found | **167** - **105 fixed and re-verified** (across 26 merged pull requests, plus 7 re-verified against the tree without a pull request cited), **62 still open right now** (of which 3 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 32 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -86,7 +86,7 @@ number stops matching the data behind it.
 | `decisions` | 13 | 13 | 0 | 10 |
 | `discovery` | 7 | 7 | 0 | 6 |
 | `trigger` | 6 | 4 | 2 | 5 |
-| `docs` | 18 | 18 | 0 | 6 |
+| `docs` | 19 | 19 | 0 | 7 |
 | `loop` | 4 | 3 | 1 | 3 |
 | `update` | 7 | 6 | 1 | 0 |
 | `stack` | 8 | 8 | 0 | 2 |
@@ -254,6 +254,8 @@ from the PR merging, not inferred from the verdict flipping:
 | `GATE-30` | a repo's `exceptions` count cannot inflate its reported adoption percentage: excepting a failure moves one point from drift to excepted, never into the numerator | `fixture:test-greenfield-core` | [core/pull/16](https://github.com/repository-standards/core/pull/16) |
 | `GATE-31` | content-verification for `copy`-class manifest entries hashes the shipped content, so a locally modified or deleted file cannot report as adopted | `fixture:test-greenfield-core` | [core/pull/16](https://github.com/repository-standards/core/pull/16) |
 | `SPEC-11` | a capability's own registration in specs/capability-map.json happens as part of minting it, not as a separate step no skill owns | `fixture:test-greenfield-core` | [core/pull/13](https://github.com/repository-standards/core/pull/13) |
+| `SPEC-17` | extending a capability that a different capability's Accepted BDR explicitly retires is caught before it is specced, not routed through the ordinary spec-specify path | `fixture:test-greenfield-core` | re-verified in `runs/2026-08-06-g-specdec.json` (no pull request cited) |
+| `SPEC-18` | spec-specify and spec-clarify read docs/decision-records/ for a record that already governs the request, before asking the user anything | `fixture:test-greenfield-core` | re-verified in `runs/2026-08-06-g-specdec.json` (no pull request cited) |
 | `TRACK-07` | cycle-open, cycle-close and every mid-cycle prompt promised by tracking-work.md resolve the backlog at the manifest's declared altPath, the same way cycle-guard does | `fixture:test-greenfield-core` | [core/pull/15](https://github.com/repository-standards/core/pull/15) |
 | `TRACK-08` | cycle-guard checks that an intent a closed cycle's outcome block declares 'returned to the pool' is actually there, not only that no intent appears in more than one place | `fixture:test-greenfield-core` | [core/pull/15](https://github.com/repository-standards/core/pull/15) |
 | `TRACK-09` | an id written in backticks or bold in a cycle or backlog table still resolves to the same intent as its bare form, and the id column is found by its header label rather than assumed to be column zero | `fixture:test-greenfield-core` | [core/pull/15](https://github.com/repository-standards/core/pull/15) |
@@ -270,8 +272,10 @@ from the PR merging, not inferred from the verdict flipping:
 | `TRIG-05` | the document that states the unprompted-behaviour contract (agent-work.md) is delivered to an adopting repo, not left as a page that exists only on the standard's own website | `fixture:test-greenfield-core` | [core/pull/18](https://github.com/repository-standards/core/pull/18) |
 | `STACK-04` | self-verify depends only on Node built-ins to check a Layer-2 stack's compliance, so a missing pnpm reads as a missing prerequisite, not as drift indistinguishable from a real lint failure | `fixture:test-greenfield-node` | [node/pull/1](https://github.com/repository-standards/node/pull/1) |
 | `STACK-06` | the one documented package-manager migration path (`pnpm import`) is verified against real bun- and yarn-managed repositories before being offered as the escape hatch | `fixture:test-greenfield-core` | [node/pull/1](https://github.com/repository-standards/node/pull/1) |
+| `SHAPE-03` | a CI workflow existing and passing is not read as evidence the PR gate actually fires, when the workflow itself never triggers on pull_request | `fixture:test-greenfield-core` | re-verified in `runs/2026-08-06-k-shape.json` (no pull request cited) |
 | `SHAPE-04` | intake reads a repo's own machine-readable governance file (`.jcheck/conf`, `.gitreview`) for the role/reviewer-count/tracker/host answers it already declares, before asking the interview questions those answers would settle | `fixture:test-greenfield-core` | [core/pull/38](https://github.com/repository-standards/core/pull/38) |
 | `SHAPE-05` | the standard has vocabulary for a binary-compatibility contract whose source of truth is a previously-compiled binary, so spec-reconcile does not document a compatibility shim as current, intended behaviour | `fixture:test-greenfield-core` | [core/pull/38](https://github.com/repository-standards/core/pull/38) |
+| `SHAPE-06` | R23's mainline-integration rule, and the manifest's release-process vocabulary generally, has a place for a maintained parallel release branch - the shape that makes an ordinary security backport possible | `fixture:test-greenfield-core` | re-verified in `runs/2026-08-06-k-shape.json` (no pull request cited) |
 | `SHAPE-07` | the security-baseline axis catalog has an adversarial/fuzz-testing axis, for a repo whose primary security control is fuzzing rather than a disclosure process | `fixture:test-greenfield-core` | [core/pull/38](https://github.com/repository-standards/core/pull/38) |
 | `SHAPE-08` | the standard's shipped bash guard scripts run correctly on a Windows checkout with Git's default `autocrlf=true`, or with a real `.gitattributes` normalizing line endings, instead of exiting 127 with no denial message on the exact command they exist to stop | `fixture:test-greenfield-core` | [core/pull/25](https://github.com/repository-standards/core/pull/25) |
 | `SHAPE-13` | the decision checklist or capability-map guidance has a category for a repo whose real coupling edge is a build-system graph independent of its directory layout | `fixture:test-greenfield-core` | [core/pull/38](https://github.com/repository-standards/core/pull/38) |
@@ -281,6 +285,9 @@ from the PR merging, not inferred from the verdict flipping:
 | `GREEN-01` | the clarify gate is actually invoked by the scripts that begin planning, so an unclarified spec cannot be planned or tasked just because nothing calls the gate that would stop it | `fixture:test-greenfield-core` | [core/pull/19](https://github.com/repository-standards/core/pull/19) |
 | `GREEN-02` | reaching self-verify drift 0 on a fresh greenfield walk requires at least one real capability spec to exist, not only the three declarative files (`.standards-version`, a profile key, an empty capability-map.json) | `fixture:test-greenfield-core` | [core/pull/37](https://github.com/repository-standards/core/pull/37) |
 | `GREEN-04` | the greenfield spec-writing step points a newcomer at a file that actually ships, for the single hardest artifact they will write | `fixture:test-greenfield-core` | [core/pull/19](https://github.com/repository-standards/core/pull/19) |
+| `DOC-16` | showcase-gap's headline honesty claim - the outcome blocks' stated commit counts - agrees with the repo's own real history when the prescribed command is actually run | `fixture:test-greenfield-core` | re-verified in `runs/2026-08-06-l-dochonesty.json` (no pull request cited) |
+| `INTAKE-07` | a policy stated inside AGENTS.md itself - the file the standard treats as the most authoritative artifact in the repo - is read by the same red-flag scan that reads CONTRIBUTING.md and named policy files | `fixture:test-greenfield-core` | re-verified in `runs/2026-08-06-j-intake.json` (no pull request cited) |
+| `INTAKE-08` | a disclosure mandate (a policy requiring AI co-authorship and disclosure, the opposite of the standard's own conventions.md rule that merges into the very file stating the mandate) produces a visible stop, not silent, permanent per-PR non-compliance | `fixture:test-greenfield-core` | re-verified in `runs/2026-08-06-j-intake.json` (no pull request cited) |
 | `SPEC-22` | re-planning a spec that has already been developed produces an INCREMENTAL plan from the spec's own delta, not a plan for the whole capability again | `repo:repository-standards/core` | [../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md](../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md) |
 | `TRACK-21` | a tracker story whose scope changed because its spec changed is updated, or the divergence is surfaced to a human | `repo:repository-standards/core` | [../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md](../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md) |
 | `TRACK-22` | no external system keys on a positional task id, and a re-export can tell same-work-whose-description-changed from genuinely-new work | `repo:repository-standards/core` | [../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md](../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md) |
