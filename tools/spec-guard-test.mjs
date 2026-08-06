@@ -150,6 +150,85 @@ const CASES = [
     says: "unknown metadata key",
     act: () => write("specs/capability-map.json", json({ ...MAP, $unclaimd: ["tooling/**"] })),
   },
+  // --audit before `git add`. The audit used to read the tracked list and fall back to the
+  // filesystem only when git listed nothing at all, so any repo with one tracked spec made
+  // new directories invisible: OK locally, failing in CI on the same tree, the moment the
+  // author staged it. The three cases after these two are the other direction - what must
+  // not start failing now that untracked files are in scope.
+  {
+    name: "--audit sees a capability directory that is not staged yet",
+    fires: true,
+    args: ["--audit"],
+    says: "specs/checkout/",
+    act: () => write("specs/checkout/spec.md", "# Checkout\n"),
+    undo: () => rmSync(join(repo, "specs/checkout"), { recursive: true, force: true }),
+  },
+  {
+    name: "--audit gives that same answer once the directory is staged",
+    fires: true,
+    args: ["--audit"],
+    says: "specs/checkout/",
+    act: () => {
+      write("specs/checkout/spec.md", "# Checkout\n");
+      git("add", "-A");
+    },
+    undo: () => {
+      git("reset", "-q");
+      rmSync(join(repo, "specs/checkout"), { recursive: true, force: true });
+    },
+  },
+  {
+    name: "--audit reports untracked code that belongs to no capability",
+    fires: true,
+    args: ["--audit"],
+    says: "scripts/deploy.mjs",
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["*", "tooling/**", "shared/paymob.ts"] }));
+      write("scripts/deploy.mjs", "export const deploy = 1;\n");
+    },
+    undo: () => rmSync(join(repo, "scripts"), { recursive: true, force: true }),
+  },
+  {
+    name: "untracked code inside a capability's globs is claimed, not unclaimed",
+    fires: false,
+    args: ["--audit"],
+    says: "each claimed by a capability or declared unclaimed",
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["*", "tooling/**", "shared/paymob.ts"] }));
+      write("src/new-widget.js", "export const widget = 9;\n");
+    },
+    undo: () => rmSync(join(repo, "src/new-widget.js")),
+  },
+  {
+    name: "ignored build output is not code nobody claims",
+    fires: false,
+    args: ["--audit"],
+    says: "each claimed by a capability or declared unclaimed",
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["*", "tooling/**", "shared/paymob.ts"] }));
+      write(".gitignore", "build/\n");
+      write("build/out.js", "export const built = 1;\n");
+    },
+    undo: () => {
+      rmSync(join(repo, "build"), { recursive: true, force: true });
+      rmSync(join(repo, ".gitignore"));
+    },
+  },
+  {
+    name: "a glob whose only matches are untracked is not a guard watching nothing",
+    fires: false,
+    args: ["--audit"],
+    says: "all matching",
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, deploys: ["deploy/**"], $unclaimed: ["*", "tooling/**", "shared/paymob.ts"] }));
+      write("specs/deploys/spec.md", "# Deploys\n");
+      write("deploy/run.sh", "echo deploy\n");
+    },
+    undo: () => {
+      rmSync(join(repo, "specs/deploys"), { recursive: true, force: true });
+      rmSync(join(repo, "deploy"), { recursive: true, force: true });
+    },
+  },
   {
     // The spec template tells a retiring capability to keep its map entry: the code is
     // gone, the spec stays as the record, and dropping the entry would make the spec
