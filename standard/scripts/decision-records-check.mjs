@@ -64,8 +64,13 @@ const streams =
 
 // Index rows: the first table cell, either `[NNN](file.md)` (this repo's own convention) or a
 // bare `NNN`. Placeholder rows (`| - | (none yet) | - |`) have no digit and are skipped for free.
-const ROW_LINKED = /^\[(\d+)\]\(([^)]+)\)$/;
-const ROW_BARE = /^(\d+)$/;
+// The `ADR-`/`BDR-` prefix is optional in both forms: labelling the row with the record's own
+// id is the shape people reach for first, and rejecting it made the whole row invisible - the
+// guard then reported the file as unindexed while its row sat two lines above, which sends the
+// reader to fix the wrong thing.
+const ROW_LINKED = /^\[(?:(ADR|BDR)-)?(\d+)\]\(([^)]+)\)$/;
+const ROW_BARE = /^(?:(ADR|BDR)-)?(\d+)$/;
+const ROW_FORMS = "[001](FILE.md), [ADR-001](FILE.md), 001 or ADR-001";
 
 const rowsIn = (readmePath) => {
   if (!existsSync(readmePath)) return null; // distinct from "no rows" - reported separately
@@ -80,7 +85,8 @@ const rowsIn = (readmePath) => {
     const linked = ROW_LINKED.exec(first);
     const bare = linked ? null : ROW_BARE.exec(first);
     if (!linked && !bare) continue; // header, separator, prose row - not an index entry
-    rows.push({ num: Number((linked ?? bare)[1]), file: linked ? linked[2] : null, raw: line });
+    const m = linked ?? bare;
+    rows.push({ num: Number(m[2]), prefix: m[1] ?? null, file: linked ? linked[3] : null, raw: line });
   }
   return rows;
 };
@@ -122,6 +128,8 @@ for (const { dir, prefixes } of streams) {
     if (row.file) {
       const m = FILE_RE.exec(row.file.split("/").pop());
       key = m ? `${m[1]}-${Number(m[2])}` : `?-${row.num}`; // link doesn't even look like a record
+    } else if (row.prefix) {
+      key = `${row.prefix}-${row.num}`; // the row said which stream it is - believe it rather than guess
     } else {
       const match = prefixes.find((p) => byKey.has(`${p}-${row.num}`));
       key = match ? `${match}-${row.num}` : `?-${row.num}`;
@@ -154,6 +162,7 @@ if (dupRows.length) {
 if (fileNoRow.length) {
   console.error("\ndecision-records-check: on disk, missing from the index:");
   for (const { dir, name } of fileNoRow) console.error(`  - ${dir}/${name} has no row in ${dir}/README.md`);
+  console.error(`    (a row is recognised by its first cell: ${ROW_FORMS} - any other form is invisible here, so check the row you wrote before writing another)`);
 }
 if (rowNoFile.length) {
   console.error("\ndecision-records-check: indexed, missing from disk:");

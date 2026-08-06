@@ -11,6 +11,11 @@
 // across the two streams (ADR-004 and BDR-004 coexisting) must not be flagged - only a
 // number reused *within* one stream is a collision.
 //
+// Three cases cover the row-syntax half, added after a real adoption wrote its index rows as
+// `[ADR-001](file.md)` - the record's own id as the link label - and the guard reported all
+// three records as unindexed while their rows sat in the table. Both directions are here: the
+// prefixed forms now resolve, and a genuinely absent row is still reported.
+//
 // Usage: node tools/decision-records-check-test.mjs   # exit 1 on any failure
 // Zone 1 tooling - never shipped.
 
@@ -110,6 +115,39 @@ check("an Accepted record on disk missing from the index (the other reproduced b
   expect: ["missing from the index", "BDR-004-pricing-model.md"],
 });
 
+check("a row labelled with the record's own id is an index row, not an invisible one", {
+  files: {
+    "docs/decision-records/adr/README.md": adrReadme(
+      "| [ADR-001](ADR-001-first.md) | something | Accepted |",
+      "| [ADR-002](ADR-002-second.md) | something | Accepted |",
+    ),
+    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+    "docs/decision-records/adr/ADR-002-second.md": "# ADR-002\n",
+  },
+  code: 0,
+  expect: ["OK", "2 record"],
+});
+
+check("a bare cell carrying the prefix resolves to that stream", {
+  files: {
+    "docs/decision-records/README.md": adrReadme("| ADR-004 | something | Accepted |") + bdrReadme("| BDR-004 | something | Accepted |"),
+    "docs/decision-records/ADR-004-x.md": "# ADR-004\n",
+    "docs/decision-records/BDR-004-y.md": "# BDR-004\n",
+  },
+  code: 0,
+  expect: ["OK", "2 record"],
+});
+
+check("a record still missing from an index that uses the prefixed form is reported, with the accepted forms named", {
+  files: {
+    "docs/decision-records/adr/README.md": adrReadme("| [ADR-001](ADR-001-first.md) | something | Accepted |"),
+    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+    "docs/decision-records/adr/ADR-002-never-indexed.md": "# ADR-002\n",
+  },
+  code: 1,
+  expect: ["missing from the index", "ADR-002-never-indexed.md", "[ADR-001](FILE.md)"],
+});
+
 check("an index row citing a file that is not there", {
   files: {
     "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md"), row("002", "ADR-002-removed.md", "Superseded")),
@@ -170,4 +208,4 @@ if (failures) {
   console.error(`decision-records-check-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("decision-records-check-test: OK - 11 cases, the index and the directory are cross-checked both ways");
+console.log("decision-records-check-test: OK - 14 cases, the index and the directory are cross-checked both ways");
