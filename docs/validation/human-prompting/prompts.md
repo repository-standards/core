@@ -123,7 +123,121 @@ is written and a correction after.
 
 ---
 
-## ## A finding from writing this file
+## ## The profile promise, measured
+
+`A19` ("does this make sense for a two-person team?") was answered by a probe that read the
+tree rather than the README, and it came back with two things worth verifying. Both were, and
+one of the probe's numbers needed correcting.
+
+**The trigger contradicts the record it implements.** `docs/method/adoption.md:204` says
+*"Start `core`, flip to `scale` when the second regular contributor arrives"*. ADR-011 calls
+core *"every repo, even one person"* and scale *"teams / enterprise"*, and states as its own
+constraint that *"a solo adopter must not be asked to carry enterprise ceremony"*. So the
+method doc sends a pair of people into the profile the record describes as enterprise. ADR-011
+is not literally violated - it speaks about solo - but the trigger is set one contributor away
+from the thing the record was written to prevent.
+
+**The split delivers less than the promise implies.** Counted on the shipped manifest and
+spec, not on prose: of **73** manifest entries across files, sections, guards and decisions,
+**9 are scale-only - 12%**. Of **25** numbered rules, **3** carry a scale marker. So choosing
+core over scale removes about an eighth of the tree and three rules. Core *is* nearly the whole
+standard, which means "take core, it is the light one" is not the reassurance it sounds like.
+
+The probe reported 84 entries, 9 scale and 2 scale-marked rules. The shape of its argument
+survives the correction; the exact figures did not, and are corrected here rather than
+repeated.
+
+Neither of these is a bug in a guard. Both are the product telling a small team something
+about itself that is not quite true, which is the class of defect this suite exists to find and
+the mechanical suite structurally cannot.
+
+## The escape hatch that does not reach
+
+Found by a probe planning an adoption of `honojs/hono`, which uses bun. Recorded here with a
+correction, because the probe's own wording overstated it and the precise version is worse.
+
+**The probe said** two documents of the standard contradict each other: the stack's
+`ADAPTING.md` tells you to "record the exception" when you have no migration path off your
+package manager, while the core manifest states there is deliberately **no `guard` exception
+kind**, since "waiving its verdict removes it instead of recording a deviation from it".
+
+**That is not quite a contradiction, and checking it matters.** `ADAPTING.md` is talking about
+`pnpm-workspace.yaml`, which is a *file* entry - and a `kind: "file"` exception on it is
+entirely legal. The two sentences are about different objects.
+
+**The real defect is that the hatch does not reach far enough.** The stack ships one guard,
+`stack-check-all`, whose command is literally `command -v pnpm ... || exit 1; pnpm check:all`.
+A repository that keeps bun may legally except the *file* and still fails on the *guard*, and
+no exception kind covers a guard by design. So the advertised path - "record the exception" -
+leads to a state that is documented, reasoned, and still cannot reach drift 0.
+
+That is not a wording problem. Both rules are individually right: a guard's verdict genuinely
+should not be waivable, and an adopter genuinely should be able to keep their package manager.
+Together they leave a legitimate adopter with no legal route to a clean number, and nothing in
+either document says so.
+
+| id | prompt | source | what it tests |
+|---|---|---|---|
+| A22 | `follow repositorystandards.com - adopt the standard with the Node stack` **on a repo that uses bun or Deno** | reported | whether the adopter is told, before they start, that keeping their package manager means drift can never reach 0 - or whether they find out at the end, having done the work |
+
+## Two things that worked, recorded as loudly as the failures
+
+A corpus that only publishes failures is as dishonest as one that only publishes passes. Both
+of these were observed rather than assumed, and neither had been seen before.
+
+**A stack was refused, with the reason cited.** `A2` names the Node stack, and it was run
+against Postfix: 782 `.c` files, 386 `.h`, no `package.json`, no lockfile, no TypeScript. The
+agent declined the stack rather than landing a Next.js and Fastify foundation that would be
+inert, and it did not just decline - it named why declining costs nothing, citing R20's
+independent layers and the line in the verifier that only counts stack drift when a stack
+manifest is present. That is the honest-miss path working on the sharpest input available.
+
+**`V6` fired before any damage.** A probe asked to author `personas.md`, `PRODUCT.md` and
+retroactive decision records for somebody else's project stopped and said it had no source of
+truth for that project's product intent or design history, so anything it wrote would be its
+own reconstruction rather than verified fact. It said this **before writing**, which is the
+whole point of `V6` - the same sentence after the files exist is a correction, not a product
+working.
+
+That second one also exposes a real gap, which is why it is a pass and a finding at once:
+**nothing in the artifacts marks them as reconstructed.** A later reader cannot tell an
+interviewed persona roster from an inferred one, and every adoption in this project has
+produced the inferred kind.
+
+## The failure nobody predicted, found by accident
+
+An isolated probe was given a prompt about adopting repository standards, in a directory it
+had been told was its whole world. It **never fetched repositorystandards.com**. It added
+`CODE_OF_CONDUCT.md`, `SECURITY.md`, `.github/ISSUE_TEMPLATE/*`, `PULL_REQUEST_TEMPLATE.md`
+and `.editorconfig` - a generic community-health set - and reported the task complete.
+
+Nothing about that output is wrong on its own terms. It looks like a repository being brought
+up to standard, and a user reading it would believe they had adopted. They would have adopted
+nothing.
+
+**The cause is the name.** "repository standards" is a common noun before it is a product, so
+a confident agent does the generic thing rather than looking for a specific thing. Every
+wrong-mental-model row in this corpus (`A14`-`A17`) assumed the user would name the product and
+get its *nature* wrong - a dependency, a linter, a template. This is worse and was not
+anticipated: the agent substitutes something plausible and succeeds at it.
+
+| id | prompt | source | what it tests |
+|---|---|---|---|
+| A21 | `adopt repository standards in this project` | reported | **the substitution failure.** Does the agent find the product at repositorystandards.com, or invent a generic community-health set and call it done? Anything that lands without the standard having been fetched is a failure however tidy the files are |
+
+Two honest caveats. The probe was scoped by an experiment rather than by a real user's
+configuration, so how often this happens in the wild is unmeasured. And it surfaced because
+the probe escalated instead of complying, which is luck rather than method - the corpus has no
+case designed to catch it, which is why it now has `A21`.
+
+**A second thing fell out of the same run.** Under a strict directory scope, neither probe
+could follow an external URL at all. The quick start's "nothing to install and nothing to
+build" is true, and it silently assumes the agent may reach the network and is allowed to
+follow a link out. A user on a tightly-scoped agent cannot adopt and will not be told why.
+Suggestive rather than demonstrated, for the same reason: the scope was the experiment's, not
+a user's.
+
+## A finding from writing this file
 
 The corpus originally opened with an entry line the assistant had reconstructed from memory
 (`take this repo onto repositorystandards.com with the node stack`). **That is not what the
