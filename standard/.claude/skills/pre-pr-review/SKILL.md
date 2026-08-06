@@ -56,7 +56,9 @@ tightening the loop early, not being the gate. (The gate is CI + human review.)
 
 5. **Fix findings, then re-run step 3.** Loop until clean.
 
-6. **Only then open the PR.** Fill the PR template honestly, including ADR impact.
+6. **Only then open the PR.** Fill the PR template honestly, including decision-record
+   impact - and answer it from both streams, since what a change is forbidden to do is
+   usually a BDR's business constraint rather than an ADR's technical one.
 
 ## What this is not
 
