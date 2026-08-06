@@ -41,6 +41,9 @@
 //                                        # case has never been observed at all, if any
 //                                        # observation has no evidence, or if any "fail"
 //                                        # observation has neither a fix nor a waiver
+//   node tools/validation.mjs --root <d> # read and write under <d> instead of
+//                                        # docs/validation - how validation-test.mjs runs
+//                                        # this renderer against fixture data
 //
 // Zone 1 tooling - this feature is evidence ABOUT the product, not part of the shipped
 // tree, so it lives entirely outside standard/. Dependency-free (Node built-ins only),
@@ -48,7 +51,18 @@
 
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
 
-const DIR = "docs/validation";
+// Overridable so the arithmetic can be exercised against fixture data. Every read and write
+// below goes through it, and the counting rules here decide the published headline numbers -
+// the one generator in this tree that had no test until a fixed finding was found to vanish
+// from both sides of the ledger at once.
+const rootFlag = process.argv.indexOf("--root");
+// A missing value would make DIR undefined and a following flag would be read as the
+// directory - both fail later, somewhere less obvious than here.
+if (rootFlag !== -1 && (!process.argv[rootFlag + 1] || process.argv[rootFlag + 1].startsWith("--"))) {
+  console.error("validation: --root needs a directory (node tools/validation.mjs --root <dir>)");
+  process.exit(1);
+}
+const DIR = rootFlag !== -1 ? process.argv[rootFlag + 1] : "docs/validation";
 const check = process.argv.includes("--check");
 
 const readJSON = (p) => JSON.parse(readFileSync(p, "utf8"));
@@ -196,13 +210,29 @@ const current = [...currentByPair.values()];
 
 const openFailures = current.filter((o) => o.verdict === "fail");
 const attemptedNotHolding = current.filter((o) => o.verdict === "fail" && o.fix);
-const confirmedFixed = current.filter((o) => o.verdict === "pass" && o.fix);
+// A pair that ever failed and now reads pass is fixed, whether or not a PR URL was attached.
+// `fix` is provenance, not the condition for counting: gating on it made a finding vanish
+// from BOTH sides of the ledger - off the punch list because it passes, and out of "fixed"
+// because it carried no link - so the headline "failures found" silently shrank. Measured on
+// three such observations: 167 became 164, and the suite's whole claim is that every failure
+// is published rather than hidden. The provenance still shows in the table below, which says
+// so when there is no link to give.
+const everFailed = new Set(
+  observations.filter((o) => o.verdict === "fail").map((o) => `${o.case} ${o.target}`),
+);
+const confirmedFixed = current.filter(
+  (o) => o.verdict === "pass" && (o.fix || everFailed.has(`${o.case} ${o.target}`)),
+);
 // Superseded fails - found in one round, a later round records the fix. Not open, and not
 // silently vanished either: the count is stated so the punch list shrinking is legible.
 const supersededFails = observations.filter(
   (o) => o.verdict === "fail" && currentByPair.get(`${o.case} ${o.target}`) !== o,
 );
-const distinctFixPRs = new Set(confirmedFixed.map((o) => o.fix));
+// Only the observations that actually cite one. A fixed observation with no link is still
+// fixed; it just has no pull request to name, and the headline says so rather than implying
+// every fix rode a merged PR.
+const distinctFixPRs = new Set(confirmedFixed.filter((o) => o.fix).map((o) => o.fix));
+const fixedWithoutPR = confirmedFixed.filter((o) => !o.fix).length;
 
 const byDepth = {};
 for (const t of targets) byDepth[t.depth] = (byDepth[t.depth] ?? 0) + 1;
@@ -249,7 +279,10 @@ const failuresTable = openFailures
 const fixedTable = confirmedFixed
   .map((o) => {
     const c = caseById.get(o.case);
-    return `| \`${o.case}\` | ${c ? c.title : "(unknown case)"} | \`${o.target}\` | [${o.fix.split("/").slice(-3).join("/")}](${o.fix}) |`;
+    const prov = o.fix
+      ? `[${o.fix.split("/").slice(-3).join("/")}](${o.fix})`
+      : `re-verified in \`runs/${o.round}.json\` (no pull request cited)`;
+    return `| \`${o.case}\` | ${c ? c.title : "(unknown case)"} | \`${o.target}\` | ${prov} |`;
   })
   .join("\n");
 
@@ -328,7 +361,7 @@ ${disconfirmedNote}
 | Observations recorded | **${observations.length}** across ${runs.length} rounds (${runFiles.map((f) => f.replace(".json", "")).join(", ")}) |
 | Targets assessed | **${targets.length}** (${repoTargets.length} real repositories, ${fixtureTargets.length} synthetic fixtures) |
 | Verdicts | ${Object.entries(byVerdict).map(([v, n]) => `${n} ${v}`).join(", ")} |
-| Failures found | **${openFailures.length + confirmedFixed.length}** - **${confirmedFixed.length} fixed and re-verified** (across ${distinctFixPRs.size} merged pull requests), **${openFailures.length} still open right now** (of which ${attemptedNotHolding.length} were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden${supersededFails.length ? `; ${supersededFails.length} earlier fail${supersededFails.length === 1 ? "" : "s"} superseded by a later re-run and no longer counted open` : ""} |
+| Failures found | **${openFailures.length + confirmedFixed.length}** - **${confirmedFixed.length} fixed and re-verified** (across ${distinctFixPRs.size} merged pull requests${fixedWithoutPR ? `, plus ${fixedWithoutPR} re-verified against the tree without a pull request cited` : ""}), **${openFailures.length} still open right now** (of which ${attemptedNotHolding.length} were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden${supersededFails.length ? `; ${supersededFails.length} earlier fail${supersededFails.length === 1 ? "" : "s"} superseded by a later re-run and no longer counted open` : ""} |
 
 These are counts of what is actually written to \`suite.json\`/\`targets.json\`/\`runs/\`, recomputed
 by this script every time it runs - not estimates, and \`--check\` fails CI the moment a rendered

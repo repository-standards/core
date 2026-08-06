@@ -62,11 +62,11 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 
 | | |
 |---|---|
-| Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
-| Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **193** across 8 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd) |
+| Cases in the catalogue | **185** (`176` executed at least once, `9` specified but not yet run) |
+| Portable cases (the benchmark subset) | **125** (68% of the catalogue); local (tests a path only this tree has): 60 |
+| Observations recorded | **194** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-v-ledger) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 99 pass, 90 fail, 1 not-applicable, 3 partial |
+| Verdicts | 100 pass, 90 fail, 1 not-applicable, 3 partial |
 | Failures found | **167** - **84 fixed and re-verified** (across 21 merged pull requests), **83 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
@@ -86,7 +86,7 @@ number stops matching the data behind it.
 | `decisions` | 13 | 13 | 0 | 10 |
 | `discovery` | 7 | 7 | 0 | 6 |
 | `trigger` | 6 | 4 | 2 | 5 |
-| `docs` | 18 | 18 | 0 | 6 |
+| `docs` | 19 | 19 | 0 | 7 |
 | `loop` | 4 | 3 | 1 | 3 |
 | `update` | 7 | 6 | 1 | 0 |
 | `stack` | 8 | 8 | 0 | 2 |

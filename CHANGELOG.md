@@ -16,6 +16,37 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A fixed finding could leave the ledger from both sides at once (2026-08-06)
+
+The suite's headline is "failures found: N - M fixed and re-verified, K still open, logged and
+named below, not hidden." The renderer counted a finding as fixed only when its observation
+carried a `fix` URL. A fix verified on its own branch before the pull request merges has no
+URL to carry yet - so that observation left the punch list, because it passes, and never
+entered the fixed count, because it had no link. The finding was not moved between buckets;
+it was removed from both, and from the total, with nothing in the output saying so.
+
+It surfaced while reconciling two conventions that had drifted apart across a day's parallel
+work: some run files cited the pull request carrying the fix, some deliberately did not
+because that pull request had not merged and the rendered line says "merged pull requests".
+Both readings were defensible, which is why neither author saw the arithmetic underneath.
+Measured on the real data by folding two branches' run files into the mainline's and
+recomputing: `167` became `164`. Adding the URLs back restored `167`, which is what showed the
+gate rather than the data to be the cause.
+
+`fix` is now provenance rather than the condition for counting: a pass whose case+target ever
+recorded a fail is a fix. The pull-request count reports only the fixes that cite one, the
+headline names the rest separately rather than folding them in, and the fixed table prints the
+run file that re-verified an uncited fix instead of an empty link. Both conventions are now
+safe, so neither has to be policed.
+
+`tools/validation.mjs` was the only generator in this tree with no test, while every guard it
+sits beside has one - and it is the one that produces the numbers this project publishes about
+itself. `tools/validation-test.mjs` runs the real renderer against throwaway fixture trees
+through a new `--root`, and CI runs it beside `--check`. Reverting the counting rule turns 6 of
+its 9 cases red; the 3 that stay green are the ones asserting the opposite direction, so the
+fix cannot be "everything counts as fixed" - a pass that never failed is still not a fix, and
+an unfixed failure is still open.
+
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 
 `update-to-version` step 2 called the diff of the two versions' `standard.manifest.json`
