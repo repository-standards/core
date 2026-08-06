@@ -13,7 +13,13 @@ invented in the spec itself.
 
 **A spec shaped like a ticket.** Layout by capability, not `001-feature/`.
 
-**A spec missing the sections that make it usable** at the tier it declares.
+**A spec missing the sections that make it usable** at the tier it declares. A spec that
+says `**Spec tier:** buildable` carries `## Data contracts`, `## Interface contracts` and
+`## Acceptance criteria`, each with something under the heading - a section that genuinely
+does not apply keeps its heading and says so, the way `## Open questions` says "None known."
+`behavioral` is still the escape hatch ([R9](../../standard/SPEC.md)); a spec declaring no
+tier at all is warned about, not blocked, because a guard that fails every undeclared spec
+in a repo mid-adoption is a guard somebody turns off.
 
 ## Why the roster is a table
 

@@ -19,7 +19,7 @@
 import { spawnSync } from "node:child_process";
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 const GATE = join(process.cwd(), "standard/scripts/spec/check-spec-clarified.sh");
 const TEMPLATE = join(process.cwd(), "standard/specs/capability-spec.template.md");
@@ -257,7 +257,7 @@ const STRUCTURE = join(process.cwd(), "standard/scripts/spec-structure.mjs");
 
 const ROSTER = "# Personas\n\n## The roster\n\n| Persona | Cares about |\n|---|---|\n| `Owner-operator Olga` | money arriving |\n";
 
-const structure = (specBody, personas = ROSTER) => {
+const structure = (specBody, personas = ROSTER, extraFiles = {}) => {
   const dir = mkdtempSync(join(tmpdir(), "spec-status-test-"));
   mkdirSync(join(dir, "specs", "payments"), { recursive: true });
   mkdirSync(join(dir, "docs"), { recursive: true });
@@ -265,6 +265,10 @@ const structure = (specBody, personas = ROSTER) => {
   // the status. The spec below names one.
   writeFileSync(join(dir, "docs", "personas.md"), personas);
   writeFileSync(join(dir, "specs", "payments", "spec.md"), specBody);
+  for (const [rel, body] of Object.entries(extraFiles)) {
+    mkdirSync(dirname(join(dir, rel)), { recursive: true });
+    writeFileSync(join(dir, rel), body);
+  }
   const r = spawnSync("node", [STRUCTURE, "--block"], { cwd: dir, encoding: "utf8" });
   rmSync(dir, { recursive: true, force: true });
   return { code: r.status ?? 1, out: `${r.stdout ?? ""}${r.stderr ?? ""}` };
@@ -314,6 +318,129 @@ const STATUS_CASES = [
     body: withStatus("in-refinement", "## Requirements\n\n- The system MUST capture.\n"),
   },
 ];
+
+// --- the tier that has to be paid for -------------------------------------------------
+// `**Spec tier:** buildable` is the other field the method reads as a promise, and the
+// sections that make it true were required by the template alone - so a buildable spec
+// shipped with no contracts at all and the sections were retrofitted by hand later.
+//
+// Most of these cases are the shapes that must KEEP passing, because a guard that fires on
+// them is a guard somebody deletes: the behavioral escape hatch (R9), a section that
+// honestly says there is nothing to state, a section whose body opens with a sub-heading,
+// a heading carrying a parenthetical, and a named sub-spec that extends the capability's
+// spec rather than repeating it.
+const CONTRACTS = `## Data contracts
+
+\`payments\` owns the \`payment\` table: \`id\` (uuid), \`amount_minor\` (integer, cents).
+
+## Interface contracts
+
+\`POST /payments\` - captures. 201 on success, 409 on a duplicate idempotency key.
+
+## Acceptance criteria
+
+- **capture.** GIVEN an authorized card WHEN capture runs THEN the payment is 201.
+`;
+
+const withTier = (tier, body) =>
+  `# Payments\n\n${tier === null ? "" : `**Spec tier:** ${tier}\n`}**Serves:** \`Owner-operator Olga\`\n**Status:** in-refinement\n\n${body}`;
+
+const TIER_CASES = [
+  {
+    name: "a buildable spec with no contracts at all is reported, naming every missing section",
+    fails: true,
+    says: "missing: ## Data contracts, ## Interface contracts, ## Acceptance criteria",
+    body: withTier("buildable", "## Purpose\n\nTake money.\n"),
+  },
+  {
+    name: "the reported spec is told how to declare the behavioral tier instead",
+    fails: true,
+    says: "declare `**Spec tier:** behavioral` and justify it",
+    body: withTier("buildable", "## Purpose\n\nTake money.\n"),
+  },
+  {
+    name: "a buildable spec carrying its contracts passes",
+    fails: false,
+    says: "OK",
+    body: withTier("buildable", CONTRACTS),
+  },
+  {
+    name: "a section that honestly says there is nothing to state passes - the heading stays, the claim is explicit",
+    fails: false,
+    says: "OK",
+    body: withTier("buildable", CONTRACTS.replace(/`payments` owns.*$/m, "None - this capability persists nothing; it forwards to the processor.")),
+  },
+  {
+    name: "a heading with an empty body is not a section",
+    fails: true,
+    says: "missing: ## Data contracts",
+    body: withTier("buildable", CONTRACTS.replace(/`payments` owns.*$/m, "")),
+  },
+  {
+    name: "a section carrying nothing but the template's own comment is not a section",
+    fails: true,
+    says: "missing: ## Data contracts",
+    body: withTier("buildable", CONTRACTS.replace(/`payments` owns.*$/m, "<!-- buildable: REQUIRED. Verbatim. -->")),
+  },
+  {
+    name: "a section whose body opens with a sub-heading is filled",
+    fails: false,
+    says: "OK",
+    body: withTier("buildable", CONTRACTS.replace(/`payments` owns.*$/m, "### Tables\n\n`payment`: `id` (uuid), `amount_minor` (integer).")),
+  },
+  {
+    name: "a heading carrying a parenthetical still satisfies the requirement",
+    fails: false,
+    says: "OK",
+    body: withTier("buildable", CONTRACTS.replace("## Acceptance criteria", "## Acceptance criteria (capture)")),
+  },
+  {
+    name: "the behavioral tier is still an escape hatch, not a violation (R9)",
+    fails: false,
+    says: "OK",
+    body: withTier("behavioral", "## Purpose\n\nTake money. Buildable is not available: the processor owns the contract.\n"),
+  },
+  {
+    name: "a spec that declares no tier is warned about, not failed - a guard that blocks every undeclared spec gets switched off",
+    fails: false,
+    says: "declare no `**Spec tier:**`",
+    body: withTier(null, "## Purpose\n\nTake money.\n"),
+  },
+  {
+    name: "the template's unfilled list of tiers is not a declaration",
+    fails: false,
+    says: "declare no `**Spec tier:**`",
+    body: withTier("buildable | behavioral", "## Purpose\n\nTake money.\n"),
+  },
+  {
+    name: "a named sub-spec is not held to the tier its capability's spec declares",
+    fails: false,
+    says: "OK",
+    body: withTier("buildable", CONTRACTS),
+    extraFiles: { "specs/payments/refunds.md": "# Refunds\n\n**Serves:** `Owner-operator Olga`\n\n## Purpose\n\nThe refund path of payments.\n" },
+  },
+  {
+    name: "a sub-spec that claims the buildable tier itself is held to it",
+    fails: true,
+    says: "specs/payments/refunds.md",
+    body: withTier("buildable", CONTRACTS),
+    extraFiles: { "specs/payments/refunds.md": "# Refunds\n\n**Spec tier:** buildable\n**Serves:** `Owner-operator Olga`\n\n## Purpose\n\nThe refund path.\n" },
+  },
+];
+
+for (const c of TIER_CASES) {
+  const { code, out } = structure(c.body, ROSTER, c.extraFiles);
+  const want = c.fails ? 1 : 0;
+  if (code !== want) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - expected exit ${want}, got ${code}\n${out.replace(/^/gm, "        ")}`);
+  } else if (!out.includes(c.says)) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - exit ${code} is right but the output never says "${c.says}"\n${out.replace(/^/gm, "        ")}`);
+  } else {
+    console.log(`  ok    ${c.name}`);
+  }
+}
 
 for (const c of STATUS_CASES) {
   const { code, out } = structure(c.body, c.personas);
@@ -407,9 +534,9 @@ for (const c of BRIDGE_CASES) {
   }
 }
 
-const total = CASES.length + STATUS_CASES.length + BRIDGE_CASES.length;
+const total = CASES.length + TIER_CASES.length + STATUS_CASES.length + BRIDGE_CASES.length;
 if (failures) {
   console.log(`\nclarify-gate-test: FAIL - ${failures} of ${total} cases`);
   process.exit(1);
 }
-console.log(`\nclarify-gate-test: OK - ${total} cases, a spec that is not settled cannot reach plan or tasks or claim it did`);
+console.log(`\nclarify-gate-test: OK - ${total} cases, a spec that is not settled cannot reach plan or tasks, claim it did, or claim a depth it does not carry`);

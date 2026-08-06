@@ -13,6 +13,10 @@
 //      `live` must pass the clarify gate. Nothing read or wrote that field, so the status
 //      the whole method reads as "this is settled" was decorative - a spec with four
 //      guards green and a failing gate still said ready-to-develop.
+//   4. A spec that declares the buildable tier carries the sections that make it
+//      buildable (R9). The template marked them REQUIRED and nothing read the template,
+//      so a buildable spec shipped without its contracts and the sections were
+//      retrofitted later, by hand, when somebody noticed.
 //
 // This is the "structure lint" half of specs/enforcement.md, made mechanical - the
 // complement to the coupling guard (spec-guard.mjs).
@@ -69,6 +73,8 @@ try {
   }
   files = fsWalk("specs").filter((f) => f.startsWith("specs/"));
 }
+
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // --- check 1: no ticket-numbered spec paths ------------------------------------
 // A ticket-numbered segment: two or more leading digits then - or _ (Spec Kit's
@@ -171,7 +177,61 @@ if (!existsSync(gatePath)) {
   }
 }
 
-// --- check 4 (warn only): committed engine scaffolding - ephemeral by rule -------
+// --- check 4: a buildable spec carries the sections that make it buildable (R9) --
+// The template marks three sections REQUIRED for the buildable tier, and nothing read
+// them: a spec shipped at that tier with no `## Data contracts` and no
+// `## Interface contracts`, and the gap was found by a person, months later.
+//
+// Only a spec that DECLARES `buildable` is held to them, and that boundary is deliberate.
+// R9 makes buildable the default, so a spec with no tier line is the same claim in
+// principle - but failing every undeclared spec in a repo mid-adoption is how a guard gets
+// switched off, and a switched-off guard checks nothing at all. An undeclared tier is
+// reported as a warning instead, so deleting the line is not a silent way out.
+//
+// `Algorithms & rules` is NOT in the list: the template requires it "where logic is
+// non-trivial", which is a judgment nothing here can make.
+const BUILDABLE_SECTIONS = ["Data contracts", "Interface contracts", "Acceptance criteria"];
+const NO_TIER = "(none)";
+const tierOf = (body) => {
+  const m = body.match(/^\*\*Spec tier:\*\*\s*(.+)$/m);
+  if (!m) return NO_TIER;
+  const value = m[1].replace(/<!--[\s\S]*$/, "").trim();
+  if (value.includes("|")) return NO_TIER; // the template's unfilled list of tiers
+  return value.replace(/[`*.]/g, "").trim().toLowerCase();
+};
+
+// The content under `## <heading>`, up to the next heading of the same or a higher level -
+// so a section whose body opens with a `###` sub-heading still counts as filled. HTML
+// comments are stripped first: the shipped template's sections are comment-only, and a
+// section carrying nothing but the template's instructions is an empty section.
+const sectionIsFilled = (body, heading) => {
+  const re = new RegExp(`^##\\s+${escapeRe(heading)}\\b.*$`, "im");
+  const at = body.search(re);
+  if (at < 0) return false;
+  const after = body.slice(at).replace(/^.*\n?/, "");
+  const end = after.search(/^#{1,2}\s/m);
+  const inner = (end < 0 ? after : after.slice(0, end)).replace(/<!--[\s\S]*?-->/g, "");
+  return inner.trim().length > 0;
+};
+
+const thin = [];
+const untiered = [];
+for (const f of files.filter(isCapSpec)) {
+  let body;
+  try { body = readFileSync(f, "utf8"); } catch { continue; }
+  const tier = tierOf(body);
+  // A named sub-spec (`specs/<cap>/<name>.md`) extends the capability's spec rather than
+  // repeating it, so it is held to the tier only when it claims one itself.
+  if (tier === NO_TIER) {
+    if (/\/spec\.md$/.test(f)) untiered.push(f);
+    continue;
+  }
+  if (tier !== "buildable") continue;
+  const missing = BUILDABLE_SECTIONS.filter((s) => !sectionIsFilled(body, s));
+  if (missing.length) thin.push({ file: f, missing });
+}
+
+// --- check 5 (warn only): committed engine scaffolding - ephemeral by rule -------
 // plan.md/tasks.md are working scaffolds the engine writes and the close removes.
 // Full-tree mode only (mid-work diffs legitimately carry them); never a violation.
 const staleScaffolding = !staged && !base ? files.filter((f) => ENGINE_ARTIFACTS.test(f)) : [];
@@ -182,12 +242,18 @@ if (staleScaffolding.length) {
   for (const f of staleScaffolding) console.error(`  - ${f}`);
   console.error("");
 }
+if (untiered.length) {
+  console.error("\nspec-structure: WARN - capability specs that declare no `**Spec tier:**` (R9 makes buildable the default):");
+  for (const f of untiered) console.error(`  - ${f}`);
+  console.error("Declare `buildable` (and carry its required sections) or `behavioral` (and justify it).");
+  console.error("");
+}
 if (gateMissing) {
   console.error(`\nspec-structure: note - the clarify gate is not installed at ${gatePath},`);
   console.error("so a spec claiming `ready-to-develop` or `live` cannot be checked against it. Ship");
   console.error("`scripts/spec/` with the guards (it is a required manifest entry) to turn the check on.");
 }
-if (numbered.length === 0 && personaless.length === 0 && unearned.length === 0 && !rosterMissing && !rosterHeadingMissing) {
+if (numbered.length === 0 && personaless.length === 0 && unearned.length === 0 && thin.length === 0 && !rosterMissing && !rosterHeadingMissing) {
   const note = personasPath ? "" : " (persona check skipped - no personas.md)";
   console.log(`spec-structure: OK (${files.length} spec paths)${note}`);
   process.exit(0);
@@ -207,6 +273,19 @@ if (personaless.length) {
   console.error("\nspec-structure: capability specs with no persona named (ADR-006 - a spec serves someone):");
   for (const f of personaless) console.error(`  - ${f}`);
   console.error('\nAdd a `**Serves:** `<persona>`` field (from docs/personas.md) - or name the persona in the spec.');
+}
+
+if (thin.length) {
+  console.error("\nspec-structure: buildable-tier specs missing the sections that make them buildable (R9):");
+  for (const { file, missing } of thin) {
+    console.error(`  - ${file}   missing: ${missing.map((s) => `## ${s}`).join(", ")}`);
+  }
+  console.error("\nA buildable spec carries its contracts: the data it owns, the interface it exposes, and");
+  console.error("acceptance criteria concrete enough to become tests. A section that genuinely does not");
+  console.error('apply keeps its heading and says so in one line ("None - this capability persists nothing"),');
+  console.error("the same way `## Open questions` says \"None known.\" - a dropped heading and an empty one");
+  console.error("read identically to everyone downstream. If the capability really cannot be specified to");
+  console.error("that depth, declare `**Spec tier:** behavioral` and justify it in the spec (R9).");
 }
 
 if (unearned.length) {

@@ -3,13 +3,18 @@
 <!-- A capability spec is a BUILDABLE technical spec, not a description - R9 makes
      buildable the default. Declare the tier below. Contracts are quoted
      VERBATIM (real field names, enums, error codes, endpoints), never paraphrased.
-     Drop sections that genuinely do not apply. No change-log section (R4,
+     Drop sections that genuinely do not apply - EXCEPT `## Data contracts`,
+     `## Interface contracts` and `## Acceptance criteria`, which the structure guard
+     checks on any spec declaring the buildable tier: those keep their heading and say
+     so in one line ("None - this capability persists nothing"), the same way the open
+     questions section at the bottom says "None known." A dropped heading and an empty
+     one read identically to everyone downstream. No change-log section (R4,
      ADR-018): the spec describes the present; git and the standard's changelog
      process (adopted by reference from the living standard - always latest:
      https://github.com/repository-standards/core/blob/main/docs/method/changelog-process.md)
      hold the past. -->
 
-**Spec tier:** buildable | behavioral   <!-- declare one -->
+**Spec tier:** buildable | behavioral   <!-- declare one; the structure guard warns while this line is unfilled, because R9 makes buildable the default and an undeclared spec is claiming it by silence -->
 **Serves:** `<persona from docs/personas.md>`   <!-- who this capability is for; required (ADR-006) -->
 **Status:** in-refinement | ready-to-develop | in-development | live | retired   <!-- in-refinement is the draft state; `/spec-reconcile` sets this field, and the structure guard re-runs the clarify gate on any spec claiming ready-to-develop or live - so typing one early buys a failed PR, not a head start -->
 <!-- Retiring a capability (the product bet is gone, a vendor replaces it, etc.): do not
