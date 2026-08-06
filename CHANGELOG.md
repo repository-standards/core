@@ -16,6 +16,25 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A hash map keyed by filename read as a schema change (2026-08-07)
+
+The coupling guard treats a `couples: "shape"` file's key paths as its contract: values and
+new entries are data, an appearing or disappearing key path is the file being interpreted
+differently and demands the spec. That is right until the file holds a map **keyed by data**.
+`standard.manifest.json` holds one - a directory entry's `sha256` is an object with a key per
+member - so collapsing five dashboard entries into one directory entry added five key paths
+(`files[].sha256.index.mjs` and its siblings) and the guard demanded a spec update for the
+verify-engine with nothing to legitimately write. That is exactly the failure `couples:
+"shape"` was introduced to end, resurfacing one level deeper, and the cheapest way out of it
+is a cosmetic spec edit - which is how a gate becomes decoration.
+
+A map entry may now name those paths: `"dataKeys": ["files[].sha256"]`. The shape walk stops
+there - the path itself is shape, everything under it is data - so a member arriving passes
+while `sha256` disappearing still couples. `dataKeys` on a content-coupled entry is refused
+rather than ignored, since it would describe a distinction that entry does not make. Recorded
+in [`enforcement.md`](standard/specs/enforcement.md) and covered by four cases in
+`tools/spec-guard-test.mjs`, including that a key added outside the declared path still fires.
+
 ### The dashboard was five files pretending to be one thing (2026-08-07)
 
 It shipped as `scripts/work-dashboard.mjs` plus four siblings distinguished only by a naming

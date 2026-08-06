@@ -627,11 +627,13 @@ function build() {
   const data = collect()
 
   // Pointed at the wrong directory, every parser finds nothing and the page renders as an
-  // empty but entirely convincing dashboard. Say it instead - the usual cause is a path.
+  // empty but entirely convincing dashboard. Thrown rather than exited: under --watch this
+  // is one bad rebuild, and killing a running server over it would be the larger surprise.
   if (!data.items.length && !data.cycles.length && !data.entries.length && !data.decisions.length && !data.specs.length) {
-    console.error(`work-dashboard: found no backlog, cycles, changelog, decision records or specs under ${root}`)
-    console.error('  pass the repository root as the first argument if it is not the parent of this script')
-    process.exit(1)
+    throw new Error(
+      `found no backlog, cycles, changelog, decision records or specs under ${root}\n` +
+        '  pass the repository root as the first argument if it is not the parent of this script',
+    )
   }
   // The fingerprint is of the content, not of the moment - so the page stays byte-identical
   // for a given commit, and an open page can still tell that the content moved.
@@ -679,7 +681,14 @@ ${readFileSync(join(here, 'src', 'page.js'), 'utf8')}</script>
   return data
 }
 
-build()
+// The first build decides whether there is anything to serve at all, so its failure is the
+// process's. A later one has a page already on disk and a reader looking at it.
+try {
+  build()
+} catch (err) {
+  console.error(`work-dashboard: ${err.message}`)
+  process.exit(1)
+}
 
 /* ---------- watch + serve: a page that notices it went stale ---------- */
 

@@ -10,7 +10,7 @@
   ],
   "verify-engine": [
     "standard/scripts/self-verify.mjs",
-    { "glob": "standard/standard.manifest.json", "couples": "shape" }
+    { "glob": "standard/standard.manifest.json", "couples": "shape", "dataKeys": ["files[].sha256"] }
   ],
   "web-surface": [
     "tools/docsite.mjs",

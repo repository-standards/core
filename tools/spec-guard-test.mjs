@@ -49,6 +49,8 @@ write("specs/widgets/spec.md", "# Widgets\n");
 write("specs/payments/spec.md", "# Payments\n");
 write("src/index.js", "export const widget = 1;\n");
 write("data/rules.json", rules());
+// A map keyed by data: one hash per shipped file. Its keys arrive and leave with the data.
+write("data/hashes.json", json({ version: 1, members: { "one.txt": "aa" } }));
 write("payment/index.ts", "export const capture = 1;\n");
 write("payment/gateway/capture.ts", "export const gateway = 1;\n");
 write("payment/refunds.ts", "export const refund = 1;\n");
@@ -98,6 +100,48 @@ const CASES = [
   { name: "code with its spec passes", fires: false, act: () => { write("src/index.js", "export const widget = 3;\n"); write("specs/widgets/spec.md", "# Widgets\n\nA widget is 3.\n"); } },
   { name: "a staged data addition does not couple", fires: false, args: ["--staged"], says: "changed as data", act: () => { write("data/rules.json", json({ version: 1, rules: [{ id: "a", on: true }, { id: "c", on: true }] })); git("add", "-A"); }, undo: () => git("reset", "-q") },
   { name: "an unusable map entry stops the guard", fires: true, says: "unusable entry", act: () => write("specs/capability-map.json", json({ widgets: [{ couples: "shape" }] })) },
+
+  // A map keyed by data - a hash per shipped file, a rate per locale - grows keys as the data
+  // grows. Without `dataKeys` every such addition reads as a schema change, which is the exact
+  // failure `couples: "shape"` was introduced to end. Found when a manifest entry for a
+  // directory added one hash key per member and the guard demanded a spec for it.
+  {
+    name: "a key added under a declared data path does not couple",
+    fires: false,
+    says: "changed as data",
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, widgets: ["src/**", { glob: "data/*.json", couples: "shape", dataKeys: ["members"] }] }));
+      write("data/hashes.json", json({ version: 1, members: { "one.txt": "aa", "two.txt": "bb" } }));
+    },
+  },
+  {
+    name: "a key added outside the declared data path still couples",
+    fires: true,
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, widgets: ["src/**", { glob: "data/*.json", couples: "shape", dataKeys: ["members"] }] }));
+      write("data/hashes.json", json({ version: 1, members: { "one.txt": "aa" }, mode: "x" }));
+    },
+  },
+  {
+    name: "the declared data path itself disappearing still couples",
+    fires: true,
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, widgets: ["src/**", { glob: "data/*.json", couples: "shape", dataKeys: ["members"] }] }));
+      write("data/hashes.json", json({ version: 1 }));
+    },
+  },
+  {
+    name: "dataKeys on a content-coupled entry is refused",
+    fires: true,
+    says: "only means something where the key shape is the contract",
+    act: () => write("specs/capability-map.json", json({ ...MAP, widgets: [{ glob: "src/**", dataKeys: ["members"] }] })),
+  },
+  {
+    name: "dataKeys that is not a list of key paths is refused",
+    fires: true,
+    says: "must be a list of key paths",
+    act: () => write("specs/capability-map.json", json({ ...MAP, widgets: ["src/**", { glob: "data/*.json", couples: "shape", dataKeys: "members" }] })),
+  },
 
   // The glob shapes the shipped example leads with. Before the shared translator each
   // of these passed: `spec-guard: OK` on a change to a money path with no spec edit.

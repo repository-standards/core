@@ -359,7 +359,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R11",
-      "sha256": "ec3d24a19891bb2986fee84d97a3e74f7cf059e2934bf57fa7057541d8308ab4"
+      "sha256": "c7eed50849bb8b3e7e97eeb156e502581def701b1e42f520a4b3510494c957d3"
     },
     {
       "path": ".github/workflows/spec-guard.yml",
@@ -529,7 +529,7 @@
       "since": "unreleased",
       "rule": "R15",
       "sha256": {
-        "index.mjs": "87f31649b0365e0d88e5affcc130d3641f5c931a8cc609427c6bd7a7e3ce31e1",
+        "index.mjs": "e40a4a804107bad484baf4517adf631cc7b9a8c1982b78deb92e9f62978b2a40",
         "src/gate.css": "63a0b56a4491c5e3686835e15886d1440be4cc497a306a9caaa2a4678d15f07c",
         "src/gate.js": "c7f62c2fc08bbbb252395f5ea4f429059226ef4d6a3ab4beef1cc5463d5e2495",
         "src/page.css": "f58ae7fd49d720a92b1a26cd7976b4842731381d787f08448f84512799c8a92e",
