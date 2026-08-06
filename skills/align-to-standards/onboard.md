@@ -180,6 +180,55 @@ guards are green - not when every file has a paragraph.
      visible, and it is often the most valuable thing the whole assessment finds. Do
      not quietly pick one and move on.
 
+   **If the repo already runs its own live decision process, point at it - do not
+   re-litigate it.** The outcomes above are for material that has stopped moving. A
+   process that is still operating is a different thing: an RFC repo whose acceptance is
+   wired into the merge gate, a design-docs directory with a required approval step, a
+   working group that votes. That is not legacy material to file under
+   `docs/discovery/` and it is not something to reconstruct from the code - the project
+   argued it properly, in public, and the reasoning there is better than anything this
+   pass would produce.
+
+   So the repo keeps its process, and this standard takes a **pointer record**: an ADR/BDR
+   in `docs/decision-records/` whose Decision paragraph states what was decided in the
+   present tense, with the upstream document linked as the authority for the context and
+   the options. Nothing is copied or paraphrased - a paraphrase drifts from the record it
+   summarises, and then the repo has two answers. Say this out loud before writing any of
+   them, because it is the difference between adoption and duplication:
+   - **Which decisions get a pointer record at all?** The ones a spec or a rule in this
+     repo will cite. A project with hundreds of accepted RFCs does not get hundreds of
+     records; the load-bearing ones do, and the rest stay one link away.
+   - **The existing process stays the way new decisions get made.** This pass adds a
+     record stream, it does not replace a governance process that already works - proposing
+     that is a conversation with the maintainers, not an alignment step.
+   - **Where the existing records already live in-repo in a compatible shape**, record
+     the mapping once (in `AGENTS.md`'s altitude ladder, and as a manifest `exception` with
+     its reason if a required entry is met a different way) instead of moving the files.
+     Every link the project has published points at the current paths.
+   - **What the existing process never covered** is what the retroactive pass above is for.
+     That set is usually where the real gaps are, and it is much smaller and much easier to
+     argue about than a wholesale re-record.
+
+   **Some decisions leave no fingerprint in the code, and the biggest one often does not.**
+   The reconstruction above works by reading what the code already chose. A founding or
+   identity decision - why this project exists at all, why it was forked, why it is licensed
+   the way it is, what it deliberately refuses to become - is invisible to that method: the
+   code looks the same either way, and the reasoning may live entirely outside the tree, on
+   a website, in a foundation's announcement, or in the maintainers' heads. Two symptoms
+   that you are looking at one: the decision predates the first commit, or the "options
+   considered" are alternative *projects* rather than alternative implementations.
+   - Write it as a record anyway. `docs/discovery/` cannot hold it - a dossier is never
+     normative (ADR-024) - and a decision this size governing nothing in the repo is the
+     largest possible instance of what R3 exists to stop.
+   - The source is the difference: the record is written from **stated** rationale, not
+     from evidence in the tree, so it cites where each part came from (the announcement,
+     the licence file, the maintainer's own words in this conversation) and says plainly
+     that it was reconstructed from outside the repo.
+   - **Confirm it with a human before it is Accepted.** Everything else in this pass can be
+     checked against the code by the next reader; this one cannot, which makes it the one
+     record an agent must not quietly assert. Unconfirmed, it is drafted as `Proposed` with
+     the open question named.
+
    A rule
    with one obviously-right answer is a convention, not an ADR. A baked-in *business*
    rule that is really a business decision is a **BDR**. Do **not** write one ADR per
@@ -264,7 +313,9 @@ guards are green - not when every file has a paragraph.
 - `specs/capability-map.json` seeded from the code.
 - The top risk-ranked capabilities specced buildable (behavioral only with a recorded
   one-line justification).
-- The genuinely re-litigable decisions drafted as retroactive ADR/BDR.
+- The genuinely re-litigable decisions drafted as retroactive ADR/BDR - as pointer records
+  where a live decision process already owns them, and, where the repo has one, the founding
+  decision written from stated rationale and marked for human confirmation.
 - `docs/backlog.md` holding everything else, prioritized - in one PR.
 
 ## Not this
