@@ -242,6 +242,15 @@ binds every repo, a solo one included.
   where the stack has a generator that does not silently drop what DDL can
   express; type agreement and generation are per-stack mechanics and live in the
   stack repos (ADR-027).
+  **Owning a database and shipping the mechanism that changes one are different
+  shapes.** A repo whose product *is* the schema change - a migration library, an
+  ORM's DDL layer, a schema toolkit - owns no database: what it emits runs against
+  somebody else's. `database/schema/` and the typed twin therefore do not apply,
+  and the repo says so once (R7). What it does own is that emitted DDL, for every
+  backend it claims to support, and that is an interface contract: it MUST be
+  specified verbatim per backend (R9), including where the backends genuinely
+  differ, so a supported backend's gap is something the spec states rather than
+  something a consumer discovers in production.
 
 ## What this standard does not do
 
