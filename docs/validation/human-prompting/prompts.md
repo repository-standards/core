@@ -38,12 +38,14 @@ Adoption, from a stranger's keyboard.
 | A18 | `co to zmieni w moim repo? pokaz zanim cokolwiek ruszysz` | assistant | plan-only, asked as doubt |
 | A19 | `czy to ma sens dla dwuosobowego zespolu?` | assistant | the profile axis |
 | A20 | `czym to sie rozni od zwyklego lintera?` | assistant | positioning, asked adversarially |
-| A26 | `take this repo onto repositorystandards.com with the node stack` | assistant | the **half-remembered** entry line - close enough to the shipped one to be typed by somebody who skimmed the landing page, and wrong in two ways at once: it names a stack instead of asking to be interviewed, and it was run against a Go and a PHP repository, so the stack it names is not the stack that is there. It opened this corpus by mistake and was corrected; it earns a row because people will type it |
+| A26 | `take this repo onto repositorystandards.com with the node stack` | assistant | the **half-remembered** entry line - close enough to the shipped one to be typed by somebody who skimmed the landing page, and wrong in two ways at once: it names a stack instead of asking to be interviewed, and it was run against a Go and a PHP repository, so the stack it names is not the stack that is there. It opened this corpus by mistake and was corrected; it earns a row because people will type it - and because it is the only entry prompt naming the domain **without** `follow`, which is what lets an agent read the domain as a place rather than as an instruction |
 | A27 | `adopt the standard here - it is not my repo, i just want to see what it would say` | assistant | **the read-only adopter.** No write access, no fork, nothing to push. Raised unprompted across sequence d's entry conversations, with no row covering it |
 | A28 | `ok zrob to, tylko u nas nie ma pull requestow` | assistant | the landing question on a project that does not use pull requests. The shipped adoption guide's last gate is "pull requests opened", so this asks the product what it does when its own exit condition cannot exist |
-| A29 | `start a new project on repositorystandards.com with the node stack` | assistant | the greenfield line typed inside a directory that already has a project in it |
+| A29 | `start a new project on repositorystandards.com with the node stack` | assistant | the greenfield twin of `A26`, same provenance - and typed inside a directory that already has a project in it |
 | A30 | `nie o to pytalem, chodzilo mi o repositorystandards.com` | assistant | **the recovery turn.** `A19` and `A20` both resolve to a question about the repo when the product is not unambiguously named; nothing else tests what happens after the agent picks the wrong referent |
 | A31 | `nie wiem czy jestem core czy scale, zdecyduj za mnie` | assistant | the one intake question a first-time user cannot answer. Does it choose and justify, or hand the decision back? |
+| A32 | `ten agent nie ma dostepu do sieci, da sie to zaadoptowac?` | assistant | the unstated prerequisite. The quick start promises nothing to install and nothing to build, which is true - but it silently requires the agent to be allowed to fetch the domain, and a user whose agent cannot is not told why nothing happens |
+| A33 | `a moze lepiej napisze sobie wlasny AGENTS.md i tyle?` | assistant | the cheapest competing option, named by the user. Either the answer says what the standard buys over one hand-written file, or the user takes the cheaper thing |
 
 ## Part 2 - the loop, on real product content
 
@@ -128,6 +130,8 @@ is written and a correction after.
 | V10 | "this order leaves the build red midway - here is one that does not" | an adoption whose obvious order breaks the build | a wave lands with the repo broken |
 | V11 | "the last step of this adoption is a pull request, and this project does not have those - here is what the end looks like instead" | adopt in a repo whose contributions go somewhere other than a pull request: a mailing list, a tarball, a single maintainer | it runs the whole adoption and stops at a gate that cannot be met, leaving the user with a finished tree and no way to land it |
 | V12 | "this spec links to a file that is not in the repository" | a spec citing a document the adoption never committed - for instance a `docs/` tree the repo's own `.gitignore` excludes | the link is followed once, found missing, and the spec is believed anyway. A filesystem-based adoption check reports the file present, so no gate fires |
+| V13 | "these artifacts assert product intent I cannot know - here is what I would be inventing" | have somebody adopt a repository they do not own, where personas, product intent and past design reasoning live only in the maintainer's head | it writes a persona roster and a `PRODUCT.md` that read as interviewed fact; nothing marks them as reconstruction and a later reader cannot tell |
+| V14 | "your ignore rules just swallowed a file the guards need - it is not in the commit, so CI will not have it" | adopt a repository whose `.gitignore` already matches a path the standard writes into, and then clone the result fresh | everything passes locally because the file is on disk, the adoption reports drift 0, and the first pull request dies on `Cannot find module` in a file nobody edited. `V12` is the same root cause seen from the spec side; this one is seen from CI |
 
 ---
 
@@ -478,6 +482,13 @@ Written by people who know the product. Least trustworthy:
   are the ones neither author has.
 - **Sloppiness** (`A8`-`A10`) - real sloppiness has a texture an insider imitates badly.
 - Anything from somebody who read the landing page once and half-remembers it.
+
+One more, found by running them rather than by writing them. Several rows are **deictic**: `A18`
+(`co to zmieni`), `A12` (`tylko specy`), `P5` (`ile to zajmie?`), `R7` (`czego brakuje zeby to
+bylo buildable?`) and `P2` (`rozbij to na taski`) all contain a `to` or a `this` with no
+antecedent. Typed as the first line of a session they do not test what the row says they test -
+the agent correctly answers that it has no idea what `to` refers to, and the run measures nothing
+but that. They are turn-two prompts and a run should place them there.
 
 Which is why a reported failure outranks anything invented here, and why every one earns a
 permanent row.

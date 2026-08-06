@@ -76,6 +76,28 @@ New rows: `A26` (kept from the wave that ran before the shipped lines were known
 with the row the mixed round added for the same sentence), `A29`, `A30`, `A31`, and `V12` for a
 spec that links to a file the adoption never committed.
 
+### A human-prompting wave against three Python repositories (2026-08-07)
+
+Twenty-eight observations across `simonw/llm`, `pydantic/pydantic-ai` and `Textualize/textual`,
+none of which has a registered stack, so every entry run also exercised the honest-miss path.
+It reached the same number three ways: the interview happens when the prompt asks for it and
+almost never otherwise. `A1`, which contains the words `interview me for what you need`, wrote
+nothing and asked six to nine questions on all three repositories. Four paraphrases of the same
+request without that clause wrote between sixteen and twenty-eight paths each, unasked.
+
+The worst single result is not a refusal but a substitute: given `adopt repository standards in
+this project`, one run added a code of conduct, a security policy and issue templates, reported
+the task done, and never looked for the product. The name reads as a common noun, so a confident
+agent does the generic thing. Two new entry prompts - an agent with no network access, and the
+user who names writing their own `AGENTS.md` as the cheaper option - and two new volunteered
+behaviours record it and the neighbouring failures. Two more entry lines this wave wrote as new
+rows turned out to be sentences the corpus already carried, so they merged into `A26` and `A29`
+rather than duplicating them.
+
+The wave also produced the first observed instance of an agent refusing to author artifacts
+because they assert product intent it cannot know, said before writing anything rather than
+after - which is the behaviour the new `V13` row now names.
+
 ### Validation splits into two named halves, and the second one is new (2026-08-06)
 
 The proof-of-work suite measured the machinery: do the guards fire, does drift mean something,
