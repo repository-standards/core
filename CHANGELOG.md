@@ -16,6 +16,21 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The tools index listed ten of eighteen tools (2026-08-06)
+
+`tools/README.md`'s Contents table is meant to say what everything in the folder does. It
+covered ten files while the directory held eighteen, and the eight missing were the newest -
+`prose-check`, `provenance-check`, `site-behaviour`, `clarify-gate-test`,
+`decision-records-check-test`, `self-verify-drift-test`, `manifest-hashes` and `validation`.
+Several of those exist because a defect shipped, so the tools a reader most needed to know
+about were the ones they could not see.
+
+Each row is read off the tool's own header paragraph rather than its filename. The file
+already argued its own case from having been out of step once before; the second occurrence
+is now recorded beside the first, with the reason nothing catches it. A row here is prose
+about a purpose, and the file map's trick of generating its table from the manifest has no
+equivalent where there is no manifest - so it is a habit, written down as one.
+
 ### The pull-request template asked about one decision stream out of two (2026-08-06)
 
 The shipped template's impact section was headed `ADR impact` and offered four choices that
