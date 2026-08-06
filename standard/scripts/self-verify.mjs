@@ -819,15 +819,68 @@ if (!skeleton) {
     return out;
   };
 
-  const fillTargets = [
-    ...["AGENTS.md", "README.md", "SECURITY.md", "docs/PRINCIPLES.md", "docs/PRODUCT.md",
-      "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md"].map((p) => [p, PLACEHOLDER_RE]),
-    ...recordFiles("docs/decision-records").map((p) => [p, UNAMBIGUOUS_RE]),
-  ];
-  for (const [p, re] of fillTargets) {
-    if (!exists(p)) continue;
+  // The list is derived from the manifest, not written here. A hardcoded list of eight is a
+  // second source of truth that silently stops covering what the manifest adds: CONTRIBUTING.md
+  // is a fill-from-repo entry and was never on it, so a two-line stub of it was checked by
+  // nothing at all. Directory entries are skipped - there is no single body to read.
+  const isDir = (p) => {
+    try {
+      return statSync(p).isDirectory();
+    } catch {
+      return false;
+    }
+  };
+  const fillFiles = (manifest?.files || [])
+    .filter((f) => f.adapt === "fill-from-repo")
+    .map((f) => [f.path, ...(f.altPaths || [])].find((x) => exists(x) && !isDir(x)))
+    .filter(Boolean);
+  const fillPaths = [...new Set([...fillFiles, "AGENTS.md", "README.md", "docs/PRINCIPLES.md", "docs/backlog.md"].filter((p) => exists(p) && !isDir(p)))];
+
+  // A stub the adopter wrote themselves carries no template placeholder, so the check above
+  // cannot see it. Six files reading "# Title\n\nTODO." moved a sparse repo from 21% to 37%
+  // adopted with its real substance unchanged, because a fill-from-repo entry scores on
+  // existence alone and by construction cannot be hashed - the adopter writes the content.
+  //
+  // What is detected is "visibly nothing written", not "not enough written". Anything else
+  // would be measuring prose by the yard: a genuine two-sentence SECURITY.md naming an address
+  // and a response time is complete, and a length threshold that failed it while passing a
+  // padded one would teach adopters to pad. So: a body with no content beyond its headings, or
+  // whose only content is a marker meaning nobody has written this yet. Both are unambiguous,
+  // and both are cleared by writing one real sentence - which is the whole ask.
+  //
+  // Still a warning, never drift. Whether what IS written is any good stays the judgment tier's
+  // call (ADR-037), and the adopted percentage counts entries present, not substance present.
+  const NOTHING_YET = /^(?:to\s?do|todo|tbd|t\.b\.d\.?|fixme|xxx|n\/?a|none|coming soon|to be (?:written|filled|done|completed)|fill (?:me )?in|placeholder|wip|work in progress)\b[\s.!:;-]*$/i;
+  const proseOf = (raw) =>
+    stripCode(raw)
+      .replace(/<!--[\s\S]*?-->/g, "")
+      .split("\n")
+      .filter((l) => !/^\s*#{1,6}\s/.test(l))
+      .join("\n")
+      .replace(/^\s*[-*+]\s+/gm, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  for (const p of fillPaths) {
+    const raw = readFileSync(p, "utf8");
+    if (hasPlaceholder(stripCode(raw))) {
+      warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
+      continue;
+    }
+    const prose = proseOf(raw);
+    if (!prose) {
+      warning("fill", `${p} has no content beyond its headings - it counts as present, and presence is not substance`);
+    } else if (NOTHING_YET.test(prose)) {
+      warning("fill", `${p} says only "${prose.slice(0, 40)}" - it counts as present, and presence is not substance`);
+    }
+  }
+
+  // Records carry prose the standard did not write, so they are scanned for the unambiguous
+  // shapes only, and for placeholders alone - a record's substance is what it decided, which
+  // no pattern here can weigh.
+  for (const p of recordFiles("docs/decision-records")) {
     const body = stripCode(readFileSync(p, "utf8"));
-    if (hasPlaceholder(body, re)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
+    if (hasPlaceholder(body, UNAMBIGUOUS_RE)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
   }
 
   // 2e. drift 0 on a repo that has specified nothing.
@@ -947,14 +1000,25 @@ const hollowNote = hollow
   ? " - AND THAT IS THE WHOLE CLAIM: no capability spec exists here yet, so this says the repo is shaped like the standard, not that any behaviour has been specified under it"
   : "";
 
+// The percentage is structural. A `fill-from-repo` entry is content the adopter writes, so
+// there is nothing to compare it against and it scores on presence: six files reading
+// "# Title / TODO." moved a sparse repo from 21% to 37% adopted with its substance unchanged.
+// Saying so where the number is printed is the honest fix; scoring prose mechanically would
+// turn substance into ceremony (ADR-037). The fill warnings above name the ones that read as
+// empty, and whether the rest say anything worth saying is reviewed at PR.
+const fillWarnings = results.filter((r) => r.isWarning && r.name === "fill").length;
+const substance = fillWarnings
+  ? ` - ${fillWarnings} authored file${fillWarnings === 1 ? "" : "s"} flagged above as unfilled or empty: this percentage counts entries present, not substance written`
+  : "";
+
 // `OK` is reserved for a run that actually performed every check it was asked to. Drift 0
 // with a blocking guard that never started is a true statement about a smaller question, and
 // the word a reader skims must not say otherwise: this loosened the gate (a missing tool used
 // to exit 1, and now does not), so what stops a skipped check reading as a clean bill of
 // health is the wording and the count, not the exit code.
 if (drift === 0) {
-  console.log(`self-verify: ${notRun.length ? "" : "OK - "}drift 0 - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${manifest ? "compliant with the standard" : "every skeleton check met"}${scope}${notRunNote}${hollowNote}\n`);
+  console.log(`self-verify: ${notRun.length ? "" : "OK - "}drift 0 - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${manifest ? "compliant with the standard" : "every skeleton check met"}${scope}${notRunNote}${substance}${hollowNote}\n`);
   process.exit(0);
 }
-console.error(`self-verify: drift ${drift} - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${drift} required entr${drift === 1 ? "y is" : "ies are"} unmet${scope}${notRunNote}\n`);
+console.error(`self-verify: drift ${drift} - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${drift} required entr${drift === 1 ? "y is" : "ies are"} unmet${scope}${notRunNote}${substance}\n`);
 process.exit(warn ? 0 : 1);
