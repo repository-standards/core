@@ -19,10 +19,26 @@ truth - so the spec, the code, and the tests must agree.
    - spec says X but the code does Y,
    - code or tests encode behavior missing from the spec,
    - spec requires a scenario with no implementation,
-   - the implementation adds a side-effect described nowhere.
+   - the implementation adds a side-effect described nowhere,
+   - code that exists only to keep an **already-shipped** contract working - a
+     compatibility shim, a deprecated alias, a function body with no header, a
+     route kept alive for an old client.
 
 3. Resolve each: update the spec, fix the code, or explicitly record why. Prefer
    making the spec accurate to the real behavior.
+
+   **A compatibility artifact is documented as one, or the record gets worse.**
+   Where the source of truth for some behavior is something already out in the
+   world - a previous release's compiled binary, a wire format in the field, a
+   published URL - the code preserving it is not what the capability is, and the
+   preference above would file it under current design. Give it its own
+   subsection naming what it preserves (the release, the consumer, the format)
+   and the condition for removing it, and leave the capability's contracts
+   describing the current shape. Deleting it from the spec is the opposite error:
+   it ships, so it cannot be silent. What counts as a breaking change in the
+   first place is a decision, not this skill's call - a repo with no recorded
+   compatibility policy gets a backlog item (`add-to-backlog`) or a record of its
+   own, and this step does not settle it by writing prose that implies one.
 
 4. **Flip the Open questions the change resolved (SD-7).** Specs drift in BOTH
    directions: if this change fixes something the spec lists under `## Open
