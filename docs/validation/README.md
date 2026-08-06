@@ -67,7 +67,7 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 | Observations recorded | **195** across 10 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-doc12, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-h-gate22) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
 | Verdicts | 101 pass, 90 fail, 1 not-applicable, 3 partial |
-| Failures found | **167** - **85 fixed and re-verified** (across 22 merged pull requests), **82 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 8 earlier fails superseded by a later re-run and no longer counted open |
+| Failures found | **168** - **86 fixed and re-verified** (across 23 merged pull requests), **82 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 8 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -292,6 +292,7 @@ from the PR merging, not inferred from the verdict flipping:
 | `SPEC-22` | re-planning a spec that has already been developed produces an INCREMENTAL plan from the spec's own delta, not a plan for the whole capability again | `repo:repository-standards/core` | [../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md](../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md) |
 | `TRACK-21` | a tracker story whose scope changed because its spec changed is updated, or the divergence is surfaced to a human | `repo:repository-standards/core` | [../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md](../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md) |
 | `TRACK-22` | no external system keys on a positional task id, and a re-export can tell same-work-whose-description-changed from genuinely-new work | `repo:repository-standards/core` | [../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md](../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md) |
+| `DOC-12` | the published landing page states the current version consistently, so a reader does not see 0.8.12 in four places and 0.8.13 in a fifth on the same page | `repo:repository-standards/core` | [core/pull/28](https://github.com/repository-standards/core/pull/28) |
 
 ## How to run it yourself
 
