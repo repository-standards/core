@@ -526,7 +526,7 @@
       "profile": "core",
       "since": "unreleased",
       "rule": "R15",
-      "sha256": "82cbd79ce6e5ed4ed9b82528a25e79dee7d554a35e50da95a221d72177fd1e00"
+      "sha256": "0980c8aede13e4c2b4248c6377c3f169a0ae8a853964321a7042a45aa44d683d"
     },
     {
       "path": "scripts/work-dashboard.css",

@@ -409,6 +409,10 @@ node scripts/work-dashboard.mjs            # once, into site/work/index.html
 node scripts/work-dashboard.mjs --serve     # rebuilds on change; the open page refreshes itself
 ```
 
+`--serve` listens on **localhost:9675** - loopback only, and a port nothing else wants, so it
+never takes the one your application is trying to use. Pass your own after the flag if it
+clashes anyway.
+
 **It keeps itself current.** The page carries a fingerprint of the content it was built from
 and checks a small `state.json` beside it. When the work moves, the page reloads and keeps
 your place - unless you have a record open or a search half-typed, in which case it says so
