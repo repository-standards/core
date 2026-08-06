@@ -16,6 +16,33 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The dashboard was five files pretending to be one thing (2026-08-07)
+
+It shipped as `scripts/work-dashboard.mjs` plus four siblings distinguished only by a naming
+prefix - `.css`, `.client.js`, `.gate.js`, `.gate.css` - sitting flat among unrelated guards.
+The prefix was doing a directory's job, and the manifest paid for it with five entries where
+the tree already had the better pattern: `scripts/spec` and `scripts/lib` are directory
+entries with one hash per member.
+
+It is now `scripts/generate-dashboard/`, an entry point beside the material it consumes:
+
+    index.mjs        the generator
+    src/page.js      the dashboard's rendering, inlined into the page
+    src/page.css
+    src/gate.js      the password gate of a locked build
+    src/gate.css
+
+Five manifest entries collapse to one directory entry, and the folder name says what running
+it does rather than what the output is called - the output is still the work dashboard, in
+the workflow, the method doc and this changelog.
+
+Moving it surfaced a defect the flat layout had hidden. The default repository root was "the
+directory above this script", which was right when the script sat directly in `scripts/` and
+is now one level short. Pointed at the wrong directory every parser finds nothing and the
+page renders as an empty but entirely convincing dashboard - zero items, zero history, no
+error. It now refuses to write that page and names the directory it looked in, because the
+failure mode of a status page nobody can check is that somebody believes it.
+
 ### Three adoptions of code older than the conventions the standard uses (2026-08-07)
 
 git/git, vim/vim and vdukhovni/postfix, taken to drift 0 on local branches: 21, 35 and 28

@@ -58,10 +58,10 @@ jobs:
           WORK_DASHBOARD_PASSWORD: ${{ secrets.WORK_DASHBOARD_PASSWORD }}
         run: |
           if [ -n "$WORK_DASHBOARD_PASSWORD" ]; then
-            node scripts/work-dashboard.mjs --lock --out _work/index.html
+            node scripts/generate-dashboard/index.mjs --lock --out _work/index.html
             echo "locked=true" >> "$GITHUB_OUTPUT"
           else
-            node scripts/work-dashboard.mjs --out _work/index.html
+            node scripts/generate-dashboard/index.mjs --out _work/index.html
             echo "locked=false" >> "$GITHUB_OUTPUT"
           fi
 
