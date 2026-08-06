@@ -204,6 +204,73 @@ check("prose angle notation in a record does not warn", {
   warnsAbout: [["ADR-002-transition-skills.md", false]],
 });
 
+// Stripping code spans is right for the angle form and was wrong for everything else: the
+// shipped SECURITY.md writes `{{SECURITY_CONTACT}}` inside backticks and personas.md wrote
+// its roster marker the same way, so both passed silently - a fake security contact and an
+// empty persona roster at drift 0. PRINCIPLES.md had no marker of either form at all.
+check("a mustache placeholder inside a code span still warns", {
+  files: { "README.md": `${FILLED_HEAD}Email \`{{SECURITY_CONTACT}}\` about anything.\n` },
+  warnsAbout: [["README.md", true]],
+});
+
+check("a mustache placeholder inside a fenced block still warns", {
+  files: { "README.md": `${FILLED_HEAD}\`\`\`\ncontact: {{SECURITY_CONTACT}}\n\`\`\`\n` },
+  warnsAbout: [["README.md", true]],
+});
+
+// The other direction, and the reason the raw form is restricted to UPPER_SNAKE: a filled
+// repo's README quotes CI expressions, and a warning it cannot clear is one nobody reads.
+check("a CI expression in a filled README does not warn", {
+  files: {
+    "README.md":
+      `${FILLED_HEAD}Release runs on \`\${{ github.ref }}\` with \`\${{ secrets.NPM_TOKEN }}\`.\n\n` +
+      "```yaml\nenv:\n  TOKEN: ${{ secrets.NPM_TOKEN }}\n  REF: ${{ github.event.pull_request.head.sha }}\n```\n",
+  },
+  warnsAbout: [["README.md", false]],
+});
+
+// PRINCIPLES.md's own banner says shipping it unread adopts commitments nobody agreed to,
+// and nothing checked whether it was still there. Deleting the note, as it instructs, is
+// what clears this - so both directions are asserted.
+check("a shipped template banner is an unfilled shell", {
+  files: {
+    "README.md": `# Acme Scheduling\n\n> **Template - rewrite every line, then delete this note.**\n\nA real, filled README.\n`,
+  },
+  warnsAbout: [["README.md", true]],
+});
+
+check("a README with the banner deleted does not warn", {
+  files: { "README.md": `${FILLED_HEAD}Principles we actually agreed on, written by us.\n` },
+  warnsAbout: [["README.md", false]],
+});
+
+// The shipped tree itself, unfilled: these are the three files the check listed and never
+// fired on. Read against the tree rather than a hand-written copy of it, so a template that
+// drops its marker fails here instead of passing quietly.
+check("the shipped SECURITY.md, personas.md and PRINCIPLES.md warn while unfilled", {
+  files: {},
+  warnsAbout: [
+    ["SECURITY.md", true],
+    ["docs/personas.md", true],
+    ["docs/PRINCIPLES.md", true],
+  ],
+});
+
+check("filled versions of all three clear the warning", {
+  files: {
+    "SECURITY.md": "# Security\n\nEmail `security@acme.example` - do not open a public issue. We reply within 3 business days.\n",
+    "docs/personas.md":
+      "# Personas\n\n## The roster\n\n| Persona | Primary? | One-line |\n|---|---|---|\n" +
+      "| `Owner-operator Olga` | yes | runs four rentals herself |\n",
+    "docs/PRINCIPLES.md": "# Engineering principles\n\n- **Boring, proven tech.** Prefer the dull option.\n",
+  },
+  warnsAbout: [
+    ["SECURITY.md", false],
+    ["docs/personas.md", false],
+    ["docs/PRINCIPLES.md", false],
+  ],
+});
+
 // Regression 2: a required sections[] entry must turn "removed" into a reported FAIL, not
 // stay silently green because the file the heading lived in is still there. (The sibling
 // regression - a required lifecycle skill deleted from .claude/skills - turned out to be the
