@@ -200,5 +200,29 @@
         "pattern": "\\((\\d+) real repositories"
       }
     ]
+  },
+  {
+    "id": "node-runtime-version",
+    "what": "the Node version the dependency-free guards are pinned to - stated in the shipped .nvmrc and restated by every workflow that installs Node",
+    "home": {
+      "match": {
+        "file": "standard/.nvmrc",
+        "pattern": "^(\\d+\\.\\d+\\.\\d+)"
+      }
+    },
+    "claims": [
+      {
+        "file": "standard/.github/workflows/spec-guard.yml",
+        "pattern": "node-version: \"(\\d+\\.\\d+\\.\\d+)\""
+      },
+      {
+        "file": ".github/workflows/checks.yml",
+        "pattern": "node-version: \"(\\d+\\.\\d+\\.\\d+)\""
+      },
+      {
+        "file": ".github/workflows/pages.yml",
+        "pattern": "node-version: \"(\\d+\\.\\d+\\.\\d+)\""
+      }
+    ]
   }
 ]

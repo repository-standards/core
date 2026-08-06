@@ -266,6 +266,11 @@ for (const f of ymlFiles) {
     if (/runs-on:.*-latest/.test(line)) { fail(`${at} floating runner label (use an exact image, e.g. ubuntu-24.04)`); pinFails++; }
     const nv = line.match(/node-version:\s*["']?([^"'\s]+)["']?\s*$/);
     if (nv && !/^\d+\.\d+\.\d+$/.test(nv[1])) { fail(`${at} node version "${nv[1]}" is not an exact x.y.z pin`); pinFails++; }
+    // The rule above says "no .nvmrc", and `node-version-file` is how a workflow reads one
+    // without ever writing `node-version:` - so the check never saw it. The shipped
+    // spec-guard workflow did exactly that: a required manifest entry whose setup step read
+    // an optional one, in every repo that had no reason to carry it.
+    if (/node-version-file:/.test(line)) { fail(`${at} node-version-file defers the pin to a file - state the exact x.y.z version here`); pinFails++; }
   });
 }
 const nvmrcPath = `${TREE}/.nvmrc`;
