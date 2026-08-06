@@ -5,8 +5,8 @@
      agent-operated repository standard would claim, phrased so a reader who has never used
      this standard can run the same idea against their own. -->
 
-Twenty-something checks - **120**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **48** of them at least once and has fixed-and-re-verified **49** so far; the rest are logged as open (which includes any case where an attempted fix
+Twenty-something checks - **124**, precisely - that any repository standard
+claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **52** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -501,6 +501,19 @@ run spec-specify against a request whose generated slug does not exact-string-ma
 - **Result:** _not yet run - specified, no observation recorded_
 
 
+**SPEC-22 - re-planning a spec that has already been developed produces an INCREMENTAL plan from the spec's own delta, not a plan for the whole capability again**
+
+- **Given:** a capability that is already built and live, whose spec is then changed by spec-update so git diff carries a well-defined delta
+- **When:** /spec-plan runs
+- **Then:** the plan covers the delta - what must change - rather than re-deriving the whole capability, and says which parts are already built
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+read spec-plan/SKILL.md's Load context and Phase 1 steps: does it read the diff, or the whole FEATURE_SPEC?
+```
+
+
 ### track
 
 **TRACK-01 - the backlog has an escape hatch for an item whose target capability retired before its definition of done could be met**
@@ -706,6 +719,45 @@ node standard/scripts/cycle-guard.mjs against a pool-and-cycle pair created by c
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 grep -n backlog across standard/.claude/skills/spec-update and spec-impact's SKILL.md files
+```
+
+
+**TRACK-20 - task ids are stable across re-planning rounds, so a tracker item keyed by task id still means the same work on the second round**
+
+- **Given:** a capability whose tasks T001..T010 were generated, exported to a tracker, built and closed - so tasks.md was deleted per R13 - and whose spec then changes
+- **When:** /spec-tasks regenerates the task list from the changed spec and the export runs again
+- **Then:** a task id either refers to the same work it did on the first round or is demonstrably new, rather than a fresh positional number colliding with an exported item describing different work
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+inspect the id scheme in scripts/spec/tasks-template.md; grep spec-tasks/SKILL.md for anything reusing, reserving or renumbering ids against a previous run
+```
+
+
+**TRACK-21 - a tracker story whose scope changed because its spec changed is updated, or the divergence is surfaced to a human**
+
+- **Given:** a backlog intent already exported as a Story, whose spec then changes so the intent's scope is materially different
+- **When:** the export runs again
+- **Then:** the Story is updated, or the divergence between repo and tracker is reported to a human rather than left silent
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+read tracking-work.md's 'It never edits an issue it did not just create' paragraph; check for any reconciliation or drift report
+```
+
+
+**TRACK-22 - no external system keys on a positional task id, and a re-export can tell same-work-whose-description-changed from genuinely-new work**
+
+- **Given:** a capability whose tasks were exported to a tracker, closed (so tasks.md was deleted per R13), and whose spec then changed
+- **When:** the task list is regenerated and the export runs again
+- **Then:** nothing matches work by task id; each item is matched by a fingerprint of its own content, so changed work is reported rather than skipped and new work is created rather than swallowed
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+read docs/method/tracker-sync.md's fingerprint table and spec-tasks/SKILL.md step 1a; confirm no shipped file keys on a task id across rounds
 ```
 
 

@@ -2906,6 +2906,72 @@
       "then": "it names each unindexed record and fails, rather than passing because the files exist",
       "procedure": "node scripts/decision-records-check.mjs --block",
       "status": "run"
+    },
+    {
+      "id": "SPEC-22",
+      "title": "re-planning a spec that has already been developed produces an INCREMENTAL plan from the spec's own delta, not a plan for the whole capability again",
+      "area": "spec",
+      "tests": [
+        "R13"
+      ],
+      "promise": "spec-update: 'the spec on this branch describes the target; git diff against main is the change delta ... the source of truth the plan and code are built from' - spec-update/SKILL.md step 5",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a capability that is already built and live, whose spec is then changed by spec-update so git diff carries a well-defined delta",
+      "when": "/spec-plan runs",
+      "then": "the plan covers the delta - what must change - rather than re-deriving the whole capability, and says which parts are already built",
+      "procedure": "read spec-plan/SKILL.md's Load context and Phase 1 steps: does it read the diff, or the whole FEATURE_SPEC?",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-20",
+      "title": "task ids are stable across re-planning rounds, so a tracker item keyed by task id still means the same work on the second round",
+      "area": "track",
+      "tests": [
+        "R13",
+        "R15"
+      ],
+      "promise": "the Jira bridge keys a sub-task by 'the task id in the summary, [T003] ..., created only if no sub-task with that id exists' - tracking-work.md",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a capability whose tasks T001..T010 were generated, exported to a tracker, built and closed - so tasks.md was deleted per R13 - and whose spec then changes",
+      "when": "/spec-tasks regenerates the task list from the changed spec and the export runs again",
+      "then": "a task id either refers to the same work it did on the first round or is demonstrably new, rather than a fresh positional number colliding with an exported item describing different work",
+      "procedure": "inspect the id scheme in scripts/spec/tasks-template.md; grep spec-tasks/SKILL.md for anything reusing, reserving or renumbering ids against a previous run",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-21",
+      "title": "a tracker story whose scope changed because its spec changed is updated, or the divergence is surfaced to a human",
+      "area": "track",
+      "tests": [
+        "R15"
+      ],
+      "promise": "'push the invoicing cycle to jira' - tracking-work.md's worked prompt, and the repo-holds-intents / tracker-holds-execution split of ADR-010",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a backlog intent already exported as a Story, whose spec then changes so the intent's scope is materially different",
+      "when": "the export runs again",
+      "then": "the Story is updated, or the divergence between repo and tracker is reported to a human rather than left silent",
+      "procedure": "read tracking-work.md's 'It never edits an issue it did not just create' paragraph; check for any reconciliation or drift report",
+      "status": "run"
+    },
+    {
+      "id": "TRACK-22",
+      "title": "no external system keys on a positional task id, and a re-export can tell same-work-whose-description-changed from genuinely-new work",
+      "area": "track",
+      "tests": [
+        "R13",
+        "R15"
+      ],
+      "promise": "ADR-032: identity and reconciliation are an extension's concern, keyed by content fingerprint, never by a task's position",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a capability whose tasks were exported to a tracker, closed (so tasks.md was deleted per R13), and whose spec then changed",
+      "when": "the task list is regenerated and the export runs again",
+      "then": "nothing matches work by task id; each item is matched by a fingerprint of its own content, so changed work is reported rather than skipped and new work is created rather than swallowed",
+      "procedure": "read docs/method/tracker-sync.md's fingerprint table and spec-tasks/SKILL.md step 1a; confirm no shipped file keys on a task id across rounds",
+      "status": "run"
     }
   ]
 }

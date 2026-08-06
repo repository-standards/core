@@ -35,6 +35,7 @@ copied into your repository as folder READMEs that then age in place.
 | `backlog.md` <br><small>or `docs/backlog.md`</small> | the work ledger; items leave only when their DoD is met | **required**, core | `fill-from-repo` | [R15](../standard/SPEC.md) |
 | `CHANGELOG.md` <br><small>or `docs/CHANGELOG.md`</small> | the only home of history (ADR-018); a PR describes its change under `## Unreleased` and never touches the version - R18/R25's one path, at every profile | **required**, core | `fill-from-repo` | [R18](../standard/SPEC.md) |
 | `.gitleaks.toml` | secret-scan config (the shipped scan SHOULD gate CI) | optional, core | `copy` | [R19](../standard/SPEC.md) |
+| `.gitattributes` | forces LF on the shipped bash guards and Node scripts - a repo whose own setting is eol=crlf makes every hook exit 127 with empty stdout, which for a deny-guard is silence, not a refusal | **required**, core | `merge` | [R19](../standard/SPEC.md) |
 | `README.md` | the repo's front door - authored from this repo's reality | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `CONTRIBUTING.md` | contribution mechanics pointer - defers to AGENTS.md | optional, scale | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `SECURITY.md` | vulnerability-reporting contact and posture (placeholders filled at adoption) | optional, core | `fill-from-repo` | [R19](../standard/SPEC.md) |
@@ -126,6 +127,7 @@ them rather than checking files.
 | [`docs/method/lead-work.md`](#) | rolling the standard out across more than one repo, consistently |
 | [`docs/method/product-work.md`](#) | the product owner's job: what should be true, and for whom |
 | [`docs/method/tracking-work.md`](#) | the three files that answer what is still owed, what is happening now, and when it lands |
+| [`docs/method/tracker-sync.md`](#) | the OPTIONAL tracker-sync extension - a per-capability sidecar core never reads; skip it entirely if you sync to no tracker (ADR-032) |
 | [`docs/method/working-language.md`](#) | language is a configuration, not a constraint - the reasoning and the guidance for a non-English team |
 
 ## Required headings
