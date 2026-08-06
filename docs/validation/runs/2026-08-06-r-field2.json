@@ -1,0 +1,70 @@
+{
+  "$about": "field-2 round, 2026-08-06: the second L3 adoption, and the first against a technology the registry has no stack for. Target: caddyserver/caddy - Go, Apache-2.0, 639 tracked files, 2,638 commits, 423 authors, nothing to do with this project. Run as a user would ask: the align router's intake, the brownfield assessment, the honest-miss path, then waves until self-verify stopped finding anything. Command shapes exercised: align (the full brownfield path), registry miss (the honest-miss fallback and its consent-gated upstream offer), and verify (self-verify plain and with --version). Every number below was printed by a shipped script during the run; nothing is estimated. Two things this round could not test: nobody answered the intake's questions (the operator was this project's own agent, again, so the questions were answered from repo evidence and that is recorded as inference wherever it reached an artifact), and the 'ask before the workflows land' step had no human to ask - the workflow was landed adapted, and only after drift reached 0. Two observations worth having outside the case table. First, the shipped facts-check earns its keep on a repo it has never seen: a temporary docs/facts.json declaring go.mod as the home of the Go version immediately reported '.github/workflows/ci.yml says \"1.26\", the source says \"1.25\"' and the same for lint.yml - real, live drift in four statements of one fact, found on the first run and left as a backlog item rather than shipped, because fixing a repo's CI is not an adopter's call. Second, onboard.md's 'the existing package boundary is often already the capability map' shortcut held here in the positive direction - caddy's module ID namespace (http.handlers.reverse_proxy, caddy.storage.file_system) is behavior-shaped by construction, so the map was read off the registry rather than invented, which is the opposite of what ADOPT-09 found on a layered repo.",
+  "observations": [
+    {
+      "case": "ADOPT-08",
+      "target": "repo:caddyserver/caddy",
+      "verdict": "pass",
+      "evidence": "First run, with only the guards and the manifest copied into the untouched clone: 'self-verify: drift 12 - 73% adopted (33/45), 0 excepted'. The twelve were nameable and closeable by authoring, not by exception: docs/decision-records, specs, specs/capability-map.json, backlog.md, CHANGELOG.md, .claude/skills, .github/workflows/spec-guard.yml, docs/personas.md, and four required sections (AGENTS.md's Altitude, its two unprompted-behaviour sections, and CHANGELOG.md's Unreleased). Final run after the waves, at the scale profile the repo's 423 contributors imply: 'self-verify: OK - drift 0 - 100% adopted (47/47), 0 excepted - compliant with the standard'. The denominator moves 45 -> 47 for a reason worth stating rather than glossing: two checks do not exist until the artifact they check does - the content hash of `.claude/skills` and the required-key check on `.github/workflows/spec-guard.yml` - so the starting percentage is measured against a slightly smaller yardstick than the finishing one. Verified by diffing the counted rows of both runs, not inferred. No exception was written, on a repo nobody here wrote - the second time that has held.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "ADOPT-10",
+      "target": "repo:caddyserver/caddy",
+      "verdict": "pass",
+      "evidence": "Confirmed on a second, larger repo. With $unclaimed declared for the whole tree the audit reported 'OK (4 capability specs, all mapped; 14 globs, all matching; 639 files, each claimed by a capability or declared unclaimed)', and after the alignment's own files landed it re-counted to 701 - the check follows the tree rather than a remembered list. The caveat recorded in the field-1 round stands unchanged: the feature is discoverable only from the audit's own output, and this run only knew to declare the key because the previous one had found it.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "STACK-03",
+      "target": "repo:caddyserver/caddy",
+      "verdict": "pass",
+      "evidence": "First time the no-registered-stack offer was consumed against a real repo rather than read. stacks.json holds one stack (node); Go is not in it, so the offer's second branch applied verbatim, and its warning about the guard cost turned out to be the operationally important half: the aligned repo now needs a Node runtime in CI for a project that builds with `go build` - the workflow invokes three Node scripts directly and self-verify runs five more guards itself. The adapted workflow says so in a comment rather than leaving the next reader to wonder why a Go repo installs Node. Rules and specs were indeed unaffected - all four capability specs and eight ADRs were written with no reference to any Node-specific machinery.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "ADOPT-07",
+      "target": "repo:caddyserver/caddy",
+      "verdict": "fail",
+      "evidence": "Reproduced on a real repo, which is what this case was previously missing: it had only ever been checked against a greenfield fixture. The honest-miss path was run end to end and produced docs/stack-decisions.md - 210 lines, every row either citing a file in this repo or a dated community source - and self-verify reported drift 0 with it present. Deleting it also reports drift 0: the deliverable the router names as its answer for an unregistered stack is in no manifest entry, no SPEC rule and no taxonomy row, so nothing distinguishes a repo that did the work from one that skipped it. Worse on a real run than on a fixture, because the document is the single largest artifact the honest-miss path asks an adopter to write.",
+      "at": "2026-08-06",
+      "waiver": "Open by design, not a silent gap: the fix is a conditional requirement (required when the technology has no registry entry, absent when it does) and the manifest has no conditionality mechanism beyond core|scale. Adding it as an optional entry would print a line about a stack-decisions document in every Node repo that correctly has none. Left for the owner rather than guessed at."
+    },
+    {
+      "case": "ADOPT-11",
+      "target": "repo:caddyserver/caddy",
+      "verdict": "fail",
+      "evidence": "Found by following onboard.md literally on a repo too large to spec in one pass. Four capabilities were specced buildable; six more are real, named and queued in the repo's backlog (reverse-proxy, tls-and-certificates, http-serving, internal-pki, cli, observability). The map has no way to say that: spec-guard --audit accepts a file only as claimed by a capability that has a spec directory, or listed under $unclaimed - 'belongs to no capability by decision'. So modules/**, cmd/** and caddytest/** are declared unclaimed, which is not true, and the map's own $about had to say so in prose to stay honest. The pressure is real rather than theoretical because the required spec-guard workflow runs --audit --block on every pull request, so the alternative to the false declaration is red CI from wave one, on a repo where wave one is the only wave that has happened.",
+      "at": "2026-08-06",
+      "waiver": "Logged with three options written out in the case's procedure field ($queued entries naming a backlog id, an in-refinement spec that may claim its globs, or scoping the unclaimed check). Choosing between them changes what the coupling guard promises, which is the owner's call, not a fix to slip into a field-run PR."
+    },
+    {
+      "case": "GATE-33",
+      "target": "repo:caddyserver/caddy",
+      "verdict": "pass",
+      "evidence": "Found and fixed this round. The first --audit run on the finished map failed with one unclaimed file: \"modules/caddyhttp/fileserver/testdata/\\331\\205\\331\\204\\331\\201.txt\" - git's default quoting of a non-ASCII path, quotes and backslash escapes included. No glob matches that string, so the file could never be claimed and the audit could never go green; `modules/**` had matched all 228 of its siblings. Fixed by asking git for the real bytes (`git -c core.quotePath=false`) in spec-guard.mjs and, for the same reason, in spec-structure.mjs, where the standard's support for specs written in the repo's own language makes a Cyrillic or Chinese capability directory expected rather than exotic. tools/spec-guard-test.mjs gains both directions - a covering glob claims the file, and removing the glob brings the complaint back - and both new cases fail against the pre-fix script.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "GATE-34",
+      "target": "repo:caddyserver/caddy",
+      "verdict": "pass",
+      "evidence": "Found and fixed this round. Nine records were written and indexed - eight ADRs and one BDR - and decision-records-check --block reported every one of them as having no row in its index, about rows that were in the file. The guard accepted `[001](ADR-001-title.md)` and a bare `001`, but not `[ADR-001](ADR-001-title.md)`, which is what an author writes when the shipped README template ships only the `| - | (none yet) | - |` placeholder and no worked row. The template could not carry one either: rows inside an HTML comment or a fenced block were read as real index entries, so the one file whose format needs demonstrating was the one file that could not demonstrate it (verified before the fix: a commented example row produced 'indexed, missing from disk'). Fixed both halves - the label may carry the stream prefix, and a stated prefix is now used rather than discarded so a flat layout can tell BDR-004's row from ADR-004's; and comments and fences are stripped with the same left-to-right scan cycle-guard already documents. Both README templates now state the row form in prose. tools/decision-records-check-test.mjs goes from 11 to 17 cases.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "GATE-35",
+      "target": "repo:caddyserver/caddy",
+      "verdict": "pass",
+      "evidence": "Found and fixed this round. .github/workflows/spec-guard.yml is a required manifest entry; its setup-node step read `node-version-file: \".nvmrc\"`, and .nvmrc is an optional one. A Go repo has no reason to carry .nvmrc, so landing the required gate as shipped points the setup step at a file the standard never required the repo to have - and self-verify reports drift 0 either way, so nothing says so until CI runs. The dependency is what was verified here; what actions/setup-node does with a missing node-version-file was not run, and the fix removes the question rather than answering it. This repo ships `.nvmrc` inside the tree and carries none at its own root, and both of its own workflows state `node-version: \"24.18.0\"` inline, so the template was the odd one out. Fixed by stating the exact version in the template with a comment saying why, and by extending tree-check's pin rule to reject `node-version-file:` - the rule's own comment already said '.nvmrc' was not acceptable, and the check never saw it because the key name differs. Verified both directions: reinstating node-version-file fails tree-check, restoring the pin passes. The duplication that fix creates is now itself declared in docs/facts.json (home standard/.nvmrc, three restatements), and moving the .nvmrc version by one patch makes facts-check name all three.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "INTAKE-10",
+      "target": "repo:caddyserver/caddy",
+      "verdict": "pass",
+      "evidence": "Found and fixed this round, and the most uncomfortable finding of the run. caddy's AGENTS.md carries an 'AI Contribution Rules' section that says, verbatim, 'Never create a PR. / Never create an issue. / Never reply to an issue. / Never file a security report.' The intake's red-flag scan names CONTRIBUTING.md and 'a dedicated policy file' and does not name AGENTS.md - the file the standard itself mandates, and the file this skill's own step 3 edits. Read only CONTRIBUTING.md and you get the other half of caddy's position (LLM-assisted code is allowed with disclosure) and none of the prohibition, then rewrite the file carrying it. Fixed in SKILL.md's step 0: AGENTS.md and CLAUDE.md are read for an agent policy before anything is written to either, with caddy named as the case. The run itself complied - the alignment lives on a local branch, nothing was pushed, and no issue or PR exists anywhere against caddyserver/caddy.",
+      "at": "2026-08-06"
+    }
+  ]
+}

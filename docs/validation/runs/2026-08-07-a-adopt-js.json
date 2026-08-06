@@ -1,0 +1,133 @@
+{
+  "$about": "adopt-wave-js, 2026-08-07: three more L3 adoptions, all JavaScript/TypeScript, on the one registered stack. honojs/hono (single-package framework, 178 non-test source files under src/), drizzle-team/drizzle-orm (pnpm workspace, eight published packages, 946 tracked .ts/.js files) and usebruno/bruno (npm workspace, sixteen workspaces under packages/, an Electron desktop application plus a CLI, 2448 tracked .js/.jsx/.ts/.tsx files). Each was cloned, branched locally and taken through the align router's brownfield path; nothing was pushed to any of the three and no issue or pull request was opened against them. Every number below is a line the shipped scripts printed, measured before anything was authored and again at the end. Where the three runs agree on a finding, that is said explicitly - one repo produces a story, three produce a pattern.",
+  "observations": [
+    {
+      "case": "ADOPT-08",
+      "target": "repo:honojs/hono",
+      "verdict": "pass",
+      "evidence": "First run with only standard.manifest.json, scripts/self-verify.mjs and scripts/lib/ copied in: 'self-verify: drift 20 - 26% adopted (7/27), 0 excepted'. Final run after the waves: 'self-verify: OK - drift 0 - 100% adopted (55/55), 0 excepted'. Every one of the 20 was closeable by authoring the artifact rather than by recording an exception, on a repo whose shape (one package, 76 subpath exports, nine runtime adapters, Bun as the package manager, no runtime dependencies) is nothing like the boilerplate the first L3 target was. The denominator moves 27 -> 55 because entries that cannot be checked until a prior artifact exists become checkable once it does.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-08",
+      "target": "repo:drizzle-team/drizzle-orm",
+      "verdict": "pass",
+      "evidence": "'self-verify: drift 21 - 30% adopted (9/30), 0 excepted' before, 'self-verify: OK - drift 0 - 98% adopted (57/58), 1 excepted' after. One entry was genuinely not closeable by authoring and became the exception: the repo's own .nvmrc pins Node 22, which its CI and every package build read, so taking the standard's copy would have installed a second contradicting runtime pin. Recorded as { kind: content, match: .nvmrc } with a reason, and self-verify then printed it as excepted rather than failing - '.nvmrc differs from the standard's copy ... - excepted (recorded manifest deviation, R17)'. The percentage stays below 100 with the exception in place, which is the documented behaviour and the right one.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-08",
+      "target": "repo:usebruno/bruno",
+      "verdict": "pass",
+      "evidence": "'self-verify: drift 21 - 32% adopted (10/31), 0 excepted' before, 'self-verify: OK - drift 0 - 96% adopted (54/56), 2 excepted' after. The hardest of the three, because this repo already had a designed agent configuration (.claude/CLAUDE.md, eight path-scoped rules, an on-demand architecture reference, two of its own skills, a settings.json with a deliberate deny rule, and a README.md that is a maintainer guide for the config with a stated line budget). The 'adapt, never blind-copy' rule (R17) was the whole run rather than a caveat on it, and it held: the two existing skills were untouched, settings.json was merged rather than replaced, and the standard's own pre-pr-review was left out with a recorded exception. Both exceptions are the repo's own decisions preserved, not corners cut.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-11",
+      "target": "repo:usebruno/bruno",
+      "verdict": "pass",
+      "evidence": "This repo arrived with a pre-existing, deliberately designed Claude Code configuration, which is where 'adapt, never blind-copy' either means something or does not. Three mechanisms carried it. (1) A directory content entry only reports members the standard ships - the code comment says so and the run proves it: .claude/skills/code-review and .claude/skills/write-e2e-test were never mentioned by self-verify, before or after. (2) A per-member content exception works: { kind: content, match: '.claude/skills/pre-pr-review/SKILL.md' } waived exactly that one skill of the twenty and self-verify reported '2 excepted' rather than failing the directory. (3) CLAUDE.md declares altPaths ['AGENTS.md'], so the repo's documented decision to have no root CLAUDE.md - stated in .claude/README.md, so that the whole config stays in one folder - cost nothing. Recorded as a pass because all three worked; the gap is in the procedure, not the mechanism - see ADOPT-12.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-12",
+      "target": "repo:usebruno/bruno",
+      "verdict": "fail",
+      "evidence": "The repo ships .claude/skills/code-review, described as 'Review a Bruno diff, PR, or branch via focused reviewers run in parallel'. The standard ships pre-pr-review, described as 'Use before pushing a branch or opening a pull request - \"is this ready?\", \"can I push?\"'. A user saying 'review my branch before I push' matches both. The standard's own shipped AGENTS.md names this exact situation as a defect - 'Two skills whose descriptions could both plausibly match one sentence will each lose that sentence half the time: sharpen both, or merge them' - and align-to-standards step 3 says only 'Skills into the repo's skill dir (.agents/skills or .claude/skills)'. Nothing in the procedure reads the target's existing skill descriptions, so the default outcome is twenty skills copied in beside a competing one and a coin flip on every review request. The mechanism to record the resolution exists (ADOPT-11); the step that makes you look does not. Detected here only because the adopting agent read .claude/README.md out of interest.",
+      "at": "2026-08-07",
+      "fix": "skills/align-to-standards/SKILL.md step 3 now tells the aligner to read the target's existing skill descriptions before copying the shipped set in, name every collision to the user, and record the resolution as a per-member `content` exception when the repo's own skill wins. The bruno run is the worked example in the text."
+    },
+    {
+      "case": "ADOPT-13",
+      "target": "repo:drizzle-team/drizzle-orm",
+      "verdict": "fail",
+      "evidence": "The shipped .claude/settings.json deny list contains 'Bash(drizzle-kit *)' and 'Bash(npx drizzle-kit *)', among the migration CLIs. Copied verbatim into drizzle-orm, that denies the repository's own build and test commands for the package it publishes - the deny list is written from a consuming application's point of view, where drizzle-kit is a production action, and this is the repository where it is the unit under test. align-to-standards step 3 says 'adapt migration/deploy CLIs to the real stack', which covers 'this repo uses Prisma, not Drizzle' and not 'this repo IS the CLI'. The same shape will hit prisma/prisma, knex/knex, typeorm/typeorm and any repo publishing a tool the standard defensively denies. Adapted here by keeping push and drop denied in every invocation form and moving the rest to ask; the point is that nothing in the procedure prompts the question.",
+      "at": "2026-08-07",
+      "fix": "skills/align-to-standards/SKILL.md step 3's settings guidance now says the deny list is written from a consuming application's point of view and to check whether the target repo *is* one of the tools it denies, narrowing the entry to the destructive subcommands rather than dropping it. drizzle-kit is the named example."
+    },
+    {
+      "case": "ADOPT-14",
+      "target": "repo:honojs/hono",
+      "verdict": "fail",
+      "evidence": "Reproduced on all three repos, with identical shape and different numbers. onboard.md step 2 says to map the code into capabilities and 'Write the result to specs/capability-map.json' - the whole code, in the first pass - while its own 'one rule: no big-bang' says you do not spec everything now and step 5 says 'A capability you are not specing this pass is a backlog item - not a behavioral placeholder written to look done'. spec-guard --audit then fails on every map entry without a spec directory, and it is wired into the required spec-guard.yml as '--audit --block', deliberately blocking at every profile. hono: 15 capabilities mapped from the code, 2 specced buildable, 'spec-guard --audit: 13 problem(s)', all of one kind. drizzle-orm: 13 mapped, 2 specced, 11 problems. bruno: 14 mapped, 2 specced, 12 problems. The audit's own remedy line offers the escape the method does not mention - 'write specs/<cap>/spec.md, or remove the entry' - and removing entries is what makes the map understate the code, which is precisely the silent-coverage trap ADOPT-10 already recorded for $unclaimed. The three runs therefore end at self-verify drift 0 with a red audit, and both numbers are recorded rather than one of them being made to disappear. Left open rather than guessed at, because the fix is a design decision the owner has to make. Three shapes, all of which change something the standard promises: (a) the audit tolerates a mapped capability with no spec while a declared alignment is in progress - cheap, and it makes the audit silent about exactly the state most brownfield repos live in for months; (b) onboard.md stops asking for the whole map in pass one and says plainly that the map grows one capability per spec - honest, and it means $unclaimed cannot be turned on until the last spec lands, which is the ADOPT-10 trap by another route; (c) a behavioral-tier placeholder becomes legal for an unspecced mapped capability, which is what step 5 currently forbids in those words.",
+      "at": "2026-08-07",
+      "waiver": "Left open on purpose: closing it means choosing between three shapes that each change something the standard promises (spelled out in the evidence above), and that is the owner's call, not a pull request's. The three runs record the state honestly instead - self-verify drift 0 with the audit's problem count printed beside it - so nothing here is hidden while the decision waits."
+    },
+    {
+      "case": "ADOPT-15",
+      "target": "repo:honojs/hono",
+      "verdict": "fail",
+      "evidence": ".github/workflows/spec-guard.yml is a required manifest entry. Its setup step reads 'node-version-file: \".nvmrc\"', and .nvmrc is an optional entry (docs/file-map.md: 'optional, core'). hono has no .nvmrc - it pins nodejs, bun and deno together in .tool-versions, and its own ci.yml already feeds that file to actions/setup-node - so self-verify reported '.nvmrc absent (optional)' and the repo reached drift 0 carrying a required workflow whose first setup step names a file that is not in the tree. Nothing in the manifest, in docs/tree/github-workflows-spec-guard-yml.md or in docs/file-map.md states the dependency. Adapted here by pointing the step at .tool-versions, which is provable rather than guessed because the repo's own CI does exactly that; the general case needs a decision, not a patch - see the case's options. Left open rather than guessed at. Three shapes: (a) make .nvmrc required, which changes the adoption arithmetic for every existing adopter and forces a Node pin onto repos that pin elsewhere; (b) drop the node-version-file line and let the runner's default Node run the dependency-free guards, which loses the exact-version property R21/ADR-017 exists for; (c) keep both as they are and make the dependency explicit in the manifest entry and the file map, so the aligner is told rather than finding out from a red CI run. The align skill now says to resolve it per repo; which of the three the standard itself takes is the owner's call.",
+      "at": "2026-08-07",
+      "fix": "skills/align-to-standards/SKILL.md step 3 now states that spec-guard.yml reads .nvmrc, that .nvmrc is optional, and that the aligner must either land it or point the step at the pin the repo already has - with hono's .tool-versions as the worked example.",
+      "waiver": "The per-repo instruction is fixed; the structural question - whether the standard makes .nvmrc required, drops the version-file line, or documents the dependency in the manifest - is left to the owner, with the three options written out in the evidence above."
+    },
+    {
+      "case": "ADOPT-16",
+      "target": "repo:honojs/hono",
+      "verdict": "fail",
+      "evidence": "The same interdependency in a form where both sides are optional, so no adoption percentage moves and nothing warns. .claude/hooks is a copy entry (the three PreToolUse guards plus the shared lib.sh they source); .claude/settings.json is a merge entry whose requiredKeys include hooks.PreToolUse, which is the wiring that makes the guards run at all. verifyKeys returns early when the file is absent ('absence is the files check's business, reported there'), and the files check reports an absent optional entry as a note. Verified on a scratch repo carrying the manifest, self-verify and .claude/hooks and nothing else: 'PASS file .claude/hooks', 'PASS content .claude/hooks matches the standard's copy (4 files)', '.claude/settings.json absent (optional)'. A repo can therefore land the guard scripts and have them never execute, and the compliance check says nothing - which for a deny-guard is the same failure mode .gitattributes exists to prevent, arrived at from the other direction.",
+      "at": "2026-08-07",
+      "fix": "skills/align-to-standards/SKILL.md step 3 now says to land .claude/hooks and .claude/settings.json together or not at all, and states why: both entries are optional, the hooks only run because settings.json wires them into PreToolUse, and a silently inert deny-guard is worse than an absent one."
+    },
+    {
+      "case": "ADOPT-03",
+      "target": "repo:drizzle-team/drizzle-orm",
+      "verdict": "pass",
+      "evidence": "The package-boundary shortcut applies and needed correcting in both directions, which is worth recording because the shortcut is phrased as though the boundary either is or is not the map. Outward: drizzle-kit, drizzle-seed and eslint-plugin-drizzle are each one package and one capability, straight from the workspace. Inward: drizzle-orm is one package and six capabilities, and the repository's own CONTRIBUTING.md already says so ('core packages for each dialect', 'all expressions and SQL template implementation', 'all other folders are for each specific driver') - taking the package as one capability would have given the coupling guard a single entry over 454 source files. Outward again, in the opposite sense: drizzle-zod, drizzle-typebox, drizzle-valibot and drizzle-arktype are four published packages and one capability - verified, not assumed, by diffing them (byte-identical constants.ts, identical file names, the same three condition tables). The shortcut's qualifier ('confirm the boundary is behavior-shaped') is what carries all three corrections; it held, but the reader has to know that 'confirm' can mean 'split' and 'merge' as well as 'accept'.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-04",
+      "target": "repo:honojs/hono",
+      "verdict": "pass",
+      "evidence": "hono is one package with no internal workspace, so onboard.md's 'look one level down' is the applicable guidance, and it produced a usable map - src/router/, src/middleware/, src/adapter/, src/jsx/, src/client/, src/validator/ are all behavior-shaped. It also produced two entries the same paragraph warns against: src/helper/ and src/utils/ are layering artifacts, and following the instruction literally would have mapped them as capabilities. What corrected them was hono's package.json exports map - 76 declared subpaths, in which hono/jwt is middleware/jwt and hono/utils/jwt is utils/jwt, one capability split across two directories by layer. Recorded as a pass with a caveat: for a library, the published export surface is a stronger capability signal than the directory tree, and neither ADOPT-03's package boundary nor ADOPT-04's 'one level down' names it.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "GATE-33",
+      "target": "repo:usebruno/bruno",
+      "verdict": "fail",
+      "evidence": "spec-structure's persona gate fired on a docs/personas.md authored from scratch rather than copied from the shipped template: 'docs/personas.md has no \"## The roster\" section, so the guard cannot tell a live persona from a name in the worked example'. Same on hono. The guard itself is right, it fails closed, and its message says exactly what to add - so the mechanism is not the problem. What fails is the case's own claim: the heading is a syntax requirement stated nowhere an author would read first. It is not in the manifest entry's purpose ('the persona roster the R10 gate checks specs against'), not in docs/file-map.md's row, and not in the method docs; it is in the guard's error text and in the shipped template, and personas.md is a fill-from-repo entry an adopter is expected to author rather than fill in place. Learned by tripping over it, twice.",
+      "at": "2026-08-07",
+      "waiver": "Left open rather than patched. Stating the requirement where an author would find it means editing standard.manifest.json, which is hashed and coupled to the verify-engine spec, or docs/file-map.md, which is generated-adjacent - either is a change to a required entry for a minor discoverability problem, and which surface should carry it is the owner's call. The cost is one failed guard run per adopter, and the guard names the fix in its own output."
+    },
+    {
+      "case": "DOC-18",
+      "target": "repo:drizzle-team/drizzle-orm",
+      "verdict": "pass",
+      "evidence": "Re-verified on two more repos. Records were authored into docs/decision-records/adr and /bdr with the shipped README indexes left untouched; decision-records-check --block named all four ('has no row in docs/decision-records/adr/README.md') and exited non-zero, then reported 'OK (4 record(s), index and directory agree)' after the rows were added. Identical on bruno and hono. The guard catches exactly what a retroactive-ADR pass produces - records written in a batch, index updated from memory afterwards - and it caught it three times out of three.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-18",
+      "target": "repo:usebruno/bruno",
+      "verdict": "pass",
+      "evidence": "The assessment's red-flag discipline earned its place on this repo. Reading the sandbox capability for the spec turned up that the script sandbox-mode mapping exists three times with two different failure directions: bruno-js/src/runtime/script-runtime.js and bruno-electron/src/ipc/network/index.js:62 both read 'is it nodevm, else quickjs' and fail closed, while bruno-cli/src/commands/run.js:86 reads 'is it safe, else nodevm' and fails open into the unsandboxed node:vm runtime. The CLI's yargs option declares default: 'safe' (run.js:138), so the ordinary path is protected by an argument default living in a different file rather than by the function - latent, not live, and the spec, the ADR and the backlog item all say so in those words. Recorded as a pass for the method (the buildable-spec pass is what found it, exactly as the standard's own ADR-003 claims writing the contracts surfaces the bugs) and as the most consequential single finding of the three runs.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-19",
+      "target": "repo:usebruno/bruno",
+      "verdict": "pass",
+      "evidence": "onboard.md step 6 asks for the drift between the code and any pre-existing document, and this repo has an unusually good set of documents to check against - which is what made four findings possible rather than none. Verified against the tree on 2026-08-07: .claude/reference/architecture.md states that sandbox selection 'is centralized: getJsSandboxRuntime' in bruno-js/src/utils/sandbox.js and instructs readers not to re-derive the mapping, and that file contains no such function while two independent definitions exist elsewhere; packages/bruno-sqlite (@usebruno/sqlite, a real workspace with src/, tests/, a rollup build and its own licence, depended on by bruno-app and bruno-electron) appears zero times in that reference or in .claude/CLAUDE.md; packages/bruno-electron/src/ipc/ai (eleven files - chat, autocomplete, script generation, provider handling) is mentioned nowhere except one clause of rules/electron-ipc.md; and packages/bruno-electron/src/ipc/mock-server exists inside a product whose own framing is 'a client, not a server'. drizzle-orm produced the same class of finding: CONTRIBUTING.md's repository-structure section still lists an examples/ directory deleted on 2025-05-15 in commit 91081c04, and drizzle-kit's package.json declares MIT where the root LICENSE and seven sibling packages declare Apache-2.0. Worth recording as method evidence: a repo that writes more documents has more drift to find, not less.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "INTAKE-12",
+      "target": "repo:honojs/hono",
+      "verdict": "fail",
+      "evidence": "hono's contribution guide carries an 'AI Usage Policy': 'You may use AI to contribute, but it must never waste a maintainer's time or make their work unpleasant. To enforce this, and regardless of whether AI was actually used, a maintainer may close your PR without notice and block your account.' align-to-standards step 0 has exactly two shapes for an AI policy - a red-flag stop (an outright ban, ripgrep's AI_POLICY.md) and a conditional allow (a human must rewrite and submit, scala3's LLM_POLICY.md). This is neither: it permits agent contribution and attaches a discretionary sanction, with no procedural condition to say back. Both shipped branches key on 'what must you do differently', so a literal reading classifies this as nothing and proceeds silently - and the risk it carries falls on the user's account, not on the run. Second problem, same repo: the policy lives in docs/CONTRIBUTING.md, and step 0 says to read 'CONTRIBUTING.md'; hono's root has no such file. drizzle-orm and bruno have root CONTRIBUTING.md / contributing.md files with no AI policy at all, so the miss is specific to the repo that has one.",
+      "at": "2026-08-07",
+      "fix": "skills/align-to-standards/SKILL.md step 0 gains a third policy shape - a permission with a sanction and no procedural condition, hono's wording quoted - and an instruction to look past the repo root and to read README.md, because hono's policy is in docs/CONTRIBUTING.md and its root carries no CONTRIBUTING.md at all."
+    },
+    {
+      "case": "ADOPT-17",
+      "target": "repo:honojs/hono",
+      "verdict": "fail",
+      "evidence": "All three runs had to answer intake questions that only a maintainer can answer, and the procedure has no shape for 'there is nobody to ask'. The profile question (core or scale, ADR-011) is written into the manifest copy and read by self-verify and the CI gate; it was inferred here from committer counts (hono: 129 distinct authors in the last year, so scale) and recorded as an inference. The persona interview is worse, because ADR-006 makes every spec cite the roster: onboard.md step 1 says to use the code for the candidate list and then interview the user, and has a paragraph for 'the user cannot answer yet - the person who knows is on holiday' (seed it, mark it inferred, backlog the interview) but none for a run where no user exists at all. That paragraph was used as the closest fit and each roster carries a 'Provenance and confidence' section saying nobody was interviewed, plus a CONF-1 backlog item. It is the honest outcome and it is not a documented one, which matters because this is the same gap that makes the operator-independence half of FIELD-1 untested: an unsolicited adoption and an adoption by an outside team both lack the person the interview addresses, for different reasons.",
+      "at": "2026-08-07",
+      "waiver": "Left open rather than guessed at. The postponed-interview paragraph in onboard.md step 1 was used as the closest fit and every artifact says so in its own provenance section, but a no-addressee adoption is a different situation: the profile answer is written into the manifest and read by CI, and ADR-006 makes the roster a gate on every spec, so declaring an inferred roster sufficient is a decision about what the persona gate means. It is also the same gap that leaves FIELD-1's operator-independence claim untested, which makes it the owner's to settle rather than a pull request's."
+    }
+  ]
+}
