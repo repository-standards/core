@@ -154,6 +154,39 @@ check("an autolink is not a placeholder", {
   warnsAbout: [["README.md", false]],
 });
 
+// The decision records were outside the scanned set entirely, so the one placeholder the
+// record templates ship - `| **Author** | {{AUTHOR}} |` - reached drift 0 on every record
+// ever written. All three directions are asserted: the unfilled row warns, a filled record
+// does not, and the template it was copied from is still allowed to carry placeholders (a
+// warning on the template is one nobody can clear, so it is one everybody learns to skip).
+const RECORD = (author) =>
+  "# ADR-001: use Postgres\n\n| | |\n| --- | --- |\n| **Status** | Accepted |\n" +
+  `| **Date** | 2026-08-06 |\n| **Author** | ${author} |\n| **Tags** | datastore |\n\n` +
+  "## Context\n\nThe scheduling data outgrew the file store.\n\n## Decision\n\nWe will use Postgres.\n";
+
+check("an unfilled record author warns", {
+  files: { "docs/decision-records/adr/ADR-001-use-postgres.md": RECORD("{{AUTHOR}}") },
+  warnsAbout: [["ADR-001-use-postgres.md", true]],
+});
+
+check("a filled record does not warn", {
+  files: { "docs/decision-records/adr/ADR-001-use-postgres.md": RECORD("adrienne") },
+  warnsAbout: [["ADR-001-use-postgres.md", false]],
+});
+
+check("the record template itself is not a shell to fill", {
+  files: {},
+  warnsAbout: [["decision-records/adr/_template.md", false], ["decision-records/bdr/_template.md", false]],
+});
+
+// A record can sit directly under docs/decision-records/ rather than in an adr/ or bdr/
+// subfolder - decision-records-check.mjs detects both layouts, and so must this: the scan
+// keys on the record filename, not on a fixed directory.
+check("a record directly under docs/decision-records/ is scanned as well", {
+  files: { "docs/decision-records/BDR-004-target-personas.md": RECORD("{{AUTHOR}}") },
+  warnsAbout: [["BDR-004-target-personas.md", true]],
+});
+
 // Regression 2: a required sections[] entry must turn "removed" into a reported FAIL, not
 // stay silently green because the file the heading lived in is still there. (The sibling
 // regression - a required lifecycle skill deleted from .claude/skills - turned out to be the
@@ -215,4 +248,4 @@ if (failures) {
   console.error(`self-verify-fill-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("self-verify-fill-test: OK - the fill warning is clearable, still fires, reads any script, catches an ellipsis row, and a removed required AGENTS.md section is reported as drift");
+console.log("self-verify-fill-test: OK - the fill warning is clearable, still fires, reads any script, catches an ellipsis row and an unfilled record author, leaves the templates alone, and a removed required AGENTS.md section is reported as drift");

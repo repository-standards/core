@@ -63,6 +63,11 @@ has hit, and rebasing late narrows the window but does not close it. Copy
 `docs/decision-records/adr/_template.md`, add the row to `adr/README.md`, set
 `Status: Accepted` when the user confirms.
 
+**Fill the `Author` row with a person**, not a role and not a persona - whoever is
+accountable for this decision and can be asked about it later. The template ships it as
+`{{AUTHOR}}`; left unsubstituted it is an unfilled shell, and the shipped `self-verify`
+warns about it the same way it warns about any other placeholder that survived.
+
 **Never edit an accepted record into a different decision.** If this supersedes one, the old
 record keeps its text, flips to `Superseded`, and names this one in its `Superseded by` row.
 

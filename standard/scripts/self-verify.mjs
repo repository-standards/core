@@ -540,7 +540,30 @@ if (!skeleton) {
   // convention is what makes the check precise, not the regex alone.
   const stripCode = (s) => s.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, "").replace(/`[^`\n]*`/g, "");
 
-  for (const p of ["AGENTS.md", "README.md", "SECURITY.md", "docs/PRINCIPLES.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md"]) {
+  // Decision records are in scope too, and they are found by the record filename pattern
+  // rather than a fixed path, because their directory layout is the repo's choice (the
+  // shipped adr/ + bdr/ split, or one flat folder). The record templates' `| **Author** |
+  // {{AUTHOR}} |` row is the placeholder this list previously could not see at all: no
+  // generator fills it, and every record ever written carried it to drift 0. The pattern
+  // excludes `_template.md` and the stream READMEs for free - a template is supposed to hold
+  // placeholders, and warning about it is how a warning gets ignored.
+  const recordFiles = (dir) => {
+    if (!existsSync(dir)) return [];
+    const out = [];
+    for (const e of readdirSync(dir)) {
+      const p = `${dir}/${e}`;
+      if (statSync(p).isDirectory()) out.push(...recordFiles(p));
+      else if (/^(?:ADR|BDR)-\d+-.+\.md$/.test(e)) out.push(p);
+    }
+    return out;
+  };
+
+  const fillTargets = [
+    "AGENTS.md", "README.md", "SECURITY.md", "docs/PRINCIPLES.md", "docs/PRODUCT.md",
+    "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md",
+    ...recordFiles("docs/decision-records"),
+  ];
+  for (const p of fillTargets) {
     if (!exists(p)) continue;
     const body = stripCode(readFileSync(p, "utf8"));
     if (hasPlaceholder(body)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
