@@ -20,10 +20,10 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 `/spec-specify` detects a capability collision by exact string match on the slug it just
 generated, and is explicitly instructed never to ask the user. A request whose slug does not
-match a capability it functionally overlaps therefore minted a sibling in silence:
-`manager-shift-reassignment` beside an existing `shift-swap-request` that already described the
-behaviour - the split-by-wording failure ADR-002 exists to prevent, arriving through the step
-meant to prevent it. The name is the one thing that does not match: the same behaviour arrives
+match a capability it functionally overlaps therefore minted a sibling in silence - as it did
+in the assessment that found this, `manager-shift-reassignment` beside an existing
+`shift-swap-request` that already described the behaviour: the split-by-wording failure ADR-002
+exists to prevent, arriving through the step meant to prevent it. The name is the one thing that does not match: the same behaviour arrives
 worded as the actor, the surface, or the ticket.
 
 The skill now checks for a collision by behaviour before minting anything - reading the Purpose,
@@ -50,9 +50,10 @@ the anchor exists, it sits between those two headings, and the heading is absent
 
 `adr-write` requires a `Confirmation` section and calls it "what stops the record being
 decoration". The BDR template had no such section, and `bdr-write` forbade naming the
-technical consequence at all, so writing a real BDR - a privacy constraint on data retention -
-recorded how the team would know the call was wrong (a detection signal) and nothing about how
-they would know it had stopped being followed. On privacy, money and safety, which is where a
+technical consequence at all. The assessment that found this wrote a real BDR against the
+shipped template - a privacy constraint on data retention - and it recorded how the team would
+know the call was wrong (a detection signal) and nothing about how they would know it had
+stopped being followed. On privacy, money and safety, which is where a
 business decision most often has a technical enforcement point, that is the whole risk.
 
 The BDR template gains `Confirmation`, and `bdr-write` asks for it as its own question:
@@ -68,8 +69,9 @@ names no subset and asserts no count", and the checklist repeats it - "deliberat
 count and no required subset." The manifest marked all eight catalogued decision entries
 `required: true`, including datastore, api-contract and auth-model, and `self-verify` printed
 `8 catalogued decisions to confirm recorded at review` on every run - a number sitting in a
-report whose other numbers are drift and adoption. Assessment of five real ML repositories
-found none of them carrying any of those three, and none of them in breach.
+report whose other numbers are drift and adoption. The validation suite's own 2026-08-04
+assessment of five machine-learning repositories found none of them carrying any of those
+three, and none of them in breach.
 
 The field is gone from all eight entries, the summary line now says what the reader has to do
 rather than how many things there are to count, and a `decisions` entry that declares
@@ -98,7 +100,8 @@ reports changed files that neither a capability claims nor `$unclaimed` declares
 rule `--audit` applies full-tree, one diff narrower. On the fixture it names
 `src/services/proxy-swap.ts` instead of printing OK. Repos that declare no `$unclaimed` are
 unaffected: the map never claimed to be total, so the guard still has no basis to call
-anything unclaimed.
+anything unclaimed. Deleting such a file is excluded rather than reported - that deletion is
+the change which fixes the map, and blocking it would leave the author with nothing to do.
 
 ### Two capabilities in one folder had no way to say which file was whose (2026-08-06)
 
@@ -119,8 +122,10 @@ that hands a file to nobody is reported as unclaimed code, one that has stopped 
 anything is reported like any other dead glob, a capability of nothing but exclusions is
 refused (it would claim no code while reading as mapped), and an exclusion written in the
 object form is refused rather than silently given a coupling mode it cannot have.
-`tools/spec-guard-test.mjs` gains nine cases and a `never` assertion, because a case that only
-checks the exit code cannot tell "the right capability fired" from "both did".
+`tools/spec-guard-test.mjs` gains ten cases and a `never` assertion, because a case that only
+checks the exit code cannot tell "the right capability fired" from "both did". The new syntax
+also had to be kept out of the one list where it would be read as a literal path: an
+exclusion, or a non-string, under `$unclaimed` is refused where it is written.
 
 ### The persona gate failed CI on four of the six files a plan writes (2026-08-06)
 
@@ -137,8 +142,10 @@ All six artifacts plus `contracts/` and `checklists/` are now one list. The full
 about committed scaffolding grows the same four, which is the direction that should be loud:
 still there after the work closed means `/spec-reconcile`'s cleanup did not run.
 `tools/clarify-gate-test.mjs` gains a diff-mode helper that builds the plan-stage branch for
-real, and two cases on it - the plan's outputs pass, and a genuine sub-spec with no persona on
-the same branch is still reported.
+real, and three cases on it - the plan's outputs pass, a genuine sub-spec with no persona on
+the same branch is still reported, and a capability genuinely named `contracts` is not read as
+scaffolding for being called that (the directory forms are anchored at `specs/<capability>/`
+for exactly that reason).
 
 ### A spec could carry two `## Clarifications` sections and every guard stayed green (2026-08-06)
 
