@@ -64,10 +64,10 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 |---|---|
 | Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **189** across 6 rounds (2026-08-03, 2026-08-04, 2026-08-06-adr032, 2026-08-06-field1, 2026-08-06-planning-loop, 2026-08-06) |
+| Observations recorded | **190** across 7 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 96 pass, 89 fail, 1 not-applicable, 3 partial |
-| Failures found | **170** - **81 fixed and re-verified** (across 19 merged pull requests), **89 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden |
+| Verdicts | 97 pass, 89 fail, 1 not-applicable, 3 partial |
+| Failures found | **167** - **82 fixed and re-verified** (across 20 merged pull requests), **85 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 4 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -174,7 +174,6 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `SHAPE-05` | the standard has vocabulary for a binary-compatibility contract whose source of truth is a previously-compiled binary, so spec-reconcile does not document a compatibility shim as current, intended behaviour | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SHAPE-06` | R23's mainline-integration rule, and the manifest's release-process vocabulary generally, has a place for a maintained parallel release branch - the shape that makes an ordinary security backport possible | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SHAPE-07` | the security-baseline axis catalog has an adversarial/fuzz-testing axis, for a repo whose primary security control is fuzzing rather than a disclosure process | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `SHAPE-08` | the standard's shipped bash guard scripts run correctly on a Windows checkout with Git's default `autocrlf=true`, or with a real `.gitattributes` normalizing line endings, instead of exiting 127 with no denial message on the exact command they exist to stop | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SHAPE-09` | the R19 settings baseline and R16's runtime-cost disclosure name a real command vocabulary for Windows, not only macOS/Linux tools (`sudo`, `diskutil`, `launchctl`, `crontab`) and the one dependency (`jq`) R16 currently omits | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SHAPE-13` | the decision checklist or capability-map guidance has a category for a repo whose real coupling edge is a build-system graph independent of its directory layout | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SHAPE-14` | the standard names a persona-and-content vocabulary for a content-only repo whose product is narrative, translation, or packaging-recipe text, not application behaviour | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
@@ -199,9 +198,6 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `ADOPT-05` | the technology-detection step names a repo's second, workspace-composing layer (a west/repo manifest pulling in dozens of sibling repositories), not only the single root package manifest | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `ADOPT-06` | stack detection has an evidence-quality rule, so 715 `package.json` matches inside npm-compat test fixtures do not read as 'maybe Node' on a repo whose real build system is something else entirely | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `ADOPT-07` | the honest-miss path's one deliverable (docs/stack-decisions.md, for a technology with no registered Layer-2 stack) exists in the manifest, a SPEC rule, and the taxonomy - the three places every other required deliverable exists in | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `SPEC-22` | re-planning a spec that has already been developed produces an INCREMENTAL plan from the spec's own delta, not a plan for the whole capability again | `repo:repository-standards/core` | **open** (logged, not fixed) |
-| `TRACK-20` | task ids are stable across re-planning rounds, so a tracker item keyed by task id still means the same work on the second round | `repo:repository-standards/core` | **open** (logged, not fixed) |
-| `TRACK-21` | a tracker story whose scope changed because its spec changed is updated, or the divergence is surfaced to a human | `repo:repository-standards/core` | **open** (logged, not fixed) |
 | `DEC-12` | the decision catalog has a category for a repo whose release gate is owned by a third party, not by its own CI or maintainer | `repo:Rdatatable/data.table` | **open** (logged, not fixed) |
 | `DEC-13` | the retroactive-decision reconstruction has a path for a founding decision that left no trace in the code or in the repo at all | `repo:opentofu/opentofu` | **open** (logged, not fixed) |
 
@@ -290,6 +286,7 @@ from the PR merging, not inferred from the verdict flipping:
 | `TRIG-05` | the document that states the unprompted-behaviour contract (agent-work.md) is delivered to an adopting repo, not left as a page that exists only on the standard's own website | `fixture:test-greenfield-core` | [core/pull/18](https://github.com/repository-standards/core/pull/18) |
 | `STACK-04` | self-verify depends only on Node built-ins to check a Layer-2 stack's compliance, so a missing pnpm reads as a missing prerequisite, not as drift indistinguishable from a real lint failure | `fixture:test-greenfield-node` | [node/pull/1](https://github.com/repository-standards/node/pull/1) |
 | `STACK-06` | the one documented package-manager migration path (`pnpm import`) is verified against real bun- and yarn-managed repositories before being offered as the escape hatch | `fixture:test-greenfield-core` | [node/pull/1](https://github.com/repository-standards/node/pull/1) |
+| `SHAPE-08` | the standard's shipped bash guard scripts run correctly on a Windows checkout with Git's default `autocrlf=true`, or with a real `.gitattributes` normalizing line endings, instead of exiting 127 with no denial message on the exact command they exist to stop | `fixture:test-greenfield-core` | [core/pull/25](https://github.com/repository-standards/core/pull/25) |
 | `GREEN-01` | the clarify gate is actually invoked by the scripts that begin planning, so an unclarified spec cannot be planned or tasked just because nothing calls the gate that would stop it | `fixture:test-greenfield-core` | [core/pull/19](https://github.com/repository-standards/core/pull/19) |
 | `GREEN-04` | the greenfield spec-writing step points a newcomer at a file that actually ships, for the single hardest artifact they will write | `fixture:test-greenfield-core` | [core/pull/19](https://github.com/repository-standards/core/pull/19) |
 | `SPEC-22` | re-planning a spec that has already been developed produces an INCREMENTAL plan from the spec's own delta, not a plan for the whole capability again | `repo:repository-standards/core` | [../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md](../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md) |

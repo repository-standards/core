@@ -120,6 +120,17 @@ post - not caveats to be relegated to a footnote:
 
 ## Adding to it
 
+**Run filenames carry an explicit sequence when more than one round lands on the same
+date** (`2026-08-06-a-<slug>.json`, `-b-`, `-c-`). Runs are read in filename order and a later run
+supersedes an earlier one for the same case+target, so filename order has to *be* run order.
+Two same-day rounds without a sequence letter are ambiguous, and `--check` refuses them rather
+than letting the alphabet decide which finding is current.
+
+**A case+target's verdict is its latest observation, not its worst.** A defect found in one
+round and fixed in a later one leaves the punch list; the earlier `fail` stays in its run file
+as history, and the headline table states how many were superseded that way, so the list
+shrinking is legible rather than quiet.
+
 New cases go in `suite.json`, new repositories in `targets.json`, new results in a new
 `runs/<date>.json` - then `node tools/validation.mjs` regenerates the two pages. Never edit the
 generated pages; `--check` will fail the pull request, which is the point of it.
