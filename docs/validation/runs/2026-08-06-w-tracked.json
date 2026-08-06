@@ -1,0 +1,12 @@
+{
+  "$about": "One case, raised by the large-multi-year adoption round and re-verified here from a clean fixture before it was fixed. This is the defect that most directly contradicts the standard's premise, so it was reproduced independently rather than taken from the round's report: the verifier's answer to 'is the repository compliant' was being decided by one laptop's disk.",
+  "observations": [
+    {
+      "case": "GATE-38",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "at": "2026-08-06",
+      "evidence": "Reproduced from scratch, not inherited. A throwaway git repository with `/docs/` in .gitignore, `docs/personas.md` authored on disk, and a minimal manifest requiring that one entry: `git ls-files` listed only `.gitignore`, `git check-ignore -v` reported `.gitignore:1:/docs/`, and the shipped verifier printed `self-verify: OK - drift 0 - 100% adopted (2/2), 0 excepted - compliant with the standard`. The file is in no commit; a fresh clone has nothing there. The condition was found in the field on matomo-org/matomo, whose .gitignore excludes /docs/ - where 16 of the manifest's 48 file entries live, so the roster, all six decision records and the product pages were written, verified as compliant, and left out of the commit. Fixed: a required entry that exists but is ignored-and-untracked is drift, and the failure quotes the rule that excludes it. The test is deliberately ignored-AND-untracked rather than merely untracked, because files are authored before they are staged and failing on that would fire during every honest adoption run. After the fix the same fixture reads `drift 1 - 50% adopted (1/2)`; `git add -f` on the same file returns it to `drift 0`. Four cases added to tools/self-verify-drift-test.mjs covering both directions plus the two shapes that must stay unaffected (unstaged-but-not-ignored, and a tree that is no git repository at all); neutralising the check turns the first red and leaves the other three green."
+    }
+  ]
+}
