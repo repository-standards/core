@@ -171,6 +171,31 @@ name and was asked to produce the product. It never searched the web.
 Every run whose line carried `repositorystandards.com` found the site within a few calls and
 planned against the real published manifest.
 
+**This is a discovery defect, not a defect in the standard, and the distinction decides what
+to do about it.** The instinct is to write "if somebody names us without a URL, we are at
+repositorystandards.com" into our own documentation - but an agent that has not found us does
+not read our documentation. Every fix on this side of the line is circular.
+
+The levers are all outside the product: a package under the obvious name whose readme says
+"this is not a dependency, here is the one line" turns `npm i repository-standards` from a
+wrong mental model into a working route; the organisation name already matches a search nobody
+performed; listings are where an agent looks before it guesses. Those belong to distribution
+work, and pushing them into the standard would be the standard trying to fix the world at its
+own expense.
+
+**The agent's behaviour should not be changed either.** Asking for a concrete address is
+correct - the alternative is inventing one, which is the substitution failure below, and of the
+two, refusing is far better. The only thing worth wanting is that the request names the *shape*
+of the answer ("an address or a repository") rather than asking the person to supply "the
+standard itself". That is somebody else's behaviour; the corpus can state the expectation and
+cannot enforce it.
+
+So `A14` stays as a regression row rather than a bug to fix here. It is how the question gets
+answered later: **the same prompt, the same bare name, run again once the distribution work has
+happened.** Found means it worked. Not found means distribution has not moved - which is a
+different conclusion from "the standard is broken", and the two are easy to confuse without a
+row that predates both.
+
 So the two failure shapes are the same defect seen from opposite sides. Given the bare name, an
 agent either **invents a plausible substitute** and reports success, or **hands the problem
 back** to the person who asked. Given the domain, it works. Nothing in the product's own
