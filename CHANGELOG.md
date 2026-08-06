@@ -16,6 +16,67 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The standard was run against a 13,591-file, nineteen-year repository, and the drift number stopped meaning what it means on a small one (2026-08-06)
+
+The third `FIELD-1` repository, and the first at scale: `matomo-org/matomo` - 13,591 tracked
+files, 31,287 commits since 2007-07-24, 479 all-time author names, 98 plugin directories of
+which 16 are git submodules, GPL-3.0, `archived: false` with `pushed_at` on the day of the
+run. Adopted for real on a local branch and taken from `drift 17 - 37% adopted (10/27)` to
+`self-verify: OK - drift 0 - 98% adopted (57/58), 1 excepted`. Nothing was pushed upstream
+and no issue or pull request was opened.
+
+Three things the run confirms, and they are worth saying before the failures. **Waves are
+already a first-class concept** - the appetite question at intake, the re-entry section, and
+step 6's "wave one closes red, by design" - so the gap this round was looking for is not
+there. **The backlog is counted and prioritised**: 36 items in four epics, each naming the
+role that must act and the skill that carries it. **Cost is not the problem at this size**:
+best of three runs on the adopted tree, self-verify 218 ms, spec-structure 64, facts-check
+40, schema-pair 40, cycle-guard 42, decision-records-check 43, `spec-guard --audit` 76,
+`spec-guard` diff mode 113. Two consecutive self-verify runs produced byte-identical output.
+
+What the run breaks is the number. **Drift reached 0 in one sitting** on a repository where
+12 of the 14 mapped capabilities have no spec and 36 items remain, because drift counts
+manifest entries and the manifest has 59 of them whatever the repository's size. The router
+names that number as the progress bar; at this scale it is full long before the first
+wave's real work is done. Worse, **`self-verify` asks the filesystem and never the
+index**: matomo's own `.gitignore:13` excludes `/docs/`, where 16 of the manifest's 48 file
+entries live, so the persona roster, all six decision records, PRODUCT and ARCHITECTURE were
+written, reported `PASS`, and were absent from a 51-file commit that contained zero paths
+under `docs/`. R3 says project knowledge lives in the repo, versioned with the code; here a
+third of the manifest's file entries resolved to a directory this repository will not carry,
+at drift 0, described as "compliant with the standard".
+
+Nine more findings, each with a reproduction: `schema-pair` skips when `database/schema/` is
+absent - the state of every repo that has *not* complied with R24 - and no manifest entry
+requires that directory at all, so matomo's 30 `CREATE TABLE` statements sit at drift 0 with
+R24 wholly unmet. `spec-guard --audit` reports its unclaimed set as 20 alphabetical paths
+plus a remainder, with map defects and unclaimed files added into one count; on this tree a
+per-directory rollup of the same 296 files shows 150 of them in `plugins/CoreHome` alone. The
+`.gitattributes` entry that exists to force LF on the shipped guards passes on a
+`.gitattributes` that forces `eol=crlf` on `*.sh` and `*.mjs`. A `content` exception on a
+merge-class entry can never apply, and self-verify tells the adopter to delete the record as
+a deviation they no longer have. The adoption percentage rises from 37% to 82% purely by
+copying the standard's own shipped files. The three options offered for landing the CI
+workflow cover its self-verify step only, while its unconditionally-blocking audit step would
+red every unrelated pull request until the twelfth spec is written. The copy-class `.nvmrc`
+contradicts a Node repo's own `engines` declaration. The intake has no step for a repository
+that already carries a substantive `AGENTS.md` whose operational rules live in another
+repository - R3's failure mode in its most defensible form. And the shipped ADR index shows
+no example of the row format its own guard accepts.
+
+All eleven land as suite cases (`ADOPT-11`-`ADOPT-15`, `GATE-33`-`GATE-36`, `SHAPE-16`,
+`DOC-19`), joined by `GATE-37` for the guard-cost measurement above; 16 observations in
+`docs/validation/runs/2026-08-06-s-field3.json`. None of the eleven is patched here: each
+one is either a design decision that changes what an existing adopter's number means, or a
+change to a shipped guard's output that wants its own pass. The options are written into
+each case rather than guessed.
+
+Two limits on what this proves. The adopting agent was this project's own, so every intake
+question needing a human - the persona tie-breaker, the appetite, the workflow blast radius -
+was answered by inference and marked as such; the target-personas record was left `Proposed`
+for exactly that reason. And `FIELD-1` still wants a mid-size repo on an **unregistered**
+stack, which is the one shape neither adoption has exercised.
+
 ### The work-cycle guard checked the id and trusted everything else (2026-08-06)
 
 Eight open findings in the tracking machinery, all reproduced against the live tree before
