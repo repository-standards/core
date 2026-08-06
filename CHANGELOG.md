@@ -16,6 +16,23 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A request describing two capabilities was split by the one skill barred from asking (2026-08-06)
+
+`/spec-specify` detects a capability collision by exact string match on the slug it just
+generated, and is explicitly instructed never to ask the user. A request whose slug does not
+match a capability it functionally overlaps therefore minted a sibling in silence:
+`manager-shift-reassignment` beside an existing `shift-swap-request` that already described the
+behaviour - the split-by-wording failure ADR-002 exists to prevent, arriving through the step
+meant to prevent it. The name is the one thing that does not match: the same behaviour arrives
+worded as the actor, the surface, or the ticket.
+
+The skill now checks for a collision by behaviour before minting anything - reading the Purpose,
+Scope and Out of scope of the near capabilities - and has an answer for the two-capability
+sentence that does not require asking: write the spec for the capability the request is
+primarily about, and record the boundary as a typed `NEEDS DECISION` marker naming the other
+one. The marker blocks the clarify gate, so `/spec-clarify`, which owns the question protocol,
+settles it before plan. Every near-miss considered goes in the completion report.
+
 ### The clarify record had no fixed place in the spec, so two runs could put it in two (2026-08-06)
 
 `/spec-clarify` was told to create `## Clarifications` "just after the highest-level
