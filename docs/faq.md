@@ -43,9 +43,14 @@ the adapters are for.
 
 **I'm a solo developer. Isn't this enterprise ceremony?**
 Adopt the **core profile**: what keeps knowledge alive (specs, records, backlog,
-self-verify) without what coordinates people (bridges, curated release notes, CI
-gates). Flip to the scale profile when the second regular contributor arrives -
-a flag plus the measured delta (ADR-011): [adoption - profiles](method/adoption.md).
+self-verify) without what carries it to people who are not in the room - contribution
+mechanics, UX research, work cycles. Be clear about the size of that discount:
+it is 9 manifest entries, not a different standard, and CI is **not** one of them - the
+spec-guard workflow is required at every profile (R16). The flip is not a headcount: it is a
+flag plus the measured delta, and it fires when work is handed off asynchronously, when
+somebody contributes or reads status from outside the conversation, when there is a release
+audience that is not you, or when you are designing for users you are not (ADR-011,
+ADR-040): [adoption - profiles](method/adoption.md).
 
 **What if I disagree with one of the standard's picks?**
 Deviate deliberately: record a local superseding decision (ADR-004) and note the
