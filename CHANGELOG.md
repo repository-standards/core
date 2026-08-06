@@ -16,6 +16,25 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A manifest entry claimed it shipped in a release nobody has cut (2026-08-06)
+
+`since` names the release an entry first shipped in, and an entry riding the next cut says
+the literal `unreleased` - which is what every other not-yet-released entry in
+`standard.manifest.json` says. One said `0.8.14`, against a `VERSION` of 0.8.13 and no such
+release: a guess at what the maintainer would call the next one, added inside an unrelated
+fix, with nothing to notice it.
+
+It is not a typo. A `since` ahead of `VERSION` cannot match any real commit, so the field
+stops being reconstructible from history - the only reason it exists - and the manifest
+quietly asserts a release R18 reserves to the maintainer. The entry now says `unreleased`.
+
+The general problem does not close by editing one value, so it is now checked: `tree-check`
+reads every object in every array of the manifest and fails any `since` that is neither
+`unreleased` nor an `x.y.z` release at or below `VERSION`. Comparison is numeric part by
+part, because as strings `0.8.9` sorts after `0.8.13` and the very case this exists for
+would read as fine. `node tools/tree-check.mjs --self` runs the eleven cases behind that
+rule - four that must pass, seven that must fail - and CI runs it beside the tree check.
+
 ### The decision catalog was missing from the file that sends people to the map (2026-08-06)
 
 `taxonomy.md` and `checklist.md` are the two method pages whose whole job is routing - which
