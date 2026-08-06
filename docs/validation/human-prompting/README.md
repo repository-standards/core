@@ -51,6 +51,55 @@ produce *on its own*. You cannot type them. You build the situation and see whet
 and, critically, whether it speaks **before** the damage rather than after. The same sentence
 is a working product before a spec is written and a correction after.
 
+## A run is a conversation, not a prompt
+
+The first version of this method scored one line in and one verdict out. That measures the
+front door and nothing behind it, and the front door is the part most likely to work.
+
+**A run is the whole flow**: the opening line, what the agent asks back, what a person would
+plausibly type next, what it asks after that, and where the thing ends up. The interesting
+failures are not in turn one. They are in turn four, when the agent asks something a real
+person cannot answer, or stops asking too early, or asks six things at once, or reaches the
+end without saying what happens now.
+
+So every run records a **trace**, and the trace is the evidence:
+
+```json
+{
+  "prompt": "A1",
+  "target": "repo:acme/booking-api",
+  "mode": "full-loop",
+  "turns": [
+    { "who": "user",  "said": "follow repositorystandards.com - take this repo onto the standard, interview me for what you need" },
+    { "who": "agent", "said": "read the standard, measured the repo, asked 4 questions: intent, technology, appetite, plan-only or execute",
+      "asked": true, "checked": true, "suggested": true,
+      "note": "asked because the line told it to - not evidence of asking unprompted" },
+    { "who": "user",  "said": "internal tool, node, small appetite, just plan it" },
+    { "who": "agent", "said": "produced a wave plan, 14 items, did not touch the tree",
+      "asked": false, "checked": true, "suggested": true }
+  ],
+  "outcome": "plan-only, nothing written, ended by naming the first wave and asking whether to run it",
+  "abandon_risk": "turn 2 asked for 'appetite' without saying what the word means here - a first-time user has to guess",
+  "verdict": "pass"
+}
+```
+
+Score the three flags **per agent turn**, not once for the run. An agent that asks well at turn
+two and then executes four steps in silence has a different problem from one that never asks.
+
+Two fields carry the weight and neither is mechanical:
+
+- **`outcome`** - what state the repository and the user are actually in at the end. "Adopted"
+  is not an outcome. "Drift 6, three specs written, the user still does not know what happens
+  on their next pull request" is.
+- **`abandon_risk`** - the turn where a real person would plausibly give up, and why. A run that
+  reaches a good end state through four turns nobody would sit through has still failed, and
+  this is the only field that catches it.
+
+**Answer as the user honestly.** If the agent asks something you can only answer because you
+know this product, say so in the trace and answer as a person who does not - or say you could
+not answer it. An interview that only works on insiders is the finding.
+
 ## How to run one
 
 1. **Give the agent two things only**: the repository, and the prompt verbatim. No briefing, no
@@ -87,9 +136,13 @@ opinion, and this suite has no mechanical check to fall back on.
 
 ## Reporting a failure
 
-**If you typed something and the standard did not do the right thing, that belongs here.** Open
-an issue or a pull request adding the prompt to [`prompts.md`](prompts.md) with `source:
-reported`, and say what you expected and what happened.
+**If you typed something and the standard did not do the right thing, that belongs here.**
+[`reporting.md`](reporting.md) says exactly what to send, what actually helps, and how to pull
+the conversation out of a Claude Code session automatically without sending everything the
+session touched.
+
+The short version: what you typed, what you expected, what happened instead. Open an issue or
+a pull request adding the prompt to [`prompts.md`](prompts.md) with `source: reported`.
 
 It stays. A prompt is never removed for having been fixed - it is the regression test that the
 fix holds. A corpus containing only prompts the product already handles proves nothing, which
