@@ -64,10 +64,10 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 |---|---|
 | Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **193** across 8 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd) |
+| Observations recorded | **195** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 99 pass, 90 fail, 1 not-applicable, 3 partial |
-| Failures found | **167** - **84 fixed and re-verified** (across 21 merged pull requests), **83 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 101 pass, 90 fail, 1 not-applicable, 3 partial |
+| Failures found | **165** - **84 fixed and re-verified** (across 21 merged pull requests), **81 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 9 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -135,8 +135,6 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `SPEC-14` | the clarify session marker section has a defined position in the template, so two independently-run sessions place it in the same spot | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SPEC-15` | R7's own text and the manifest's own required-decisions list agree on whether the standard asserts a count or subset of required decisions | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SPEC-16` | a spec's engine-artifact scaffolding is excluded from the persona/structure guards for every path spec-plan is documented to produce, not only plan.md/tasks.md | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `SPEC-17` | extending a capability that a different capability's Accepted BDR explicitly retires is caught before it is specced, not routed through the ordinary spec-specify path | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `SPEC-18` | spec-specify and spec-clarify read docs/decision-records/ for a record that already governs the request, before asking the user anything | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SPEC-19` | spec-specify has explicit guidance for a sentence that describes two capabilities at once, so the capability-split decision is not made silently by the one skill forbidden from asking | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SPEC-21` | a business decision written as a BDR has a Confirmation section stating how compliance is verified, the same as an ADR | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `TRACK-10` | the vocabulary for a cycle-boundary split (ADR-029) includes a real status value, so the fixture does not have to invent one outside the declared enum | `fixture:test-greenfield-core` | attempted, still open - [core/pull/15](https://github.com/repository-standards/core/pull/15) did not fully hold (see evidence in `runs/2026-08-04.json`) |

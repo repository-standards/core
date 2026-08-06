@@ -459,7 +459,7 @@ add a narrow capability-map.json entry for a second capability inside an already
 - **Given:** a request that would extend a capability an Accepted BDR has retired, routed through spec-specify (the PO's documented entry point)
 - **When:** spec-specify runs
 - **Then:** the request is recognized as governed by the retiring BDR before a spec is drafted for it, instead of proceeding because spec-specify is the only spec-lifecycle skill with no retired-status check
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -472,7 +472,7 @@ grep -c -i retired across every standard/.claude/skills/*/SKILL.md, and reproduc
 - **Given:** a request that collides with an Accepted BDR neither skill has been told to check
 - **When:** spec-specify or spec-clarify runs, using docs/discovery/ as the documented sole pre-user answer source
 - **Then:** the relevant BDR is read and surfaces before the user is asked, instead of only being found if a human happens to read it out of band
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
