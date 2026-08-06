@@ -4,7 +4,7 @@
 // The claim this repo makes ("executed against real repositories, failures published
 // alongside passes, the portable half re-runnable by someone else's standard") only
 // survives a sceptic if every number in the rendered pages traces to a row in
-// docs/validation/{suite.json,targets.json,runs/*.json} - never to hand-typed prose that
+// docs/validation/ai-prompting/{suite.json,targets.json,runs/*.json} - never to hand-typed prose that
 // can drift out from under the data it once matched. This script is that trace: it reads
 // the three sources and writes the two pages, so the pages cannot say something the data
 // does not.
@@ -36,13 +36,13 @@
 // sequence letter (<date>-a-<slug>), because "same date" is not "known order".
 //
 // Usage:
-//   node tools/validation.mjs           # write docs/validation/{README,benchmark}.md
+//   node tools/validation.mjs           # write docs/validation/ai-prompting/{README,benchmark}.md
 //   node tools/validation.mjs --check   # exit 1 if the rendered pages are stale, if any
 //                                        # case has never been observed at all, if any
 //                                        # observation has no evidence, or if any "fail"
 //                                        # observation has neither a fix nor a waiver
 //   node tools/validation.mjs --root <d> # read and write under <d> instead of
-//                                        # docs/validation - how validation-test.mjs runs
+//                                        # docs/validation/ai-prompting - how validation-test.mjs runs
 //                                        # this renderer against fixture data
 //
 // Zone 1 tooling - this feature is evidence ABOUT the product, not part of the shipped
@@ -62,7 +62,7 @@ if (rootFlag !== -1 && (!process.argv[rootFlag + 1] || process.argv[rootFlag + 1
   console.error("validation: --root needs a directory (node tools/validation.mjs --root <dir>)");
   process.exit(1);
 }
-const DIR = rootFlag !== -1 ? process.argv[rootFlag + 1] : "docs/validation";
+const DIR = rootFlag !== -1 ? process.argv[rootFlag + 1] : "docs/validation/ai-prompting";
 const check = process.argv.includes("--check");
 
 const readJSON = (p) => JSON.parse(readFileSync(p, "utf8"));

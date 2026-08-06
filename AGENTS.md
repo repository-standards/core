@@ -71,7 +71,7 @@ clients get them by reference (ADR-004), never as copies.
   nothing there that is not indexed),
   `node tools/file-map.mjs --check` (the file map is generated from the manifest,
   never hand-written), `node tools/validation.mjs --check` (the validation suite's
-  rendered pages match `docs/validation/suite.json`/`targets.json`/`runs/*.json`, every
+  rendered pages match `docs/validation/ai-prompting/suite.json`/`targets.json`/`runs/*.json`, every
   case has a verdict, and every open failure carries an explicit waiver rather than a
   silent gap), `node tools/docsite.mjs && node tools/site-check.mjs &&
   node tools/site-behaviour.mjs && node tools/site-check-test.mjs` (the landing and the
