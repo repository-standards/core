@@ -42,6 +42,18 @@ Before any phase runs, one intake pass:
      testing). Treat this as a **red-flag stop** (same tier as a committed secret or
      a remote-database write) - halt and tell the human what the repo's own policy
      says, rather than proceeding to open a PR the repo's own rules forbid.
+   - **Look past the repo root, and read `README.md` too.** `honojs/hono` states its AI
+     policy in `docs/CONTRIBUTING.md` and carries no root `CONTRIBUTING.md` at all, so a
+     scan that checks the two usual filenames at the root finds nothing and reports the
+     repo as having no policy.
+   - **A third shape exists: a permission with a sanction and no condition.** hono's is
+     "You may use AI to contribute, but it must never waste a maintainer's time or make
+     their work unpleasant... a maintainer may close your PR without notice and block your
+     account." Nothing procedural is being asked for, so both branches below - which key on
+     *what must you do differently* - have no answer and the policy passes unremarked. It
+     is not a stop and it is not a condition; it is a risk that falls on the **user's**
+     account rather than on the run. Say it back plainly before anything is submitted
+     anywhere, and let the user decide whether an unsolicited contribution is worth it.
    - **Not every AI policy is a ban - some are a conditional allow.** A policy can permit
      agent involvement while requiring every contribution artifact (issues, PRs, commit
      messages, ADR/BDR text) to be rewritten and submitted by a human, disclosure of
@@ -224,7 +236,17 @@ npx degit repository-standards/core/standard
 3. **Apply, adapted - do NOT blind-copy:**
    - Merge the `settings.json` guards + deny/ask into the target's
      `.claude/settings.json`; keep repo-specific entries; adapt migration/deploy CLIs
-     to the real stack.
+     to the real stack. **The deny list is written from a consuming application's point of
+     view, so check whether the target repo *is* one of the tools it denies** - copied
+     verbatim into `drizzle-team/drizzle-orm`, `Bash(drizzle-kit *)` denies that
+     repository's own build and test command, and the same holds for any repo publishing a
+     CLI the list names defensively. Narrow the entry to the genuinely destructive
+     subcommands rather than dropping it.
+   - **Land `.claude/hooks` and `.claude/settings.json` together or not at all.** The hooks
+     only ever run because `settings.json` wires them into `PreToolUse`; both entries are
+     optional, so a repo that takes the guard scripts and not the wiring reaches drift
+     0 with four guards that never fire, and `self-verify` says nothing. A deny-guard that
+     is silently inert is worse than an absent one.
    - Drop in the guard + workflows; wire the pre-commit into the repo's hook mechanism.
      **Ask before the workflows land - this is the one step whose blast radius is other
      people.** They are live on merge, not dormant: `spec-guard.yml` runs `self-verify` on
@@ -234,6 +256,12 @@ npx degit repository-standards/core/standard
      accept red CI while the waves run, (b) hold them until the final wave, (c) land them
      now with the self-verify step set to `--warn` and flip it to blocking at drift 0.
      Never land them silently.
+   - **`spec-guard.yml` reads the Node version from `.nvmrc`, and `.nvmrc` is optional.**
+     A repo that pins its runtime elsewhere - `honojs/hono` pins node, bun and deno
+     together in `.tool-versions`, and its own CI already feeds that file to `setup-node` -
+     reaches drift 0 carrying a required workflow whose first setup step names a file that
+     is not there. Either land `.nvmrc` as well, or point the step at the pin the repo
+     already has. Do not leave the reference dangling because the manifest did not complain.
    - `.github/workflows/spec-guard.yml` is a **reference implementation of the R16 gate**
      (run `self-verify`, block the PR on nonzero drift), written for GitHub Actions because
      that is the common case - it is not a mandate to use GitHub Actions. If the repo's
@@ -259,7 +287,18 @@ npx degit repository-standards/core/standard
      user, because then the rule only holds while someone remembers it.
    - `docs/` and `specs/` in the shipped tree are **templates** - fill them with the
      target repo's content, in that repo's language.
-   - Skills into the repo's skill dir (`.agents/skills` or `.claude/skills`).
+   - Skills into the repo's skill dir (`.agents/skills` or `.claude/skills`). **Read the
+     descriptions already there first.** A repo that has invested in its agent setup often
+     has a skill for a job one of the shipped skills also claims - found in
+     `usebruno/bruno`, whose `code-review` and the standard's `pre-pr-review` both answer
+     "review my branch before I push". Two descriptions that could each plausibly match one
+     sentence each lose it half the time, which the shipped `AGENTS.md` names as a defect, so copying
+     the set in beside a competitor makes the repo worse at the exact moment it adopts.
+     Name every collision to the user and let them pick: keep theirs (record the shipped
+     one as a `content` exception on that member so an update does not reinstate it),
+     keep the standard's, or merge the two. A directory content entry only checks the
+     members the standard ships, so the repo's own skills are never at risk - the risk is
+     only ambiguity, and only the user can resolve it.
 
 4. **Watch repo gotchas** (e.g. a broad `settings.json` `.gitignore` rule swallowing
    `.claude/settings.json` - add a `!` negation).
