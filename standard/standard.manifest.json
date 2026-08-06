@@ -156,7 +156,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R4",
-      "sha256": "0d6b2a4017cfe8e1d527df9b828efa30602e3e74b9df823976003c81a3f9565f"
+      "sha256": "3afdeea3f19b27624b69bfb0d00e0ceb1165bdeec53692a630b4596113ed6edf"
     },
     {
       "path": "docs/facts.json",

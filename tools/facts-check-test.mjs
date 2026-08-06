@@ -48,6 +48,26 @@ const BASE = {
   "SPEC.md": "# Spec\n\n- **R1.** a rule\n- **R2.** another rule\n",
 };
 
+// A repo whose canonical fact lives in a binary artifact - a font's version inside its
+// TTF name table. The two encodings matter: the check used to answer differently
+// depending on which one the artifact happened to use, matching the ASCII record and
+// reporting a green tick, and reporting "matches nothing" for the UTF-16 one as though
+// the pattern were at fault. Both are the same unsupported home.
+const nameTable = (bytes) =>
+  Buffer.concat([Buffer.from([0x00, 0x01, 0x00, 0x00]), Buffer.from("name"), Buffer.from([0x00, 0x00]), bytes]);
+const BINARY = {
+  "font-ascii.ttf": nameTable(Buffer.from("Version 2.103", "ascii")),
+  "font-utf16.ttf": nameTable(Buffer.from("Version 2.103".split("").flatMap((c) => [0, c.charCodeAt(0)]))),
+};
+const BINARY_FACT = (file) => [
+  {
+    id: "font-version",
+    what: "the font's version, which lives in the binary name table",
+    home: { match: { file, pattern: "Version (\\d+\\.\\d+)" } },
+    claims: [{ file: "README.md", pattern: "at version (\\d+\\.\\d+)" }],
+  },
+];
+
 const run = (dir, args = ["--facts", "facts.json"]) => {
   try {
     return { code: 0, out: execFileSync("node", [CHECK, ...args], { cwd: dir, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }) };
@@ -78,6 +98,42 @@ const CASES = [
   // A repo that declares no facts is not a repo with drift - the shipped guard runs
   // in every adopting repo and must stay quiet where nothing was declared.
   { name: "a repo with no declared facts passes", fails: false, says: "skipping", files: {}, args: [] },
+  {
+    name: "a home inside a binary artifact is refused by name, not answered by accident",
+    fails: true,
+    says: "font-ascii.ttf is not UTF-8 text",
+    files: { ...BINARY, "README.md": "this font ships at version 2.103\n" },
+    facts: BINARY_FACT("font-ascii.ttf"),
+  },
+  {
+    name: "the same binary home in another encoding gets the same answer, not 'matches nothing'",
+    fails: true,
+    says: "font-utf16.ttf is not UTF-8 text",
+    files: { ...BINARY, "README.md": "this font ships at version 2.103\n" },
+    facts: BINARY_FACT("font-utf16.ttf"),
+  },
+  {
+    name: "a claim pointing into a binary artifact is refused the same way",
+    fails: true,
+    says: "font-ascii.ttf is not UTF-8 text",
+    files: { ...BINARY, "README.md": "this font ships at version 2.103\n" },
+    facts: [
+      {
+        id: "font-version",
+        what: "a text home restated inside a binary artifact",
+        home: { match: { file: "README.md", pattern: "at version (\\d+\\.\\d+)" } },
+        claims: [{ file: "font-ascii.ttf", pattern: "Version (\\d+\\.\\d+)" }],
+      },
+    ],
+  },
+  // The boundary must not cost the ordinary case: a text home beside binary artifacts
+  // in the same repo still resolves and still passes.
+  {
+    name: "a text home in a repo that also ships binaries still passes",
+    fails: false,
+    says: "every restatement agrees",
+    files: { ...BINARY },
+  },
 ];
 
 let failures = 0;
@@ -85,7 +141,7 @@ for (const c of CASES) {
   const dir = mkdtempSync(join(tmpdir(), "facts-check-test-"));
   const files = { ...BASE, ...c.files };
   for (const drop of c.drop ?? []) delete files[drop];
-  files["facts.json"] = JSON.stringify(FACTS, null, 2);
+  files["facts.json"] = JSON.stringify(c.facts ?? FACTS, null, 2);
   for (const [rel, body] of Object.entries(files)) {
     mkdirSync(dirname(join(dir, rel)), { recursive: true });
     writeFileSync(join(dir, rel), body);
