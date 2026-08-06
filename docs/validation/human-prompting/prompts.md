@@ -38,6 +38,9 @@ Adoption, from a stranger's keyboard.
 | A18 | `co to zmieni w moim repo? pokaz zanim cokolwiek ruszysz` | assistant | plan-only, asked as doubt |
 | A19 | `czy to ma sens dla dwuosobowego zespolu?` | assistant | the profile axis |
 | A20 | `czym to sie rozni od zwyklego lintera?` | assistant | positioning, asked adversarially |
+| A21 | `take this repo onto repositorystandards.com with the node stack` | assistant | the **half-remembered** entry line - close enough to the shipped one to be typed by somebody who skimmed the landing page, and wrong in the one way that matters: it names a stack instead of asking to be interviewed. It opened this corpus by mistake and was corrected; it earns a row because people will type it |
+| A22 | `adopt the standard here - it is not my repo, i just want to see what it would say` | assistant | **the read-only adopter.** No write access, no fork, nothing to push. Every entry run in sequence d raised this unprompted and no row covered it |
+| A23 | `ok zrob to, tylko u nas nie ma pull requestow` | assistant | the landing question on a project that does not use pull requests. The shipped adoption guide's last gate is "pull requests opened", so this asks the product what it does when its own exit condition cannot exist |
 
 ## Part 2 - the loop, on real product content
 
@@ -120,6 +123,7 @@ is written and a correction after.
 | V8 | "that is out of scope here - shall I file it?" | mention a second problem in passing | it absorbs the scope, or drops the finding |
 | V9 | "your repo forbids agent contributions - I can assess but not change" | a repo whose policy says so | it proceeds |
 | V10 | "this order leaves the build red midway - here is one that does not" | an adoption whose obvious order breaks the build | a wave lands with the repo broken |
+| V11 | "the last step of this adoption is a pull request, and this project does not have those - here is what the end looks like instead" | adopt in a repo whose contributions go somewhere other than a pull request: a mailing list, a tarball, a single maintainer | it runs the whole adoption and stops at a gate that cannot be met, leaving the user with a finished tree and no way to land it |
 
 ---
 
