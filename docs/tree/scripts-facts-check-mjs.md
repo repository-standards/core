@@ -23,6 +23,13 @@ A `home` is a file to `read`, a `count` of a glob, or a `match` that extracts th
 another file. Each claim names a file and a regular expression whose first capture group
 must equal the home's value.
 
+**Every mechanism reads UTF-8 text, and anything else is refused rather than guessed at.**
+A repo whose canonical fact lives inside a compiled artifact - a font's version in its TTF
+name table, a version resource inside an executable - cannot declare that artifact as a
+home here. Point the fact at the text the artifact is built from, or leave the restatement
+undeclared and say so where it is restated: a fact known to be unchecked is worth more than
+a check whose answer depends on which encoding the bytes happened to use.
+
 ## Decisions behind it
 
 - **Declaration rather than prohibition.** Banning restatement outright is unenforceable:
