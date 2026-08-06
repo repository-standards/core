@@ -46,6 +46,12 @@ const base = baseIdx >= 0 ? args[baseIdx + 1] : null;
 
 const sh = (c) => execSync(c, { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] }).trim();
 
+// git quotes any path outside ASCII by default (`"specs/\321\206\320\265\320\275\321\213/spec.md"`),
+// and a quoted path matches no glob and opens no file. The standard explicitly supports specs
+// written in the repo's own language, so a capability directory named in Cyrillic or Chinese is
+// expected, not exotic - and it would arrive here unreadable. Ask git for the real bytes.
+const GIT = "git -c core.quotePath=false";
+
 // Walk specs/ on the filesystem - the fallback when git is absent (a fresh degit has
 // no .git) or tracks nothing there yet. A shipped guard never dumps a stack trace.
 const fsWalk = (dir, acc = []) => {
@@ -61,11 +67,11 @@ const fsWalk = (dir, acc = []) => {
 let files;
 try {
   let raw;
-  if (staged) raw = sh("git diff --cached --name-only --diff-filter=ACMR -- specs");
-  else if (base) raw = sh(`git diff --name-only --diff-filter=ACMR ${base}...HEAD -- specs`);
+  if (staged) raw = sh(`${GIT} diff --cached --name-only --diff-filter=ACMR -- specs`);
+  else if (base) raw = sh(`${GIT} diff --name-only --diff-filter=ACMR ${base}...HEAD -- specs`);
   else {
-    const tracked = sh("git ls-files specs");
-    const untracked = sh("git ls-files --others --exclude-standard -- specs");
+    const tracked = sh(`${GIT} ls-files specs`);
+    const untracked = sh(`${GIT} ls-files --others --exclude-standard -- specs`);
     raw = [tracked, untracked].filter(Boolean).join("\n");
     if (!raw) raw = fsWalk("specs").join("\n"); // brand-new repo, nothing there yet
   }
