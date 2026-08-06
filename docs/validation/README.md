@@ -30,9 +30,11 @@ which is backwards: the machine half is the floor, and the human half is the pro
 ## Contributing a failure
 
 **If you typed something and the standard did not do the right thing, that belongs in
-[human-prompting](human-prompting/README.md).** Open an issue or a pull request. The prompt
-stays in the corpus permanently once it lands, including after it is fixed - that is what makes
-it a regression test rather than an anecdote.
+[human-prompting](human-prompting/README.md).** [How to report
+one](human-prompting/reporting.md) says what to send and how to extract the conversation from a
+Claude Code session without shipping everything the session touched. The prompt stays in the
+corpus permanently once it lands, including after it is fixed - that is what makes it a
+regression test rather than an anecdote.
 
 Defects in the machinery itself belong in [ai-prompting](ai-prompting/README.md), which
 documents how to write a case and what evidence a verdict needs.
