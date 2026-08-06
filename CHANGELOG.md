@@ -16,6 +16,21 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A business decision could say how it would fail and not how it is held (2026-08-06)
+
+`adr-write` requires a `Confirmation` section and calls it "what stops the record being
+decoration". The BDR template had no such section, and `bdr-write` forbade naming the
+technical consequence at all, so writing a real BDR - a privacy constraint on data retention -
+recorded how the team would know the call was wrong (a detection signal) and nothing about how
+they would know it had stopped being followed. On privacy, money and safety, which is where a
+business decision most often has a technical enforcement point, that is the whole risk.
+
+The BDR template gains `Confirmation`, and `bdr-write` asks for it as its own question:
+"what would catch us breaking this?" is not "what would we see in three months if this was the
+wrong call?" The tension with the record's boundary is resolved rather than dropped - naming
+where compliance is checked is required, designing it stays the ADR's job, and "nothing yet"
+is a real answer that has to be written down as one.
+
 ### The manifest asserted the required decisions R7 says it does not have (2026-08-06)
 
 R7's own text: which decision areas apply "is a property of what is being built, so this rule
