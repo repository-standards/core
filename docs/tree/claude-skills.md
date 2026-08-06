@@ -33,6 +33,13 @@ description: Use when the user describes a feature, story or behaviour change an
 description: Writes a capability spec file.
 ```
 
+## What is in here
+
+The procedures themselves, whose names are terse on purpose. [What each skill is
+for](../skill-map.md) lists every one, grouped by the moment it fires - generated from the
+skills' own frontmatter, so it cannot describe a procedure the tree no longer has, nor miss
+one it gained.
+
 ## What goes in here
 
 A procedure a person or an agent runs repeatedly, whose steps matter enough that getting

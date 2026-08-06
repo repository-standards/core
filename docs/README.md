@@ -16,6 +16,7 @@ manual. The client-authored templates and tool manuals live in the shipped tree 
 | [decision-records/](decision-records/README.md) | this repo's own ADRs - the decisions that shaped the standard, gist table in the index |
 | [open-questions/](open-questions/README.md) | the owner's provisional calls, openly seeking challengers - one file per topic, deliberations kept |
 | [case-studies/](case-studies/) | anonymized field evidence - the cases that earned the rules |
+| [skill-map.md](skill-map.md) | **generated** - what each shipped procedure is for, grouped by the moment it fires, with every description taken verbatim from the skill's own frontmatter; `tools/skill-map.mjs --check` fails CI on a stale page or a skill nobody grouped |
 | [file-map.md](file-map.md) | **generated** - what every shipped file is, why it exists and the rule it enforces, rendered from `standard.manifest.json` so it cannot disagree with what self-verify checks; `tools/file-map.mjs --check` fails CI on a stale copy |
 | [validation/](validation/README.md) | **generated** - the proof-of-work suite: real cases run against real repositories, failures published with their fix (or an open waiver), the portable subset offered as a benchmark to other standards; `tools/validation.mjs --check` fails CI on a stale render or a silently-unwaived failure |
 | [facts.json](facts.json) | the facts this repo restates on more than one surface, each with its source - `standard/scripts/facts-check.mjs` fails when a restatement stops agreeing |

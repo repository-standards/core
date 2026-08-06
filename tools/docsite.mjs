@@ -109,6 +109,7 @@ export const PAGES = CONFIG.pages || [
   { src: "docs/method/lead-work.md", out: "lead-work.html", nav: "Consultant", role: "lead", group: "Working with it" },
   { src: "docs/method/working-with-specs.md", out: "working-with-specs.html", nav: "Anyone", role: "any", group: "Working with it" },
   { src: "docs/method/agent-work.md", out: "agent-work.html", nav: "What the agent does by itself", group: "Working with it" },
+  { src: "docs/skill-map.md", out: "skill-map.html", nav: "What each skill is for", group: "Working with it" },
   { src: "docs/method/discovery.md", out: "discovery.html", nav: "Turning meetings into specs", group: "Working with it" },
   { src: "docs/method/working-language.md", out: "working-language.html", nav: "Choosing a working language", group: "Working with it" },
 
