@@ -48,6 +48,12 @@ write("shared/paymob.ts", "export const unrelated = 1;\n");
 // Tracked and claimed by nobody - what the unclaimed-code check is for.
 write("tooling/build.mjs", "export const build = 1;\n");
 git("init", "-q", "-b", "main");
+// Most developers ignore node_modules globally, and both `git add` and
+// `git ls-files --others --exclude-standard` honour that - which would hide the dependency
+// tree the cases below depend on, on their machine but not on CI. Point the excludes file at
+// an empty file, inside .git so it is not itself a tracked path the audit has to explain.
+write(".git/no-excludes", "");
+git("config", "core.excludesFile", join(repo, ".git/no-excludes"));
 git("add", "-A");
 git(...IDENT, "commit", "-qm", "seed");
 
@@ -129,6 +135,40 @@ const CASES = [
     fires: true,
     says: "unknown metadata key",
     act: () => write("specs/capability-map.json", json({ ...MAP, $unclaimd: ["tooling/**"] })),
+  },
+  // A committed (or simply unignored) dependency tree is not this repo's code. The audit's
+  // filesystem walk always skipped it; every list that came from git did not, so a repo with
+  // no .gitignore had `**/payment/**` matching `node_modules/<pkg>/payment/…` and a
+  // dependency bump blocked the PR for a capability nobody touched.
+  {
+    name: "a dependency tree does not trip a capability's glob",
+    fires: false,
+    says: "committed dependency tree",
+    act: () => write("node_modules/some-pkg/payment/index.js", "module.exports = 1;\n"),
+    undo: () => rmSync(join(repo, "node_modules"), { recursive: true, force: true }),
+  },
+  {
+    // The other direction: only a whole path segment is a dependency tree. A real source
+    // file whose name merely begins the same way is this repo's code and still couples.
+    name: "a path that only starts like a dependency directory still couples",
+    fires: true,
+    act: () => write("payment/node_modules_shim.ts", "export const shim = 1;\n"),
+    undo: () => rmSync(join(repo, "payment/node_modules_shim.ts"), { force: true }),
+  },
+  {
+    name: "--audit does not read a dependency tree as code nobody claims",
+    fires: false,
+    args: ["--audit"],
+    says: "each claimed by a capability or declared unclaimed",
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["tooling/**", "shared/paymob.ts"] }));
+      write("node_modules/some-pkg/index.js", "module.exports = 1;\n");
+      git("add", "-A");
+    },
+    undo: () => {
+      git("reset", "-q");
+      rmSync(join(repo, "node_modules"), { recursive: true, force: true });
+    },
   },
   {
     // The spec template tells a retiring capability to keep its map entry: the code is
