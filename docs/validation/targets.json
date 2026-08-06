@@ -1,5 +1,5 @@
 {
-  "$about": "Backfilled 2026-08-03 round (32 real repos + 2 synthetic greenfield fixtures + 6 wave-6 stub rows) plus the 2026-08-04 round's 71 new repository rows across 12 brownfield waves (bf-governance, bf-language, bf-lifecycle, bf-notcode, bf-platform, bf-thin, bf-monorepo, bf-ml, bf-critical, bf-review, bf-shapes, bf-closing) and the completed wave-6 backfill (bf-wave6-backfill, replacing the 6 earlier stub rows with real assessed data). depth follows VALIDATION-PLAN.md's L1-L4 scale; every 2026-08-04 row is L1 (read-only assessment, nothing changed) unless its note says otherwise - several were assessed from blobless/checkout-failed clones (no working tree, structure and content reads only) or metadata + gh api only where a full clone was infeasible; each such row's note says which. Fields left as 'not stated' in a source finding report are recorded as such here rather than guessed.",
+  "$about": "Backfilled 2026-08-03 round (32 real repos + 2 synthetic greenfield fixtures + 6 wave-6 stub rows) plus the 2026-08-04 round's 71 new repository rows across 12 brownfield waves (bf-governance, bf-language, bf-lifecycle, bf-notcode, bf-platform, bf-thin, bf-monorepo, bf-ml, bf-critical, bf-review, bf-shapes, bf-closing) and the completed wave-6 backfill (bf-wave6-backfill, replacing the 6 earlier stub rows with real assessed data). depth follows VALIDATION-PLAN.md's L1-L4 scale; every 2026-08-04 row is L1 (read-only assessment, nothing changed) unless its note says otherwise - several were assessed from blobless/checkout-failed clones (no working tree, structure and content reads only) or metadata + gh api only where a full clone was infeasible; each such row's note says which. Fields left as 'not stated' in a source finding report are recorded as such here rather than guessed. The field-3 round (2026-08-06) adds matomo-org/matomo as the second L3 row and the first at scale.",
   "targets": [
     {
       "slug": "psf/requests",
@@ -1484,6 +1484,20 @@
       "depth": "L3",
       "round": "field-1 (2026-08-06)",
       "note": "THE FIRST L3 TARGET. Adopted for real on a local branch: guards+manifest+skills landed, three capability specs and a persona roster authored from the code, three retroactive ADRs written, nine backlog items filed, self-verify taken from drift 14 to drift 0 (46/46). Not pushed upstream - hagopj13 has not asked for this, and the adoption exists as evidence, not as an unsolicited pull request."
+    },
+    {
+      "slug": "matomo-org/matomo",
+      "kind": "repo",
+      "ecosystem": "PHP 7.2 (Zend Framework 1 vendored) + Twig + jQuery-era JS + Vue 3, MySQL-family only",
+      "size": "very large",
+      "quality": "good",
+      "quality_evidence": "actively developed, not a maintained artefact: 861 commits by 38 distinct authors in the 12 months to 2026-08-06, HEAD dated the day of the run, and `gh api` reporting archived:false with pushed_at 2026-08-06. 773 tracked `*Test.php` files across named unit/integration/system tiers plus 114 UI specs; PHPStan (`phpstan.neon` level 5) and PHPCS both run `on: pull_request`; all 21 of the repository's own workflow files declare a `permissions:` block (verified against the pre-adoption tree, so the one this adoption added is not counted). The debt is old rather than sloppy - PHP 7.2 floor (EOL 2020-11-30) with 16 Twig advisories formally waived in composer.json's audit.ignore, each carrying a written exploitability argument",
+      "star_tier": "very popular",
+      "stars_approx": "21,746 (gh api repos/matomo-org/matomo, 2026-08-06)",
+      "shape": "13,591 tracked files, 31,287 commits since 2007-07-24 (19 years), 479 all-time author names, 98 plugin directories of which 16 are git submodules; a plugin platform whose directories are units of deployment rather than units of behaviour, and whose own .gitignore excludes /docs/",
+      "depth": "L3",
+      "round": "field-3 (2026-08-06)",
+      "note": "THE SECOND L3 TARGET, and the first at scale. Adopted for real on a local branch (blobless clone, full history): guards, manifest and skills landed, a 14-capability map derived from behaviour rather than from the 98 plugin directories, two capability specs written at the buildable tier from the code with file:line anchors (both left `in-refinement`, carrying the typed open markers this pass could not close without the team), five retroactive ADRs and one Proposed BDR, a 36-item counted backlog, self-verify taken from drift 17 to drift 0. Not pushed upstream and no issue or pull request opened - Matomo did not ask for this, and the adoption exists as evidence. The finding is the drift number itself: it reached 0 in one sitting on a 19-year platform where 12 of 14 capabilities have no spec, and the 14 artifacts written under docs/ are excluded from the repository by its own .gitignore while self-verify reports them present."
     },
     {
       "slug": "repository-standards/core",

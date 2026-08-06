@@ -1,5 +1,5 @@
 {
-  "$about": "The regression-case catalogue backfilled from the 2026-08-03 testing round. Every case traces to research/testing-log-2026-08-03.md (defect rows, the 8 Track B lifecycle scenarios, or the known-gaps list) or to VALIDATION-PLAN.md's own 15 exemplar cases. 'tests' cites SPEC.md rule numbers (R1-R25) or a docs/PRODUCT.md anchor where no rule fits. Eight of VALIDATION-PLAN.md's 15 exemplar cases cited a rule number that does not match their own description once checked against standard/SPEC.md (GATE-01: R17->R16; GATE-02/GATE-03: R13->R11; GATE-06: R14->R15; GATE-07: R12->R9; TRACK-03/TRACK-06: R14->R15; UPD-01: R19->R17) - corrected here; see the codify report for the detail. status: run = executed at least once with a recorded verdict in runs/2026-08-03.json; planned = specified, not yet executed; needs-procedure = the log describes a real finding but not enough to reconstruct a reproduction, so procedure is left empty rather than invented.",
+  "$about": "The regression-case catalogue backfilled from the 2026-08-03 testing round. Every case traces to research/testing-log-2026-08-03.md (defect rows, the 8 Track B lifecycle scenarios, or the known-gaps list) or to VALIDATION-PLAN.md's own 15 exemplar cases. 'tests' cites SPEC.md rule numbers (R1-R25) or a docs/PRODUCT.md anchor where no rule fits. Eight of VALIDATION-PLAN.md's 15 exemplar cases cited a rule number that does not match their own description once checked against standard/SPEC.md (GATE-01: R17->R16; GATE-02/GATE-03: R13->R11; GATE-06: R14->R15; GATE-07: R12->R9; TRACK-03/TRACK-06: R14->R15; UPD-01: R19->R17) - corrected here; see the codify report for the detail. status: run = executed at least once with a recorded verdict in runs/2026-08-03.json; planned = specified, not yet executed; needs-procedure = the log describes a real finding but not enough to reconstruct a reproduction, so procedure is left empty rather than invented. The field-3 round (2026-08-06) adds eleven cases from the first at-scale adoption (matomo-org/matomo, 13,591 files, 19 years): ADOPT-11..15, GATE-33..37, SHAPE-16 and DOC-19 - most of them about what the drift number and the audit output stop meaning at that size.",
   "cases": [
     {
       "id": "GATE-01",
@@ -2971,6 +2971,203 @@
       "when": "the task list is regenerated and the export runs again",
       "then": "nothing matches work by task id; each item is matched by a fingerprint of its own content, so changed work is reported rather than skipped and new work is created rather than swallowed",
       "procedure": "read docs/method/tracker-sync.md's fingerprint table and spec-tasks/SKILL.md step 1a; confirm no shipped file keys on a task id across rounds",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-11",
+      "title": "self-verify measures the working tree, so an artifact the repo's own .gitignore excludes is still counted as adopted",
+      "area": "adoption",
+      "tests": [
+        "R3",
+        "R16"
+      ],
+      "promise": "Project knowledge MUST live in the repo, versioned with the code - SPEC.md R3; Aligned means self-verify reports drift 0 - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repo whose .gitignore excludes a directory the manifest places required entries under (16 of the manifest's 48 file entries live under docs/)",
+      "when": "the standard's docs/ artifacts are authored there and node scripts/self-verify.mjs runs",
+      "then": "the ignored artifacts are reported as drift or as a warning, not as PASS - a file git will never carry is not knowledge that lives in the repo",
+      "procedure": "in a clone whose .gitignore contains `/docs/`, author docs/personas.md and docs/decision-records/, run `node scripts/self-verify.mjs`, then `git status --porcelain` and `git add -A && git commit` and count the committed paths under docs/",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-12",
+      "title": "the drift number is bounded by the manifest's entry count, so it says the same thing about a 78-file boilerplate and a 13,591-file multi-year platform",
+      "area": "adoption",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Aligned means self-verify reports drift 0 - SPEC.md R16; a multi-year repo does not reach drift 0 in one pull request and must not try - skills/align-to-standards/SKILL.md step 6",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a brownfield repo far larger than any the manifest was written against",
+      "when": "one adoption sitting authors the required entries and self-verify runs",
+      "then": "the reported number reflects how much of the repo is aligned, not how many manifest entries were satisfied - or the standard says plainly that it does not, where an adopter reads it",
+      "procedure": "adopt a >10,000-file repo to the point where every required manifest entry is met, run `node scripts/self-verify.mjs`, and compare the drift number against the count of capabilities without specs (`node scripts/spec-guard.mjs --audit`) and against the adoption backlog's own total",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-13",
+      "title": "the adoption percentage rises from copying the standard's own shipped files, before any repo-specific content is authored",
+      "area": "adoption",
+      "tests": [
+        "R16",
+        "R17"
+      ],
+      "promise": "\"17 points of drift\" reads as failure at every stage, while \"63% adopted, 17 to go\" reads as progress - and it is the same measurement - scripts/self-verify.mjs",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "an unaligned repo, with nothing of the method adopted",
+      "when": "self-verify runs three times - with the manifest and pin alone, then with the guard scripts added, then with the whole copy class added",
+      "then": "the percentage does not move materially between the three, because none of them adopted anything about the repo",
+      "procedure": "copy standard.manifest.json + .standards-version into an unaligned repo and run self-verify; add scripts/*.mjs and run again; add SPEC.md, .claude/skills, .claude/hooks, scripts/spec, scripts/lib, .gitleaks.toml, docs/facts.example.json and run again; compare the three percentages and denominators",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-14",
+      "title": "the three offered options for landing the CI workflow cover the self-verify step only, and the full-tree audit it also lands is unconditionally blocking",
+      "area": "adoption",
+      "tests": [
+        "R11",
+        "R16"
+      ],
+      "promise": "Offer the three real options and let the user pick: (a) land them now and accept red CI while the waves run, (b) hold them until the final wave, (c) land them now with the self-verify step set to `--warn` - skills/align-to-standards/SKILL.md step 3",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a brownfield repo mid-adoption whose capability map names more capabilities than it has specs",
+      "when": "the shipped .github/workflows/spec-guard.yml lands as written",
+      "then": "the adopter has a stated option for the audit step too, so unrelated pull requests do not go red for the months the remaining specs take",
+      "procedure": "land standard/.github/workflows/spec-guard.yml in a repo whose capability-map has entries without specs, and run its last step: `node scripts/spec-guard.mjs --audit --block`",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-15",
+      "title": "the copy-class .nvmrc overwrites the runtime pin a repo already has, and its content is the repo's, not the standard's",
+      "area": "adoption",
+      "tests": [
+        "R17"
+      ],
+      "promise": "Adoption and updates MUST adapt, never blind-copy - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "a repo that already declares its own Node version (package.json engines, CI pins) at a different major from the standard's",
+      "when": "the copy-class .nvmrc lands verbatim as its adapt rule says",
+      "then": "the repo is not left telling contributors to use a runtime its own package manager rejects - the entry is merge or fill-from-repo, or the guards' runtime is declared somewhere that is not the repo's own pin",
+      "procedure": "copy standard/.nvmrc into a repo whose package.json declares a different `engines.node` range, and compare the two; then check whether the manifest's adapt class allows the repo's value without an exception",
+      "status": "run"
+    },
+    {
+      "id": "GATE-33",
+      "title": "schema-pair skips precisely the repos that have not complied with R24, and no manifest entry requires database/schema/ at all",
+      "area": "gates",
+      "tests": [
+        "R24"
+      ],
+      "promise": "A repo that owns a database MUST carry that schema as executable DDL under database/schema/ - SPEC.md R24",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repo that owns a database and carries no database/schema/ directory",
+      "when": "self-verify runs the schema-pair guard",
+      "then": "R24 is reported as unmet - the absence of the directory the rule demands is the non-compliance, not evidence that the rule does not apply",
+      "procedure": "run `node scripts/schema-pair.mjs --block` in a repo with CREATE TABLE statements and no database/schema/ directory, and grep standard.manifest.json for a files entry whose rule is R24",
+      "status": "run"
+    },
+    {
+      "id": "GATE-34",
+      "title": "spec-guard --audit's unclaimed report is actionable at repository scale, not a 20-line alphabetical truncation with the count conflated",
+      "area": "gates",
+      "tests": [
+        "R11"
+      ],
+      "promise": "code that belongs to no capability - what a refactor leaves behind - scripts/spec-guard.mjs --audit",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo of over ten thousand tracked files whose capability map declares $unclaimed",
+      "when": "spec-guard --audit runs and finds hundreds or thousands of unclaimed files",
+      "then": "the output tells the adopter where the work is - a per-directory rollup, and unclaimed files counted separately from map defects - instead of the first twenty paths in git order",
+      "procedure": "declare $unclaimed in a >10,000-file repo's capability-map.json and run `node scripts/spec-guard.mjs --audit`; compare its output against a per-directory rollup of the same unclaimed set",
+      "status": "run"
+    },
+    {
+      "id": "GATE-35",
+      "title": "the .gitattributes entry that exists to force LF on the shipped guards checks that the file exists and nothing else",
+      "area": "gates",
+      "tests": [
+        "R19"
+      ],
+      "promise": "forces LF on the shipped bash guards and Node scripts - a repo whose own setting is eol=crlf makes every hook exit 127 with empty stdout - standard.manifest.json, .gitattributes entry",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "an adopted repo carrying a .gitattributes that sets eol=crlf on *.sh and *.mjs",
+      "when": "self-verify runs",
+      "then": "the entry fails, or reports that it cannot check what it exists to guarantee - a PASS whose own text describes the failure state it is in is worse than no entry",
+      "procedure": "write `* text=auto` + `*.sh text eol=crlf` + `*.mjs text eol=crlf` into an adopted repo's .gitattributes, confirm with `git check-attr eol -- .claude/hooks/lib.sh`, then run `node scripts/self-verify.mjs` and read the .gitattributes line",
+      "status": "run"
+    },
+    {
+      "id": "GATE-36",
+      "title": "a content exception on a merge-class entry can never apply, and self-verify reports it as a deviation the repo no longer has",
+      "area": "gates",
+      "tests": [
+        "R17"
+      ],
+      "promise": "an update applies the delta... preserving the repo's recorded deviations (the manifest's exceptions) - SPEC.md R17",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "an adopted repo that deliberately adapted a merge-class file and recorded it as { kind: content, match: <that path> }",
+      "when": "self-verify runs",
+      "then": "the message says why the exception cannot apply (a merge entry carries no recorded content), not that the repo no longer deviates - which is false and sends the adopter to delete a true record",
+      "procedure": "add `{ \"kind\": \"content\", \"match\": \".github/workflows/spec-guard.yml\", \"reason\": \"...\" }` to an adopted repo's manifest copy after editing that workflow, and run `node scripts/self-verify.mjs`",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-16",
+      "title": "the intake has a step for a repo that already carries an AGENTS.md whose operational rules live in a different repository",
+      "area": "shape",
+      "tests": [
+        "R1",
+        "R3",
+        "R22"
+      ],
+      "promise": "A repo MUST carry AGENTS.md at its root as the single entry point - SPEC.md R1; a rule that exists only in chat, a wiki or someone's personal agent config does not exist - SPEC.md R3",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a target repo whose AGENTS.md already exists, is substantive, and routes agents to skills held in a separate repository",
+      "when": "the align router's step 3 ('Put conventions in AGENTS.md (single source)') is followed literally",
+      "then": "the procedure says how to reconcile the two - the existing file is the repo's real conventions and the external skills are the R3 violation to name, and neither is resolved by writing sections underneath",
+      "procedure": "run the align router's intake and step 3 against a repo carrying an AGENTS.md that delegates to an external skills repository, and check whether any step addresses the existing file or the out-of-repo rules",
+      "status": "run"
+    },
+    {
+      "id": "DOC-19",
+      "title": "the shipped ADR/BDR index shows the row format its own guard accepts",
+      "area": "docs",
+      "tests": [
+        "R5"
+      ],
+      "promise": "Add one row per record. Use _template.md. Numbers are gapless and never reused - standard/docs/decision-records/adr/README.md",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "an adopter filling the shipped adr/README.md, whose only row is the placeholder `| - | (none yet) | - |`",
+      "when": "they write the natural first cell for an ADR index - `ADR-001` - and run decision-records-check",
+      "then": "the row is accepted, or the shipped file shows the format that is (`[001](ADR-001-title.md)`) so the adopter is not guessing",
+      "procedure": "write `| ADR-001 | [title](ADR-001-title.md) | Accepted |` into a filled adr/README.md and run `node scripts/decision-records-check.mjs --block`",
+      "status": "run"
+    },
+    {
+      "id": "GATE-37",
+      "title": "the shipped guards stay cheap enough to run on every pull request at repository scale",
+      "area": "gates",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose: self-verify and spec-structure MUST gate CI - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "an adopted repository of over ten thousand tracked files",
+      "when": "each shipped guard is timed, best of three runs, on the adopted tree",
+      "then": "no guard takes long enough that a team turns it off - a guard measured in minutes is a guard nobody runs",
+      "procedure": "time `node scripts/self-verify.mjs`, `spec-structure.mjs --block`, `facts-check.mjs`, `schema-pair.mjs --block`, `cycle-guard.mjs --block`, `decision-records-check.mjs --block`, `spec-guard.mjs --audit --block` and `spec-guard.mjs --block` on a >10,000-file adopted repo, three runs each, and report the best wall time",
       "status": "run"
     }
   ]
