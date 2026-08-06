@@ -16,6 +16,59 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The drift number answered two different questions with the same integer (2026-08-06)
+
+Two ways `self-verify` said more than it had measured, both reproduced against the current
+tree before anything was changed.
+
+**A missing tool scored as repository drift.** A Layer 2 guard shells out to its stack's own
+toolchain, so `pnpm check:all` on a machine with no `pnpm` failed with a bare
+`command not found` and printed `drift 1 - 99% adopted (78/79)` - byte for byte the verdict
+three real lint errors produce on a compliant repo. Measured side by side, the two verdict
+lines were string-identical. `prerequisites.md` already stated the rule this broke: the
+number scores the repo's structure, not the machine it runs on. A guard whose prerequisites
+are absent is now **not run** - reported as `SKIP`, counted as neither drift nor adoption,
+and named in the verdict line, because a skipped blocking check must never be quiet.
+This loosens the gate - a guard failing on a missing tool used to exit 1 and now does not -
+so `OK` is dropped from the verdict whenever a check did not run, and the count is named in
+the same line. The exit code answers whether the repo complies, and a check that never
+started has no opinion on that. Prerequisites come from the guard entry's new `requires`
+(`{ "kind": "command"|"path", "match": ..., "hint": ... }`) and, for guards that declare
+nothing, from any bare word in `run` that is no shell builtin and resolves nowhere on `PATH`.
+The `path` kind is what keeps the question free of side effects: with a package manager
+present and its dependency tree absent, *running* the guard is what pulls the tree off the
+network, so the guard must not run. Demonstrated both ways - with the prerequisite undeclared
+the fixture installed as a side effect of `self-verify`; declared, it did not, and nothing
+about the repo's drift changed. Inference errs toward running the guard in every direction
+it can be wrong, because the wrong answer is a check that quietly stops running: quoted text
+is blanked before splitting, so a tool named inside an error message is never probed; `a || b`
+is read as a fallback rather than two requirements; and the `node` executing the file is never
+probed, since a runtime invoked by absolute path from outside `PATH` would otherwise silence
+every guard at once.
+
+**`drift 0` read as "the method has been used here".** A raw greenfield tree plus three
+declarative files - `.standards-version`, a `profile` key, an empty
+`specs/capability-map.json` - walks from `drift 3` to
+`OK - drift 0 - 100% adopted (69/69) - compliant with the standard` with not one capability
+spec written. The number was right; every manifest entry really was met. The sentence was
+not. So the drift-0 line now carries the caveat in the same breath as the number, and the
+absence is **reported, never scored**: the greenfield walk scaffolds in step 1 and specifies
+in step 6, and step 1 promises the scaffold passes, so scoring the gap would put drift 0 out
+of reach of an honest new repo for the whole length of the interview - and a failure nobody
+can clear is one everybody learns to route around. The caveat clears the moment a real
+`specs/<capability>/spec.md` exists; the spec engine's own `plan.md` and `tasks.md` do not
+clear it, because scaffolding is not specified behaviour.
+
+Ten cases in `tools/self-verify-drift-test.mjs` hold both halves in both directions - a
+missing tool must stop counting *and* a real guard failure must keep counting, a repo with
+nothing specified must still reach drift 0 *and* say so, and a guard whose prerequisites are
+met must still run. Each half was then checked by reverting it and re-running: neutralising
+the prerequisite resolver turns three cases red, neutralising the caveat two, restoring the
+`OK` prefix one, and reading `a || b` as two requirements one. That pass earned its keep -
+the assertion about the drift-0 verdict line was at first written against a fixture sitting
+at drift 1, where it could not have failed whatever the line said, and the summary line's
+hardcoded "20 cases" had been stale at 22 for some time. The count is computed now.
+
 ### The one number a cycle publishes could not be reproduced by whoever read it (2026-08-06)
 
 `/cycle-close` prescribed `git log --oneline --since=<opened> --until=<closed> | wc -l` for

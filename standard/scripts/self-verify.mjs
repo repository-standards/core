@@ -34,9 +34,16 @@
 //      accepted silently as deprecated aliases
 //      (solo -> core, team -> scale). An entry with no profile counts as core, so
 //      manifests from before ADR-011 still check in full either way.
+//   2b. A guard whose prerequisites are absent is NOT RUN, and that is reported as its own
+//      thing rather than as drift. Running `pnpm check:all` on a machine with no pnpm used
+//      to score exactly what a genuine lint failure scores, so the number said "this
+//      laptop" in the words of one that says "this repo".
 //   3. Stray transition skills (ADR-009): align-to-standards, onboard-repo, modernize,
 //      greenfield-start never ship in a consuming repo. One found under .claude/skills/
 //      is a hand-copy mistake, flagged as a warning - it does not add to drift.
+//   4. What drift 0 does NOT say. The number is the manifest, so a repo can meet every
+//      entry and have specified no behaviour at all. When no capability spec exists, the
+//      verdict says so instead of printing an unqualified "compliant with the standard".
 //
 // Usage:
 //   node scripts/self-verify.mjs                  # gate: exit 1 on any failure
@@ -55,6 +62,7 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { createHash } from "node:crypto";
+import { delimiter } from "node:path";
 
 const METHOD_DOC = "https://github.com/repository-standards/core/blob/main/docs/method/self-verify.md";
 
@@ -97,6 +105,11 @@ const pass = (name, msg) => results.push({ ok: true, name, msg });
 const fail = (name, msg) => results.push({ ok: false, name, msg });
 const note = (name, msg) => results.push({ ok: true, name, msg, dim: true });
 const warning = (name, msg) => results.push({ ok: true, name, msg, isWarning: true });
+// A check that could not run at all is neither a pass nor a failure, and collapsing it into
+// either is how a number stops meaning what it says. It is dim (so it never enters the
+// adoption arithmetic - it was never assessed) but it is counted and named in the verdict,
+// because the one thing a skipped blocking check must not be is quiet.
+const unrun = (id, msg) => results.push({ ok: true, name: "guard", msg, dim: true, isUnrun: true, id });
 
 // 0. load the manifest (ADR-005) ------------------------------------------------
 let manifest = null;
@@ -391,6 +404,111 @@ const verifyKeys = (f) => {
   }
 };
 
+// 2c. what a guard needs before it can answer anything ---------------------------
+// A guard reports on the repo only when the tools it shells out to are actually here. With
+// no pnpm on PATH, `pnpm check:all` exited non-zero with a bare `command not found` and
+// scored `drift 1 - 99% adopted (78/79)` - byte for byte what a genuine lint failure on a
+// compliant repo scores. Two different questions, one number, no way to tell them apart.
+// prerequisites.md already states the rule this restores: self-verify scores the repo's
+// structure, not the machine it runs on, and a laptop missing a tool is not repository
+// drift.
+//
+// So a guard whose prerequisites are absent is NOT RUN: never drift, never a pass, named in
+// its own category and again in the verdict. Prerequisites come from two places.
+//
+//   Declared, on the guard entry:
+//     "requires": [{ "kind": "command", "match": "pnpm" },
+//                  { "kind": "path", "match": "node_modules", "hint": "..." }]
+//   The `path` kind is what keeps a compliance check from having side effects. With a
+//   package manager present and its dependency tree absent, RUNNING the guard is what
+//   installs the tree - off the network, as a side effect of asking a question about the
+//   repo; recorded once at 376 packages and ~670 MB, and reproducible on demand, though
+//   whether it fires at all turns out to depend on the package manager's local settings.
+//   The only way not to do it is to look before shelling out, and only the entry that knows
+//   the toolchain can say what to look for.
+//
+//   Inferred, from `run`: every bare command word that is no shell builtin and resolves
+//   nowhere on PATH. This is the part that needs nothing declared, so a stack whose guard
+//   predates the field still gets a legible answer.
+//
+// Inference errs toward RUNNING the guard, in every direction it can be wrong, because the
+// wrong answer here is a check that quietly stops running:
+//   - quoted text is blanked before anything is split, so a tool named inside an error
+//     message is never probed;
+//   - a word carrying a `/` is left to the script rule below, since a relative path means
+//     something different after a `cd`;
+//   - `a || b` is a FALLBACK, not two requirements: the group is satisfied when either side
+//     resolves, and reporting `b` because `a` was taken would skip a guard that works;
+//   - the node executing this file is never probed - a runtime invoked by absolute path
+//     from outside PATH would otherwise silence every guard at once;
+//   - anything this cannot parse runs exactly as it did before.
+const SH_WORDS = new Set(
+  (": . [ [[ ]] alias bg break builtin case cd command continue do done echo elif else esac eval exec exit " +
+    "export false fc fg fi for function getopts hash if in jobs kill let local newgrp printf pwd read " +
+    "readonly return set shift source test then time times trap true type ulimit umask unalias unset until wait while").split(" "),
+);
+const ALWAYS_AVAILABLE = new Set(["node", "nodejs"]);
+const PATH_EXTS = process.platform === "win32" ? ["", ".exe", ".cmd", ".bat"] : [""];
+const onPath = (cmd) =>
+  (process.env.PATH || "")
+    .split(delimiter)
+    .filter(Boolean)
+    .some((dir) =>
+      PATH_EXTS.some((ext) => {
+        try {
+          return statSync(`${dir}/${cmd}${ext}`).isFile();
+        } catch {
+          return false;
+        }
+      }),
+    );
+
+const commandWord = (seg) => seg.trim().replace(/^[({!]+\s*/, "").replace(/^(?:\w+=\S*\s+)+/, "").split(/\s+/)[0] || "";
+const probeable = (w) => /^[A-Za-z][\w.+-]*$/.test(w) && !SH_WORDS.has(w) && !ALWAYS_AVAILABLE.has(w);
+// `||` is swapped for a sentinel the operator split cannot see, so a fallback chain stays
+// ONE group; every other operator separates things that all have to be there (both stages
+// of a pipeline, both sides of `&&`). The sentinel carries no shell metacharacter of its
+// own - one that did would be found by the very split it is hiding from, and no NUL, which
+// tree-check forbids in tracked text for exactly the reason it would be convenient here.
+const OR = "@@self-verify-or@@";
+const unresolvedCommands = (run) => {
+  const missing = new Set();
+  const sanitized = String(run).replace(/'[^']*'/g, "''").replace(/"[^"]*"/g, '""').split("||").join(OR);
+  for (const group of sanitized.split(/&&|[;|&\n]/)) {
+    const words = group.split(OR).map(commandWord).filter(Boolean);
+    // An alternative this cannot classify - a shell builtin, the running node, a redirect, a
+    // quoted remnant - is one that may well work, so the group is satisfied and nothing is
+    // reported. Only a group whose every alternative is a plain name that resolves nowhere
+    // is a prerequisite this machine does not have.
+    if (!words.length || words.some((w) => !probeable(w) || onPath(w))) continue;
+    for (const w of words) missing.add(w);
+  }
+  return missing;
+};
+
+const REQUIRE_KINDS = ["command", "path"];
+// A malformed `requires` entry is drift, for the same reason a malformed exception is: a
+// prerequisite nobody can evaluate is how a blocking guard stops running while the run
+// still reads green.
+const missingPrerequisites = (g) => {
+  const missing = [];
+  const declared = new Set();
+  for (const r of g.requires || []) {
+    const label = `${r?.kind ?? "(no kind)"}:${r?.match ?? "(no match)"}`;
+    if (!REQUIRE_KINDS.includes(r?.kind) || !String(r?.match ?? "").trim()) {
+      fail("guard", `${g.id} carries an unusable requires entry ${label} - each one is { "kind": "command"|"path", "match": "...", "hint": "..." (optional) }, and a prerequisite that cannot be evaluated would stop a blocking guard running while the run still reads green`);
+      continue;
+    }
+    if (r.kind === "command") declared.add(r.match);
+    const met = r.kind === "command" ? onPath(r.match) : exists(r.match);
+    if (!met) missing.push(`${r.match} ${r.kind === "command" ? "is not on PATH" : "is absent from this repo"}${r.hint ? ` (${r.hint})` : ""}`);
+  }
+  for (const c of unresolvedCommands(g.run)) {
+    if (!declared.has(c) && !onPath(c)) missing.push(`${c} is not on PATH`);
+  }
+  return missing;
+};
+
 if (manifest) {
   // method docs adopted by reference (ADR-004/023): named, never file-checked
   if ((manifest.references || []).length) {
@@ -429,10 +547,17 @@ if (manifest) {
     if (g.id === "self-verify") continue;
     if (g.kind === "diff") { note("guard", `${g.id} is diff-based - runs in CI on the PR diff, not here`); continue; }
     const script = (g.run.match(/scripts\/[\w.-]+\.mjs/) || [])[0];
-    // Not installed = skipped, because optional guards legitimately are not (no database,
+    // Not installed = not run, because optional guards legitimately are not (no database,
     // no cycles). That tolerance is why a guard's script may not be excepted: excepting it
     // would turn "missing required file" into "check silently absent". See EXCEPTION_KINDS.
-    if (script && !exists(script)) { note("guard", `${g.id} not installed (${script}) - skipped`); continue; }
+    // It used to be a dim note, which is most of the way to silent - it now goes through the
+    // same category as a missing prerequisite and is counted in the verdict.
+    if (script && !exists(script)) { unrun(g.id, `${g.id} NOT RUN - its script ${script} is not installed in this repo`); continue; }
+    const lacking = missingPrerequisites(g);
+    if (lacking.length) {
+      unrun(g.id, `${g.id} NOT RUN - ${lacking.join("; ")}. A check that could not start has measured nothing, so it counts as neither drift nor adoption (see prerequisites.md in the standards repo); supply what it needs and re-run to get an answer for this one`);
+      continue;
+    }
     try {
       execSync(g.run, { stdio: "pipe" });
       pass("guard", `${g.id} passed`);
@@ -486,8 +611,9 @@ if (manifest) {
   }
 }
 
-// 2b. surviving template placeholders - drift 0 with empty shells is a hollow win.
+// 2d. surviving template placeholders - drift 0 with empty shells is a hollow win.
 // A warning, never drift: substance stays the judgment tier's call.
+let hollow = false; // no capability spec here - what drift 0 does not say (2e below)
 if (!skeleton) {
   // The three shapes the shipped templates actually use, and nothing wider:
   //   {{NORTH_STAR}}   mustache, in PRODUCT
@@ -545,6 +671,59 @@ if (!skeleton) {
     const body = stripCode(readFileSync(p, "utf8"));
     if (hasPlaceholder(body)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
   }
+
+  // 2e. drift 0 on a repo that has specified nothing.
+  // Measured on a raw greenfield tree: three declarative files - `.standards-version`, a
+  // `profile` key, and an empty `specs/capability-map.json` - walked it from drift 3 to
+  // `OK - drift 0 - 100% adopted (69/69) - compliant with the standard`, with not one
+  // capability spec written and every shipped template still a shell. The number was not
+  // wrong; every manifest entry really was met. The sentence was. "Compliant" reads as "the
+  // method has been used here", and what had been measured was that the folders are in the
+  // right places.
+  //
+  // Reported, never scored, and that distinction is the whole design. The greenfield walk
+  // scaffolds the repo in step 1 and writes the first spec in step 6, and step 1 promises
+  // "Empty but valid: self-verify passes". Making the absence drift would put drift 0 out of
+  // reach of an honest brand-new repo for the entire length of the interview, and a failure
+  // nobody can clear is one everybody learns to route around - the same reason the
+  // placeholder scan above warns rather than counting. Substance stays the judgment tier's
+  // call; what changes is that the verdict stops claiming more than it checked.
+  const specWalk = (dir, depth, acc) => {
+    if (depth < 0) return acc;
+    let entries = [];
+    try {
+      entries = readdirSync(dir);
+    } catch {
+      return acc; // no specs/ at all - the files check reports that; here it just means none
+    }
+    for (const e of entries) {
+      const p = `${dir}/${e}`;
+      let isDir = false;
+      try {
+        isDir = statSync(p).isDirectory();
+      } catch {
+        continue; // a broken symlink specifies nothing
+      }
+      if (isDir) specWalk(p, depth - 1, acc);
+      else acc.push(p);
+    }
+    return acc;
+  };
+  // The same shape spec-structure.mjs holds a capability spec to: specs/<capability>/<file>.md.
+  // Templates, READMEs and the spec engine's ephemeral plan/tasks artifacts (ADR-010) are not
+  // specified behaviour and must not read as any.
+  const capabilitySpecs = specWalk("specs", 3, []).filter(
+    (f) =>
+      f.split("/").length >= 3 &&
+      f.endsWith(".md") &&
+      !f.includes(".template.") &&
+      !/\/readme\.md$/i.test(f) &&
+      !(/\/(?:plan|tasks)\.md$/.test(f) || f.includes("/checklists/")),
+  );
+  if (!capabilitySpecs.length) {
+    hollow = true;
+    warning("spec", 'no capability spec exists here yet (specs/<capability>/spec.md) - drift measures the manifest, so it reaches 0 on a repo that has specified no behaviour at all; the shape is right, which is not the same claim as "the method has been used here"');
+  }
 }
 
 // 3. stray transition skills (ADR-009 / SKILL-1) ---------------------------------
@@ -564,7 +743,7 @@ const failed = results.filter((r) => !r.ok);
 const drift = failed.length; // one unmet required entry = one point of drift
 console.log(`\nself-verify - compliance with ${manifest ? `manifest ${manifest.version}` : "the BUILT-IN SKELETON (no standard.manifest.json here)"}\n`);
 for (const r of results) {
-  const tag = !r.ok ? "FAIL" : r.isWarning ? "WARN" : r.dim ? "····" : "PASS";
+  const tag = !r.ok ? "FAIL" : r.isWarning ? "WARN" : r.isUnrun ? "SKIP" : r.dim ? "····" : "PASS";
   // padEnd(9) leaves no gap after a 9-character name, so `reference` ran into its own
   // count: "reference9 method docs". One more column, and the separator is unconditional.
   console.log(`  ${tag}  ${r.name.padEnd(10)} ${r.msg}`);
@@ -596,9 +775,28 @@ const scope = manifest
   ? ""
   : ` - AGAINST THE BUILT-IN ${applicable}-CHECK SKELETON, NOT A MANIFEST: this repo carries no standard.manifest.json, so the real distance from the standard is larger and is not measured here`;
 
+// A check that could not run is absent from BOTH numbers - it is not drift and it is not
+// adoption - so the verdict has to carry it or it is absent from the report entirely, which
+// is how "we ran the gate" and "the gate ran" quietly become different statements.
+const notRun = results.filter((r) => r.isUnrun);
+const notRunNote = notRun.length
+  ? ` - ${notRun.length} CHECK${notRun.length === 1 ? "" : "S"} NOT RUN HERE (${notRun.map((r) => r.id).join(", ")}): a missing prerequisite, counted as neither drift nor adoption, so this verdict covers less than the manifest does`
+  : "";
+// The claim the drift-0 line makes is about the repo's SHAPE. On a repo with no capability
+// spec that is the entire claim, and printing it unqualified is how "compliant" came to read
+// as "the method has been used here".
+const hollowNote = hollow
+  ? " - AND THAT IS THE WHOLE CLAIM: no capability spec exists here yet, so this says the repo is shaped like the standard, not that any behaviour has been specified under it"
+  : "";
+
+// `OK` is reserved for a run that actually performed every check it was asked to. Drift 0
+// with a blocking guard that never started is a true statement about a smaller question, and
+// the word a reader skims must not say otherwise: this loosened the gate (a missing tool used
+// to exit 1, and now does not), so what stops a skipped check reading as a clean bill of
+// health is the wording and the count, not the exit code.
 if (drift === 0) {
-  console.log(`self-verify: OK - drift 0 - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${manifest ? "compliant with the standard" : "every skeleton check met"}${scope}\n`);
+  console.log(`self-verify: ${notRun.length ? "" : "OK - "}drift 0 - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${manifest ? "compliant with the standard" : "every skeleton check met"}${scope}${notRunNote}${hollowNote}\n`);
   process.exit(0);
 }
-console.error(`self-verify: drift ${drift} - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${drift} required entr${drift === 1 ? "y is" : "ies are"} unmet${scope}\n`);
+console.error(`self-verify: drift ${drift} - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${drift} required entr${drift === 1 ? "y is" : "ies are"} unmet${scope}${notRunNote}\n`);
 process.exit(warn ? 0 : 1);
