@@ -75,6 +75,7 @@ const streams =
 // tells a bare `BDR-004` row from `ADR-004`, which the number alone cannot.
 const ROW_LINKED = /^\[(?:(ADR|BDR)-)?(\d+)\]\(([^)]+)\)$/i;
 const ROW_BARE = /^(?:(ADR|BDR)-)?(\d+)$/i;
+const ROW_FORMS = "[001](FILE.md), [ADR-001](FILE.md), 001 or ADR-001";
 
 // Rows inside an HTML comment or a fenced code block are examples, not index entries. Every
 // other shipped template documents its own row shape that way (the backlog, the cycle file),
@@ -205,6 +206,7 @@ if (dupRows.length) {
 if (fileNoRow.length) {
   console.error("\ndecision-records-check: on disk, missing from the index:");
   for (const { dir, name } of fileNoRow) console.error(`  - ${dir}/${name} has no row in ${dir}/README.md`);
+  console.error(`    (a row is recognised by its first cell: ${ROW_FORMS} - any other form is invisible here, so check the row you wrote before writing another)`);
 }
 if (rowNoFile.length) {
   console.error("\ndecision-records-check: indexed, missing from disk:");
