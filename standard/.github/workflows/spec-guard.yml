@@ -38,11 +38,17 @@ jobs:
         # A pull request has a base branch to diff against. A push does not, so the whole
         # tree is checked instead - stricter, and the only reading that means anything on
         # the first push, when there is no "before" to compare with.
+        #
+        # The event's values arrive through `env`, never interpolated into the script: a
+        # branch name is contributor-controlled text, and `${{ }}` pastes it into the shell
+        # before bash ever sees a quote.
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
           set -euo pipefail
-          if [ -n "${{ github.base_ref }}" ]; then
-            git fetch --no-tags --quiet origin "${{ github.base_ref }}"
-            node scripts/spec-structure.mjs --base "origin/${{ github.base_ref }}" --block
+          if [ -n "$BASE_REF" ]; then
+            git fetch --no-tags --quiet origin "$BASE_REF"
+            node scripts/spec-structure.mjs --base "origin/$BASE_REF" --block
           else
             node scripts/spec-structure.mjs --block
           fi
@@ -55,15 +61,17 @@ jobs:
         # (all-zeros), and after a force-push it may no longer exist in this checkout - both
         # are checked for rather than assumed, because a guard that dies on a missing ref
         # reports the same red as a guard that found a violation.
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
         run: |
           set -euo pipefail
           PROFILE=$(node -p "try { JSON.parse(require('fs').readFileSync('standard.manifest.json','utf8')).profile || 'scale' } catch { 'scale' }")
           BLOCK="--block"
           if [ "$PROFILE" = "core" ] || [ "$PROFILE" = "solo" ]; then BLOCK=""; fi
-          BEFORE="${{ github.event.before }}"
-          if [ -n "${{ github.base_ref }}" ]; then
-            git fetch --no-tags --quiet origin "${{ github.base_ref }}"
-            node scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}" $BLOCK
+          if [ -n "$BASE_REF" ]; then
+            git fetch --no-tags --quiet origin "$BASE_REF"
+            node scripts/spec-guard.mjs --base "origin/$BASE_REF" $BLOCK
           elif [ -n "$BEFORE" ] && git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
             node scripts/spec-guard.mjs --base "$BEFORE" $BLOCK
           else
