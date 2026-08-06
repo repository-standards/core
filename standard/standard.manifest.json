@@ -217,7 +217,7 @@
         "discovery-digest/SKILL.md": "bc7f25b8a7eb9be3adaa0917febb5c2b452d378e1d5836c5b1bf47add2094d09",
         "idea-write/SKILL.md": "0c6bf300123b8b7b2be4b9d5d757158bd3a8524be95b858876cfd35e532c68fd",
         "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",
-        "pre-pr-review/SKILL.md": "d72bee4edf7979968dc08f2cc493826953a396090a212f36132af557cde55960",
+        "pre-pr-review/SKILL.md": "aa43d020310c9c684720c58ec9e0efbeca4abf78fcce23b7dc2ec78544a0ce4f",
         "product-write/SKILL.md": "21bdc82897281178f915cb0f51dd669d35228d17748977cbacdc1993f2843b98",
         "spec-clarify/SKILL.md": "042ec5e0153d9e62d7f9be86af7205d44c0b278c2aea626aa5167672cd2f2d8e",
         "spec-impact/SKILL.md": "9d583c7b37b4bcf11a052c6bdaf13ec92ce8ad725f974a06c5cba91f6d366728",
@@ -421,7 +421,7 @@
     },
     {
       "path": ".github/pull_request_template.md",
-      "purpose": "PR template - what/why, ADR impact, test plan, checklist",
+      "purpose": "PR template - what/why, decision-record impact across both streams, test plan, checklist",
       "adapt": "merge",
       "required": false,
       "profile": "scale",
