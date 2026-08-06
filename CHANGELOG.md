@@ -16,6 +16,44 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The landing showed two versions at once, and both guards called it shippable (2026-08-06)
+
+`site/index.html` stated the version in five places. The header pill read `v1.0.13`, which is
+what `VERSION` says; the maturity disclosure, the footer and two lines of the hero script all
+read `1.0.12`. A first-time reader got both numbers on one page, four lines apart.
+
+Neither guard could see it. `site-check.mjs` asserted that the current version appears
+somewhere on the landing - a condition a page satisfies perfectly while also naming the
+previous release. `docs/facts.json` declares one pattern for this file, the header pill's
+`class="tag mono">v`, so `facts-check` was checking the one occurrence that happened to be
+right. Both reported green on every push while the page was wrong.
+
+The four stale strings are corrected, and `site-check` now compares **every** version-shaped
+string on the landing against `VERSION`, reporting the line and the string for each
+disagreement. It needs no list of where the versions are, so it covers the sixth occurrence
+somebody adds next. `<svg>` bodies are masked out first and are the only exemption: path data
+is a coordinate stream that reads as a version to any regex, and the header's GitHub mark
+alone contributes thirteen, seventeen across the page's marks. Masked rather than deleted,
+so the reported line numbers still belong to the real file. Comments and stylesheets stay in
+scope - the frozen previous landing, the one surface that legitimately names an old version,
+is `site/previous.html`, which this gate has never read.
+
+No new `facts.json` patterns: the other four places are prose, footer layout and hero copy, and
+`facts-check` fails loudly when a declared pattern stops matching, so declaring them would block
+the next legitimate rewording while still missing whatever gets added after. The scan covers
+them all without being told where they are; the reasoning is recorded in the web-surface spec.
+
+`tools/site-check-test.mjs` is new and drives the gate over fixture sites: a clean landing
+passes, a stale version in the footer fails with exactly one problem reported (proving the SVG
+mask holds), a stale version inside the hero script fails, a version ahead of the release fails,
+and a landing naming no version at all still fails the original advertise check.
+
+The validation record moves with it: `DOC-12`'s observation from the 2026-08-04 round was
+re-run against the live tree and flipped to `pass` rather than left reading "open (logged, not
+fixed)" on a published punch list, and `runs/2026-08-06-doc12.json` carries the full evidence
+against `repo:repository-standards/core` - a new target row, deliberately depth L1 and labelled
+self-assessment, because this project cannot adopt itself and no count here may suggest it did.
+
 ### The persona gate never opened the roster (2026-08-06)
 
 `spec-structure`'s persona check was a three-way OR, and its first arm decided almost every
