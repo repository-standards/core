@@ -69,8 +69,10 @@ record keeps its text, flips to `Superseded`, and names this one in its `Superse
 ## Not this
 
 - **Do not write a record for a decision nobody made.** If the user is thinking out loud, it
-  is an idea (`docs/ideas/`) until they approve it - `Proposed` is for a decision awaiting
-  ratification, not for a maybe.
+  is an idea until they approve it - `Proposed` is for a decision awaiting ratification, not
+  for a maybe. Hand it to **`idea-write`**, by name: that skill owns the idea template, the
+  "an idea that serves no persona is parked" check and the graduation contract, and writing
+  a file into `docs/ideas/` yourself is how all three get skipped.
 - **Do not invent the options.** Reconstructing what was on the table is the user's memory or
   the discovery dossier's, and an invented rejected option is worse than none: it will be
   cited later as if it were considered.
