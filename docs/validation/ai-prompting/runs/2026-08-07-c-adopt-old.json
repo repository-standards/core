@@ -68,7 +68,7 @@
       "verdict": "pass",
       "evidence": "Found, reproduced, fixed and re-verified in this change. On the untouched clone, self-verify reported `WARN fill README.md still carries template placeholders`. The cause is Git's own README.md:26-27, which reads `documentation of each command with \\`man git-<commandname>\\` or \\`git help` / `<commandname>\\`.` - the code span wraps a line break, and `stripCode`'s span pattern was `` /`[^`\\n]*`/g ``, which refuses to cross one. The leftover `<commandname>` on line 27 was then read as an unfilled template placeholder, in a file the standard never wrote and an adopter cannot fill. The fix pairs backtick RUNS across newlines while refusing to cross a blank line, and it is covered in both directions by `tools/self-verify-fill-test.mjs`: a wrapped span does not warn, a real placeholder after one still does, and an unmatched backtick cannot swallow a later placeholder. Re-run against the same clone with the fixed script: no fill warning, `drift 0` unchanged.",
       "at": "2026-08-07",
-      "fix": "../../tools/self-verify-fill-test.mjs"
+      "fix": "../../../tools/self-verify-fill-test.mjs"
     },
     {
       "case": "GATE-39",
@@ -76,7 +76,7 @@
       "verdict": "pass",
       "evidence": "The second instance, in the other markdown code form, and the one that made the first fix insufficient. Vim's own `AGENTS.md:92` carries `Signed-off-by: Author Name <email>` inside a four-space-indented code block - the pre-fence form an older document uses - which `stripCode` never stripped, so `<email>` warned. Stripping indented blocks cleared it and exposed a third: `AGENTS.md:261` `- \\`<Key>\\` or \\`CTRL-X\\` - special keys` began warning once spans could cross lines, because line 260 contains `` \\`\\` \\`:cmd\\` \\`\\` `` - a double-backtick span - and pairing one backtick at a time left an odd one behind, shifting every following span by one position. Matching the delimiter as a RUN (`` /(`+)([\\s\\S]*?)\\1/g ``) fixed the pairing. All three shapes now have a test on both sides in `tools/self-verify-fill-test.mjs`, including 'notation after a double-backtick span is still notation' and 'a placeholder in an indented list continuation still warns' - the latter guarding the false-negative direction, because four spaces under a bullet is a continuation paragraph, not code. Re-run on all three of this round's adopted trees with the fixed script: zero fill warnings.",
       "at": "2026-08-07",
-      "fix": "../../tools/self-verify-fill-test.mjs"
+      "fix": "../../../tools/self-verify-fill-test.mjs"
     },
     {
       "case": "DEC-14",
