@@ -486,8 +486,6 @@ const { entries, releases } = parseChangelog()
 const cycles = parseCycles()
 const items = backlog.epics.flatMap((e) => e.items)
 
-const productFile = pick('PRODUCT.md', 'docs/PRODUCT.md')
-const product = readIf(productFile) || ''
 const pkg = has('package.json') ? JSON.parse(read('package.json')) : {}
 const version = (readIf('VERSION') || pkg.version || '').trim() || null
 const specDoc = readIf(pick('standard/SPEC.md', 'SPEC.md')) || ''
@@ -501,16 +499,20 @@ const remote = (git('config', '--get', 'remote.origin.url') || '').replace(/\.gi
 const slug = remote.split(/[:/]/).slice(-2)
 const repoName = remote ? (slug[0] && slug[0] !== slug[1] ? slug.join('/') : slug[1]) : null
 
+// One way out of the page, to wherever this project actually lives. Declared by the repo -
+// its homepage, the domain its site is published under, or failing both the repository
+// itself. A status page does not need to explain the product; it needs to link to it.
+const cname = (readIf('site/CNAME') || readIf('CNAME') || '').trim().split('\n')[0]
+const home =
+  (typeof pkg.homepage === 'string' && pkg.homepage.trim()) ||
+  (cname && `https://${cname}`) ||
+  (remote.startsWith('git@github.com:') ? `https://github.com/${remote.slice('git@github.com:'.length)}` : null) ||
+  (remote.startsWith('https://') ? remote : null)
+
 const data = {
   meta: {
     name: pkg.name || repoName || basename(root),
-    tagline: clip(
-      sectionBody(product, 'What this is') ||
-        sectionBody(product, 'The product') ||
-        sectionBody(product, 'What we are building') ||
-        (product.split('\n').find((l) => l.trim() && !/^[#>|]/.test(l)) ?? ''),
-      420,
-    ),
+    home,
     version,
     commit,
     branch,
