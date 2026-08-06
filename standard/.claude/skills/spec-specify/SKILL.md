@@ -54,6 +54,13 @@ Given that feature description, do this:
       - The directory name is the short name alone: `<short-name>` (e.g., `user-auth`) - it names a capability/domain, so it must be stable and prefix-free
       - Do NOT add a numeric prefix (`003-user-auth`) or timestamp prefix (`20260319-143022-user-auth`)
       - If `specs/<short-name>/` already exists, this is the same capability: update the existing spec in place instead of minting a new sibling directory
+      <!-- PATCHED(repository-standards): ADR-002/R8 - the name match above is necessary and
+           not sufficient. The short name comes from the words of the request, so a request
+           about behaviour an existing capability already owns collides with nothing when it
+           is phrased differently (an approved idea's slug is the common case - it names the
+           idea, never the capability). Minting on a name miss is how a capability acquires a
+           sibling spec that contradicts it. -->
+      - A name miss is not evidence the capability is new. Before minting a directory, read the existing `specs/*/spec.md` Purpose and Scope lines (or run `/spec-impact`) and ask whether one of them already owns this behaviour. If one does, that spec is the target and `/spec-update` is the skill - say which capability you matched and why. Mint only when no existing capability owns it, and name the directory after the capability, never after the request or the idea it came from
       - Set `SPECIFY_FEATURE_DIRECTORY` to `specs/<short-name>`
 
    **Create the directory and spec file**:
