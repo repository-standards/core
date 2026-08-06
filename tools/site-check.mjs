@@ -5,7 +5,8 @@
 // check asserts the two human surfaces are shippable:
 //   landing  - tags balanced, the positioning one-liner quoted VERBATIM (PDLC-1's
 //              "surfaces quote it, never re-phrase" rule, enforced mechanically),
-//              no em/en dashes, no unexpected external hosts.
+//              no em/en dashes, no unexpected external hosts, and every version string
+//              on the page - not merely one of them - the one in VERSION.
 //   docsite  - every generated page exists, every internal .html link resolves,
 //              no raw markdown artifacts leaked ("|---", "```"), dark-first palette
 //              present (the landing's ink), no em/en dashes.
@@ -136,6 +137,36 @@ const version = readFileSync("VERSION", "utf8").trim();
 const vRe = new RegExp(`v${version.replace(/\./g, "\\.")}(?![0-9.])`);
 if (vRe.test(landing)) ok(`${LANDING}: advertises v${version} (matches VERSION)`);
 else fail(`${LANDING}: does not advertise v${version} - VERSION moved and the landing did not`);
+
+// ...and it must be the ONLY version the page states. "the current version appears
+// somewhere" is a condition a page satisfies while still naming the previous one, which
+// is exactly what shipped: v0.8.12 in the disclosure, in the footer and twice in the hero
+// script, four lines above a header pill correctly reading v0.8.13, with this check green.
+// Every version-shaped string is compared now, so a release that updates one of the five
+// and forgets four cannot pass - and nothing has to be told where the five are.
+//
+// SVG path data is masked out first, and it is the only exemption: `d="M12 .3a12 12 0 0
+// 0-3.8 23.4c.6.1.8-.3..."` is a stream of coordinates that reads as a version to any
+// regex, and the GitHub mark in the header alone contributes thirteen (seventeen across
+// the page's marks). Masked rather than deleted so the offsets, and therefore the line
+// numbers below, still belong to the real file. Comments and stylesheets stay in scope:
+// a version written in either is still a version somebody has to keep true, and the
+// landing has never legitimately carried an old one - the frozen previous landing lives
+// at site/previous.html, which this gate does not read.
+//
+// Anything x.y.z shaped counts, so a dotted date (2026.08.06) would be reported as a
+// wrong version. That is the intended trade: the page writes dates as 2026-08-06, and a
+// check that tried to tell dates from versions would be guessing about the one thing it
+// exists to be certain of.
+const masked = landing.replace(/<svg[\s\S]*?<\/svg>/gi, (s) => s.replace(/[^\n]/g, " "));
+const found = [...masked.matchAll(/\d+\.\d+\.\d+/g)];
+const stale = found.filter((m) => m[0] !== version);
+for (const m of stale) {
+  const line = masked.slice(0, m.index).split("\n").length;
+  const context = landing.slice(Math.max(0, m.index - 40), m.index + 20).replace(/\s+/g, " ").trim();
+  fail(`${LANDING}:${line}: states ${m[0]}, and VERSION says ${version} ("...${context}...")`);
+}
+if (!stale.length) ok(`${LANDING}: all ${found.length} version string(s) on the page state ${version}`);
 }
 
 // External hosts allowlist: only GitHub links may leave the page. Inlined `data:` URIs are

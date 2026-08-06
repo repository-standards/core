@@ -74,7 +74,9 @@ clients get them by reference (ADR-004), never as copies.
   rendered pages match `docs/validation/suite.json`/`targets.json`/`runs/*.json`, every
   case has a verdict, and every open failure carries an explicit waiver rather than a
   silent gap), `node tools/docsite.mjs && node tools/site-check.mjs &&
-  node tools/site-behaviour.mjs`. The list is the set CI
+  node tools/site-behaviour.mjs && node tools/site-check-test.mjs` (the landing and the
+  generated docs are shippable, the navigation behaves as it claims, and the landing gate
+  still fails a page carrying a second version). The list is the set CI
   runs - if a check is in `checks.yml` and not here, this line is the bug.
 - **Changed anything under `standard/`?** Run `node tools/manifest-hashes.mjs` and
   commit the manifest: every `copy` entry records the hash of what it ships, and that
