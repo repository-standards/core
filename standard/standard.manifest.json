@@ -209,11 +209,11 @@
       ],
       "rule": "R22",
       "sha256": {
-        "add-to-backlog/SKILL.md": "151571dfcf9a2aae38db59fff6383000505dc7d8fe753910af6b00edd729ea22",
+        "add-to-backlog/SKILL.md": "e5aacb7fc264fcc077a6b268e68575ba0410efc99f057ece3c9bad7bc36d4ef1",
         "adr-write/SKILL.md": "fc48ce8bc9c48453cb0ed25c2e3c5de54e6fd1dd6afaf50d5df0ca0d5530e239",
         "bdr-write/SKILL.md": "afb5a4de61ff80e0321467b5c8cc8b79f13439751fd3249603a4cf5b9f310035",
-        "cycle-close/SKILL.md": "5f7d2c8483da72a43ce9326790ba3aa7c6ca2162cc0cfc5588f6a163dc4fa5e5",
-        "cycle-open/SKILL.md": "2e9f3b417584523cd56c8763a20aa4667db366905110c3719a9087f4910d19c4",
+        "cycle-close/SKILL.md": "2b3ec7e05dce507bfc6e5ee17fc1d9640e50c0146f8e76c7453f7b961940a0f4",
+        "cycle-open/SKILL.md": "d02e573e06d05ef05e38e5d7a1d11872b286e5c1b7c4dcc9de6dbdf12bc65186",
         "discovery-digest/SKILL.md": "bc7f25b8a7eb9be3adaa0917febb5c2b452d378e1d5836c5b1bf47add2094d09",
         "idea-write/SKILL.md": "01f74cf692bb7941d24118928080e16519c78c683a374a69aad81695036e02ae",
         "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",
@@ -516,7 +516,7 @@
       "profile": "scale",
       "since": "0.8.0",
       "rule": "R15",
-      "sha256": "2d01c193d687b931b987c37065231842e7b01f2af52caf6f63fb42d54dfebd65"
+      "sha256": "975110bbbe1a31c5d6cbcba9be84d491afc5491bcd6332108c5e1fa17f946736"
     }
   ],
   "references": [
