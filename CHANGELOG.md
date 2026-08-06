@@ -51,8 +51,10 @@ artifact.
 `| **Author** | {{AUTHOR}} |`, nothing fills it, and `self-verify`'s placeholder warning read
 a fixed list of eight entry documents that never included the records - so an unsubstituted
 author reached drift 0. The scan now reaches the records, found by the record filename
-pattern so it works in both shipped layouts and leaves the templates alone, and the two
-record skills say to fill the row with a person rather than a role or a persona.
+pattern so it works in both shipped layouts and leaves the templates alone, and it reads them
+for the two shapes that are never notation - a mustache token and an all-ellipsis row -
+because a record's prose is the repo's own writing, not a shell this standard wrote. The two
+record skills now also say to fill the row with a person rather than a role or a persona.
 
 **Two shapes the brownfield decisions step could not handle.** A repo running its own live,
 formal decision process wired into its merge gate had only "file it as discovery material
