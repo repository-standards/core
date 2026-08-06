@@ -64,10 +64,10 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 |---|---|
 | Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **201** across 12 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-n-vocab) |
+| Observations recorded | **203** across 13 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-n-vocab) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 106 pass, 90 fail, 2 not-applicable, 3 partial |
-| Failures found | **165** - **89 fixed and re-verified** (across 24 merged pull requests), **76 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 14 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 108 pass, 90 fail, 2 not-applicable, 3 partial |
+| Failures found | **163** - **89 fixed and re-verified** (across 24 merged pull requests), **74 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 16 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -183,8 +183,6 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `DOC-15` | the denial message a Bash-tooling guard prints when `jq` is missing points at a path that actually exists in the surface the reader is on | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DOC-16` | showcase-gap's headline honesty claim - the outcome blocks' stated commit counts - agrees with the repo's own real history when the prescribed command is actually run | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DOC-17` | the shipped documentation-and-tooling surface (the workflow, taxonomy, checklist) is delivered in the same file the routing logic actually reads, so a repo that satisfies R1's 'single entry point' also satisfies the pages that make routing legible | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `INTAKE-07` | a policy stated inside AGENTS.md itself - the file the standard treats as the most authoritative artifact in the repo - is read by the same red-flag scan that reads CONTRIBUTING.md and named policy files | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `INTAKE-08` | a disclosure mandate (a policy requiring AI co-authorship and disclosure, the opposite of the standard's own conventions.md rule that merges into the very file stating the mandate) produces a visible stop, not silent, permanent per-PR non-compliance | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `INTAKE-09` | the intake's lifecycle-signal read distinguishes a repo that migrated to another forge entirely from one that is merely quiet, using more than the archived flag and commit recency | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `ADOPT-05` | the technology-detection step names a repo's second, workspace-composing layer (a west/repo manifest pulling in dozens of sibling repositories), not only the single root package manifest | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `ADOPT-06` | stack detection has an evidence-quality rule, so 715 `package.json` matches inside npm-compat test fixtures do not read as 'maybe Node' on a repo whose real build system is something else entirely | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
