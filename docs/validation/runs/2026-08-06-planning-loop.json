@@ -1,0 +1,29 @@
+{
+  "$about": "2026-08-06, owner question: 'I change an already-developed spec - does re-planning give an incremental plan and stories to push to Jira? And on the NEXT change, will the stories needing an update be updated and new ones added, or will it bug?' Answered by reading the shipped tree rather than the promise. All three fail; TRACK-20 is severe and was not previously known.",
+  "observations": [
+    {
+      "case": "SPEC-22",
+      "target": "repo:repository-standards/core",
+      "verdict": "fail",
+      "evidence": "The delta is well-defined - spec-update step 5 makes `git diff` against main the change delta, and that part is real. Nothing downstream consumes it. spec-plan step 2 is 'Read FEATURE_SPEC' - the whole current spec - and Phase 1 regenerates data-model.md, contracts/ and quickstart.md wholesale. No step reads the diff and none distinguishes already-built behaviour from the change. Whether the plan comes out incremental depends on the agent noticing the capability is live, not on the mechanism, while the docs imply mechanism.",
+      "at": "2026-08-06",
+      "waiver": "Open by design this round: the fix is a real step in spec-plan (read the spec's own diff, mark what is already built), not a wording change, and it shares the notion of 'what is new since last round' with TRACK-20."
+    },
+    {
+      "case": "TRACK-20",
+      "target": "repo:repository-standards/core",
+      "verdict": "fail",
+      "evidence": "Task ids are positional (T001, T002, T003 ... in scripts/spec/tasks-template.md), regenerated from scratch each run; grepping spec-tasks/SKILL.md and the template for reuse/reserve/renumber/previous-run logic returns nothing. R13 sharpens it rather than softening it: tasks.md is deleted when work closes, so round two holds no record of what round one's ids meant. The bridge keys a sub-task by that id ('created only if no sub-task with that id exists'), so a NEW T003 describing DIFFERENT work matches the OLD [T003] and is skipped as already present. The failure is silent and loses work rather than duplicating it - nothing errors and the board reads complete.",
+      "at": "2026-08-06",
+      "waiver": "Open, logged the day it was found. The fix is a design call for the owner - ids derived from content rather than position, or an explicit generation marker in the key - and guessing it in a patch would be worse than naming it."
+    },
+    {
+      "case": "TRACK-21",
+      "target": "repo:repository-standards/core",
+      "verdict": "fail",
+      "evidence": "Fails by explicit design, which is worth separating from the accident above. tracking-work.md states 'It never edits an issue it did not just create. Not the summary, not the description, not the status, not the assignee', for the good reason that a generator overwriting a board is one nobody may run twice. The consequence stands: a Story whose spec changed keeps its old summary indefinitely and nothing reports the divergence. The deliberate half is right; the missing half is any drift report.",
+      "at": "2026-08-06",
+      "waiver": "Open by design: not-overwriting is a decision to keep. The missing piece is a divergence report, which is new work rather than a correction."
+    }
+  ]
+}

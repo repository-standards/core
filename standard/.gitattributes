@@ -1,0 +1,24 @@
+# Line endings for the shipped tree.
+#
+# Why this file exists, since it is easy to delete as noise: the guards in
+# `.claude/hooks/` and the spec engine in `scripts/spec/` are bash scripts invoked
+# by a shebang. A repo whose own .gitattributes sets `* text=auto eol=crlf` - a real
+# and common setting on Windows-first teams, shipped by real repositories - checks
+# these out with CRLF endings. The kernel then reads `#!/usr/bin/env bash\r` and
+# fails to find an interpreter named `bash\r`, so the script exits 127 with empty
+# stdout.
+#
+# For a hook whose entire job is to DENY a dangerous command, that failure mode is
+# the dangerous one: it does not deny and it does not complain. It says nothing, and
+# the command proceeds. Verified against a real repo shipping exactly that setting -
+# all ten shipped .sh files exited 127 with no output against a destructive command.
+#
+# So the line endings of these files are not a preference, they are a correctness
+# property, and this file is what holds it when the surrounding repo disagrees.
+
+*.sh text eol=lf
+*.mjs text eol=lf
+
+# Files without an extension that are still scripts - hooks land here.
+.claude/hooks/* text eol=lf
+scripts/spec/* text eol=lf
