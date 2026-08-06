@@ -6,7 +6,7 @@
      this standard can run the same idea against their own. -->
 
 Twenty-something checks - **124**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **53** so far; the rest are logged as open (which includes any case where an attempted fix
+claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **57** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -323,7 +323,7 @@ node scripts/spec-guard.mjs --audit with and without $unclaimed present
 - **Given:** a spec that already has a `## Clarifications` heading
 - **When:** a second `## Clarifications` heading is added instead of a new `### Session` subsection under the existing one
 - **Then:** spec-structure.mjs (or an equivalent check) flags the duplicate heading
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -433,7 +433,7 @@ run spec-specify to mint a new capability, then node standard/scripts/spec-guard
 - **Given:** the plan template's default source-layout option (layer folders: src/models, src/services, src/cli, src/lib)
 - **When:** a capability is implemented under that default layout and spec-guard.mjs runs
 - **Then:** the coupling guard fires on a real code change, the same as it does under the domain-folder convention
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -446,7 +446,7 @@ implement a capability under the plan template's default layer-folder layout and
 - **Given:** two genuinely separate capabilities whose code necessarily lives inside one already-claimed domain folder
 - **When:** one capability's glob entry is added, then narrowed, then the audit is run at each step
 - **Then:** the map can bind one file to the correct capability without also always firing on the sibling, unlike a glob-only scheme with no exclusion or negation syntax
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -485,7 +485,7 @@ grep -n decision-record across standard/.claude/skills/spec-specify and spec-cla
 - **Given:** a request describing behaviour that spans two capabilities, one of which (under a different name) already has a spec
 - **When:** spec-specify runs, which is explicitly instructed never to ask the user at this step
 - **Then:** the collision is caught and surfaced, instead of silently minting a new sibling capability because collision detection is exact-string on the generated slug
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
