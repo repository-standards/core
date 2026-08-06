@@ -34,7 +34,7 @@ outgrew itself - as its own meta entry predicted it would.)
 | [GitHub Issues as default tracker](default-tracker.md) | ADR-010: free wins; Jira/Linear adapters | weakest PO experience of the three |
 | [Spec Status in front matter](status-frontmatter.md) | the clarify gate flips it mechanically | status exists in two places once a tracker mirrors |
 | [Ideas are slugs](ideas-slugs.md) | `docs/ideas/<slug>.md`, never numbers | slugs are wordier and renames break links |
-| [Core and scale profiles](profiles.md) | ADR-011: one repo, two profiles | two may be too coarse; an `audit` third looms |
+| [Core and scale profiles](profiles.md) | ADR-011 + ADR-040: one repo, two profiles, triggered by reach | the split may be too weak to carry the weight - 9 entries and two rule clauses; an `audit` third looms |
 | [Personas as a hard gate](personas-gate.md) | gate is core, roster is scale | ceremony for solo tools and no-product repos |
 | [One source, two surfaces](docs-funnel.md) | docs site renders the same md agents read | in-place READMEs may not sequence into a learning path |
 | [Case-study anonymization](case-anonymization.md) | describe the situation, never the company | the identifiability line is unwritten judgment |

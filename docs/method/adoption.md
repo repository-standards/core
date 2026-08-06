@@ -187,22 +187,82 @@ This is stack- and vendor-agnostic (Layer 1): it describes capability tiers ("a 
 reasoning model", "bounded sub-agents"), not a product. A Layer-2 setup may name the
 concrete models and wire the orchestration.
 
-## Pick your profile: core vs scale (ADR-011)
+## Pick your profile: core vs scale (ADR-011, ADR-040)
 
-One standard, two postures - declared next to the recorded alignment state, verified per profile
-(previously written solo/team):
+One standard, two postures - declared next to the recorded alignment state, verified per
+profile (previously written solo/team). The principle: **core keeps knowledge alive; scale
+carries it to someone who is not in the room.**
 
-- **`core`** - solo repos adopt core: a one-person or small project carries what keeps
-  knowledge alive - `AGENTS.md`, taxonomy, living specs, decision records, backlog,
-  ideas, self-verify. Guards run locally/pre-commit; one persona is enough; no tracker
-  bridge, no release-notes curation.
-- **`scale`** - teams carry core + scale, the full posture: CI-enforced gates, tracker
-  bridge and statuses mirrored out, curated release notes, full persona roster, UX
-  cadence, C4/token discipline.
+**`scale` binds on reach, not on headcount.** Answer yes to any one of these and the repo is
+`scale`. A second pair of hands is not one of them:
 
-The principle when in doubt: **core keeps knowledge alive; scale coordinates people.**
-Start `core`, flip to `scale` when the second regular contributor arrives - the flip is
-a manifest flag plus the measured delta, not a re-adoption.
+- work is handed off **asynchronously** - somebody picks a piece up without the person who
+  wrote it being reachable to explain it;
+- somebody contributes from **outside the conversation** - an outside contributor, a
+  rotating team, a vendor, a maintainer who arrives after everyone here has gone;
+- somebody **outside the repo reads execution state** - a stakeholder who follows a board
+  rather than a backlog;
+- the repo has a **release audience that is not its authors**;
+- it is designed for **users nobody here is**.
+
+Two people at one desk shipping to each other are `core`, and compliant. One person shipping
+a library to ten thousand strangers meets the release-audience condition and is not.
+
+**What the flag actually changes** - nine entries, named rather than summarised, because the
+difference is small enough that a summary of it misleads:
+
+| At `scale` only | What it is for |
+|---|---|
+| `CONTRIBUTING.md`, `.github/pull_request_template.md` | contribution mechanics for people who cannot be told them in person |
+| `docs/journeys`, `docs/research`, `docs/analytics.md` | designing for, and measuring, users nobody in the repo is |
+| `docs/cycles`, `scripts/cycle-guard.mjs`, the `cycle-guard` guard | a team agreeing what it committed to and by when (ADR-028) |
+| the `spec-guard` guard **blocking** | R11's coupling gate blocks at `scale`; at `core` the same guard runs and advises |
+
+**And what it does not change** - three things the picker used to offer as discounts and one
+it had backwards:
+
+- **CI is not a scale thing.** `.github/workflows/spec-guard.yml` is a required entry at
+  every profile, and R16 puts `self-verify` and `spec-structure` in CI for every repo, a
+  solo one included. Only `spec-guard`'s blocking mode is marked *(scale)*, and the
+  full-tree coupling audit blocks everywhere. A core repo that skips CI is at drift, not
+  exempt.
+- **Personas and architecture are core.** `docs/personas.md` (R10) and
+  `docs/ARCHITECTURE.md` are required at both profiles. A fuller roster and C4 depth are how
+  much you write in a file you carry either way - a judgment, not a flag, and nothing
+  measures it.
+- **The tracker bridge and curated release notes are required at no profile.** Tracker sync
+  is an optional per-capability extension core never reads (ADR-032); release-notes
+  curation is not a manifest entry at all. Neither is a discount, because neither was ever
+  charged.
+
+Do not take this list on trust - `node scripts/self-verify.mjs --profile core` prints how
+many entries it skipped, and today the answer is 9.
+
+**Between the two - the 2-5 person repo.** There is no third profile and there will not be
+one for team size. A repo whose answers land in the middle picks the route that leaves a
+record:
+
+- **declare `scale` and except the documents you do not carry** - each in the manifest's
+  `exceptions` with a reason. self-verify reports them as excepted rather than drift and
+  keeps them in the adoption denominator, so excepting can never raise the percentage. This
+  is the paved road for the six document entries above: an exception carries a reason, and
+  the next person reads why.
+- **declare `core` and carry what a condition above actually triggered** - carrying more
+  than your profile requires has never been drift. It is also not verified: nothing checks
+  a scale artifact in a `core` repo, which is the cost of this route.
+
+**The three enforcement entries cannot be excepted, and that is what actually decides it.**
+`scripts/cycle-guard.mjs` and the two guards are outside the hatch by design - waiving a live
+check removes it rather than recording a deviation from it, so self-verify refuses the
+exception and says so. Declaring `scale` therefore means accepting that R11's coupling guard
+**blocks** every pull request where a capability's code moves without its spec. That is the
+one difference a small team should decide deliberately; at `core` the same guard runs and
+advises, and the full-tree coupling audit blocks either way.
+
+Reading `core` as "we are only two, so none of this is for us" is the one wrong answer. The
+conditions ask what leaves the room, and for most pairs something already does.
+
+The flip either way is a manifest flag plus the measured delta, not a re-adoption.
 
 ## Not this
 
