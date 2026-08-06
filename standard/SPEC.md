@@ -16,7 +16,8 @@ projection (each manifest entry names the rule it enforces), and
 `scripts/self-verify.mjs` reports unmet rules as a drift count. Rules the manifest
 cannot check mechanically are verified at review or by the shipped guards the
 skills invoke (the clarify gate checks R12 by script, outside the manifest).
-Rules marked *(scale)* bind team repos; everything else is the core profile and
+Rules marked *(scale)* bind repos on the scale profile - which a repo is on by
+reach, not by headcount (ADR-040); everything else is the core profile and
 binds every repo, a solo one included.
 
 ## Entry and knowledge
@@ -163,8 +164,11 @@ binds every repo, a solo one included.
   methodology, for any stack; Layer 2, optional technology best practices living
   in per-technology stack repos, official only when listed in the core registry
   (`stacks.json`) - and one standard with two profiles: core keeps knowledge
-  alive in every repo, scale adds the coordination artifacts teams need. Solo
-  repos meet core alone and are compliant. A stack declares what adopting it
+  alive in every repo, scale adds what carries it to people who are not in the
+  room. Which profile a repo is on is a question about reach - work handed off
+  asynchronously, contributors or readers outside the conversation, a release
+  audience that is not the authors - and never about how many people it has
+  (ADR-040). Solo repos meet core alone and are compliant. A stack declares what adopting it
   means in its own manifest (`stack.manifest.json`, the core schema); a repo
   that adopted one carries it, and `self-verify` counts one drift across both.
   A repo whose stacks coexist permanently carries one manifest per stack
