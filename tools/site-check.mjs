@@ -149,16 +149,25 @@ else fail(`${LANDING}: does not advertise v${version} - VERSION moved and the la
 // 0-3.8 23.4c.6.1.8-.3..."` is a stream of coordinates that reads as a version to any
 // regex, and the GitHub mark in the header alone contributes thirteen (seventeen across
 // the page's marks). Masked rather than deleted so the offsets, and therefore the line
-// numbers below, still belong to the real file. Comments and stylesheets stay in scope:
-// a version written in either is still a version somebody has to keep true, and the
-// landing has never legitimately carried an old one - the frozen previous landing lives
-// at site/previous.html, which this gate does not read.
+// numbers below, still belong to the real file.
+//
+// Nothing else is exempt, and the landing needs nothing else: every version on it is meant
+// to be the current one, the hero's simulated session included. No historical reference, no
+// changelog link naming an old release, no example pinned to an older tag - the one surface
+// that does legitimately carry an old version is the frozen previous landing (v0.7.2
+// throughout), which this gate has never read. The stylesheet cannot produce a false hit
+// either: a CSS number has one decimal point, so `1.05s` is not version-shaped. Comments
+// stay in scope, because a version in one is still a version somebody has to keep true.
+//
+// The opening tag must not be self-closing. `<svg class="x"/>` closes itself, so pairing
+// it with a later `</svg>` would mask everything in between - including a stale version -
+// and the guard would go quiet rather than loud, which is the one way it must not fail.
 //
 // Anything x.y.z shaped counts, so a dotted date (2026.08.06) would be reported as a
 // wrong version. That is the intended trade: the page writes dates as 2026-08-06, and a
 // check that tried to tell dates from versions would be guessing about the one thing it
 // exists to be certain of.
-const masked = landing.replace(/<svg[\s\S]*?<\/svg>/gi, (s) => s.replace(/[^\n]/g, " "));
+const masked = landing.replace(/<svg\b(?:[^>]*[^/>])?>[\s\S]*?<\/svg>/gi, (s) => s.replace(/[^\n]/g, " "));
 const found = [...masked.matchAll(/\d+\.\d+\.\d+/g)];
 const stale = found.filter((m) => m[0] !== version);
 for (const m of stale) {
