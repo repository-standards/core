@@ -146,7 +146,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R16",
-      "sha256": "67f463a1d4296bbd62243c09c2999bfe03fef5bfebdc96d218f40702b2f4609a"
+      "sha256": "b7be7f29faa986700e7754ff607e468d5d719c8b0e459e5b1b55a2f44aef6527"
     },
     {
       "path": "scripts/facts-check.mjs",
@@ -156,7 +156,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R4",
-      "sha256": "0d6b2a4017cfe8e1d527df9b828efa30602e3e74b9df823976003c81a3f9565f"
+      "sha256": "3afdeea3f19b27624b69bfb0d00e0ceb1165bdeec53692a630b4596113ed6edf"
     },
     {
       "path": "docs/facts.json",
@@ -209,22 +209,22 @@
       ],
       "rule": "R22",
       "sha256": {
-        "add-to-backlog/SKILL.md": "151571dfcf9a2aae38db59fff6383000505dc7d8fe753910af6b00edd729ea22",
+        "add-to-backlog/SKILL.md": "e5aacb7fc264fcc077a6b268e68575ba0410efc99f057ece3c9bad7bc36d4ef1",
         "adr-write/SKILL.md": "663276a872c658cefa8db89dbdf2679b8d8d0c006ce652f528ea92b81bf366df",
-        "bdr-write/SKILL.md": "8e87ca6142adc1ed745deed962448ce5d572dc7c3fb726c34836f7f13d4abfde",
-        "cycle-close/SKILL.md": "72bad295dd461eebae9bd356ad07db33a76274c7b3011ad1d52d1158f0b82147",
-        "cycle-open/SKILL.md": "2e9f3b417584523cd56c8763a20aa4667db366905110c3719a9087f4910d19c4",
+        "bdr-write/SKILL.md": "c357fe5fedffaa4565337cee03f5608ba0926054d20355ffbaa02c21e68d60a2",
+        "cycle-close/SKILL.md": "2b3ec7e05dce507bfc6e5ee17fc1d9640e50c0146f8e76c7453f7b961940a0f4",
+        "cycle-open/SKILL.md": "d02e573e06d05ef05e38e5d7a1d11872b286e5c1b7c4dcc9de6dbdf12bc65186",
         "discovery-digest/SKILL.md": "bc7f25b8a7eb9be3adaa0917febb5c2b452d378e1d5836c5b1bf47add2094d09",
         "idea-write/SKILL.md": "0c6bf300123b8b7b2be4b9d5d757158bd3a8524be95b858876cfd35e532c68fd",
         "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",
         "pre-pr-review/SKILL.md": "d72bee4edf7979968dc08f2cc493826953a396090a212f36132af557cde55960",
         "product-write/SKILL.md": "21bdc82897281178f915cb0f51dd669d35228d17748977cbacdc1993f2843b98",
-        "spec-clarify/SKILL.md": "26da90f61886188eec6fc6c4a92c60fd825b6c1bb47bd90c16257f14a4471cdd",
-        "spec-impact/SKILL.md": "c80c79bcf87b1c273a4173fffb128986887430ef8e2373ac2ccdca3c9ac30f19",
+        "spec-clarify/SKILL.md": "042ec5e0153d9e62d7f9be86af7205d44c0b278c2aea626aa5167672cd2f2d8e",
+        "spec-impact/SKILL.md": "9d583c7b37b4bcf11a052c6bdaf13ec92ce8ad725f974a06c5cba91f6d366728",
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",
         "spec-plan/SKILL.md": "00d877467e5d5f971fbdcce2cc5b20afb03e6645198363c92cbc57f13a4e3ae3",
-        "spec-reconcile/SKILL.md": "709bb954a4c408eaf8a1e9d1af164453ce57749e96806d4437dc66d27d73c0bf",
-        "spec-specify/SKILL.md": "50d57c356b74a18723628adef221113042d8e6dfe7c142c0137931d3298bd570",
+        "spec-reconcile/SKILL.md": "d5b123a8ae57c1c0ac003d3c338e27badbdb3bdf0b13edf5275fd007a07f03ef",
+        "spec-specify/SKILL.md": "58f00c7f3b47e3a7fb1c4cb57d85a5219923ff0159ae92417746db50c02e185a",
         "spec-tasks/SKILL.md": "59cdabc8e4e8f3656d245c1aa20213f0d89cd5e7fc9915e05d3e7fa1af98b9f1",
         "spec-update/SKILL.md": "04ddb59820a62b53de5c7d2ce6862ee622dbc60f1fb7fe8dac353ac751db82cd",
         "timeline-update/SKILL.md": "e0770d9e33139bbddaa01be6bd59748845ab6d18b34fd9de489910f110cd584c",
@@ -244,7 +244,7 @@
         "check-prerequisites.sh": "24f398770a52ae6b73ae0d4601fe3fd2a81491c51463f53a956c4d98d49b9f25",
         "check-spec-clarified.sh": "414c28837b93e0b9c2c342b230f7f09c2c2b24fe7a0e804e3ab4b1e5add55229",
         "common.sh": "814ec1d965c536b8806324f5050ad75e521b6e2aa3ff241510d316b4bd779e13",
-        "plan-template.md": "c8a345b6a586d54125a95ce9bb6d90e5fc8870ee90c4a4bbc5c3edd904130c03",
+        "plan-template.md": "c3dd77a9a109cee4bdc77b615e7d5a707b80c164e02fa8b4d7552f7ad2f8400c",
         "setup-plan.sh": "2ea9e784b283f66aac7c92fead8810a9809adbbdd2091036800a8dd287085a88",
         "setup-tasks.sh": "0e14f3d03e71479fc20cc15cef42d57ab50ad10b08d7dd1613c0b98bd85d3433",
         "tasks-template.md": "55b784e4b1e1c1295cc748e72f00b913105bfe45774228ecd1b86f91f648336e"
@@ -358,7 +358,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R11",
-      "sha256": "eac82889fdc92feeb22541f1cab02f048d76b5d6c1cc03d36748f7f92d49790e"
+      "sha256": "f31487ac7dd5a3a7e6fc2703d7ccad3bf3e1727779ac0a47fa128fc4b02c2cc2"
     },
     {
       "path": ".github/workflows/spec-guard.yml",
@@ -516,7 +516,69 @@
       "profile": "scale",
       "since": "0.8.0",
       "rule": "R15",
-      "sha256": "2d01c193d687b931b987c37065231842e7b01f2af52caf6f63fb42d54dfebd65"
+      "sha256": "975110bbbe1a31c5d6cbcba9be84d491afc5491bcd6332108c5e1fa17f946736"
+    },
+    {
+      "path": "scripts/work-dashboard.mjs",
+      "purpose": "renders the work state - pool, cycles, timeline, records, changelog - as one static page for the people who never open the repository; a projection, never a second place work is tracked",
+      "adapt": "copy",
+      "required": false,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R15",
+      "sha256": "2bab5c3fa97f6b5f94458f52630c82dca4c82c4dac6836f6d8f7a47dad5f275b"
+    },
+    {
+      "path": "scripts/work-dashboard.css",
+      "purpose": "the dashboard's styling, inlined into the page at build time",
+      "adapt": "copy",
+      "required": false,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R15",
+      "sha256": "9f16f1ac18ab8f0a4f005d5bc9b936f65927bac3893887a3aa6ef1ecbf516dec"
+    },
+    {
+      "path": "scripts/work-dashboard.client.js",
+      "purpose": "the dashboard's rendering, inlined into the page at build time - no network, no dependencies",
+      "adapt": "copy",
+      "required": false,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R15",
+      "sha256": "f72430fdeb2cc48729c5f1c9870b2df8d70b0590020a023b15cbb669f72944ba"
+    },
+    {
+      "path": "scripts/work-dashboard.gate.js",
+      "purpose": "the password gate of a locked build - derives the key and decrypts the page in the browser; only present in the page when --lock is used",
+      "adapt": "copy",
+      "required": false,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R15",
+      "sha256": "c7f62c2fc08bbbb252395f5ea4f429059226ef4d6a3ab4beef1cc5463d5e2495"
+    },
+    {
+      "path": "scripts/work-dashboard.gate.css",
+      "purpose": "the password gate's styling, inlined into a locked page at build time",
+      "adapt": "copy",
+      "required": false,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R15",
+      "sha256": "63a0b56a4491c5e3686835e15886d1440be4cc497a306a9caaa2a4678d15f07c"
+    },
+    {
+      "path": ".github/workflows/work-dashboard.yml",
+      "purpose": "builds the dashboard on every push to main; publishes it only when the repository is public, because Pages on a private repository is served publicly",
+      "adapt": "merge",
+      "required": false,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R15",
+      "requiredKeys": [
+        "on.push"
+      ]
     }
   ],
   "references": [
@@ -784,7 +846,6 @@
       "prompt": "Monorepo vs polyrepo?",
       "record": "ADR",
       "catalog": "foundation",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -793,7 +854,6 @@
       "prompt": "Where are the module/domain seams? (slice by capability, not layer)",
       "record": "ADR",
       "catalog": "foundation",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -802,7 +862,6 @@
       "prompt": "Primary datastore & persistence model?",
       "record": "ADR",
       "catalog": "data",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -811,7 +870,6 @@
       "prompt": "API / contract style & versioning?",
       "record": "ADR",
       "catalog": "interfaces",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -820,7 +878,6 @@
       "prompt": "Authn mechanism + authz model?",
       "record": "ADR",
       "catalog": "interfaces",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -829,7 +886,6 @@
       "prompt": "Test tiers and where each runs?",
       "record": "ADR",
       "catalog": "quality",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -838,7 +894,6 @@
       "prompt": "The floor below which nothing ships?",
       "record": "ADR",
       "catalog": "quality",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -847,7 +902,6 @@
       "prompt": "Branching & release strategy (who cuts releases)?",
       "record": "ADR",
       "catalog": "delivery",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     }
