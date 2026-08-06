@@ -68,6 +68,11 @@ buildable, each one revertable. Four rules get you there:
   forward. This is the one hard stop in the list - rewriting shared history
   destroys other people's work.
 
+**If review does not happen on the git host** - a mailing-list patch series, a
+Gerrit change - the four rules bind to whatever this repo reviews as one unit,
+and the branching ADR names it. Without that name, "one per PR" has no referent
+here and the section reads as somebody else's workflow.
+
 Turn on the platform's linear-history protection so the rule is enforced, not
 remembered, and set the merge button to the method this repo recorded. Why this
 shape, what it costs, and when squash or a merge commit is the better pick:

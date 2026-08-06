@@ -164,16 +164,21 @@ binds every repo, a solo one included.
 
 ## Integration and history
 
-- **R23.** The mainline's history MUST read as one finished unit of work per PR.
-  A branch is brought up to date by **rebasing onto its base**; the base MUST NOT
-  be merged back into the branch. Every PR MUST be based on the mainline, never
-  on another open PR's branch. A PR MUST land by **rebase-merge** (the paved
-  road) or squash-merge - decided once and recorded with the branching decision
-  (R7); the platform's linear-history protection SHOULD enforce it. Rebase-merge
-  publishes every commit, so it MUST NOT be chosen unless each commit is a
-  complete, buildable, reviewed change; a repo that will not hold that bar
-  squashes instead. A branch MAY be rewritten while it is the author's alone;
-  once another person or branch builds on it, it MUST NOT be (ADR-026).
+- **R23.** The mainline's history MUST read as one finished unit of work per
+  **reviewed change**. The pull request is the paved road's unit of review; a
+  repo whose review does not happen on the git host has another one - a
+  mailing-list patch series, a Gerrit or Phabricator change - and MUST name it
+  in the branching decision (R7), because every clause below binds to that unit
+  and not to a platform feature. A branch is brought up to date by **rebasing
+  onto its base**; the base MUST NOT be merged back into the branch. Every
+  reviewed change MUST be based on the mainline, never on another open change's
+  branch. It MUST land by **rebase-merge** (the paved road) or squash-merge -
+  decided once and recorded with the branching decision (R7); the platform's
+  linear-history protection SHOULD enforce it where the platform has one.
+  Rebase-merge publishes every commit, so it MUST NOT be chosen unless each
+  commit is a complete, buildable, reviewed change; a repo that will not hold
+  that bar squashes instead. A branch MAY be rewritten while it is the author's
+  alone; once another person or branch builds on it, it MUST NOT be (ADR-026).
 
 - **R25.** A PR that changes what the standard ships describes that change under
   `CHANGELOG.md`'s `## Unreleased` heading (R18) - it MUST NOT move the version itself.
