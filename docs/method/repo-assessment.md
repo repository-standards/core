@@ -71,10 +71,42 @@ Each pass: what to **detect**, what **good** looks like (the paved road), and wh
 | **2. Decisions in code** | Walk the [decision checklist](checklist.md): which forks are decided / undecided / decided **inconsistently** | Every contestable fork has an ADR/BDR; the rest are conscious conventions | Retroactive ADR/BDR for decided-but-unrecorded; backlog item for each undecided fork |
 | **3. Capabilities & specs** | Domains present in the code; any specs; a `capability-map.json`? | Specs [by capability, buildable](../tree/specs.md); code mapped | Seed `capability-map.json`; backlog items to spec the risky capabilities first |
 | **4. Quality gates** | Tests (present? tiers? which paths?), typecheck strictness, lint/format | Named test tiers, strict types, one formatter/linter | Set up the missing gate; backlog coverage for money/security/contract paths |
-| **5. CI/CD** | Is there a pipeline? Least-privilege permissions? Actions pinned? Reproducible build? | Hardened, pinned, least-privilege CI/CD | Add or harden the pipeline; pin actions; scope permissions down |
+| **5. CI/CD** | Is there a pipeline, and **does its PR gate actually fire**? Least-privilege permissions? Actions pinned? Reproducible build? | Hardened, pinned, least-privilege CI/CD, demonstrably running on pull requests | Add or harden the pipeline; pin actions; scope permissions down |
 | **6. Security & supply chain** | Secret scanning, secrets committed, dependency audit, lockfile, release cooldown | Secret scan + audit in CI; no committed secrets; supply-chain cooldown | Set up scanning + audit; **committed secret = red-flag stop** |
 | **7. Dependencies & stack** | Detect the stack; outdated / risky / unmaintained deps; does it match a known stack layer? | Current, minimal, justified deps | Map to the stack layer (Node/TS) where it applies; ADR for each risky/heavy dep |
 | **8. Drift & health** | Code<->doc contradictions, dead code, `TODO`/debt density, churn hotspots | Docs match code; no silent drift; hotspots understood | Backlog item per contradiction; spec/ADR the churn hotspots first |
+
+**Pass 5 rates what fires, not what exists.** A workflow file is evidence of intent;
+the evidence that a **gate** exists is a **recent run on a pull request** - `gh run list
+--workflow <file> --event pull_request --limit 5`, or the checks list on the last few
+merged PRs. Four shapes carry a workflow file and gate nothing, and all four were found
+in the field:
+
+- **No pull-request trigger at all** - the workflow runs on push, on a schedule or on
+  `workflow_dispatch` only. Often deliberate: postgres and openjdk run their real CI
+  outside GitHub Actions, and postgres says so in a comment inside the workflow.
+- **A filter that excludes the change** - `paths:`, `paths-ignore:` or `branches:` on the
+  `pull_request` trigger. The trigger is present, the job never queues.
+- **Disabled at the platform** - a workflow set to `disabled_manually`, or Actions turned
+  off for the whole repo. Nothing in the file says so. LibreOffice/core goes further: its
+  only PR-triggered workflow auto-closes every pull request opened against the mirror.
+- **A runner that does not exist** - `runs-on:` naming a self-hosted label with nothing
+  registered behind it. The job queues until it is cancelled, which reads as *no run*
+  rather than as *failed*.
+
+So report the two facts separately - which gates **exist**, and which of them **ran on a
+pull request** recently. A workflow nobody can show running rates `partial` at best,
+never `solid`, and the finding says which of the two was observed.
+
+**And CI outside the host is still CI.** No workflow directory does not mean no pipeline:
+the gate may be Gerrit, buildbot, Jenkins, or a patch queue on a mailing list. Look for it
+before writing "no CI" into a health report handed to maintainers who have run one for
+twenty years.
+
+When the run history is not reachable - no API access, a mirror with no runs, CI on a
+system you cannot query - say so in the health report the way pass 8 says it for a shallow
+clone ("gate execution unverified - no accessible run history") instead of promoting file
+existence to a passing gate.
 
 **Pass 8's churn-hotspot check needs real history.** A shallow clone (`git clone --depth
 1`, common when assessing someone else's repo from outside) has exactly one commit -
