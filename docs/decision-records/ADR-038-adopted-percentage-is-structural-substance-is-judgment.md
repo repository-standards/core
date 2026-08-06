@@ -1,4 +1,4 @@
-# ADR-037: The adopted percentage measures structure; substance stays the judgment tier
+# ADR-038: The adopted percentage measures structure; substance stays the judgment tier
 
 | | |
 | --- | --- |
