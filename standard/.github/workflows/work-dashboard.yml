@@ -11,10 +11,13 @@
 #   public repository   -> the page is published, and being able to point at it is a feature
 #   private repository  -> the page is a build artifact, readable by whoever can read the repo
 #
-# If you want it published from a private repository, put it behind an identity gate
-# (Cloudflare Access, Netlify or Vercel protection, your own intranet) and add that step in
-# place of the publish job. Add `--anonymise` to the build if the page should carry no
-# colleague's name.
+# Pages has no password of its own to put in front of it, so a private repository that wants
+# a link has three answers, in the order worth trying: put the file where your authentication
+# already is (wiki, shared drive, an app already behind your SSO - it is one self-contained
+# HTML file with no external requests, so it travels), leave it as the artifact this job
+# already uploads, or add a static host with an identity layer and replace the publish job
+# with that upload. Add `--anonymise` to the build if the page should carry no colleague's
+# name.
 name: work-dashboard
 
 on:

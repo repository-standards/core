@@ -47,6 +47,10 @@ Three properties were the point rather than the page:
   page as an artifact, and reaches the publish step only when the repository is genuinely
   public - GitHub Pages on a private repository is served publicly unless the organisation is
   on Enterprise Cloud, which is precisely how a private backlog ends up on the open internet.
+  Pages has no password to put in front of it and a prompt written in the page's own
+  JavaScript is theatre, so the method doc answers the private case with what the build
+  already is - one self-contained HTML file, no external requests - and says to put it where
+  the organisation's authentication already is before adding a host that has one.
   `--anonymise` drops assignees and the owner a cycle names, at build time, for a page that
   leaves the building - structured fields only, since prose written by hand is reproduced as
   written. The local `--serve` binds loopback for the same reason, on a port nothing else

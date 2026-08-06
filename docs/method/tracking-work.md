@@ -425,11 +425,43 @@ nothing the repository does not already contain.
 - **Public repository: publish it.** GitHub Pages is enough, and being able to send someone a
   link instead of a status email is most of the point. This standard publishes its own.
 - **Private repository: not on GitHub Pages.** Pages on a private repository is served
-  **publicly** unless the organisation is on Enterprise Cloud with access control - the
-  default outcome is a private backlog on the open internet. Keep it as the CI build
-  artifact, which only people who can read the repository can download; serve it locally with
-  `--serve`; or put it behind an identity gate (Cloudflare Access, Netlify or Vercel
-  protection, your own intranet).
+  **publicly** unless the organisation is on Enterprise Cloud with access control, so the
+  default outcome is a private backlog on the open internet. GitHub Pages has no password of
+  its own to put in front of it, and a password prompt written in the page's own JavaScript
+  is theatre: the content has already reached the browser by the time it is asked.
+
+**What to do instead, in the order worth trying.** The build is **one self-contained HTML
+file** - stylesheet and code inlined, no fonts, no CDN, not a single external request. That
+is what makes this easy: it does not need a host, it needs a place your company already
+locks.
+
+1. **Put it where your authentication already is.** An internal wiki page, a shared drive, the
+   static directory of an app that already sits behind your SSO, the intranet. No new vendor,
+   no new account, no new set of permissions to get wrong. Dropped somewhere with no
+   `state.json` beside it the page simply stops self-refreshing and becomes a snapshot - the
+   masthead still names the commit it was built from, so nobody mistakes it for live.
+2. **Leave it as the build artifact.** The shipped workflow already uploads it on every push
+   to `main`, and only people who can read the repository can download it. Not a link you can
+   send, which is the whole cost, but it is zero setup and it is already running.
+3. **Add a gate only if you have none.** Two are free at the size a private project actually
+   is, take about a quarter of an hour, and deploy from CI. Both were checked in August 2026;
+   hosting terms move, so check again rather than trusting this paragraph.
+   - **Azure Static Web Apps, Free plan.** Authentication is built in - GitHub or Microsoft
+     accounts, nothing extra to stand up - and a single route rule closes the whole site:
+     `{ "route": "/*", "allowedRoles": ["reader"] }` in `staticwebapp.config.json`, with the
+     readers named through the built-in invitation system (25 per app on Free). Azure writes
+     the deployment workflow into your repository when you create the app.
+   - **Cloudflare Pages behind Cloudflare Access.** Access is free up to 50 users, policies
+     are by email address, email domain or your identity provider, and it protects the
+     `*.pages.dev` URL, so you do not need a domain of your own to start.
+
+   Two to know about before you reach for them: Vercel's password protection is an Enterprise
+   feature or a paid add-on, and the free Vercel Authentication only admits people already
+   signed into your Vercel team - which means seats for the very readers you built this for.
+   Netlify moved site passwords to its paid tier for accounts created after September 2025.
+
+   Whichever you pick, weigh how it **removes** access, not how it grants it. Someone leaves
+   the project long after the interesting part of this decision is over.
 
 The shipped workflow encodes exactly that: it builds on every push to `main`, uploads the
 page as an artifact, and reaches the publish step **only when the repository is public**, so
