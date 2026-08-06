@@ -76,6 +76,13 @@ const sh = (c) => execSync(c, { encoding: "utf8" }).trim();
 // code nobody claims. One answer, applied wherever a path list enters this guard.
 const VENDORED = new Set(["node_modules", ".git"]);
 const isVendored = (f) => f.split("/").some((s) => VENDORED.has(s));
+
+// git quotes any path outside ASCII by default, printing
+// `"modules/x/testdata/\331\205\331\204\331\201.txt"` - quotes included. That string matches no
+// glob, so --audit reports such a file as belonging to no capability and there is no glob an
+// author can write to claim it. Found on a real repository (caddyserver/caddy) the first time
+// the audit ran against one. Ask git for the real bytes instead.
+const GIT = "git -c core.quotePath=false";
 const declared = JSON.parse(readFileSync(MAP, "utf8"));
 
 const bad = (msg) => {
@@ -202,8 +209,8 @@ if (audit) {
     };
     const target = what === "." ? "" : ` ${what}`;
     const out = [
-      ...collect(`git ls-files${target}`),
-      ...collect(`git ls-files --others --exclude-standard${target ? ` --${target}` : ""}`),
+      ...collect(`${GIT} ls-files${target}`),
+      ...collect(`${GIT} ls-files --others --exclude-standard${target ? ` --${target}` : ""}`),
     ].filter((f) => !isVendored(f));
     if (out.length) return [...new Set(out)];
     return fsWalk(what === "." ? "." : what);
@@ -307,11 +314,11 @@ if (audit) {
 // (R11). Excluding it let a capability's code disappear with the spec never
 // touched, and spec-guard reported OK on the PR that did it.
 let raw;
-if (staged) raw = sh("git diff --cached --name-only --diff-filter=ACDMR");
-else if (base) raw = sh(`git diff --name-only --diff-filter=ACDMR ${base}...HEAD`);
+if (staged) raw = sh(`${GIT} diff --cached --name-only --diff-filter=ACDMR`);
+else if (base) raw = sh(`${GIT} diff --name-only --diff-filter=ACDMR ${base}...HEAD`);
 // A file not yet added is still a change: locally the guard has to fire before
 // `git add`, not only in CI where everything is tracked.
-else raw = `${sh("git diff --name-only --diff-filter=ACDMR HEAD")}\n${sh("git ls-files --others --exclude-standard")}`;
+else raw = `${sh(`${GIT} diff --name-only --diff-filter=ACDMR HEAD`)}\n${sh(`${GIT} ls-files --others --exclude-standard`)}`;
 const changed = [...new Set(raw.split("\n").filter(Boolean))];
 const files = changed.filter((f) => !isVendored(f));
 // Say when the guard dropped paths, for the same reason it says when it decided not to
