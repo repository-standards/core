@@ -64,14 +64,57 @@ const streams =
 
 // Index rows: the first table cell, either `[NNN](file.md)` (this repo's own convention) or a
 // bare `NNN`. Placeholder rows (`| - | (none yet) | - |`) have no digit and are skipped for free.
-const ROW_LINKED = /^\[(\d+)\]\(([^)]+)\)$/;
-const ROW_BARE = /^(\d+)$/;
+//
+// The link label may carry the stream prefix - `[ADR-001](ADR-001-title.md)` - because that is
+// what an author writes when nothing shows them otherwise, and the shipped README templates
+// ship only the placeholder row. Rejecting it produced the worst possible message: "has no row
+// in README.md" about a record whose row was right there, one character off. The label is
+// cosmetic either way; a linked row's identity always comes from the file it links to, so
+// accepting the prefix cannot make a wrong row look right.
+// A stated prefix is kept rather than discarded: in a flat layout it is the only thing that
+// tells a bare `BDR-004` row from `ADR-004`, which the number alone cannot.
+const ROW_LINKED = /^\[(?:(ADR|BDR)-)?(\d+)\]\(([^)]+)\)$/i;
+const ROW_BARE = /^(?:(ADR|BDR)-)?(\d+)$/i;
 
+// Rows inside an HTML comment or a fenced code block are examples, not index entries. Every
+// other shipped template documents its own row shape that way (the backlog, the cycle file),
+// and this index could not: a commented `| [002](ADR-002-example.md) | ... |` was read as a
+// real row and reported as "indexed, missing from disk". So the one file whose format an
+// author most needs shown was the one file that could not show it. Same left-to-right comment
+// scan as cycle-guard.mjs, for the same reasons it documents: an open-and-close on one line
+// must not swallow a real row, and a `-->` in prose must not resurrect an example block.
 const rowsIn = (readmePath) => {
   if (!existsSync(readmePath)) return null; // distinct from "no rows" - reported separately
   const rows = [];
+  let commented = false;
+  let fenced = false;
   for (const raw of readFileSync(readmePath, "utf8").split("\n")) {
-    const line = raw.trim();
+    const src = raw.trim();
+    if (!commented && /^(```|~~~)/.test(src)) {
+      fenced = !fenced;
+      continue;
+    }
+    let rest = src;
+    let visible = "";
+    while (rest) {
+      if (commented) {
+        const end = rest.indexOf("-->");
+        if (end === -1) break;
+        commented = false;
+        rest = rest.slice(end + 3);
+      } else {
+        const start = rest.indexOf("<!--");
+        if (start === -1) {
+          visible += rest;
+          break;
+        }
+        visible += rest.slice(0, start);
+        commented = true;
+        rest = rest.slice(start + 4);
+      }
+    }
+    if (fenced) continue;
+    const line = visible.trim();
     if (!line.startsWith("|")) continue;
     const cells = line.split("|").map((c) => c.trim());
     if (cells[0] === "") cells.shift();
@@ -80,7 +123,13 @@ const rowsIn = (readmePath) => {
     const linked = ROW_LINKED.exec(first);
     const bare = linked ? null : ROW_BARE.exec(first);
     if (!linked && !bare) continue; // header, separator, prose row - not an index entry
-    rows.push({ num: Number((linked ?? bare)[1]), file: linked ? linked[2] : null, raw: line });
+    const m = linked ?? bare;
+    rows.push({
+      num: Number(m[2]),
+      prefix: m[1] ? m[1].toUpperCase() : null,
+      file: linked ? linked[3] : null,
+      raw: line,
+    });
   }
   return rows;
 };
@@ -122,6 +171,8 @@ for (const { dir, prefixes } of streams) {
     if (row.file) {
       const m = FILE_RE.exec(row.file.split("/").pop());
       key = m ? `${m[1]}-${Number(m[2])}` : `?-${row.num}`; // link doesn't even look like a record
+    } else if (row.prefix && prefixes.includes(row.prefix)) {
+      key = `${row.prefix}-${row.num}`;
     } else {
       const match = prefixes.find((p) => byKey.has(`${p}-${row.num}`));
       key = match ? `${match}-${row.num}` : `?-${row.num}`;
