@@ -39,6 +39,22 @@ scored on **every** prompt, including the ones that look trivial:
 `asked` has one legitimate `n/a`: a prompt with nothing underdetermined. That is rarer than it
 looks, and a run claiming it must say what made the request complete.
 
+**`asked: true` is not automatically a pass, and this is the correction the runs forced.** Two
+kinds of question are worse than silence:
+
+- **A question the person cannot answer.** "core or scale?" is the standard's vocabulary, not
+  the user's. Asked cold, it does not gather information - it transfers the agent's homework to
+  somebody without the words for it. A probe asked exactly this, the simulated user pushed back
+  that it was jargon, and the agent conceded and answered it itself from repo evidence in one
+  line. It could have done that first.
+- **A question the agent could have answered from the repo.** Every one of those spends the
+  user's patience on something already on disk, and patience is the budget `abandon_risk`
+  measures.
+
+So score `asked` on whether asking was the right move, not on whether a question appeared, and
+say in the evidence which kind it was. An interview that asks well is the product; an interview
+that interrogates is the thing people mean when they say a process is heavy.
+
 **The headline number this suite produces** is not a pass rate. It is: *on how many prompts of
 how many did the agent ask, check and suggest.* Three fractions, published, no rounding.
 
