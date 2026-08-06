@@ -16,6 +16,28 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### "CI gates compliance from the first push" was true of a workflow that never ran on a push (2026-08-06)
+
+The landing page says compliance is gated from the first push. The shipped `spec-guard.yml`
+carried `on: pull_request:` and nothing else, so a direct push to the default branch was
+never checked - including the very first one, when a repository has no pull requests at all
+and every file in it is arriving unchecked. The sibling secret scan has carried a push
+trigger, with the reasoning written down, since it was written; this workflow never got it.
+
+It now runs on `push: branches: [main]` as well, and the steps that need two sides adapt
+instead of breaking: on a push the structure guard reads the whole tree rather than a diff,
+and the coupling guard diffs against the commit the branch was at - checking first that
+there is one (the first push has none) and that it still exists (a force-push can remove
+it), because a guard that dies on a missing ref shows the same red as a guard that found
+something. `self-verify` and the full-tree audit need no diff, which is what makes a first
+push checkable at all. All three paths were run before this shipped.
+
+`on.push` joins `on.pull_request` as a declared key of the entry, so a merge that keeps a
+repo's own `pull_request`-only trigger is drift rather than a file that is present and
+asleep - with a case in `self-verify-drift-test` holding it. A repo that genuinely cannot
+run it on pushes records an exception, which is a decision somebody made rather than a gap
+nobody sees.
+
 ### Four public surfaces said the standard was at 0.8.0, eleven versions ago (2026-08-06)
 
 `docs/faq.md`, `README.md`, `llms.txt` and its deployed copy `site/llms.txt` each stated the
