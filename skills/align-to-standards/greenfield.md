@@ -97,6 +97,13 @@ after personas and product.
    Layer 2 consent came from the intake - this step asks nothing; it scaffolds and
    records.
 
+   **Technology undecided at intake?** Skip this step whole and say so in the closing
+   report: steps 1-3 and 5-8 are technology-agnostic, so the phase completes without it and
+   the repo is genuinely on Layer 1. Add a backlog item for the stack decision, naming that
+   taking it later costs a scaffold and an ADR, not a rework of anything written here. Do
+   not fabricate a `docs/stack-decisions.md` for a technology nobody has chosen - the
+   no-match fallback below researches a *named* technology, and there is not one yet.
+
    **No registry entry for this technology?** Then there is no starter and no composition
    rule to run - skip the rest of this step entirely. Scaffold Layer 1 alone, generate
    `docs/stack-decisions.md` per the no-match fallback in `SKILL.md`, and say the true

@@ -78,6 +78,28 @@ Before any phase runs, one intake pass:
      Greenfield has no evidence, so ask - but never as a blank question: name what the
      registry actually has, so the user's answer is informed rather than a guess that gets
      silently downgraded three steps later.
+
+     **Weigh the evidence; do not count it.** What a manifest is *doing* decides the stack,
+     not how many of them there are. A build-system-defining manifest at the repo root - the
+     one the repo's own CI invokes to build and test itself - outweighs any number of the
+     same filename found elsewhere. Discount, explicitly: anything under a test-fixture or
+     example tree, a vendored dependency directory, or a compatibility surface the repo
+     implements *for* another ecosystem rather than builds *with*. Deno's repository carries
+     715 `package.json` files, 62 `tsconfig.json` and a vendored `node_modules/` tree, all of
+     them npm-compatibility fixtures, against one `Cargo.toml` that actually builds it: a
+     count says "probably Node", the build system says Rust, and the build system is right.
+     Say which file decided it and why, so a wrong call is arguable rather than mysterious.
+
+     **A repo can have a second, composing layer above its own manifest.** A workspace
+     manifest - Zephyr's `west.yml`, Android's `repo` `manifest.xml`, `.gitmodules` - names
+     other *repositories* and assembles them into one working tree; Zephyr's pulls in 79.
+     Detect it as evidence in its own right, because the repo in front of you may build
+     almost nothing by itself. It does not widen the adoption unit: **this repository is the
+     unit**, the composed siblings are not adopted transitively (they have their own owners,
+     licences and lifecycles), and the composing manifest is itself a first-class artifact -
+     what it pins is a supply-chain decision belonging in an ADR. Say that boundary out loud
+     rather than letting the user assume 79 repos are in scope or that none of them are.
+
      **Look the technology up in `stacks.json` before making the offer**, and say the true
      thing:
      - a registered stack: "this repo is <technology> - the registry has a boot-verified
@@ -93,6 +115,17 @@ Before any phase runs, one intake pass:
      Promising "the <technology> best practices from the registry" before the lookup makes
      a promise the registry cannot keep, and the user only finds out when the offer
      quietly becomes something else.
+
+     **"We have not decided yet" is a legal answer on a greenfield, and the honest one more
+     often than the question implies** - the greenfield phase is explicitly *not* stack-first,
+     so a technology named to get past this question is a decision made for the wrong reason.
+     Take it: say that Layer 1 is unaffected and complete without it, that everything through
+     personas, product and the first specs proceeds unchanged (none of it is technology-
+     specific), and that the stack step is simply deferred - it is the last step of the
+     phase anyway. Then name the two ways it closes: pick a registered stack when the
+     decision is made and run the stack step then, or record the decision as an ADR the
+     moment it is taken. Do not generate the no-match fallback document for an undecided
+     stack - it is a researched record *of a technology*, and there is no technology yet.
 
      **A registered stack targets an application archetype - not a library, CLI or
      framework repo shipping many packages.** A registered stack is a boot-verified,
