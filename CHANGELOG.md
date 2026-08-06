@@ -143,7 +143,7 @@ you have to route around is worse than a gap - a map people argue with stops bei
 maintained, and every capability in it loses its guard together.
 
 An entry may now be `{ "external": "<repo>", "reason": "<why no glob here reaches it>" }`
-([ADR-036](docs/decision-records/ADR-036-capabilities-whose-code-is-not-here.md)). Both
+([ADR-039](docs/decision-records/ADR-039-capabilities-whose-code-is-not-here.md)). Both
 fields are required - an external binding with no reason is refused with the map unusable,
 because without the reason this is a way out of the guard rather than a record of where the
 code lives. Nothing is enforced for such a capability, it is never counted as a glob or

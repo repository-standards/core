@@ -98,7 +98,7 @@ binds every repo, a solo one included.
   this. A capability whose implementation lives in a repository this one does not
   own MUST still have an entry: it names that repository, with a recorded reason,
   in place of the globs it cannot have. No coupling can be enforced for that part,
-  and the audit names it on every run (ADR-036).
+  and the audit names it on every run (ADR-039).
 - **R12.** A spec MUST pass the clarify gate before planning or implementation:
   zero open questions, with explicit deferrals recorded as answers, never dropped.
 - **R13.** Plan and task scaffolding is ephemeral and MUST be removed when the work
