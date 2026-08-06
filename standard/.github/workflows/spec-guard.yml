@@ -16,7 +16,13 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version-file: ".nvmrc"
+          # Exact version, not `node-version-file: .nvmrc`: this workflow is a REQUIRED
+          # manifest entry and `.nvmrc` is an optional one, so reading the file made a
+          # required gate depend on something no repo is required to carry - and least of
+          # all a repo that is not a Node repo, which is who this template is hardest to get
+          # right for. If your repo does carry `.nvmrc`, swapping this back for
+          # `node-version-file` is a good local adaptation (this entry is merge-class).
+          node-version: "24.18.0"
           # This job installs no package manager; do not try to restore its cache.
           package-manager-cache: false
       - name: Self-verify (standard compliance)
