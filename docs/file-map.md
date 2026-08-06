@@ -82,6 +82,9 @@ copied into your repository as folder READMEs that then age in place.
 | `scripts/verifyAgentGuards.sh` | drives every guard with real commands - they only emit output on a denial, so a broken guard is otherwise silent | optional, core | `copy` | [R19](../standard/SPEC.md) |
 | `scripts/spec-guard.mjs` | code<->spec coupling guard (+ --audit) - the tool ships at core, the blocking CI gate is scale (R11) | **required**, core | `copy` | [R11](../standard/SPEC.md) |
 | `scripts/cycle-guard.mjs` | proves the one-place invariant the pool and the cycles depend on | optional, scale | `copy` | [R15](../standard/SPEC.md) |
+| `scripts/work-dashboard.mjs` | renders the work state - pool, cycles, timeline, records, changelog - as one static page for the people who never open the repository; a projection, never a second place work is tracked | optional, core | `copy` | [R15](../standard/SPEC.md) |
+| `scripts/work-dashboard.css` | the dashboard's styling, inlined into the page at build time | optional, core | `copy` | [R15](../standard/SPEC.md) |
+| `scripts/work-dashboard.client.js` | the dashboard's rendering, inlined into the page at build time - no network, no dependencies | optional, core | `copy` | [R15](../standard/SPEC.md) |
 
 ## `.claude/` - the procedures, in Claude Code's reference form
 
@@ -99,6 +102,7 @@ copied into your repository as folder READMEs that then age in place.
 | `.github/workflows/standards-update-watch.yml` | weekly notification that a newer standard exists - opens one issue per release, never edits the recorded state (ADR-025) | optional, core | `merge` | [R2](../standard/SPEC.md) |
 | `.github/workflows/spec-guard.yml` | the CI workflow that wires self-verify + both guards - how R16's gate actually runs | **required**, core | `merge` | [R16](../standard/SPEC.md) |
 | `.github/pull_request_template.md` | PR template - what/why, ADR impact, test plan, checklist | optional, scale | `merge` | [R5](../standard/SPEC.md) |
+| `.github/workflows/work-dashboard.yml` | builds the dashboard on every push to main; publishes it only when the repository is public, because Pages on a private repository is served publicly | optional, core | `merge` | [R15](../standard/SPEC.md) |
 
 ## Adopted by reference, never copied
 

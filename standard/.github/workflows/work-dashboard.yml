@@ -1,0 +1,74 @@
+# Builds the work dashboard - one page showing the backlog, the cycles, the timeline, the
+# decisions and the changelog - and decides where it may go by how visible this repository is.
+#
+# The page contains nothing the repository does not already contain, which is exactly why
+# publishing it needs a decision rather than a default: a private repository's backlog is
+# private, and **GitHub Pages on a private repository is served publicly** unless the
+# organisation is on Enterprise Cloud with access control. That is the trap this file exists
+# to close - the publish job is gated on the repository actually being public, so turning
+# Pages on cannot leak a private board by accident.
+#
+#   public repository   -> the page is published, and being able to point at it is a feature
+#   private repository  -> the page is a build artifact, readable by whoever can read the repo
+#
+# If you want it published from a private repository, put it behind an identity gate
+# (Cloudflare Access, Netlify or Vercel protection, your own intranet) and add that step in
+# place of the publish job. Add `--anonymise` to the build if the page should carry no
+# colleague's name.
+name: work-dashboard
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: work-dashboard
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: ".nvmrc"
+          package-manager-cache: false
+
+      # No dependencies, no install: the generator is Node built-ins only.
+      - name: Build the page
+        run: node scripts/work-dashboard.mjs --out _work/index.html
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: work-dashboard
+          path: _work
+          retention-days: 30
+
+  publish:
+    needs: build
+    # The gate. A private repository never reaches this job, whatever the Pages settings say.
+    if: github.event.repository.visibility == 'public'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: work-dashboard
+          path: _work
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        with:
+          path: _work
+      - id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
