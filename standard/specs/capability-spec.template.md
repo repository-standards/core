@@ -59,6 +59,21 @@ Tables / columns / types / constraints, enums, persisted JSONB or message/record
 shapes this capability reads or writes. Quote real identifiers. State what each
 field means and its units. Name the idempotency / correlation keys.
 
+<!-- A capability whose product is CONTENT rather than behavior - a narrative
+     work's chapters, a translation catalogue, a packaging recipe, a normative
+     document - has both contract sections too; they are simply not endpoints
+     and tables. Its data contract is the artefact's own structure: the recipe's
+     required variables, the catalogue's message ids and plural forms, the
+     document's normative-statement conventions and stable anchors. Its
+     interface contract is what consumes the artefact and how that consumption
+     fails: the build that runs the recipe, the renderer, the importer
+     downstream, and what a malformed artefact does to each. Where the repo's
+     own artefact states a contract more exactly than prose could - a build
+     recipe, a catalogue header, a schema - quote it verbatim and point at the
+     file rather than paraphrasing it into something that will drift.
+     `behavioral` is NOT the alternate path here: the contracts exist, so
+     taking the escape hatch drops the only part that was checkable. -->
+
 ## Interface contracts
 
 <!-- buildable: REQUIRED. Verbatim. -->
