@@ -26,7 +26,7 @@ one who wins ties unless a decision says otherwise.
 
 | Persona | Primary? | One-line |
 |---|---|---|
-| `<Name + role>` | yes | (fill at adoption - the roster below is what the R10 gate checks specs against) |
+| `{{PERSONA_NAME_AND_ROLE}}` | yes | (fill at adoption - the roster below is what the R10 gate checks specs against) |
 
 <!-- The worked example further down carries a filled roster from a rental-property product.
      It stays there deliberately: `scripts/spec-structure.mjs` reads THIS table as the live
@@ -38,7 +38,7 @@ one who wins ties unless a decision says otherwise.
 
 Copy this block per persona.
 
-### `<Name + role>` <!-- e.g. "Owner-operator Olga" -->
+### `{{PERSONA_NAME_AND_ROLE}}` <!-- e.g. "Owner-operator Olga" -->
 
 - **Who / context.** One paragraph: their role, environment, tech comfort, constraints.
 - **Jobs to be done.** The progress they are trying to make ("when \_\_\_, I want to \_\_\_,

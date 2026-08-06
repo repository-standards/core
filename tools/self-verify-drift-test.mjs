@@ -280,6 +280,31 @@ check(
   },
 );
 
+// The stack's own version was carried and never printed, so a repo several stack releases
+// behind read exactly like one on the newest. Naming it is not staleness detection - nothing
+// local knows what the stack repo ships (ADR-022) - but an unspoken number cannot be compared
+// by hand either.
+const stackManifest = (extra = {}) =>
+  `${JSON.stringify({ standard: "repository-standards-node", technology: "node", layer: 2, files: [], ...extra }, null, 2)}\n`;
+
+check(
+  "the stack layer's own version is printed, not only its technology",
+  (dir) => writeFileSync(join(dir, "stack.manifest.json"), stackManifest({ version: "0.1.0" })),
+  (r, expect) => {
+    expect(says(r, "stack manifest present: node @ 0.1.0"), "the stack's version was carried but never said out loud");
+    expect(r.drift === base.drift, `naming the stack version must not move drift: expected ${base.drift}, got ${r.drift}`);
+  },
+);
+
+check(
+  "a stack manifest with no version at all says so",
+  (dir) => writeFileSync(join(dir, "stack.manifest.json"), stackManifest()),
+  (r, expect) => {
+    expect(says(r, "declares no version"), "a stack manifest carrying no version was accepted in silence");
+    expect(r.drift === base.drift, `expected drift ${base.drift}, got ${r.drift}`);
+  },
+);
+
 check(
   "a stack manifest's own exceptions are honoured, not only the primary manifest's",
   (dir) => {
@@ -362,14 +387,14 @@ check(
 // entries unchecked and its absence unreported. The last two cases here are the bound: a
 // file that only looks like a stack manifest is not one, and a stack manifest that cannot be
 // parsed is loud rather than skipped.
-const stackManifest = (technology, files) => `${JSON.stringify({ standard: `repository-standards/env-${technology}`, technology, version: "0.1.0", layer: 2, files }, null, 2)}\n`;
+const namedStackManifest = (technology, files) => `${JSON.stringify({ standard: `repository-standards/env-${technology}`, technology, version: "0.1.0", layer: 2, files }, null, 2)}\n`;
 const NEEDS = (path, purpose) => [{ path, purpose, adapt: "fill-from-repo", required: true, rule: "R20" }];
 
 check(
   "a repo running two stacks at once registers both, and both count in the one drift number",
   (dir) => {
-    writeFileSync(join(dir, "stack.manifest.json"), stackManifest("dart-flutter", NEEDS("pubspec.yaml", "the dart package manifest")));
-    writeFileSync(join(dir, "stack.native-engine.manifest.json"), stackManifest("native-engine", NEEDS("CMakeLists.txt", "the engine build")));
+    writeFileSync(join(dir, "stack.manifest.json"), namedStackManifest("dart-flutter", NEEDS("pubspec.yaml", "the dart package manifest")));
+    writeFileSync(join(dir, "stack.native-engine.manifest.json"), namedStackManifest("native-engine", NEEDS("CMakeLists.txt", "the engine build")));
   },
   (r, expect) => {
     expect(r.drift === base.drift + 2, `expected both stacks' unmet entries: drift ${base.drift + 2}, got ${r.drift}`);
@@ -385,8 +410,8 @@ check(
     // `.nvmrc` is in the tree, so the collision costs no drift and the case is only about
     // what the run says: neither stack is this repo's to edit, and silently picking a
     // winner would hide that they disagree about who owns the file.
-    writeFileSync(join(dir, "stack.manifest.json"), stackManifest("dart-flutter", NEEDS(".nvmrc", "the node version the tooling runs on")));
-    writeFileSync(join(dir, "stack.native-engine.manifest.json"), stackManifest("native-engine", NEEDS(".nvmrc", "the node version the build scripts run on")));
+    writeFileSync(join(dir, "stack.manifest.json"), namedStackManifest("dart-flutter", NEEDS(".nvmrc", "the node version the tooling runs on")));
+    writeFileSync(join(dir, "stack.native-engine.manifest.json"), namedStackManifest("native-engine", NEEDS(".nvmrc", "the node version the build scripts run on")));
   },
   (r, expect) => {
     expect(r.drift === base.drift, `a satisfied path is not drift however many stacks declare it: expected ${base.drift}, got ${r.drift}`);
@@ -398,7 +423,7 @@ check(
 check(
   "a file that only looks like a stack manifest is not read as one",
   (dir) => {
-    writeFileSync(join(dir, "mystack.manifest.json"), stackManifest("invented", NEEDS("nothing-here.txt", "an entry no stack registered")));
+    writeFileSync(join(dir, "mystack.manifest.json"), namedStackManifest("invented", NEEDS("nothing-here.txt", "an entry no stack registered")));
   },
   (r, expect) => {
     expect(r.drift === base.drift, `expected the baseline drift ${base.drift}, got ${r.drift}`);
@@ -409,7 +434,7 @@ check(
 check(
   "a second stack manifest that cannot be parsed is drift, not a silent skip",
   (dir) => {
-    writeFileSync(join(dir, "stack.manifest.json"), stackManifest("dart-flutter", NEEDS("pubspec.yaml", "the dart package manifest")));
+    writeFileSync(join(dir, "stack.manifest.json"), namedStackManifest("dart-flutter", NEEDS("pubspec.yaml", "the dart package manifest")));
     writeFileSync(join(dir, "stack.native-engine.manifest.json"), "{ not json");
   },
   (r, expect) => {
@@ -584,6 +609,89 @@ check(
   (r, expect) => {
     expect(r.drift === base.drift, `a stale exception must not be drift: expected ${base.drift}, got ${r.drift}`);
     expect(says(r, "is excepted but met anyway"), "a deviation the repo no longer has was left unreported");
+  },
+);
+
+// --- 4b. the two things the run said nothing about at all --------------------------------
+// Neither is drift - drift counts unmet manifest entries - but both were invisible, and
+// invisible is what let each of them decide something on its own.
+
+// The shipped CI workflow computes `PROFILE=… .profile || 'scale'`, and the manifest it
+// reads that from carried no such key, so every repo took the scale-tier gate by default,
+// including the solo ones the core profile exists for. The key now ships, and a copy that
+// lost it says so instead of defaulting in silence.
+check(
+  "the shipped manifest declares the profile the CI gate reads",
+  () => {},
+  (r, expect) => {
+    expect(says(r, 'profile "scale" declared in the manifest copy'), "the shipped manifest declares no profile for the workflow to read");
+    expect(r.drift === base.drift, `declaring a profile must not move drift: expected ${base.drift}, got ${r.drift}`);
+  },
+);
+
+check(
+  "a manifest copy with no profile says so rather than defaulting quietly",
+  (dir) =>
+    patchManifest(dir, (m) => {
+      delete m.profile;
+    }),
+  (r, expect) => {
+    expect(says(r, "declares no profile - defaulted to scale"), "the fallback to scale happened without a word");
+    expect(r.drift === base.drift, `a missing profile is not drift: expected ${base.drift}, got ${r.drift}`);
+  },
+);
+
+// A dependency tree tracked in git is what a `**/`-prefixed capability glob matches by
+// accident: `**/swap/**` compiles to `(?:[^/]+/)*swap/.+` and matches
+// `node_modules/pkg/swap/a.js`, so a dependency bump broke the blocking coupling gate for a
+// capability nobody touched. spec-guard now ignores those paths (tools/spec-guard-test.mjs);
+// this is the repo-side condition, which self-verify reported nowhere.
+const gitInit = (dir) => {
+  const git = (...a) =>
+    spawnSync("git", ["-C", dir, "-c", "user.name=t", "-c", "user.email=t@e.x", "-c", "commit.gpgsign=false", ...a], { encoding: "utf8" });
+  git("init", "-q", "-b", "main");
+  // Most developers ignore node_modules globally, and `git add` honours that - which would
+  // make this fixture untrackable on their machine and green on CI for the wrong reason.
+  // Point the excludes file at an empty file, inside .git so it is not itself tracked.
+  writeFileSync(join(dir, ".git/no-excludes"), "");
+  git("config", "core.excludesFile", join(dir, ".git/no-excludes"));
+  git("add", "-A");
+};
+
+check(
+  "a tracked dependency tree is named, and so is the missing .gitignore",
+  (dir) => {
+    mkdirSync(join(dir, "node_modules/some-pkg"), { recursive: true });
+    writeFileSync(join(dir, "node_modules/some-pkg/index.js"), "module.exports = 1;\n");
+    gitInit(dir);
+  },
+  (r, expect) => {
+    expect(says(r, "under node_modules/ are tracked in git"), "a committed dependency tree was not reported");
+    expect(says(r, "no .gitignore at all"), "the missing .gitignore was not named");
+    expect(r.drift === base.drift, `this is a warning, not drift: expected ${base.drift}, got ${r.drift}`);
+  },
+);
+
+check(
+  "a workspace's nested dependency tree is caught too, and a lookalike directory is not",
+  (dir) => {
+    mkdirSync(join(dir, "packages/api/node_modules/dep"), { recursive: true });
+    writeFileSync(join(dir, "packages/api/node_modules/dep/index.js"), "module.exports = 1;\n");
+    mkdirSync(join(dir, "tools/my_node_modules"), { recursive: true });
+    writeFileSync(join(dir, "tools/my_node_modules/keep.js"), "export const keep = 1;\n");
+    gitInit(dir);
+  },
+  (r, expect) => {
+    expect(says(r, "1 file(s) under node_modules/ are tracked in git"), "a nested dependency tree was missed, or the lookalike directory was counted");
+  },
+);
+
+check(
+  "a git repo that does not track one says nothing",
+  (dir) => gitInit(dir),
+  (r, expect) => {
+    expect(!says(r, "tracked in git"), "the dependency-tree warning fired on a repo with no dependency tree");
+    expect(r.drift === base.drift, `expected drift ${base.drift}, got ${r.drift}`);
   },
 );
 
