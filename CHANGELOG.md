@@ -16,6 +16,62 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Nine rules assumed a repo shape, and said nothing to the repos that have the other one (2026-08-06)
+
+A rule framed for one product shape does not fail loudly on another - it simply has
+nothing to bind to, and an adopter reads it as not applying. Nine such gaps, found by
+running the standard against real repositories of the wrong shape, are closed by naming
+the other shape rather than by widening the rule until it always passes.
+
+**The integration rule spoke only about pull requests.** One unit of work per PR, every PR
+based on the mainline, a PR lands by rebase-merge - all of it inert in a repo whose review
+happens on a mailing list or in Gerrit, which has no pull requests to bind any of it to. It
+now binds to the **reviewed change**, and a repo whose review does not happen on the git
+host names its own unit in the branching decision. The bar is unchanged. What is still
+open, deliberately: a merge queue that batches many changes into one two-parent commit is
+neither rebase nor squash, and ADR-026 reserves that call for its own record rather than a
+rule edit.
+
+**The schema rule opened with "a repo that owns a database"** and then said nothing to a
+library whose product *is* multi-backend migrations - which owns no schema, and whose
+riskiest artefact is the DDL it emits into somebody else's. The directory and the typed
+twin do not apply, said once as a decision; the emitted DDL is an interface contract,
+specified verbatim per supported backend.
+
+**The stated runtime cost named Node and stopped**, while the agent guards are shell
+scripts that parse their input with `jq` - an absence that denies every command, on a
+platform where a missing POSIX shell instead runs no guard at all and reports nothing. All
+three are now named, with what a repo does when it cannot supply them. The prerequisites
+page gains the platform half, including why the shipped deny/ask lists, written in a POSIX
+command vocabulary, do not cover the same action spelled in another shell.
+
+**The security baseline had no adversarial-testing axis** - searching the whole standard
+for "fuzz" returned nothing - so a repo whose real defence is a fuzzer running against its
+parser could answer every axis and never mention its primary control.
+
+**Three catalogues gained the shape they were missing:** the decision checklist covers one
+structure described twice (a Bazel graph beside a CMake one, one schema hand-forked into a
+second SQL dialect), with generate-or-declare as the paved road and two hand-edited copies
+named as the answer that is not available; the buildable tier says what its required
+sections mean for a content product (a translation catalogue, a packaging recipe, a
+narrative work) rather than leaving the escape hatch as the only reading; and intake reads
+the governance a repo already declares as config (`.jcheck/conf`, `.gitreview`,
+`CODEOWNERS`) instead of interviewing for answers sitting in a file it had already cloned.
+
+**`spec-reconcile` treated a compatibility shim as current design.** Its standing
+preference - make the spec accurate to the real behaviour - files a body that exists only
+to keep a previous release's binary working under "what this capability is". It is now
+recorded as what it preserves and when it can go, with the contracts left describing the
+current shape; deleting it is named as the opposite error, because it ships.
+
+**`facts-check` answered a binary home by coin flip.** All four home mechanisms read UTF-8
+text and nothing said so, so a font's version inside its TTF name table got a green tick
+when the name record happened to be ASCII, and "the home pattern matches nothing" - which
+reads as a bad regex - when it was UTF-16. One read path now serves every mechanism and
+refuses a binary file by name, pointing at the way out: a text home the artefact is built
+from, or an undeclared restatement stated as undeclared. Four cases cover it, three of
+which fail with the check disabled.
+
 ### The drift number answered two different questions with the same integer (2026-08-06)
 
 Two ways `self-verify` said more than it had measured, both reproduced against the current
