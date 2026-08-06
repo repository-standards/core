@@ -797,12 +797,66 @@ if (!skeleton) {
     return false;
   };
 
-  // Code spans and fenced blocks are stripped before the forms above, because generic
-  // notation lives there and a *correctly filled* repo keeps it: `specs/<capability>`,
-  // `docs/discovery/<topic>/`, `blocked:<id>`. Without this the warning can never be cleared
-  // - AGENTS.md ships `specs/<capability>` in its own altitude ladder - and a warning nobody
-  // can clear is one everybody learns to skip, on the single file this check exists for.
-  const stripCode = (s) => s.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, "").replace(/`[^`\n]*`/g, "");
+  // Code spans and fenced blocks are stripped first, because generic notation lives there and
+  // a *correctly filled* repo keeps it: `specs/<capability>`, `docs/discovery/<topic>/`,
+  // `blocked:<id>`. Without this the warning can never be cleared - AGENTS.md ships
+  // `specs/<capability>` in its own altitude ladder - and a warning nobody can clear is one
+  // everybody learns to skip, on the single file this check exists for.
+  //
+  // The cost is a real placeholder written inside backticks going unseen. That is why the
+  // shipped templates put fill markers in prose and keep code formatting for notation; the
+  // convention is what makes the check precise, not the regex alone.
+  //
+  // Markdown has four code forms and this used to strip two. The other two are what a
+  // document written before fenced blocks existed actually uses, and both were found on
+  // real repositories the standard never wrote:
+  //   - a code span that WRAPS A LINE BREAK. git/git's README.md:26-27 reads
+  //     "`man git-<commandname>` or `git help\n<commandname>`" - the span crosses the line
+  //     end, the old `[^`\n]*` refused to cross it, and the leftover `<commandname>` on the
+  //     next line was read as a placeholder. A span may now contain newlines but never a
+  //     BLANK line, so an unmatched backtick cannot swallow the rest of the file.
+  //     The delimiter is a RUN of backticks matched by its own length, which is what
+  //     markdown says and what keeps the pairing local: with a single-backtick pattern, a
+  //     `` `x` `` span (the form used to show a backtick) left an odd backtick behind and
+  //     every span after it paired one position out - which, once spans could cross lines,
+  //     exposed the notation on the following lines instead of stripping it.
+  //   - an INDENTED code block (four spaces or a tab, the pre-fence form). vim/vim's own
+  //     AGENTS.md:92 carries `Signed-off-by: Author Name <email>` inside one.
+  // A four-space indent under a list item is a continuation paragraph rather than code, so
+  // the run is only stripped when the line introducing it is not a list item - otherwise a
+  // real placeholder in a nested bullet would go unseen, which is the failure this check
+  // exists to prevent, in the other direction.
+  const stripIndentedBlocks = (s) => {
+    const out = [];
+    let prevNonBlank = "";
+    let afterBlank = true; // start of file behaves like the line after a blank one
+    let inBlock = false;
+    for (const line of s.split("\n")) {
+      const blank = !line.trim();
+      const indented = /^(?: {4,}|\t)/.test(line);
+      if (inBlock) {
+        if (blank || indented) {
+          out.push(blank ? line : "");
+          continue;
+        }
+        inBlock = false;
+      }
+      if (!blank && indented && afterBlank && !/^\s*(?:[-*+]|\d+[.)])\s/.test(prevNonBlank)) {
+        inBlock = true;
+        out.push("");
+        continue;
+      }
+      out.push(line);
+      afterBlank = blank;
+      if (!blank) prevNonBlank = line;
+    }
+    return out.join("\n");
+  };
+  // `\r` is in the blank-line class on purpose: a CRLF checkout writes "\r\n\r\n" between
+  // paragraphs, and without it an unmatched backtick in such a file would still cross one.
+  const stripSpans = (s) =>
+    s.replace(/(`+)([\s\S]*?)\1/g, (whole, _delim, inner) => (/\n[ \t\r]*\n/.test(inner) ? whole : ""));
+  const stripCode = (s) => stripSpans(stripIndentedBlocks(s.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, "")));
 
   // Decision records are in scope too, and they are found by the record filename pattern
   // rather than a fixed path, because their directory layout is the repo's choice (the

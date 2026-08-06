@@ -137,7 +137,7 @@
       "profile": "core",
       "since": "0.4.0",
       "rule": "R16",
-      "sha256": "a7ffdb6b80dd5bbb4be189905ab97c99a4a152e6a640c6c7e31d5ed32a87cd20"
+      "sha256": "19f49ec28916f1a9c637356ae9e8efb7b72e911774d479175c80e70714d00b72"
     },
     {
       "path": "scripts/spec-structure.mjs",
