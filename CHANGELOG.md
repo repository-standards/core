@@ -16,6 +16,31 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A CI workflow that exists is not a gate that fires (2026-08-06)
+
+The assessment's CI/CD pass detected "is there a pipeline?" and rated what it found. A
+workflow file is evidence of intent, not of a gate. The 2026-08-04 round found it carrying
+no `pull_request` trigger at all (postgres and openjdk run their real CI elsewhere, and
+postgres says so in a comment inside the workflow) and worse - LibreOffice/core's only
+PR-triggered workflow auto-closes every pull request opened against the mirror. Two more
+shapes gate nothing just as quietly: a `pull_request` trigger behind a `paths:` filter that
+excludes everything, and a self-hosted `runs-on` label with nothing registered behind it,
+where the job queues until it is cancelled and reads as *no run* rather than as *failed*.
+
+Pass 5 now rates what fires. The evidence a gate exists is a recent run **on a pull
+request** - `gh run list --workflow <file> --event pull_request` or the checks list on the
+last few merged PRs - and the health report states two facts separately: which gates exist,
+and which of them ran. A workflow nobody can show running rates `partial` at best, never
+`solid`, and where the run history is unreachable the report says so the way pass 8 already
+says it for a shallow clone, instead of promoting file existence to a passing gate. The
+pass also now says that CI outside the host is still CI: no workflow directory does not
+mean no pipeline when the gate is Gerrit, buildbot or a mailing-list patch queue.
+
+Self-verify's own limit is stated with it, in the judgment tier. The manifest requires
+`.github/workflows/spec-guard.yml` to declare `on.pull_request`, and that is a key in a
+file: measured on this tree, the same workflow with a `paths:` filter matching nothing
+still reports `drift 0 - 100% adopted (70/70)`.
+
 ### The intake looked for a contribution policy everywhere except AGENTS.md (2026-08-06)
 
 The red-flag scan in `align-to-standards` step 0 looked for an AI/agent policy in

@@ -175,6 +175,11 @@ A machine cannot (yet) decide these; they are checked when the PR is reviewed:
   `spec`; money / security / data / external-contract paths are
   buildable, not merely described.
 - **No unrecorded drift** - no known spec<->code contradiction is left unresolved.
+- **The CI gate actually fires** - the manifest requires `.github/workflows/spec-guard.yml`
+  to declare `on.pull_request`, and that is a key in a file, not a run. The same workflow
+  passes the check with a `paths:` filter that excludes everything, disabled at the
+  platform, or with a `runs-on` label no runner answers. What proves the gate is a recent
+  run on a pull request; `self-verify` reads the checkout and cannot see one.
 
 ## Staying current - the record is a bookmark, not a lock
 
