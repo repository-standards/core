@@ -6,7 +6,7 @@
      this standard can run the same idea against their own. -->
 
 Twenty-something checks - **124**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **53** so far; the rest are logged as open (which includes any case where an attempted fix
+claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **58** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -1190,7 +1190,7 @@ read docs/method's persona-roster guidance for a roster-of-one allowance
 - **Given:** a repo governed by mailing-list patches with no PRs at all (torvalds/linux), or by a merge-queue that batches many PRs into two-parent merge commits (rust-lang/rust's bors)
 - **When:** R23's rebase-merge/squash-merge integration rule is checked against that repo's real mainline history
 - **Then:** the rule is written entirely in pull-request terms and has nothing to bind to, or bindsto a shape (batched merge-queue commits) that is neither rebase nor squash
-- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (3 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1203,7 +1203,7 @@ read SPEC.md R23 for any non-PR-based or merge-queue-batched governance provisio
 - **Given:** a library whose product is itself multi-backend database migrations (oban-bg/oban), not an application with one owned schema
 - **When:** R24's database-ownership framing is checked against that shape
 - **Then:** the rule's 'a repo that owns a database' framing does not fit a repo whose product is the migration mechanism itself
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1229,7 +1229,7 @@ read the CI-workflow check's logic against LibreOffice/core's lockdown.yml (auto
 - **Given:** a repo whose own machine-readable config already declares role, reviewer count, issue tracker and review host in a few lines (openjdk's `.jcheck/conf`, qtbase's and LibreOffice's `.gitreview`)
 - **When:** any of the 8 assessment passes runs
 - **Then:** at least one pass opens the file and reads the pre-answered questions, instead of zero passes opening it
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1255,7 +1255,7 @@ read SPEC.md R23 and R18 against a repo with more than one concurrently-maintain
 - **Given:** FFmpeg's 6 in-tree fuzz targets as its primary security control
 - **When:** docs/method/security-baseline.md's axis catalog is checked for a fuzzing/adversarial-testing axis
 - **Then:** an axis exists, instead of grep -rni fuzz over the whole standard returning 0 hits
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1281,7 +1281,7 @@ check out one of the shipped .sh guard scripts on a repo with `* text=auto` in .
 - **Given:** R16's stated runtime-cost list and R19's settings baseline, read by a Windows-only team
 - **When:** the guards are run for real and jq's absence is tested
 - **Then:** both name a real, complete cost/prerequisite list for that platform, instead of R16 omitting jq (whose absence denies every Bash command, per direct testing) and R19 being written entirely in a macOS/Linux command vocabulary with zero Windows equivalents
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1307,7 +1307,7 @@ read onboard.md's package/crate-boundary guidance against kafka's Gradle modules
 - **Given:** a narrative-content repo (i7/counterfeit-monkey), a packaging-recipe repo (alpinelinux/aports), or a spec-only repo (w3c/csswg-drafts) - none of whose 'capabilities' are application behavioural slices
 - **When:** the buildable-tier template's Data contracts/Interface contracts requirement, and the persona interview, are applied
 - **Then:** at least one of the two has a named alternate path for a content-only product, instead of both assuming one product's behavioural slices
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
