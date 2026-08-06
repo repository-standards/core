@@ -3333,6 +3333,87 @@
       "then": "the guidance names what to do with a runtime library every other capability depends on, rather than leaving only a forbidden capability or an untrue $unclaimed declaration",
       "procedure": "read onboard.md's capability-mapping step for a runtime-library case; run node scripts/spec-guard.mjs --audit with those files unclaimed and see what the check says about them",
       "status": "run"
+    },
+    {
+      "id": "INTAKE-10",
+      "title": "the intake reads the agent entry point itself for an agent policy, not only CONTRIBUTING.md",
+      "area": "intake",
+      "tests": [
+        "docs/method/adoption.md"
+      ],
+      "promise": "the standard reads the repo before asking - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repo whose AGENTS.md carries the prohibition ('Never create a PR. Never create an issue.') while its CONTRIBUTING.md separately permits LLM-assisted code with disclosure - caddyserver/caddy",
+      "when": "align-to-standards' step 0 intake runs its red-flag scan",
+      "then": "the prohibition is found and played back before anything is written, instead of the run editing AGENTS.md - which step 3 does - without ever having read the rule it contains",
+      "procedure": "grep skills/align-to-standards/SKILL.md's red-flag paragraph for AGENTS.md and CLAUDE.md",
+      "status": "run"
+    },
+    {
+      "id": "SPEC-23",
+      "title": "a spec reconstructed from years-old production code can say so, instead of carrying the same status as a feature nobody has built",
+      "area": "spec",
+      "tests": [
+        "R9",
+        "R10"
+      ],
+      "promise": "a spec is the current truth of a capability - specs are buildable, not descriptive (ADR-003)",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "onboard.md step 5, which requires that an unclear branch or a spec-code discrepancy be recorded as an open marker rather than guessed, and the structure guard, which re-runs the clarify gate on any spec claiming ready-to-develop or live",
+      "when": "a spec for shipped, running code is written honestly, with its open questions live",
+      "then": "the status vocabulary can express 'shipped, spec incomplete' - instead of forcing in-refinement, the same value a not-yet-built feature carries, so specs/ cannot distinguish what runs in production from what is only a draft",
+      "procedure": "set Status: live on a reconstructed spec that carries open [NEEDS ...] markers and run node standard/scripts/spec-structure.mjs --block",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-18",
+      "title": "the buildable-spec pass on a security-critical capability surfaces a defect in the target's code, not only in its documents",
+      "area": "adoption",
+      "tests": [
+        "R9"
+      ],
+      "promise": "buildable is the default spec tier; writing the contracts is what surfaces the bugs - SPEC.md R9, ADR-003",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a security-critical capability specced buildable from the code (usebruno/bruno's script sandbox, whose runtime selection decides between a WebAssembly interpreter and node:vm)",
+      "when": "the extract-then-synthesize pass writes the contracts verbatim with file anchors",
+      "then": "a real divergence in the code is found by the act of writing it down, rather than the spec merely restating what the documents already claimed",
+      "procedure": "spec a target's highest-risk capability buildable and record whether the pass produced a finding about the code",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-19",
+      "title": "the assessment's drift pass finds contradictions between a repo's own documents and its tree, and the better-documented the repo the more it finds",
+      "area": "adoption",
+      "tests": [
+        "docs/method/repo-assessment.md"
+      ],
+      "promise": "the 8 assessment passes, drift as a number - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a repo with real internal documentation to check the code against (usebruno/bruno's .claude/ tree; drizzle-orm's CONTRIBUTING.md repository-structure section)",
+      "when": "assessment pass 8 runs",
+      "then": "each contradiction is named with the file and the evidence, rather than the documents being read as the record",
+      "procedure": "run assessment pass 8 against a documented repo and check each finding by grepping the tree rather than by trusting the document",
+      "status": "run"
+    },
+    {
+      "id": "INTAKE-12",
+      "title": "an AI policy that permits agent contribution while attaching a discretionary sanction is recognised as its own category, and the scan looks beyond a root CONTRIBUTING.md",
+      "area": "intake",
+      "tests": [
+        "R19"
+      ],
+      "promise": "a repo's own policy can forbid or condition what this skill does - align-to-standards step 0's red-flag and conditional-allow branches",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "honojs/hono's docs/CONTRIBUTING.md: 'You may use AI to contribute, but it must never waste a maintainer's time... a maintainer may close your PR without notice and block your account' - a permission with a sanction and no procedural condition, in a file the repo root does not carry",
+      "when": "the intake's policy scan runs",
+      "then": "the policy is named and its consequence put to the user, instead of falling between the two shipped branches (outright ban, and conditional allow requiring a human to rewrite) because there is nothing procedural to say back",
+      "procedure": "read skills/align-to-standards/SKILL.md step 0's AI-policy branches against honojs/hono's docs/CONTRIBUTING.md, and check which paths the scan is told to read",
+      "status": "run"
     }
   ]
 }

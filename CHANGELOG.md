@@ -1388,6 +1388,33 @@ placeholder still reported as serving nobody rather than as serving a persona by
 reproductions above and each preserved hatch. `docs/tree/docs-personas-md.md` had been
 showing roster rows without backticks, a table this guard reads as empty; it now shows the
 form the guard parses.
+### The skills had no catalogue, only a folder page saying what the folder was for (2026-08-06)
+
+Twenty procedures ship, with names that are terse on purpose: `spec-reconcile`,
+`discovery-digest`, `bdr-write`. `docs/tree/claude-skills.md` explained what the folder is
+for and the rule that decides whether a new skill earns its place, and never said what was in
+it. A reader who had not used them could not tell from a directory listing which one to reach
+for, which is a poor return on procedures whose descriptions are the most carefully written
+prose in the tree.
+
+`docs/skill-map.md` is that catalogue, grouped by **the moment a skill fires** rather than by
+what it writes - because a reader arrives with a situation ("we changed our mind about auth",
+"when does billing ship?"), never with an artifact name. Six groups: deciding what to build,
+specifying a capability, planning and doing the work, closing the work, running the cadence,
+staying on the standard. The transition procedure that runs *from* this repo against somebody
+else's tree is listed apart, since it never ships.
+
+**It is generated, and that is the point.** A hand-written list of twenty things is a second
+source of truth with nothing holding it to the first, and this repo has already watched that
+fail twice in `tools/README.md` alone - four listed while seven existed, then ten while
+eighteen existed. Every description on the page is the skill's own frontmatter verbatim, which
+is also what an agent reads when deciding whether to run it, so the page and the behaviour
+cannot disagree. If a description there is wrong, the skill is wrong.
+
+The one thing not derivable from a skill is which group it belongs to, so the generator
+declares that - and **refuses to render at all** when a shipped skill belongs to no group,
+rather than omitting it quietly. Verified by adding a throwaway skill: the check names it and
+fails. `tools/skill-map.mjs --check` runs in CI beside the file map's.
 
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 
