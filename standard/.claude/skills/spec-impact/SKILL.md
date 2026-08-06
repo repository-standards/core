@@ -21,6 +21,12 @@ then find the ripple. This is analysis - do not edit code yet.
    and say so, and point at the BDR/ADR that retired it. A genuinely new need in
    that area is a new capability, specced fresh, not a reopening.
 
+   **Check `Status` on every capability this reaches, not only the primary** - the
+   ripple below finds retired specs too, and skipping them is how a retired spec
+   ends up stating something a later change made false. A retired **ripple** target
+   is not a stop: report it as a correction target (ADR-036), so the change fixes
+   what it falsified rather than leaving it.
+
 2. **Read** the primary spec and the code it maps to (`specs/capability-map.json`).
 
 3. **Find the ripple:**
