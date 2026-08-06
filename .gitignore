@@ -5,4 +5,4 @@ node_modules/
 .claude/tmp/
 .claude/worktrees/
 site/docs/
-site/work/
+site/dashboard/
