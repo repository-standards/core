@@ -40,7 +40,7 @@ invisible to it - and it walked a **hardcoded list of eight files** that `CONTRI
 `fill-from-repo` entry, was never on. A second source of truth beside the manifest, quietly not
 covering what the manifest added.
 
-Resolved by [ADR-037](docs/decision-records/ADR-037-adopted-percentage-is-structural-substance-is-judgment.md)
+Resolved by [ADR-038](docs/decision-records/ADR-038-adopted-percentage-is-structural-substance-is-judgment.md)
 rather than by deepening the check. Two deeper options were considered and rejected in writing:
 required sections per entry, which converts substance into ceremony the moment somebody adds
 the heading and writes `TODO` beneath it; and a length threshold, which measures prose by the
