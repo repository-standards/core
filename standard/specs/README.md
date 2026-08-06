@@ -67,6 +67,14 @@ Given / When / Then concrete enough to become tests. Contracts quote real identi
 verbatim - field names, enums, error codes, endpoints, exactly as they are. A paraphrased
 contract is not a contract.
 
+**A content product has contracts too.** Where a capability's product is text or data
+rather than behaviour - a translation catalogue, a packaging recipe, a narrative work, a
+normative document - buildable means the artefact's own structure and the consumers that
+read it, stated as exactly as an endpoint would be. The capability template says what
+fills each section for that shape. Reaching for `behavioral` because the capability has
+no endpoints is the mistake this shape invites, and it discards the part that was
+checkable.
+
 **`behavioral` is the escape hatch, not a shortcut.** It carries prose invariants and edge
 cases without the full contract detail. It must declare itself in the spec's header **and**
 carry a one-line justification, so the gap is a visible choice rather than a habit. On a
