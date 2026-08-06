@@ -62,6 +62,8 @@ jobs:
           node tools/decision-records-check-test.mjs
       - name: file-map is regenerated from the manifest, not hand-written
         run: node tools/file-map.mjs --check
+      - name: skill-map is regenerated from the skills, and every skill is grouped
+        run: node tools/skill-map.mjs --check
       - name: validation suite (render matches the data; no unwaived open failure)
         run: node tools/validation.mjs --check
       - name: site (generate + check landing and docs)
