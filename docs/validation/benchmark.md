@@ -5,7 +5,7 @@
      agent-operated repository standard would claim, phrased so a reader who has never used
      this standard can run the same idea against their own. -->
 
-Twenty-something checks - **132**, precisely - that any repository standard
+Twenty-something checks - **133**, precisely - that any repository standard
 claiming to be agent-operable should survive. This project failed **57** of them at least once and has fixed-and-re-verified **80** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
@@ -352,6 +352,19 @@ declare $unclaimed in a >10,000-file repo's capability-map.json and run `node sc
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 time `node scripts/self-verify.mjs`, `spec-structure.mjs --block`, `facts-check.mjs`, `schema-pair.mjs --block`, `cycle-guard.mjs --block`, `decision-records-check.mjs --block`, `spec-guard.mjs --audit --block` and `spec-guard.mjs --block` on a >10,000-file adopted repo, three runs each, and report the best wall time
+```
+
+
+**GATE-38 - a required entry that exists on disk but is excluded by the repo's own ignore rules is drift, not a pass**
+
+- **Given:** a repository whose .gitignore excludes a directory the manifest requires entries in - for example `/docs/`, where the persona roster, the decision records and the product pages live - with those files authored and present on the working disk
+- **When:** self-verify runs
+- **Then:** the entries are drift and the failure names the ignore rule excluding them, instead of reporting PASS on files that are in no commit and absent from a fresh clone
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+in a git repository, write `/docs/` to .gitignore, author a required entry under docs/, run `node scripts/self-verify.mjs`; then `git add -f` the same file and re-run - the first must fail naming the rule, the second must pass
 ```
 
 

@@ -558,6 +558,30 @@ check(
   },
 );
 
+// Present on disk is not present in the repository. The fixture is not a git work tree, so
+// these four cases make one - which is also what pins the "no git, no change" behaviour.
+const git = (dir, ...args) => spawnSync("git", args, { cwd: dir, encoding: "utf8" });
+const asRepo = (dir) => {
+  git(dir, "init", "-q", ".");
+  git(dir, "add", "-A");
+};
+
+check(
+  "a required file under an ignore rule is drift, not a pass",
+  (dir) => {
+    // The rule has to exist before anything is staged, or git tracks the file first and the
+    // ignore rule never applies to it - which is the second case below, not this one.
+    writeFileSync(join(dir, ".gitignore"), "/docs/\n");
+    asRepo(dir);
+  },
+  (r, expect) => {
+    expect(r.drift > base.drift, `an ignored required entry did not move the number: drift ${r.drift}, baseline ${base.drift}`);
+    expect(says(r, "is git-ignored and untracked"), "the failure did not say why the file does not count");
+    expect(says(r, ".gitignore:1:/docs/"), "the failure did not name the rule that excludes it, which is the only actionable part");
+    expect(says(r, "a fresh clone does not have it"), "the consequence was not stated");
+  },
+);
+
 check(
   "a fallback chain needs one of its alternatives, not all of them",
   (dir) =>
@@ -614,6 +638,19 @@ check(
   (r, expect) => {
     expect(says(r, "THE GUARD EXECUTED"), "a met prerequisite left the guard unrun - the check would be permanently off");
     expect(r.drift === base.drift + 1, `expected the guard's failure to count: ${base.drift + 1}, got ${r.drift}`);
+  },
+);
+
+check(
+  "the same file, force-added, counts again",
+  (dir) => {
+    asRepo(dir);
+    writeFileSync(join(dir, ".gitignore"), "/docs/\n");
+    git(dir, "add", "-f", "docs/personas.md");
+  },
+  (r, expect) => {
+    expect(r.drift === base.drift, `tracking the file did not clear the drift: drift ${r.drift}, baseline ${base.drift}`);
+    expect(!says(r, "git-ignored and untracked"), "a tracked file was still reported as ignored - an ignore rule does not un-track what git already follows");
   },
 );
 
@@ -687,6 +724,20 @@ check(
 );
 
 check(
+  "untracked but not ignored is left alone",
+  (dir) => {
+    // The state every adoption passes through: files authored, nothing staged yet. Failing
+    // here would fire on every honest run of the procedure that creates them.
+    asRepo(dir);
+    git(dir, "rm", "-r", "--cached", "-q", ".");
+  },
+  (r, expect) => {
+    expect(r.drift === base.drift, `an unstaged working tree was penalised: drift ${r.drift}, baseline ${base.drift}`);
+    expect(!says(r, "git-ignored and untracked"), "files that are merely not staged yet were reported as excluded");
+  },
+);
+
+check(
   "a template, a README and the engine's own scaffolding are not specified behaviour",
   (dir) => {
     // The shapes that would make the caveat unreachable if they counted: the shipped
@@ -701,6 +752,15 @@ check(
   (r, expect) => {
     expect(says(r, "no capability spec exists here yet"), "ephemeral engine scaffolding counted as a capability spec");
     expect(r.drift === 0, `expected drift 0, got ${r.drift}`);
+  },
+);
+
+check(
+  "a tree that is no git repository is checked exactly as before",
+  () => {},
+  (r, expect) => {
+    expect(r.drift === base.drift, `the baseline fixture is not a git work tree and must be unaffected: drift ${r.drift}, baseline ${base.drift}`);
+    expect(!says(r, "git-ignored and untracked"), "a non-repository was told about ignore rules it cannot have");
   },
 );
 

@@ -63,11 +63,11 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 
 | | |
 |---|---|
-| Cases in the catalogue | **197** (`188` executed at least once, `9` specified but not yet run) |
-| Portable cases (the benchmark subset) | **132** (67% of the catalogue); local (tests a path only this tree has): 65 |
-| Observations recorded | **260** across 22 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-k-shape, 2026-08-06-l-dochonesty, 2026-08-06-m-drift, 2026-08-06-n-vocab, 2026-08-06-o-specmech, 2026-08-06-p-shape, 2026-08-06-q-track, 2026-08-06-s-field3, 2026-08-06-t-decisions, 2026-08-06-v-ledger) |
+| Cases in the catalogue | **198** (`189` executed at least once, `9` specified but not yet run) |
+| Portable cases (the benchmark subset) | **133** (67% of the catalogue); local (tests a path only this tree has): 65 |
+| Observations recorded | **261** across 23 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-k-shape, 2026-08-06-l-dochonesty, 2026-08-06-m-drift, 2026-08-06-n-vocab, 2026-08-06-o-specmech, 2026-08-06-p-shape, 2026-08-06-q-track, 2026-08-06-s-field3, 2026-08-06-t-decisions, 2026-08-06-v-ledger, 2026-08-06-w-tracked) |
 | Targets assessed | **108** (105 real repositories, 2 synthetic fixtures) |
-| Verdicts | 150 pass, 105 fail, 2 not-applicable, 3 partial |
+| Verdicts | 151 pass, 105 fail, 2 not-applicable, 3 partial |
 | Failures found | **178** - **129 fixed and re-verified** (across 29 merged pull requests, plus 7 re-verified against the tree without a pull request cited), **49 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 56 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
@@ -82,7 +82,7 @@ number stops matching the data behind it.
 | `adoption` | 14 | 14 | 0 | 11 |
 | `greenfield` | 7 | 7 | 0 | 2 |
 | `spec` | 22 | 19 | 3 | 17 |
-| `gates` | 38 | 38 | 0 | 26 |
+| `gates` | 39 | 39 | 0 | 27 |
 | `track` | 22 | 20 | 2 | 20 |
 | `decisions` | 13 | 13 | 0 | 10 |
 | `discovery` | 7 | 7 | 0 | 6 |
