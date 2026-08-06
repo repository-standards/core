@@ -56,10 +56,11 @@ the result with `self-verify`.
    changelog covering it. Say which half you could not diff. (A manifest from before hashes
    shipped carries none, and then that half is gone too - read the changelog and say so.)
 
-   **The stack layer updates too:** if the repo carries a `stack.manifest.json`, re-read
-   it from the stack repo's checkout and apply its entry deltas the same way - the stack
-   is linked by the registry pointer, never by a core version (ADR-022), so its update
-   rides on its own clock.
+   **The stack layer updates too:** if the repo carries a `stack.manifest.json` - or one
+   `stack.<technology>.manifest.json` per stack, where more than one coexists - re-read
+   each from its stack repo's checkout and apply its entry deltas the same way. A stack
+   is linked by the registry pointer, never by a core version (ADR-022), so each one's
+   update rides on its own clock, and updating one never implies the others.
 
 3. **Apply the delta, adapted - never a blind re-scaffold.** For each changed item:
    - the repo has **not** diverged here -> apply it, adapted to this repo's stack and

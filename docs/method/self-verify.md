@@ -94,6 +94,13 @@ entries in and counts **one drift number across both layers**. The stack file li
 repo to its stack by the registry pointer - never by a core version (ADR-022 in the
 standard repo); the picks' rationale lives in the stack repo's DECISIONS.
 
+A repo whose stacks **coexist permanently** - a framework beside a native engine, neither
+migrating to the other - carries one file per stack, `stack.<technology>.manifest.json`,
+alongside or instead of the single-stack name. Every one is read, in filename order, and
+they all land in the same drift number. Two stacks declaring the same path is not an error
+and is not this repo's to resolve, so it is reported rather than silently collapsed: the
+path is checked once per declaration, and the run says which two files claimed it.
+
 **Which rules the number covers.** The drift number is exactly the manifest: file
 presence, the recorded content of `copy` entries, the declared keys of `merge` entries,
 required sections, static guards, plus the structure guard's checks (spec

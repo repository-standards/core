@@ -88,8 +88,10 @@ for is deleting the file.
 explanation of what a path is for lives in its documentation page.
 
 **Your repo's own additions.** A stack adds `stack.manifest.json` beside this one and the
-two are concatenated into a single drift number. Editing the core manifest to add your own
-entries makes the next update a merge conflict in the one file that must stay true.
+two are concatenated into a single drift number - one file per stack
+(`stack.<technology>.manifest.json`) where more than one coexists, all of them concatenated
+the same way. Editing the core manifest to add your own entries makes the next update a
+merge conflict in the one file that must stay true.
 
 ## Decisions behind it
 

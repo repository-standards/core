@@ -45,6 +45,8 @@ one settled.
 
 | [036](ADR-036-capabilities-whose-code-is-not-here.md) | A capability may be bound to a repository this one does not own | a capability whose implementation lives in a satellite repo, plugin or vendor SDK declares `{ external, reason }` in the capability map instead of a glob that matches nothing; nothing is enforced for it, the spec still lives here, and every audit run names it | Accepted |
 
+| [037](ADR-037-a-repo-may-register-more-than-one-stack.md) | A repo may register more than one technology stack | a repo whose stacks coexist permanently carries `stack.<technology>.manifest.json` per stack beside the unchanged single-stack name; every one is read, the drift stays one number, an unparseable one is drift, and two stacks claiming one path is reported rather than collapsed | Accepted |
+
 Add one row per record; the template ships in the tree
 (`standard/docs/decision-records/adr/_template.md`). Numbers are gapless and never
 reused.

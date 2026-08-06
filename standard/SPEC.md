@@ -142,6 +142,9 @@ binds every repo, a solo one included.
   repos meet core alone and are compliant. A stack declares what adopting it
   means in its own manifest (`stack.manifest.json`, the core schema); a repo
   that adopted one carries it, and `self-verify` counts one drift across both.
+  A repo whose stacks coexist permanently carries one manifest per stack
+  (`stack.<technology>.manifest.json`); every one is read and the drift stays a
+  single number (ADR-037).
 
 ## Supply chain
 

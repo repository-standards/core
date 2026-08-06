@@ -109,16 +109,37 @@ if (exists("standard.manifest.json")) {
 }
 
 // 0b. a repo that adopted a stack carries the stack's manifest too (ADR-016):
-// same schema, second file - the engine eats both and drift is one number.
-if (manifest && exists("stack.manifest.json")) {
-  try {
-    const stack = JSON.parse(readFileSync("stack.manifest.json", "utf8"));
-    note("stack", `stack manifest present: ${stack.technology || "unnamed"} - technology layer counted in the same drift number (ADR-016/022)`);
+// same schema, second file - the engine eats them all and drift is one number.
+//
+// A repo whose stacks genuinely coexist carries one file per stack,
+// `stack.<technology>.manifest.json` (ADR-037). The engine read exactly one filename, so a
+// repo like flutter/flutter - a Dart framework beside a native engine, permanently, neither
+// migrating to the other - could register one stack and the second was invisible: no entry
+// checked, no drift, and nothing said a manifest had been ignored. Every match is read, in
+// filename order so two runs on one tree report in the same order.
+const STACK_MANIFEST = /^stack(?:\.[A-Za-z0-9][A-Za-z0-9._-]*)?\.manifest\.json$/;
+if (manifest) {
+  const declaredBy = new Map(); // path -> the stack manifest that claimed it first
+  for (const file of [...listing(".")].filter((f) => STACK_MANIFEST.test(f)).sort()) {
+    let stack;
+    try {
+      stack = JSON.parse(readFileSync(file, "utf8"));
+    } catch (e) {
+      fail("stack", `${file} is present but unparseable: ${e.message}`);
+      continue;
+    }
+    note("stack", `${file}: ${stack.technology || "unnamed"} - technology layer counted in the same drift number (ADR-016/022)`);
+    // Two stacks claiming one path is not drift and is not this repo's to resolve - but it
+    // does mean the same file is checked twice and counted twice, so the number needs the
+    // caveat out loud rather than a quiet collapse that picks a winner.
+    for (const f of stack.files || []) {
+      const first = declaredBy.get(f.path);
+      if (first) warning("stack", `${f.path} is declared by both ${first} and ${file} - it is checked once per declaration, so it counts twice; the two stacks disagree about who owns the path (report it to them)`);
+      else declaredBy.set(f.path, file);
+    }
     for (const k of ["files", "sections", "guards", "exceptions"]) {
       manifest[k] = [...(manifest[k] || []), ...(stack[k] || [])];
     }
-  } catch (e) {
-    fail("stack", `stack.manifest.json is present but unparseable: ${e.message}`);
   }
 }
 
