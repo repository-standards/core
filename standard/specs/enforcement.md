@@ -146,6 +146,17 @@ the spec. Anything it cannot compare - a file with no earlier version, unparseab
 JSON on either side - couples, so the quiet direction is the guarded one. A plain
 glob string is unchanged: every edit couples.
 
+Some of those files hold a map **keyed by data**: a hash per shipped file, a rate
+per locale, a limit per plan. Its keys arrive and leave as the data does, so
+counting them as key shape brings back the failure this distinction exists to end -
+one added row, one demanded spec edit, nothing to legitimately write. Name those
+paths with `"dataKeys": ["files[].sha256"]` on the same entry, in the notation the
+shape uses (array indices collapse to `[]`), and the walk stops there: **the path
+itself is shape, everything under it is data**. The path disappearing still couples,
+because that is the interpretation changing. `dataKeys` on an entry that couples on
+content is refused rather than ignored - it would describe a distinction that entry
+does not make.
+
 The distinction is not a convenience. A gate that fires when nothing is wrong gets
 satisfied with a cosmetic spec edit, and once that is the habit the gate is
 decoration.
