@@ -66,8 +66,8 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
 | Observations recorded | **194** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-h-gate22) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 101 pass, 89 fail, 1 not-applicable, 3 partial |
-| Failures found | **166** - **84 fixed and re-verified** (across 21 merged pull requests), **82 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 100 pass, 90 fail, 1 not-applicable, 3 partial |
+| Failures found | **167** - **85 fixed and re-verified** (across 22 merged pull requests), **82 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 8 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -260,6 +260,7 @@ from the PR merging, not inferred from the verdict flipping:
 | `GATE-19` | a spec's `Status: ready-to-develop` (or `live`) is verified by re-running the clarify gate, not left as a value nothing checks | `fixture:test-greenfield-core` | [core/pull/13](https://github.com/repository-standards/core/pull/13) |
 | `GATE-20` | SPEC.md's own stated rule range agrees with the rule it actually defines last, and the count is a declared, checked fact | `fixture:test-greenfield-core` | [core/pull/13](https://github.com/repository-standards/core/pull/13) |
 | `GATE-21` | the persona-roster check and the placeholder-drift warning are locale-aware, not silently blind on a translated repo | `fixture:test-greenfield-core` | [core/pull/13](https://github.com/repository-standards/core/pull/13) |
+| `GATE-22` | the persona check verifies a `**Serves:**` value against the actual roster in docs/personas.md, not merely that the field is non-empty and non-placeholder | `fixture:test-greenfield-core` | [core/pull/27](https://github.com/repository-standards/core/pull/27) |
 | `GATE-23` | spec-guard --audit sees a capability the map declares with no spec, not only a spec with no map entry | `fixture:test-greenfield-core` | [core/pull/13](https://github.com/repository-standards/core/pull/13) |
 | `GATE-25` | the CI-facing gate a repo actually blocks on is the one pre-pr-review names, so a local green run never precedes a CI-red one | `fixture:test-greenfield-core` | [core/pull/14](https://github.com/repository-standards/core/pull/14) |
 | `GATE-26` | the manifest's `exceptions` mechanism honours a deviation recorded in a Layer-2 stack manifest, not only one recorded in the core manifest | `fixture:test-greenfield-core` | [core/pull/17](https://github.com/repository-standards/core/pull/17) |

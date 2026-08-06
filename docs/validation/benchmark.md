@@ -6,7 +6,7 @@
      this standard can run the same idea against their own. -->
 
 Twenty-something checks - **124**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **50** of them at least once and has fixed-and-re-verified **54** so far; the rest are logged as open (which includes any case where an attempted fix
+claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **54** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -230,7 +230,7 @@ run standard/scripts/spec-structure.mjs and self-verify.mjs against a repo whose
 - **Given:** a capability spec declaring `**Serves:** \`Whoever I like\`` (a name absent from docs/personas.md), or a spec with no roster at all
 - **When:** spec-structure.mjs's persona gate runs
 - **Then:** the check fails, because the roster is the constraint, not merely an alternative satisfier a non-empty string can bypass
-- **Result:** passed every time it ran (2/2)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
