@@ -47,7 +47,18 @@ the result with `self-verify`.
 
    **Where the two trees come from:** one checkout of the standards repo, read at two refs -
    the target version's and the one in `.standards-version`. That needs its history, not a
-   snapshot of latest.
+   snapshot of latest, so it is a clone and never a `degit`:
+
+   ```
+   git clone https://github.com/repository-standards/core.git /tmp/repository-standards-core
+   ```
+
+   Clone it outside this repo (or into a gitignored path); it is a reference to read the
+   delta from, never a directory to commit. If the repo follows a fork of the standard,
+   clone that instead - the `STANDARD_REPO` the update-watch workflow names is the same
+   pointer. Nothing in the steps below can run before this exists, which is why it is
+   written here rather than left to the standard's own README, a file this repo does not
+   carry.
 
    **If the current version's tree cannot be had,** the delta is partial and must be
    reported as partial rather than as the whole. The manifest copy this repo carries records
@@ -64,6 +75,18 @@ the result with `self-verify`.
 3. **Apply the delta, adapted - never a blind re-scaffold.** For each changed item:
    - the repo has **not** diverged here -> apply it, adapted to this repo's stack and
      language (same rule as `align-to-standards`: reconcile, do not blind-copy);
+   - the item **changed upstream and this repo also changed it locally** -> this is the
+     ordinary case, not the exception: `merge` and `fill-from-repo` entries are adapted
+     at adoption by definition, so almost every one of them is diverged the moment the
+     release touches it. **Merge the two, three-way**, against the entry's own reference
+     copy at the current version - the version's file is the base, the target's file is
+     theirs, the repo's file is ours. Take the upstream addition, keep the local
+     adaptation, and where the two genuinely collide, say what collided and let the human
+     choose; a `copy` entry resolves as step 4 describes, by hash. **Never skip the file
+     because it "has local content"** - it always does, and skipping is how a release's
+     additions go unapplied while `self-verify` still says drift 0: these entries carry
+     no `sha256`, so nothing downstream will ever notice the miss. Report every file
+     merged this way and every collision the human decided;
    - the item was **removed** in the target -> remove or migrate the repo's use of it;
    - re-applying the whole standard is wrong - it erases the repo's local adaptation.
 
@@ -83,7 +106,10 @@ the result with `self-verify`.
 
 5. **Bump the pin and the manifest.** Write the target version to `.standards-version`,
    and replace `standard.manifest.json` with the target version's manifest (carrying the
-   repo's `exceptions` forward). The pin and the manifest move together.
+   repo's `exceptions` **and its top-level `profile`** forward - both are this repo's
+   answers, not the standard's, and the shipped manifest carries a default `profile` that
+   would silently move a core repo onto the scale gate). The pin and the manifest move
+   together.
 
 6. **Self-verify.** Run the compliance check - `node scripts/self-verify.mjs --version <target>`
    (see `self-verify.md` (by reference)). It must pass: the pin matches the manifest, every required
@@ -99,6 +125,9 @@ the result with `self-verify`.
   with placeholders and erases local adaptation. Apply the delta only.
 - **Not a clobber of deviations** - a client-owned superseding decision outranks the
   standard's default; surface the conflict, do not silently overwrite it.
+- **Not a skip of the diverged files either** - the opposite failure, and the quieter one.
+  A `merge` or `fill-from-repo` file left untouched because the repo has its own content in
+  it drops the release's change on the floor, and no hash exists to report it.
 - **Not a delta read off the manifest alone** - it records entries, and the content of the
   `copy` ones. A release that only moved templates, workflows or prose changes nothing in it
   and still has to be applied. Diff the trees.
