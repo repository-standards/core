@@ -15,7 +15,10 @@
 <!-- Retiring a capability (the product bet is gone, a vendor replaces it, etc.): do not
      delete this file - it stays as the record of what was built and why (R4). Flip Status
      to `retired` with a link to the BDR/ADR that decided it (the decision to stop building
-     something is exactly as re-litigable as the decision to build it, R5). Leave the
+     something is exactly as re-litigable as the decision to build it, R5). This file is then
+     not extended, under this slug or a near-miss one: a later need in the same area goes back
+     to the person who owns the bet, with the retiring record in hand, and is specced fresh as
+     a NEW capability if they still want it. Leave the
      capability-map.json entry in place even though its globs now match nothing - deleting
      it makes this spec directory read as an unmapped orphan spec-guard --audit would flag,
      which it is not. -->

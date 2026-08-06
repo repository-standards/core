@@ -59,7 +59,10 @@ binds every repo, a solo one included.
   settled way of doing a recurring thing MUST be written as a rule where the next
   person will look; the standard's taxonomy (adopted by reference from the living standard - always latest) is the map of where each kind lands.
 - **R6.** An accepted record MUST NOT be edited into a different decision. It is
-  superseded by a new record: status flip plus link.
+  superseded by a new record: status flip plus link. An accepted record **binds work
+  in its scope** until it is superseded: a spec, plan or change that contradicts one
+  MUST stop, and then either come into line or supersede the record. Writing around
+  it is not a third option.
 - **R7.** Every fork in the decision checklist that applies to the repo MUST be
   consciously decided and recorded; an area that does not apply MUST say so once,
   in one line. Silence is not an answer - an undecided area gets decided anyway, by
