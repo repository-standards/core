@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Accepted (2026-07-22) |
+| **Status** | Accepted (2026-07-22); the trigger and the solo/enterprise framing revised by [ADR-040](ADR-040-the-scale-profile-binds-on-reach-not-headcount.md) - scale binds on what leaves the room, not on headcount, and CI is core |
 | **Date** | 2026-07-22 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | profiles, manifest, adoption, solo, enterprise |
