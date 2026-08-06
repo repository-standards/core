@@ -393,16 +393,62 @@ Note what it does there. It gives the honest projection **and** names the readin
 contradicts it, with the arithmetic for both. That is the difference between a status report
 and a number somebody has to decide whether to believe.
 
+## One page, for the people who never open the repository
+
+Markdown in a repository is the right home for this and the wrong reading surface for a
+sponsor, a client, or somebody who joined on Monday. `scripts/work-dashboard.mjs` renders the
+three files - plus the decision records, the specs and the changelog - into one static page:
+what is in flight now, the cycles against a calendar, the pool, a handful of reports, the
+history, and every record with a search across it.
+
+It is a projection, never a second place the work is tracked. It writes nothing back, and two
+people running it on the same commit get the same bytes.
+
+```
+node scripts/work-dashboard.mjs            # once, into site/work/index.html
+node scripts/work-dashboard.mjs --serve     # rebuilds on change; the open page refreshes itself
+```
+
+**It keeps itself current.** The page carries a fingerprint of the content it was built from
+and checks a small `state.json` beside it. When the work moves, the page reloads and keeps
+your place - unless you have a record open or a search half-typed, in which case it says so
+and lets you choose the moment. Nothing pulls, nothing rebases: a stale page is a display
+problem, and fixing it by moving somebody's branch would be a much worse one.
+
+**Where it may go depends on who may read the repository**, because the page contains
+nothing the repository does not already contain.
+
+- **Public repository: publish it.** GitHub Pages is enough, and being able to send someone a
+  link instead of a status email is most of the point. This standard publishes its own.
+- **Private repository: not on GitHub Pages.** Pages on a private repository is served
+  **publicly** unless the organisation is on Enterprise Cloud with access control - the
+  default outcome is a private backlog on the open internet. Keep it as the CI build
+  artifact, which only people who can read the repository can download; serve it locally with
+  `--serve`; or put it behind an identity gate (Cloudflare Access, Netlify or Vercel
+  protection, your own intranet).
+
+The shipped workflow encodes exactly that: it builds on every push to `main`, uploads the
+page as an artifact, and reaches the publish step **only when the repository is public**, so
+turning Pages on cannot leak a private board by accident. Add `--anonymise` when the page
+should carry no colleague's name: assignees and the owner a cycle names are dropped at build
+time rather than hidden in the page. It is not redaction - prose you wrote by hand is
+reproduced as you wrote it, so a build that must carry no names needs the sources read too.
+
+The output belongs in `.gitignore`. Committing it costs a large diff in every pull request
+and a conflict on every parallel branch, and buys nothing: the page is a function of the
+commit, so anybody can rebuild it byte for byte.
+
 ## What this is not
 
 **It can replace your tracker, and for some teams it does.** For the work the repository
 knows about - what is owed, what somebody picked up, when it lands - this is complete, and
 running without a board is a real option rather than a compromise.
 
-What it does not try to be is the **platform**: dashboards for people who never open the
-repository, permissions and portfolio views, reporting lines, the workflows of departments
-outside engineering. A tracker is much more than a list of work, and if you need that part,
-keep it and bridge it - that is not a failure of this, it is a different product.
+What it does not try to be is the **platform**: permissions and portfolio views, reporting
+lines, the workflows of departments outside engineering. The page above covers the reading
+half of what a board is for; none of the rest is here. A tracker is much more than a list of
+work, and if you need that part, keep it and bridge it - that is not a failure of this, it is
+a different product.
 
 And be honest with yourself that it is a **change of mind, not a swap**. The work lives where
 the code lives; you read it in a diff and argue about it in a pull request rather than
