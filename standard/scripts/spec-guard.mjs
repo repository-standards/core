@@ -105,13 +105,29 @@ if (audit) {
     }
     return acc;
   };
+  // Tracked AND untracked, unioned - not tracked-with-an-untracked-fallback. The fallback
+  // only fired when git listed NOTHING, so one already-tracked spec made every new
+  // directory invisible: `--audit` said OK before `git add` and failed naming the orphan
+  // straight after, on the same tree. The local run has to give CI's answer, and the whole
+  // point of the audit is the capability somebody just created.
+  //
+  // `--exclude-standard` keeps ignored files out (build output is not unclaimed code);
+  // node_modules and .git are dropped by name as well, so a repo that has not ignored them
+  // gets the same answer as the filesystem fallback rather than several thousand orphans.
   const listed = (what) => {
-    try {
-      const out = sh(`git ls-files ${what}`).split("\n").filter(Boolean);
-      if (out.length) return out;
-    } catch {
-      /* no git, or nothing tracked yet */
-    }
+    const collect = (cmd) => {
+      try {
+        return sh(cmd).split("\n").filter(Boolean);
+      } catch {
+        return []; // no git, or nothing tracked yet
+      }
+    };
+    const target = what === "." ? "" : ` ${what}`;
+    const out = [
+      ...collect(`git ls-files${target}`),
+      ...collect(`git ls-files --others --exclude-standard${target ? ` --${target}` : ""}`),
+    ].filter((f) => !f.split("/").some((seg) => SKIP_DIRS.has(seg)));
+    if (out.length) return [...new Set(out)];
     return fsWalk(what === "." ? "." : what);
   };
   const specFiles = listed("specs");

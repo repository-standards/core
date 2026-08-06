@@ -31,7 +31,9 @@ spec honest. Honest scope - only part of this is mechanical; the rest needs an A
   the spec is correct - it forces the author to touch the spec or acknowledge.
 - **Map audit (same guard):** the map is what makes the coupling guard mean anything,
   and it can rot in four ways - each of them silent, which is why all four are checked
-  by `spec-guard.mjs --audit`, full-tree in CI rather than on the diff:
+  by `spec-guard.mjs --audit`, full-tree in CI rather than on the diff. Full-tree means
+  tracked and untracked alike (git's ignore rules still apply), so a capability
+  directory counts from the moment it exists and the local run answers what CI will:
   1. a `specs/<capability>/` with **no map entry** has no coupling and silently rots
      (source-of-truth rule 4);
   2. a **map entry naming a capability with no spec** - a key nothing can ever satisfy;

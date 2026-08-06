@@ -11,6 +11,12 @@ you. The audit catches the thing the diff mode structurally cannot: a capability
 entry in `capability-map.json` is never considered by the diff run, so an unmapped
 capability is unguarded and silent.
 
+The audit reads the tracked files **and** the untracked ones git is not ignoring, so a
+capability directory is in scope from the moment it is created. It used to read the tracked
+list alone and fall back to walking the filesystem only when git listed nothing at all -
+which meant one already-tracked spec was enough to hide every new directory, and a local
+run said OK on the tree CI would fail on as soon as it was staged.
+
 ## How it decides
 
 It reads `specs/capability-map.json`, turns each glob into a regular expression (`**`
