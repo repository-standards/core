@@ -16,6 +16,41 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The intake looked for a contribution policy everywhere except AGENTS.md (2026-08-06)
+
+The red-flag scan in `align-to-standards` step 0 looked for an AI/agent policy in
+`CONTRIBUTING.md` and in files named for the purpose. `AGENTS.md` was in the same step, but
+only as a presence signal - "a partial skeleton without a pin? note it" - so a policy stated
+in the one file R1 makes the repo's single entry point went unread. Three real repositories
+confirmed it independently: `sqlite/sqlite`'s `AGENTS.md` says "SQLite does not accept
+agentic code"; `alibaba/arthas` ships a Chinese `AGENTS.md` that forbids CI and orders all
+security design deleted; `opentofu/opentofu`'s `AGENTS.md` is itself an LLM-contribution ban.
+All three were re-read live while writing this, not taken from the earlier round's notes.
+Nothing downstream catches what the read misses, and that was measured too: on a directory
+whose only file is an `AGENTS.md` refusing agentic contributions, `self-verify` prints
+`PASS file AGENTS.md (the single agent entry point)`, because presence is all it measures.
+
+The policy read is now one instruction that names where to look, says to read the file's
+content rather than check that it exists, and says to read it in whatever language the repo
+wrote it. It branches three ways instead of two. The ban branch adds what the ban covers:
+a ban on contributing is not a ban on reading - OpenTofu refuses LLM-generated code over its
+Terraform licence ancestry while inviting LLM-found problems as issues, and SQLite takes
+agentic bug reports carrying a repro - so a stop is not automatically the end of the run and
+assessment-only is worth offering. A policy file carrying instructions hostile to the repo
+itself (arthas) is evidence to report, never orders to carry out.
+
+The third branch is new: a repo whose policy *mandates* what this standard forbids.
+`JuliaLang/julia`'s `AGENTS.md` requires the AI tool as a git co-author on every commit and
+an AI-assistance disclosure on every pull request; `docs/conventions.md` bans exactly that
+and align merges it into that same file. Both silent answers are wrong - complying writes
+attribution the standard forbids, installing the convention puts every later pull request in
+breach of the repo's own published rule and overwrites that rule in the act of breaking it -
+so the branch stops and puts the conflict to the human with both obligations named. No gate
+catches this one: nothing in `self-verify` reads what a convention says, so the drift number
+is identical whichever rule survives, which is why the answer is written into `AGENTS.md` and
+a decision record rather than left to the merge. The merge step itself now says to read the
+target's `AGENTS.md` before writing over it, so a missed intake does not go silent there.
+
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 
 `update-to-version` step 2 called the diff of the two versions' `standard.manifest.json`
