@@ -36,11 +36,21 @@ that reads like an ADR with the wrong nouns.
 - **How we would know we were wrong.** The observable signal - a churn number, a support
   pattern, a segment that never converts. Ask: *what would we see in three months if this was
   the wrong call?* Push for something checkable; "if it doesn't work out" is not one.
+- **How compliance is confirmed.** Not the same question, and this is the one that gets
+  dropped: the signal above says how you would learn the decision was a *mistake*, this says
+  how you would learn it is *not being kept*. Ask: *what would catch us breaking this?* A
+  guard, a test, a CI check, a review step, a config value, or the spec that now carries it.
+  Name the enforcement point - naming it is not designing it, and a business decision with a
+  technical consequence and no named check is the one that quietly stops being followed. On
+  privacy, money and safety decisions this is the whole risk, and "nothing yet" is a real
+  answer that has to be written down as one.
 - **Revisit when.** Usually the same signal, with a date or a threshold attached.
 
 These are the template's own sections - `Who it serves`, `What this rules out` and `How we
 would know we were wrong` exist in the BDR template and not in the ADR one, which is the
-whole reason the two records are not the same form with different nouns.
+whole reason the two records are not the same form with different nouns. `Confirmation` is
+the one section both forms share, for the same reason in both: it is what stops the record
+being decoration.
 
 ## Draft first, ask second
 
@@ -66,8 +76,10 @@ never edited into a different decision.
 
 ## Not this
 
-- **Do not write the technical consequence here.** Which table, which service, which library
-  is an ADR. If the record starts naming files, it has drifted.
+- **Do not design the technical consequence here.** Which table, which service, which library
+  is an ADR. If the record starts specifying files, it has drifted. Naming *where* compliance
+  is checked is not that, and it is required: `Confirmation` says "the retention job's test
+  asserts it" or "nothing yet", and the ADR it links says how the job works.
 - **Do not soften the cost.** The section exists so a future reader can tell whether the
   trade was worth it, and a BDR whose costs are all upside teaches them the records lie.
 - **Do not record a decision the user is still thinking about.** That is an idea

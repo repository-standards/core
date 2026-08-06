@@ -38,6 +38,17 @@ that loses is the thing a future reader most needs to know was considered.
 - Trade-offs accepted: ...
 - Follow-ups: ...
 
+## Confirmation
+
+How compliance with this decision is verified in practice - the guard, test, CI check, review
+step, config value, or the spec / doc it changes. **Name the enforcement point; do not design
+it here** (which table, which service, which library is the ADR's job - link it). A business
+decision with a technical consequence and no named check is the one that quietly stops being
+followed: "how we would know we were wrong" below says how you would learn the decision was a
+mistake, and this says how you would learn it is not being kept. If nothing confirms it yet,
+say so plainly - an unconfirmed decision is a red flag, and on privacy, money or safety it is
+the whole risk.
+
 ## What this rules out
 
 The non-goals that come with the decision - what it commits us to *not* doing. This is the
