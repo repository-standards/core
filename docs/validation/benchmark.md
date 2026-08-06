@@ -5,8 +5,8 @@
      agent-operated repository standard would claim, phrased so a reader who has never used
      this standard can run the same idea against their own. -->
 
-Twenty-something checks - **124**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **53** so far; the rest are logged as open (which includes any case where an attempted fix
+Twenty-something checks - **128**, precisely - that any repository standard
+claiming to be agent-operable should survive. This project failed **52** of them at least once and has fixed-and-re-verified **53** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -308,11 +308,37 @@ node standard/scripts/self-verify.mjs against a repo whose altPath target direct
 - **Given:** a capability map covering every source file of a real repo, with the $unclaimed declaration absent
 - **When:** $unclaimed is declared for the source tree only, and the audit is re-run
 - **Then:** the audit turns the check on and reports every remaining file in the repo - config, tests, tooling, root files - rather than silently scoping itself to src/
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 node scripts/spec-guard.mjs --audit with and without $unclaimed present
+```
+
+
+**GATE-33 - the coupling audit can claim a file whose name is not ASCII, instead of reporting it unclaimed for ever**
+
+- **Given:** a repo with a tracked file named outside ASCII (caddyserver/caddy carries modules/caddyhttp/fileserver/testdata/ملف.txt) and a $unclaimed glob covering its directory
+- **When:** node standard/scripts/spec-guard.mjs --audit runs
+- **Then:** the file counts as claimed, instead of being reported as belonging to no capability because git printed it quoted and backslash-escaped, which no glob can match
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+node standard/scripts/spec-guard.mjs --audit in a repo with a non-ASCII tracked filename; both directions covered by tools/spec-guard-test.mjs
+```
+
+
+**GATE-34 - the decision-record index guard reads the row form an author actually writes, and an index can carry a commented example of it**
+
+- **Given:** an ADR index whose rows are written `[ADR-001](ADR-001-title.md)`, the form the filename suggests, plus an example row inside an HTML comment
+- **When:** node standard/scripts/decision-records-check.mjs --block runs
+- **Then:** the rows are recognised and the commented example is ignored, instead of every record being reported as 'has no row in README.md' while its row is on screen, and instead of the one file whose format needs demonstrating being unable to demonstrate it
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+node standard/scripts/decision-records-check.mjs --block against an index using the prefixed link form and carrying a commented example row; both directions covered by tools/decision-records-check-test.mjs
 ```
 
 
@@ -1064,6 +1090,19 @@ run intake's lifecycle-signal check against ziglang/zig's real state (archived: 
 ```
 
 
+**INTAKE-10 - the intake reads the agent entry point itself for an agent policy, not only CONTRIBUTING.md**
+
+- **Given:** a repo whose AGENTS.md carries the prohibition ('Never create a PR. Never create an issue.') while its CONTRIBUTING.md separately permits LLM-assisted code with disclosure - caddyserver/caddy
+- **When:** align-to-standards' step 0 intake runs its red-flag scan
+- **Then:** the prohibition is found and played back before anything is written, instead of the run editing AGENTS.md - which step 3 does - without ever having read the rule it contains
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+grep skills/align-to-standards/SKILL.md's red-flag paragraph for AGENTS.md and CLAUDE.md
+```
+
+
 ### adoption
 
 **ADOPT-01 - the churn-hotspot assessment pass states when a shallow clone makes it categorically unrunnable, instead of silently under-reporting**
@@ -1149,7 +1188,7 @@ run stack detection against denoland/deno and check whether the 715 package.json
 - **Given:** a real repo nobody on this project wrote, with no pin and no skeleton (hagopj13/node-express-boilerplate)
 - **When:** the align router's brownfield path is run end to end and self-verify is measured before and after
 - **Then:** a real drift number is produced at the start, every entry it names is closeable by authoring rather than by exception, and the run ends at drift 0
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1167,6 +1206,19 @@ node scripts/self-verify.mjs before landing anything, then again after the waves
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 node scripts/spec-guard.mjs --audit after authoring specs/capability-map.json
+```
+
+
+**ADOPT-11 - a brownfield repo mid-programme can say 'this is capability code, not specced yet' without either lying or failing the audit**
+
+- **Given:** onboard.md's explicit instruction that one pass specs the risk-ranked capabilities and leaves the rest as backlog items, and spec-guard --audit's two states: claimed by a capability that has a spec, or declared unclaimed by decision
+- **When:** a mid-size repo is aligned in wave one with four of ten capabilities specced, and the required spec-guard workflow (which runs --audit --block on every PR) lands with it
+- **Then:** a third state exists for code that is a capability but has no spec yet, carrying the backlog id that will claim it - instead of the adopter choosing between declaring real capability code 'unclaimed by decision', writing placeholder specs the standard forbids, and red CI
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+node standard/scripts/spec-guard.mjs --audit on a partially specced brownfield repo. Options, none chosen: (a) a $queued key whose entries each name a backlog id, reported by --audit as a count rather than a failure; (b) allow a spec at Status: in-refinement to claim its globs, so the map is honest and the clarify gate still holds the spec back; (c) scope --audit's unclaimed check to directories the map already touches, which is cheaper but silently shrinks the check.
 ```
 
 
@@ -1376,7 +1428,7 @@ grep standard/SPEC.md for 'Node runtime' near its R16 bullet
 - **Given:** a repo with no registered Layer-2 stack, in a non-Node language
 - **When:** align-to-standards/SKILL.md's no-stack offer is read
 - **Then:** it says the guards (Node scripts) still carry a real cost, not only that rules and specs are 'unaffected'
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```

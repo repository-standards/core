@@ -2972,6 +2972,86 @@
       "then": "nothing matches work by task id; each item is matched by a fingerprint of its own content, so changed work is reported rather than skipped and new work is created rather than swallowed",
       "procedure": "read docs/method/tracker-sync.md's fingerprint table and spec-tasks/SKILL.md step 1a; confirm no shipped file keys on a task id across rounds",
       "status": "run"
+    },
+    {
+      "id": "GATE-33",
+      "title": "the coupling audit can claim a file whose name is not ASCII, instead of reporting it unclaimed for ever",
+      "area": "gates",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo with a tracked file named outside ASCII (caddyserver/caddy carries modules/caddyhttp/fileserver/testdata/ملف.txt) and a $unclaimed glob covering its directory",
+      "when": "node standard/scripts/spec-guard.mjs --audit runs",
+      "then": "the file counts as claimed, instead of being reported as belonging to no capability because git printed it quoted and backslash-escaped, which no glob can match",
+      "procedure": "node standard/scripts/spec-guard.mjs --audit in a repo with a non-ASCII tracked filename; both directions covered by tools/spec-guard-test.mjs",
+      "status": "run"
+    },
+    {
+      "id": "GATE-34",
+      "title": "the decision-record index guard reads the row form an author actually writes, and an index can carry a commented example of it",
+      "area": "gates",
+      "tests": [
+        "R5"
+      ],
+      "promise": "A contestable, re-litigable choice MUST be recorded as a decision record in docs/decision-records/ - ADR for technical, BDR for business - SPEC.md R5",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "an ADR index whose rows are written `[ADR-001](ADR-001-title.md)`, the form the filename suggests, plus an example row inside an HTML comment",
+      "when": "node standard/scripts/decision-records-check.mjs --block runs",
+      "then": "the rows are recognised and the commented example is ignored, instead of every record being reported as 'has no row in README.md' while its row is on screen, and instead of the one file whose format needs demonstrating being unable to demonstrate it",
+      "procedure": "node standard/scripts/decision-records-check.mjs --block against an index using the prefixed link form and carrying a commented example row; both directions covered by tools/decision-records-check-test.mjs",
+      "status": "run"
+    },
+    {
+      "id": "GATE-35",
+      "title": "a required workflow template does not depend on an optional manifest entry to start",
+      "area": "gates",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose: self-verify and spec-structure MUST gate CI - SPEC.md R16",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": ".github/workflows/spec-guard.yml is a required manifest entry and .nvmrc is an optional one",
+      "when": "the workflow is landed in a repo that did not take the optional file - every repo that is not a Node repo, and this repo itself, which carries no .nvmrc at its root",
+      "then": "the workflow's Node setup names a version the workflow itself states, instead of pointing actions/setup-node at a file the manifest never required any repo to carry - a dependency self-verify reports drift 0 either way, and one nobody sees until CI runs",
+      "procedure": "grep standard/.github/workflows/spec-guard.yml for node-version-file; node tools/tree-check.mjs, whose pin rule now rejects a workflow that defers its Node pin to a file",
+      "status": "run"
+    },
+    {
+      "id": "INTAKE-10",
+      "title": "the intake reads the agent entry point itself for an agent policy, not only CONTRIBUTING.md",
+      "area": "intake",
+      "tests": [
+        "docs/method/adoption.md"
+      ],
+      "promise": "the standard reads the repo before asking - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repo whose AGENTS.md carries the prohibition ('Never create a PR. Never create an issue.') while its CONTRIBUTING.md separately permits LLM-assisted code with disclosure - caddyserver/caddy",
+      "when": "align-to-standards' step 0 intake runs its red-flag scan",
+      "then": "the prohibition is found and played back before anything is written, instead of the run editing AGENTS.md - which step 3 does - without ever having read the rule it contains",
+      "procedure": "grep skills/align-to-standards/SKILL.md's red-flag paragraph for AGENTS.md and CLAUDE.md",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-11",
+      "title": "a brownfield repo mid-programme can say 'this is capability code, not specced yet' without either lying or failing the audit",
+      "area": "adoption",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "onboard.md's explicit instruction that one pass specs the risk-ranked capabilities and leaves the rest as backlog items, and spec-guard --audit's two states: claimed by a capability that has a spec, or declared unclaimed by decision",
+      "when": "a mid-size repo is aligned in wave one with four of ten capabilities specced, and the required spec-guard workflow (which runs --audit --block on every PR) lands with it",
+      "then": "a third state exists for code that is a capability but has no spec yet, carrying the backlog id that will claim it - instead of the adopter choosing between declaring real capability code 'unclaimed by decision', writing placeholder specs the standard forbids, and red CI",
+      "procedure": "node standard/scripts/spec-guard.mjs --audit on a partially specced brownfield repo. Options, none chosen: (a) a $queued key whose entries each name a backlog id, reported by --audit as a count rather than a failure; (b) allow a spec at Status: in-refinement to claim its globs, so the map is honest and the clarify gate still holds the spec back; (c) scope --audit's unclaimed check to directories the map already touches, which is cheaper but silently shrinks the check.",
+      "status": "run"
     }
   ]
 }

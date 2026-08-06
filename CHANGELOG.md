@@ -16,6 +16,48 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The second field adoption: a mid-size Go repo, and the honest-miss path run for real (2026-08-06)
+
+`caddyserver/caddy` - Go, Apache-2.0, 639 tracked files, 2,638 commits, 423 authors - taken
+from **drift 12 to drift 0** (47/47, scale profile) on a local branch. The first adoption
+against a technology the registry has no stack for, so the honest-miss path ran end to end
+for the first time on a real repo: no stack to offer, `docs/stack-decisions.md` written as
+the fallback deliverable, and the consent-gated upstream offer produced rather than filed.
+Four capability specs, a four-persona roster, eight retroactive ADRs and one BDR, a
+15-item backlog. Recorded as the suite's second **L3** target, with nine observations in
+[`docs/validation/runs/2026-08-06-r-field2.json`](docs/validation/runs/2026-08-06-r-field2.json).
+Nothing was pushed to caddy and no issue or pull request exists against it.
+
+Four defects it found are fixed here, and two are logged open:
+
+- **The intake never read the file it was about to rewrite.** caddy's `AGENTS.md` says
+  "Never create a PR. / Never create an issue."; the red-flag scan named `CONTRIBUTING.md`
+  and "a dedicated policy file" and not the agent entry point the standard itself mandates.
+  `align-to-standards` now reads `AGENTS.md` and `CLAUDE.md` for an agent policy before
+  writing to either.
+- **The coupling audit could not claim a non-ASCII filename.** git quotes such a path by
+  default, and the quoted string matches no glob, so `--audit` reported one of caddy's test
+  fixtures as belonging to no capability with no way to claim it. `spec-guard.mjs` and
+  `spec-structure.mjs` now ask git for the real bytes - which also matters for a capability
+  directory named in the repo's own language.
+- **The decision-record index guard rejected the row form authors write.** Nine records
+  indexed with the prefixed link form were all reported as having no row, and the
+  shipped index template could not show the accepted form because a commented or fenced
+  example row was itself read as an index entry. Both halves fixed; the templates now state
+  the row form.
+- **A required workflow depended on an optional file.** `spec-guard.yml` read
+  `node-version-file: ".nvmrc"` while `.nvmrc` is optional - so the required gate pointed its
+  setup step at a file the standard never required any repo to carry, in every repo that is
+  not a Node repo, with `self-verify` reporting drift 0 either way. The template states the
+  exact version, `tree-check` now rejects `node-version-file:`, and the resulting
+  duplication is declared in `docs/facts.json`.
+- **Open:** the honest-miss deliverable still exists in no manifest entry, SPEC rule or
+  taxonomy row (`ADOPT-07`, now reproduced on a real repo rather than a fixture), and a
+  brownfield repo mid-programme has no way to mark capability code as specced-later -
+  `spec-guard --audit`'s only two states are claimed-with-a-spec and unclaimed-by-decision,
+  and the required workflow blocks on it from wave one (`ADOPT-11`, three options written
+  out, none chosen).
+
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 
 `update-to-version` step 2 called the diff of the two versions' `standard.manifest.json`

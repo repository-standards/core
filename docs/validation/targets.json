@@ -1498,6 +1498,20 @@
       "depth": "L4",
       "round": "ongoing",
       "note": "Used where a case is verified by reading or running the shipped tree rather than by applying it to somebody else's repo."
+    },
+    {
+      "slug": "caddyserver/caddy",
+      "kind": "repo",
+      "ecosystem": "Go",
+      "size": "639 tracked files, 325 .go (217 non-test), one Go module, 2,638 commits, 423 authors since 2019",
+      "quality": "good",
+      "quality_evidence": "74,716 stars, Apache-2.0; SHA-pinned actions with hardened runners, govulncheck + dependency-review per PR, OpenSSF Scorecard published, cosign signatures and a per-artifact SBOM at release, an explicit golangci-lint enable list, 108 test files plus 7 fuzz targets and an 18-file integration suite",
+      "star_tier": "flagship",
+      "stars_approx": "74,716",
+      "shape": "mid-size product on an UNREGISTERED stack (Go) - the honest-miss path run for real: no Layer 2 stack to offer, docs/stack-decisions.md as the fallback deliverable, and a pre-existing AGENTS.md carrying the repo's own agent policy",
+      "depth": "L3",
+      "round": "field-2 (2026-08-06)",
+      "note": "THE SECOND L3 TARGET, and the first on a technology with no registered stack. Adopted for real on a local branch: guards + manifest + the 20 skills landed, four capability specs (admin-api, config-adaptation, automatic-https, module-registry) authored from the code with file:line anchors, a four-persona roster reconstructed from the CLI, the admin routes and the module API, eight retroactive ADRs and one BDR, 15 backlog items, self-verify taken from drift 12 to drift 0 (47/47, scale profile). Nothing pushed upstream: caddy's own AGENTS.md forbids an agent creating a PR or an issue, which the intake's red-flag scan did not read: it named CONTRIBUTING.md and \"a dedicated policy file\", and not the agent entry point."
     }
   ]
 }

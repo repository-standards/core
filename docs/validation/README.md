@@ -19,11 +19,11 @@ written rather than generated.
 
 ## What this does not prove - read this before the numbers
 
-- **Assessment is not adoption.** 103 of 107 targets were assessed at
+- **Assessment is not adoption.** 103 of 108 targets were assessed at
   depth **L1** - a read-only clone, method passes applied, nothing changed. "We assessed
-  104 public repositories" and "we adopted 104 repositories" are different
+  105 public repositories" and "we adopted 105 repositories" are different
   claims, and only the first one is true.
-  **1 third-party repository has been adopted for real** (depth L3 or better, listed by slug in `targets.json`): `hagopj13/node-express-boilerplate`. That is what moves this from a design claim to a demonstrated one - and one repository is one repository. `FIELD-1` asks for three, of different sizes and stack situations, and stays open until it has them.
+  **2 third-party repositories have been adopted for real** (depth L3 or better, listed by slug in `targets.json`): `hagopj13/node-express-boilerplate`, `caddyserver/caddy`. That is what moves this from a design claim to a demonstrated one - and 2 repositories are still a small sample. `FIELD-1` asks for three, of different sizes and stack situations, and stays open until it has them.
 - **Both sides of the fixtures share an author.** `test-greenfield-core` and
   `test-greenfield-node` - the two **L4** targets, the only ones that lived a full lifecycle
   loop - were built by the same people who wrote the standard being tested against them. They
@@ -62,12 +62,12 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 
 | | |
 |---|---|
-| Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
-| Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **193** across 8 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd) |
-| Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 99 pass, 90 fail, 1 not-applicable, 3 partial |
-| Failures found | **167** - **84 fixed and re-verified** (across 21 merged pull requests), **83 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
+| Cases in the catalogue | **189** (`180` executed at least once, `9` specified but not yet run) |
+| Portable cases (the benchmark subset) | **128** (68% of the catalogue); local (tests a path only this tree has): 61 |
+| Observations recorded | **202** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-r-field2) |
+| Targets assessed | **108** (105 real repositories, 2 synthetic fixtures) |
+| Verdicts | 106 pass, 92 fail, 1 not-applicable, 3 partial |
+| Failures found | **169** - **84 fixed and re-verified** (across 21 merged pull requests), **85 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -77,11 +77,11 @@ number stops matching the data behind it.
 
 | Area | Cases | Executed | Specified only | Portable |
 |---|---|---|---|---|
-| `intake` | 9 | 9 | 0 | 8 |
-| `adoption` | 9 | 9 | 0 | 8 |
+| `intake` | 10 | 10 | 0 | 9 |
+| `adoption` | 10 | 10 | 0 | 9 |
 | `greenfield` | 7 | 7 | 0 | 2 |
 | `spec` | 22 | 19 | 3 | 17 |
-| `gates` | 33 | 33 | 0 | 23 |
+| `gates` | 36 | 36 | 0 | 25 |
 | `track` | 22 | 20 | 2 | 20 |
 | `decisions` | 13 | 13 | 0 | 10 |
 | `discovery` | 7 | 7 | 0 | 6 |
@@ -103,7 +103,7 @@ Every declared area carries at least one case.
 |---|---|---|
 | L1 | read-only assessment pass, nothing changed | 103 |
 | L2 | dry adoption - the align router's decisions worked out for real, still no changes | 0 |
-| L3 | the standard actually applied to a working copy, drift measured | 1 |
+| L3 | the standard actually applied to a working copy, drift measured | 2 |
 | L4 | the repo then lived the loop for at least one full cycle of real work | 3 |
 
 ## The punch list - what is actually still broken
@@ -198,6 +198,8 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `ADOPT-07` | the honest-miss path's one deliverable (docs/stack-decisions.md, for a technology with no registered Layer-2 stack) exists in the manifest, a SPEC rule, and the taxonomy - the three places every other required deliverable exists in | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DEC-12` | the decision catalog has a category for a repo whose release gate is owned by a third party, not by its own CI or maintainer | `repo:Rdatatable/data.table` | **open** (logged, not fixed) |
 | `DEC-13` | the retroactive-decision reconstruction has a path for a founding decision that left no trace in the code or in the repo at all | `repo:opentofu/opentofu` | **open** (logged, not fixed) |
+| `ADOPT-07` | the honest-miss path's one deliverable (docs/stack-decisions.md, for a technology with no registered Layer-2 stack) exists in the manifest, a SPEC rule, and the taxonomy - the three places every other required deliverable exists in | `repo:caddyserver/caddy` | **open** (logged, not fixed) |
+| `ADOPT-11` | a brownfield repo mid-programme can say 'this is capability code, not specced yet' without either lying or failing the audit | `repo:caddyserver/caddy` | **open** (logged, not fixed) |
 
 ## Fixed and re-verified this round
 
