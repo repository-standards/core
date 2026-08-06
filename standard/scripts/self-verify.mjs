@@ -575,9 +575,10 @@ if (manifest) {
   // decisions to confirm recorded at review" - which reads as eight records this repo owes,
   // on every run, in a report whose other numbers are exactly that. R7 says the opposite in
   // as many words: which areas apply is a property of what is being built, so the rule
-  // "names no subset and asserts no count". Five real ML repositories assessed against it
-  // had none of the three most commonly assumed entries, and were not in breach. So the
-  // line says what the reader has to do instead of how many things there are to count.
+  // "names no subset and asserts no count", and the validation suite's own assessment of
+  // five machine-learning repositories found none of them carrying the three areas most
+  // often assumed universal - none of them in breach. So the line says what the reader has
+  // to do instead of how many things there are to count.
   if ((manifest.decisions || []).length) {
     note("decision", `the decision catalog applies where it applies - confirm at review that every area this repo DOES decide is recorded, and that one it does not says so once (R7 names no subset and asserts no count - see ${METHOD_DOC})`);
   }
@@ -586,7 +587,9 @@ if (manifest) {
   // sections - so it could only ever be a claim about the standard that the standard denies.
   // Refused loudly rather than ignored: the eight shipped entries carried it for four
   // versions and the contradiction was found by reading, not by any check.
-  for (const d of manifest.decisions || []) {
+  // Array.isArray, not `|| []`: a malformed `decisions` that is an object would make this
+  // loop throw, and a verifier that throws stops reporting the other sixty checks.
+  for (const d of Array.isArray(manifest.decisions) ? manifest.decisions : []) {
     if (d?.required !== undefined) {
       fail("decision", `the decisions entry "${d.id ?? "(no id)"}" declares required:${d.required} - a decision area cannot be required by the manifest (R7 names no subset and asserts no count; which areas apply is a property of what this repo is building). Drop the field: nothing reads it here, and an area that must be enforced is a guard, not a flag`);
     }

@@ -93,7 +93,11 @@ for (const f of files) {
 // so `--base <ref> --block`, the form CI runs, failed the persona gate on the other four in
 // every PR opened between /spec-plan and /spec-reconcile, a mid-workflow state the comment
 // beside the full-tree check already calls legitimate.
-const ENGINE_ARTIFACTS = /\/(plan|tasks|research|data-model|quickstart)\.md$|\/(checklists|contracts)\//;
+// The directory forms are anchored at `specs/<capability>/` on purpose: `contracts` and
+// `checklists` are ordinary words, and an unanchored `/contracts/` would read a capability
+// genuinely called that - `specs/contracts/spec.md` in a repo whose domain is contracts -
+// as scaffolding and exempt its whole directory from the persona gate.
+const ENGINE_ARTIFACTS = /\/(plan|tasks|research|data-model|quickstart)\.md$|^specs\/[^/]+\/(checklists|contracts)\//;
 const isCapSpec = (f) =>
   f.split("/").length >= 3 && f.endsWith(".md") && !f.includes(".template.") && !/\/readme\.md$/i.test(f) && !ENGINE_ARTIFACTS.test(f);
 

@@ -136,7 +136,7 @@
       "profile": "core",
       "since": "0.4.0",
       "rule": "R16",
-      "sha256": "01a1a358da6157d41e20df8d9dad31b4c80adf92fea644f754129563155c39f1"
+      "sha256": "23969d44c75123aa95b27761c567cd67331dda86d4d2c5237241c26042c6e19f"
     },
     {
       "path": "scripts/spec-structure.mjs",
@@ -146,7 +146,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R16",
-      "sha256": "ff1a21baeee7449963b55198d1a1f5029f4ac74272dc19aa147aaec2d143d3b4"
+      "sha256": "518d7a989876876a2bb4f3144c1c11209d91b706bca047701f87c296a6a91f23"
     },
     {
       "path": "scripts/facts-check.mjs",
@@ -224,7 +224,7 @@
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",
         "spec-plan/SKILL.md": "00d877467e5d5f971fbdcce2cc5b20afb03e6645198363c92cbc57f13a4e3ae3",
         "spec-reconcile/SKILL.md": "2df8cf62c9df25ac4d165908f8a7345531006381aef1a841f82447d37a3d460a",
-        "spec-specify/SKILL.md": "195d150eb9e71063478024ea0a191e7904f81156b25a2fea2f8380ba668ff62c",
+        "spec-specify/SKILL.md": "aa10fc0f8a34bdd50a3c2a41d076d9625affda7f5826aba96d2a598af4b1e7bd",
         "spec-tasks/SKILL.md": "59cdabc8e4e8f3656d245c1aa20213f0d89cd5e7fc9915e05d3e7fa1af98b9f1",
         "spec-update/SKILL.md": "737a9a862f7ed0ea441fe72f0855ddca5dbfcee7284b8343e82ef6c8f967b980",
         "timeline-update/SKILL.md": "e0770d9e33139bbddaa01be6bd59748845ab6d18b34fd9de489910f110cd584c",
@@ -358,7 +358,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R11",
-      "sha256": "f15b7011ead91df4328748903bc8186f21d489901de4936745a97bd6aaba973e"
+      "sha256": "f31487ac7dd5a3a7e6fc2703d7ccad3bf3e1727779ac0a47fa128fc4b02c2cc2"
     },
     {
       "path": ".github/workflows/spec-guard.yml",
