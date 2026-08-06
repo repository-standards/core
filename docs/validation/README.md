@@ -64,7 +64,7 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 |---|---|
 | Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **194** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-gate22) |
+| Observations recorded | **194** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-h-gate22) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
 | Verdicts | 101 pass, 89 fail, 1 not-applicable, 3 partial |
 | Failures found | **166** - **84 fixed and re-verified** (across 21 merged pull requests), **82 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
