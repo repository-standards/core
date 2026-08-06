@@ -68,7 +68,10 @@ rather than by reading the step - pulling every `Revisit when` block across the 
 records and matching new material against them lands on `BDR-001` for "approval fatigue",
 with no agent memory involved. What that closes is a tripwire on material entering through
 discovery, which is what the case asked for; a signal true in the world and never written
-down here still reaches nothing, and the step says so itself.
+down here still reaches nothing, and the step says so itself. One thing did change:
+`dev-work.md` introduced the revisit-when field as "the difference between a record and an
+opinion" while naming nothing that reads it back. It now points at the skill that does, and
+states the same limit, so a reader learns the reader exists where the field is introduced.
 
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 

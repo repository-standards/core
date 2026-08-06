@@ -6,7 +6,7 @@
      this standard can run the same idea against their own. -->
 
 Twenty-something checks - **124**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **53** so far; the rest are logged as open (which includes any case where an attempted fix
+claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **56** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -898,7 +898,7 @@ graduate an approved idea that changes an existing capability, following idea-wr
 - **Given:** a proposed change an Accepted BDR explicitly rules out for the affected capability
 - **When:** spec-impact's step 3 ripple checklist runs literally
 - **Then:** the BDR is opened and the conflict is surfaced, instead of the checklist bullet saying 'ADRs' only, so the check never opens docs/decision-records/bdr/ at all
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1335,7 +1335,7 @@ read docs/method/security-baseline.md's axis catalog for a negative-scope entry
 - **Given:** a real security vulnerability under active embargo, with R3 (living docs), R11 (spec/code coupling on every PR) and R15 (backlog transparency) all read literally
 - **When:** the fix is developed following the standard's ordinary rules
 - **Then:** at least one rule has an embargo/confidentiality exception, instead of all three, followed literally, publishing an unfixed vulnerability before it can be fixed
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1536,7 +1536,7 @@ blind-route the utterance "btw the export is broken" against every one of the 20
 - **Given:** a decision record with a stated revisit-when trigger, written in one lap
 - **When:** evidence matching that trigger exactly arrives in a later lap, run by a fresh or the same agent
 - **Then:** something reads the trigger and flags the match, instead of the mechanism firing only because the same agent happened to remember writing it
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
