@@ -97,10 +97,10 @@ const reportable = D.cycles.some((c) => c.stats) || D.entries.length > 3
 const TABS = [
   { id: 'now', label: 'Now' },
   { id: 'timeline', label: 'Timeline', skip: !D.cycles.length },
-  { id: 'cycles', label: 'Cycles', n: D.counts.cycleOpen || null },
+  { id: 'cycles', label: 'Cycles', n: D.counts.cycleOpen || null, skip: !D.cycles.length },
   { id: 'backlog', label: 'Backlog', n: D.counts.todo + D.counts.doing + D.counts.blocked },
   { id: 'reports', label: 'Reports', skip: !reportable },
-  { id: 'history', label: 'History', n: D.entries.length, skip: !D.entries.length },
+  { id: 'changelog', label: 'Changelog', n: D.entries.length, skip: !D.entries.length },
   {
     id: 'docs',
     label: 'Documents',
@@ -569,7 +569,11 @@ if (views.timeline) {
 
 /* ---------- view: cycles ---------- */
 
-{
+// Only reached when the repository keeps cycles - the tab is absent otherwise, the same way
+// Timeline and Reports are. It used to explain their absence and then show the pool on a
+// board underneath, which put the backlog under a heading that says cycle and gave the tab
+// something to display rather than something to say.
+if (views.cycles) {
   const v = views.cycles
   const open = D.cycles.filter((c) => c.state === 'open')
   const closed = D.cycles.filter((c) => c.state !== 'open')
@@ -580,17 +584,7 @@ if (views.timeline) {
     el('p', { class: 'lede', text: 'A cycle is a goal, an agreed end date and the items pulled in for it. An item is in the backlog pool or in exactly one cycle - never both, so no number is counted twice.' }),
   )
 
-  if (!D.cycles.length) {
-    add(
-      v,
-      el('div', { class: 'card' }, [
-        el('h3', { text: 'This repository does not run cycles' }),
-        el('p', { text: 'Cycles bind at team scale, and this repository has one contributor - work goes straight from the pool into flight. Rather than invent a period nobody agreed to, the page says so and shows what is actually being worked on.' }),
-      ]),
-      el('h2', { class: 'section', text: 'In flight today' }),
-      kanban(D.items.filter((i) => i.status !== 'done')),
-    )
-  } else {
+  {
     for (const c of open) {
       const late = c.target && today && c.target < today
       add(
@@ -914,10 +908,10 @@ if (views.reports) {
   }
 }
 
-/* ---------- view: history ---------- */
+/* ---------- view: changelog ---------- */
 
-if (views.history) {
-  const v = views.history
+if (views.changelog) {
+  const v = views.changelog
   const max = Math.max(...D.weeks.map((w) => w.count), 1)
   const releaseByDate = new Map(D.releases.filter((r) => r.date).map((r) => [r.date, r]))
   const PER_DAY = 6
@@ -979,7 +973,7 @@ if (views.docs) {
   const state = { q: '', kind: null }
 
   const GROUPS = [
-    ['spec', 'Capability specs', 'One per capability, never per ticket: what it must do, who it serves, how you know it works.'],
+    ['spec', 'What each part must do', 'One page per capability - a thing this product does, like invoicing or scheduling - rather than one per ticket. Each says what that part has to do, who it is for, and how you can tell it works.'],
     ['business', 'Business decisions', 'What the product will and will not do, and who it is for. Written by the people who decide that, not translated from an engineering note.'],
     ['technical', 'Technical decisions', 'Every fork the build took, dated, with the context that made it the right call at the time.'],
     ['idea', 'Ideas', 'A feature that may never ship. Written down so the itch behind it survives, and nobody re-argues it from scratch.'],
@@ -1027,7 +1021,7 @@ if (views.docs) {
     tiles([
       D.meta.rules ? tile('Rules', D.meta.rules, '', 'the normative core') : null,
       tile('Decisions', D.decisions.length, '', 'forks taken, with reasons'),
-      tile('Capability specs', D.specs.length, '', 'what each part must do'),
+      tile('Capability specs', D.specs.length, '', 'one per thing the product does'),
       D.meta.skills ? tile('Procedures', D.meta.skills, '', 'runnable by an agent') : null,
     ]),
     el('div', { class: 'controls searchrow' }, [search]),
