@@ -14,6 +14,15 @@
 // change and does. Without that distinction a data edit demands a spec update
 // with nothing to write, and the cheapest way out is a cosmetic one.
 //
+// A glob string may start with `!`, which excludes: the capability claims everything
+// its other globs match EXCEPT these paths. Two capabilities can legitimately live in
+// one domain folder - a sibling that grew out of the first - and with globs alone the
+// only shapes available were "the folder" (both specs demanded on every edit) or a
+// hand-enumerated file list that goes stale in silence. `"swap": ["src/swap/**",
+// "!src/swap/audit*"]` beside `"swap-audit": ["src/swap/audit*"]` says which file
+// belongs to which. An exclusion is a claim boundary, not a coupling mode, so it is
+// only ever the plain string form.
+//
 // Two keys in that file are metadata rather than capabilities: `$about` (a note)
 // and `$unclaimed` (globs for the paths that belong to no capability by decision -
 // config, tooling, docs). --audit reads the second to tell code nobody claims from
@@ -52,7 +61,7 @@ const declared = JSON.parse(readFileSync(MAP, "utf8"));
 
 const bad = (msg) => {
   console.error(`\nspec-guard: ${MAP} - ${msg}`);
-  console.error('  an entry is "<glob>" or { "glob": "<glob>", "couples": "content" | "shape" }\n');
+  console.error('  an entry is "<glob>", "!<glob>" (paths this capability does not claim), or { "glob": "<glob>", "couples": "content" | "shape" }\n');
   process.exit(1);
 };
 
@@ -70,17 +79,40 @@ const map = Object.fromEntries(Object.entries(declared).filter(([k]) => !k.start
 const unclaimedGlobs = declared.$unclaimed ?? null;
 if (unclaimedGlobs !== null && !Array.isArray(unclaimedGlobs)) bad('"$unclaimed" must hold a list of globs');
 const parseEntry = (e, cap) => {
-  if (typeof e === "string") return { glob: e, couples: "content" };
+  if (typeof e === "string") {
+    if (!e.startsWith("!")) return { glob: e, couples: "content", excludes: false };
+    const glob = e.slice(1);
+    if (!glob) bad(`empty exclusion under "${cap}": "!" excludes nothing - write the paths after it`);
+    return { glob, couples: "content", excludes: true };
+  }
   const couples = e?.couples ?? "content";
   if (typeof e?.glob !== "string" || (couples !== "content" && couples !== "shape"))
     bad(`unusable entry under "${cap}": ${JSON.stringify(e)}`);
-  return { glob: e.glob, couples };
+  // An exclusion says which paths the capability does NOT claim, so a coupling mode on it
+  // would describe how something that does not couple couples. Refused rather than ignored.
+  if (e.glob.startsWith("!"))
+    bad(`exclusion written as an object under "${cap}": ${JSON.stringify(e)} - an exclusion carries no coupling mode; write it as the plain string ${JSON.stringify(e.glob)}`);
+  return { glob: e.glob, couples, excludes: false };
 };
 const coupling = Object.fromEntries(
   Object.entries(map).map(([cap, entries]) => {
     if (!Array.isArray(entries)) bad(`"${cap}" must hold a list of entries, not ${JSON.stringify(entries)}`);
-    return [cap, entries.map((e) => parseEntry(e, cap))];
+    const parsed = entries.map((e) => parseEntry(e, cap));
+    // Exclusions narrow a claim; they cannot be the whole claim. A capability with nothing
+    // but exclusions claims no file at all, which reads as a mapped capability and guards
+    // nothing - the silent state this file exists to prevent.
+    if (parsed.length && parsed.every((e) => e.excludes))
+      bad(`"${cap}" has only exclusions, so it claims no code at all - an exclusion narrows a glob, it cannot stand in for one`);
+    return [cap, parsed];
   }),
+);
+
+// One capability's claim over one path: something it claims matches, and nothing it
+// excludes does. Both the diff run and --audit ask this question, and asking it in two
+// places is how the two modes drift into disagreeing about who owns a file.
+const claimed = (entries, f) => entries.some((e) => !e.excludes && e.re.test(f)) && !entries.some((e) => e.excludes && e.re.test(f));
+const compiled = Object.fromEntries(
+  Object.entries(coupling).map(([cap, entries]) => [cap, entries.map((e) => ({ ...e, re: globToRegExp(e.glob) }))]),
 );
 
 // --audit: the map itself is sound, full-tree. Four ways it can stop meaning
@@ -137,25 +169,27 @@ if (audit) {
     ),
   );
 
+  // An exclusion that matches nothing is the same failure as a claim that matches
+  // nothing, one negation later: it reads as "this file belongs to the sibling" while
+  // excluding no file at all, so the sibling's edits go on demanding both specs.
   const emptyGlobs = [];
-  for (const [cap, entries] of Object.entries(coupling)) {
+  for (const [cap, entries] of Object.entries(compiled)) {
     if (retired.has(cap)) continue;
     for (const e of entries) {
-      const re = globToRegExp(e.glob);
-      if (!treeFiles.some((f) => re.test(f))) emptyGlobs.push({ cap, glob: e.glob });
+      if (!treeFiles.some((f) => e.re.test(f))) emptyGlobs.push({ cap, glob: e.glob, excludes: e.excludes });
     }
   }
 
   // specs/ is never code: the specs are the other side of the coupling, and the map
-  // lives there too. Everything else is claimed by a capability or declared.
-  const claims = Object.values(coupling)
-    .flat()
-    .map((e) => globToRegExp(e.glob));
+  // lives there too. Everything else is claimed by a capability or declared. A file one
+  // capability excludes is claimed only if another capability claims it - which is what
+  // makes an exclusion safe: what it hands over has to be picked up by someone.
   const unclaimedRes = (unclaimedGlobs ?? []).map(globToRegExp);
+  const claimsIt = (f) => Object.values(compiled).some((entries) => claimed(entries, f));
   const unclaimed =
     unclaimedGlobs === null
       ? []
-      : treeFiles.filter((f) => !f.startsWith("specs/") && !claims.some((re) => re.test(f)) && !unclaimedRes.some((re) => re.test(f)));
+      : treeFiles.filter((f) => !f.startsWith("specs/") && !claimsIt(f) && !unclaimedRes.some((re) => re.test(f)));
 
   const problems = orphans.length + specless.length + emptyGlobs.length + unclaimed.length;
   if (problems === 0) {
@@ -180,7 +214,10 @@ if (audit) {
   }
   if (emptyGlobs.length) {
     console.error("\n  globs that match no file in the tree - the guard is watching nothing:");
-    for (const { cap, glob } of emptyGlobs) console.error(`    - "${cap}": "${glob}"   (fix the glob, or drop it if the code moved)`);
+    for (const { cap, glob, excludes } of emptyGlobs) {
+      const hint = excludes ? "the exclusion holds nothing back - fix it, or drop it if the sibling's code moved" : "fix the glob, or drop it if the code moved";
+      console.error(`    - "${cap}": "${excludes ? "!" : ""}${glob}"   (${hint})`);
+    }
   }
   if (unclaimed.length) {
     const shown = unclaimed.slice(0, 20);
@@ -261,13 +298,12 @@ const shapeChanged = (f) => {
 
 const violations = [];
 const dataOnly = new Set();
-for (const [cap, entries] of Object.entries(coupling)) {
-  const res = entries.map((e) => ({ ...e, re: globToRegExp(e.glob) }));
+for (const [cap, entries] of Object.entries(compiled)) {
   const specTouched = files.some((f) => f.startsWith(`specs/${cap}/`));
   const codeTouched = files.some((f) => {
     if (f.startsWith("specs/")) return false;
-    const matched = res.filter((e) => e.re.test(f));
-    if (matched.length === 0) return false;
+    if (!claimed(entries, f)) return false; // not this capability's, or handed to a sibling
+    const matched = entries.filter((e) => !e.excludes && e.re.test(f));
     // A content-coupled glob wins over a shape-coupled one matching the same file.
     const couples = matched.some((e) => e.couples !== "shape" || shapeChanged(f));
     if (!couples) dataOnly.add(f);
