@@ -60,9 +60,12 @@ for (const f of textFiles) {
   if (!existsSync(f)) continue;
   readFileSync(f, "utf8").split("\n").forEach((line, n) => {
     for (const m of line.matchAll(BY_REFERENCE)) {
-      // Strip the anchor, then sentence punctuation the URL picked up from the prose
-      // around it: "see .../prerequisites.md." names a file, not a directory called `md.`.
-      const target = m[1].replace(/#.*$/, "").replace(/[.,;:!?]+$/, "");
+      // Strip the anchor, then a trailing backslash, then sentence punctuation the URL
+      // picked up from the prose around it: "see .../prerequisites.md." names a file, not a
+      // directory called `md.`. The backslash is JSON's escape for the quote that closes the
+      // string - a run file quoting a line of source code carries the URL as
+      // `\"https://...self-verify.md\"`, and the escape is not part of the path.
+      const target = m[1].replace(/#.*$/, "").replace(/\\+$/, "").replace(/[.,;:!?]+$/, "");
       if (!target || target.includes("<")) continue; // the form written out, not a link
       byRefCount++;
       if (!existsSync(target)) unresolved.push(`${f}:${n + 1} -> ${target}`);
