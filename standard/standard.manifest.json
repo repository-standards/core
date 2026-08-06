@@ -45,7 +45,7 @@
       "profile": "core",
       "since": "1.0.0",
       "rule": "R2",
-      "sha256": "781c6057325f589a5a1815f823773f84edc50f2d091f7b4d34883e3a0ec1ee12"
+      "sha256": "5987191fa354b14273545c299e94feabc6e90389ef123169ca7e6b32f59772e8"
     },
     {
       "path": "CLAUDE.md",
@@ -358,7 +358,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R11",
-      "sha256": "e784314f419215f114bbd9b0c2d36acd9fec3c6aed7b22297d137d7d65d4f670"
+      "sha256": "ba7023112b3a148c70b6bd31752bc8a0c82e295fe393d541c74000bd6f2ccf53"
     },
     {
       "path": ".github/workflows/spec-guard.yml",

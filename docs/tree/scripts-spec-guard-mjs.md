@@ -34,6 +34,10 @@ the diff mode also reports **a changed file that no capability claims and `$uncl
 not declare**. That is the state a map is in when the code went somewhere its globs do not
 look: every glob matches nothing, and a guard watching an empty set reports OK forever.
 
+`{"external": "<repo>", "reason": "..."}` says the implementation lives in a repository this
+one does not own. Nothing is enforced for it - the code is not here to watch - and the audit
+names it on every run, so a capability cannot leave the guard's reach quietly.
+
 ## What it cannot catch
 
 **A spec edited to say nothing.** Touching the file satisfies the guard. That is the known
