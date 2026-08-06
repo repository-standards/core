@@ -123,7 +123,47 @@ is written and a correction after.
 
 ---
 
-## ## A number is not an answer
+## ## The standard is reachable from its domain, not from its name
+
+The single most useful thing the first full wave produced, and it pairs with the substitution
+failure above to make one finding rather than two.
+
+Run `A14` (`zainstaluj repository standards`) against a repository: the agent declined to
+invent an install command, correctly and in good words, and then **asked the user to supply
+"the standard itself, or the exact install command"**. The person had just typed the product's
+name and was asked to produce the product. It never searched the web.
+
+Every run whose line carried `repositorystandards.com` found the site within a few calls and
+planned against the real published manifest.
+
+So the two failure shapes are the same defect seen from opposite sides. Given the bare name, an
+agent either **invents a plausible substitute** and reports success, or **hands the problem
+back** to the person who asked. Given the domain, it works. Nothing in the product's own
+materials says the domain is load-bearing, and every paraphrase a real person writes drops it.
+
+## The last gate of the adoption method cannot be met by a large class of repository
+
+`docs/method/adoption.md:63` - the final gate, "Verify" - states its exit criteria as
+`drift 0; PRs opened`.
+
+Verified verbatim. On `git/git` (4 pull requests merged out of 2,005), on `postfix` (none in
+thirteen years, issues disabled), or for anyone adopting a repository they cannot push to,
+that gate has no way to close. The adoption is complete and the method says it is not.
+
+The probe reported a second half to this - that the guide also lists write access as a
+prerequisite. **That did not reproduce**: no such text exists in the tree, and it is not
+repeated here.
+
+What makes this worth fixing rather than arguing about: the *behaviour* was already right.
+Asked how the work would land on a mailing-list project, the agent named patches and a bundle
+unprompted, without being told. **The guide is wrong, not the agent.** A method doc whose final
+gate contradicts what its own procedure does is a doc defect, and the cheapest kind to fix.
+
+| id | prompt | source | what it tests |
+|---|---|---|---|
+| A25 | `follow repositorystandards.com - take this repo onto the standard` **on a repo you cannot push to** | reported | whether the adoption has a defined end when there is no fork, no write access and no pull request - or whether it runs to completion and then fails a gate that assumes one |
+
+## A number is not an answer
 
 A probe assessed Caddy and produced a count: 45-60 capability specs, 22 files to copy, 7 to
 merge, 21 documents to author. All true, all measured. The simulated user's reaction was that
