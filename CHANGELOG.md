@@ -16,6 +16,37 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A repo could be certified compliant on files that were in no commit (2026-08-06)
+
+`self-verify` asked the filesystem whether a required entry was there. It never asked git.
+So a repository whose own ignore rules exclude a directory the manifest requires entries in
+reported those entries as `PASS`, counted them toward `drift 0 - 100% adopted - compliant
+with the standard`, and a fresh clone had none of them.
+
+Found in the field on a 19-year platform whose `.gitignore` excludes `/docs/` - which is
+where 16 of the manifest's 48 file entries live. The persona roster, all six decision records,
+the product and architecture pages were written there, verified as compliant, and were absent
+from the commit that landed the adoption. Reproduced from scratch afterwards on a three-file
+fixture, because a defect this close to the premise should not be taken on report: with
+`/docs/` ignored and `docs/personas.md` on disk, `git ls-files` lists only `.gitignore` and
+the verifier prints `OK - drift 0 - 100% adopted (2/2) - compliant with the standard`.
+
+This is the failure that contradicts the whole point. The standard's claim is that the
+knowledge lives in the repository; a compliance number computed from one laptop's disk says
+nothing about the repository at all.
+
+A required entry that exists but is git-ignored and untracked is now drift, and the failure
+quotes the rule excluding it (`.gitignore:1:/docs/`) rather than just asserting the file is
+missing when the author can plainly see it. Two boundaries are deliberate: the test is
+ignored **and** untracked, never merely untracked, because files are authored before they are
+staged and failing on that would fire during every honest run of the procedure that creates
+them; and a tree that is not a git work tree at all - a scaffold before `git init`, an export -
+is checked exactly as before rather than told it failed something it cannot satisfy.
+
+`tools/self-verify-drift-test.mjs` gains four cases: the ignored entry, the same file after
+`git add -f`, an unstaged working tree, and a non-repository. Neutralising the check turns the
+first red and leaves the other three green, so the fix cannot be "count everything as drift".
+
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 
 `update-to-version` step 2 called the diff of the two versions' `standard.manifest.json`

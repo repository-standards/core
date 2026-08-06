@@ -2972,6 +2972,22 @@
       "then": "nothing matches work by task id; each item is matched by a fingerprint of its own content, so changed work is reported rather than skipped and new work is created rather than swallowed",
       "procedure": "read docs/method/tracker-sync.md's fingerprint table and spec-tasks/SKILL.md step 1a; confirm no shipped file keys on a task id across rounds",
       "status": "run"
+    },
+    {
+      "id": "GATE-38",
+      "title": "a required entry that exists on disk but is excluded by the repo's own ignore rules is drift, not a pass",
+      "area": "gates",
+      "tests": [
+        "R17"
+      ],
+      "promise": "the knowledge lives in the repository, and a compliance number that says so is telling the truth",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repository whose .gitignore excludes a directory the manifest requires entries in - for example `/docs/`, where the persona roster, the decision records and the product pages live - with those files authored and present on the working disk",
+      "when": "self-verify runs",
+      "then": "the entries are drift and the failure names the ignore rule excluding them, instead of reporting PASS on files that are in no commit and absent from a fresh clone",
+      "procedure": "in a git repository, write `/docs/` to .gitignore, author a required entry under docs/, run `node scripts/self-verify.mjs`; then `git add -f` the same file and re-run - the first must fail naming the rule, the second must pass",
+      "status": "run"
     }
   ]
 }
