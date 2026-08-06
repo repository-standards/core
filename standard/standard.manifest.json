@@ -358,7 +358,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R11",
-      "sha256": "f31487ac7dd5a3a7e6fc2703d7ccad3bf3e1727779ac0a47fa128fc4b02c2cc2"
+      "sha256": "e784314f419215f114bbd9b0c2d36acd9fec3c6aed7b22297d137d7d65d4f670"
     },
     {
       "path": ".github/workflows/spec-guard.yml",
