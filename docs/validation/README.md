@@ -64,10 +64,10 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 |---|---|
 | Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **193** across 8 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd) |
+| Observations recorded | **195** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-m-drift) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 99 pass, 90 fail, 1 not-applicable, 3 partial |
-| Failures found | **167** - **84 fixed and re-verified** (across 21 merged pull requests), **83 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 100 pass, 91 fail, 1 not-applicable, 3 partial |
+| Failures found | **166** - **84 fixed and re-verified** (across 21 merged pull requests), **82 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 9 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -179,7 +179,6 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `SEC-02` | the standard has vocabulary for embargoed or confidential work-in-progress, so R3/R11/R15 followed literally do not force publishing an unfixed vulnerability | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SEC-03` | a decision record has an authority/vote field, so a chartered-committee decision (a TSC vote with quorum) has somewhere to record what actually made it valid | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SEC-04` | R9's 'rebuild and verify from the spec alone' escape hatch (the behavioral tier) is reachable for a capability whose correctness oracle is a person or piece of hardware, not only for the shapes onboard.md already forbids using it for | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `GREEN-02` | reaching self-verify drift 0 on a fresh greenfield walk requires at least one real capability spec to exist, not only the three declarative files (`.standards-version`, a profile key, an empty capability-map.json) | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `GREEN-03` | the self-verify placeholder-fill check can fire on every file it lists, including ones whose fill-in marker sits inside backticks or has no recognized marker form at all | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `GREEN-05` | self-verify's own runtime output points an adopter at a file that exists in their repo, not a docs/self-verify.md path that is adopted by reference and never copied | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `GREEN-06` | the four skills that touch `checklists/requirements.md` (create it, read and block on it, classify it, clean it up) agree on what the file is | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
