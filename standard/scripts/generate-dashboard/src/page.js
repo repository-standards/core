@@ -77,7 +77,14 @@ document.body.append(
     wrap([
       el('div', { class: 'brand' }, [
         el('h1', { html: D.meta.name + ' <span class="sub">- work</span>' }),
-        D.meta.tagline ? el('p', { text: D.meta.tagline }) : null,
+        D.meta.home
+          ? el('a', {
+              class: 'home',
+              href: D.meta.home,
+              rel: 'noopener',
+              text: D.meta.home.replace(/^https?:\/\//, '').replace(/\/$/, ''),
+            })
+          : null,
       ]),
       el('div', { class: 'stamp' }, [
         D.meta.version ? el('div', { html: 'version <b>' + D.meta.version + '</b>' }) : null,
