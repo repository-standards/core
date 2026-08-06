@@ -91,9 +91,16 @@ This is how one is opened.
 A cycle is a markdown file - read it directly for one row's answer. For "how is the dispatch
 cycle going", render it as a board instead, because a person acts on the shape faster than on
 a table: group every row under `## Intents` by its status cell into three lanes, `done`,
-`doing` (a `blocked:<id>` row stays in `doing` and says what it is waiting on), and `todo`.
-Show id, title and holder (`assignee`) per row - the three things the file exists to answer.
-An empty `assignee` is worth naming, the same way the file itself calls that a gap.
+`doing` and `todo`. Show id, title and holder (`assignee`) per row - the three things the
+file exists to answer. An empty `assignee` is worth naming, the same way the file itself
+calls that a gap.
+
+**A `blocked:<id>` row goes in `doing`, and the board must show the id it names.** Blocked is
+not a fourth place work sits, it is a thing that is true about work somebody is holding - so
+the row keeps its lane and carries the reference on it (`blocked - waiting on NOTIF-6`).
+Dropping it, or moving the row to `todo` without it, loses the only fact that row was worth
+rendering for. A `split:<id>` row groups with `done` and names the remainder the same way: it
+is finished work, and `<id>` is where the rest of it went.
 
 This is a grouping of what the row already stores, nothing computed and no date attached -
 that is `timeline-update`'s job, and it correctly refuses to project an open cycle. This only
