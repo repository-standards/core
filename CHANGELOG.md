@@ -16,6 +16,33 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The one number a cycle publishes could not be reproduced by whoever read it (2026-08-06)
+
+`/cycle-close` prescribed `git log --oneline --since=<opened> --until=<closed> | wc -l` for
+the commits-in-window figure, with the dates bare. Git resolves a bare date as an approxidate,
+meaning that date at *the moment the command runs*, so the same command over the same history
+answers differently in the morning and in the evening, and the cycle-open and cycle-close
+commits, which sit on the boundary days by definition, fall inside the window only when the
+open commit's time of day is later than the close commit's. Measured on the worked showcase's
+three closed cycles: 3 / 2 / 1 at 19:24, 3 / 2 / 2 at midnight, 2 / 1 / 1 at midday. The
+inclusive window returns 4 / 3 / 3, and carries no approxidate to move with the clock.
+
+That is also the history of the defect. The blocks first claimed 63 / 51 / 88 against a repo
+whose entire history is 34 commits; a commit correcting them to 9 / 6 / 3 stated that the new
+numbers were what `git log` returns, and they were not either; the third pass wrote 4 / 3 / 3
+from the full inclusive days, which is right - and which the bare-date form could not return
+at any hour, since each of the three cycles opens earlier in the day than it closes, and the
+sliding window can hold both ends only if that is reversed. Two published corrections of one
+number, the first wrong and the second unreachable by the command the standard named - an
+ambiguous instruction rather than carelessness. The prescription now writes the times out,
+and the spec records why the window is the two boundary days whole.
+
+Worth saying about the measurement itself: the showcase is a demo whose early history was
+authored rather than accumulated - its 19 oldest commits, which is every commit those three
+cycles span, carry whole-minute timestamps with author and committer date identical. The
+counts over them are real; the times they land on were chosen, which is part of why a morning
+open and an evening close made the ambiguity so easy to hit.
+
 ### R23 forbade the ordinary security backport, so a maintained release line is now a base a PR may have (2026-08-06)
 
 "Every PR MUST be based on the mainline, never on another open PR's branch" was written
