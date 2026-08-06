@@ -16,6 +16,40 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### R23 forbade the ordinary security backport, so a maintained release line is now a base a PR may have (2026-08-06)
+
+"Every PR MUST be based on the mainline, never on another open PR's branch" was written
+for one failure - work stacked on a branch that gets rewritten when it lands - and it
+banned far more than that. It made a CVE fix shipped to a supported `3.x` line
+non-compliant, because the pull request carrying it is based on `3.x` and not on the
+mainline. R18 had the matching gap: one repo, one `## Unreleased` heading, one slot for a
+fix that ships in four releases at once.
+
+This was the most-repeated finding of the 2026-08-04 validation round, confirmed on five
+independent repositories - odoo (98 branches, four supported lines), openssl (five
+maintained `REL` branches with a per-PR backport matrix), dotnet/runtime (servicing
+branches with a written backport policy), FFmpeg (a `Changelog` section per version, which
+is this mechanism already applied per line), and PowerShell.
+
+R23 now names the class the old wording missed. A PR is based on the branch it will merge
+into - the mainline, or a **maintained release line**: long-lived, protected, declared as
+supported with the repo's branching decision, and never rewritten. Every requirement in
+the rule binds a release line exactly as it binds the mainline, and another open pull
+request's branch is still never a legal base, because what made that unsafe was that it
+gets rewritten. A fix touching more than one line lands on the mainline first and reaches
+each supported line as its own PR, so no supported line is ever ahead of the mainline in
+fixes. R18 gains the matching clause: one changelog per line, each with its own
+`## Unreleased`, the entry written under the heading on the branch the PR targets - the
+same one mechanism applied per line, not a second one.
+
+The decision, and the five shapes rejected on the way to it - including a new numbered
+rule, which would have left R23 still forbidding what the new rule permitted - is
+[ADR-033](docs/decision-records/ADR-033-maintained-release-lines-are-integration-targets.md).
+The conventions block, the decision checklist's branching fork and the changelog process
+carry the same rule for the reader who never opens the spec. Making the support set
+machine-checkable was considered and rejected for now: a branch existing is not a branch
+supported, so the check would assert what a checkout cannot show.
+
 ### A CI workflow that exists is not a gate that fires (2026-08-06)
 
 The assessment's CI/CD pass detected "is there a pipeline?" and rated what it found. A
