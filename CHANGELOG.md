@@ -16,6 +16,64 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Three more real adoptions, on three shapes of JavaScript repository (2026-08-07)
+
+`honojs/hono`, `drizzle-team/drizzle-orm` and `usebruno/bruno` were cloned, branched
+locally and taken through the align router's brownfield path end to end. Drift 20 -> 0,
+21 -> 0 and 21 -> 0; the second and third end with one and two recorded exceptions, both
+times because the repo already had a decision worth preserving rather than because a
+corner was cut. Nothing was pushed to any of the three and no issue or pull request was
+opened against them. Six capability specs were written buildable from the code with file
+anchors, twelve decision records reconstructed, three capability maps derived, three persona
+rosters seeded, and 45 backlog items filed across the three repositories.
+
+**What the three runs prove.** The router works on shapes the first L3 target did not
+cover: a single package with a 76-entry subpath export map and nine runtime adapters;
+a pnpm workspace of eight independently-versioned packages; and a sixteen-workspace
+Electron application that already had a designed agent configuration of its own. The drift
+number is honest at both ends on all three. The exceptions mechanism carries a real
+deviation, including a **per-member** exception on a directory entry - which is what let
+bruno keep its own `code-review` skill instead of the standard's `pre-pr-review` - and the
+directory content check never once mentioned the two skills that repository already had,
+because it only reports members the standard ships. "Adapt, never blind-copy" was the whole
+bruno run rather than a caveat on it, and it held.
+
+**What they do not prove.** Not one of the three was adopted by its own maintainers, so
+the operator-independence half of the claim is still untested; the runs make that gap
+sharper rather than closing it, because the intake asks questions - the profile, the
+persona interview - that have no addressee in an unsolicited adoption, and the procedure
+has no named shape for that. All three also end at self-verify drift 0 with a **red
+coupling audit**: 13, 11 and 12 mapped capabilities with no spec yet. That number is
+printed rather than hidden, because the alternative was to shrink each map to the two
+capabilities that have specs and leave the guard watching a fraction of the tree while
+reporting success.
+
+**Eight defects, five of them fixed here.** `skills/align-to-standards` now: reads the
+target's existing skill descriptions before copying the shipped set in beside a competitor
+(bruno's `code-review` and the standard's `pre-pr-review` both answer "review my branch
+before I push", and the standard's own `AGENTS.md` calls that a defect); checks whether the
+target repo *is* one of the tools its deny list defensively blocks (verbatim, the list
+denies `drizzle-kit` inside the repository that publishes it); says to land `.claude/hooks`
+and `.claude/settings.json` together, because both are optional and the guards never fire
+without the wiring - verified on a scratch repo, where the guard scripts passed their
+content check while inert and `self-verify` said nothing; says that the required
+`spec-guard.yml` reads the optional `.nvmrc`, so a repo pinning its runtime elsewhere
+reaches drift 0 with a workflow naming a file that is not there; and gains a **third**
+AI-policy shape - a permission with a sanction and no procedural condition, which is what
+hono states, and which both existing branches miss because they key on what you must do
+differently. Three defects are left open with their options written out rather than guessed
+at, because each needs a call the owner has to make: a whole-tree capability map colliding
+with the audit's every-entry-needs-a-spec rule; what the procedure should say when there
+is nobody to interview; and where the `## The roster` heading `docs/personas.md` must
+carry should be stated, since today it is only in the guard's error message. The `.nvmrc`
+fix above is the per-repo half only - whether the standard makes the file required, drops
+the version-file line, or documents the dependency is the same kind of call.
+
+Recorded as eleven new suite cases and seventeen observations in
+[`docs/validation/runs/2026-08-07-a-adopt-js.json`](docs/validation/runs/2026-08-07-a-adopt-js.json),
+with three L3 rows in `targets.json`. The suite now holds 195 cases and 210 observations
+across 110 targets.
+
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 
 `update-to-version` step 2 called the diff of the two versions' `standard.manifest.json`
