@@ -1,7 +1,18 @@
 name: spec-guard
 
+# Pull requests AND pushes to the default branch. The push trigger is the one that makes
+# "gated from the first push" true: a pull_request-only workflow never runs on a direct
+# push to main - including the very first one, when the repository has no pull requests at
+# all and every file in it is arriving unchecked. The sibling secret scan has carried a push
+# trigger for the same reason; this one had not.
 on:
+  push:
+    branches: [main]
   pull_request:
+
+concurrency:
+  group: spec-guard-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   spec-guard:
@@ -21,24 +32,46 @@ jobs:
           package-manager-cache: false
       - name: Self-verify (standard compliance)
         # .standards-version pin + core skeleton + structure guard (static, whole-repo).
+        # Needs no diff, so it is the same check on a push and on a pull request.
         run: node scripts/self-verify.mjs
       - name: Spec structure guard
+        # A pull request has a base branch to diff against. A push does not, so the whole
+        # tree is checked instead - stricter, and the only reading that means anything on
+        # the first push, when there is no "before" to compare with.
         run: |
-          git fetch --no-tags --quiet origin "${{ github.base_ref }}"
-          node scripts/spec-structure.mjs --base "origin/${{ github.base_ref }}" --block
+          set -euo pipefail
+          if [ -n "${{ github.base_ref }}" ]; then
+            git fetch --no-tags --quiet origin "${{ github.base_ref }}"
+            node scripts/spec-structure.mjs --base "origin/${{ github.base_ref }}" --block
+          else
+            node scripts/spec-structure.mjs --block
+          fi
       - name: Spec policy coupling guard (blocks at scale, advises at core)
         # The repo's manifest copy declares its profile (ADR-011); the blocking
         # coupling gate is a scale-profile prescription (R11).
+        #
+        # Coupling is a statement about a change, so it needs two sides. On a push the
+        # earlier side is the commit the branch was at; on the first push there is none
+        # (all-zeros), and after a force-push it may no longer exist in this checkout - both
+        # are checked for rather than assumed, because a guard that dies on a missing ref
+        # reports the same red as a guard that found a violation.
         run: |
-          git fetch --no-tags --quiet origin "${{ github.base_ref }}"
+          set -euo pipefail
           PROFILE=$(node -p "try { JSON.parse(require('fs').readFileSync('standard.manifest.json','utf8')).profile || 'scale' } catch { 'scale' }")
-          if [ "$PROFILE" = "core" ] || [ "$PROFILE" = "solo" ]; then
-            node scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}"
+          BLOCK="--block"
+          if [ "$PROFILE" = "core" ] || [ "$PROFILE" = "solo" ]; then BLOCK=""; fi
+          BEFORE="${{ github.event.before }}"
+          if [ -n "${{ github.base_ref }}" ]; then
+            git fetch --no-tags --quiet origin "${{ github.base_ref }}"
+            node scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}" $BLOCK
+          elif [ -n "$BEFORE" ] && git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            node scripts/spec-guard.mjs --base "$BEFORE" $BLOCK
           else
-            node scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}" --block
+            echo "No earlier commit to diff against - the full-tree audit below is the gate for this push."
           fi
-      - name: Spec coupling audit (full tree, every PR)
+      - name: Spec coupling audit (full tree, every run)
         # Orphan specs and unmapped capabilities do not wait for a release ritual.
         # Deliberately blocking at every profile: the audit checks structure, not
-        # conduct - a spec with no map entry is broken at core too.
+        # conduct - a spec with no map entry is broken at core too. It needs no diff,
+        # which is what makes it the gate on a first push.
         run: node scripts/spec-guard.mjs --audit --block

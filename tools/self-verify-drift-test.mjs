@@ -228,6 +228,21 @@ check(
 );
 
 check(
+  "the compliance workflow with its push trigger merged away is drift",
+  (dir) => {
+    const p = join(dir, ".github/workflows/spec-guard.yml");
+    // The shape a merge leaves behind: the workflow arrives, the repo keeps its own
+    // pull_request-only trigger, and every direct push to main - starting with the first
+    // one, before any pull request exists - goes unchecked while the file is present.
+    writeFileSync(p, readFileSync(p, "utf8").replace(/^on:\n(?:.*\n)*?\nconcurrency:/m, "on:\n  pull_request:\n\nconcurrency:"));
+  },
+  (r, expect) => {
+    expect(r.drift === base.drift + 1, `expected drift ${base.drift + 1}, got ${r.drift}`);
+    expect(says(r, `is missing the "on.push" key`), "no key FAIL naming on.push");
+  },
+);
+
+check(
   "a stack manifest's declared keys run through the same code path (Layer 2's supply chain)",
   (dir) => {
     // pnpm's policy block is the case the stack layer needs: the file exists, is valid
