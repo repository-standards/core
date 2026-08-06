@@ -47,6 +47,13 @@ const patchManifest = (dir, edit) => {
   writeFileSync(p, `${JSON.stringify(m, null, 2)}\n`);
 };
 
+// The capability map is authored at adoption, so the shipped tree carries none and the plain
+// fixture sits one point above zero. Cases that assert something about the DRIFT-0 verdict
+// line have to write it, or they assert nothing: an assertion about that line is vacuously
+// true while the run is taking the drift-above-zero branch.
+const emptyCapabilityMap = (dir) =>
+  writeFileSync(join(dir, "specs/capability-map.json"), `${JSON.stringify({ $about: ["capability -> the code globs that must move with its spec (R11)."] }, null, 2)}\n`);
+
 const base = (() => {
   const dir = fixture();
   const r = run(dir);
@@ -55,7 +62,9 @@ const base = (() => {
 })();
 
 let failures = 0;
+let cases = 0;
 const check = (name, mutate, assert, args = []) => {
+  cases++;
   const dir = fixture();
   let r;
   try {
@@ -499,9 +508,205 @@ check(
   ["--version", "9.9.9"],
 );
 
+// --- 6. a check that could not run, against a check that ran and failed -----------------
+//
+// Both were `drift 1 - 99% adopted (78/79)`, byte for byte: a machine with no pnpm and a
+// repo with three real lint errors produced the same number, so the number said "this
+// laptop" in the words of one that says "this repo". Every case below is asserted in both
+// directions - the missing prerequisite must stop counting AND the real failure must keep
+// counting, because a fix that only did the first would be a fix that deleted the check.
+//
+// The absent tool is a name nothing could plausibly install rather than `pnpm`: a runner
+// that happens to have pnpm would otherwise run the guard for real and the case would
+// assert nothing.
+const ABSENT_TOOL = "definitely-not-installed-tool-9f3c";
+const stackGuard = (dir, guard) =>
+  writeFileSync(
+    join(dir, "stack.manifest.json"),
+    `${JSON.stringify(
+      {
+        technology: "node",
+        layer: 2,
+        guards: [{ id: "stack-check-all", kind: "static", blocks: true, purpose: "the stack's own quality gate", profile: "core", ...guard }],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+// A guard that shouts if it executes: whether it ran is then readable in the drift number
+// and in the output, with no sentinel file to inspect after the fixture is gone.
+const LOUD = `node -e "console.error('THE GUARD EXECUTED'); process.exit(1)"`;
+
+check(
+  "a guard whose tool is not on this machine is NOT RUN - not drift, and never silent",
+  (dir) => {
+    // Taken all the way to drift 0 on purpose: the assertions below are about the drift-0
+    // verdict line, and against a fixture sitting at drift 1 they would pass no matter what
+    // that line said.
+    emptyCapabilityMap(dir);
+    stackGuard(dir, { run: `${ABSENT_TOOL} check:all` });
+  },
+  (r, expect) => {
+    expect(r.drift === 0, `a missing prerequisite must not score as drift: expected 0, got ${r.drift}`);
+    expect(says(r, "stack-check-all NOT RUN"), "the guard was not reported as unrun");
+    expect(says(r, `${ABSENT_TOOL} is not on PATH`), "the message does not name what is missing");
+    expect(says(r, "1 CHECK NOT RUN HERE (stack-check-all)"), "the verdict line hides a check that never ran");
+    // Not counting it as drift loosened the gate - this used to exit 1 - so the word a reader
+    // skims is what has to stop saying the run was complete.
+    expect(r.exit === 0, `expected exit 0: a tool this machine lacks is not this repo's failure, got ${r.exit}`);
+    expect(!says(r, "self-verify: OK"), "a run with a blocking check that never started still announced itself as OK");
+  },
+);
+
+check(
+  "a fallback chain needs one of its alternatives, not all of them",
+  (dir) =>
+    // `a || b` where a resolves: probing b and skipping on it would turn a working guard off.
+    // `git` rather than `node` on purpose - node is never probed at all, so it would exercise
+    // the "unclassifiable alternative" branch and leave "a resolvable alternative satisfies
+    // the group" untested. git is a prerequisite of the standard's own guards anyway.
+    stackGuard(dir, { run: `git --version || ${ABSENT_TOOL} check:all` }),
+  (r, expect) => {
+    expect(says(r, "stack-check-all passed"), "a satisfied fallback chain was treated as a missing prerequisite");
+    expect(!says(r, "NOT RUN"), "a guard whose first alternative resolves was skipped on the second");
+    expect(r.drift === base.drift, `expected the baseline drift ${base.drift}, got ${r.drift}`);
+  },
+);
+
+check(
+  "a guard that ran and failed is still drift, and reads nothing like one that could not run",
+  (dir) => stackGuard(dir, { run: `node -e "console.error('checked 214 files: 3 lint errors'); process.exit(1)"` }),
+  (r, expect) => {
+    expect(r.drift === base.drift + 1, `a real guard failure must still count: expected ${base.drift + 1}, got ${r.drift}`);
+    expect(says(r, "stack-check-all failed"), "the failing guard was not reported as a failure");
+    expect(says(r, "3 lint errors"), "the guard's own output was swallowed");
+    expect(!says(r, "NOT RUN"), "a guard that ran was reported as unrun");
+    expect(!says(r, "CHECK NOT RUN HERE"), "the verdict claims a check did not run when it did");
+    expect(r.exit === 1, `expected exit 1, got ${r.exit}`);
+  },
+);
+
+check(
+  "a declared path prerequisite stops the guard executing at all - the compliance check has no side effects",
+  (dir) =>
+    stackGuard(dir, {
+      run: LOUD,
+      requires: [{ kind: "path", match: "node_modules", hint: "the guard runs the installed toolchain" }],
+    }),
+  (r, expect) => {
+    // The shape this exists for: a package manager present and its dependency tree absent,
+    // where RUNNING the guard is what pulls the tree off the network as a side effect of
+    // asking a question about the repo - recorded once at 376 packages and ~670 MB. The only
+    // way not to do that is to look first.
+    expect(!says(r, "THE GUARD EXECUTED"), "the guard ran despite a declared prerequisite being absent");
+    expect(r.drift === base.drift, `expected the baseline drift ${base.drift}, got ${r.drift}`);
+    expect(says(r, "node_modules is absent from this repo"), "the message does not name the missing prerequisite");
+    expect(says(r, "the guard runs the installed toolchain"), "the entry's hint was not passed through");
+  },
+);
+
+check(
+  "the same guard runs, and fails, once its declared prerequisite is there",
+  (dir) => {
+    mkdirSync(join(dir, "node_modules"));
+    stackGuard(dir, { run: LOUD, requires: [{ kind: "path", match: "node_modules" }] });
+  },
+  (r, expect) => {
+    expect(says(r, "THE GUARD EXECUTED"), "a met prerequisite left the guard unrun - the check would be permanently off");
+    expect(r.drift === base.drift + 1, `expected the guard's failure to count: ${base.drift + 1}, got ${r.drift}`);
+  },
+);
+
+check(
+  "a requires entry nobody can evaluate is drift, not a guard that quietly stops running",
+  (dir) => stackGuard(dir, { run: `node -e "process.exit(0)"`, requires: [{ kind: "toolbox", match: "pnpm" }] }),
+  (r, expect) => {
+    expect(r.drift === base.drift + 1, `expected drift ${base.drift + 1}, got ${r.drift}`);
+    expect(says(r, "carries an unusable requires entry"), "a malformed prerequisite was ignored instead of reported");
+  },
+);
+
+check(
+  "words inside a guard's own error message are not mistaken for missing tools",
+  (dir) =>
+    stackGuard(dir, {
+      // The shape the node stack's guard actually has: a builtin probe, a quoted message
+      // naming things that are not commands, then the real command.
+      run: `command -v node >/dev/null 2>&1 || { echo "${ABSENT_TOOL} is required; install it"; exit 1; }; node -e "process.exit(0)"`,
+    }),
+  (r, expect) => {
+    expect(says(r, "stack-check-all passed"), "a runnable guard was skipped - inference that errs this way removes checks");
+    expect(!says(r, "NOT RUN"), "quoted text or a shell builtin was probed as a command");
+    expect(r.drift === base.drift, `expected the baseline drift ${base.drift}, got ${r.drift}`);
+  },
+);
+
+// --- 7. what drift 0 does not say -------------------------------------------------------
+//
+// Measured on a raw greenfield tree: `.standards-version`, a `profile` key and an empty
+// `specs/capability-map.json` took it from drift 3 to `OK - drift 0 - 100% adopted (69/69) -
+// compliant with the standard` with no capability spec written at all. The number was right
+// and the sentence was not. Reported rather than scored: the greenfield walk scaffolds in
+// step 1 and specifies in step 6, so scoring the gap would put drift 0 out of reach of an
+// honest new repo for the length of the interview.
+
+// The greenfield walk in miniature, and the exact tree the case was measured on: the third
+// declarative file (`emptyCapabilityMap`, defined with the fixture helpers above) is what
+// takes it to drift 0. `.standards-version` the fixture already wrote.
+check(
+  "a repo that has specified nothing reaches drift 0, and the verdict says that is all it means",
+  emptyCapabilityMap,
+  (r, expect) => {
+    expect(r.drift === 0, `the documented greenfield walk must still reach drift 0: got ${r.drift}`);
+    expect(r.exit === 0, `expected exit 0 - the caveat is reported, never scored, got ${r.exit}`);
+    expect(says(r, "no capability spec exists here yet"), "an empty repo was reported as compliant with nothing said about it");
+    expect(says(r, "AND THAT IS THE WHOLE CLAIM"), "the verdict line still reads as an unqualified compliance claim");
+  },
+);
+
+check(
+  "one real capability spec clears it - the caveat is a state, not a permanent footnote",
+  (dir) => {
+    emptyCapabilityMap(dir);
+    // A spec that satisfies the rest of the gate too, so the run is a real drift 0 and not
+    // the caveat trading places with a structure failure: personas.md is fill-from-repo, and
+    // R10 holds every capability spec to a persona from its roster.
+    const personas = join(dir, "docs/personas.md");
+    writeFileSync(personas, readFileSync(personas, "utf8").replace("| `<Name + role>` | yes |", "| `Booker Bea` | yes |"));
+    mkdirSync(join(dir, "specs/booking"), { recursive: true });
+    writeFileSync(
+      join(dir, "specs/booking/spec.md"),
+      "# Booking\n\n**Spec tier:** behavioral\n**Serves:** `Booker Bea`\n\n## Purpose\n\nReal specified behaviour.\n",
+    );
+  },
+  (r, expect) => {
+    expect(r.drift === 0, `expected drift 0, got ${r.drift}`);
+    expect(!says(r, "no capability spec exists here yet"), "a repo with a capability spec was still told it has none");
+    expect(!says(r, "AND THAT IS THE WHOLE CLAIM"), "the verdict kept the caveat after it stopped being true");
+  },
+);
+
+check(
+  "a template, a README and the engine's own scaffolding are not specified behaviour",
+  (dir) => {
+    // The shapes that would make the caveat unreachable if they counted: the shipped
+    // templates and example under specs/, plus the plan/tasks files the spec engine writes
+    // and deletes (ADR-010). A repo whose only "spec" is a plan has specified nothing.
+    emptyCapabilityMap(dir);
+    mkdirSync(join(dir, "specs/booking"), { recursive: true });
+    writeFileSync(join(dir, "specs/booking/plan.md"), "# Plan\n");
+    writeFileSync(join(dir, "specs/booking/tasks.md"), "# Tasks\n");
+    writeFileSync(join(dir, "specs/booking/README.md"), "# Booking specs\n");
+  },
+  (r, expect) => {
+    expect(says(r, "no capability spec exists here yet"), "ephemeral engine scaffolding counted as a capability spec");
+    expect(r.drift === 0, `expected drift 0, got ${r.drift}`);
+  },
+);
+
 console.log();
 if (failures) {
   console.error(`self-verify-drift-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("self-verify-drift-test: OK - 20 cases, the drift number moves when the content does");
+console.log(`self-verify-drift-test: OK - ${cases} cases, the drift number moves when the content does and holds still when the machine changes`);

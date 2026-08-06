@@ -54,3 +54,12 @@ bash scripts/verifyAgentGuards.sh
 different things. The enforcement lives where the tool is used instead - the guards deny
 when they cannot run, and `scripts/verifyAgentGuards.sh`
 covers that path so a regression is caught rather than assumed.
+
+That rule used to hold everywhere except inside `self-verify`'s own guard runner, which is
+the one place it shells out to a tool itself. A Layer 2 guard (`pnpm check:all`) on a machine
+with no `pnpm` failed with a bare `command not found` and scored `drift 1 - 99% adopted
+(78/79)` - the same number, in the same words, that three real lint errors produce on a
+compliant repo. A guard whose prerequisites are absent is now **not run**: reported as
+`SKIP`, counted as neither drift nor adoption, and named in the verdict, so the answer says
+plainly that it is missing a tool rather than reporting a repository that is fine as one that
+is not. See [`self-verify.md`](self-verify.md) for how a guard declares what it needs.
