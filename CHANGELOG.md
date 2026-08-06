@@ -16,6 +16,92 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The work-cycle guard checked the id and trusted everything else (2026-08-06)
+
+Eight open findings in the tracking machinery, all reproduced against the live tree before
+anything was written. Three of them are one guard learning to read what it already had in
+front of it, and a fourth defect surfaced while fixing them.
+
+**A split row was not read as finished.** `split:<id>` landed in the template's vocabulary a
+release ago and `cycle-guard.mjs` was never told about it, so a `blocked:` reference to an
+intent that finished and handed its remainder to a new row still reported `1 live block(s)`.
+Reproduced on the greenfield fixture: exit 0, block reported live. It is finished work and is
+now treated as such - and the reference is checked too, since reading three words in a status
+cell as "done" without checking what they name would be a way to retire any row and disarm
+every block pointing at it.
+
+**The one-place invariant was keyed entirely on the id.** Copy an intent into a cycle,
+renumber the copy left in the pool, keep the title, and the guard reported `OK - each in
+exactly one` - because two ids are two ids. The title is now compared too, with markup
+stripped and whitespace collapsed, across files only, and one pair is exempt: a `split:<id>`
+row and the remainder row it names, because `/cycle-close` cuts that row and an author who
+keeps the wording is following the skill.
+
+**A reference was uppercased before it was compared.** Found while building the split check,
+and older than it: the whole status cell was lowercased on read and the id restored with
+`toUpperCase()`, so `blocked:ADR-auth` - the id shape this guard's own header documents -
+reported `ADR-AUTH exists nowhere` on a repo that was correct. References now resolve to the
+row that declares the id without regard to case, and are reported in that row's spelling.
+
+**The pool's in-flight pointers were nobody's job.** A pointer row for a cycle that closed
+three months ago, an item count that disagreed with the cycle's real rows, and a `done` row
+still in the pool - all three at once, and both guards reported full compliance. Two of the
+three are now mechanical: the `Cycle` cell must name a cycle file that exists and is still
+open, and a non-empty `Items` cell must be that cycle's real row count. Deleting the row is
+not the way out - once the table carries any row, an open cycle nothing points at is caught
+as well. A pool that deleted the section is not running cycles and is not checked. The third,
+a `done` row lingering in the pool, is deliberately left alone: the pool template licenses
+`done` rows until release ("drop `done` rows on release, or let the Backlog.md tool archive
+them"), and a guard failing on every one of them would make that licence impossible to use.
+
+The two comment-and-fence readers inside the guard became one, which is what made a third
+scan affordable. `tools/cycle-guard-test.mjs` goes from 37 cases to 65, each new check
+carrying both directions - the defect fails, and the legitimate shape beside it still passes.
+The worked adopting repository (three closed cycles, one open, a populated pool, a live
+pointer row) passes unchanged, which is the only reason to believe the new checks are
+checks rather than noise.
+
+### A backlog row now carries where it came from, under one id convention (2026-08-06)
+
+The other three findings from the same round, all in what a row is allowed to say.
+
+**"Every item has a source" was claimed in three documents and the row had nowhere to put
+one.** The ten declared columns were id / title / cap / persona / owner / assignee / size /
+why / DoD / status, and two agents filing different rows independently found the same
+undocumented workaround: fold the provenance into `why`. There is now a `source` column, with
+five declared categories - `onboarding`, `spec-delta`, `drift`, `decision`, `asked` - and the
+Definition of Ready requires it. `docs/method/tracking-work.md` used to say plainly that a
+row carried no source field and that a column would close it if it started mattering; it now
+says what the column does.
+
+**Two id conventions were documented at once.** `add-to-backlog` said type-scoped (`SPEC-3`,
+`ADR-auth`), every worked example in the method docs used capability-scoped (`INV-3`,
+`PAY-2`), and the pool template mixed both inside one sentence. The id is the only field
+joining the pool to a cycle, so the ambiguity was load-bearing. One convention, stated in one
+place: the prefix names what the item belongs to - the capability where there is one, the
+artifact type where there is not. Everything else now points at that sentence instead of
+restating it.
+
+**Internal work had no persona to name.** An item that serves no persona is parked rather
+than queued (ADR-006), the roster holds end users, and documentation and spec debt is the
+pool's own headline content - so the doc's flagship category was parked by its own rule. The
+only precedent, `(infra)`, existed solely inside a commented-out template row. The pool now
+declares `Maintainer (internal)` in prose, and `add-to-backlog` names it.
+
+**The board had nowhere to render a blocked item.** `blocked` is the fourth status the schema
+declares and the rendered three-lane board showed nothing of it - so the one fact worth seeing,
+what a stuck row is stuck on, had no home. The board keeps three lanes, which was already the
+skill's decision, and a blocked row stays in `doing` carrying the id it waits on.
+
+**A cycle's commit count measured the repository, not the team.** `git log --oneline --since
+--until | wc -l` has no author or path scope, so two teams whose windows overlap both record
+every commit in the overlap - contradicting `/timeline-update`'s own rule never to blend
+throughput across teams. Reproduced on a nine-commit two-team history: 7 and 6, of which 2 and
+2 belonged to the other team. Scoped to each cycle's own `assignee` set, the same history
+gives 5 and 4. `/cycle-close` now prescribes the scoped command, tells the close to report an
+assignee that maps to no git author and a window that yields zero commits rather than absorbing
+either, and requires the recorded number to name what it was taken over.
+
 ### A fixed finding could leave the ledger from both sides at once (2026-08-06)
 
 The suite's headline is "failures found: N - M fixed and re-verified, K still open, logged and
