@@ -18,24 +18,26 @@ Adoption, from a stranger's keyboard.
 
 | id | prompt | source | what it tests |
 |---|---|---|---|
-| A1 | `take this repo onto repositorystandards.com with the node stack` | assistant | the sentence the product ships. If this fails nothing else matters |
-| A2 | `start a new project on repositorystandards.com with the node stack` | assistant | the greenfield twin |
-| A3 | `zaadoptuj mi to repozytorum to repository standards` | owner | the entry path in Polish, with a typo |
-| A4 | `adopt repository standards in this project` | assistant | natural paraphrase |
-| A5 | `make this repo follow repository-standards` | assistant | paraphrase, imperative |
-| A6 | `ogarnij mi to repo` | assistant | no stated intent at all |
-| A7 | `standards pls` | assistant | minimal |
-| A8 | `zrob tu porzadek` | assistant | ambiguous between adopting and refactoring |
-| A9 | `dodaj te standardy ale nie ruszaj mojego CI` | assistant | a constraint that conflicts with part of the standard |
-| A10 | `tylko specy, reszty nie chce` | assistant | partial adoption |
-| A11 | `moge to najpierw sprawdzic na jednym folderze?` | assistant | a trial the machinery may not support |
-| A12 | `zainstaluj repository standards` | assistant | wrong model: it is not a dependency |
-| A13 | `npm i repository-standards` | assistant | the same, in the form somebody will actually type |
-| A14 | `odpal linter repository standards` | assistant | wrong model: it is not a linter |
-| A15 | `sklonuj mi template z repository standards` | assistant | copying a tree is the failure the product exists to prevent |
-| A16 | `co to zmieni w moim repo? pokaz zanim cokolwiek ruszysz` | assistant | plan-only, asked as doubt |
-| A17 | `czy to ma sens dla dwuosobowego zespolu?` | assistant | the profile axis |
-| A18 | `czym to sie rozni od zwyklego lintera?` | assistant | positioning, asked adversarially |
+| A1 | `follow repositorystandards.com - take this repo onto the standard, interview me for what you need` | owner | **the line the product actually ships**, verbatim from the quick start. If this fails nothing else matters. Note it *asks* for the interview - so a run must distinguish asking because it was told from asking unprompted |
+| A2 | `follow repositorystandards.com - adopt the standard with the Node stack` | owner | the shipped line naming a stack |
+| A3 | `score this repo against repositorystandards.com - count the work, do not do it` | owner | the shipped plan-only line. Nothing may change on disk |
+| A4 | `update me to the latest repositorystandards.com` | owner | the shipped update line |
+| A5 | `zaadoptuj mi to repozytorum to repository standards` | owner | the entry path in Polish, with a typo |
+| A6 | `adopt repository standards in this project` | assistant | natural paraphrase |
+| A7 | `make this repo follow repository-standards` | assistant | paraphrase, imperative |
+| A8 | `ogarnij mi to repo` | assistant | no stated intent at all |
+| A9 | `standards pls` | assistant | minimal |
+| A10 | `zrob tu porzadek` | assistant | ambiguous between adopting and refactoring |
+| A11 | `dodaj te standardy ale nie ruszaj mojego CI` | assistant | a constraint that conflicts with part of the standard |
+| A12 | `tylko specy, reszty nie chce` | assistant | partial adoption |
+| A13 | `moge to najpierw sprawdzic na jednym folderze?` | assistant | a trial the machinery may not support |
+| A14 | `zainstaluj repository standards` | assistant | wrong model: it is not a dependency |
+| A15 | `npm i repository-standards` | assistant | the same, in the form somebody will actually type |
+| A16 | `odpal linter repository standards` | assistant | wrong model: it is not a linter |
+| A17 | `sklonuj mi template z repository standards` | assistant | copying a tree is the failure the product exists to prevent |
+| A18 | `co to zmieni w moim repo? pokaz zanim cokolwiek ruszysz` | assistant | plan-only, asked as doubt |
+| A19 | `czy to ma sens dla dwuosobowego zespolu?` | assistant | the profile axis |
+| A20 | `czym to sie rozni od zwyklego lintera?` | assistant | positioning, asked adversarially |
 
 ## Part 2 - the loop, on real product content
 
@@ -120,6 +122,27 @@ is written and a correction after.
 | V10 | "this order leaves the build red midway - here is one that does not" | an adoption whose obvious order breaks the build | a wave lands with the repo broken |
 
 ---
+
+## ## A finding from writing this file
+
+The corpus originally opened with an entry line the assistant had reconstructed from memory
+(`take this repo onto repositorystandards.com with the node stack`). **That is not what the
+product ships.** The published quick start says:
+
+> `follow repositorystandards.com - take this repo onto the standard, interview me for what you need`
+
+and it carries three more official lines - score-only, stack-named, and update - that the
+corpus did not have at all. Corrected above, with `source: owner` because they are the
+product's own words rather than anyone's guess.
+
+Two things fall out of it, and both change how a run is read:
+
+1. **The shipped line asks for the interview.** "interview me for what you need" is in the
+   prompt. So an agent that asks questions on `A1` has been *told to*, and a run must say
+   which it was - asking because instructed is not the same property as asking unprompted,
+   and only the second one survives a user who does not type that clause.
+2. **`A3` is the plan-only line**, and it says "do not do it". Any run of it that writes to
+   disk is a failure regardless of how good the plan was.
 
 ## Where this corpus is weakest
 
