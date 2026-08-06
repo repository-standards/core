@@ -22,6 +22,12 @@ then find the ripple. This is analysis - do not edit code yet.
    that area is a new capability, specced fresh, not a reopening.
 
 2. **Read** the primary spec and the code it maps to (`specs/capability-map.json`).
+   Read the topic's dossier too, if it has one (`docs/discovery/<topic>/`, ADR-024):
+   entries **newer** than its `Last reconciled:` stamp, plus anything still `new`/`open`,
+   are the material that has not reached this spec yet - and new material is the usual
+   reason a change to a shipped capability starts at all. Name those entries in the
+   output so `spec-update` knows which ones it is folding in; entries marked
+   `folded-into-spec` or `superseded-by:` are history and are never re-raised.
 
 3. **Find the ripple:**
    - **Other capability specs** whose behavior this touches (cross-domain). A
@@ -46,6 +52,7 @@ then find the ripple. This is analysis - do not edit code yet.
 - Affected capabilities, with their spec paths.
 - ADR impact: none / new / supersede (link).
 - Code areas to change.
+- Unreconciled discovery entries for the topic (newer than the stamp, or still `new`/`open`), or "none".
 - Anything filed to the backlog because this change will not address it now.
 
 This drives `spec-update` (which specs to edit) and the technical plan.

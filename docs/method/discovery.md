@@ -143,14 +143,22 @@ The user explains the new input once; nothing old is re-litigated.
    alternatives), documented once.
 4. **The stamp closes the re-ask loop**: `Last reconciled:` in the dossier
    README; agents ask only about newer entries. Entry lifecycle:
-   `new -> folded-into-spec | superseded-by-record | open`.
+   `new -> folded-into-spec | superseded-by-record | open`. **Whichever skill folds
+   the material in is the one that moves the stamp** - `spec-specify` when a spec is
+   minted, `spec-clarify` when a clarify round answers from the dossier, and
+   `spec-update` on the change path (`discovery-digest` -> `spec-impact` ->
+   `spec-update`), which is where an already-shipped capability's material lands.
+   A stamp only the mint step ever moved would say `never` for every capability that
+   was specced once and changed afterwards, and re-raise everything under it forever.
 5. **Draft the spec early**: status `in-refinement` (the draft state) with
    typed markers - CLARIFICATION / DECISION / INPUT / ASSET, each with an
    owner. The clarify gate blocks the whole family; zero open markers earns
    `ready-to-develop`.
 6. **Curator vs consumer**: `discovery-digest` maintains the dossier and
-   flags contradictions; the `spec-*` skills read it at specify/clarify/plan
-   time. Neither does the other's job.
+   flags contradictions - including a contradiction *inside* one source, which is
+   usually why the handover arrived; the `spec-*` skills read it at
+   specify/clarify/plan/update time and mark what they consume. Neither does the
+   other's job.
 7. **Adoption fills the first dossiers**: a repo joining the standard usually has years
    of knowledge somewhere that is not the repo - a wiki, a tracker, an `rfcs/` folder,
    a decision nobody moved out of a ticket. Intake asks for it and suggests where to
