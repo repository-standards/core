@@ -16,6 +16,53 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The work state had no surface for the people who most need to read it (2026-08-06)
+
+The pool, the cycles and the timeline answer what is owed, what is in flight and when it
+lands - in markdown, in a repository. That is the right home and the wrong reading surface
+for a sponsor, a client, or somebody who joined on Monday, and the gap was being filled the
+way it always is: somebody retyping the state into a status email, where it is stale on
+arrival and nobody can check it against anything.
+
+`scripts/work-dashboard.mjs` ships, with its stylesheet and its client, and renders one
+static page: what is in flight now, the cycles against a calendar with today, the agreed
+target and the measured projection on it, the pool as a ranked list, a kanban per cycle, four
+reports, the changelog as history, and every decision record, spec, idea and open question
+behind one search. A repository that keeps no cycles gets no cycle views and is told why
+rather than shown an invented sprint.
+
+Three properties were the point rather than the page:
+
+- **It is a projection.** It writes nothing back, and the same commit produces the same bytes
+  - the fingerprint is over the content, never the build time. There is no second place where
+  work is tracked and nothing to keep in step.
+- **It notices when it goes stale.** The page carries its fingerprint and polls a `state.json`
+  written beside it; when the work moves it reloads itself and restores the reader's place,
+  and it waits with a prompt instead when a record is open or a search half-typed. Nothing
+  fetches, pulls or rebases: a stale page is a display problem, and repairing it by moving
+  somebody's branch would be a much worse one. `--watch` and `--serve` give the same loop
+  locally.
+- **Publication is gated on who may read the repository**, because the page contains nothing
+  the repository does not. The shipped workflow builds on every push to `main`, uploads the
+  page as an artifact, and reaches the publish step only when the repository is genuinely
+  public - GitHub Pages on a private repository is served publicly unless the organisation is
+  on Enterprise Cloud, which is precisely how a private backlog ends up on the open internet.
+  `--anonymise` drops assignees and the owner a cycle names, at build time, for a page that
+  leaves the building - structured fields only, since prose written by hand is reproduced as
+  written. The local `--serve` binds loopback for the same reason.
+
+The generated page is not committed. It is a function of the commit, so committing it would
+buy nothing and cost a large diff in every pull request plus a conflict on every parallel
+branch - the same call `site/docs/` already carries. This repository publishes its own at
+`/work/`, which is both the dogfooding and the demo.
+
+Run against two repositories before shipping: this one, and the showcase, whose four cycles
+and closed-cycle outcomes are what the timeline and the reports were actually built against.
+It ships under `$unclaimed` in the coupling map - the declared form of "shipped code with no
+capability spec yet", the same position the other guards were in - with a backlog row for the
+spec, because a report whose definition lives only in the code is a number nobody can argue
+with.
+
 ### The spec loop reads the decision log before it writes (2026-08-06)
 
 Two `severe` validation findings, one defect seen from two sides.
