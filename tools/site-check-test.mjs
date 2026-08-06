@@ -31,7 +31,7 @@ const VERSION = "2.4.0";
 // list inside <svg>, which is the whole of the exemption the gate makes.
 const MARK = '<svg viewBox="0 0 24 24"><path d="M1.9.9 4.5.6 2.3.9"/></svg>';
 
-const landing = ({ pill = VERSION, prose = VERSION, footer = VERSION, script = VERSION }) => `<meta charset="utf-8">
+const landing = ({ pill = VERSION, prose = VERSION, footer = VERSION, script = VERSION, deco = false }) => `<meta charset="utf-8">
 <title>fixture landing</title>
 <meta property="og:title" content="fixture">
 <meta property="og:description" content="a fixture landing">
@@ -47,7 +47,7 @@ const landing = ({ pill = VERSION, prose = VERSION, footer = VERSION, script = V
   <p>Open source, MIT, no build step.${prose ? ` Version ${prose}, the first stable line.` : ""}</p>
   <a href="/docs/index.html">Docs</a>
 </main>
-<footer><span>fixture${footer ? ` &middot; v${footer}` : ""} &middot; MIT</span></footer>
+<footer>${deco ? '<svg class="deco" width="8" height="8"/>' : ""}<span>fixture${footer ? ` &middot; v${footer}` : ""} &middot; MIT</span>${deco ? MARK : ""}</footer>
 <script>
   var SCRIPT = [
     {h:'Reading the standard&hellip; <span class="cv">fixture${script ? `@${script}` : ""}</span>', d:640}
@@ -120,6 +120,17 @@ const CASES = [
     fails: true,
     says: "states 2.4.1",
     files: { "site/index.html": landing({ prose: "2.4.1" }) },
+  },
+  {
+    // The mask must not be an opening a stale version can hide behind. This fixture puts
+    // a self-closing <svg/> before the stale footer and a real mark after it: a mask that
+    // paired the self-closing tag with the NEXT </svg> blanks out everything in between,
+    // the version included, and reports the page clean. Verified load-bearing - swap the
+    // opener back to a plain <svg and this case is the one that goes red.
+    name: "a self-closing mark does not open a hiding place for a stale version",
+    fails: true,
+    says: ["states 2.3.9", "site-check: FAIL - 1 problem(s)"],
+    files: { "site/index.html": landing({ deco: true, footer: "2.3.9" }) },
   },
   {
     // The criterion the strict check must not replace: every version agreeing is not the
