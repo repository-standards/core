@@ -1,4 +1,4 @@
-# ADR-033: Embargoed work is a private mirror of the repo, not an exemption from R3
+# ADR-034: Embargoed work is a private mirror of the repo, not an exemption from R3
 
 | | |
 | --- | --- |

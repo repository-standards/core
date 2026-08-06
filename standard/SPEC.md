@@ -53,7 +53,7 @@ binds every repo, a solo one included.
   what this rule forbids. "Not written up yet", "it is in the chat", and work someone
   would rather not publish are not embargoes. A repo that is already private needs
   none of this: its knowledge is in the repo, which is all this rule ever asked
-  (ADR-033).
+  (ADR-034).
 - **R4.** Documents are living: they MUST be updated in place. The current version
   is the truth; git is the history. When a change reverses something a future
   reader will need, the document SHOULD say so in one line. History MUST NOT

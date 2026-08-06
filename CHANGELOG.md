@@ -40,7 +40,7 @@ all. An embargo names its lifting condition and its owner the moment it starts -
 no stated end is knowledge kept out of the repo, which R3 already forbade - and the near
 misses are named so the clause cannot be read as a general licence: "not written up yet",
 "it is in the chat", and work someone would rather not publish are not embargoes. Recorded
-as ADR-033 with the two rejected shapes: an "unless confidential" clause on each of the
+as ADR-034 with the two rejected shapes: an "unless confidential" clause on each of the
 three rules, and a new `embargo` kind in the manifest's `exceptions` (which records a
 repo's standing structural deviation and lowers its adoption percentage - the wrong
 mechanism for a temporary state of one piece of work). `security-baseline.md` gains the
