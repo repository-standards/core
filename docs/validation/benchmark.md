@@ -672,7 +672,7 @@ render the promised board against a real open cycle with a blocked:SPEC-1 item
 
 **TRACK-14 - cycle-close's prescribed commit-count measurement is scoped to the team and window it is measuring, not a repo-wide count two overlapping teams both silently share**
 
-- **Given:** two teams whose cycles overlap in time, each closing a cycle with cycle-close's prescribed `git log --oneline --since=<opened> --until=<closed> | wc -l`
+- **Given:** two teams whose cycles overlap in time, each closing a cycle with the repo-wide commit count cycle-close prescribes (unscoped by team or path, whatever window form it names)
 - **When:** both teams record their cycle's commit count
 - **Then:** the two counts are genuinely different, scoped to each team's own work, instead of both recording the identical repo-wide blended number - contradicting timeline-update's own rule to never blend throughput across teams
 - **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
@@ -1440,10 +1440,10 @@ grep .github/workflows/spec-guard.yml's `on:` block and compare against gitleaks
 
 **DOC-16 - showcase-gap's headline honesty claim - the outcome blocks' stated commit counts - agrees with the repo's own real history when the prescribed command is actually run**
 
-- **Given:** the showcase repo's own cycle-close outcome blocks, claiming 9 / 6 / 3 commits landed for three cycles
-- **When:** the prescribed measurement command (git log --oneline --since=<opened> --until=<closed> | wc -l) is actually run against the repo's real history
-- **Then:** the numbers agree, instead of the real commands returning 2 / 1 / 1 against a total of 25 commits in the whole repo's history
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Given:** the showcase repo's own cycle-close outcome blocks and the commit counts they state for its three closed cycles
+- **When:** the command cycle-close prescribes for that number is actually run against the repo's real history
+- **Then:** the numbers agree, and agree whatever hour the command is run at - which requires the prescription to state the window explicitly, since git resolves a bare --since/--until date at the current time of day
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
