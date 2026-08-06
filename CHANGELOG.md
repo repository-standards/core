@@ -16,6 +16,27 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A capability built where its globs do not look changed with `spec-guard: OK` (2026-08-06)
+
+The plan template's default single-project layout was upstream's layer folders - `models/`,
+`services/`, `cli/`, `lib/` - while a capability's globs name its domain. A capability
+implemented under that default therefore matched no glob at all, and the coupling guard's
+diff run, which can only fire on a file some glob matches, passed it. Reproduced: the same
+two files under `src/services/proxy-swap.ts` and `src/models/swap-audit.ts` gave
+`spec-guard: OK` with the spec untouched, and gave a violation when moved to `src/swap/`.
+`--audit` does report it, but the diff run is the only spec-guard entry the manifest ships as
+a gate, so an adopted repo sees nothing unless its author wired the audit as well.
+
+Both halves are fixed. The template's default is now sliced by capability, which is what the
+decision checklist has always called the paved road ("slice by capability/domain, not by
+layer or page"), and its Structure Decision field says to bind the chosen paths in the map
+and check them with `--audit`. And where the map declares `$unclaimed`, the diff run now
+reports changed files that neither a capability claims nor `$unclaimed` declares - the same
+rule `--audit` applies full-tree, one diff narrower. On the fixture it names
+`src/services/proxy-swap.ts` instead of printing OK. Repos that declare no `$unclaimed` are
+unaffected: the map never claimed to be total, so the guard still has no basis to call
+anything unclaimed.
+
 ### Two capabilities in one folder had no way to say which file was whose (2026-08-06)
 
 `capability-map.json` had globs and nothing else, so a second capability whose code

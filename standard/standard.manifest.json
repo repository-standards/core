@@ -244,7 +244,7 @@
         "check-prerequisites.sh": "24f398770a52ae6b73ae0d4601fe3fd2a81491c51463f53a956c4d98d49b9f25",
         "check-spec-clarified.sh": "414c28837b93e0b9c2c342b230f7f09c2c2b24fe7a0e804e3ab4b1e5add55229",
         "common.sh": "814ec1d965c536b8806324f5050ad75e521b6e2aa3ff241510d316b4bd779e13",
-        "plan-template.md": "c8a345b6a586d54125a95ce9bb6d90e5fc8870ee90c4a4bbc5c3edd904130c03",
+        "plan-template.md": "c3dd77a9a109cee4bdc77b615e7d5a707b80c164e02fa8b4d7552f7ad2f8400c",
         "setup-plan.sh": "2ea9e784b283f66aac7c92fead8810a9809adbbdd2091036800a8dd287085a88",
         "setup-tasks.sh": "0e14f3d03e71479fc20cc15cef42d57ab50ad10b08d7dd1613c0b98bd85d3433",
         "tasks-template.md": "55b784e4b1e1c1295cc748e72f00b913105bfe45774228ecd1b86f91f648336e"
@@ -358,7 +358,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R11",
-      "sha256": "7d9345dbe90d8882b78b1e5acbebb2e92032deadadc3cf98c4bb331dfc1f78b1"
+      "sha256": "f15b7011ead91df4328748903bc8186f21d489901de4936745a97bd6aaba973e"
     },
     {
       "path": ".github/workflows/spec-guard.yml",

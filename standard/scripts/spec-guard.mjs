@@ -312,17 +312,47 @@ for (const [cap, entries] of Object.entries(compiled)) {
   if (codeTouched && !specTouched) violations.push(cap);
 }
 
+// Changed code the map does not describe at all. The loop above can only fire on a file
+// some glob matches, so a capability whose code does not sit where its globs say - the
+// commonest cause being a source layout the map was never rewritten for, e.g. an
+// implementation under `src/services/` and `src/models/` against domain-shaped globs -
+// changed with `spec-guard: OK` and its spec untouched. --audit catches that full-tree,
+// but the diff run is the only spec-guard the manifest ships as a gate, so in an adopted
+// repo nothing said it unless the author wired the audit as well.
+//
+// Only when `$unclaimed` is declared: that declaration is the author saying the map is
+// meant to cover everything, and without it the guard cannot tell code nobody claims from
+// code deliberately claimed by nobody. Same rule as --audit, one diff narrower.
+const declaredUnclaimed = (unclaimedGlobs ?? []).map(globToRegExp);
+const claimsAny = (f) => Object.values(compiled).some((entries) => claimed(entries, f));
+const unclaimedChanges =
+  unclaimedGlobs === null
+    ? []
+    : files.filter((f) => !f.startsWith("specs/") && !claimsAny(f) && !declaredUnclaimed.some((re) => re.test(f)));
+
 // Say when the guard decided not to fire - a silent skip is indistinguishable
 // from a guard that stopped working.
 for (const f of [...dataOnly].sort())
   console.log(`spec-guard: note - ${f} changed as data, key shape unchanged - no spec coupling`);
 
-if (violations.length === 0) {
+if (violations.length === 0 && unclaimedChanges.length === 0) {
   console.log("spec-guard: OK");
   process.exit(0);
 }
 
-console.error("\nspec-guard: code changed in these capabilities without a spec update:");
-for (const v of violations) console.error(`  - ${v}   (update specs/${v}/ or state why no change is needed)`);
+if (violations.length) {
+  console.error("\nspec-guard: code changed in these capabilities without a spec update:");
+  for (const v of violations) console.error(`  - ${v}   (update specs/${v}/ or state why no change is needed)`);
+}
+
+if (unclaimedChanges.length) {
+  const shown = unclaimedChanges.slice(0, 20);
+  console.error(`\nspec-guard: ${unclaimedChanges.length} changed file(s) belong to no capability:`);
+  for (const f of shown) console.error(`  - ${f}`);
+  if (unclaimedChanges.length > shown.length) console.error(`  ... and ${unclaimedChanges.length - shown.length} more`);
+  console.error(`\nAdd the path to the capability whose behaviour it implements, or declare it under "$unclaimed"`);
+  console.error(`in ${MAP} if it belongs to no capability by decision. A capability whose globs describe a layout`);
+  console.error("the code does not have is a coupling guard watching an empty set, and it reports OK forever.");
+}
 console.error("");
 process.exit(block ? 1 : 0);
