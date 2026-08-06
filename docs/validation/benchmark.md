@@ -1216,7 +1216,7 @@ read SPEC.md R24 against oban-bg/oban's real shape (a migrations library with no
 - **Given:** a repo whose only PR-triggered workflow auto-closes every PR opened against it (LibreOffice/core), or whose real CI runs with no pull_request trigger by design (postgres/postgres, openjdk/jdk)
 - **When:** the CI-workflow-exists check runs as part of an assessment pass
 - **Then:** the pass distinguishes 'a workflow file exists' from 'the PR gate fires', instead of scoring drift down by one for a workflow that structurally cannot gate a PR
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```

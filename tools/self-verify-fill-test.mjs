@@ -210,6 +210,61 @@ checkDrift("the shipped tree carries every required section - no false positive"
   ],
 });
 
+// A stub the adopter wrote themselves carries no template placeholder, so the check above is
+// blind to it - and the file list it walked was hardcoded, so `CONTRIBUTING.md` (a
+// fill-from-repo entry) was covered by nothing at all. Six such files moved a sparse repo
+// from 21% to 37% adopted with its substance unchanged.
+//
+// What is asserted here is the boundary, in both directions. "Visibly nothing written" must
+// warn; terse-but-real must not. A length threshold would fail that second half, which is why
+// there is no length threshold.
+const checkSubstance = (name, { files, warnsAbout }) => {
+  const dir = fixture(files);
+  const r = spawnSync("node", [join(dir, "scripts/self-verify.mjs")], { cwd: dir, encoding: "utf8" });
+  const out = `${r.stdout ?? ""}${r.stderr ?? ""}`;
+  rmSync(dir, { recursive: true, force: true });
+
+  const warned = out.split("\n").filter((l) => l.includes("presence is not substance"));
+  const named = (f) => warned.some((l) => l.includes(` ${f} `));
+  const wrong = warnsAbout.some(([file, expected]) => named(file) !== expected);
+
+  if (wrong) {
+    failures++;
+    const got = warned.map((l) => l.trim()).join("\n       ") || "(no substance warnings)";
+    console.error(`  FAIL ${name}\n       expected ${JSON.stringify(warnsAbout)}\n       ${got}`);
+  } else {
+    console.log(`  ok    ${name}`);
+  }
+};
+
+checkSubstance("a self-written TODO stub warns, on a file the hardcoded list never covered", {
+  files: { "CONTRIBUTING.md": "# Contributing\n\nTODO.\n" },
+  warnsAbout: [["CONTRIBUTING.md", true]],
+});
+
+checkSubstance("a file with nothing but a heading warns", {
+  files: { "SECURITY.md": "# Security\n" },
+  warnsAbout: [["SECURITY.md", true]],
+});
+
+checkSubstance("a marker meaning nobody has written this yet warns, whichever spelling", {
+  files: { "docs/PRODUCT.md": "# Product\n\nTBD\n", "SECURITY.md": "# Security\n\nWork in progress\n" },
+  warnsAbout: [["docs/PRODUCT.md", true], ["SECURITY.md", true]],
+});
+
+checkSubstance("a terse but real file does not warn - substance is not length", {
+  files: {
+    "SECURITY.md": "# Security\n\nReport vulnerabilities to security@example.com. We acknowledge within five working days.\n",
+    "CONTRIBUTING.md": "# Contributing\n\nOpen a pull request against main; the conventions live in AGENTS.md.\n",
+  },
+  warnsAbout: [["SECURITY.md", false], ["CONTRIBUTING.md", false]],
+});
+
+checkSubstance("a heading plus a real list is content, not an empty shell", {
+  files: { "docs/ARCHITECTURE.md": "# Architecture\n\n## Shape\n\n- A Fastify API behind a Next proxy.\n- Postgres, one schema.\n" },
+  warnsAbout: [["docs/ARCHITECTURE.md", false]],
+});
+
 console.log();
 if (failures) {
   console.error(`self-verify-fill-test: ${failures} case(s) failed`);

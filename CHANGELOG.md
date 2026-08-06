@@ -16,6 +16,48 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Six files saying "TODO." bought sixteen percentage points (2026-08-06)
+
+`self-verify` scores three classes of manifest entry differently, and one of them was scored on
+almost nothing. A `copy` entry is compared against its recorded hash; a `merge` entry against
+its declared keys; a **`fill-from-repo`** entry - the ones the adopter authors - has neither,
+and by construction cannot have either, because the content is theirs and there is nothing to
+compare it against.
+
+Measured rather than argued. On a sparse repo carrying the manifest, the pin and the verifier
+and nothing else, creating six files whose whole body is `# Title` and `TODO.` moved it from
+`drift 19 - 21% adopted (5/24)` to `drift 19 - 37% adopted (11/30)`. Real substance identical,
+drift identical, sixteen percentage points bought by writing nothing.
+
+The figures recorded when this was first logged (25% against 12%) did **not** reproduce as
+stated, and the record is corrected rather than repeated: on the full shipped tree the same
+experiment moves the percentage not at all, because the denominator rises with the numerator.
+The gap only appears on a sparse repo, which is the shape the original reading was taken on.
+
+Two further defects surfaced while fixing it. The placeholder warning that already existed
+recognised only **surviving template placeholders**, so a stub the adopter typed themselves was
+invisible to it - and it walked a **hardcoded list of eight files** that `CONTRIBUTING.md`, a
+`fill-from-repo` entry, was never on. A second source of truth beside the manifest, quietly not
+covering what the manifest added.
+
+Resolved by [ADR-037](docs/decision-records/ADR-037-adopted-percentage-is-structural-substance-is-judgment.md)
+rather than by deepening the check. Two deeper options were considered and rejected in writing:
+required sections per entry, which converts substance into ceremony the moment somebody adds
+the heading and writes `TODO` beneath it; and a length threshold, which measures prose by the
+yard and would fail a genuine two-sentence `SECURITY.md` while passing a padded one.
+
+What shipped instead: the file list is derived from the manifest; a **warning, never drift**
+fires on a body with no content beyond its headings or whose entire content is a nothing-yet
+marker; and the verdict line now states that the percentage counts entries present, not
+substance written. Nobody's drift number changes, so no adopter's CI turns red on a release
+that only clarified what the number meant.
+
+`tools/self-verify-fill-test.mjs` gains five cases carrying the boundary in both directions - a
+self-written stub warns, a heading-only file warns, each spelling of the marker warns, and a
+terse-but-real file does not. Neutralising the check turns exactly the three positive cases red
+and leaves the two negative ones green, so a check that warned about everything would fail
+these tests as surely as one that warned about nothing.
+
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 
 `update-to-version` step 2 called the diff of the two versions' `standard.manifest.json`

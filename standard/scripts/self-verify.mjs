@@ -540,10 +540,60 @@ if (!skeleton) {
   // convention is what makes the check precise, not the regex alone.
   const stripCode = (s) => s.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, "").replace(/`[^`\n]*`/g, "");
 
-  for (const p of ["AGENTS.md", "README.md", "SECURITY.md", "docs/PRINCIPLES.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md"]) {
-    if (!exists(p)) continue;
-    const body = stripCode(readFileSync(p, "utf8"));
-    if (hasPlaceholder(body)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
+  // The list is derived from the manifest, not written here. A hardcoded list of eight is a
+  // second source of truth that silently stops covering what the manifest adds: CONTRIBUTING.md
+  // is a fill-from-repo entry and was never on it, so a two-line stub of it was checked by
+  // nothing at all. Directory entries are skipped - there is no single body to read.
+  const isDir = (p) => {
+    try {
+      return statSync(p).isDirectory();
+    } catch {
+      return false;
+    }
+  };
+  const fillFiles = (manifest?.files || [])
+    .filter((f) => f.adapt === "fill-from-repo")
+    .map((f) => [f.path, ...(f.altPaths || [])].find((x) => exists(x) && !isDir(x)))
+    .filter(Boolean);
+  const fillPaths = [...new Set([...fillFiles, "AGENTS.md", "README.md", "docs/PRINCIPLES.md", "docs/backlog.md"].filter((p) => exists(p) && !isDir(p)))];
+
+  // A stub the adopter wrote themselves carries no template placeholder, so the check above
+  // cannot see it. Six files reading "# Title\n\nTODO." moved a sparse repo from 21% to 37%
+  // adopted with its real substance unchanged, because a fill-from-repo entry scores on
+  // existence alone and by construction cannot be hashed - the adopter writes the content.
+  //
+  // What is detected is "visibly nothing written", not "not enough written". Anything else
+  // would be measuring prose by the yard: a genuine two-sentence SECURITY.md naming an address
+  // and a response time is complete, and a length threshold that failed it while passing a
+  // padded one would teach adopters to pad. So: a body with no content beyond its headings, or
+  // whose only content is a marker meaning nobody has written this yet. Both are unambiguous,
+  // and both are cleared by writing one real sentence - which is the whole ask.
+  //
+  // Still a warning, never drift. Whether what IS written is any good stays the judgment tier's
+  // call (ADR-037), and the adopted percentage counts entries present, not substance present.
+  const NOTHING_YET = /^(?:to\s?do|todo|tbd|t\.b\.d\.?|fixme|xxx|n\/?a|none|coming soon|to be (?:written|filled|done|completed)|fill (?:me )?in|placeholder|wip|work in progress)\b[\s.!:;-]*$/i;
+  const proseOf = (raw) =>
+    stripCode(raw)
+      .replace(/<!--[\s\S]*?-->/g, "")
+      .split("\n")
+      .filter((l) => !/^\s*#{1,6}\s/.test(l))
+      .join("\n")
+      .replace(/^\s*[-*+]\s+/gm, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  for (const p of fillPaths) {
+    const raw = readFileSync(p, "utf8");
+    if (hasPlaceholder(stripCode(raw))) {
+      warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
+      continue;
+    }
+    const prose = proseOf(raw);
+    if (!prose) {
+      warning("fill", `${p} has no content beyond its headings - it counts as present, and presence is not substance`);
+    } else if (NOTHING_YET.test(prose)) {
+      warning("fill", `${p} says only "${prose.slice(0, 40)}" - it counts as present, and presence is not substance`);
+    }
   }
 }
 
@@ -596,9 +646,20 @@ const scope = manifest
   ? ""
   : ` - AGAINST THE BUILT-IN ${applicable}-CHECK SKELETON, NOT A MANIFEST: this repo carries no standard.manifest.json, so the real distance from the standard is larger and is not measured here`;
 
+// The percentage is structural. A `fill-from-repo` entry is content the adopter writes, so
+// there is nothing to compare it against and it scores on presence: six files reading
+// "# Title / TODO." moved a sparse repo from 21% to 37% adopted with its substance unchanged.
+// Saying so where the number is printed is the honest fix; scoring prose mechanically would
+// turn substance into ceremony (ADR-037). The fill warnings above name the ones that read as
+// empty, and whether the rest say anything worth saying is reviewed at PR.
+const fillWarnings = results.filter((r) => r.isWarning && r.name === "fill").length;
+const substance = fillWarnings
+  ? ` - ${fillWarnings} authored file${fillWarnings === 1 ? "" : "s"} flagged above as unfilled or empty: this percentage counts entries present, not substance written`
+  : "";
+
 if (drift === 0) {
-  console.log(`self-verify: OK - drift 0 - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${manifest ? "compliant with the standard" : "every skeleton check met"}${scope}\n`);
+  console.log(`self-verify: OK - drift 0 - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${manifest ? "compliant with the standard" : "every skeleton check met"}${scope}${substance}\n`);
   process.exit(0);
 }
-console.error(`self-verify: drift ${drift} - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${drift} required entr${drift === 1 ? "y is" : "ies are"} unmet${scope}\n`);
+console.error(`self-verify: drift ${drift} - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${drift} required entr${drift === 1 ? "y is" : "ies are"} unmet${scope}${substance}\n`);
 process.exit(warn ? 0 : 1);
