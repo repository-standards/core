@@ -31,7 +31,11 @@ const here = dirname(fileURLToPath(import.meta.url))
 const argv = process.argv.slice(2)
 const outFlag = argv.indexOf('--out')
 const serveFlag = argv.indexOf('--serve')
-const port = serveFlag >= 0 && /^\d+$/.test(argv[serveFlag + 1] || '') ? Number(argv[serveFlag + 1]) : 4173
+// 9675 spells "work" on a phone keypad, and belongs to nothing: the ports a developer
+// actually has in use - 3000, 4173, 5173, 5432, 8080, 9229 - are all somewhere else. A
+// dashboard that squats on the port your app wants is a dashboard you turn off.
+const DEFAULT_PORT = 9675
+const port = serveFlag >= 0 && /^\d+$/.test(argv[serveFlag + 1] || '') ? Number(argv[serveFlag + 1]) : DEFAULT_PORT
 const watching = argv.includes('--watch') || serveFlag >= 0
 const anonymise = argv.includes('--anonymise') || argv.includes('--anonymize')
 const root = resolve(
@@ -623,7 +627,7 @@ if (watching) {
 
 if (serveFlag >= 0) {
   const types = { '.html': 'text/html; charset=utf-8', '.json': 'application/json' }
-  createServer((req, res) => {
+  const server = createServer((req, res) => {
     const name = (req.url || '/').split('?')[0] === '/state.json' ? stateFile : out
     try {
       const body = readFileSync(name)
@@ -632,7 +636,17 @@ if (serveFlag >= 0) {
     } catch {
       res.writeHead(404).end('not built yet')
     }
-    // Loopback only. The page carries whatever the repository carries, and a dev server that
-    // binds every interface serves a private backlog to the coffee shop.
-  }).listen(port, '127.0.0.1', () => console.log(`work-dashboard: http://localhost:${port} (live)`))
+  })
+
+  // A port already in use is the one failure here that is entirely ordinary - two checkouts,
+  // or the last run still open. Say which port and how to pick another, not a stack trace.
+  server.on('error', (err) => {
+    if (err.code !== 'EADDRINUSE') throw err
+    console.error(`work-dashboard: port ${port} is already in use - pass another, e.g. --serve ${port + 1}`)
+    process.exit(1)
+  })
+
+  // Loopback only. The page carries whatever the repository carries, and a dev server that
+  // binds every interface serves a private backlog to the coffee shop.
+  server.listen(port, '127.0.0.1', () => console.log(`work-dashboard: http://localhost:${port} (live)`))
 }
