@@ -196,7 +196,7 @@
       "profile": "core",
       "since": "unreleased",
       "rule": "R5",
-      "sha256": "8b08b51c5d8a8eb97e803208684937c683f6b7ea8c2b881ec5758036eb15469a"
+      "sha256": "92155f76a1cd8cd9f818d77d5752fbb214a86e1e53192f4349e7d28016c28a44"
     },
     {
       "path": ".claude/skills",
