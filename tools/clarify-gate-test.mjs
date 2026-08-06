@@ -375,8 +375,62 @@ const STRUCTURE_CASES = [
   },
 ];
 
-for (const c of STRUCTURE_CASES) {
-  const { code, out } = structure(c.body, c.personas);
+// --- the mid-workflow state CI actually sees -------------------------------------------
+// `--base <ref> --block` is the form the shipped workflow runs, and it is the only one that
+// reads a diff. Between /spec-plan and /spec-reconcile that diff carries the Phase 0/1
+// outputs the plan writes - research.md, data-model.md, quickstart.md, contracts/ - and the
+// persona gate read all four as capability specs that serve nobody, failing CI on a state
+// the guard's own full-tree comment calls legitimate. These cases build that branch for real.
+const planStage = (files) => {
+  const dir = mkdtempSync(join(tmpdir(), "spec-plan-stage-test-"));
+  const git = (...a) =>
+    spawnSync("git", ["-C", dir, "-c", "user.name=t", "-c", "user.email=t@example.com", "-c", "commit.gpgsign=false", ...a], {
+      encoding: "utf8",
+    });
+  mkdirSync(join(dir, "specs", "payments"), { recursive: true });
+  mkdirSync(join(dir, "docs"), { recursive: true });
+  writeFileSync(join(dir, "docs", "personas.md"), ROSTER);
+  writeFileSync(join(dir, "specs", "payments", "spec.md"), withStatus("in-refinement", "## Requirements\n\n- The system MUST capture.\n"));
+  git("init", "-q", "-b", "main");
+  git("add", "-A");
+  git("commit", "-qm", "seed");
+  git("checkout", "-qb", "plan-stage");
+  for (const [rel, body] of Object.entries(files)) {
+    mkdirSync(join(dir, rel.split("/").slice(0, -1).join("/")), { recursive: true });
+    writeFileSync(join(dir, rel), body);
+  }
+  git("add", "-A");
+  git("commit", "-qm", "plan");
+  const r = spawnSync("node", [STRUCTURE, "--base", "main", "--block"], { cwd: dir, encoding: "utf8" });
+  rmSync(dir, { recursive: true, force: true });
+  return { code: r.status ?? 1, out: `${r.stdout ?? ""}${r.stderr ?? ""}` };
+};
+
+const PLAN_OUTPUTS = {
+  "specs/payments/plan.md": "# Plan\n",
+  "specs/payments/research.md": "# Research\n",
+  "specs/payments/data-model.md": "# Data model\n",
+  "specs/payments/quickstart.md": "# Quickstart\n",
+  "specs/payments/contracts/capture-api.md": "# Capture API\n",
+};
+
+const PLAN_STAGE_CASES = [
+  {
+    name: "every artifact /spec-plan writes passes the persona gate mid-workflow",
+    fails: false,
+    says: "OK",
+    files: PLAN_OUTPUTS,
+  },
+  {
+    name: "a real sub-spec on the same branch is still gated",
+    fails: true,
+    says: "specs/payments/refunds.md",
+    files: { ...PLAN_OUTPUTS, "specs/payments/refunds.md": "# Refunds\n\nWhat happens on a refund.\n" },
+  },
+];
+
+for (const c of [...STRUCTURE_CASES.map((s) => ({ ...s, kind: "tree" })), ...PLAN_STAGE_CASES.map((s) => ({ ...s, kind: "diff" }))]) {
+  const { code, out } = c.kind === "diff" ? planStage(c.files) : structure(c.body, c.personas);
   const want = c.fails ? 1 : 0;
   if (code !== want) {
     failures++;
@@ -467,7 +521,7 @@ for (const c of BRIDGE_CASES) {
   }
 }
 
-const total = CASES.length + STRUCTURE_CASES.length + BRIDGE_CASES.length;
+const total = CASES.length + STRUCTURE_CASES.length + PLAN_STAGE_CASES.length + BRIDGE_CASES.length;
 if (failures) {
   console.log(`\nclarify-gate-test: FAIL - ${failures} of ${total} cases`);
   process.exit(1);
