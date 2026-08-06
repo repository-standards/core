@@ -41,6 +41,34 @@ Given that feature description, do this:
      - "Create a dashboard for analytics" → "analytics-dashboard"
      - "Fix payment processing timeout bug" → "fix-payment-timeout"
 
+<!-- PATCHED(repository-standards): ADR-002 - collision detection was exact-string on the
+     generated slug, in the one skill barred from asking the user. A request whose slug did
+     not string-match an existing capability it functionally overlapped therefore minted a
+     sibling in silence: `manager-shift-reassignment` beside an existing `shift-swap-request`
+     that already described the same behaviour - the split-by-wording failure ADR-002 exists
+     to prevent, arriving through the step that is supposed to prevent it. -->
+1b. **Before minting anything, look for a capability collision - by behaviour, not by name.**
+    List the directories under `specs/` and the capability keys in `specs/capability-map.json`,
+    and read the `## Purpose`, `## Scope` and `## Out of scope` of every one whose subject is
+    near this request. The name is the one thing that will not match: the same behaviour
+    arrives worded as the actor ("a manager reassigns a shift"), as the surface ("the shift
+    screen"), or as the ticket that asked for it, and a generated slug matches none of those.
+
+    - **An existing capability already owns this behaviour** -> update that spec in place.
+      Name it and say why in the Completion Report; do not mint a sibling.
+    - **The request spans two capabilities** - one sentence, two boundaries - -> write the
+      spec for the one it is primarily about, and record the other in `## Out of scope` as
+      `[NEEDS DECISION: <the boundary question>; owner: <who>]`, naming the capability it may
+      belong to. Never absorb the second silently, and never mint both in one invocation.
+    - **You cannot tell whether it is one capability or two** -> that is the same marker, not
+      a guess. Splitting a capability the wrong way produces two valid specs no guard can
+      compare, and nothing downstream will ever notice.
+
+    This is how the step surfaces a boundary call without breaking the rule that specify does
+    not ask: the marker blocks the clarify gate, and `/spec-clarify` - which owns the question
+    protocol - settles it before plan. Report every near-miss you considered, including the
+    ones you ruled out and why.
+
 2. **Create the spec feature directory**:
 
    Specs live under the default `specs/` directory unless the user explicitly provides `SPECIFY_FEATURE_DIRECTORY`.
@@ -53,7 +81,7 @@ Given that feature description, do this:
            prefix. Never create NNN-slug or YYYYMMDD-HHMMSS-slug directories. -->
       - The directory name is the short name alone: `<short-name>` (e.g., `user-auth`) - it names a capability/domain, so it must be stable and prefix-free
       - Do NOT add a numeric prefix (`003-user-auth`) or timestamp prefix (`20260319-143022-user-auth`)
-      - If `specs/<short-name>/` already exists, this is the same capability: update the existing spec in place instead of minting a new sibling directory
+      - If `specs/<short-name>/` already exists, this is the same capability: update the existing spec in place instead of minting a new sibling directory. That test is a name match and catches only the easy half - step 1b is what catches the same capability arriving under a different name
       - Set `SPECIFY_FEATURE_DIRECTORY` to `specs/<short-name>`
 
    **Create the directory and spec file**:
@@ -90,7 +118,7 @@ Given that feature description, do this:
      unmapped by construction, that one catches a refactor moving code out from under a glob.
 
    **IMPORTANT**:
-   - You must only create one feature per `/spec-specify` invocation
+   - You must only create one feature per `/spec-specify` invocation - a request that spans two capabilities is handled by step 1b (write one, mark the boundary), never by folding the second one in unnamed
    - The spec directory name and the git branch name are independent — they may be the same but that is the user's choice
 
 3. Load `specs/capability-spec.template.md` to understand required sections. <!-- PATCHED(repository-standards): the standard's template is the single source of the spec shape -->
@@ -217,6 +245,7 @@ Given that feature description, do this:
 Report completion to the user with:
 - `SPECIFY_FEATURE_DIRECTORY` — the feature directory path
 - `SPEC_FILE` — the spec file path
+- The capability collisions considered (step 1b): which existing capabilities were read, which was ruled the same or a neighbour, and any boundary left as a `NEEDS DECISION` marker <!-- PATCHED(repository-standards) -->
 - Checklist results summary
 - Readiness for the next phase (`/spec-clarify` or `/spec-plan`)
 
