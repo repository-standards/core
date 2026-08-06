@@ -5,6 +5,10 @@
 // one cycle. It reports nothing when a repo has no cycles, which is correct behaviour and
 // also what a broken version looks like - so the cases below assert both directions.
 //
+// Every check the guard grew has a pair of cases here for the same reason: one proving the
+// defect now fails, one proving the legitimate shape next to it still passes. A guard that
+// only learned to fail is a guard that stopped letting correct repos through.
+//
 // The template case is the one worth naming: the shipped `_template.md` carries example
 // ids, and if the guard read them the tree would violate its own invariant the moment it
 // landed in a repo whose backlog uses the same ids.
@@ -20,8 +24,13 @@ import { join } from "node:path";
 const GUARD = join(process.cwd(), "standard/scripts/cycle-guard.mjs");
 const TEMPLATE = join(process.cwd(), "standard/docs/cycles/_template.md");
 
-const table = (...ids) =>
-  `| id | title |\n|----|-------|\n${ids.map((i) => `| ${i} | something |`).join("\n")}\n`;
+// Each row's title is derived from its id, because the guard also keys the one-place
+// invariant on the title: rows that all said "something" made every fixture below look like
+// one intent copied into four places. Fixtures that want a shared title say so explicitly,
+// through `rows`.
+const rows = (...pairs) =>
+  `| id | title |\n|----|-------|\n${pairs.map(([id, t]) => `| ${id} | ${t} |`).join("\n")}\n`;
+const table = (...ids) => rows(...ids.map((i) => [i, `build ${i}`]));
 
 // Rows carrying a real status cell, for the `blocked:<id>` checks. The status is read as
 // the last cell whatever the column count, so this deliberately uses a different width
@@ -29,7 +38,7 @@ const table = (...ids) =>
 // fail on the shipped ten-column table.
 const statusTable = (...pairs) =>
   `| id | title | owner | status |\n|----|-------|-------|--------|\n${pairs
-    .map(([id, s]) => `| ${id} | something | dev | ${s} |`)
+    .map(([id, s]) => `| ${id} | build ${id} | dev | ${s} |`)
     .join("\n")}\n`;
 
 // A cycle file, as `cycle-open` writes one: the rows live under `## Intents`, because that
@@ -42,6 +51,19 @@ const cycleStatus = (...pairs) => `# Cycle\n\n## Intents\n\n${statusTable(...pai
 // A closed cycle carrying an `## Outcome` block, for the returned-id checks.
 const closedCycle = (ids, outcome) =>
   `# Cycle\n\n| | |\n| --- | --- |\n| **Status** | closed |\n\n## Intents\n\n${table(...ids)}\n## Outcome\n\n${outcome}\n`;
+
+// A cycle whose header table declares a status, for the in-flight pointer checks: a pointer
+// row is stale exactly when the cycle it names has closed.
+const statedCycle = (state, ...ids) =>
+  `# Cycle\n\n| | |\n| --- | --- |\n| **Status** | ${state} |\n\n## Intents\n\n${table(...ids)}`;
+
+// The pool's `## In flight` table - team, goal, target, the cycle file and how many intents
+// it holds. `cycles/...` is written relative to the pool's own directory, the way both the
+// shipped template and the worked example write it.
+const inFlight = (...pointers) =>
+  `# Backlog\n\n## In flight\n\n| Team | Goal | Target | Cycle | Items |\n|---|---|---|---|---|\n${pointers
+    .map(([team, path, items]) => `| ${team} | a goal | 2026-09-01 | \`${path}\` | ${items} |`)
+    .join("\n")}\n\n## Epic: everything\n\n`;
 
 // spawnSync, not execFileSync: the guard reports violations on stderr and advisory runs
 // still exit 0, so a success-only capture loses exactly the output the advisory case is
@@ -134,6 +156,15 @@ check("prose in the first cell is not mistaken for an id", {
 
 check("a cycle with no rows yet is valid", {
   files: { [POOL]: table("SPEC-1"), [CYC_A]: "# Cycle\n\n## Intents\n\nnothing pulled in yet.\n" },
+  code: 0,
+  expect: ["OK"],
+});
+
+// The heading was seen even though nothing follows it, so this is an empty cycle rather than
+// an unreadable one. Worth pinning: the three scans now share one reader, and "the section
+// exists" has to survive there being no line under it to prove it.
+check("a cycle whose Intents heading is the last line is empty, not unreadable", {
+  files: { [POOL]: table("SPEC-1"), [CYC_A]: "# Cycle\n\n## Intents" },
   code: 0,
   expect: ["OK"],
 });
@@ -379,11 +410,277 @@ check("a returned-to-pool line only matters when the cycle is closed", {
   expect: ["OK"],
 });
 
+// A reference is resolved case-insensitively and reported in the spelling the row declares.
+// Neither half is cosmetic: `ADR-auth` is the id form this guard's own header documents and
+// `add-to-backlog` tells an author to write, and uppercasing the reference to compare it
+// reported `ADR-AUTH exists nowhere` on a repo that was correct.
+check("a block naming a mixed-case id resolves to the row that declares it", {
+  files: { [POOL]: statusTable(["ADR-auth", "todo"], ["SPEC-2", "blocked:ADR-auth"]) },
+  code: 0,
+  expect: ["OK", "1 live block(s)"],
+});
+
+check("a block written in a different case than the row still resolves", {
+  files: { [POOL]: statusTable(["ADR-auth", "done"], ["SPEC-2", "blocked:adr-AUTH"]) },
+  code: 1,
+  expect: ["ADR-auth is done"],
+});
+
+// `split:<id>` - the cycle-boundary answer (ADR-029). It is finished work, so a block on it
+// is as stale as a block on a `done` row; the vocabulary landed in the template a release
+// before the guard learned to read it, and a re-run found the block still reported live.
+check("a block on a split-and-finished intent is stale", {
+  files: {
+    [POOL]: statusTable(["INV-2b", "todo"], ["DEC-1", "blocked:INV-2"]),
+    [CYC_A]: cycleStatus(["INV-2", "split:INV-2b"]),
+  },
+  code: 1,
+  expect: ["INV-2 was split and INV-2b carries what remains", "no longer applies"],
+});
+
+check("a block on an intent still being worked is not stale because a sibling split", {
+  files: {
+    [POOL]: statusTable(["INV-2b", "todo"], ["DEC-1", "blocked:INV-7"]),
+    [CYC_A]: cycleStatus(["INV-2", "split:INV-2b"], ["INV-7", "doing"]),
+  },
+  code: 0,
+  expect: ["OK", "1 live block(s)"],
+});
+
+// Reading `split:` as finished without checking what it names would turn three words in a
+// status cell into a way to retire any row and disarm every block pointing at it.
+check("a split naming a remainder that was never cut fails", {
+  files: {
+    [POOL]: table("SPEC-1"),
+    [CYC_A]: cycleStatus(["INV-2", "split:INV-2b"]),
+  },
+  code: 1,
+  expect: ["was split into INV-2b", "exists nowhere", "the remainder was never cut"],
+});
+
+check("an intent split into itself fails", {
+  files: { [POOL]: statusTable(["INV-2", "split:INV-2"]) },
+  code: 1,
+  expect: ["was split into itself"],
+});
+
+check("plain `split` with no reference is not read as finished", {
+  files: { [POOL]: statusTable(["INV-2", "split"], ["DEC-1", "blocked:INV-2"]) },
+  code: 0,
+  expect: ["OK", "1 live block(s)"],
+});
+
+// The one-place invariant is about the intent. Keyed entirely on the id, it certified a
+// copied row whose pool copy had been renumbered - the ids differed, so nothing clashed.
+check("one intent copied into a cycle and renumbered in the pool is caught", {
+  files: {
+    [POOL]: rows(["INV-9", "Reassign an active route"]),
+    [CYC_A]: `# Cycle\n\n## Intents\n\n${rows(["INV-2", "Reassign an active route"])}`,
+  },
+  code: 1,
+  expect: ["is one intent in 2 places under 2 ids", "INV-9", "INV-2"],
+});
+
+check("markup and spacing do not make it a different intent", {
+  files: {
+    [POOL]: rows(["INV-9", "Reassign an  active **route**"]),
+    [CYC_A]: `# Cycle\n\n## Intents\n\n${rows(["INV-2", "Reassign an active route"])}`,
+  },
+  code: 1,
+  expect: ["is one intent in 2 places under 2 ids"],
+});
+
+check("two intents with different titles are two intents", {
+  files: {
+    [POOL]: rows(["INV-9", "Reassign an active route"]),
+    [CYC_A]: `# Cycle\n\n## Intents\n\n${rows(["INV-2", "Notify the original courier"])}`,
+  },
+  code: 0,
+  expect: ["OK", "2 intent(s)"],
+});
+
+// A split is the one legitimate way one title reaches two rows: the remainder is a new row
+// and an author who keeps the wording is doing what `/cycle-close` told them to.
+check("a split remainder may keep its title", {
+  files: {
+    [POOL]: statusTable(["INV-2b", "todo"]).replace("build INV-2b", "Reassign an active route"),
+    [CYC_A]: cycleStatus(["INV-2", "split:INV-2b"]).replace("build INV-2", "Reassign an active route"),
+  },
+  code: 0,
+  expect: ["OK"],
+});
+
+check("a third row under the split's title is not covered by the exemption", {
+  files: {
+    [POOL]: `| id | title | status |\n|----|-------|--------|\n| INV-2b | Reassign an active route | todo |\n| INV-9 | Reassign an active route | todo |\n`,
+    [CYC_A]: cycleStatus(["INV-2", "split:INV-2b"]).replace("build INV-2", "Reassign an active route"),
+  },
+  code: 1,
+  expect: ["is one intent in 2 places under 3 ids"],
+});
+
+check("a repeated title inside one file is not two places", {
+  files: {
+    [POOL]: `| id | title |\n|----|-------|\n| INV-9 | Reassign an active route |\n| INV-8 | Reassign an active route |\n`,
+    [CYC_A]: cycle("PAY-1"),
+  },
+  code: 0,
+  expect: ["OK"],
+});
+
+check("a title cell that identifies nothing is not compared", {
+  files: {
+    [POOL]: rows(["INV-9", "-"]),
+    [CYC_A]: `# Cycle\n\n## Intents\n\n${rows(["INV-2", "-"])}`,
+  },
+  code: 0,
+  expect: ["OK"],
+});
+
+// The pool's in-flight pointer table. `/cycle-open` writes the row and `/cycle-close`
+// removes it, so all three of these are hygiene a repo was previously trusted to remember -
+// and a pool carrying all three at once still reported itself fully compliant.
+check("a pointer row for a cycle that has closed is stale", {
+  files: {
+    [POOL]: `${inFlight(["dispatch", "cycles/dispatch/may.md", 2])}${table("SPEC-1")}`,
+    "docs/cycles/dispatch/may.md": statedCycle("closed", "DSP-1", "DSP-2"),
+  },
+  code: 1,
+  expect: ["still points dispatch at docs/cycles/dispatch/may.md, which is closed"],
+});
+
+check("a pointer row for an open cycle with a matching count passes", {
+  files: {
+    [POOL]: `${inFlight(["dispatch", "cycles/dispatch/may.md", 2])}${table("SPEC-1")}`,
+    "docs/cycles/dispatch/may.md": statedCycle("open", "DSP-1", "DSP-2"),
+  },
+  code: 0,
+  expect: ["OK"],
+});
+
+check("a pointer row whose item count disagrees with the cycle is caught", {
+  files: {
+    [POOL]: `${inFlight(["dispatch", "cycles/dispatch/may.md", 4])}${table("SPEC-1")}`,
+    "docs/cycles/dispatch/may.md": statedCycle("open", "DSP-1", "DSP-2"),
+  },
+  code: 1,
+  expect: ["says dispatch's cycle holds 4 item(s), but docs/cycles/dispatch/may.md holds 2"],
+});
+
+check("a pointer row whose item cell is not a bare count is reported as unreadable", {
+  files: {
+    [POOL]: `${inFlight(["dispatch", "cycles/dispatch/may.md", "2 items"])}${table("SPEC-1")}`,
+    "docs/cycles/dispatch/may.md": statedCycle("open", "DSP-1", "DSP-2"),
+  },
+  code: 1,
+  expect: ["`Items` cell reads `2 items`", "it holds the count and nothing else"],
+});
+
+check("a pointer row naming a cycle file that is not there is caught", {
+  files: {
+    [POOL]: `${inFlight(["dispatch", "cycles/dispatch/june.md", 2])}${table("SPEC-1")}`,
+    "docs/cycles/dispatch/may.md": statedCycle("open", "DSP-1", "DSP-2"),
+  },
+  code: 1,
+  expect: ["is running `cycles/dispatch/june.md`, but no cycle file is there"],
+});
+
+// Deleting the pointer row rather than fixing it would otherwise be the cheapest way past
+// every check above.
+check("an open cycle no pointer row names is caught, once the pool keeps the table", {
+  files: {
+    [POOL]: `${inFlight(["dispatch", "cycles/dispatch/may.md", 2])}${table("SPEC-1")}`,
+    "docs/cycles/dispatch/may.md": statedCycle("open", "DSP-1", "DSP-2"),
+    "docs/cycles/growth/may.md": statedCycle("open", "GRO-1"),
+  },
+  code: 1,
+  expect: ["docs/cycles/growth/may.md is open, but no in-flight row"],
+});
+
+// A table with no pointer rows in it is a pool not running cycles from its own side, rather
+// than a pool with a pointer missing - the boundary the checks above deliberately stop at.
+check("a pool with the table present but no pointer rows is not using it", {
+  files: {
+    [POOL]: `${inFlight()}${table("SPEC-1")}`,
+    "docs/cycles/dispatch/may.md": statedCycle("open", "DSP-1"),
+  },
+  code: 0,
+  expect: ["OK"],
+});
+
+// The same boundary against the real shipped pool, whose In flight table carries one blank
+// row and one commented-out example. Neither is a pointer, and an adopter who instantiates
+// the tree and opens a cycle before touching the table must not be failed for it.
+{
+  const dir = fixture({ "docs/cycles/dispatch/may.md": statedCycle("open", "DSP-1") });
+  cpSync(join(process.cwd(), "standard/docs/backlog.md"), join(dir, POOL));
+  const { code, out } = run(dir, true);
+  rmSync(dir, { recursive: true, force: true });
+  if (code !== 0) {
+    failures++;
+    console.error(`  FAIL the shipped pool's empty in-flight table is not a missing pointer\n       exit ${code}: ${out.trim()}`);
+  } else {
+    console.log("  ok    the shipped pool's empty in-flight table is not a missing pointer");
+  }
+}
+
+check("a closed cycle needs no pointer row", {
+  files: {
+    [POOL]: `${inFlight(["dispatch", "cycles/dispatch/may.md", 1])}${table("SPEC-1")}`,
+    "docs/cycles/dispatch/may.md": statedCycle("open", "DSP-1"),
+    "docs/cycles/growth/april.md": statedCycle("closed", "GRO-1"),
+  },
+  code: 0,
+  expect: ["OK"],
+});
+
+check("an in-flight row this guard cannot key on a cycle is reported, not skipped", {
+  files: {
+    [POOL]: `# Backlog\n\n## In flight\n\n| Team | Goal | Items |\n|---|---|---|\n| dispatch | a goal | 2 |\n\n## Epic: everything\n\n${table("SPEC-1")}`,
+    "docs/cycles/dispatch/may.md": statedCycle("open", "DSP-1", "DSP-2"),
+  },
+  code: 1,
+  expect: ["an in-flight row with no `cycle` column to read"],
+});
+
+// Blanking one cell would otherwise be the way to stop a pointer being checked, while the
+// row still reads as a team in flight.
+check("a pointer row with the cycle cell blanked is reported, not skipped", {
+  files: {
+    [POOL]: `${inFlight(["dispatch", "", 2])}${table("SPEC-1")}`,
+    "docs/cycles/dispatch/may.md": statedCycle("open", "DSP-1", "DSP-2"),
+  },
+  code: 1,
+  expect: ["an in-flight row with no `cycle` column to read"],
+});
+
+// The worked adopting repo writes its pointer as a markdown link and the shipped template
+// as a backticked path. Both are the same pointer.
+check("a pointer written as a markdown link resolves the same as a bare path", {
+  files: {
+    [POOL]: `# Backlog\n\n## In flight\n\n| Team | Goal | Target | Cycle | Items |\n|---|---|---|---|---|\n| dispatch | a goal | 2026-09-01 | [may](cycles/dispatch/may.md) | 2 |\n\n## Epic: everything\n\n${table("SPEC-1")}`,
+    "docs/cycles/dispatch/may.md": statedCycle("open", "DSP-1", "DSP-2"),
+  },
+  code: 0,
+  expect: ["OK"],
+});
+
+// The pointer table is recognised by its columns. A pool that writes something else under
+// the same heading is not a pool with a broken pointer table.
+check("another table under the same heading is not read as a broken pointer table", {
+  files: {
+    [POOL]: `# Backlog\n\n## In flight\n\nnothing in flight.\n\n${table("SPEC-1")}`,
+    [CYC_A]: cycle("PAY-9"),
+  },
+  code: 0,
+  expect: ["OK", "2 intent(s)"],
+});
+
 console.log();
 if (failures) {
   console.error(`cycle-guard-test: ${failures} case(s) failed`);
   process.exit(1);
 }
 console.log(
-  "cycle-guard-test: OK - one intent lives in exactly one place, blocks point at something real, a cycle the guard cannot read is an error, and a return actually lands",
+  "cycle-guard-test: OK - one intent lives in exactly one place under one title, blocks and splits point at something real, a cycle the guard cannot read is an error, a return actually lands, and the pool's in-flight pointers agree with the cycles they name",
 );

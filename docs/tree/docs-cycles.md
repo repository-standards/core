@@ -54,8 +54,15 @@ Backticks or bold around the id are fine either way - the guard strips them befo
 
 **The status is the last cell**, whatever columns you add in between. Blocking gets no
 column of its own: `blocked:INV-2` goes in the status cell, and the guard fails when that
-id does not exist, is already done, or is the row itself - a stale block is the most common
-way a board lies.
+id does not exist, is already finished, or is the row itself - a stale block is the most
+common way a board lies. `split:INV-2b`, the cycle-boundary answer `/cycle-close` writes,
+counts as finished for that check and is itself checked the same way: the remainder must be a
+row that exists and is not this one.
+
+**The title is the other half of the id.** The guard reads it from the column the header
+names `title` and treats one title in two files under two ids as one intent in two places -
+because copying a row into a cycle and renumbering the copy left in the pool passes every
+check keyed on the id alone. A `split:<id>` pair may share a title; nothing else may.
 
 `Size` is a cold-start ranking signal and nothing else - it is never converted into a duration,
 even before the repo has any closed cycles. Once it does, the forecast comes from what
