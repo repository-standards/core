@@ -52,12 +52,21 @@ dropped`, and `approved` graduates into `graduated`.
 - **`idea -> exploring`**: someone is actively working the open questions, not just holding
   the thought. Update the file in place - add what was learned, narrow the open questions.
 - **`-> approved`**: the fork was taken - the idea is going to happen. **Do not stop here.**
-  Hand off immediately: a backlog intent for the work (`add-to-backlog`), a behavioral or
-  buildable spec for what it changes (`spec-specify`), and any ADR/BDR the shape now
-  demands (`adr-write`/`bdr-write` - a decision now exists to write). Flip the idea doc's
+  Hand off immediately: a backlog intent for the work (`add-to-backlog`), the spec change
+  for what it alters (routed as below), and any ADR/BDR the shape now demands
+  (`adr-write`/`bdr-write` - a decision now exists to write). Flip the idea doc's
   `Status` to `graduated` and fill the **Graduation** section with the backlog id, spec
   path, and record ids - the idea doc becomes the historical "here's how we got here," the
   new artifacts are where the work actually lives now.
+
+  **Route the spec half through `spec-impact`, and let it name the capability.** An idea's
+  slug names the idea, not a capability, so handing the slug to `spec-specify` mints
+  `specs/<idea-slug>/` next to the capability the idea actually changes - two specs for one
+  behaviour, the older one still stating the behaviour this idea replaced. An approved idea
+  that changes how an **existing** capability works is `spec-update` against that
+  capability's spec; `spec-specify` is for the case where the impact pass finds no existing
+  capability owns the behaviour, and then the directory is named after the capability, never
+  after the idea.
 - **`-> parked`**: not now, not never. One line on why, so the next person who has the same
   thought finds this instead of re-arguing it from zero.
 - **`-> dropped`**: decided against. One line on why - same reason: cheap memory beats a
@@ -83,6 +92,7 @@ considered and what happened to it - that is the value, not the idea itself.
 - [ ] `docs/ideas/<slug>.md` exists, filled from what the user actually said
 - [ ] `For whom` names a real persona, or the idea is marked `parked` instead
 - [ ] `Status` reflects where it actually is, dated
-- [ ] On approval: backlog intent + spec + any records exist, and the idea doc reads
-      `graduated` with links to all three
+- [ ] On approval: backlog intent + the spec change (the existing capability's spec where
+      one owns the behaviour, a new capability only where none does) + any records exist,
+      and the idea doc reads `graduated` with links to all three
 - [ ] On park/drop: one line says why

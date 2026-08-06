@@ -146,7 +146,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R16",
-      "sha256": "518d7a989876876a2bb4f3144c1c11209d91b706bca047701f87c296a6a91f23"
+      "sha256": "67f463a1d4296bbd62243c09c2999bfe03fef5bfebdc96d218f40702b2f4609a"
     },
     {
       "path": "scripts/facts-check.mjs",
@@ -210,21 +210,21 @@
       "rule": "R22",
       "sha256": {
         "add-to-backlog/SKILL.md": "151571dfcf9a2aae38db59fff6383000505dc7d8fe753910af6b00edd729ea22",
-        "adr-write/SKILL.md": "fc48ce8bc9c48453cb0ed25c2e3c5de54e6fd1dd6afaf50d5df0ca0d5530e239",
-        "bdr-write/SKILL.md": "90e067a709444a04c5e8664109e069140cc388c41822f2b4e909b7229afdedff",
+        "adr-write/SKILL.md": "cd6948133b5fb69e214f07cac124c69e77eecfd5db81a3c49ae807d435ac1a40",
+        "bdr-write/SKILL.md": "0792778940339c77fb41c0c4faf3f48ebec02057e26738c9bdb742d118fcfda3",
         "cycle-close/SKILL.md": "72bad295dd461eebae9bd356ad07db33a76274c7b3011ad1d52d1158f0b82147",
         "cycle-open/SKILL.md": "2e9f3b417584523cd56c8763a20aa4667db366905110c3719a9087f4910d19c4",
         "discovery-digest/SKILL.md": "bc7f25b8a7eb9be3adaa0917febb5c2b452d378e1d5836c5b1bf47add2094d09",
-        "idea-write/SKILL.md": "01f74cf692bb7941d24118928080e16519c78c683a374a69aad81695036e02ae",
+        "idea-write/SKILL.md": "0c6bf300123b8b7b2be4b9d5d757158bd3a8524be95b858876cfd35e532c68fd",
         "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",
         "pre-pr-review/SKILL.md": "d72bee4edf7979968dc08f2cc493826953a396090a212f36132af557cde55960",
         "product-write/SKILL.md": "21bdc82897281178f915cb0f51dd669d35228d17748977cbacdc1993f2843b98",
-        "spec-clarify/SKILL.md": "b52633474235603614e301bca1717dab11d257c9d5d5daee1ba0d8d3ca270366",
+        "spec-clarify/SKILL.md": "26da90f61886188eec6fc6c4a92c60fd825b6c1bb47bd90c16257f14a4471cdd",
         "spec-impact/SKILL.md": "557be97a4f0e6fb3cc232e4b5bc8bc16c820bb3314b33ac047ff09efdde94441",
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",
         "spec-plan/SKILL.md": "00d877467e5d5f971fbdcce2cc5b20afb03e6645198363c92cbc57f13a4e3ae3",
         "spec-reconcile/SKILL.md": "2df8cf62c9df25ac4d165908f8a7345531006381aef1a841f82447d37a3d460a",
-        "spec-specify/SKILL.md": "aa10fc0f8a34bdd50a3c2a41d076d9625affda7f5826aba96d2a598af4b1e7bd",
+        "spec-specify/SKILL.md": "50d57c356b74a18723628adef221113042d8e6dfe7c142c0137931d3298bd570",
         "spec-tasks/SKILL.md": "59cdabc8e4e8f3656d245c1aa20213f0d89cd5e7fc9915e05d3e7fa1af98b9f1",
         "spec-update/SKILL.md": "737a9a862f7ed0ea441fe72f0855ddca5dbfcee7284b8343e82ef6c8f967b980",
         "timeline-update/SKILL.md": "e0770d9e33139bbddaa01be6bd59748845ab6d18b34fd9de489910f110cd584c",
@@ -244,7 +244,7 @@
         "check-prerequisites.sh": "24f398770a52ae6b73ae0d4601fe3fd2a81491c51463f53a956c4d98d49b9f25",
         "check-spec-clarified.sh": "414c28837b93e0b9c2c342b230f7f09c2c2b24fe7a0e804e3ab4b1e5add55229",
         "common.sh": "814ec1d965c536b8806324f5050ad75e521b6e2aa3ff241510d316b4bd779e13",
-        "plan-template.md": "c3dd77a9a109cee4bdc77b615e7d5a707b80c164e02fa8b4d7552f7ad2f8400c",
+        "plan-template.md": "c8a345b6a586d54125a95ce9bb6d90e5fc8870ee90c4a4bbc5c3edd904130c03",
         "setup-plan.sh": "2ea9e784b283f66aac7c92fead8810a9809adbbdd2091036800a8dd287085a88",
         "setup-tasks.sh": "0e14f3d03e71479fc20cc15cef42d57ab50ad10b08d7dd1613c0b98bd85d3433",
         "tasks-template.md": "55b784e4b1e1c1295cc748e72f00b913105bfe45774228ecd1b86f91f648336e"
@@ -358,7 +358,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R11",
-      "sha256": "f31487ac7dd5a3a7e6fc2703d7ccad3bf3e1727779ac0a47fa128fc4b02c2cc2"
+      "sha256": "eac82889fdc92feeb22541f1cab02f048d76b5d6c1cc03d36748f7f92d49790e"
     },
     {
       "path": ".github/workflows/spec-guard.yml",
@@ -784,6 +784,7 @@
       "prompt": "Monorepo vs polyrepo?",
       "record": "ADR",
       "catalog": "foundation",
+      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -792,6 +793,7 @@
       "prompt": "Where are the module/domain seams? (slice by capability, not layer)",
       "record": "ADR",
       "catalog": "foundation",
+      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -800,6 +802,7 @@
       "prompt": "Primary datastore & persistence model?",
       "record": "ADR",
       "catalog": "data",
+      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -808,6 +811,7 @@
       "prompt": "API / contract style & versioning?",
       "record": "ADR",
       "catalog": "interfaces",
+      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -816,6 +820,7 @@
       "prompt": "Authn mechanism + authz model?",
       "record": "ADR",
       "catalog": "interfaces",
+      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -824,6 +829,7 @@
       "prompt": "Test tiers and where each runs?",
       "record": "ADR",
       "catalog": "quality",
+      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -832,6 +838,7 @@
       "prompt": "The floor below which nothing ships?",
       "record": "ADR",
       "catalog": "quality",
+      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -840,6 +847,7 @@
       "prompt": "Branching & release strategy (who cuts releases)?",
       "record": "ADR",
       "catalog": "delivery",
+      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     }
