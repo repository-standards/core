@@ -431,13 +431,21 @@ function mdToHtml(markdown, ctx) {
       continue;
     }
 
-    // fenced code block - consumed verbatim, escaped, never inline-parsed
-    if (/^```/.test(line)) {
-      const fenceLang = line.slice(3).trim().toLowerCase();
+    // fenced code block - consumed verbatim, escaped, never inline-parsed.
+    //
+    // A fence indented under a list item is the same fence: an author writing a numbered
+    // step with a command under it indents both, which is ordinary markdown. Matching only
+    // at column 0 let that block through as prose, so the page rendered its backticks
+    // literally - caught by site-check, one release after the doc was written. The opening
+    // indent is remembered and stripped from the body, so the code reads as it was written
+    // rather than carrying the list's indentation into the block.
+    if (/^\s{0,3}```/.test(line)) {
+      const indent = line.match(/^\s*/)[0];
+      const fenceLang = line.trim().slice(3).trim().toLowerCase();
       i++;
       const codeLines = [];
-      while (i < lines.length && !/^```/.test(lines[i])) {
-        codeLines.push(lines[i]);
+      while (i < lines.length && !/^\s{0,3}```\s*$/.test(lines[i])) {
+        codeLines.push(lines[i].startsWith(indent) ? lines[i].slice(indent.length) : lines[i]);
         i++;
       }
       i++; // consume closing fence (or EOF if unterminated)
