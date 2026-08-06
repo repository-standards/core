@@ -40,6 +40,13 @@
 
 The responsibility and boundary of this capability, in one or two sentences.
 
+<!-- CLARIFY-ANCHOR: `## Clarifications` goes HERE - immediately after `## Purpose`, before
+     `## Scope` - and every later session is a new `### Session YYYY-MM-DD` under that one
+     heading. The position is fixed so two runs, possibly by two different agents, produce
+     the same file instead of a diff that moves the section around. The heading itself is
+     deliberately NOT shipped in this template: the clarify gate greps for it, so a template
+     carrying it would satisfy that check on a spec where no clarify session ever ran. -->
+
 ## Scope
 
 What belongs to this capability.

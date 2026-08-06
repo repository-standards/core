@@ -188,8 +188,13 @@ Execution steps:
 6. Integration after EACH accepted answer (incremental update approach):
     - Maintain in-memory representation of the spec (loaded once at start) plus the raw file contents.
     - For the first integrated answer in this session:
-       - Ensure a `## Clarifications` section exists (create it just after the highest-level contextual/overview section per the spec template if missing).
-       - Under it, create (if not present) a `### Session YYYY-MM-DD` subheading for today.
+       <!-- PATCHED(repository-standards): "just after the highest-level contextual/overview
+            section" is a judgement, and the template's 16 headings offer several plausible
+            answers, so two independent runs placed the section in different spots - churn in
+            a file whose section order the specify step separately requires be preserved. The
+            template now carries a CLARIFY-ANCHOR comment and this names the position. -->
+       - Ensure a `## Clarifications` section exists. If it is missing, create it at the anchor the template marks (`CLARIFY-ANCHOR` in `specs/capability-spec.template.md`): immediately after `## Purpose`, before `## Scope`. The position is fixed rather than chosen, so a second session - possibly run by a different agent - lands in the same place.
+       - Under it, create (if not present) a `### Session YYYY-MM-DD` subheading for today. **Never add a second `## Clarifications` heading**: the gate reads the first one and stops, so everything under a duplicate is invisible to it, and the structure guard refuses the spec.
     - Append a bullet line immediately after acceptance: `- Q: <question> → A: <final answer>`.
     - Then immediately apply the clarification to the most appropriate section(s):
        <!-- PATCHED(repository-standards): routed to the sections capability-spec.template.md
