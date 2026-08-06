@@ -78,6 +78,11 @@ Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-c
 - Both tools MUST be dependency-free (Node built-ins only) and runnable from the repo root.
 - tree-check MUST run every check and report every failure, never stop at the first.
 - link-check MUST strip a `#fragment` from the target before resolving the path.
+- tree-check MUST verify that every tracked text file is still **diffable** - free of NUL
+  bytes. A file carrying one is classified binary by git, so `git diff` shows nothing and
+  `grep` finds nothing in it: the file keeps working while silently ceasing to be
+  reviewable, which no other gate detects. Files that are binary by extension are excluded
+  before being read.
 
 ## Invariants
 
@@ -85,6 +90,7 @@ Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-c
 - A manifest `files[]` path outside `CLIENT_ONLY` MUST exist in the tree at `path` or at an `altPaths` entry.
 - The pristine tree MUST pass its own `self-verify --skeleton`.
 - Every `copy`-class manifest entry MUST carry a hash of what the tree actually ships, and no hash may be authored by hand.
+- No tracked text file MUST contain a NUL byte.
 
 ## Acceptance criteria
 
@@ -92,6 +98,7 @@ Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-c
 - **Client-only pass.** GIVEN the manifest promises `.standards-version` and the tree does not contain it WHEN tree-check runs THEN the promises check still passes.
 - **Missing promise.** GIVEN a manifest file exists at neither `path` nor any `altPaths` under `standard/` WHEN tree-check runs THEN a FAIL names `standard/<path>` and the entry's `purpose`, exit 1.
 - **Stale hash.** GIVEN a shipped `copy` file is edited and the manifest is not regenerated WHEN tree-check runs THEN a FAIL names the entry and says to run `tools/manifest-hashes.mjs`, exit 1.
+- **Unreviewable file.** GIVEN a tracked text file containing a NUL byte WHEN tree-check runs THEN a FAIL names the file and the line, and exit code is 1.
 - **Hash on the wrong class.** GIVEN a `merge` or `fill-from-repo` entry carries a `sha256` WHEN the hash check runs THEN it FAILs - only copy-class content is the standard's to fix.
 - **Broken skeleton.** GIVEN `self-verify --skeleton` exits non-zero inside `standard/` WHEN tree-check runs THEN its output appears indented under a FAIL and tree-check exits 1.
 - **Dead link.** GIVEN `docs/a.md` line 7 links a relative target `missing.md` and `docs/missing.md` does not exist WHEN link-check runs THEN it prints `docs/a.md:7 -> missing.md` and exits 1. (The literal pattern is not reproduced here - it would fail this very check.)
