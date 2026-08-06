@@ -20,15 +20,18 @@ verifiable against the **code**. A persona makes it verifiable against a **user*
 ## What goes in here
 
 A table. `scripts/spec-structure.mjs` reads it as the live roster, so it is data as much as
-prose.
+prose - and the name goes in backticks, which is the part the guard parses.
 
 ```markdown
 | Persona | Primary? | One-line |
 |---|---|---|
-| Host Hanna, part-time landlord | yes | lists two flats, checks payouts weekly |
-| Guest Gustav, business traveller | | books late, cancels often, never calls support |
-| Ops lead Ola, mid-size agency | | manages 60 listings and three staff accounts |
+| `Host Hanna, part-time landlord` | yes | lists two flats, checks payouts weekly |
+| `Guest Gustav, business traveller` | | books late, cancels often, never calls support |
+| `Ops lead Ola, mid-size agency` | | manages 60 listings and three staff accounts |
 ```
+
+A row without them reads as no persona at all, so a table written that way is an empty
+roster. The guard says so rather than passing everything.
 
 Keep it small. Three to six is typical, and that is a **ceiling rather than a quota**: one
 persona you actually know beats three invented to fill the table, and invented ones produce

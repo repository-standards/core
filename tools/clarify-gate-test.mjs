@@ -257,14 +257,15 @@ const STRUCTURE = join(process.cwd(), "standard/scripts/spec-structure.mjs");
 
 const ROSTER = "# Personas\n\n## The roster\n\n| Persona | Cares about |\n|---|---|\n| `Owner-operator Olga` | money arriving |\n";
 
-const structure = (specBody, personas = ROSTER) => {
+const structure = (specBody, personas = ROSTER, { noPersonas = false, extraFiles = {} } = {}) => {
   const dir = mkdtempSync(join(tmpdir(), "spec-status-test-"));
   mkdirSync(join(dir, "specs", "payments"), { recursive: true });
   mkdirSync(join(dir, "docs"), { recursive: true });
   // A roster, so the persona check has something to hold and these cases are only about
   // the status. The spec below names one.
-  writeFileSync(join(dir, "docs", "personas.md"), personas);
-  writeFileSync(join(dir, "specs", "payments", "spec.md"), specBody);
+  if (!noPersonas) writeFileSync(join(dir, "docs", "personas.md"), personas);
+  if (specBody !== null) writeFileSync(join(dir, "specs", "payments", "spec.md"), specBody);
+  for (const [rel, body] of Object.entries(extraFiles)) writeFileSync(join(dir, rel), body);
   const r = spawnSync("node", [STRUCTURE, "--block"], { cwd: dir, encoding: "utf8" });
   rmSync(dir, { recursive: true, force: true });
   return { code: r.status ?? 1, out: `${r.stdout ?? ""}${r.stderr ?? ""}` };
@@ -316,7 +317,127 @@ const STATUS_CASES = [
 ];
 
 for (const c of STATUS_CASES) {
-  const { code, out } = structure(c.body, c.personas);
+  const { code, out } = structure(c.body, c.personas, c);
+  const want = c.fails ? 1 : 0;
+  if (code !== want) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - expected exit ${want}, got ${code}\n${out.replace(/^/gm, "        ")}`);
+  } else if (!out.includes(c.says)) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - exit ${code} is right but the output never says "${c.says}"\n${out.replace(/^/gm, "        ")}`);
+  } else {
+    console.log(`  ok    ${c.name}`);
+  }
+}
+
+// --- the persona gate, checked against the roster ---------------------------------------
+// R10 says every capability spec names the persona it serves, and personas-write states the
+// consequence: a persona missing from the roster "does not exist as far as R10 is concerned".
+// The check said otherwise. It was a three-way OR whose first arm passed any non-placeholder
+// `**Serves:**` string without ever opening personas.md, so the two roster-aware arms behind
+// it could never fire and the roster constrained nothing. A spec could serve `Whoever I like`,
+// or write the phrase "for whom" and name nobody, and the guard printed OK - and stripping the
+// backticks off every roster row (which empties the parsed roster) changed no verdict either,
+// because nothing was being compared against it. These cases pin the roster as the constraint
+// in both directions, including the silence that hid it.
+const NO_BACKTICKS = "# Personas\n\n## The roster\n\n| Persona | Cares about |\n|---|---|\n| Owner-operator Olga | money arriving |\n";
+const PLACEHOLDER_ROSTER = "# Personas\n\n## The roster\n\n| Persona | Primary? | One-line |\n|---|---|---|\n| `<Name + role>` | yes | (fill at adoption) |\n";
+const REQUIREMENTS = "## Requirements\n\n- The system MUST capture.\n";
+const withServes = (serves, body = REQUIREMENTS) => `# Payments\n\n${serves}**Status:** in-refinement\n\n${body}`;
+
+const PERSONA_CASES = [
+  {
+    name: "a Serves naming a persona on the roster passes",
+    fails: false,
+    says: "OK",
+    body: withServes("**Serves:** `Owner-operator Olga` - money must land without her chasing it.\n"),
+  },
+  {
+    name: "a Serves naming a persona who is not on the roster fails",
+    fails: true,
+    says: "not on the roster",
+    body: withServes("**Serves:** `Whoever I like`\n"),
+  },
+  {
+    name: "the failure quotes the name the spec claimed and the roster it is not in",
+    fails: true,
+    says: 'serves "Whoever I like"',
+    body: withServes("**Serves:** `Whoever I like`\n"),
+  },
+  {
+    name: "a Serves naming two personas passes when both are on the roster",
+    fails: false,
+    says: "OK",
+    personas: `${ROSTER}| \`Agency admin Adam\` | reconciling in bulk |\n`,
+    body: withServes("**Serves:** `Agency admin Adam` reconciles in bulk; `Owner-operator Olga` never reconciles at all.\n"),
+  },
+
+  // A roster the guard cannot read is not a roster that forbids nothing. Both shapes below
+  // parse to zero personas, which is the state every membership test passes silently.
+  {
+    name: "a roster whose rows lost their backticks fails instead of emptying the check",
+    fails: true,
+    says: "no persona could be read from the roster",
+    personas: NO_BACKTICKS,
+    body: withServes("**Serves:** `Owner-operator Olga`\n"),
+  },
+  {
+    name: "a roster still carrying only the shipped placeholder fails the same way",
+    fails: true,
+    says: "no persona could be read from the roster",
+    personas: PLACEHOLDER_ROSTER,
+    body: withServes("**Serves:** `Owner-operator Olga`\n"),
+  },
+
+  // The other two arms of the old OR, each of which passed a spec that serves nobody.
+  {
+    name: "the phrase 'for whom' no longer stands in for naming a persona",
+    fails: true,
+    says: "no persona named",
+    body: withServes("", `This section explains for whom the capability exists.\n\n${REQUIREMENTS}`),
+  },
+  {
+    name: "an unfilled Serves placeholder is a spec that serves nobody",
+    fails: true,
+    says: "no persona named",
+    body: withServes("**Serves:** `<persona from docs/personas.md>`   <!-- required (ADR-006) -->\n"),
+  },
+
+  // The escape hatches that were already there, and stay: prose may name the persona, a
+  // repo may have no roster yet, and a template is not a spec.
+  {
+    name: "a spec with no Serves field that names a roster persona in prose passes",
+    fails: false,
+    says: "OK",
+    body: withServes("", `Owner-operator Olga runs the property herself, so capture must be one tap.\n\n${REQUIREMENTS}`),
+  },
+  {
+    name: "a repo with no personas.md and no capability specs is not a violation",
+    fails: false,
+    says: "persona check skipped",
+    noPersonas: true,
+    body: null,
+  },
+  {
+    name: "a capability spec with no roster anywhere to check it against still fails",
+    fails: true,
+    says: "no docs/personas.md roster",
+    noPersonas: true,
+    body: withServes("**Serves:** `Owner-operator Olga`\n"),
+  },
+  {
+    // The shipped template, read rather than restated: its unfilled `**Serves:**` placeholder
+    // must not be graded as a spec that serves nobody, or every adopting repo starts red.
+    name: "the shipped capability template sitting in specs/ is not a capability spec",
+    fails: false,
+    says: "OK",
+    extraFiles: { "specs/payments/capability-spec.template.md": readFileSync(TEMPLATE, "utf8") },
+    body: withServes("**Serves:** `Owner-operator Olga`\n"),
+  },
+];
+
+for (const c of PERSONA_CASES) {
+  const { code, out } = structure(c.body, c.personas, c);
   const want = c.fails ? 1 : 0;
   if (code !== want) {
     failures++;
@@ -407,9 +528,9 @@ for (const c of BRIDGE_CASES) {
   }
 }
 
-const total = CASES.length + STATUS_CASES.length + BRIDGE_CASES.length;
+const total = CASES.length + STATUS_CASES.length + PERSONA_CASES.length + BRIDGE_CASES.length;
 if (failures) {
   console.log(`\nclarify-gate-test: FAIL - ${failures} of ${total} cases`);
   process.exit(1);
 }
-console.log(`\nclarify-gate-test: OK - ${total} cases, a spec that is not settled cannot reach plan or tasks or claim it did`);
+console.log(`\nclarify-gate-test: OK - ${total} cases, a spec that is not settled cannot reach plan or tasks or claim it did, and one that serves nobody on the roster cannot pass`);
