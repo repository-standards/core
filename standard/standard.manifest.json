@@ -517,6 +517,48 @@
       "since": "1.0.0",
       "rule": "R15",
       "sha256": "2d01c193d687b931b987c37065231842e7b01f2af52caf6f63fb42d54dfebd65"
+    },
+    {
+      "path": "scripts/work-dashboard.mjs",
+      "purpose": "renders the work state - pool, cycles, timeline, records, changelog - as one static page for the people who never open the repository; a projection, never a second place work is tracked",
+      "adapt": "copy",
+      "required": false,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R15",
+      "sha256": "82cbd79ce6e5ed4ed9b82528a25e79dee7d554a35e50da95a221d72177fd1e00"
+    },
+    {
+      "path": "scripts/work-dashboard.css",
+      "purpose": "the dashboard's styling, inlined into the page at build time",
+      "adapt": "copy",
+      "required": false,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R15",
+      "sha256": "9f16f1ac18ab8f0a4f005d5bc9b936f65927bac3893887a3aa6ef1ecbf516dec"
+    },
+    {
+      "path": "scripts/work-dashboard.client.js",
+      "purpose": "the dashboard's rendering, inlined into the page at build time - no network, no dependencies",
+      "adapt": "copy",
+      "required": false,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R15",
+      "sha256": "f72430fdeb2cc48729c5f1c9870b2df8d70b0590020a023b15cbb669f72944ba"
+    },
+    {
+      "path": ".github/workflows/work-dashboard.yml",
+      "purpose": "builds the dashboard on every push to main; publishes it only when the repository is public, because Pages on a private repository is served publicly",
+      "adapt": "merge",
+      "required": false,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R15",
+      "requiredKeys": [
+        "on.push"
+      ]
     }
   ],
   "references": [
