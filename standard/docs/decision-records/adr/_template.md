@@ -5,7 +5,16 @@
 | **Status** | Proposed |
 | **Date** | YYYY-MM-DD |
 | **Author** | {{AUTHOR}} |
+| **Decided by** | the author |
 | **Tags** | <area> |
+
+<!-- "Decided by" is what made this binding, not who typed it. Most records answer "the
+     author" or "the maintainers" and that is a real answer, worth one word. It exists for
+     the projects where it is not: a chartered committee whose vote is the thing that
+     confers authority (a TSC carrying a legally binding technical charter), a named
+     delegate, a client sign-off. Record the vote as the charter defines it - body, date,
+     tally, quorum met - because a reader asking "who could overturn this?" is asking about
+     the body, and a record that only names its typist cannot answer. -->
 
 <!-- An Accepted record is never edited into a different decision. When it stops being
      true, write `Superseded by ADR-NNN (date)` in Status; the text below stays exactly as

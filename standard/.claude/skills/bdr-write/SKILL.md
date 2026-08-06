@@ -45,6 +45,10 @@ that reads like an ADR with the wrong nouns.
   privacy, money and safety decisions this is the whole risk, and "nothing yet" is a real
   answer that has to be written down as one.
 - **Revisit when.** Usually the same signal, with a date or a threshold attached.
+- **Decided by - what made it binding.** "The author" is a real answer where the author could
+  make the call. Where a body did - a steering group, a board, a client sign-off - name it
+  the way that body defines a decision (name, date, tally, quorum met). A business decision
+  is contested more often than a technical one, and the row is what a challenge lands on.
 
 These are the template's own sections - `Who it serves`, `What this rules out` and `How we
 would know we were wrong` exist in the BDR template and not in the ADR one, which is the
