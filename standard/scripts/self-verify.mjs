@@ -538,7 +538,57 @@ if (!skeleton) {
   // The cost is a real placeholder written inside backticks going unseen. That is why the
   // shipped templates put fill markers in prose and keep code formatting for notation; the
   // convention is what makes the check precise, not the regex alone.
-  const stripCode = (s) => s.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, "").replace(/`[^`\n]*`/g, "");
+  //
+  // Markdown has four code forms and this used to strip two. The other two are what a
+  // document written before fenced blocks existed actually uses, and both were found on
+  // real repositories the standard never wrote:
+  //   - a code span that WRAPS A LINE BREAK. git/git's README.md:26-27 reads
+  //     "`man git-<commandname>` or `git help\n<commandname>`" - the span crosses the line
+  //     end, the old `[^`\n]*` refused to cross it, and the leftover `<commandname>` on the
+  //     next line was read as a placeholder. A span may now contain newlines but never a
+  //     BLANK line, so an unmatched backtick cannot swallow the rest of the file.
+  //     The delimiter is a RUN of backticks matched by its own length, which is what
+  //     markdown says and what keeps the pairing local: with a single-backtick pattern, a
+  //     `` `x` `` span (the form used to show a backtick) left an odd backtick behind and
+  //     every span after it paired one position out - which, once spans could cross lines,
+  //     exposed the notation on the following lines instead of stripping it.
+  //   - an INDENTED code block (four spaces or a tab, the pre-fence form). vim/vim's own
+  //     AGENTS.md:92 carries `Signed-off-by: Author Name <email>` inside one.
+  // A four-space indent under a list item is a continuation paragraph rather than code, so
+  // the run is only stripped when the line introducing it is not a list item - otherwise a
+  // real placeholder in a nested bullet would go unseen, which is the failure this check
+  // exists to prevent, in the other direction.
+  const stripIndentedBlocks = (s) => {
+    const out = [];
+    let prevNonBlank = "";
+    let afterBlank = true; // start of file behaves like the line after a blank one
+    let inBlock = false;
+    for (const line of s.split("\n")) {
+      const blank = !line.trim();
+      const indented = /^(?: {4,}|\t)/.test(line);
+      if (inBlock) {
+        if (blank || indented) {
+          out.push(blank ? line : "");
+          continue;
+        }
+        inBlock = false;
+      }
+      if (!blank && indented && afterBlank && !/^\s*(?:[-*+]|\d+[.)])\s/.test(prevNonBlank)) {
+        inBlock = true;
+        out.push("");
+        continue;
+      }
+      out.push(line);
+      afterBlank = blank;
+      if (!blank) prevNonBlank = line;
+    }
+    return out.join("\n");
+  };
+  // `\r` is in the blank-line class on purpose: a CRLF checkout writes "\r\n\r\n" between
+  // paragraphs, and without it an unmatched backtick in such a file would still cross one.
+  const stripSpans = (s) =>
+    s.replace(/(`+)([\s\S]*?)\1/g, (whole, _delim, inner) => (/\n[ \t\r]*\n/.test(inner) ? whole : ""));
+  const stripCode = (s) => stripSpans(stripIndentedBlocks(s.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, "")));
 
   for (const p of ["AGENTS.md", "README.md", "SECURITY.md", "docs/PRINCIPLES.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md"]) {
     if (!exists(p)) continue;

@@ -154,6 +154,73 @@ check("an autolink is not a placeholder", {
   warnsAbout: [["README.md", false]],
 });
 
+// The two code forms an old document uses and the check used to miss. Both were found on
+// third-party repositories during the 2026-08-07 adoption round, in files the standard
+// never wrote and an adopter cannot "fill": git/git's README.md and vim/vim's AGENTS.md.
+check("a code span wrapped across a line break is not a placeholder", {
+  files: {
+    // git/git README.md:26-27, verbatim shape.
+    "README.md":
+      `${FILLED_HEAD}documentation of each command with \`man git-<commandname>\` or \`git help\n<commandname>\`.\n`,
+  },
+  warnsAbout: [["README.md", false]],
+});
+
+check("a real placeholder after a wrapped code span still warns", {
+  files: {
+    "README.md": `${FILLED_HEAD}Run \`git help\n<commandname>\` for details. Owned by <team name>.\n`,
+  },
+  warnsAbout: [["README.md", true]],
+});
+
+check("notation in an indented code block is not a placeholder", {
+  files: {
+    // vim/vim AGENTS.md:84-92, verbatim shape: a commit-message example indented four
+    // spaces rather than fenced.
+    "README.md":
+      `${FILLED_HEAD}Vim uses a strict commit message format:\n\n` +
+      "    patch 9.2.NNNN: short description of the problem\n\n" +
+      "    Signed-off-by: Author Name <email>\n\nThat is the whole convention.\n",
+  },
+  warnsAbout: [["README.md", false]],
+});
+
+check("a placeholder in an indented list continuation still warns", {
+  files: {
+    // Four spaces under a bullet is a continuation paragraph, not code - so the strip must
+    // not reach it, or a nested unfilled marker would go silent.
+    "README.md": `${FILLED_HEAD}- The owner is:\n\n    <team name>\n`,
+  },
+  warnsAbout: [["README.md", true]],
+});
+
+// The subtle half of letting a span cross a line break: `` `x` `` - the way markdown shows
+// a backtick - is a two-backtick delimiter. Paired one backtick at a time it leaves an odd
+// one behind, and every span after it shifts by one, which exposed the notation on the
+// FOLLOWING lines. vim/vim's AGENTS.md:257-262 is exactly this list.
+check("notation after a double-backtick span is still notation", {
+  files: {
+    "README.md":
+      `${FILLED_HEAD}Cross-references:\n\n` +
+      "- `` `:cmd` `` is an Ex command.\n- `'option'` is an option name.\n- `<Key>` or `CTRL-X` are special keys.\n",
+  },
+  warnsAbout: [["README.md", false]],
+});
+
+check("a real placeholder after a double-backtick span still warns", {
+  files: {
+    "README.md": `${FILLED_HEAD}Use \`\` \`:cmd\` \`\` for commands. Maintained by <team name>.\n`,
+  },
+  warnsAbout: [["README.md", true]],
+});
+
+check("an unmatched backtick cannot swallow a later placeholder", {
+  files: {
+    "README.md": `${FILLED_HEAD}A stray \` backtick here.\n\nThe owner is <team name>.\n`,
+  },
+  warnsAbout: [["README.md", true]],
+});
+
 // Regression 2: a required sections[] entry must turn "removed" into a reported FAIL, not
 // stay silently green because the file the heading lived in is still there. (The sibling
 // regression - a required lifecycle skill deleted from .claude/skills - turned out to be the
