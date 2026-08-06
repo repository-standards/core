@@ -64,10 +64,10 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 |---|---|
 | Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **190** across 7 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08) |
+| Observations recorded | **193** across 8 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 97 pass, 89 fail, 1 not-applicable, 3 partial |
-| Failures found | **167** - **82 fixed and re-verified** (across 20 merged pull requests), **85 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 4 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 99 pass, 90 fail, 1 not-applicable, 3 partial |
+| Failures found | **166** - **83 fixed and re-verified** (across 20 merged pull requests), **83 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -159,8 +159,6 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `LOOP-03` | a decision record's `Revisit when` trigger is checked against incoming evidence by something other than the same agent remembering having written it a lap earlier | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `LOOP-04` | self-verify certifies a repo compliant only if it also carries the version-control hygiene (a .gitignore excluding dependency trees) the manifest's own capability globs assume | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `LOOP-05` | the CI-facing `profile` key self-verify's shipped workflow reads actually exists on the manifest it reads it from, so the core/solo advisory branch is reachable | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `UPD-02` | the delta between two versions is computed from the real file changes between them, not only from a keyed manifest-entry diff that can report zero added/removed across an 18-file release | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `UPD-03` | self-verify's drift-0 result after an update distinguishes an actually-applied update from a sham one that only bumped the pin and copied the manifest | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `UPD-04` | recording a local deviation as a manifest `exceptions` entry and reaching self-verify drift 0 are simultaneously satisfiable at the version an adopter is actually on, not only at a version still under `## Unreleased` | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `UPD-05` | update-to-version has a documented branch for a manifest `files` entry that changed upstream and also diverged locally - the actual shape of most merge- and fill-class entries, not only 'unchanged' or 'removed' | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `UPD-06` | the update path names where to fetch the standard's own checkout from, on the surface an adopter actually reads - not only inside the standard's own README, a file the adopter is told to gitignore | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
@@ -280,6 +278,7 @@ from the PR merging, not inferred from the verdict flipping:
 | `TRACK-11` | timeline-update's cold-start behaviour and the backlog template's ban on converting a size to a duration agree with each other | `fixture:test-greenfield-core` | [core/pull/15](https://github.com/repository-standards/core/pull/15) |
 | `TRACK-19` | spec-impact and spec-update are among the skills add-to-backlog documents as automatic backlog feeders, and each actually files what it claims to | `fixture:test-greenfield-core` | [core/pull/14](https://github.com/repository-standards/core/pull/14) |
 | `DEC-05` | a decision record's number is assigned from a real enumeration of the records on disk, not from a stale index a guard would have caught | `fixture:test-greenfield-core` | [core/pull/14](https://github.com/repository-standards/core/pull/14) |
+| `UPD-03` | self-verify's drift-0 result after an update distinguishes an actually-applied update from a sham one that only bumped the pin and copied the manifest | `fixture:test-greenfield-core` | [core/pull/16](https://github.com/repository-standards/core/pull/16) |
 | `TRIG-02` | the section of AGENTS.md that produces unprompted ask-and-volunteer behaviour is actually loaded into context on every turn, not left behind a markdown link an agent can leave unread | `fixture:test-greenfield-core` | [core/pull/18](https://github.com/repository-standards/core/pull/18) |
 | `TRIG-03` | deleting the section of AGENTS.md that produces unprompted behaviour, or removing a required lifecycle skill, changes the reported drift number | `fixture:test-greenfield-core` | [core/pull/18](https://github.com/repository-standards/core/pull/18) |
 | `TRIG-04b` | an ordinary utterance that names a bug in passing ("btw the export is broken") reaches a skill, instead of matching none of the 20 shipped descriptions | `fixture:test-greenfield-core` | [core/pull/18](https://github.com/repository-standards/core/pull/18) |
