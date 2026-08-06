@@ -16,6 +16,34 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A stranger's agent can find the standard from the domain, and not from the name (2026-08-07)
+
+A human-prompting round against four already-adopted repositories: two on the registered
+JS/TS stack (hono, drizzle-orm) and two that are old and not pull-request shaped (git,
+postfix). Recorded in
+[`docs/validation/human-prompting/runs/2026-08-07-d-mixed.json`](docs/validation/human-prompting/runs/2026-08-07-d-mixed.json).
+
+**The entry path works when the prompt carries the domain.** Runs that were handed a line
+containing `repositorystandards.com` fetched the site unprompted, read the layer model, the
+stack registry and the stack's own adapting guide off the public web, and planned against the
+real entry list. None of them needed the standards repository. **Runs handed only the product's
+name did not think to look**: one grepped the tree, found nothing, and asked the user to supply
+the standard it had just been named. That is one discovery gap, and it is the difference
+between the two halves of the corpus rather than a property of the agent.
+
+**The adoption guide's exit condition does not exist in every repository.** The published guide
+lists write access as a prerequisite and ends its last gate with pull requests opened. On a
+project whose contributions go to a mailing list, both are false, and an agent that reads the
+guide honestly stops there rather than finishing. Three new prompt rows and one new volunteered
+behaviour were added for the shape this exposes: the adopter who does not own the repository,
+the project with no pull-request route, and the sentence the agent has to say when the last
+step of the adoption cannot happen.
+
+**The stack layer aimed at a library.** Both JS/TS runs reached the same conclusion without
+being led there: the Node stack is an application paved road, the repositories are library
+monorepos, and most of the stack would land as recorded exceptions rather than as compliance.
+Both asked whether the run was worth doing on those terms.
+
 ### Validation splits into two named halves, and the second one is new (2026-08-06)
 
 The proof-of-work suite measured the machinery: do the guards fire, does drift mean something,
