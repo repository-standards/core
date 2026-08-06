@@ -5,7 +5,7 @@
      agent-operated repository standard would claim, phrased so a reader who has never used
      this standard can run the same idea against their own. -->
 
-Twenty-something checks - **124**, precisely - that any repository standard
+Twenty-something checks - **125**, precisely - that any repository standard
 claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **63** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
@@ -1461,6 +1461,19 @@ run the prescribed cycle-close commit-count command against each of the showcase
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 node scripts/decision-records-check.mjs --block
+```
+
+
+**VAL-01 - a defect recorded as fixed stays in the failures-found total even when no pull request is cited**
+
+- **Given:** an observation that reads fail in one round and pass in a later round, with no `fix` URL on the pass - the shape produced when a fix is verified on its own branch before the pull request merges
+- **When:** tools/validation.mjs renders the headline numbers
+- **Then:** the finding is counted as fixed and the failures-found total is unchanged, instead of leaving the punch list because it passes and never entering the fixed count because it carries no link
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+add a fail observation and a later pass observation for the same case+target with no `fix` field, run `node tools/validation.mjs`, and read the 'Failures found' row; then run `node tools/validation-test.mjs`
 ```
 
 
