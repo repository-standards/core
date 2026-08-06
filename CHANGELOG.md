@@ -30,10 +30,11 @@ compared against it. All three reproduced exit 0 before this change, and R10 plu
 concerned" both say otherwise.
 
 The roster is now the constraint. A filled `**Serves:**` must name somebody on it - the whole
-value is read, not just its first backticked name, so a spec serving two or three personas is
-checked on all of them - and the failure quotes back both the claim and the roster. A spec
-with no `Serves` field may still name its persona in prose, which is the hatch the error
-message always advertised; "for whom" on its own no longer counts.
+value is read, not just its first backticked name, and on to the lines that continue it, so a
+spec serving two or three personas is checked on all of them however it wraps - and the
+failure quotes back both the claim and the roster. A spec with no `Serves` field may still
+name its persona in prose, which is the hatch the error message always advertised; "for whom"
+on its own no longer counts.
 
 An unreadable roster is now reported rather than obeyed. Every arm of this check is a
 membership test, so a roster that parses to nothing passes everything by having nothing left
@@ -43,7 +44,7 @@ and names the row shape it expects. The hatches that were already there stay: a 
 `personas.md` and no specs yet, templates and READMEs, and an unfilled `<persona ...>`
 placeholder still reported as serving nobody rather than as serving a persona by that name.
 
-`tools/clarify-gate-test.mjs` gains 12 cases covering both directions, including the three
+`tools/clarify-gate-test.mjs` gains 16 cases covering both directions, including the three
 reproductions above and each preserved hatch. `docs/tree/docs-personas-md.md` had been
 showing roster rows without backticks, a table this guard reads as empty; it now shows the
 form the guard parses.

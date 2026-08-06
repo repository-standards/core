@@ -19,7 +19,7 @@
 import { spawnSync } from "node:child_process";
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 const GATE = join(process.cwd(), "standard/scripts/spec/check-spec-clarified.sh");
 const TEMPLATE = join(process.cwd(), "standard/specs/capability-spec.template.md");
@@ -265,7 +265,10 @@ const structure = (specBody, personas = ROSTER, { noPersonas = false, extraFiles
   // the status. The spec below names one.
   if (!noPersonas) writeFileSync(join(dir, "docs", "personas.md"), personas);
   if (specBody !== null) writeFileSync(join(dir, "specs", "payments", "spec.md"), specBody);
-  for (const [rel, body] of Object.entries(extraFiles)) writeFileSync(join(dir, rel), body);
+  for (const [rel, body] of Object.entries(extraFiles)) {
+    mkdirSync(dirname(join(dir, rel)), { recursive: true });
+    writeFileSync(join(dir, rel), body);
+  }
   const r = spawnSync("node", [STRUCTURE, "--block"], { cwd: dir, encoding: "utf8" });
   rmSync(dir, { recursive: true, force: true });
   return { code: r.status ?? 1, out: `${r.stdout ?? ""}${r.stderr ?? ""}` };
@@ -371,6 +374,29 @@ const PERSONA_CASES = [
     personas: `${ROSTER}| \`Agency admin Adam\` | reconciling in bulk |\n`,
     body: withServes("**Serves:** `Agency admin Adam` reconciles in bulk; `Owner-operator Olga` never reconciles at all.\n"),
   },
+  {
+    // Reading only the first backticked name would fail this one: the roster persona is the
+    // second name in the value. R10 asks the spec to name the persona it serves, and it does.
+    name: "the whole Serves value is read, so a roster persona named after another still counts",
+    fails: false,
+    says: "OK",
+    body: withServes("**Serves:** the finance team indirectly, and `Owner-operator Olga` directly.\n"),
+  },
+  {
+    // Found in review, not in the wild: scoping the value to the field truncated it at the end
+    // of the line, so a value long enough to wrap - which is any value that says how it serves
+    // two personas - was judged on its first line alone and reported as off-roster.
+    name: "a Serves value that wraps onto the next line is read to the end of the value",
+    fails: false,
+    says: "OK",
+    body: withServes("**Serves:** the small landlord who never opens a back office -\n`Owner-operator Olga` - so capture must be one tap.\n"),
+  },
+  {
+    name: "a wrapped Serves value naming nobody on the roster still fails",
+    fails: true,
+    says: "not on the roster",
+    body: withServes("**Serves:** the small landlord who never opens a back office -\n`Whoever I like` - so capture must be one tap.\n"),
+  },
 
   // A roster the guard cannot read is not a roster that forbids nothing. Both shapes below
   // parse to zero personas, which is the state every membership test passes silently.
@@ -401,6 +427,16 @@ const PERSONA_CASES = [
     fails: true,
     says: "no persona named",
     body: withServes("**Serves:** `<persona from docs/personas.md>`   <!-- required (ADR-006) -->\n"),
+  },
+  {
+    // GATE-21 was an ASCII-only placeholder test in this same script, which made a translated
+    // but unfilled shell invisible. The membership test is roster-name comparison and the
+    // filled test is `\p{L}`-based, so both halves stay honest in another language.
+    name: "a roster and a Serves written in another language are checked, not waved through",
+    fails: true,
+    says: "no persona named",
+    personas: "# Persony\n\n## The roster\n\n| Persona | Zalezy jej na |\n|---|---|\n| `Wlascicielka Ola` | pieniadze |\n",
+    body: withServes("**Serves:** `<角色名>`\n"),
   },
 
   // The escape hatches that were already there, and stay: prose may name the persona, a
