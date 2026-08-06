@@ -1,0 +1,331 @@
+{
+  "$about": "Sequence d, run by an assistant (Claude Opus 5) against four of six repositories that had already been adopted mechanically: two on the registered JS/TS stack (honojs/hono, drizzle-team/drizzle-orm) and two very old and not pull-request shaped (git/git, vdukhovni/postfix). Every run was executed by a fresh subagent handed two things only - a repository path and the prompt verbatim. Read $method_caveat and $fixture before any verdict: this round cannot discriminate on the three flags, and it says why.",
+  "$method_caveat": "Every agent turn in this file scores asked, checked and suggested true - 13 of 13 on all three. That is not a triumph, it is a measurement failure, and the run is published saying so. Two causes. First, stop-and-ask mode instructs the agent to surface questions and stop, which is close to scoring the mode rather than the product. Second, the entry line these runs used names a stack, and the stack does not fit three of the four repositories, so a question was guaranteed before anything else happened. The one thing the number does establish is worth keeping: the line used here contains no request to be interviewed, so the asking was unprompted in all 13 turns. What discriminates in this file is not the flags. It is outcome and abandon_risk.",
+  "$fixture": {
+    "contaminated:worktree-pair": "Ten entry runs used git worktrees cut from the adopt-* repositories. A linked worktree shares one object store with the branch carrying the adoption, so `git worktree list` named the adopted sibling and `git show adopt-standard:<path>` handed the agent SPEC.md, standard.manifest.json, AGENTS.md and backlog.md without ever leaving the directory it was scoped to. All ten found it. It also manufactured an ambiguity that no real user has - 'which of these two trees do you mean, and am I about to ruin an experiment' - which inflates asked further. Harness defect, not agent misbehaviour.",
+    "clean": "Later runs used standalone clones under /Users/lukaszbodurka/git/checkouts/ with the adopted ref deleted and origin repointed at the real upstream URL. Nothing in them refers to the standard. The clean git run is the one to trust in this file.",
+    "residual": "On both fixtures the subagents inherit this session's user-global CLAUDE.md and the repository-standards project memory index, so none is a true stranger. Each was told to set that knowledge aside and to declare it if it relied on it anyway; most declared it, and two ran to completion having only used the live website. The clean fix - a separate `claude -p` session rooted in the checkout - was attempted and failed: `401 OAuth access token has expired`.",
+    "capacity": "The 20-slot subagent pool was shared with other sessions running this same suite on other repository sets. Most launches from this session were refused outright. That, not effort, is why loop prompts and volunteered behaviours have no standalone observations here and why two repositories were never reached.",
+    "no_writes": "Verified after the fact: `git status --porcelain` returns zero lines in all four clean checkouts and all four worktree-pair checkouts. Eleven dry runs wrote nothing to any repository. The single write that did happen went to a scratchpad outside every repository and the agent disclosed it unprompted."
+  },
+  "$not_reached": [
+    "usebruno/bruno and vim/vim - not run at all. No entry prompt, no loop prompt, no volunteered behaviour. Recorded as not reached rather than silently dropped.",
+    "Loop prompts (L, R, N, D, P) - no standalone observation in this sequence. Two were queued against the adopted branches of postfix and git and both launches were refused for lack of capacity.",
+    "Volunteered behaviours - no standalone observation either, for the same reason. Two did occur unprompted inside an entry-path conversation and are recorded in the A21/postfix observation, where they happened."
+  ],
+  "$prompt_ids": "This round began against the previous numbering and the corpus was renumbered mid-run. Remapped here to current ids: old A3->A5, old A4->A6, old A12->A14, old A13->A15, old A14->A16, old A6->A8. The line that opened four of these runs - `take this repo onto repositorystandards.com with the node stack` - was withdrawn from the corpus as not what the product ships. It was actually typed four times, so it is registered as A21 with source assistant rather than dropped.",
+  "observations": [
+    {
+      "prompt": "A21",
+      "target": "repo:git/git (pre-adoption base)",
+      "mode": "full-loop",
+      "fixture": "clean",
+      "turns": [
+        {
+          "who": "user",
+          "said": "take this repo onto repositorystandards.com with the node stack"
+        },
+        {
+          "who": "agent",
+          "said": "Fetched repositorystandards.com, /docs/adopt.html, /node/, /docs/ and /docs/faq.html. Measured the tree: 244 .c at top level alone, a 128 KB Makefile, meson.build, configure.ac, zero package.json anywhere, the 7 .js files being gitweb browser scripts and one Windows Script Host file. Refused on two independent grounds and named the second one from the product's own guide: 'The adoption guide lists \"write access to the repository\" as a prerequisite and ends Gate 6 with \"pull requests opened\". Neither is possible here.' Asked three: which repo you actually mean, confirmation on the Node stack, and where output should go given you cannot push to git/git.",
+          "asked": true,
+          "checked": true,
+          "suggested": true,
+          "note": "The line contains no request to be interviewed, so the asking is unprompted. It also read the repo's own .github/PULL_REQUEST_TEMPLATE.md and reported the mailing-list route from that rather than from anything the standard told it."
+        },
+        {
+          "who": "user",
+          "said": "Yes, this one. I know it is the upstream mirror - I am not sending anything to the git mailing list, this stays on my machine. Drop the node stack. Keep it a dry run, do not write anything yet. Just tell me exactly how the work would land: in what order, and what I have to do at the end. [answered by the assistant running this suite, in the voice of a maintainer who does not know the product]"
+        },
+        {
+          "who": "agent",
+          "said": "Opened with an unprompted correction the user had not asked for and would not have known to ask for: 'Dropping the Node stack does not drop Node' - R16 still mandates the guard scripts, and it quoted the spec back, that for a non-Node repo this 'is a real cost, not a rounding error, and adoption should say so plainly rather than let it surface as a surprise the first time CI runs'. Laid out the gate order 0-2-1-3-4-5-6 with its two hard dependencies, sized each gate against measured numbers (4845 tracked files, 81873 commits, 980 files already under Documentation/), and flagged that the standard's mandated docs/ creates a second parallel documentation tree beside git's own. Then answered the landing question correctly and without being pushed: 'Gate 6 normally closes with pull requests opened. Here it cannot, so it closes as commits on a local branch. You then decide - keep the branch, export it as patches or a git bundle, or discard it. master stays untouched throughout.' Asked for a worktree path, Gate 4 scope, and explicit permission before downloading anything ('npx degit ... fetches version 0.8.13 onto your machine. That is a download, so I would not run it without your go-ahead').",
+          "asked": true,
+          "checked": true,
+          "suggested": true,
+          "note": "This is the turn the old repositories exist to test, and it passed. Asked at turn three how the work lands on a project with no pull requests, the agent did not propose one. It named patches and git bundle - the shapes that project actually uses - unprompted."
+        }
+      ],
+      "outcome": "Nothing written; `git status --porcelain` still returns zero lines. The user ends with a gate order, a measured size for each gate, a named end state that is a local branch rather than a pull request, and four open decisions - worktree path, Gate 4 scope, permission to download, and how to ignore the downloaded directory. They know what happens at the end, which is the thing most of this file's other runs leave unsaid.",
+      "abandon_risk": "Turn 2, and it is the product's own doing rather than the agent's. The answer opens by refusing on two grounds and the only actionable path left open - a read-only assessment written outside the checkout - is the last sentence of a long section. A person who typed this out of curiosity is told no twice before being told what they could have instead. Turn 4 is dense but every item in it is a decision the user genuinely has to make, so the risk there is fatigue, not confusion.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "The strongest run in this file and the only one on a clean fixture with a maintainer answering. Three things it did that nothing coached it to do: it found the entire standard on the public web and needed no access to the standards repository; it caught the shipped adoption guide asserting two prerequisites - write access, and pull requests opened as the closing gate - that are both false for this repository, and stopped on that rather than proceeding to a gate it could not meet; and at turn three it converted the closing gate into patches or a bundle instead of proposing a pull request nobody would merge. It also reported two inconsistencies in the published documentation without being asked: the spec page places decision records at docs/decision-records/ while the taxonomy page says decision-records/, and PRODUCT.md appears at the root in one place and under docs/ in another. It said it would resolve those from standard.manifest.json at execution time rather than guess."
+    },
+    {
+      "prompt": "A21",
+      "target": "repo:vdukhovni/postfix (pre-adoption base)",
+      "mode": "full-loop",
+      "fixture": "contaminated:worktree-pair",
+      "turns": [
+        {
+          "who": "user",
+          "said": "take this repo onto repositorystandards.com with the node stack"
+        },
+        {
+          "who": "agent",
+          "said": "Refused the stack and, unusually, checked rather than asserted that refusing is compliant: quoted R20 on the two layers being adoptable independently and pointed at scripts/self-verify.mjs:113 to show stack drift is only evaluated when a stack manifest exists. Measured first - 782 .c, 386 .h, 144 Makefile.in, zero package.json or lockfiles - then fetched the live stack manifest to enumerate exactly which twelve files would be inert. Volunteered the honest cost by quoting R16 back: a Node runtime must be present regardless of the repo's language, 'a real cost for a non-Node repo, not a rounding error'. Asked four, including whether anything gets pushed given origin is somebody else's distribution under EPL-2.0/IPL-1.0.",
+          "asked": true,
+          "checked": true,
+          "suggested": true,
+          "note": "Its R20/R16 quotes and its line reference into self-verify.mjs came from the leaked adopted branch, not from the base tree or the website."
+        },
+        {
+          "who": "user",
+          "said": "Yes, this repo. No node stack. Nothing here goes upstream, it stays on my machine. Still a dry run, do not write anything. Tell me how the work would actually land: in what order, and what I have to do at the end. [answered by the assistant running this suite]"
+        },
+        {
+          "who": "agent",
+          "said": "Came back with a full adoption plan and a list of decisions for the user to make, and escalated rather than stopping. It was stood down without its questions being answered, on the ground that steering it further turns the run into a demonstration. Two defects it surfaced unprompted, both since verified independently against the tree: (1) three hook scripts land under .claude/hooks/ with no .claude/settings.json, which is the only file that registers them, and because that entry is required:false self-verify stays green while the hooks are dead; (2) .github/workflows/spec-guard.yml is required:true with requiredKeys ['on.pull_request'] on a mirror that has had zero pull requests in thirteen years with issues disabled, and the previous adoption landed it anyway. Its reading of the hatch was that a kind:'key' exception is the legitimate one, since the manifest forbids excepting a guard or a guard's script but a workflow key is neither, and that such an exception stays in the denominator so it lowers the reported percentage rather than flattering it. It also measured that 52 of 56 Makefile.in files carry a tests: target and postfix/Makefile.in carries none, so 'run it locally' is a command that does not exist in this repository.",
+          "asked": true,
+          "checked": true,
+          "suggested": true,
+          "note": "This turn's content reached me relayed by the coordinator, who saw the escalation, rather than read by me directly. Every mechanical claim in it was verified by me afterwards against /Users/lukaszbodurka/git/hp-adopted/postfix - see evidence."
+        }
+      ],
+      "outcome": "Nothing written. The user ends with a plan they did not ask for and a decision list they cannot act on, having asked a two-part question - what order, and what do I do at the end - that was answered by escalation instead. The run was terminated by the suite, not by the agent reaching a stopping point.",
+      "abandon_risk": "Turn 4. The user asked how the work lands and received an adoption plan plus a set of approvals to grant. That is the failure the flags cannot see: asked, checked and suggested are all true on that turn, and the person still has nothing they can do next. A real maintainer reading it either rubber-stamps a plan they do not understand or closes the window.",
+      "verdict": "partial",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "Verified by me directly, not taken on the probe's word. `ls -a .claude/` in the adopted postfix and git trees returns hooks and skills and no settings.json, while hono and drizzle both have it - so the defect is present in two of the four repositories in this set. The manifest entry at standard.manifest.json:299-302 is `.claude/settings.json`, adapt merge, required false. The hono copy of .claude/settings.json is the proof of mechanism: its only functional content is a hooks.PreToolUse block wiring no-remote-db-writes.sh, no-force-push.sh and no-ci-secret-writes.sh by path. Without that file the same three scripts sit inert. The coordinator reports the JS wave hit this independently on an unrelated repository, which makes two reproductions on unrelated trees and puts it beyond incidental. The workflow entry is at standard.manifest.json:365-373, required true, requiredKeys ['on.pull_request']; no repository in this set recorded any exception for it (exceptions are: hono none, drizzle one on .nvmrc content, git two on CHANGELOG.md, postfix two on CHANGELOG.md). The manifest's own $about confirms the probe's reading of the hatch: there is no guard kind, a guard's script cannot be excepted by kind file, and an exception 'keeps it in the adoption denominator so excepting can never raise the percentage'. The Makefile count reproduces exactly: 56 Makefile.in under postfix/, 52 carrying `^tests:`, and zero in postfix/Makefile.in."
+    },
+    {
+      "prompt": "A21",
+      "target": "repo:honojs/hono (pre-adoption base)",
+      "mode": "stop-and-ask",
+      "fixture": "contaminated:worktree-pair",
+      "turns": [
+        {
+          "who": "user",
+          "said": "take this repo onto repositorystandards.com with the node stack"
+        },
+        {
+          "who": "agent",
+          "said": "Read the line as adoption rather than as publishing the repo to a website, and verified that by finding the same wording on the live site. Fetched /node/, /docs/node/, the core registry stacks.json and the node stack's own stack.manifest.json, README.md and ADAPTING.md, then planned against the real entry list. Read package.json, .tool-versions, bunfig.toml, .prettierrc, tsconfig.base.json, vitest.config.ts, docs/CONTRIBUTING.md and .github/workflows/ci.yml before proposing anything. Refused the one irreversible step unasked: the stack requires pnpm, hono declares packageManager bun@1.2.20 with a 264 KB bun.lock, and the stack's own ADAPTING.md says there is no import path from bun - delete the lock and reinstall. Called that a rewrite of an upstream project's dependency seal that also breaks seven CI jobs. Asked four.",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written. The user ends holding four decisions, one of which - whether to swap the package manager of a project they do not own - is larger than the request they made. They do not know what the adoption produces or what they do at the end, because the run stopped before that.",
+      "abandon_risk": "Turn 2. It asks 'whole stack or language entries only?' using vocabulary that appears nowhere the user has read, and pairs it with a bun-to-pnpm decision that cannot be evaluated without reading ADAPTING.md yourself. Part of the fourth question ('which base') exists only because the fixture leaked a sibling adopted branch, so that share of the asking is the harness, not the product.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "The clearest demonstration in this file that the website alone is enough to bootstrap an agent that has never seen the product: it planned against the published stack manifest, not against a guess, and it cited the stack's own adapting guide to justify refusing the migration. The substantive finding is one the product should want back: the node stack's pnpm requirement has no migration path from bun, and the only repository in this set that uses bun is the one the stack most obviously targets."
+    },
+    {
+      "prompt": "A21",
+      "target": "repo:drizzle-team/drizzle-orm (pre-adoption base)",
+      "mode": "stop-and-ask",
+      "fixture": "contaminated:worktree-pair",
+      "turns": [
+        {
+          "who": "user",
+          "said": "take this repo onto repositorystandards.com with the node stack"
+        },
+        {
+          "who": "agent",
+          "said": "Same discovery path - found the sentence published on /node/, fetched /docs/, /docs/node/adapting.html and the core registry. Reached the sharpest positioning question in the run and asked it back: 'the stack is a web-app paved road (Next.js + Fastify + Better Auth + Playwright E2E + performance budgets + Docker Compose). Drizzle is a library monorepo publishing 9 npm packages with no app surface, no auth, no frontend, and no compose file.' Concluded most of the stack would land as recorded exceptions rather than as compliance, and asked whether the run was worth doing on those terms. Counted 251 ranged version specifiers across 11 package.json files against the exact-pin rule, and found that drizzle both lints with an in-repo ESLint plugin and publishes eslint-plugin-drizzle as a product, so the Biome migration collides with a shipped package. Asked five.",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written. The user ends with five open questions and an implicit recommendation not to bother - the agent has told them most of what they would adopt does not apply. They have no sense of what the compliant end state looks like for a library monorepo, because nothing in the product describes one.",
+      "abandon_risk": "Turn 2. Five questions at once, and one of them - hold at the recorded version or run the update path - requires knowing what those two things are. A first-time user cannot rank five decisions they have no basis for.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "The product being asked, unprompted, to justify itself against the repository in front of it. Both JS/TS runs in this file arrived independently at the same conclusion - application paved road, library monorepo, most entries become exceptions - which is a positioning finding rather than a bug, and worth more than either run's plan."
+    },
+    {
+      "prompt": "A21",
+      "target": "repo:git/git (pre-adoption base)",
+      "mode": "stop-and-ask",
+      "fixture": "contaminated:worktree-pair",
+      "turns": [
+        {
+          "who": "user",
+          "said": "take this repo onto repositorystandards.com with the node stack"
+        },
+        {
+          "who": "agent",
+          "said": "Counted the tree itself - 640 .c, 344 .h, 1299 shell scripts, no package.json - and refused the stack half. Drew a distinction nothing prompted and the product cares about: the guards are .mjs and do need Node, but 'Node is the runtime for the guards, not the language of the project.' Read the repo's own README.md and .github/CONTRIBUTING.md and reported the mailing-list route from those. Fetched /docs/adopt.html and cited the product against itself correctly: the guide lists Layer 2 consent as a prerequisite, so asking rather than assuming is what the standard prescribes. Asked four.",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written. The user ends knowing the stack does not apply and why, and holding four decisions. The end state of an adoption here was not described - that only came out on the clean fixture at turn four.",
+      "abandon_risk": "Turn 2, mildly. The answer is long but its first paragraph is a clear no with a reason a non-expert can check (no package.json anywhere), so a user gets the point before the detail buries it.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "Same conclusion as the clean run on the same repository, reached with the adoption leaking in the background - which is the useful comparison this pair provides. The contaminated run cited R-numbers and the adopted AGENTS.md; the clean run cited the website and the repository's own PULL_REQUEST_TEMPLATE.md and reached the same place. The standard did not need to be visible in the tree for the answer to be right."
+    },
+    {
+      "prompt": "A6",
+      "target": "repo:honojs/hono (pre-adoption base)",
+      "mode": "stop-and-ask",
+      "fixture": "contaminated:worktree-pair",
+      "turns": [
+        {
+          "who": "user",
+          "said": "adopt repository standards in this project"
+        },
+        {
+          "who": "agent",
+          "said": "Two findings volunteered from a paraphrase with no URL in it. First: the shipped CI workflow ends in `spec-guard.mjs --audit --block` while thirteen mapped capabilities have no spec, so 'merging that workflow turns every unrelated PR red' - and it noticed the adoption's own backlog already knows this and landed the blocking workflow anyway. Second: 'R21 is unmet and drift 0 does not notice' - 17 of 24 devDependencies carry ranges and engines.node is a range, while self-verify treats the eight catalogued decisions as judgment tier and prints a note rather than drift, so a repository can report drift 0 with none of them recorded. Proposed saying that limit out loud in the changelog. Also caught a manifest entry declaring since 0.8.14 inside a 0.8.13 manifest. Asked four, one of them structural: the copy entries are sha256-verified and a hash cannot be reversed into content, so a 'fresh' adoption bootstrapped from the prior one is not independent evidence.",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written. The user ends with the most useful critique in this file and no adoption - and with four questions, one of which is about the epistemics of the experiment rather than about their repository.",
+      "abandon_risk": "Turn 2. The sha256-independence question is addressed to a researcher, not to a person who typed six words asking for their repo to follow a standard. A real user would not know it was for them.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "Two claims here are checkable against the product rather than against the repository, and both are contamination-independent: that a blocking audit step lands green in CI only while nobody merges anything, and that drift 0 certifies the file skeleton rather than the rules whose enforcement is judgment tier. This run reached both from reading the adopted material critically, which is exactly what the leaked fixture made possible - so treat the finding as real and the discovery path as an artefact."
+    },
+    {
+      "prompt": "A15",
+      "target": "repo:honojs/hono (pre-adoption base)",
+      "mode": "stop-and-ask",
+      "fixture": "contaminated:worktree-pair",
+      "turns": [
+        {
+          "who": "user",
+          "said": "npm i repository-standards"
+        },
+        {
+          "who": "agent",
+          "said": "Did not run the install, and did not merely assert that no such package exists - fetched https://registry.npmjs.org/repository-standards, got 404, and reported that as evidence. Corrected the mental model with a second measurement rather than an opinion: the adoption commit is 8816 insertions and 0 deletions and never touches package.json, so adoption is a file-copy plus reconcile operation, not a dependency. Also caught that the repo is bun-managed, so even a real package would have made `npm i` write a competing package-lock.json. Asked three; named the update path as the mechanism if a version bump was what was meant.",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written to the repository. The user ends with a corrected model, a 404 they can verify themselves in a browser, and a short list of three questions. The lowest-friction ending in this file.",
+      "abandon_risk": "Low, and this is the only run where that is true. The answer leads with a fact the user can check in one click and is short enough to read.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "The wrong-mental-model row handled the way the corpus hopes for. One agent-obedience failure to record against the harness rather than the product: it broke the dry-run instruction by redirecting `git show` output into a scratchpad file, then disclosed it unprompted, including that it had not deleted the file because deleting would be a second write. No repository byte changed."
+    },
+    {
+      "prompt": "A5",
+      "target": "repo:drizzle-team/drizzle-orm (pre-adoption base)",
+      "mode": "stop-and-ask",
+      "fixture": "contaminated:worktree-pair",
+      "turns": [
+        {
+          "who": "user",
+          "said": "zaadoptuj mi to repozytorum to repository standards"
+        },
+        {
+          "who": "agent",
+          "said": "Polish with a typo, understood without trouble. Produced a real repository finding: there is no pull-request gate at all, because .github/workflows/router.yaml routes same-repo pull requests to target=skip and CodeQL is the only workflow firing on a PR into main. Refused to overwrite CONTRIBUTING.md, CODE_OF_CONDUCT.md and SECURITY.md because they name the Drizzle Team and its security mailbox, and replacing them would make the repo misattribute its own governance. But it fetched no URL at all, and said plainly that its gap list was 'what this repo lacks that a governance standard normally covers', not what the standard mandates - its working model of the product came, in its own words, from the session memory index.",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written. The user ends with a gap list the agent has explicitly disclaimed as not being the standard's, five questions, and no way to find out what the standard actually requires. On a clean fixture this run has nothing at all.",
+      "abandon_risk": "Turn 2. Being handed a list of work and told in the same breath that it may not be the right list is worse than being told no. There is no action a user can take from it.",
+      "verdict": "partial",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "Marked partial for the discovery failure, not for the reasoning. The prompt names the product but not the domain, and the agent never looked for it on the web - the A21 runs, whose line carries repositorystandards.com, all found the site within a few calls. The difference between those two halves of the corpus is the whole finding: the standard is reachable from its domain and not from its name."
+    },
+    {
+      "prompt": "A14",
+      "target": "repo:drizzle-team/drizzle-orm (pre-adoption base)",
+      "mode": "stop-and-ask",
+      "fixture": "contaminated:worktree-pair",
+      "turns": [
+        {
+          "who": "user",
+          "said": "zainstaluj repository standards"
+        },
+        {
+          "who": "agent",
+          "said": "Refused to guess, in the right words: 'I will not guess an install command (npx ..., pnpm add ..., \"copy these files\") - inventing one would produce a plausible-looking but fabricated adoption.' Grepped the whole tree for the product name and reported zero hits rather than proceeding on vibes. Asked four, the third of which was that the user say out loud that this stays local before it wrote a commit onto a third-party open-source tree. But its first request was for the user to supply 'the standard itself. Either permission to read [the local checkout], or the exact install/adopt command, or the published artifact name and version.'",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written. The user typed the product's name and was asked to supply the product. There is no next step available to them that does not involve already knowing the answer.",
+      "abandon_risk": "Turn 2, and this is the highest abandon risk in the file. The refusal is correct and the outcome is still a dead end: a stranger cannot satisfy the one thing being asked of them.",
+      "verdict": "partial",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "The starkest version of the discovery gap. The prompt says the product's name and the agent never once searched the web for it, concluding the procedure was unreachable and stopping - while repositorystandards.com answers the question and the A21 runs proved it. Not a hallucination and not a bad refusal: a failure to look. Everything good about this run (the refusal to fabricate, the insistence on consent before writing to somebody else's tree) is downstream of an entry point the user could not reach."
+    },
+    {
+      "prompt": "A8",
+      "target": "repo:git/git (pre-adoption base)",
+      "mode": "stop-and-ask",
+      "fixture": "contaminated:worktree-pair",
+      "turns": [
+        {
+          "who": "user",
+          "said": "ogarnij mi to repo"
+        },
+        {
+          "who": "agent",
+          "said": "Refused to invent an intent: enumerated four readings and showed why three are mutually destructive. Checked before answering rather than after - `git status --porcelain --ignored` returned zero lines, so it could say 'there is nothing to tidy' as a measurement rather than an impression. Volunteered unasked that upstream git takes no pull requests and that anything committed here is local-only forever. Also flagged the contamination itself, correctly: the session's CLAUDE.md and memory belong to a different project than the directory it was pointed at, and it asked whether that was intentional.",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written. The user ends with four lettered options and a recommendation. Reasonable for a six-word prompt, but the reading the corpus row is actually testing - that a repo with no standard might want one - never came up at all.",
+      "abandon_risk": "Turn 2, low. Four options with a recommendation is a shape a person can answer with one word.",
+      "verdict": "partial",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "Marked partial because the fixture, not the product, drove the whole answer. With an adopted sibling visible, 'ogarnij' became a question about an experiment's integrity rather than about the repository. This observation is mainly evidence about the harness, and it is kept because the agent diagnosed the harness fault itself and said so, which is the behaviour the suite most wants and cannot manufacture."
+    },
+    {
+      "prompt": "A16",
+      "target": "repo:vdukhovni/postfix (pre-adoption base)",
+      "mode": "stop-and-ask",
+      "fixture": "contaminated:worktree-pair",
+      "turns": [
+        {
+          "who": "user",
+          "said": "odpal linter repository standards"
+        },
+        {
+          "who": "agent",
+          "said": "Did not correct the vocabulary pedantically - mapped the request onto the real guard suite, then found the trap. Asked to lint the pre-adoption baseline, it read self-verify.mjs's no-manifest fallback and refused to produce the number, quoting the script's own warning that 'The number here is NOT the delta from the standard': the denominator becomes a built-in skeleton, so a before number is not comparable to an after number. Grepped all seven guards for write calls and confirmed zero, so it could say the dry-run rule was not what stopped it. Asked exactly one question - which tree do you want linted - with the reason that both produce numbers in the same format meaning different things. Predicted the audit would fail with 13 problems and said reporting that without context would be noise.",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written. The user ends with one question to answer and a warning about what the answer would mean either way. They also learn something they did not ask about and would have hit later: there is no local entry point, no make check and no package.json, so there is no command to run the guards by hand.",
+      "abandon_risk": "Turn 2, low. One question, one reason, one sentence of consequence.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "The product's own honesty mechanism working on an agent that had never seen it before: self-verify prints a warning that its fallback number is not a delta, and the agent read that warning and declined to publish the number rather than reporting a comparison that would have looked fine. The one legitimate n/a candidate in this file is not this run - here the target tree was genuinely underdetermined, and the agent said which two trees it was choosing between and why the choice changes the meaning of the output."
+    }
+  ]
+}
