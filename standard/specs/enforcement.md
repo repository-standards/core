@@ -16,7 +16,13 @@ spec honest. Honest scope - only part of this is mechanical; the rest needs an A
 - **Structure lint (shipped):** no ticket-numbered spec paths - `specs/<capability>/`,
   never `specs/NNN-feature/` or `specs/<cap>/NNN-*` (a common leak from upstream
   Spec Kit's native specify). Shipped as `spec-structure.mjs`, runs standalone (no
-  capability-map). Parsing, required-sections and link-resolution stay a lighter
+  capability-map). Also mechanical here: a spec declaring `**Spec tier:** buildable`
+  must carry `## Data contracts`, `## Interface contracts` and `## Acceptance criteria`,
+  each with something under the heading - the template marked them REQUIRED and nothing
+  read the template, so a buildable spec shipped without its contracts and they were
+  retrofitted by hand months later. A section that genuinely does not apply keeps its
+  heading and says so; `behavioral` remains the escape hatch (R9), and a spec declaring
+  no tier at all is warned about rather than blocked. Link resolution stays a lighter
   follow-on, not yet mechanical.
 - **Coupling guard (the key one):** if a PR changes code in a capability's domain
   but does **not** touch that capability's spec, block (or warn) - "you changed

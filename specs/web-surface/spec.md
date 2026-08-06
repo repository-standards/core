@@ -40,6 +40,29 @@ The prose of the rendered pages (owned by their source files); markdown link int
 - **FILE MAP** - `docs/file-map.md`, rendered from `standard/standard.manifest.json` by `tools/file-map.mjs`: one row per shipped entry with its purpose, required-ness and profile, adapt class and the rule it enforces, plus the by-reference documents and the required headings. It is a PAGE MAP entry like any other and, unlike any other, it is **generated** - `tools/file-map.mjs --check` compares the committed file against a fresh render and fails CI when the manifest has moved and the map has not. Hand-editing it is the failure that check exists to catch, because the map's whole claim is that it cannot disagree with what `self-verify` reads.
 - **A page's `src` follows its document.** Moving a source file moves its PAGE MAP entry - `self-verify.md` left `standard/docs/` for `docs/method/` when it stopped being copied into adopters' repositories, and the entry moved with it. A `src` pointing at a moved file is caught by the generated-page count being derived from the map rather than written down.
 
+## Data contracts
+
+Nothing is persisted between runs and nothing is read back: `OUT_DIR` is wiped and
+regenerated every time, which is why a stale page there is a bug rather than state.
+
+Read:
+
+| Input | Required | Format | Shape |
+|---|---|---|---|
+| every PAGE MAP `src` | yes - a missing one exits 1 and writes nothing | Markdown | the source document's own. Only headings, tables, lists, fenced code and link targets are interpreted. |
+| `site/site.config.json` (repo root accepted as a legacy location) | no - every field falls back | JSON | `brand`, `repo_url`, `out_dir`, `node_stack_url`, `landing`, `pages` (a PAGE MAP: `{ src, out, nav, group }` per entry), `sidebar_links`, and `topbar` read for its external entry only. |
+| `VERSION` | yes | text, one line | `x.y.z`, rendered into the version pill and asserted on the landing. |
+| `site/index.html` | yes | HTML | the landing: its `--bg` custom property is read at check time, so the docs take their ink from the landing rather than from a number written twice. |
+| `docs/positioning.md` | yes | Markdown | the `> `-prefixed lines under `## The one-liner`, joined with single spaces - the positioning one-liner, quoted verbatim, never re-phrased. |
+
+Written, all of it generated and none of it hand-edited:
+
+| Output | Shape |
+|---|---|
+| `OUT_DIR/<out>` per PAGE MAP entry | HTML: the shared shell plus the rendered source, ending in the generated footer that names the source file. |
+| `OUT_DIR/README.md` | Markdown declaring the folder generated and naming the generator by URL, so it still reads correctly inside a satellite repo. |
+| `site/llms.txt` | a byte copy of the repo root's `llms.txt` - only `site/` is deployed, so the copy is how the file reaches the deployed root. |
+
 ## Interface contracts
 
 `node tools/docsite.mjs` - repo root, no flags, no dependencies. For each PAGE MAP entry: read `src`, render markdown to HTML (headings with slugified ids, GFM tables, nested lists, fenced code escaped verbatim), wrap in the shared shell (the fixed top bar - mark, wordmark, version pill read from `VERSION`, centred ecosystem switcher, one link home; sidebar nav from the PAGE MAP, active page marked; sidebar footer links from config; `<title><nav> - <brand> docs</title>`), write `OUT_DIR/<out>`. Also writes `OUT_DIR/README.md` declaring the folder generated (naming the core repo's generator by URL - the file must make sense inside a satellite repo too). Every page ends with the generated footer: `Generated from <src> (linked to its GitHub blob) by tools/docsite.mjs - edit the source there, not this HTML.`

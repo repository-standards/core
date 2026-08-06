@@ -16,6 +16,33 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A spec could declare the buildable tier and carry none of what makes it buildable (2026-08-06)
+
+The capability template marks `## Data contracts`, `## Interface contracts` and
+`## Acceptance criteria` REQUIRED at the buildable tier, and nothing read the template. A
+spec at that tier with neither contracts section passed every guard; the sections were
+added later, by hand, when a person noticed. Reproduced against the shipped guard before
+anything changed: `spec-structure.mjs` reported `OK (1 spec paths)` on exactly that spec.
+
+The structure guard now checks them on any spec that declares `buildable`, and reports the
+missing ones by name. Three shapes are deliberately left passing, because a guard that
+fires on them is a guard the next person deletes: `behavioral` remains the escape hatch R9
+says it is; a section that genuinely does not apply keeps its heading and says so in one
+line, the way `## Open questions` already says "None known."; and a named sub-spec is held
+to the tier only when it claims one itself. A heading with an empty body, or one carrying
+nothing but the template's own instructions, does not count as a section - a dropped
+heading and an empty one read identically to everyone downstream.
+
+A spec declaring no tier at all is **warned** about rather than blocked. R9 makes buildable
+the default, so silence is the same claim - but failing every undeclared spec in a repo
+mid-adoption is how a guard gets switched off, and a switched-off guard checks nothing.
+Deleting the tier line is therefore not a silent way out of the check.
+
+This repository's own tree was three specs short by its new guard: `tree-guard`,
+`verify-engine` and `web-surface` each declared `buildable` with no `## Data contracts`.
+All three now carry one, and none of them says "None" - each capability turned out to read
+or write shapes that were only ever described in passing.
+
 ### A repo could be certified compliant on files that were in no commit (2026-08-06)
 
 `self-verify` asked the filesystem whether a required entry was there. It never asked git.

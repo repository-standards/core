@@ -38,6 +38,28 @@ Guarding this repo's own shipped tree ([tree-guard](../tree-guard/spec.md)); aut
 - **Declared prerequisite** - a `guards[]` entry's `requires`: `{ "kind": "command"|"path", "match": "...", "hint"?: "..." }`. `command` resolves on `PATH`; `path` resolves in the repo. The second kind is what keeps a compliance check side-effect free - a package manager present with its dependency tree absent installs it when the guard runs, so the guard must not run.
 - **Profile** - `core` or `scale` per entry (ADR-011); an entry with no profile counts as core, so pre-ADR-011 manifests check in full under either profile.
 
+## Data contracts
+
+The engine persists nothing and writes no file: it reads, reports and exits. Everything it
+reads sits at the root of the repo being verified.
+
+| Input | Required | Format | Shape |
+|---|---|---|---|
+| `standard.manifest.json` | no (a note plus the fallback skeleton when absent) | JSON | the align-engine manifest (ADR-005). Its entry classes are in Core concepts above and each field's meaning in Interface contracts below; the manifest's own `$about` is the authored description of the schema. |
+| `stack.manifest.json` | no | JSON | the same schema at Layer 2 (ADR-016/022), plus `technology` - the stack's name, used in the report. Only `files`, `sections`, `guards` and `exceptions` are merged into the core manifest's arrays; every other field is the stack's own. |
+| `.standards-version` | yes, outside `--skeleton` | text, one line | `x.y.z` - the version the repo last aligned to, a bookmark rather than a pin (ADR-025). Matched with `/^\d+\.\d+\.\d+/`, so a trailing note on the line is tolerated. |
+| every path a manifest entry names | per entry | any | read as text when the entry records a hash or declares keys; otherwise only its existence, and its case, are read. |
+
+Two values are content rather than structure, and both travel inside the manifest the repo
+already carries - which is what lets the check run offline, against the version the repo
+aligned to, with no second source of truth:
+
+- **`sha256`** - SHA-256 over the file's text with CRLF normalized to LF, hex, lower case.
+  A string for a file entry; a `{ "<member path>": "<hash>" }` map for a directory entry,
+  where the member path is relative to the entry's `path`.
+- **`requiredKeys`** - dotted key paths (`on.pull_request`, `permissions.deny`), presence
+  only. A value is the repo's to choose, and is never compared.
+
 ## Interface contracts
 
 `node scripts/self-verify.mjs [--version <x.y.z>] [--warn] [--profile core|scale (solo/team as deprecated aliases)] [--skeleton]` - no dependencies (Node built-ins only). Checks, in order:
