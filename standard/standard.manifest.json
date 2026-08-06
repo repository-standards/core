@@ -137,7 +137,7 @@
       "profile": "core",
       "since": "0.4.0",
       "rule": "R16",
-      "sha256": "d3b8370deb9716f317d1f440183c92d97b492e8e26b8bf1df84b10987ce59fed"
+      "sha256": "7c4e964b68f55a525e3ffc843a0851a1185c3d7fa7658cb537d0e032bb404619"
     },
     {
       "path": "scripts/spec-structure.mjs",
@@ -147,7 +147,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R16",
-      "sha256": "67f463a1d4296bbd62243c09c2999bfe03fef5bfebdc96d218f40702b2f4609a"
+      "sha256": "f1d471206bc89ef1418285bd9cba27a8e1efaed40ef10bf2f893752a558c76b5"
     },
     {
       "path": "scripts/facts-check.mjs",
@@ -211,25 +211,25 @@
       "rule": "R22",
       "sha256": {
         "add-to-backlog/SKILL.md": "151571dfcf9a2aae38db59fff6383000505dc7d8fe753910af6b00edd729ea22",
-        "adr-write/SKILL.md": "fc48ce8bc9c48453cb0ed25c2e3c5de54e6fd1dd6afaf50d5df0ca0d5530e239",
-        "bdr-write/SKILL.md": "afb5a4de61ff80e0321467b5c8cc8b79f13439751fd3249603a4cf5b9f310035",
+        "adr-write/SKILL.md": "42bbcf88de11f6cff4c651f3ca20cdff70cd85e08792f2b0d8c0eba1762bd76c",
+        "bdr-write/SKILL.md": "a413b1c05b500774d2caf6bc91b837085746ee4f3653e3b3c11cd226920ed0eb",
         "cycle-close/SKILL.md": "72bad295dd461eebae9bd356ad07db33a76274c7b3011ad1d52d1158f0b82147",
         "cycle-open/SKILL.md": "2e9f3b417584523cd56c8763a20aa4667db366905110c3719a9087f4910d19c4",
-        "discovery-digest/SKILL.md": "bc7f25b8a7eb9be3adaa0917febb5c2b452d378e1d5836c5b1bf47add2094d09",
+        "discovery-digest/SKILL.md": "208c0ee5265cd820d64267ccfc5cbf60746e3f9f697755ff76e823c4161907c4",
         "idea-write/SKILL.md": "01f74cf692bb7941d24118928080e16519c78c683a374a69aad81695036e02ae",
         "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",
         "pre-pr-review/SKILL.md": "d72bee4edf7979968dc08f2cc493826953a396090a212f36132af557cde55960",
         "product-write/SKILL.md": "21bdc82897281178f915cb0f51dd669d35228d17748977cbacdc1993f2843b98",
         "spec-clarify/SKILL.md": "26da90f61886188eec6fc6c4a92c60fd825b6c1bb47bd90c16257f14a4471cdd",
-        "spec-impact/SKILL.md": "557be97a4f0e6fb3cc232e4b5bc8bc16c820bb3314b33ac047ff09efdde94441",
+        "spec-impact/SKILL.md": "289c3df829fd93e98541edd25d7682d0cd55f747074d19b102f2cc9d17762d0b",
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",
         "spec-plan/SKILL.md": "00d877467e5d5f971fbdcce2cc5b20afb03e6645198363c92cbc57f13a4e3ae3",
-        "spec-reconcile/SKILL.md": "2df8cf62c9df25ac4d165908f8a7345531006381aef1a841f82447d37a3d460a",
+        "spec-reconcile/SKILL.md": "e7c4a48154c1991840f2b9036e5b6e15a021e566d35132e96424e2bd13eb2b9c",
         "spec-specify/SKILL.md": "03335ef089e1937f3be74f757ed7d69e440280407775fb4e25f5efad7001e2be",
         "spec-tasks/SKILL.md": "59cdabc8e4e8f3656d245c1aa20213f0d89cd5e7fc9915e05d3e7fa1af98b9f1",
-        "spec-update/SKILL.md": "737a9a862f7ed0ea441fe72f0855ddca5dbfcee7284b8343e82ef6c8f967b980",
+        "spec-update/SKILL.md": "0789cec1bde6a409d6dd3b04ee2211be5471ac55c2d0364a64df4147123c601e",
         "timeline-update/SKILL.md": "e0770d9e33139bbddaa01be6bd59748845ab6d18b34fd9de489910f110cd584c",
-        "update-to-version/SKILL.md": "f320a0108b609659bd13ba8123bdd51eb90d1b9881aa86eb937f649cfd923166"
+        "update-to-version/SKILL.md": "f7c1e902460cb431be66ab214e24f30bffc25f8123cd31324ab945962bffc79b"
       }
     },
     {
@@ -359,7 +359,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R11",
-      "sha256": "eac82889fdc92feeb22541f1cab02f048d76b5d6c1cc03d36748f7f92d49790e"
+      "sha256": "753dafbd91d5cedf29f8a774f0837c13bec65e02cc9fc5b2ac4e3c3ba1c15cf1"
     },
     {
       "path": ".github/workflows/spec-guard.yml",
