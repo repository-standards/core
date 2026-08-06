@@ -64,10 +64,10 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 |---|---|
 | Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **193** across 8 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd) |
+| Observations recorded | **194** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-gate22) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 99 pass, 90 fail, 1 not-applicable, 3 partial |
-| Failures found | **167** - **84 fixed and re-verified** (across 21 merged pull requests), **83 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 101 pass, 89 fail, 1 not-applicable, 3 partial |
+| Failures found | **166** - **84 fixed and re-verified** (across 21 merged pull requests), **82 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -127,7 +127,6 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `DOC-01` | standard.manifest.json's `since` field per entry reflects the entry's real first-shipped version, reconstructed from git history | `fixture:test-greenfield-core` | attempted, still open - [core/pull/1](https://github.com/repository-standards/core/pull/1) did not fully hold (see evidence in `runs/2026-08-03.json`) |
 | `DOC-10` | CHANGELOG.md has a recorded entry for every past version bump, and the documented scripts/changelog.mjs exists in the tree | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SHAPE-02` | R24's 'a repo that owns a database' framing has room for a library whose product IS the migration mechanism, not one owned schema | `repo:oban-bg/oban` | **open** (logged, not fixed) |
-| `GATE-22` | the persona check verifies a `**Serves:**` value against the actual roster in docs/personas.md, not merely that the field is non-empty and non-placeholder | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `GATE-24` | spec-guard --audit sees a spec directory the moment it is created, not only after it is `git add`-ed | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `GATE-32` | self-verify tracks a package-manager or workspace-composition entry that a repo satisfies only by coincidence, requiring a content match inside the matched path - not merely that the altPath resolves to something that exists | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SPEC-12` | spec-guard's coupling check binds to the domain-folder convention regardless of which source-layout option a spec's plan chose | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
