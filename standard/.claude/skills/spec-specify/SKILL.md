@@ -54,6 +54,34 @@ Given that feature description, do this:
      - "Create a dashboard for analytics" → "analytics-dashboard"
      - "Fix payment processing timeout bug" → "fix-payment-timeout"
 
+<!-- PATCHED(repository-standards): ADR-002 - collision detection was exact-string on the
+     generated slug, in the one skill barred from asking the user. A request whose slug did
+     not string-match an existing capability it functionally overlapped therefore minted a
+     sibling in silence: `manager-shift-reassignment` beside an existing `shift-swap-request`
+     that already described the same behaviour - the split-by-wording failure ADR-002 exists
+     to prevent, arriving through the step that is supposed to prevent it. -->
+1b. **Before minting anything, look for a capability collision - by behaviour, not by name.**
+    List the directories under `specs/` and the capability keys in `specs/capability-map.json`,
+    and read the `## Purpose`, `## Scope` and `## Out of scope` of every one whose subject is
+    near this request. The name is the one thing that will not match: the same behaviour
+    arrives worded as the actor ("a manager reassigns a shift"), as the surface ("the shift
+    screen"), or as the ticket that asked for it, and a generated slug matches none of those.
+
+    - **An existing capability already owns this behaviour** -> update that spec in place.
+      Name it and say why in the Completion Report; do not mint a sibling.
+    - **The request spans two capabilities** - one sentence, two boundaries - -> write the
+      spec for the one it is primarily about, and record the other in `## Out of scope` as
+      `[NEEDS DECISION: <the boundary question>; owner: <who>]`, naming the capability it may
+      belong to. Never absorb the second silently, and never mint both in one invocation.
+    - **You cannot tell whether it is one capability or two** -> that is the same marker, not
+      a guess. Splitting a capability the wrong way produces two valid specs no guard can
+      compare, and nothing downstream will ever notice.
+
+    This is how the step surfaces a boundary call without breaking the rule that specify does
+    not ask: the marker blocks the clarify gate, and `/spec-clarify` - which owns the question
+    protocol - settles it before plan. Report every near-miss you considered, including the
+    ones you ruled out and why.
+
 2. **Create the spec feature directory**:
 
    Specs live under the default `specs/` directory unless the user explicitly provides `SPECIFY_FEATURE_DIRECTORY`.
@@ -69,8 +97,8 @@ Given that feature description, do this:
       <!-- PATCHED(repository-standards): ADR-033 - this check ran on the slug alone and read
            no status, so a near-miss name minted a rival spec for a subject the repo already
            had, and "update in place" applied to a retired capability as readily as a live one.
-           It is first because step 1's short name is a guess that invites exactly that. -->
-      - **`ls specs/` FIRST and match on subject, not on slug.** The short name step 1 generated is yours, not the repo's: `shift-reminders` and `shift-notifications` are the same capability under two names, and `specs/shift-reminders/` not existing proves nothing. An existing capability covering this subject is the one this request belongs to, whatever it is called
+           The subject search itself is step 1b; what happens here is what the match is used for. -->
+      - **Take the capability step 1b matched, not the slug.** The short name step 1 generated is yours, not the repo's: `shift-reminders` and `shift-notifications` are the same capability under two names, and `specs/shift-reminders/` not existing proves nothing. A name match catches only the easy half; step 1b's search on subject is what decides whether this request already has a home
       - **Read the matched spec's `Status` before editing it.** `retired` means stop and do not draft: the capability was ended by a decision record, and the file stays as the record of what was built, not as somewhere to add to. Name that record, say what it decided, and let the user choose - a genuinely new capability specced fresh may well be right, and the record often says so, but that is the user's call to make with the record in front of them. What you must not do is proceed on your own, under either the old slug or a new one
       - Otherwise, if a directory matched, this is the same capability: update the existing spec in place instead of minting a new sibling directory
       - Set `SPECIFY_FEATURE_DIRECTORY` to the matched capability's directory, or to `specs/<short-name>` when nothing matched. The generated short name only names the directory when the capability is genuinely new - adopting it over a matched capability's existing name is how the rival spec gets minted anyway, one bullet after the check that caught it
@@ -109,7 +137,7 @@ Given that feature description, do this:
      unmapped by construction, that one catches a refactor moving code out from under a glob.
 
    **IMPORTANT**:
-   - You must only create one feature per `/spec-specify` invocation
+   - You must only create one feature per `/spec-specify` invocation - a request that spans two capabilities is handled by step 1b (write one, mark the boundary), never by folding the second one in unnamed
    - The spec directory name and the git branch name are independent — they may be the same but that is the user's choice
 
 3. Load `specs/capability-spec.template.md` to understand required sections. <!-- PATCHED(repository-standards): the standard's template is the single source of the spec shape -->
@@ -238,6 +266,7 @@ Given that feature description, do this:
 Report completion to the user with:
 - `SPECIFY_FEATURE_DIRECTORY` — the feature directory path
 - `SPEC_FILE` — the spec file path
+- The capability collisions considered (step 1b): which existing capabilities were read, which was ruled the same or a neighbour, and any boundary left as a `NEEDS DECISION` marker <!-- PATCHED(repository-standards) -->
 - Checklist results summary
 - Readiness for the next phase (`/spec-clarify` or `/spec-plan`)
 
