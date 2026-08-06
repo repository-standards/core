@@ -35,6 +35,12 @@ truth - so the spec, the code, and the tests must agree.
    across capabilities. A cross-spec contradiction is a finding - resolve it in this
    change if it belongs here, otherwise file a backlog item for it (`add-to-backlog`).
 
+   **When one side is `retired`, the contradiction resolves in one direction**
+   (ADR-036): the live spec wins, and the retired one is corrected to say what its
+   capability *did*, naming the change that superseded it. Correcting it is not
+   extending it, and `Status` stays `retired` - a retired spec is frozen against new
+   behaviour, never against telling the truth (R4).
+
 6. **Decision-record citations stay live (the altitude above the spec, `AGENTS.md`).**
    For each capability spec in scope, check every ADR/BDR it names or links - in the
    spec's own prose and in the capability's code comments - against that record's
