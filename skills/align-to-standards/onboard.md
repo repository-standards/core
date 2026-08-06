@@ -32,8 +32,9 @@ detail lives in the standards checkout at
    undecided / decided **inconsistently**?
 3. **Capabilities & specs** - domains in the code; any specs; a `capability-map.json`?
 4. **Quality gates** - tests (tiers? which paths?), typecheck strictness, lint/format.
-5. **CI/CD** - pipeline present, least-privilege permissions, pinned actions,
-   reproducible build.
+5. **CI/CD** - pipeline present **and its PR gate demonstrably firing** (a workflow file
+   is not a gate - the pass detail says what proves it), least-privilege permissions,
+   pinned actions, reproducible build.
 6. **Security & supply chain** - secret scanning, committed secrets, dependency audit,
    lockfile, release cooldown.
 7. **Dependencies & stack** - detect the stack; outdated / risky / unmaintained deps;
