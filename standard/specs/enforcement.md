@@ -96,6 +96,16 @@ path segment; `**` matches any number of segments **including none**, which is w
 trailing `**` means the contents of a directory: `src/**` matches `src/index.ts`, not a
 file named `src`.
 
+**Two capabilities in one folder** - a sibling that grew out of the first, whose code
+cannot move out without a refactor nobody is asking for. A glob starting with `!`
+**excludes**, so the folder's capability claims everything but the sibling's files:
+`"payments": ["packages/payments/**", "!packages/payments/refunds/**"]` beside
+`"refunds": ["packages/payments/refunds/**"]`. Without it the map can only say the whole
+folder, which demands both specs on every edit until the failure stops being read, or list
+files by hand, which goes stale the moment one is added. An exclusion narrows a claim and
+cannot replace one: a capability with nothing but exclusions is refused, and `--audit`
+reports both an exclusion that has stopped matching anything and a file it handed to nobody.
+
 **Map hygiene:** globs bind **behavior-bearing source**. Dependency manifests and
 lockfiles (`package.json`, `pnpm-lock.yaml`, `go.mod`, ...) SHOULD stay out of
 capability globs - a version bump is not a behavior change; it is reviewed as a

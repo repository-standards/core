@@ -16,6 +16,28 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Two capabilities in one folder had no way to say which file was whose (2026-08-06)
+
+`capability-map.json` had globs and nothing else, so a second capability whose code
+necessarily lives inside an already-claimed domain folder had three options and no good one.
+Reproduced in a fixture with `src/swap/request.ts` and `src/swap/audit.ts`: unmapped, an edit
+to the audit file demanded the wrong capability's spec; with a narrow entry added for it,
+`spec-guard` fired on **both** capabilities for that single edit; and hand-enumerating the
+files that remain is a list that goes stale the first time somebody adds one. Leaving the
+sibling unmapped is not available either - `--audit` requires the entry. An attempted
+`"!src/swap/audit.ts"` was read as a literal path and reported as a glob matching nothing.
+
+A map entry may now start with `!`, which excludes: the capability claims what its other
+globs match except those paths. On the same fixture, an edit to `src/swap/audit.ts` now names
+`swap-audit` alone, an edit to `src/swap/request.ts` names `swap-request` alone, and `--audit`
+reports 5 files each claimed by a capability. The escapes are closed with it: an exclusion
+that hands a file to nobody is reported as unclaimed code, one that has stopped matching
+anything is reported like any other dead glob, a capability of nothing but exclusions is
+refused (it would claim no code while reading as mapped), and an exclusion written in the
+object form is refused rather than silently given a coupling mode it cannot have.
+`tools/spec-guard-test.mjs` gains nine cases and a `never` assertion, because a case that only
+checks the exit code cannot tell "the right capability fired" from "both did".
+
 ### The persona gate failed CI on four of the six files a plan writes (2026-08-06)
 
 `spec-structure.mjs` excluded `plan.md`, `tasks.md` and `checklists/` from the persona gate as

@@ -35,6 +35,23 @@ lives behind:
 `"couples": "shape"` fires only when the file's **key structure** changes, so editing a
 value in a config file is not a behaviour change while adding a field is.
 
+A glob starting with `!` **excludes**: the capability claims everything its other globs
+match except those paths. That is how two capabilities share one folder - the sibling that
+grew out of the first:
+
+```json
+{
+  "payments": ["**/payment/**", "!**/payment/refunds*"],
+  "refunds": ["**/payment/refunds*"]
+}
+```
+
+Without it the only shapes available are the whole folder, which demands both specs on every
+edit until people stop reading the failure, or a hand-listed set of files that goes stale the
+moment somebody adds one. An exclusion cannot make a file vanish: `--audit` reports what it
+hands over if no other capability picks it up, and reports the exclusion itself when it stops
+matching anything.
+
 Tests co-located with the code are already covered - `**/booking/**` matches
 `src/booking/booking.test.ts` like anything else under it.
 

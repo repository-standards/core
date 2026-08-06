@@ -35,6 +35,14 @@ const MAP = {
   widgets: ["src/**", { glob: "data/*.json", couples: "shape" }],
   payments: ["**/payment/**", "shared/**/payment*"],
 };
+// Two capabilities inside one domain folder - the sibling that grew out of the first. The
+// exclusion is what lets `payment/refunds.ts` belong to `refunds` alone while everything
+// else under `payment/` stays with `payments`.
+const SPLIT_MAP = {
+  ...MAP,
+  payments: ["**/payment/**", "!**/payment/refunds*", "shared/**/payment*"],
+  refunds: ["**/payment/refunds*"],
+};
 
 write("specs/capability-map.json", json(MAP));
 write("specs/widgets/spec.md", "# Widgets\n");
@@ -43,6 +51,7 @@ write("src/index.js", "export const widget = 1;\n");
 write("data/rules.json", rules());
 write("payment/index.ts", "export const capture = 1;\n");
 write("payment/gateway/capture.ts", "export const gateway = 1;\n");
+write("payment/refunds.ts", "export const refund = 1;\n");
 write("shared/payment.ts", "export const money = 1;\n");
 write("shared/paymob.ts", "export const unrelated = 1;\n");
 // Tracked and claimed by nobody - what the unclaimed-code check is for.
@@ -57,6 +66,17 @@ const run = (...args) => {
   } catch (e) {
     return { code: e.status ?? 1, out: `${e.stdout ?? ""}${e.stderr ?? ""}` };
   }
+};
+
+// The sibling capability's own spec directory, minted and removed by the --audit cases that
+// need it: leaving it in the seed would make every --audit case above report an orphan spec,
+// and creating it in a diff-mode case would read as that capability's spec being touched.
+const withRefundsSpec = {
+  act: () => write("specs/refunds/spec.md", "# Refunds\n"),
+  undo: () => {
+    git("reset", "-q");
+    rmSync(join(repo, "specs/refunds"), { recursive: true, force: true });
+  },
 };
 
 // fires = the guard must block (exit 1 under --block); passes = it must not.
@@ -148,6 +168,98 @@ const CASES = [
       rmSync(join(repo, "specs/legacy"), { recursive: true, force: true });
     },
   },
+
+  // Exclusions: two capabilities in one domain folder. Without them the map could only say
+  // "the whole folder" - every edit demanding both specs - or hand-enumerate the files that
+  // are left, which goes stale in silence the moment one is added.
+  {
+    name: "an exclusion hands one file inside a claimed folder to its sibling",
+    fires: true,
+    says: "- refunds ",
+    never: "- payments ",
+    act: () => {
+      write("specs/capability-map.json", json(SPLIT_MAP));
+      write("payment/refunds.ts", "export const refund = 2;\n");
+    },
+  },
+  {
+    name: "the excluded file's neighbours still couple to the folder's capability",
+    fires: true,
+    says: "- payments ",
+    never: "- refunds ",
+    act: () => {
+      write("specs/capability-map.json", json(SPLIT_MAP));
+      write("payment/index.ts", "export const capture = 2;\n");
+    },
+  },
+  {
+    name: "editing the excluded file with its own spec passes",
+    fires: false,
+    act: () => {
+      withRefundsSpec.act();
+      write("specs/capability-map.json", json(SPLIT_MAP));
+      write("payment/refunds.ts", "export const refund = 3;\n");
+      write("specs/refunds/spec.md", "# Refunds\n\nA refund returns a capture.\n");
+      git("add", "-A");
+    },
+    undo: withRefundsSpec.undo,
+  },
+  {
+    name: "--audit accepts the split - every file still claimed by exactly one capability",
+    fires: false,
+    args: ["--audit"],
+    says: "each claimed by a capability or declared unclaimed",
+    act: () => {
+      withRefundsSpec.act();
+      write("specs/capability-map.json", json({ ...SPLIT_MAP, $unclaimed: ["tooling/**", "shared/paymob.ts"] }));
+      git("add", "-A");
+    },
+    undo: withRefundsSpec.undo,
+  },
+  {
+    // The silent way an exclusion rots: the sibling's file is renamed, the exclusion stops
+    // matching, and the folder's capability quietly claims it back.
+    name: "--audit reports an exclusion that holds nothing back",
+    fires: true,
+    args: ["--audit"],
+    says: "the exclusion holds nothing back",
+    act: () => {
+      withRefundsSpec.act();
+      write("specs/capability-map.json", json({ ...SPLIT_MAP, payments: ["**/payment/**", "!**/payment/rebates*", "shared/**/payment*"] }));
+      git("add", "-A");
+    },
+    undo: withRefundsSpec.undo,
+  },
+  {
+    // An exclusion may hand a file over; it may not make one disappear.
+    name: "--audit reports a file an exclusion handed to nobody",
+    fires: true,
+    args: ["--audit"],
+    says: "payment/refunds.ts",
+    act: () =>
+      write(
+        "specs/capability-map.json",
+        json({ ...MAP, payments: ["**/payment/**", "!**/payment/refunds*", "shared/**/payment*"], $unclaimed: ["tooling/**", "shared/paymob.ts"] }),
+      ),
+  },
+  {
+    name: "a capability of nothing but exclusions is refused",
+    fires: true,
+    says: "only exclusions",
+    act: () => write("specs/capability-map.json", json({ ...MAP, widgets: ["!src/**"] })),
+  },
+  {
+    name: "an exclusion written as an object is refused, not silently given a coupling mode",
+    fires: true,
+    says: "exclusion written as an object",
+    act: () => write("specs/capability-map.json", json({ ...MAP, widgets: ["src/**", { glob: "!src/vendor/**", couples: "shape" }] })),
+  },
+  {
+    name: "a bare `!` is refused",
+    fires: true,
+    says: "empty exclusion",
+    act: () => write("specs/capability-map.json", json({ ...MAP, widgets: ["src/**", "!"] })),
+  },
 ];
 
 let failures = 0;
@@ -161,6 +273,11 @@ for (const c of CASES) {
   } else if (c.says && !out.includes(c.says)) {
     failures++;
     console.log(`  FAIL  ${c.name} - exit ${code} is right but the output never says "${c.says}"`);
+  } else if (c.never && out.includes(c.never)) {
+    // Firing is not enough when the point of the case is WHICH capability fired: an
+    // exclusion that changed nothing still exits 1, on the sibling it was meant to release.
+    failures++;
+    console.log(`  FAIL  ${c.name} - exit ${code} is right but the output also says "${c.never}"\n${out.replace(/^/gm, "        ")}`);
   } else {
     console.log(`  ok    ${c.name}`);
   }
