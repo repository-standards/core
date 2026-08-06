@@ -47,6 +47,26 @@ bash scripts/verifyAgentGuards.sh
 | **python3** | a fallback JSON parser inside the spec engine (`scripts/spec/common.sh` tries jq, then python3, then grep/sed) | nothing - jq is tried first and the grep/sed path covers the rest |
 | **gitleaks** | the secret scan | the CI workflow installs it itself, so nothing breaks locally either way. `specs/enforcement.md` describes a local pre-commit pass as the intended design, but no pre-commit hook installer ships with the tree yet (no husky/lefthook config, nothing under `.git/hooks/`) - today the secret scan only ever runs in CI, gitleaks installed locally or not |
 
+## On a machine with no POSIX shell (Windows)
+
+The `bash` and `jq` rows above are not a formality there. The three `PreToolUse` guards
+ship as `.sh` files and the settings baseline invokes them as commands, so a session with
+no POSIX shell runs none of them - and that is silent by construction, because a guard
+only prints when it denies something. Git Bash or WSL supplies the shell; `jq` is a
+separate install on top of either. Whichever you use, run
+`bash scripts/verifyAgentGuards.sh` once and watch it print its denials, since that is the
+only positive evidence this design can give you.
+
+Installing a shell does not finish the job. The deny/ask lists match command strings, and
+every destructive entry in the shipped baseline names a POSIX tool - `sudo`, `rm -rf`,
+`dd`, `diskutil`, `shred`, `launchctl`, `crontab`. The same action spelled in another
+shell's vocabulary matches none of them, so it is neither denied nor queried. A repo whose
+agents work in that shell extends the lists with the equivalents they actually run and
+records what it added under the security baseline's agent-boundaries axis. The shipped
+baseline keeps the vocabulary it has been tested against rather than growing a second one
+nobody here can exercise: a deny entry that has never once fired on the platform it claims
+to cover is the same silence, in a longer file.
+
 ## Why this page exists rather than a check
 
 `self-verify` scores the repo's structure, not the machine it runs on: a laptop missing
