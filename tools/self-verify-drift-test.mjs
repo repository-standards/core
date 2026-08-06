@@ -55,7 +55,9 @@ const base = (() => {
 })();
 
 let failures = 0;
+let cases = 0; // counted, not written down - the verdict said 20 while 23 ran
 const check = (name, mutate, assert, args = []) => {
+  cases++;
   const dir = fixture();
   let r;
   try {
@@ -140,6 +142,51 @@ check(
     expect(r.drift === base.drift + 1, `expected drift ${base.drift + 1}, got ${r.drift}`);
     expect(says(r, "stands in for .claude/skills"), "the altPath was accepted on existence alone");
     expect(says(r, "a partial port is drift"), "the message does not name R22's rule");
+  },
+);
+
+// The same hole one entry-shape over. A directory at an alternate path may be a genuine
+// port - a different format, checked by name above - but a FILE cannot: an altPath says the
+// standard's file lives elsewhere here, not that something else lives there instead. The
+// entry resolved, nothing was compared, and the run reported it in a dim note.
+const altPathFixture = (dir, body) => {
+  patchManifest(dir, (m) => {
+    m.files.find((f) => f.path === "SPEC.md").altPaths = ["docs/SPEC.md"];
+  });
+  unlinkSync(join(dir, "SPEC.md"));
+  writeFileSync(join(dir, "docs/SPEC.md"), body);
+};
+
+check(
+  "a single-file copy entry resolved through an alternate path is compared, not waved through",
+  (dir) => altPathFixture(dir, "# not the standard's SPEC at all\n"),
+  (r, expect) => {
+    expect(r.drift === base.drift + 1, `expected drift ${base.drift + 1}, got ${r.drift}`);
+    expect(says(r, "docs/SPEC.md stands in for SPEC.md"), "the alternate path was accepted on existence alone");
+    expect(says(r, "not permission for a different file"), "the message does not say what an altPath means for a file");
+  },
+);
+
+check(
+  "the same entry, carrying the standard's content at the alternate path, passes",
+  (dir) => altPathFixture(dir, readFileSync(join(TREE, "SPEC.md"), "utf8")),
+  (r, expect) => {
+    expect(r.drift === base.drift, `a faithful copy at the alternate path is not drift: expected ${base.drift}, got ${r.drift}`);
+    expect(says(r, "docs/SPEC.md stands in for SPEC.md and carries the standard's copy"), "a satisfied alternate path is not reported as satisfied");
+  },
+);
+
+check(
+  "a repo that deliberately rewrote the file at its alternate path records it and stops drifting",
+  (dir) => {
+    altPathFixture(dir, "# this repo's own normative core\n");
+    patchManifest(dir, (m) => {
+      m.exceptions = [...(m.exceptions || []), { kind: "content", match: "SPEC.md", reason: "this repo carries its own normative core and tracks the standard's rules by reference" }];
+    });
+  },
+  (r, expect) => {
+    expect(r.drift === base.drift, `a recorded deviation is not drift: expected ${base.drift}, got ${r.drift}`);
+    expect(r.excepted === 1, `expected the deviation to be counted as excepted, got ${r.excepted}`);
   },
 );
 
@@ -504,4 +551,4 @@ if (failures) {
   console.error(`self-verify-drift-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("self-verify-drift-test: OK - 20 cases, the drift number moves when the content does");
+console.log(`self-verify-drift-test: OK - ${cases} cases, the drift number moves when the content does`);

@@ -16,6 +16,29 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### An alternate path satisfied a shipped file on its name alone (2026-08-06)
+
+Half of this was already closed and was re-run before anything was changed: a *directory* at
+an alternate path is checked by name today, so the monorepo shape that started it - an
+unrelated 31-skill system standing in for `.claude/skills` - is drift and stays drift. The
+same coincidence one entry-shape over was still open. A `copy` entry for a single **file**,
+resolved through an `altPath`, was never compared at all: the entry resolved, the run
+printed a dim note saying the content was not compared, and drift stayed 0. Reproduced on a
+copy of the current tree with `SPEC.md` moved to an alternate path and replaced by one line
+of unrelated text: `drift 0`, verdict compliant.
+
+A file at an alternate path is now hashed like any other copy entry. A directory may be a
+port - a different format by design, which is why it is checked by name - but a file may
+not: an altPath names a different *location* for the standard's file, not permission for a
+different file. The three shapes that must keep working have their own cases: a faithful
+copy at the alternate path passes and says so, a repo that deliberately rewrote the file
+records `{ "kind": "content" }` and stops drifting, and the ported-directory check is
+untouched.
+
+`self-verify-drift-test`'s verdict also stops hand-writing its own case count. It said
+"20 cases" while 22 ran, which is the fact-restated-by-hand failure the standard has a rule
+about, inside the file that exists to catch checks that stopped measuring anything.
+
 ### The coupling audit could not see a capability until somebody staged it (2026-08-06)
 
 `spec-guard --audit` listed the repo with `git ls-files` and fell back to walking the
