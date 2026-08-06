@@ -30,6 +30,13 @@ after personas and product.
    create `docs/facts.json` from scratch, in that shape, once the repo has its first fact
    worth declaring.
 
+   **The drift 0 you get here says "shaped like the standard", and says so out loud** - the
+   verdict carries `no capability spec exists here yet`, because nothing has been specified
+   under the shape. That line is this phase's progress bar: it clears at step 6 and not
+   before. Do not report a green step 1 to the user as a finished adoption, and never treat
+   the caveat as noise to be silenced - it is the difference between the folders being right
+   and the method having been used.
+
    **Write `specs/capability-map.json` now, even though there is nothing to map yet.** It is
    a required entry (R11) and the whole coupling mechanism reads it, so a repo that reaches
    the end of this phase without it fails `self-verify` on a file nobody thought to author -
@@ -163,8 +170,12 @@ after personas and product.
 7. **Seed the backlog.** Turn the unspecced capabilities and known work into
    `backlog.md` items - each naming its `cap` and `persona`.
 
-8. **Prove it.** `node scripts/self-verify.mjs` is green (drift 0). Open the first PR;
-   never push without the user's go.
+8. **Prove it.** `node scripts/self-verify.mjs` is green (drift 0), **and the shape-only
+   caveat from step 1 is gone** - if it still says no capability spec exists, step 6 did not
+   happen and drift 0 is not the proof it looks like. A guard reported `SKIP` is a third
+   answer: this machine lacks a tool, which is not the repo's drift and not a green light
+   either; install it and re-run before calling the walk done. Open the first PR; never push
+   without the user's go.
 
 ## Not this
 

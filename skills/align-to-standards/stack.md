@@ -32,6 +32,15 @@ phase is the procedure that consumes it.
    tests) - a wave that breaks the build does not close. Close the phase by
    copying `stack.manifest.json` into the repo: from then on `self-verify`
    counts one drift across both layers.
+6. **A stack guard reported `SKIP` is not drift and not a pass.** A Layer 2 guard
+   usually shells out to the stack's own toolchain, so it can only answer where
+   that toolchain is installed. `self-verify` refuses to run it otherwise and
+   says which prerequisite is missing, rather than scoring the machine as the
+   repo. Two consequences for this phase: install what the line names before you
+   report a drift number to anyone, and if the stack's manifest declares more
+   than a binary (`{ "kind": "path", "match": "node_modules" }`), leave it
+   declared - it is what stops a compliance check installing a dependency tree
+   off the network as a side effect of being asked a question.
 
 ## Not this
 
