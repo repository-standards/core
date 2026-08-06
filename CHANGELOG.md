@@ -16,6 +16,28 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The by-reference links the tree ships are checked now, instead of swept by hand (2026-08-06)
+
+Method docs are adopted by reference, so the shipped tree points at them by full URL - the
+file is not in the adopting repo, and a relative link would be a lie there. A URL naming a
+path that does not exist **here** is the same lie one level up, made to every adopted repo,
+and nothing checked those: `link-check` resolves relative links, and an absolute URL is
+skipped by construction.
+
+That class was found and hand-swept four times - the verifier's decisions line, the
+`jq`-missing denial in a hook, an example claim in `facts.example.json`, and a rule citing a
+path as though it were a file in the reader's repo. Re-run live before this shipped, the
+denial message names the full URL and it resolves, so the specific defect is closed - but
+nothing was stopping the fifth instance.
+
+`link-check` now resolves every `.../repository-standards/core/blob|tree/main/<path>` link
+against the local tree, across every tracked and untracked text file rather than only
+markdown, because two of the four instances lived in a shell script and a JSON example. It
+finds 33 such links today and all resolve. An anchor and trailing sentence punctuation are
+stripped before resolving, and a URL whose path carries a `<placeholder>` is prose about the
+form rather than a link - both verified against the shipped tree, which contains one of
+each.
+
 ### A manifest entry claimed it shipped in a release nobody has cut (2026-08-06)
 
 `since` names the release an entry first shipped in, and an entry riding the next cut says
@@ -67,7 +89,7 @@ asleep - with a case in `self-verify-drift-test` holding it. A repo that genuine
 run it on pushes records an exception, which is a decision somebody made rather than a gap
 nobody sees.
 
-### Four public surfaces said the standard was at 1.0.0, eleven versions ago (2026-08-06)
+### Four public surfaces said the standard was at 1.0.0, and nothing covered them (2026-08-06)
 
 `docs/faq.md`, `README.md`, `llms.txt` and its deployed copy `site/llms.txt` each stated the
 standard is at 1.0.0 while `VERSION` read 1.0.13 - and none of the four was among the five
