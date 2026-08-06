@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Renders a repository's work state as one static page: site/work/index.html.
+// Renders a repository's work state as one static page: site/dashboard/index.html.
 //
 // Everything it shows is read from committed files - the backlog pool, the cycles, the
 // changelog, the decision records, the specs. Two people who run it on the same commit get
@@ -38,9 +38,13 @@ const DEFAULT_PORT = 9675
 const port = serveFlag >= 0 && /^\d+$/.test(argv[serveFlag + 1] || '') ? Number(argv[serveFlag + 1]) : DEFAULT_PORT
 const watching = argv.includes('--watch') || serveFlag >= 0
 const anonymise = argv.includes('--anonymise') || argv.includes('--anonymize')
-const root = resolve(
-  argv.find((a, n) => !a.startsWith('--') && n !== outFlag + 1 && !(serveFlag >= 0 && n === serveFlag + 1)) || join(here, '..', '..'),
-)
+// The first bare argument is the repository root - unless it is a flag's value. Written as a
+// set of taken positions because the obvious `n !== outFlag + 1` reads as position 0 when
+// there is no --out at all, which silently swallowed the root of `index.mjs /path/to/repo`.
+const taken = new Set()
+if (outFlag >= 0) taken.add(outFlag + 1)
+if (serveFlag >= 0 && /^\d+$/.test(argv[serveFlag + 1] || '')) taken.add(serveFlag + 1)
+const root = resolve(argv.find((a, n) => !a.startsWith('--') && !taken.has(n)) || join(here, '..', '..'))
 
 const read = (p) => readFileSync(join(root, p), 'utf8')
 const has = (p) => existsSync(join(root, p))
@@ -565,10 +569,10 @@ return data
 // by changing it and rebuilding, and an attacker can take the ciphertext away and try
 // passwords offline - so use a passphrase worth attacking, not the company name and a year.
 const PBKDF2_ROUNDS = 600_000
-const password = process.env.WORK_DASHBOARD_PASSWORD || ''
+const password = process.env.DASHBOARD_PASSWORD || ''
 const locked = argv.includes('--lock')
 if (locked && password.length < 8) {
-  console.error('work-dashboard: --lock needs WORK_DASHBOARD_PASSWORD set to at least 8 characters')
+  console.error('dashboard: --lock needs DASHBOARD_PASSWORD set to at least 8 characters')
   console.error('  (an environment variable, never an argument - arguments reach shell history and CI logs)')
   process.exit(1)
 }
@@ -622,7 +626,7 @@ ${gate}</script>
 
 /* ---------- emit ---------- */
 
-const out = outFlag >= 0 ? resolve(argv[outFlag + 1]) : join(root, 'site/work/index.html')
+const out = outFlag >= 0 ? resolve(argv[outFlag + 1]) : join(root, 'site/dashboard/index.html')
 const stateFile = join(dirname(out), 'state.json')
 
 function build() {
@@ -677,7 +681,7 @@ ${readFileSync(join(here, 'src', 'page.js'), 'utf8')}</script>
   )
 
   console.log(
-    `work-dashboard: ${data.items.length} pool items, ${data.cycles.length} cycles (${data.counts.cycleItems} items), ` +
+    `dashboard: ${data.items.length} pool items, ${data.cycles.length} cycles (${data.counts.cycleItems} items), ` +
       `${data.entries.length} changelog entries, ${data.decisions.length} decisions, ${data.specs.length} specs -> ${out}`,
   )
   return data
@@ -688,7 +692,7 @@ ${readFileSync(join(here, 'src', 'page.js'), 'utf8')}</script>
 try {
   build()
 } catch (err) {
-  console.error(`work-dashboard: ${err.message}`)
+  console.error(`dashboard: ${err.message}`)
   process.exit(1)
 }
 
@@ -707,12 +711,12 @@ if (watching) {
         try {
           build()
         } catch (err) {
-          console.error('work-dashboard: rebuild failed -', err.message)
+          console.error('dashboard: rebuild failed -', err.message)
         }
       }, 250)
     })
   }
-  console.log(`work-dashboard: watching ${sources.length} sources`)
+  console.log(`dashboard: watching ${sources.length} sources`)
 }
 
 if (serveFlag >= 0) {
@@ -732,11 +736,11 @@ if (serveFlag >= 0) {
   // or the last run still open. Say which port and how to pick another, not a stack trace.
   server.on('error', (err) => {
     if (err.code !== 'EADDRINUSE') throw err
-    console.error(`work-dashboard: port ${port} is already in use - pass another, e.g. --serve ${port + 1}`)
+    console.error(`dashboard: port ${port} is already in use - pass another, e.g. --serve ${port + 1}`)
     process.exit(1)
   })
 
   // Loopback only. The page carries whatever the repository carries, and a dev server that
   // binds every interface serves a private backlog to the coffee shop.
-  server.listen(port, '127.0.0.1', () => console.log(`work-dashboard: http://localhost:${port} (live)`))
+  server.listen(port, '127.0.0.1', () => console.log(`dashboard: http://localhost:${port} (live)`))
 }

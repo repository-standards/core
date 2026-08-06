@@ -76,7 +76,7 @@ document.body.append(
   el('header', { class: 'masthead' }, [
     wrap([
       el('div', { class: 'brand' }, [
-        el('h1', { html: D.meta.name + ' <span class="sub">- work</span>' }),
+        el('h1', { html: D.meta.name + ' <span class="sub">- dashboard</span>' }),
         D.meta.home
           ? el('a', {
               class: 'home',
@@ -1157,7 +1157,7 @@ select(TABS.some((t) => t.id === location.hash.slice(1)) ? location.hash.slice(1
 // It waits instead of reloading in one case: the reader is doing something a reload would
 // destroy - a record open, a search half-typed, text selected. Then it says so and lets them
 // choose. Reloading out from under somebody once is enough for them to stop trusting a page.
-const RESUME = 'work-dashboard:resume'
+const RESUME = 'dashboard:resume'
 try {
   const saved = sessionStorage.getItem(RESUME)
   if (saved) {

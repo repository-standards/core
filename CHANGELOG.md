@@ -16,6 +16,38 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The page is called the dashboard, and the masthead stopped pitching the product (2026-08-07)
+
+The surface was called `work` in every path and label - `/work/`, `site/work/index.html`,
+`WORK_DASHBOARD_PASSWORD`, "name - work" in the masthead - while the thing everybody actually
+calls it, including the folder that generates it, is the dashboard. It is now `dashboard`
+throughout: `/dashboard/`, `site/dashboard/`, `DASHBOARD_PASSWORD`, and the shipped workflow
+is `dashboard.yml`.
+
+Four things a reader hit in the first minute on the published page:
+
+- **The masthead opened with five lines of positioning prose**, lifted whole from the product
+  frame. Nobody opening a status page needs to be sold the project, and it pushed the content
+  under the fold. In its place, one small link to wherever the project lives, taken from what
+  the repository already declares - `package.json`'s homepage, the domain its site publishes
+  under, or the repository itself.
+- **A Cycles tab on a repository that keeps no cycles.** It said so honestly and then showed
+  the backlog pool on a board underneath, which put the pool under a heading that says cycle
+  and duplicated the Backlog tab. It existed so the tab would have something to display
+  rather than something to say - the instinct the rest of the page refuses, since Timeline
+  and Reports disappear when their source is missing. Cycles now does too.
+- **The changelog tab was called History**, inventing a second name for a file this
+  repository already names, in a rule and in the record that decided it.
+- **"Capability specs" meant nothing** to the reader the page is for. The section now says
+  what a capability is in the same breath, and the records search follows the reader down the
+  list instead of scrolling out of sight above thirty-nine decision records.
+
+Found while renaming: a repository root passed **without** `--out` was silently ignored, so
+`index.mjs /path/to/repo` rendered the wrong repository - the argument scan treated position
+zero as "the value after --out" whenever there was no `--out` at all. It cost nothing here
+only because every call site passed both.
+
+
 ### A stranger's agent can find the standard from the domain, and not from the name (2026-08-07)
 
 A human-prompting round against four already-adopted repositories: two on the registered
