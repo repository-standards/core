@@ -68,6 +68,18 @@ buildable, each one revertable. Four rules get you there:
   forward. This is the one hard stop in the list - rewriting shared history
   destroys other people's work.
 
+**If this repo maintains more than one release line** - a `3.x` branch still taking
+security fixes while `main` moves on - read the first rule as *base every PR on the
+branch it will merge into*, and the other three as binding that line exactly as they
+bind `main`: update by rebasing onto it, never back-merge it, never rewrite it. Land
+the fix on `main` **first**, then open one PR per supported line (a cherry-pick,
+adapted where the code diverged), and write that line's changelog entry under its own
+`## Unreleased` heading. Which lines are supported, and until when, belongs in the
+branching decision where a contributor will find it - a line nobody knows is supported
+is a line that silently regresses. What is never a legal base is another open pull
+request's branch, whatever it is named
+([ADR-035](https://github.com/repository-standards/core/blob/main/docs/decision-records/ADR-035-maintained-release-lines-are-integration-targets.md)).
+
 Turn on the platform's linear-history protection so the rule is enforced, not
 remembered, and set the merge button to the method this repo recorded. Why this
 shape, what it costs, and when squash or a merge commit is the better pick:
