@@ -172,6 +172,53 @@ if (manifest && pinned && manifest.version && manifest.version !== pinned) {
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const hasFile = (p, alts = []) => [p, ...alts].some((x) => exists(x));
 const isCore = (entry) => !entry.profile || entry.profile === "core"; // no profile = core (pre-ADR-011)
+
+// Present on disk is not present in the repository. A required entry sitting under an
+// ignore rule reported PASS and counted toward drift 0, while a fresh clone had nothing
+// there: the roster, the decision records and the product pages could all be written,
+// verified as compliant, and then not be in the commit. Found on a 19-year platform whose
+// .gitignore excludes /docs/, which is where 16 of the manifest's 48 file entries live -
+// the repo read `drift 0 - compliant with the standard` with none of them tracked.
+//
+// The test is deliberately ignored-AND-untracked, not merely untracked. Mid-adoption, files
+// are authored before they are staged, and failing that would fire on every honest run of
+// the very procedure that creates them. An ignore rule is different in kind: it cannot be
+// resolved by getting round to `git add`, because `git add` refuses it.
+//
+// git is optional. A repo that is not a git work tree (a scaffold before `git init`, an
+// export) is checked exactly as before rather than being told it failed something it has no
+// way to satisfy.
+const gitOk = (() => {
+  try {
+    execSync("git rev-parse --is-inside-work-tree", { stdio: ["ignore", "pipe", "ignore"] });
+    return true;
+  } catch {
+    return false;
+  }
+})();
+const trackedPaths = (() => {
+  if (!gitOk) return null;
+  try {
+    return new Set(execSync("git ls-files", { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 }).split("\n").filter(Boolean));
+  } catch {
+    return null;
+  }
+})();
+// Returns the matching ignore rule when the path is ignored and nothing under it is tracked,
+// otherwise null. A directory entry counts as tracked when any file beneath it is.
+const ignoredPath = (p) => {
+  if (!p || !trackedPaths) return null;
+  const prefix = p.endsWith("/") ? p : `${p}/`;
+  for (const t of trackedPaths) if (t === p || t.startsWith(prefix)) return null;
+  try {
+    // -v prints "<ignore-file>:<line>:<pattern>\t<path>" and exits 0 only on a match.
+    const out = execSync(`git check-ignore -v -- ${JSON.stringify(p)}`, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+    const rule = out.split("\t")[0].trim();
+    return rule || "matched an ignore rule";
+  } catch {
+    return null; // exit 1 = not ignored; anything else is not a claim worth failing on
+  }
+};
 let scaleSkipped = 0; // entries skipped by --profile core, across files/sections/guards
 
 // exceptions (R17): a deliberate, recorded deviation from a required entry - the
@@ -519,6 +566,11 @@ if (manifest) {
     if (coreOnly && !isCore(f)) { scaleSkipped++; continue; }
     if (f.adapt === "reference") { note("file", `${f.path} is reference-class - adopted by link to the living standard, no file expected here`); continue; }
     if (hasFile(f.path, f.altPaths)) {
+      const ignored = ignoredPath([f.path, ...(f.altPaths || [])].find((x) => exists(x)));
+      if (ignored) {
+        failOrExcept("file", f.path, "file", `${f.path} exists on this disk but is git-ignored and untracked (${ignored}) - it is not in the repository, so a fresh clone does not have it`);
+        continue;
+      }
       pass("file", `${f.path} (${f.purpose})`);
       verifyContent(f);
       verifyKeys(f);
