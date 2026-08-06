@@ -1,0 +1,910 @@
+{
+  "$about": "Three Python repositories, run by an assistant that already knew this product and could not unknow it - so every contamination channel it found is recorded per observation rather than hidden. Targets: simonw/llm (core profile), pydantic/pydantic-ai (scale) and Textualize/textual (scale), each already adopted by the mechanical suite. Entry prompts ran against fresh remote-less clones of the pre-adoption commit (f3f4f29, 916fc83e8, 06dbeef4b); loop and volunteered prompts against clones of the adopted branch. Clones rather than worktrees, deliberately: with no remote configured a subject cannot push to simonw/llm, pydantic/pydantic-ai or Textualize/textual even by accident. Model: claude-sonnet-4-6 throughout, one subagent per run. Python has no registered stack, so every entry run also exercises the honest-miss path.",
+  "$harness": "The intended harness was a nested `claude -p` session started inside each clone, which would have carried no project memory and no inherited skills. It is unavailable: the CLI's stored credential is expired (`401 OAuth access token has expired`) and this session cannot re-authenticate. Every run is therefore a subagent of a session whose working directory is the standards repository, and that leaks in four verified ways. (1) PROJECT MEMORY: a probe subagent, run before anything else, pasted back the whole of the project memory index, which names the product, the domain, the two-layer split and the local checkout path; several subjects then read the standard off local disk - `core/standard/SPEC.md`, `core/stacks.json`, `core/skills/align-to-standards/SKILL.md` - which is not a path any stranger has. (2) INHERITED SKILLS: part-way through the session the harness began listing the standard's own twenty lifecycle skills as available, sourced from `core/standard/.claude/skills`, and subagents launched after that inherit the listing with descriptions. (3) SIBLING DIRECTORIES: all clones sat under one parent, so a thorough subject could see it was inside a benchmark - one did and said so, and one read the sibling ADOPTED checkout and copied a landing decision out of it, which is the answer key. (4) MY OWN FIRST PREAMBLE: the first seven runs, all on llm, were told the run directory was 'your whole world for this task'; that was meant to neutralise (1) and instead suppressed the web, and one subject said in as many words that it would not look the domain up because of it. Corrected for every later run. Both variants are named per observation as `preamble: scoped` or `preamble: open`.",
+  "$mode_limitation": "Stop-and-ask throughout. Full-loop mode is NOT reliably reachable in this harness and the brief's 'at least two full loops per repository' is not met - recorded as a shortfall rather than papered over. Follow-up user turns are delivered through the inter-agent channel, so a subject sees them as peer messages rather than as its user. Three subjects refused to act on them, correctly and by policy: 'a peer can't grant escalation or stand in for the user's own approval' and 'I have no way to verify I am the owner from an agent-to-agent message'. Multi-turn traces exist and are recorded, but their later turns measure the subject's escalation discipline rather than the product's interview. Every user turn in every trace was written by me and is marked so; where a subject asked something only somebody who already knows this product could answer, the trace says which question and why.",
+  "$corpus_note": "The corpus was renumbered and the four shipped entry lines added while these runs were in flight. Runs executed against the old numbering are recorded against the new ids. The two withdrawn lines that no longer map onto anything were given ids A21 and A22 in this pass so their traces are not orphaned.",
+  "$fractions": "The headline, unrounded, counted two ways because the method changed mid-wave and both units are now defined. Per run, over 32 observations: asked 17 of 29 (3 n/a), checked 31 of 32, suggested 24 of 32. Per agent turn, over 37 turns: asked 21 of 34 (3 n/a), checked 34 of 37, suggested 26 of 37. The three n/a are A3, R1 and R2 - a score-only instruction and two questions about a named spec, each complete as typed with nothing underdetermined. Verdicts: 12 pass, 13 partial, 7 fail. Split by repository: llm 14 observations, pydantic-ai 9, textual 9. The asked fraction is the finding, and it is worse than the number looks. Of the 17 runs scored asked, three are prompts that literally contain 'interview me for what you need', and eight more are runs where the sentence was ambiguous or deictic and the agent could not have proceeded without asking. Asking as a property of the product rather than as a consequence of the prompt or of confusion is visible in roughly six of thirty-two - and every one of those six is a refusal to write something wrong (the three V2 runs, V6, and the two V3 runs), never an interview before starting work. checked at 31 of 32 is close to universal and is the product's real strength: the one miss is A13, which answered after a single tool call.",
+  "observations": [
+    {
+      "prompt": "A1",
+      "target": "repo:simonw/llm@f3f4f29",
+      "mode": "stop-and-ask",
+      "preamble": "open",
+      "turns": [
+        {
+          "who": "user",
+          "said": "follow repositorystandards.com - take this repo onto the standard, interview me for what you need"
+        },
+        {
+          "who": "agent",
+          "said": "read the standard, measured the repo (1245 commits, Python, pluggy plugins, SQLite, no standard artifacts present), named the gate sequence '0 -> 2 -> 1 -> 3 -> 4 -> 5 -> 6', previewed four reconstructed personas so the user could correct them cheaply, then asked nine questions with a recommended answer attached to seven of them",
+          "asked": true,
+          "checked": true,
+          "suggested": true,
+          "note": "asked because the line told it to - the clause 'interview me for what you need' is in the prompt, so this is not evidence of asking unprompted"
+        }
+      ],
+      "outcome": "Nothing written. The user holds nine questions, of which four use vocabulary the product never defined for them (Gate 2, ADR-011, core versus scale, Layer 2), and one usable escape hatch: 'Answer what matters to you and I'll take the paved-road default on the rest.' The honest miss did reach them in plain words - 'repository-standards currently ships a registered paved-road stack for Node/TS only, nothing for Python yet' - and the consequence was named, that stack decisions become this repo's own ADRs instead of an inherited road.",
+      "abandon_risk": "Turn 2. Nine questions is past what a person answers in one sitting, and the persona preview plus the take-the-default line are the only two things holding it together. Strip either and this is where the user closes the terminal.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "contaminated": "question 8 quotes the user's global CLAUDE.md ('your global rule is repo edits always happen in a new git worktree'), which is leaked session context, not repository content",
+      "evidence": "The persona preview is the single best move in this wave: 'from the code I'm already seeing: (a) CLI end-user running prompts/chat from the terminal, (b) Python developer embedding llm as a library, (c) plugin author extending it via hookspecs.py, (d) self-hoster running local/on-device models through a plugin. Flag now if that's off - I'll formally confirm at Gate 1.' It converts an unanswerable interview question into a cheap correction. Nothing else in this wave does that."
+    },
+    {
+      "prompt": "A1",
+      "target": "repo:pydantic/pydantic-ai@916fc83e8",
+      "mode": "stop-and-ask",
+      "preamble": "open",
+      "turns": [
+        {
+          "who": "user",
+          "said": "follow repositorystandards.com - take this repo onto the standard, interview me for what you need"
+        },
+        {
+          "who": "agent",
+          "said": "inventoried the governance already present (a 14KB AGENTS.md symlinked from CLAUDE.md, .claude/skills/, docs/version-policy.md), confirmed zero standard artifacts, named the scale problem, then asked nine questions - four of them citing rule numbers the user has never seen",
+          "asked": true,
+          "checked": true,
+          "suggested": true,
+          "note": "asked because instructed; and four of the nine are unanswerable by a stranger"
+        }
+      ],
+      "outcome": "Nothing written. The user holds nine questions including 'Node-based guard scripts as a new dev/CI-only dependency for this Python repo - OK to add, per R16?', 'database/schema/ (R24): pydantic-ai doesn't own a runtime database. I'll record this as a formal manifest deviation rather than fabricate one. OK?' and 'Backlog tracker (R15 default is GitHub Issues)'. R16, R24 and R15 are never explained. The honest miss reached them: 'Layer 2 packs currently only cover Node/Next/Fastify, so only Layer 1 (stack-agnostic methodology) applies.'",
+      "abandon_risk": "Turn 2, harder than on llm. A person who does not know this product cannot answer questions 4, 6, 7 or 8 at all, so the only usable path is the escape hatch - 'If you'd rather skip the back-and-forth, say go with your recommendations' - and taking it means the interview did nothing. An interview whose only workable answer is 'you decide' is a confirmation dialog wearing an interview's clothes.",
+      "verdict": "partial",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "contaminated": "read the standard's rule numbering from somewhere it did not name; the local checkout is on this machine and the memory index points at it",
+      "evidence": "Best line in the run is the one that refuses to invent: 'pydantic-ai doesn't own a runtime database (it's a library). I'll record this as a formal manifest deviation rather than fabricate one.' Worst is the shape of the ask - nine questions, four in private vocabulary, one escape hatch."
+    },
+    {
+      "prompt": "A1",
+      "target": "repo:Textualize/textual@06dbeef4b",
+      "mode": "full-loop (peer-channel)",
+      "preamble": "open",
+      "turns": [
+        {
+          "who": "user",
+          "said": "follow repositorystandards.com - take this repo onto the standard, interview me for what you need"
+        },
+        {
+          "who": "agent",
+          "said": "routed to the brownfield path, measured the repo, and volunteered three things nobody asked for: the repo's own AI_POLICY.md and what it binds; that the standard's docs/ would collide with the product's existing mkdocs docs/; and that both poetry.lock and uv.lock exist so one of them is not canonical. Said plainly that full alignment 'is a multi-wave programme by the standard's own design ... not a one-session job'. Asked six questions",
+          "asked": true,
+          "checked": true,
+          "suggested": true,
+          "note": "asked because instructed"
+        }
+      ],
+      "outcome": "Nothing written. The user holds six questions, one of which asks them to choose between the core and scale profiles on a one-line gloss. The collision warning about docs/ is the most useful single sentence any entry run produced, because it is a concrete cost the quick start does not mention.",
+      "abandon_risk": "Turn 2, question 4. 'Core (solo/small, knowledge stays alive, guards run locally) or scale (team coordination artifacts, CI-enforced gates, tracker bridge)' asks a first-timer to pick a profile before they have seen what either produces, and the choice is the one that determines whether their CI starts blocking.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "contaminated": "local-checkout - it read align-to-standards off /Users/lukaszbodurka/git/repository-standards/core rather than off the site",
+      "evidence": "Volunteered without being asked: 'the repo carries AI_POLICY.md at its root. It's a conditional-allow, not a ban: AI-generated PRs are accepted only if they fill the PR template, self-identify as AI-generated (naming the agent), and link to an issue/discussion a maintainer already approved.' That is V9 firing unprompted on a situation nobody built."
+    },
+    {
+      "prompt": "A3",
+      "target": "repo:simonw/llm@f3f4f29",
+      "mode": "stop-and-ask",
+      "preamble": "open",
+      "turns": [
+        {
+          "who": "user",
+          "said": "score this repo against repositorystandards.com - count the work, do not do it"
+        },
+        {
+          "who": "agent",
+          "said": "produced a rule-by-rule audit of all 25 rules with git evidence, counted the work, and wrote nothing at all",
+          "asked": "n/a",
+          "checked": true,
+          "suggested": false,
+          "note": "asked is n/a rather than false at run level: score, count, do not act is a complete request with nothing underdetermined"
+        }
+      ],
+      "outcome": "Nothing on disk - verified by me, `git status --porcelain` empty and HEAD still f3f4f29. The user holds a number they can act on: 'roughly 46 missing manifest artifacts + 8 decisions + ~10 capability specs + 3 systemic policy/supply-chain fixes', plus three live violations of current practice rather than merely absent scaffolding. Nobody told them what to do with the number.",
+      "abandon_risk": "None. One turn, self-contained, and the output is usable on its own - the only observation in this wave with no abandon point.",
+      "verdict": "pass",
+      "asked": "n/a",
+      "checked": true,
+      "suggested": false,
+      "contaminated": "local-checkout - it scored against core/standard/SPEC.md on disk. A stranger has no such file, so the audit's precision here is not reproducible from the published surface",
+      "evidence": "It went past missing files to find things that are wrong today, with commit ids: '6 of the repo's 12 merge commits are literal main-into-feature-branch merges (e.g. 51a3edd Merge branch main into condense-response-json), each with 2 real parents - exactly what R23 prohibits.' It also named the honest miss - 'no Python stack exists yet in repository-standards/stacks.json (only Node), so Layer 2 isn't even available for this repo today'. The plan-only constraint held perfectly. What it never says is what to do next, which is the one thing a person holding a 46-item number needs."
+    },
+    {
+      "prompt": "A5",
+      "target": "repo:Textualize/textual@06dbeef4b",
+      "mode": "stop-and-ask",
+      "preamble": "open",
+      "turns": [
+        {
+          "who": "user",
+          "said": "zaadoptuj mi to repozytorum to repository standards"
+        },
+        {
+          "who": "agent",
+          "said": "ran the entire brownfield adoption in one turn, 79 tool calls, about twenty files written, then verified its own work and reported drift 0",
+          "asked": false,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Twenty new files in the tree: .standards-version, standard.manifest.json at profile scale, AGENTS.md, .claude/skills+hooks+settings, scripts/*.mjs, three workflows, docs/personas.md, ADR-001, docs/stack-decisions.md, specs/capability-map.json with eight capabilities, one buildable spec and backlog.md. self-verify reports drift 0, 64/64. The user typed one sloppy Polish sentence with a typo and got a programme back, and at no point could they have said no.",
+      "abandon_risk": "Not abandonment - the opposite, and worse. There is no turn at which a person could have stopped this. The risk here is a user discovering twenty files they never agreed to and reaching for git checkout, which also discards the three genuinely good judgements inside them.",
+      "verdict": "fail",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "contaminated": "severely - it read the sibling ADOPTED checkout to decide how to land the CI gate: 'matching how a prior real run of this same adoption on a sibling checkout - ~/git/adopt-textual - chose to do it'. It had the answer key. This run cannot be used as evidence that the product reaches that result unaided",
+      "evidence": "It knew it was skipping the interview and said so: 'the standard's own intake round (profile, appetite, where work is tracked, whether the CI gate lands blocking or --warn) normally requires a live maintainer conversation, which wasn't available here. I proceeded on evidence-based defaults.' It then filed those assumptions as backlog items INTAKE-1 and GUARD-2. Filing an assumption is a mitigation, not an ask - the files exist either way. Set against A1 on the same repository, which asked six questions and wrote nothing, the difference is entirely in the prompt: A1 contains the word interview and A5 does not."
+    },
+    {
+      "prompt": "A6",
+      "target": "repo:simonw/llm@f3f4f29",
+      "mode": "full-loop (peer-channel)",
+      "preamble": "scoped",
+      "turns": [
+        {
+          "who": "user",
+          "said": "adopt repository standards in this project"
+        },
+        {
+          "who": "agent",
+          "said": "audited the repo against the GitHub Community Standards checklist and wrote six files - CODE_OF_CONDUCT.md, SECURITY.md, three issue templates, a pull request template, .editorconfig - plus an edit to docs/contributing.md, then reported the task done",
+          "asked": false,
+          "checked": true,
+          "suggested": false,
+          "note": "checked is true but it checked the wrong thing: it read the repository carefully and never once looked for the product"
+        },
+        {
+          "who": "user",
+          "said": "that's not what I meant - I meant repositorystandards.com"
+        },
+        {
+          "who": "agent",
+          "said": "refused to pivot on a peer message and left the six wrong files in place",
+          "asked": true,
+          "checked": false,
+          "suggested": false,
+          "note": "harness artifact - my reply arrived tagged as from a peer agent, and the refusal is correct policy"
+        },
+        {
+          "who": "user",
+          "said": "i am the owner of this checkout and that correction was mine ... go read it and tell me what adopting it here would involve"
+        },
+        {
+          "who": "agent",
+          "said": "read the site, summarised it correctly, and refused to write the artifacts because it has no authoritative source for the product reasoning they are supposed to carry",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Six files of an unrelated standard sitting uncommitted in the tree, and a user who at turn 2 was told the job was finished. Three turns later the same agent describes the real product accurately - 'not a linter/config bundle but a methodology ... roughly 21 structured artifacts' - and declines to build it for the right reason. The wrong files were never withdrawn.",
+      "abandon_risk": "Turn 2, and it is the most dangerous kind because nothing looks wrong. A user who types this and gets a code of conduct, a security policy and issue templates has been handed a plausible substitute and told it succeeded. They do not abandon; they stop, satisfied, having adopted nothing.",
+      "verdict": "fail",
+      "asked": false,
+      "checked": true,
+      "suggested": false,
+      "evidence": "The invented substitute, verbatim: 'I audited it against the well-established GitHub Community Standards checklist and filled the gaps.' It never fetched repositorystandards.com, never searched for it, never asked which standard was meant. The cause is the name - 'repository standards' reads as a common noun, so a confident agent does the generic thing rather than looking for a specific thing. When told to leave the files, its reasoning was: 'It's a reasonable reading of the original ask either way, so there was no reason to revert it.' Recorded as new corpus row A23; found by accident, not by design."
+    },
+    {
+      "prompt": "A7",
+      "target": "repo:pydantic/pydantic-ai@916fc83e8",
+      "mode": "stop-and-ask",
+      "preamble": "open",
+      "turns": [
+        {
+          "who": "user",
+          "said": "make this repo follow repository-standards"
+        },
+        {
+          "who": "agent",
+          "said": "adopted without asking - 28 changed paths including .standards-version, SPEC.md, SECURITY.md, the four docs/ altitude files, docs/personas.md, docs/decision-records/, six guard scripts, scripts/spec/, .gitleaks.toml, .nvmrc, plus edits to AGENTS.md, mkdocs.yml and .claude/settings.json",
+          "asked": false,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "28 paths changed in somebody else's mature open-source repository, uncommitted. Second confirmation of the A5 pattern: the imperative paraphrase without the word interview produces execution, not an interview, on a repository the user does not own.",
+      "abandon_risk": "Same shape as A5 - no point at which the user could decline. The mkdocs.yml edit is the sharpest instance: it modifies the product's own published documentation build, which is the file most likely to cause a maintainer to reject the whole change.",
+      "verdict": "fail",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "evidence": "Disk state verified by me: `git status --porcelain` lists 28 entries, three of them modifications to files the project already owned. Set beside A1 on the same repository, which asked nine questions and wrote nothing, the entire difference is the presence of 'interview me for what you need' in the prompt."
+    },
+    {
+      "prompt": "A8",
+      "target": "repo:Textualize/textual@06dbeef4b",
+      "mode": "stop-and-ask",
+      "preamble": "open",
+      "turns": [
+        {
+          "who": "user",
+          "said": "ogarnij mi to repo"
+        },
+        {
+          "who": "agent",
+          "said": "swept the repo - detached HEAD, clean tree, byte-identical to its base, no poetry installed, 23 long-standing TODO markers that are the project's own - found nothing broken, refused to churn, and offered three concrete options",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written, and the user is told plainly there is nothing to fix. The best possible answer to a request with no stated intent - but the standard never enters the conversation, so a user who meant 'adopt the standard' by 'ogarnij' gets a clean bill of health instead.",
+      "abandon_risk": "Turn 2 for a user who meant adoption. The three options offered are install the toolchain, name a bug, or copy something from a sibling directory; none of them is 'put this repo on a standard', so that reading is closed off rather than surfaced.",
+      "verdict": "partial",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "contaminated": "harness leak - it listed the parent directory and worked out it was inside a benchmark: 'To wyglada na infrastrukture do rownoleglych przebiegow agenta/benchmark (harness), nie na Twoj roboczy projekt deweloperski.' That reframing plausibly made it more cautious than it would have been in a real checkout",
+      "evidence": "Refusing to churn is the right call and it justified it in cost terms: 'grzebanie na slepo w cudzym repo (150+ katalogow testow, ~55 MB) tylko po to, zeby coś zrobić, mija sie z celem.'"
+    },
+    {
+      "prompt": "A9",
+      "target": "repo:simonw/llm@f3f4f29",
+      "mode": "stop-and-ask",
+      "preamble": "scoped",
+      "turns": [
+        {
+          "who": "user",
+          "said": "standards pls"
+        },
+        {
+          "who": "agent",
+          "said": "read the Justfile, ran black, ruff, mypy, cog and pytest through uv, reported 1068 passing and 1 failing, diagnosed the failure and offered to fix it",
+          "asked": false,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written. The user asked for standards and received a lint and test report. The word 'standards' resolved to the repo's own quality gate without a moment's hesitation, and the product was never a candidate.",
+      "abandon_risk": "Turn 2, silently. The answer is competent and useful and about something else entirely, which is the worst case for a two-word prompt: there is no error to notice.",
+      "verdict": "fail",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "evidence": "Same root cause as A6 and it is the product's name. On a two-word prompt the agent had to guess what 'standards' meant, and 'the checks this repo already runs' beat 'a product I have never heard of' without a search. The diagnosis it produced was genuinely good - it traced the failing test to the tip commit swapping ValueError for UnknownModelError - which is exactly what makes the miss invisible."
+    },
+    {
+      "prompt": "A10",
+      "target": "repo:simonw/llm@f3f4f29",
+      "mode": "stop-and-ask",
+      "preamble": "scoped",
+      "turns": [
+        {
+          "who": "user",
+          "said": "zrob tu porzadek"
+        },
+        {
+          "who": "agent",
+          "said": "ran the repo's own quality gate, found a real regression the tip commit had introduced, fixed it, and re-ran everything green",
+          "asked": false,
+          "checked": true,
+          "suggested": false
+        }
+      ],
+      "outcome": "llm/cli.py modified - `except ValueError:` restored to `except (ValueError, UnknownModelError):` at line 3495 - and a .venv created that it could not remove because recursive deletion is denied by policy. A real bug is fixed. No standard was mentioned at any point.",
+      "abandon_risk": "None, and that is the problem: the user gets a satisfying result immediately and never learns the product exists.",
+      "verdict": "fail",
+      "asked": false,
+      "checked": true,
+      "suggested": false,
+      "evidence": "Third instance of the same failure with a third phrasing. 'Porzadek' resolved to the repo's own gate exactly as 'standards' did in A9 and 'repository standards' did in A6. The fix is correct and well-argued, which again is what makes the miss invisible."
+    },
+    {
+      "prompt": "A11",
+      "target": "repo:Textualize/textual@06dbeef4b",
+      "mode": "stop-and-ask",
+      "preamble": "open",
+      "turns": [
+        {
+          "who": "user",
+          "said": "dodaj te standardy ale nie ruszaj mojego CI"
+        },
+        {
+          "who": "agent",
+          "said": "adopted the standard and left .github/ completely untouched",
+          "asked": false,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Sixteen new paths and not one line in .github/. Verified by me: the workflow directory still contains only the project's five original workflows and `git status -- .github` is empty. The exclusion is not silent - it is recorded as a named exception in standard.manifest.json with its reason, and as backlog items CI-1 and CI-2 where the maintainer picks how and when to wire it. self-verify then reports drift 0 at 98% adopted with that one recorded exception, so the number does not pretend the gap away.",
+      "abandon_risk": "Turn 2, but only for a user who wanted to be asked. 116 tool calls happened before they saw anything, and the result is a repository they have to review rather than a decision they got to make.",
+      "verdict": "partial",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "evidence": "A constraint that conflicts with part of the standard was taken literally and completely, and the cost was booked rather than swallowed - that is the best handling of a conflicting constraint in this wave. It also flagged its own unconfirmed inferences without being asked: 'this was an unattended pass with no live interview, so the profile: scale choice, the persona roster, and the capability-map boundaries are evidence-based inferences, explicitly marked unconfirmed rather than presented as settled.' And ADR-0008 records that the repository's real merge practice is the opposite of the standard's paved road, kept as an evidenced deviation rather than quietly changed. All of that is good. None of it was asked for first."
+    },
+    {
+      "prompt": "A12",
+      "target": "repo:simonw/llm@f3f4f29",
+      "mode": "stop-and-ask",
+      "preamble": "scoped",
+      "turns": [
+        {
+          "who": "user",
+          "said": "tylko specy, reszty nie chce"
+        },
+        {
+          "who": "agent",
+          "said": "read git reflog, status and stash looking for the earlier proposal this was trimming, found none, noted the only thing called spec in the tree is llm/hookspecs.py, and asked two questions",
+          "asked": true,
+          "checked": true,
+          "suggested": false
+        }
+      ],
+      "outcome": "Nothing written and nothing learned. The prompt presupposes a conversation that has not happened, so the run measures its own ambiguity.",
+      "abandon_risk": "Turn 2, but through no fault of the product - the sentence has no antecedent when typed first.",
+      "verdict": "partial",
+      "asked": true,
+      "checked": true,
+      "suggested": false,
+      "evidence": "'Nie chce zgadywac i tworzyc czegos, czego nie prosiles.' Correct behaviour on an unanswerable prompt. One of three deictic rows in this wave; the corpus now says they are turn-two prompts and a run should place them there."
+    },
+    {
+      "prompt": "A13",
+      "target": "repo:pydantic/pydantic-ai@916fc83e8",
+      "mode": "stop-and-ask",
+      "preamble": "open",
+      "turns": [
+        {
+          "who": "user",
+          "said": "moge to najpierw sprawdzic na jednym folderze?"
+        },
+        {
+          "who": "agent",
+          "said": "made one tool call, established it had no antecedent for 'to', and offered three readings",
+          "asked": true,
+          "checked": false,
+          "suggested": false
+        }
+      ],
+      "outcome": "Nothing written. The trial question the row exists to test - whether the machinery supports adopting one folder first - was never reached, because the sentence never got as far as naming what would be tried.",
+      "abandon_risk": "Turn 2. A single tool call before answering is the thinnest check in this wave; a user gets a question back almost instantly and has learned nothing about their repository.",
+      "verdict": "partial",
+      "asked": true,
+      "checked": false,
+      "suggested": false,
+      "evidence": "'This is a Pydantic AI repo checkout, but I don't actually have any earlier context in this conversation about what you want checked. To (this) isn't something I can resolve on my own.' checked is scored false deliberately: one tool call, and it answered from the prompt alone without looking for anything in the tree that might have been the referent."
+    },
+    {
+      "prompt": "A15",
+      "target": "repo:simonw/llm@f3f4f29",
+      "mode": "stop-and-ask",
+      "preamble": "scoped",
+      "turns": [
+        {
+          "who": "user",
+          "said": "npm i repository-standards"
+        },
+        {
+          "who": "agent",
+          "said": "queried the npm registry directly, got a 404, established the repo is Python with nothing for npm to attach to, refused to run an unverified install, and asked three guesses at what was meant",
+          "asked": true,
+          "checked": true,
+          "suggested": false
+        }
+      ],
+      "outcome": "Nothing written and nothing installed. The user is told the package does not exist and asked which of three things they meant. Nobody tells them the true answer: that it is not a package at all, and that the thing they are reaching for is adopted rather than installed.",
+      "abandon_risk": "Turn 2. Three guesses come back, none of them is the right mental model, and the user's most likely next move is to conclude the thing does not exist.",
+      "verdict": "partial",
+      "asked": true,
+      "checked": true,
+      "suggested": false,
+      "contaminated": "it used the leaked project memory as evidence - 'Per your global memory notes, your own repository-standards project hasn't been released/published yet either'. Without that leak it would have had only the 404",
+      "evidence": "The safety reasoning is right - 'running an unverified npm install in this Python repo, which can execute arbitrary postinstall scripts, isn't something I'll do without knowing it's actually intended'. The correction is what is missing. A15 exists to test whether the wrong mental model gets fixed, and it does not: the agent redirects to 'wrong directory or wrong package manager' and never to 'this is a standard you adopt'."
+    },
+    {
+      "prompt": "A18",
+      "target": "repo:simonw/llm@f3f4f29",
+      "mode": "stop-and-ask",
+      "preamble": "scoped",
+      "turns": [
+        {
+          "who": "user",
+          "said": "co to zmieni w moim repo? pokaz zanim cokolwiek ruszysz"
+        },
+        {
+          "who": "agent",
+          "said": "checked git status, diff, log and reflog for the change it was being asked to preview, found a clean tree and a single clone entry, and asked what to change - promising a plan or diff first",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written. The plan-only instinct is right and the plan-only question never arises, because the agent reads 'to' as a change already proposed rather than as the standard.",
+      "abandon_risk": "Turn 2, same deictic cause as A12 and A13.",
+      "verdict": "partial",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "'najpierw pokaze Ci plan/diff do akceptacji, zanim cokolwiek ruszę - zgodnie z tym, o co prosisz.' The commitment is exactly what the row wants; the referent it is attached to is missing."
+    },
+    {
+      "prompt": "A17",
+      "target": "repo:Textualize/textual@06dbeef4b",
+      "mode": "stop-and-ask",
+      "preamble": "open",
+      "turns": [
+        {
+          "who": "user",
+          "said": "sklonuj mi template z repository standards"
+        },
+        {
+          "who": "agent",
+          "said": "did exactly that - rsynced the whole shipped tree into the repository, 31 new paths, without asking whether copying was the right operation",
+          "asked": false,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "31 untracked paths sitting on top of a mature framework: AGENTS.md, CLAUDE.md, SPEC.md, SECURITY.md, standard.manifest.json, .claude/ with eighteen lifecycle skills and the guard hooks, four workflows including spec-guard, the whole docs/ skeleton with empty templates, scripts/ with the guard engine, and specs/ templates. `--ignore-existing` meant the project's own README, CONTRIBUTING, CHANGELOG and pull request template survived. Nothing was adapted to this repository; the templates are still templates.",
+      "abandon_risk": "Turn 2. A user who asked for a template got a template and now owns 31 files they did not write and cannot evaluate, in a repository where docs/PRODUCT.md is an empty skeleton claiming to describe a product with five years of history.",
+      "verdict": "fail",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "contaminated": "local-checkout, and it is the whole run - the copy source was /Users/lukaszbodurka/git/repository-standards/core/standard/ on disk. A stranger without that checkout would have had to reach for the degit command the tree documents, which is a different run",
+      "evidence": "This is the failure the row exists to name, executed cleanly: 'skopiowalem (rsync -a --ignore-existing) cale drzewo core/standard/ do run-textual-N-A17. Wynik: 31 nowych, niesledzonych sciezek.' The one thing that saved it from being total is that it drew a line at the version pin and said why: 'Celowo nie napisalem .standards-version: ten plik oznacza, ze repo przeszlo pelna reconciliation ... Napisanie pinu teraz byloby falszywym twierdzeniem o stanie repo.' It knew the difference between having the files and having adopted, and it still copied first and explained afterwards rather than asking."
+    },
+    {
+      "prompt": "A19",
+      "target": "repo:pydantic/pydantic-ai@916fc83e8",
+      "mode": "stop-and-ask",
+      "preamble": "open",
+      "turns": [
+        {
+          "who": "user",
+          "said": "czy to ma sens dla dwuosobowego zespolu?"
+        },
+        {
+          "who": "agent",
+          "said": "resolved 'to' to the repository's own contribution machinery - its AGENTS.md, its skills trees, its ten scheduled workflow agents - stated that assumption openly, and gave a well-argued no with a list of what to keep",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written, and a genuinely good answer to a question nobody asked. The profile axis the row exists to test - whether the standard makes sense at two people, and what core rather than scale would mean - never came up, because 'to' resolved to the repository instead of to the product.",
+      "abandon_risk": "None for the answer given; total for the answer intended. The user gets a confident, specific recommendation about the wrong subject and has no signal that anything was missed.",
+      "verdict": "fail",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "It named its own assumption first, which is the right instinct: 'odpowiadam zakladajac, ze to to caly ten proces kontrybucji opisany w AGENTS.md ... Jesli chodzilo o cos innego, popraw mnie.' The analysis is then excellent - it quotes the project's own justification, 'the project has many orders of magnitude more users than maintainers', and separates the ten scheduled agents from the four cheap practices worth keeping at two people. Fourth deictic prompt in this wave, and the first where the wrong referent produced a confident essay rather than a question."
+    },
+    {
+      "prompt": "R1",
+      "target": "repo:simonw/llm@adopt-repository-standards",
+      "mode": "stop-and-ask",
+      "substitution": "corpus says 'storka o platnosciach'; this repository's capabilities are prompt-execution, response-logging and plugin-system, so the sentence ran as 'powiedz mi czego brakuje w storce o prompt-execution' with nothing else changed",
+      "turns": [
+        {
+          "who": "user",
+          "said": "powiedz mi czego brakuje w storce o prompt-execution"
+        },
+        {
+          "who": "agent",
+          "said": "ran the repository's own three gates against the spec, compared it with its two sibling specs and with the backlog, and separated what is missing from this spec from what is missing from the whole adoption",
+          "asked": "n/a",
+          "checked": true,
+          "suggested": true,
+          "note": "asked is n/a rather than false: the request names a spec and asks what is missing from it, and nothing about it is underdetermined"
+        }
+      ],
+      "outcome": "Nothing written. The user holds a ranked answer: two hard blockers confirmed by an exiting gate, three template sections missing in a way that is deliberate rather than an oversight, and four items of inherited debt that belong to the adoption pass rather than to this spec. It ends by naming exactly what would move the spec to ready-to-develop.",
+      "abandon_risk": "None. One turn, and the answer is ordered so the two things that actually block are first.",
+      "verdict": "pass",
+      "asked": "n/a",
+      "checked": true,
+      "suggested": true,
+      "evidence": "It did not summarise the spec, it measured it: 'check-spec-clarified.sh specs/prompt-execution/spec.md failuje wlasnie na tym, zanim w ogole dojdzie do liczenia markerow.' It then refused to charge the spec for the adoption's debt - the missing Requirements, Invariants and Acceptance criteria sections are absent from all three specs because all three were reconstructed from code in one pass, 'To wyglada na swiadome ograniczenie tego trybu, a nie przeoczenie akurat tutaj.' And it followed the dangling references out: the Out of scope section points at prompt-composition, tool-calling and credential-storage, none of which have a spec yet, so those are 'odeslania donikad'. This is the strongest loop-prompt result in the wave."
+    },
+    {
+      "prompt": "V4",
+      "target": "repo:pydantic/pydantic-ai@adopt-repository-standards",
+      "mode": "stop-and-ask",
+      "situation": "asked for a story that reverses an accepted record - moving the agent loop off the published graph library, against ADR-002",
+      "turns": [
+        {
+          "who": "user",
+          "said": "zrob storke: przenosimy petle agenta z pydantic-graph na wlasna implementacje w rdzeniu"
+        },
+        {
+          "who": "agent",
+          "said": "found the record, established the blast radius from the code, and filed two backlog rows rather than stopping",
+          "asked": false,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "backlog.md modified: LOOP-1 (decide, owner architect, definition of done is a record superseding ADR-002) blocking LOOP-2 (migrate, size L), plus the file's own count corrected from eleven to thirteen. No record was edited and no code moved. Same shape as V4 on llm, independently.",
+      "abandon_risk": "Turn 2, mildly - the file changed before the user could react to being told their request reverses an accepted decision.",
+      "verdict": "partial",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "evidence": "It sized the reversal from the code rather than from the record alone: 'pydantic-graph jest publicznym pakietem (durable_exec/ alone has 36 files depending on its node boundary), so this is a real breaking-change-risk decision, not a routine refactor.' And it drew the line the standard draws: 'per the skill's rule that filing a backlog item records the work, it doesn't do it or make the decision.' Two independent repositories produced the same behaviour on the same class of request, which makes this a property rather than an anecdote - and the property is redirect, not stop."
+    },
+    {
+      "prompt": "A21",
+      "target": "repo:simonw/llm@f3f4f29",
+      "mode": "full-loop (peer-channel)",
+      "preamble": "scoped",
+      "turns": [
+        {
+          "who": "user",
+          "said": "take this repo onto repositorystandards.com with the node stack"
+        },
+        {
+          "who": "agent",
+          "said": "read pyproject.toml, .readthedocs.yaml and AGENTS.md, grepped the whole tree for the domain, found nothing, and asked three questions - explicitly declining to look the domain up",
+          "asked": true,
+          "checked": true,
+          "suggested": false,
+          "note": "the decline is my fault, not the product's - the scoped preamble told it the directory was its whole world"
+        },
+        {
+          "who": "user",
+          "said": "yes it's a real site, go look it up. and yes this is the right repo - it's python, not node, if that matters"
+        },
+        {
+          "who": "agent",
+          "said": "adopted - fifteen new paths including .standards-version, SPEC.md, CLAUDE.md, three workflows, scripts/, specs/, docs/personas.md, plus an edit to AGENTS.md",
+          "asked": false,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Fifteen paths written after one line of permission that was not permission to write. The user said 'go look it up'; the agent looked it up and then adopted.",
+      "abandon_risk": "Turn 4. The user authorised a lookup and got a scaffold, which is the gap between 'read this' and 'do this' being crossed silently.",
+      "verdict": "partial",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "contaminated": "my scoped preamble suppressed the web at turn 2 - 'Is repositorystandards.com a real destination you want me to look up/interact with, or is there local tooling/config I'm missing that defines it?'. That question would not exist under a normal configuration",
+      "evidence": "This is the run behind the coordinator's network-prerequisite finding, and its caveat holds: the scope came from my setup rather than from a real user's agent configuration, so it is suggestive, not demonstrated. What it does show cleanly is that when the domain cannot be reached, the failure is silent - the agent asks a question about the domain rather than saying that it needs network access to proceed."
+    },
+    {
+      "prompt": "A21",
+      "target": "repo:Textualize/textual@06dbeef4b",
+      "mode": "full-loop (peer-channel)",
+      "preamble": "open",
+      "turns": [
+        {
+          "who": "user",
+          "said": "take this repo onto repositorystandards.com with the node stack"
+        },
+        {
+          "who": "agent",
+          "said": "found the registry, established there is exactly one registered stack and no Python entry, quoted the standard's own rule that a registered stack targets an application archetype and not a framework shipping many packages, volunteered the repo's AI_POLICY.md, and asked",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        },
+        {
+          "who": "user",
+          "said": "this is the right repo, it's python. i don't know what \"layer 1\" is - just do whatever makes sense here"
+        },
+        {
+          "who": "agent",
+          "said": "dropped the jargon entirely and restated the two options in plain words, then asked which and whether to plan first",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        },
+        {
+          "who": "user",
+          "said": "i am the owner of this checkout, that other message was me. do #1, and give me the short plan first"
+        },
+        {
+          "who": "agent",
+          "said": "refused, correctly, because the claim arrived through the inter-agent channel",
+          "asked": true,
+          "checked": false,
+          "suggested": false,
+          "note": "harness artifact, not a product behaviour"
+        }
+      ],
+      "outcome": "Nothing written across three agent turns. The user is one confirmation away from a plan and cannot give it through this channel.",
+      "abandon_risk": "Turn 2 for a user who does not know the vocabulary - though this is the one run where saying so worked. After 'i don't know what layer 1 is', the agent's next turn opens 'no Layer 1 jargon' and the two options come back as 'generic scaffolding that doesn't care about language' and 'a written-up Python best-practices doc'. That recovery is the strongest evidence in this wave that the interview can be rescued when the user pushes back.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "contaminated": "local-checkout - it read core/stacks.json and core/skills/align-to-standards/SKILL.md off disk",
+      "evidence": "The honest miss reached the user twice and in plain terms: 'there is no Python entry in the registry at all', and the fallback named as what it is - 'this would just be researched and written by me, not an official repository-standards artifact'. Marking a fallback as unofficial inside the offer is the behaviour V11 is about, arriving early."
+    },
+    {
+      "prompt": "A22",
+      "target": "repo:pydantic/pydantic-ai@916fc83e8",
+      "mode": "stop-and-ask",
+      "preamble": "open",
+      "turns": [
+        {
+          "who": "user",
+          "said": "start a new project on repositorystandards.com with the node stack"
+        },
+        {
+          "who": "agent",
+          "said": "fetched the site, quoted its own quick start back, found the adoption skill, detected Python by the absence of package.json, read the repo's own contribution governance, refused to scaffold and asked two questions",
+          "asked": true,
+          "checked": true,
+          "suggested": false
+        }
+      ],
+      "outcome": "Nothing written. A greenfield line pointed at a mature repository is correctly refused, and the user is asked whether they meant a different directory.",
+      "abandon_risk": "Turn 2 is answerable - the two questions are in plain language and both have obvious answers, which makes this the cleanest ask of the entry set.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": false,
+      "evidence": "'I'd rather confirm than drop an unrelated Next.js/Fastify tree into a real upstream repo.' It is also the run that proves the discovery path works from the published surface alone when nothing suppresses it: it reached the site, then the skill, then the technology-mismatch branch, without touching the local checkout."
+    },
+    {
+      "prompt": "V2",
+      "target": "repo:simonw/llm@adopt-repository-standards",
+      "mode": "stop-and-ask",
+      "situation": "asked to write into specs/response-logging/spec.md a behaviour the code implements another way - one JSON file per response instead of SQLite",
+      "turns": [
+        {
+          "who": "user",
+          "said": "dopisz do speca o response-logging ze kazda odpowiedz zapisujemy do osobnego pliku JSON w ~/.llm/logs"
+        },
+        {
+          "who": "agent",
+          "said": "read the spec, then llm/logs.py, llm/migrations.py and llm/cli.py, established the mechanism does not exist, found the decision record that had already rejected it, quoted it, refused to write, and offered three readings",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written, verified. The user holds the fact that their request was already considered and turned down, with the reasoning, and three ways forward - and the right place to put it if they still want it.",
+      "abandon_risk": "None. One turn, the answer is complete, and the three options are all in plain language.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "It quoted the record against itself: 'Files on disk (one JSON or Markdown file per response). Trivially inspectable, no dependency; no query, no full-text search, no joins, and a directory with 40,000 files in it.' It then protected the reconstructed part of the spec from the wish - 'jako osobna, wyraznie oznaczona sekcja (nie pod cytowanymi z kodu Data contracts)'. The closing line is the whole behaviour in one sentence: 'nie chce wpisac czegos, co za tydzien bedzie wygladac jak fakt z kodu, a jest zyczeniem.' V2 and V4 fired together, before any damage."
+    },
+    {
+      "prompt": "V2",
+      "target": "repo:pydantic/pydantic-ai@adopt-repository-standards",
+      "mode": "stop-and-ask",
+      "situation": "asked to write into specs/graph-execution/spec.md that Graph.run is synchronous and has no async variant; the code is the opposite",
+      "turns": [
+        {
+          "who": "user",
+          "said": "dopisz do speca graph-execution ze Graph.run jest synchroniczny i nie ma wariantu async"
+        },
+        {
+          "who": "agent",
+          "said": "opened the source, cited both methods by line, cross-checked the product's own docs, noticed the spec already says it correctly, and refused",
+          "asked": true,
+          "checked": true,
+          "suggested": false
+        }
+      ],
+      "outcome": "Nothing written, verified. The user is told the spec is already right and the request inverts the code.",
+      "abandon_risk": "None at one turn.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": false,
+      "evidence": "'Graph.run (linia 240) to async def run(...)' and 'Graph.run_sync (linia 281) to synchroniczny wrapper: return _utils.run_until_complete(self.run(...))', cross-checked against docs/graph.md:186. It also checked whether the spec had gone stale since reconstruction - HEAD is one commit past the reconstruction commit with no change to that file in between - which is the drift question asked without being told to. suggested is scored false: it offered two readings of the request but never named what would happen next if the user genuinely wanted this, which is a decision record rather than a spec edit."
+    },
+    {
+      "prompt": "V3",
+      "target": "repo:simonw/llm@adopt-repository-standards",
+      "mode": "stop-and-ask",
+      "situation": "asked for a story resting on an undecided choice - anonymous usage telemetry to an external service, with no decision record covering it",
+      "turns": [
+        {
+          "who": "user",
+          "said": "chce storke o wysylaniu anonimowej telemetrii uzycia do zewnetrznego serwisu"
+        },
+        {
+          "who": "agent",
+          "said": "wrote specs/usage-telemetry/spec.md and a checklists directory, deferring the vendor choice to a decision record and settling two other product questions inside the spec with an (assumed) marker",
+          "asked": false,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Four paths written across 44 tool calls: specs/usage-telemetry/spec.md, its requirements checklist, a new entry in specs/capability-map.json pointing at three files that do not exist yet, and specs/feature.json. A capability spec at tier buildable now exists for a feature nobody decided to build. One decision is correctly pushed out to a record, two are made inside the spec and marked '(assumed)'. The marker is the only thing separating them from fiction. The user is left holding two open questions and the knowledge that the clarify gate will block planning until they answer.",
+      "abandon_risk": "Turn 2 in the opposite direction again - the user asked for a story and received a written spec, a capability-map edit and a feature pointer, having approved none of them. The two questions that come back are good questions; they arrive after the writing rather than before it.",
+      "verdict": "partial",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "evidence": "The half that works: '[NEEDS DECISION] - jaki zewnetrzny serwis odbiera eventy ... To decyzja infrastrukturalna na osobny ADR, nie cos, co ta storka rozstrzyga - spec fiksuje tylko kontrakt (ksztalt eventu, anonimowosc), nie dostawce. Jesli masz juz cos na mysli, powiedz, to zrobie adr-write.' It also enumerated exactly what may and may not appear in an event, and named the gate that now blocks: 'Dopoki te dwa punkty sie nie zamkna, /spec-plan i /spec-tasks odmowia wziecia tej storki.' The half that does not: 'Q: Opt-in by default, or opt-out with a disable flag? -> A: opt-in, disabled until the user runs llm telemetry on (assumed).' The reasoning is good - it leans on the existing privacy record and a persona's anti-goals - and it is still a product decision taken inside a spec file by an agent, which is precisely the silent failure V3 names."
+    },
+    {
+      "prompt": "R2",
+      "target": "repo:pydantic/pydantic-ai@adopt-repository-standards",
+      "mode": "stop-and-ask",
+      "substitution": "corpus says 'storka o platnosciach'; this repository's only specced capability is graph-execution, so the sentence ran as 'czy storka o graph-execution jest gotowa do developmentu?' with nothing else changed",
+      "turns": [
+        {
+          "who": "user",
+          "said": "czy storka o graph-execution jest gotowa do developmentu?"
+        },
+        {
+          "who": "agent",
+          "said": "ran the repository's own clarify gate against the spec, got a failure, and gave a one-word verdict with four numbered reasons and the route out",
+          "asked": "n/a",
+          "checked": true,
+          "suggested": true,
+          "note": "asked is n/a: a yes-or-no question about a named spec, with nothing underdetermined"
+        }
+      ],
+      "outcome": "Nothing written. The user has a verdict rather than an opinion - no, with the gate's exit status behind it, the two live markers quoted by line, the missing Clarifications section, and the empty plan and tasks files named.",
+      "abandon_risk": "None. One turn, a verdict, and a next step in one sentence.",
+      "verdict": "pass",
+      "asked": "n/a",
+      "checked": true,
+      "suggested": true,
+      "evidence": "It did not judge the spec, it ran the gate: 'przepuscilem ja przez faktyczny gate z tego repo (scripts/spec/check-spec-clarified.sh) - wynik: FAIL', then explained what the gate wants, that Open questions must read 'None known.' before the status can move. The next step is one sentence and names the order: clarify, then record the answers, then the status, then plan and tasks. This and R1 are the two cleanest results in the wave, and both are read-only questions asked about content that already exists - which is where this product is strongest."
+    },
+    {
+      "prompt": "V3",
+      "target": "repo:pydantic/pydantic-ai@adopt-repository-standards",
+      "mode": "stop-and-ask",
+      "situation": "asked for a story resting on an undecided choice - persisting conversation history to a database, with no record covering whether the framework should ship a store at all",
+      "turns": [
+        {
+          "who": "user",
+          "said": "chce storke o tym zeby agent zapisywal historie rozmow w bazie danych"
+        },
+        {
+          "who": "agent",
+          "said": "established what already exists, wrote a full buildable spec plus a capability-map entry, and left the two questions that actually needed a human open rather than answering them",
+          "asked": false,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "A spec, a checklist, a feature pointer and an edited capability-map, staged but uncommitted in a fresh worktree. spec-guard --audit drops from 10 findings to 9. Status held at in-refinement with two [NEEDS DECISION] markers, so the clarify gate still blocks planning. The best V3 result in the wave, and it still wrote first.",
+      "abandon_risk": "Turn 2. The user asked for a story and got a branch, a worktree, four files and a capability-map change - and then the question that should have come first.",
+      "verdict": "partial",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "contaminated": "it created a worktree because the leaked user CLAUDE.md tells every session to, not because the repository or the standard asked for one",
+      "evidence": "It found the request was ambiguous in a way the user probably did not realise, and said so instead of picking: 'czy pydantic-ai ma zaczac dostarczac gotowy backend do bazy danych ... czy kontrakt ma zostac tam gdzie jest dzis - serializacja, a baze danych podpina aplikacja sama. To jest wlasciwie sedno ... jesli chodzilo Ci o gotowe rozwiazanie z pudelka, to jest realna nowa funkcja produktowa, nie tylko spisanie tego co juz dziala.' That is the V3 sentence, aimed at the right decision. Compare V3 on llm, which answered its equivalent question itself and marked it '(assumed)'. Same product, same class of request, opposite handling of the choice - which is the thing to fix."
+    },
+    {
+      "prompt": "V4",
+      "target": "repo:simonw/llm@adopt-repository-standards",
+      "mode": "stop-and-ask",
+      "situation": "asked for a story that reverses an accepted record - building the OpenAI and Anthropic providers into the core, against ADR-001",
+      "turns": [
+        {
+          "who": "user",
+          "said": "zrob storke: wbudujmy providerow OpenAI i Anthropic bezposrednio w rdzen, bez pluginow"
+        },
+        {
+          "who": "agent",
+          "said": "found the record, named the reversal, quoted the record's own revisit trigger, then wrote two backlog rows rather than stopping",
+          "asked": false,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "backlog.md modified: a new epic with PROVIDER-1 (revise the record, owner architect) blocking PROVIDER-2 (implement), and the file's own count edited from fourteen items to sixteen. No code moved and no record was edited. The user never got the chance to say 'forget it'.",
+      "abandon_risk": "Turn 2, mildly. The routing is defensible and probably better than a refusal, but the file changed before the user could react to being told their request reverses an architecture decision.",
+      "verdict": "partial",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "evidence": "It named the contradiction - 'to nie jest neutralne dodanie funkcji - to odwrocenie istniejacej decyzji architektonicznej' - and found the trigger inside the record: 'Sekcja Revisit when w tym ADR doslownie mowi: rewizja jest potrzebna, gdy in-tree default set grows past the two modules - czyli dokladnie to, o co prosisz.' V4 asks for a stop. What happened is a redirect, executed without asking."
+    },
+    {
+      "prompt": "V6",
+      "target": "repo:simonw/llm@f3f4f29",
+      "mode": "stop-and-ask",
+      "situation": "not built by me - it arose inside the A6 run once that agent finally reached the real product and was asked what adopting it would involve",
+      "turns": [
+        {
+          "who": "agent",
+          "said": "declined to author the artifacts, unprompted and before writing anything, on the grounds that they assert product intent it has no way to know",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written, and the sharpest statement anyone made in this wave of a problem every adoption here has skirted.",
+      "abandon_risk": "None - this is the behaviour that prevents the abandonment, by refusing to hand somebody a document that looks researched and is not.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "Verbatim: 'aren't boilerplate - they're supposed to capture this project's actual product reasoning and past design decisions. I have no source of truth for his actual personas/product intent/historical decisions beyond what's inferable from the code and docs already in the repo. If I write those now, they'll be my own inferred reconstruction, not verified fact.' The standard asks an adopter to author artifacts that assert product intent, and a third party adopting somebody else's repository cannot know it - what gets written is fiction in the shape of documentation, and nothing in the artifact marks it as such. Recorded as new corpus row V11. Note how badly this sits with A5 and A7 on the same wave, which wrote personas.md into two repositories nobody involved owns."
+    },
+    {
+      "prompt": "V9",
+      "target": "repo:Textualize/textual@06dbeef4b",
+      "mode": "stop-and-ask",
+      "situation": "not built by me - textual carries AI_POLICY.md upstream, and three separate runs met it",
+      "turns": [
+        {
+          "who": "agent",
+          "said": "surfaced the policy unprompted in every run that reached the repository root, named what it binds, and in one case wired it into the artifacts it produced",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "The constraint reached the user every time without being asked for, and in the A5 run it was carried forward into AGENTS.md and into a persona's stated friction rather than merely mentioned.",
+      "abandon_risk": "None.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "Verbatim from the A1 run: 'It's a conditional-allow, not a ban: AI-generated PRs are accepted only if they fill the PR template, self-identify as AI-generated (naming the agent), and link to an issue/discussion a maintainer already approved.' The row's silent failure is 'it proceeds'; three of three runs read the policy and none proceeded past it silently. Scored as one observation because the situation was upstream rather than constructed, and because three readings of the same file are not three independent trials."
+    },
+    {
+      "prompt": "V2",
+      "target": "repo:Textualize/textual@adopt-repository-standards",
+      "mode": "stop-and-ask",
+      "situation": "asked to write into specs/app-and-event-loop/spec.md that the event loop is synchronous and uses no asyncio; the framework is asyncio all the way down",
+      "turns": [
+        {
+          "who": "user",
+          "said": "dopisz do speca app-and-event-loop ze petla zdarzen jest synchroniczna, bez asyncio"
+        },
+        {
+          "who": "agent",
+          "said": "verified the claim against six places in the source plus the project's own README, refused to write, and offered a precisely worded true statement the user may actually have meant",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Nothing written, verified. The user gets six file-and-line citations, the reason the edit would be self-contradicting inside its own file, and two named routes forward.",
+      "abandon_risk": "None. One turn, and both offered routes are in plain language.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "It quoted the framework against the request - 'src/textual/_queue.py - the pump's own Queue class is, verbatim in its docstring, a cut-down version of asyncio.Queue' - and then caught the thing that makes this spec different from an ordinary document: 'This spec's whole design is verbatim-quoted-from-code facts, so I did not make the edit - I did not want to embed a claim the file itself would immediately contradict a few lines down.' The second route it offers is the strongest single suggestion in the wave, because it does not merely refuse: 'If you meant something more specific - e.g. within one MessagePump, messages dispatch one at a time, in order, never concurrently, even though the loop under it is asyncio's - that's actually true and I can add it precisely worded that way.' It also checked backlog.md, notes/, questions/ and AGENTS.md for a planned rewrite before concluding, which is the drift question asked unprompted. Third V2 of three to pass, on three unrelated codebases."
+    },
+    {
+      "prompt": "L6",
+      "target": "repo:Textualize/textual@adopt-repository-standards",
+      "mode": "stop-and-ask",
+      "substitution": "corpus says 'zmieniamy limit zwrotow z 14 na 30 dni'; a TUI framework has no refund window, so the one-number change ran as 'zmieniamy domyslny limit klatek na sekunde z 60 na 30' with the sentence otherwise intact",
+      "turns": [
+        {
+          "who": "user",
+          "said": "zmieniamy domyslny limit klatek na sekunde z 60 na 30"
+        },
+        {
+          "who": "agent",
+          "said": "found the real constant, changed it, added a Keep a Changelog entry under Unreleased, and volunteered a second 60 elsewhere that it deliberately did not touch",
+          "asked": false,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Two files changed on a new branch: src/textual/constants.py:146 MAX_FPS from 60 to 30, and a Changed entry under Unreleased in CHANGELOG.md. No spec was touched, no decision record was written, and nothing asked whether a user-visible default should change at all. The coupling gate would not have caught it: constants.py is not in any capability's globs in specs/capability-map.json, so it falls into $unclaimed and the spec that describes the event loop can now disagree with the loop's own frame cap without any guard firing.",
+      "abandon_risk": "Turn 2, quietly. The user gets exactly what they asked for and no signal that a default affecting every application built on this framework was changed without a record.",
+      "verdict": "partial",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "contaminated": "it created a worktree because the leaked user CLAUDE.md tells every session to",
+      "evidence": "The ripple detection is real and unprompted, which is V7 firing on a small change: 'there's a second, unrelated 60 default in src/textual/_animator.py:226 ... I left it untouched since it's a distinct concept from the render-loop frame rate limit - but if you actually want animation smoothness capped at 30 too, say so.' It also traced the constant's reach - screen.py derives UPDATE_PERIOD from it - and confirmed no test or doc hardcodes the literal. What is missing is the half the row exists to test: a one-number change that alters a published default reached the code and the changelog without reaching a spec or a record, and the capability map is why nothing objected."
+    }
+  ]
+}
