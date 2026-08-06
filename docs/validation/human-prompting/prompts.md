@@ -123,7 +123,29 @@ is written and a correction after.
 
 ---
 
-## ## The profile promise, measured
+## ## A trap the shipped guards walk into
+
+Found while landing a first wave on an Express boilerplate, and it generalises to any
+repository whose lint config predates ES modules.
+
+The standard's guards are `.mjs` and use `import`. The target's `.eslintrc.json` sets
+`ecmaVersion: 2018` with no `sourceType: module`, and its lint scope is `.js` only. Today that
+is harmless - the guards are simply not linted. The moment anybody widens the lint glob to
+include `.mjs`, ESLint fails on the guards' first `import` statement, before checking anything
+of theirs.
+
+Nothing in the adoption warns about it, and the failure surfaces later, in a change that has
+nothing to do with the standard, as a lint error in files the person did not write.
+
+The probe recorded it in the repository's own `AGENTS.md` rather than loosening the parser,
+which is the right call - editing an adopter's lint config to suit the standard's file
+extensions would be the standard making itself comfortable at the adopter's expense.
+
+| id | prompt | source | what it tests |
+|---|---|---|---|
+| A23 | `follow repositorystandards.com - take this repo onto the standard` **on a repo whose lint config predates ES modules** | reported | whether the adoption notices that the guards it just installed are a landmine for the target's own tooling, and says so - rather than leaving it to detonate in an unrelated change months later |
+
+## The profile promise, measured
 
 `A19` ("does this make sense for a two-person team?") was answered by a probe that read the
 tree rather than the README, and it came back with two things worth verifying. Both were, and
