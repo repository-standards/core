@@ -16,6 +16,24 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The manifest asserted the required decisions R7 says it does not have (2026-08-06)
+
+R7's own text: which decision areas apply "is a property of what is being built, so this rule
+names no subset and asserts no count", and the checklist repeats it - "deliberately no minimum
+count and no required subset." The manifest marked all eight catalogued decision entries
+`required: true`, including datastore, api-contract and auth-model, and `self-verify` printed
+`8 catalogued decisions to confirm recorded at review` on every run - a number sitting in a
+report whose other numbers are drift and adoption. Assessment of five real ML repositories
+found none of them carrying any of those three, and none of them in breach.
+
+The field is gone from all eight entries, the summary line now says what the reader has to do
+rather than how many things there are to count, and a `decisions` entry that declares
+`required` is a FAIL naming R7 - nothing read that field there, so it could only ever assert
+the subset the rule denies, and it survived four versions because reading was the only thing
+that could catch it. `tools/self-verify-fill-test.mjs` gains four cases: the catalog is still
+surfaced for review, its line carries no number, the shipped manifest declares no required
+area, and a manifest that declares one is drift.
+
 ### A capability built where its globs do not look changed with `spec-guard: OK` (2026-08-06)
 
 The plan template's default single-project layout was upstream's layer folders - `models/`,
