@@ -64,10 +64,10 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 |---|---|
 | Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **193** across 8 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd) |
+| Observations recorded | **195** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-l-dochonesty) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 99 pass, 90 fail, 1 not-applicable, 3 partial |
-| Failures found | **167** - **84 fixed and re-verified** (across 21 merged pull requests), **83 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 100 pass, 91 fail, 1 not-applicable, 3 partial |
+| Failures found | **166** - **84 fixed and re-verified** (across 21 merged pull requests), **82 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 9 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -188,7 +188,6 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `DOC-13` | every surface that states the standard's current version is covered by facts-check, so a page saying '1.0.0' when the real version has moved on eleven times since is caught rather than shipped | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DOC-14` | the workflow that says compliance is gated 'from the first push' actually triggers on a push, not only on a pull_request | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DOC-15` | the denial message a Bash-tooling guard prints when `jq` is missing points at a path that actually exists in the surface the reader is on | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `DOC-16` | showcase-gap's headline honesty claim - the outcome blocks' stated commit counts - agrees with the repo's own real history when the prescribed command is actually run | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DOC-17` | the shipped documentation-and-tooling surface (the workflow, taxonomy, checklist) is delivered in the same file the routing logic actually reads, so a repo that satisfies R1's 'single entry point' also satisfies the pages that make routing legible | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `INTAKE-07` | a policy stated inside AGENTS.md itself - the file the standard treats as the most authoritative artifact in the repo - is read by the same red-flag scan that reads CONTRIBUTING.md and named policy files | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `INTAKE-08` | a disclosure mandate (a policy requiring AI co-authorship and disclosure, the opposite of the standard's own conventions.md rule that merges into the very file stating the mandate) produces a visible stop, not silent, permanent per-PR non-compliance | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
