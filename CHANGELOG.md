@@ -56,14 +56,14 @@ another name (542 RelNotes files; a 916-entry C array plus `version9.txt`; a 31,
 reachable with no changelog at all, which is exactly what that entry's own purpose says
 must not happen (`SHAPE-17`). Each of the three needed a `runtime-library` capability for
 the project's own replacement for libc, which `onboard.md` warns against as a layering
-artifact and which is 37% of the tracked files in postfix (`SHAPE-18`). And drift 0 arrived
+artifact and which is 922 of postfix's 2,522 tracked files (`SHAPE-18`). And drift 0 arrived
 in one sitting on all three, with the adoption percentage moving 24% -> 62% -> 77% on
 git/git before a single sentence was authored, purely from copying files the standard
 itself ships (`ADOPT-17`).
 
 **Held.** The persona gate produces something real where there is no product owner to
-interview: Git classifies its own 185 commands into audience categories in
-`command-list.txt`, Postfix states its tie-break in code (`compatibility_level`), and
+interview: the first attribute of each of the 193 entries in Git's own
+`command-list.txt` is an audience, Postfix states its tie-break in code (`compatibility_level`), and
 `onboard.md`'s "mark it inferred and unconfirmed, put the interview in the backlog" branch
 is exactly the right move rather than an excuse (`ADOPT-16`). The capability map came out
 behaviour-shaped on a repository with 244 C files at its root, and the audit's empty-glob
