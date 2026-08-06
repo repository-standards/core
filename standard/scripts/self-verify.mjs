@@ -519,8 +519,12 @@ if (!skeleton) {
       "title tr track u ul use var video wbr").split(" "),
   );
   const PLACEHOLDER_RE = /\{\{[^}\n]+\}\}|<(\p{L}[\p{L}\p{N} '._+-]{0,58})>|^\|(?:\s*(?:\.{3}|…)\s*\|)+\s*$/gmu;
-  const hasPlaceholder = (body) => {
-    for (const m of body.matchAll(PLACEHOLDER_RE)) {
+  // The same list without the angle form - for documents whose prose the standard does not
+  // own. Mustache and ellipsis rows are never anything else, so this half has no
+  // false-positive surface at all; see the record scan below for why that matters there.
+  const UNAMBIGUOUS_RE = /\{\{[^}\n]+\}\}|^\|(?:\s*(?:\.{3}|…)\s*\|)+\s*$/gm;
+  const hasPlaceholder = (body, re = PLACEHOLDER_RE) => {
+    for (const m of body.matchAll(re)) {
       const angle = m[1];
       if (angle === undefined) return true; // the mustache and ellipsis-row forms are never anything else
       if (!/\s/.test(angle) && HTML_ELEMENTS.has(angle.toLowerCase())) continue;
@@ -547,6 +551,17 @@ if (!skeleton) {
   // generator fills it, and every record ever written carried it to drift 0. The pattern
   // excludes `_template.md` and the stream READMEs for free - a template is supposed to hold
   // placeholders, and warning about it is how a warning gets ignored.
+  //
+  // Records are scanned with UNAMBIGUOUS_RE, not the full pattern, and that is deliberate.
+  // The eight documents above are shells this standard wrote, so its "angle brackets in prose
+  // mean replace me" convention governs them. A record is the repo's own writing, and records
+  // quote paths and agent utterances in prose: measured against this project's own 33 records,
+  // the angle form fires on 2 of them - `<standard>@<version>` and `<technology>` inside
+  // quoted example dialogue - neither an unfilled anything. The cost is that an unfilled
+  // `<short title of the decision>` in a record heading goes unwarned here; that one is
+  // visible in the filename and in the index row, while the author row is the one that
+  // survives unnoticed.
+  //
   // Directory entries, never stat: an entry is recursed into only when it IS a directory, so
   // a symlink is a leaf here and a link loop cannot hang the check. An unreadable or absent
   // directory is not this check's business - the files[] entry above owns whether it must exist.
@@ -566,14 +581,14 @@ if (!skeleton) {
   };
 
   const fillTargets = [
-    "AGENTS.md", "README.md", "SECURITY.md", "docs/PRINCIPLES.md", "docs/PRODUCT.md",
-    "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md",
-    ...recordFiles("docs/decision-records"),
+    ...["AGENTS.md", "README.md", "SECURITY.md", "docs/PRINCIPLES.md", "docs/PRODUCT.md",
+      "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md"].map((p) => [p, PLACEHOLDER_RE]),
+    ...recordFiles("docs/decision-records").map((p) => [p, UNAMBIGUOUS_RE]),
   ];
-  for (const p of fillTargets) {
+  for (const [p, re] of fillTargets) {
     if (!exists(p)) continue;
     const body = stripCode(readFileSync(p, "utf8"));
-    if (hasPlaceholder(body)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
+    if (hasPlaceholder(body, re)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
   }
 }
 
