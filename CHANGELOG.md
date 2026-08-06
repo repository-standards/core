@@ -18,22 +18,38 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ### A human-prompting wave against three Python repositories (2026-08-07)
 
-Twenty-eight observations across `simonw/llm`, `pydantic/pydantic-ai` and `Textualize/textual`,
-none of which has a registered stack, so every entry run also exercised the honest-miss path.
-It reached the same number three ways: the interview happens when the prompt asks for it and
-almost never otherwise. `A1`, which contains the words `interview me for what you need`, wrote
-nothing and asked six to nine questions on all three repositories. Four paraphrases of the same
-request without that clause wrote between sixteen and twenty-eight paths each, unasked.
+Thirty-four observations across `simonw/llm`, `pydantic/pydantic-ai` and `Textualize/textual`,
+none of which has a registered stack, so every entry run also exercised the honest-miss path -
+and in all three the fact that no stack exists for their language did reach the user, in plain
+words, with the consequence named.
 
-The worst single result is not a refusal but a substitute: given `adopt repository standards in
-this project`, one run added a code of conduct, a security policy and issue templates, reported
-the task done, and never looked for the product. The name reads as a common noun, so a confident
-agent does the generic thing. Five new entry prompts and one new volunteered behaviour record it
-and the neighbouring failures.
+The wave reaches one number three ways: the interview happens when the prompt asks for it and
+almost never otherwise. The shipped entry line, which contains the words "interview me for what
+you need", wrote nothing and asked six to nine questions on all three repositories. Four
+paraphrases of the same request without that clause wrote between sixteen and twenty-eight paths
+each, unasked. Read that way, asking is a property of the sentence rather than of the product.
 
-The wave also produced the first observed instance of an agent refusing to author artifacts
-because they assert product intent it cannot know, said before writing anything rather than
-after - which is the behaviour the new `V11` row now names.
+The worst single result is not a refusal but a substitute. Asked to adopt repository standards,
+one run added a code of conduct, a security policy and issue templates, reported the task done,
+and never looked for the product - the name reads as a common noun, so a confident agent does
+the generic thing. A parallel wave hit the same failure independently and it is now a reported
+row; four new entry prompts record what sits around it, including the network access the quick
+start needs and never mentions.
+
+One new volunteered behaviour comes out of the same wave: an agent refused to author personas
+and a product statement because those artifacts assert product intent it had no way to know,
+said before writing anything rather than after. It happened twice, in two repositories, without
+being asked - and it is the counterweight to the runs that wrote a persona roster into somebody
+else's project without pausing.
+
+One of the runs also found a live break in a repository this project had already recorded as
+adopted. Textual's own ignore rules match `lib/`, a Python packaging convention, and that
+silently swallowed the guard engine's only shared module out of the commit. Everything passes
+where the file is on disk; a fresh clone, which is what continuous integration uses, cannot run
+the guards at all. A second new volunteered row names the class.
+
+The run file records where knowing the product contaminated a run rather than hiding it: four
+verified leakage channels, and full-loop mode recorded as not reached, with the reason.
 
 ### Validation splits into two named halves, and the second one is new (2026-08-06)
 

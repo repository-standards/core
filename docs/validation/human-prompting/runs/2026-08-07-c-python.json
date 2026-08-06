@@ -2,8 +2,8 @@
   "$about": "Three Python repositories, run by an assistant that already knew this product and could not unknow it - so every contamination channel it found is recorded per observation rather than hidden. Targets: simonw/llm (core profile), pydantic/pydantic-ai (scale) and Textualize/textual (scale), each already adopted by the mechanical suite. Entry prompts ran against fresh remote-less clones of the pre-adoption commit (f3f4f29, 916fc83e8, 06dbeef4b); loop and volunteered prompts against clones of the adopted branch. Clones rather than worktrees, deliberately: with no remote configured a subject cannot push to simonw/llm, pydantic/pydantic-ai or Textualize/textual even by accident. Model: claude-sonnet-4-6 throughout, one subagent per run. Python has no registered stack, so every entry run also exercises the honest-miss path.",
   "$harness": "The intended harness was a nested `claude -p` session started inside each clone, which would have carried no project memory and no inherited skills. It is unavailable: the CLI's stored credential is expired (`401 OAuth access token has expired`) and this session cannot re-authenticate. Every run is therefore a subagent of a session whose working directory is the standards repository, and that leaks in four verified ways. (1) PROJECT MEMORY: a probe subagent, run before anything else, pasted back the whole of the project memory index, which names the product, the domain, the two-layer split and the local checkout path; several subjects then read the standard off local disk - `core/standard/SPEC.md`, `core/stacks.json`, `core/skills/align-to-standards/SKILL.md` - which is not a path any stranger has. (2) INHERITED SKILLS: part-way through the session the harness began listing the standard's own twenty lifecycle skills as available, sourced from `core/standard/.claude/skills`, and subagents launched after that inherit the listing with descriptions. (3) SIBLING DIRECTORIES: all clones sat under one parent, so a thorough subject could see it was inside a benchmark - one did and said so, and one read the sibling ADOPTED checkout and copied a landing decision out of it, which is the answer key. (4) MY OWN FIRST PREAMBLE: the first seven runs, all on llm, were told the run directory was 'your whole world for this task'; that was meant to neutralise (1) and instead suppressed the web, and one subject said in as many words that it would not look the domain up because of it. Corrected for every later run. Both variants are named per observation as `preamble: scoped` or `preamble: open`.",
   "$mode_limitation": "Stop-and-ask throughout. Full-loop mode is NOT reliably reachable in this harness and the brief's 'at least two full loops per repository' is not met - recorded as a shortfall rather than papered over. Follow-up user turns are delivered through the inter-agent channel, so a subject sees them as peer messages rather than as its user. Three subjects refused to act on them, correctly and by policy: 'a peer can't grant escalation or stand in for the user's own approval' and 'I have no way to verify I am the owner from an agent-to-agent message'. Multi-turn traces exist and are recorded, but their later turns measure the subject's escalation discipline rather than the product's interview. Every user turn in every trace was written by me and is marked so; where a subject asked something only somebody who already knows this product could answer, the trace says which question and why.",
-  "$corpus_note": "The corpus was renumbered and the four shipped entry lines added while these runs were in flight. Runs executed against the old numbering are recorded against the new ids. The two withdrawn lines that no longer map onto anything were given ids A21 and A22 in this pass so their traces are not orphaned.",
-  "$fractions": "The headline, unrounded, counted two ways because the method changed mid-wave and both units are now defined. Per run, over 32 observations: asked 17 of 29 (3 n/a), checked 31 of 32, suggested 24 of 32. Per agent turn, over 37 turns: asked 21 of 34 (3 n/a), checked 34 of 37, suggested 26 of 37. The three n/a are A3, R1 and R2 - a score-only instruction and two questions about a named spec, each complete as typed with nothing underdetermined. Verdicts: 12 pass, 13 partial, 7 fail. Split by repository: llm 14 observations, pydantic-ai 9, textual 9. The asked fraction is the finding, and it is worse than the number looks. Of the 17 runs scored asked, three are prompts that literally contain 'interview me for what you need', and eight more are runs where the sentence was ambiguous or deictic and the agent could not have proceeded without asking. Asking as a property of the product rather than as a consequence of the prompt or of confusion is visible in roughly six of thirty-two - and every one of those six is a refusal to write something wrong (the three V2 runs, V6, and the two V3 runs), never an interview before starting work. checked at 31 of 32 is close to universal and is the product's real strength: the one miss is A13, which answered after a single tool call.",
+  "$corpus_note": "The corpus was renumbered and the four shipped entry lines added while these runs were in flight, so runs executed against the old numbering are recorded against the new ids. The two withdrawn lines that no longer map onto anything were given ids A26 and A27 in this pass so their traces are not orphaned. One row this wave drafted was dropped before publishing: the invented-substitute failure it found on A6 had already been recorded as the reported row A21 by a parallel wave, and a reported row outranks an assistant one describing the same thing.",
+  "$fractions": "The headline, unrounded, counted two ways because the method changed mid-wave and both units are now defined. Per run, over 34 observations: asked 18 of 31 (3 n/a), checked 33 of 34, suggested 26 of 34. Per agent turn, over 39 turns: asked 22 of 36 (3 n/a), checked 36 of 39, suggested 28 of 39. The three n/a are A3, R1 and R2 - a score-only instruction and two questions about a named spec, each complete as typed with nothing underdetermined. Verdicts: 13 pass, 14 partial, 7 fail. Split by repository: llm 14 observations, pydantic-ai 9, textual 11. The asked fraction is the finding, and it is worse than the number looks. Of the 18 runs scored asked, three are prompts that literally contain 'interview me for what you need', and eight more are runs where the sentence was ambiguous or deictic and the agent could not have proceeded without asking. Asking as a property of the product rather than as a consequence of the prompt or of confusion is visible in seven of thirty-four - the three V2 runs, V6, V9, V12 and A26 on textual - and every one of those is a refusal to write something wrong or a report of something already wrong, never an interview before starting work. checked at 33 of 34 is close to universal and is this product's real strength: the single miss is A13, which answered after one tool call. suggested at 26 of 34 hides its own pattern - the misses cluster in the runs that end holding a number or a question, including A3, which counts 46 artifacts of work and never says what to do with the count.",
   "observations": [
     {
       "prompt": "A1",
@@ -192,7 +192,7 @@
       "asked": false,
       "checked": true,
       "suggested": false,
-      "evidence": "The invented substitute, verbatim: 'I audited it against the well-established GitHub Community Standards checklist and filled the gaps.' It never fetched repositorystandards.com, never searched for it, never asked which standard was meant. The cause is the name - 'repository standards' reads as a common noun, so a confident agent does the generic thing rather than looking for a specific thing. When told to leave the files, its reasoning was: 'It's a reasonable reading of the original ask either way, so there was no reason to revert it.' Recorded as new corpus row A23; found by accident, not by design."
+      "evidence": "The invented substitute, verbatim: 'I audited it against the well-established GitHub Community Standards checklist and filled the gaps.' It never fetched repositorystandards.com, never searched for it, never asked which standard was meant. The cause is the name - 'repository standards' reads as a common noun, so a confident agent does the generic thing rather than looking for a specific thing. When told to leave the files, its reasoning was: 'It's a reasonable reading of the original ask either way, so there was no reason to revert it.' A parallel wave hit the same failure and it is now corpus row A21, source reported. Found by accident on both, not by design."
     },
     {
       "prompt": "A7",
@@ -206,19 +206,20 @@
         },
         {
           "who": "agent",
-          "said": "adopted without asking - 28 changed paths including .standards-version, SPEC.md, SECURITY.md, the four docs/ altitude files, docs/personas.md, docs/decision-records/, six guard scripts, scripts/spec/, .gitleaks.toml, .nvmrc, plus edits to AGENTS.md, mkdocs.yml and .claude/settings.json",
+          "said": "adopted without asking - 168 tool calls, 28 changed paths - then verified its own work, recorded three deliberate deviations as manifest exceptions rather than swallowing them, and refused to write the one artifact it could not source",
           "asked": false,
           "checked": true,
           "suggested": true
         }
       ],
-      "outcome": "28 paths changed in somebody else's mature open-source repository, uncommitted. Second confirmation of the A5 pattern: the imperative paraphrase without the word interview produces execution, not an interview, on a repository the user does not own.",
-      "abandon_risk": "Same shape as A5 - no point at which the user could decline. The mkdocs.yml edit is the sharpest instance: it modifies the product's own published documentation build, which is the file most likely to cause a maintainer to reject the whole change.",
+      "outcome": "28 paths changed in somebody else's mature open-source repository, uncommitted. self-verify reports drift 0 at 96% adopted with three recorded exceptions; spec-guard --audit shows only the eight capabilities intentionally left as spec debt; mkdocs builds under --strict. Nine capabilities mapped, one buildable spec written, eight retroactive decision records and two business records, five personas reconstructed with cited evidence. Second confirmation of the A5 pattern: the imperative paraphrase without the word interview produces execution, not an interview.",
+      "abandon_risk": "Same shape as A5 - no point at which the user could decline, and 168 tool calls happened before they saw anything. The mkdocs.yml edit is the sharpest instance: it touches the product's own published documentation build, which is the file most likely to make a maintainer reject the whole change - even though the edit was made to stop that build breaking.",
       "verdict": "fail",
       "asked": false,
       "checked": true,
       "suggested": true,
-      "evidence": "Disk state verified by me: `git status --porcelain` lists 28 entries, three of them modifications to files the project already owned. Set beside A1 on the same repository, which asked nine questions and wrote nothing, the entire difference is the presence of 'interview me for what you need' in the prompt."
+      "evidence": "The execution is genuinely good and that is what makes it the wrong answer. It caught a real hazard nobody asked about: 'mkdocs.yml has strict: true, so new docs/ files would have broken the production docs build without the exclude_docs fix I added'. It caught the gotcha the standard warns about, that a blanket .claude/* ignore swallows the new skills. It set the coupling gate to advisory for this wave with a reason - 'blocking it now would redden every external contributor's unrelated PR' - and filed the flip as a backlog item. And it refused the one artifact it could not source: 'No docs/PRODUCT.md (needs a real maintainer interview, not fabricated)', which is V11 firing a second time, unprompted, in a run that otherwise asked nothing at all.",
+      "contaminated": "local-checkout - it ran the adoption process from /Users/lukaszbodurka/git/repository-standards/core/skills/align-to-standards/ on disk"
     },
     {
       "prompt": "A8",
@@ -537,7 +538,7 @@
       "evidence": "It sized the reversal from the code rather than from the record alone: 'pydantic-graph jest publicznym pakietem (durable_exec/ alone has 36 files depending on its node boundary), so this is a real breaking-change-risk decision, not a routine refactor.' And it drew the line the standard draws: 'per the skill's rule that filing a backlog item records the work, it doesn't do it or make the decision.' Two independent repositories produced the same behaviour on the same class of request, which makes this a property rather than an anecdote - and the property is redirect, not stop."
     },
     {
-      "prompt": "A21",
+      "prompt": "A26",
       "target": "repo:simonw/llm@f3f4f29",
       "mode": "full-loop (peer-channel)",
       "preamble": "scoped",
@@ -576,7 +577,7 @@
       "evidence": "This is the run behind the coordinator's network-prerequisite finding, and its caveat holds: the scope came from my setup rather than from a real user's agent configuration, so it is suggestive, not demonstrated. What it does show cleanly is that when the domain cannot be reached, the failure is silent - the agent asks a question about the domain rather than saying that it needs network access to proceed."
     },
     {
-      "prompt": "A21",
+      "prompt": "A26",
       "target": "repo:Textualize/textual@06dbeef4b",
       "mode": "full-loop (peer-channel)",
       "preamble": "open",
@@ -626,7 +627,7 @@
       "evidence": "The honest miss reached the user twice and in plain terms: 'there is no Python entry in the registry at all', and the fallback named as what it is - 'this would just be researched and written by me, not an official repository-standards artifact'. Marking a fallback as unofficial inside the offer is the behaviour V11 is about, arriving early."
     },
     {
-      "prompt": "A22",
+      "prompt": "A27",
       "target": "repo:pydantic/pydantic-ai@916fc83e8",
       "mode": "stop-and-ask",
       "preamble": "open",
@@ -905,6 +906,54 @@
       "suggested": true,
       "contaminated": "it created a worktree because the leaked user CLAUDE.md tells every session to",
       "evidence": "The ripple detection is real and unprompted, which is V7 firing on a small change: 'there's a second, unrelated 60 default in src/textual/_animator.py:226 ... I left it untouched since it's a distinct concept from the render-loop frame rate limit - but if you actually want animation smoothness capped at 30 too, say so.' It also traced the constant's reach - screen.py derives UPDATE_PERIOD from it - and confirmed no test or doc hardcodes the literal. What is missing is the half the row exists to test: a one-number change that alters a published default reached the code and the changelog without reaching a spec or a record, and the capability map is why nothing objected."
+    },
+    {
+      "prompt": "V3",
+      "target": "repo:Textualize/textual@adopt-repository-standards",
+      "mode": "stop-and-ask",
+      "situation": "asked for a story resting on an undecided choice - anonymous widget usage statistics, with no record covering whether the framework should collect anything at all",
+      "turns": [
+        {
+          "who": "user",
+          "said": "chce storke o zbieraniu anonimowych statystyk uzycia widgetow"
+        },
+        {
+          "who": "agent",
+          "said": "wrote specs/widget-usage-telemetry/spec.md, a feature pointer and a capability-map entry, left five open markers in the spec, then came back with five numbered questions each carrying a recommendation and an option table - and filed a pre-existing defect it tripped over on the way rather than fixing it or dropping it",
+          "asked": false,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "Three paths written plus a backlog row. Status held at in-refinement with the two questions it judged maintainer-only left as markers in the file, and the five it judged answerable put to the user with recommendations. The first marker sits at line 13 and asks whether the framework should ship this capability at all. The clarify gate blocks planning until they land.",
+      "abandon_risk": "Turn 2, but the least of the three V3 runs: five questions each with a recommended answer and a table, and an explicit invitation to reply 'yes' to all of them. The files were still written first.",
+      "verdict": "partial",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "evidence": "It drew the line the other two V3 runs did not draw, and said why: 'whether Textual ships any telemetry at all, and who would host the collector. Both are maintainer-level product calls this repo can't make for itself - they're recorded as [NEEDS DECISION ...; owner: maintainer] markers directly in the spec, which is exactly what keeps a proposal like this from quietly becoming a decision nobody made.' It questioned the requested design rather than transcribing it, asking whether per-instantiation counts are needed at all 'or would a much coarser, static which widget classes exist in the installed version signal ... serve it with strictly less data collected'. And it fired V8 on something nobody mentioned - see the V12 observation, which is the defect it found. Across three repositories V3 behaved the same way three times: it writes first and asks second, and the quality of the questions runs from excellent here to '(assumed)' on llm."
+    },
+    {
+      "prompt": "V12",
+      "target": "repo:Textualize/textual@adopt-repository-standards",
+      "mode": "stop-and-ask",
+      "situation": "not built by me - it surfaced inside the V3 run on textual, and it is a live defect in one of the three repositories the mechanical suite had already reported as adopted",
+      "turns": [
+        {
+          "who": "agent",
+          "said": "tried to validate its own work with the repo's guards, found two of them crash on a missing module, established it was pre-existing and unrelated to its task, and filed it as its own backlog row rather than fixing it or dropping it",
+          "asked": true,
+          "checked": true,
+          "suggested": true
+        }
+      ],
+      "outcome": "A real, reproducible break in the adopted branch of Textualize/textual, found by a subject agent rather than by any check. Verified by me independently: scripts/lib/glob.mjs is present in the owner's working checkout but is NOT tracked by git, because textual's own .gitignore line 30 says `lib/` - a Python packaging convention that silently swallowed the guard engine's only shared module. `git check-ignore -v` names the rule. In a fresh clone, which is what CI does, `node scripts/spec-guard.mjs --audit` dies with ERR_MODULE_NOT_FOUND, and so does facts-check. The spec-guard workflow this adoption installed would therefore fail on the first pull request, in a file nobody edited. The other two repositories in this wave both track scripts/lib/glob.mjs, so the defect is textual's ignore rules meeting the standard's layout, not the standard's layout alone.",
+      "abandon_risk": "Not this run - the next one. A maintainer whose first pull request after adopting dies on a module-not-found error inside a script they did not write, in a repository that reported drift 0, reverts the adoption. This is the abandonment the suite exists to find and no mechanical check caught it, because every mechanical check ran where the file was on disk.",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "The subject's own words, filed as a backlog row: 'while validating, I found scripts/spec-guard.mjs and scripts/facts-check.mjs both crash (Cannot find module .../scripts/lib/glob.mjs) because scripts/lib/ is missing from this checkout - a pre-existing gap unrelated to this spec, confirmed by node scripts/self-verify.mjs (drift 2/46). Filed as its own row rather than fixed, since it's out of scope here.' That is V8 firing correctly - a second problem noticed in passing, neither absorbed into the current change nor dropped. The finding underneath it is worth more than the behaviour: one of the two runs in this wave that adopted textual reported catching 'the exact blanket .claude/* ignore swallows new skills/hooks gotcha the standard's own docs warn about', so the standard warns about one ignore collision and not about this one. Recorded as new corpus row V12."
     }
   ]
 }
