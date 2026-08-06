@@ -6,7 +6,7 @@
      this standard can run the same idea against their own. -->
 
 Twenty-something checks - **133**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **57** of them at least once and has fixed-and-re-verified **80** so far; the rest are logged as open (which includes any case where an attempted fix
+claiming to be agent-operable should survive. This project failed **57** of them at least once and has fixed-and-re-verified **85** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -113,7 +113,7 @@ grep skills/align-to-standards/SKILL.md for 'reference implementation' language 
 - **Given:** a repo (e.g. bazelbuild/bazel) whose real rule implementations for several languages live in satellite `rules_*` repos it does not own
 - **When:** an agent tries to bind one of those capabilities to a glob in capability-map.json
 - **Then:** there is no glob in this repo that can reach the capability's real code
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -126,7 +126,7 @@ read specs/capability-map.json's schema/docs for any provision for an external-r
 - **Given:** a repo with two permanently-coexisting technology stacks (e.g. flutter/flutter's Dart framework + native engine)
 - **When:** self-verify.mjs is asked to register and check drift for both stacks at once
 - **Then:** the script has a mechanical way to track two simultaneous stack.manifest.json registrations
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -243,7 +243,7 @@ node standard/scripts/spec-structure.mjs against a spec whose `**Serves:**` valu
 - **Given:** a repo with at least one already-tracked spec, and a brand-new untracked capability directory
 - **When:** spec-guard.mjs --audit runs locally, before `git add`
 - **Then:** the audit sees the untracked directory and reports it as unmapped, the same result CI will give after it is staged - not a false OK that flips to a failure only once staged
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -295,7 +295,7 @@ node standard/scripts/self-verify.mjs against a repo whose README.md/SECURITY.md
 - **Given:** a repo whose altPath resolves to a directory that exists for an unrelated reason (an existing 31-skill system, an unrelated SECURITY.md, an unrelated altPath skills folder)
 - **When:** self-verify.mjs checks whether the altPath is satisfied
 - **Then:** the check requires the standard's own content to actually be found inside the matched directory, not merely that a path with the right name exists
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1534,7 +1534,7 @@ read SPEC.md R18 and R25 side by side for a contradiction on PR-level version bu
 - **Given:** site/index.html's claim that compliance is gated 'from the first push'
 - **When:** the real spec-guard.yml workflow's trigger list is read
 - **Then:** it fires on push, the same as the sibling gitleaks.yml (which carries a push trigger with documented reasoning that was never applied here) - instead of firing only on pull_request, so a direct push to main, including the very first one, is never checked
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
