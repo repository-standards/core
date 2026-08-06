@@ -16,6 +16,18 @@
 // its own pattern stops being covered, and silence would look identical to
 // agreement - which is how a check rots into decoration.
 //
+// The boundary: every mechanism here reads UTF-8 TEXT. A repo whose canonical fact
+// lives inside a binary artifact - a font's version in its TTF name table, a version
+// resource compiled into an executable - has no home this file can express, and
+// pointing one at the bytes gave two arbitrary answers depending on the encoding
+// that artifact happened to use: an ASCII string inside the binary matched and
+// reported a green tick over a file this cannot parse, a UTF-16 one reported "the
+// home pattern matches nothing", which reads as a bad pattern. Both are worse than
+// a refusal, so a binary file is now refused by name, with the way out stated: give
+// the fact a text home the artifact is BUILT from, or leave the restatement
+// undeclared and say so where it is restated. An unchecked fact somebody knows about
+// beats a check that answers by coin flip.
+//
 // Declare facts in docs/facts.json (R4):
 //   [{ "id": "...", "what": "...",
 //      "home":   { "count": "<glob>" }                                   how many files match
@@ -59,6 +71,20 @@ const walk = (dir, acc = []) => {
   return acc;
 };
 
+// One read path for every mechanism, so the text-only boundary is stated once and
+// cannot be true of three homes and forgotten in the fourth. A NUL byte in the first
+// 8000 bytes is the test - cheap, and no text file this check is meant for has one.
+const readText = (file) => {
+  const buf = readFileSync(file);
+  if (buf.subarray(0, 8000).includes(0)) {
+    throw new Error(
+      `${file} is not UTF-8 text (NUL byte in the first 8000 bytes) - facts-check reads UTF-8 text only, so a fact living inside a binary artifact cannot be declared here. ` +
+        `Give it a text home the artifact is built from, or leave the restatement undeclared and say so where it is restated (R4)`,
+    );
+  }
+  return buf.toString("utf8");
+};
+
 const homeValue = (fact) => {
   const { home } = fact;
   if (home.count) {
@@ -66,14 +92,14 @@ const homeValue = (fact) => {
     const re = globToRegExp(home.count);
     return String(walk(base).filter((f) => re.test(f)).length);
   }
-  if (home.read) return readFileSync(home.read, "utf8").trim();
+  if (home.read) return readText(home.read).trim();
   if (home.match) {
     // Multiline, exactly like a claim's pattern below. The two were compiled with different
     // flags, so `^Version: (\d+...)` worked as a claim and matched nothing as a home - the
     // same string meaning two things depending on which field it sat in. (`g` belongs to the
     // claims path only: with `String.match` it would return the matches and drop the capture
     // group this line reads.)
-    const m = readFileSync(home.match.file, "utf8").match(new RegExp(home.match.pattern, "m"));
+    const m = readText(home.match.file).match(new RegExp(home.match.pattern, "m"));
     if (!m) throw new Error(`the home pattern matches nothing in ${home.match.file}`);
     return m[1];
   }
@@ -82,7 +108,7 @@ const homeValue = (fact) => {
   // occurrence when the number wanted is how many there are. Without it, a count of
   // something declared inside one file has no home and goes back to being hand-written.
   if (home.countMatches) {
-    const hits = [...readFileSync(home.countMatches.file, "utf8").matchAll(new RegExp(home.countMatches.pattern, "gm"))].length;
+    const hits = [...readText(home.countMatches.file).matchAll(new RegExp(home.countMatches.pattern, "gm"))].length;
     if (hits === 0) throw new Error(`the home pattern matches nothing in ${home.countMatches.file}`);
     return String(hits);
   }
@@ -108,7 +134,14 @@ for (const fact of facts) {
       continue;
     }
     // Multiline: a claim anchored with ^ means the start of its line in a document.
-    const matches = [...readFileSync(claim.file, "utf8").matchAll(new RegExp(claim.pattern, "gm"))];
+    let text;
+    try {
+      text = readText(claim.file);
+    } catch (e) {
+      fail(`${fact.id}: ${e.message}`);
+      continue;
+    }
+    const matches = [...text.matchAll(new RegExp(claim.pattern, "gm"))];
     if (matches.length === 0) {
       fail(`${fact.id}: the claim in ${claim.file} matches nothing - the surface was reworded past its pattern, so nothing was covering it`);
       continue;
