@@ -74,6 +74,12 @@ a real collision this project has hit. Copy `docs/decision-records/bdr/_template
 row to `bdr/README.md`, `Status: Accepted` on confirmation. An accepted record is superseded,
 never edited into a different decision.
 
+**Fill the `Author` row with a person**, not a role and not a persona - whoever is
+accountable for this decision and can be asked about it later. The template ships it as
+`{{AUTHOR}}`; left unsubstituted it is an unfilled shell, and the shipped `self-verify`
+warns about it the same way it warns about any other placeholder that survived. A business
+record is the likeliest place to write a persona name here, and a persona is nobody.
+
 ## Not this
 
 - **Do not design the technical consequence here.** Which table, which service, which library
