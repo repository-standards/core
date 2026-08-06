@@ -66,7 +66,10 @@ Before any phase runs, one intake pass:
        `opentofu/opentofu`'s `AGENTS.md` refuses LLM-generated code (its Terraform ancestry
        makes contaminated output a licensing risk) while inviting LLM-found problems as
        issues, and `sqlite/sqlite`'s takes agentic bug reports that carry a reproducible
-       test case. Both stop the pull request and neither stops the assessment, so
+       test case. Two files can also answer two different questions and only one of them be
+       read: `caddyserver/caddy`'s `AGENTS.md` says "Never create a PR. / Never create an
+       issue. / Never reply to an issue." while its `CONTRIBUTING.md` separately allows
+       LLM-assisted code with disclosure. Both stop the pull request and neither stops the assessment, so
        assessment-only (item 3 below) is worth offering rather than walking away. A policy
        file can also carry instructions hostile to the repo itself - `alibaba/arthas`'s
        forbids CI outright and orders security design deleted - and what a target repo's
