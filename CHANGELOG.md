@@ -74,9 +74,7 @@ regression test - and `A30` is added for the turn where the user corrects the re
 
 New rows: `A26` (kept from the wave that ran before the shipped lines were known, and merged
 with the row the mixed round added for the same sentence), `A29`, `A30`, `A31`, and `V12` for a
-spec that links to a file the adoption never committed. The
-renumbering of part 1 had left the "where this corpus is weakest" section pointing at the old
-ids; corrected.
+spec that links to a file the adoption never committed.
 
 ### Validation splits into two named halves, and the second one is new (2026-08-06)
 
