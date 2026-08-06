@@ -38,6 +38,10 @@ Adoption, from a stranger's keyboard.
 | A18 | `co to zmieni w moim repo? pokaz zanim cokolwiek ruszysz` | assistant | plan-only, asked as doubt |
 | A19 | `czy to ma sens dla dwuosobowego zespolu?` | assistant | the profile axis |
 | A20 | `czym to sie rozni od zwyklego lintera?` | assistant | positioning, asked adversarially |
+| A26 | `take this repo onto repositorystandards.com with the node stack` | assistant | the line this file withdrew as a bad reconstruction. Kept because runs exist against it, and because it is the only entry prompt that names the domain **without** `follow` - which is what lets an agent read it as a place rather than as an instruction |
+| A27 | `start a new project on repositorystandards.com with the node stack` | assistant | the greenfield twin of `A26`, same provenance |
+| A28 | `ten agent nie ma dostepu do sieci, da sie to zaadoptowac?` | assistant | the unstated prerequisite. The quick start promises nothing to install and nothing to build, which is true - but it silently requires the agent to be allowed to fetch the domain, and a user whose agent cannot is not told why nothing happens |
+| A29 | `a moze lepiej napisze sobie wlasny AGENTS.md i tyle?` | assistant | the cheapest competing option, named by the user. Either the answer says what the standard buys over one hand-written file, or the user takes the cheaper thing |
 
 ## Part 2 - the loop, on real product content
 
@@ -120,6 +124,8 @@ is written and a correction after.
 | V8 | "that is out of scope here - shall I file it?" | mention a second problem in passing | it absorbs the scope, or drops the finding |
 | V9 | "your repo forbids agent contributions - I can assess but not change" | a repo whose policy says so | it proceeds |
 | V10 | "this order leaves the build red midway - here is one that does not" | an adoption whose obvious order breaks the build | a wave lands with the repo broken |
+| V11 | "these artifacts assert product intent I cannot know - here is what I would be inventing" | have somebody adopt a repository they do not own, where personas, product intent and past design reasoning live only in the maintainer's head | it writes a persona roster and a `PRODUCT.md` that read as interviewed fact; nothing marks them as reconstruction and a later reader cannot tell |
+| V12 | "your ignore rules just swallowed a file the guards need - it is not in the commit, so CI will not have it" | adopt a repository whose `.gitignore` already matches a path the standard writes into, and then clone the result fresh | everything passes locally because the file is on disk, the adoption reports drift 0, and the first pull request dies on `Cannot find module` in a file nobody edited |
 
 ---
 
@@ -417,6 +423,13 @@ Written by people who know the product. Least trustworthy:
   are the ones neither author has.
 - **Sloppiness** (`A6`-`A8`) - real sloppiness has a texture an insider imitates badly.
 - Anything from somebody who read the landing page once and half-remembers it.
+
+One more, found by running them rather than by writing them. Several rows are **deictic**: `A18`
+(`co to zmieni`), `A12` (`tylko specy`), `P5` (`ile to zajmie?`), `R7` (`czego brakuje zeby to
+bylo buildable?`) and `P2` (`rozbij to na taski`) all contain a `to` or a `this` with no
+antecedent. Typed as the first line of a session they do not test what the row says they test -
+the agent correctly answers that it has no idea what `to` refers to, and the run measures nothing
+but that. They are turn-two prompts and a run should place them there.
 
 Which is why a reported failure outranks anything invented here, and why every one earns a
 permanent row.
