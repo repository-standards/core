@@ -128,16 +128,30 @@ const parseEntry = (e, cap) => {
       bad(`"external" under "${cap}" must name the repository holding the code: ${JSON.stringify(e)}`);
     if (typeof e.reason !== "string" || !e.reason.trim())
       bad(`the external entry "${e.external}" under "${cap}" carries no reason - an unwatchable capability has to say why, or it is an escape hatch rather than a record`);
+    // An external entry watches no file here, so a coupling mode or a data-key list on it
+    // describes nothing. Refused where it is written rather than dropped in silence.
+    if ("couples" in e || "dataKeys" in e)
+      bad(`the external entry "${e.external}" under "${cap}" carries a coupling mode - there is no file here to compare, which is what "external" says`);
     return { external: e.external.trim(), reason: e.reason.trim() };
   }
   const couples = e?.couples ?? "content";
   if (typeof e?.glob !== "string" || (couples !== "content" && couples !== "shape"))
     bad(`unusable entry under "${cap}": ${JSON.stringify(e)}`);
+  // Some maps are keyed by data: a per-member hash object is keyed by filename, a per-locale
+  // table by locale. Their keys arrive and leave as the data does, and counting them as key
+  // shape makes every data addition read as a schema change - the failure `couples: "shape"`
+  // exists to end. `dataKeys` names those paths, in the same collapsed notation the shape
+  // uses, and the walk stops there: the path itself is shape, everything under it is data.
+  const dataKeys = e.dataKeys ?? [];
+  if (!Array.isArray(dataKeys) || dataKeys.some((k) => typeof k !== "string" || !k.trim()))
+    bad(`"dataKeys" under "${cap}" must be a list of key paths: ${JSON.stringify(e)}`);
+  if (dataKeys.length && couples !== "shape")
+    bad(`"dataKeys" under "${cap}" on an entry that couples on content: ${JSON.stringify(e)} - it only means something where the key shape is the contract`);
   // An exclusion says which paths the capability does NOT claim, so a coupling mode on it
   // would describe how something that does not couple couples. Refused rather than ignored.
   if (e.glob.startsWith("!"))
     bad(`exclusion written as an object under "${cap}": ${JSON.stringify(e)} - an exclusion carries no coupling mode; write it as the plain string ${JSON.stringify(e.glob)}`);
-  return { glob: e.glob, couples, excludes: false };
+  return { glob: e.glob, couples, dataKeys: dataKeys.map((k) => k.trim()), excludes: false };
 };
 const coupling = Object.fromEntries(
   Object.entries(map).map(([cap, entries]) => {
@@ -329,13 +343,14 @@ if (vendoredChanges)
 
 // The key shape of a JSON value: every key path, array indices collapsed.
 // { "files": [{ "path": "a" }] } -> files, files[].path
-const shapeOf = (value, prefix, acc) => {
-  if (Array.isArray(value)) for (const v of value) shapeOf(v, `${prefix}[]`, acc);
+const shapeOf = (value, prefix, acc, stop = []) => {
+  if (Array.isArray(value)) for (const v of value) shapeOf(v, `${prefix}[]`, acc, stop);
   else if (value && typeof value === "object")
     for (const [k, v] of Object.entries(value)) {
       const p = prefix ? `${prefix}.${k}` : k;
       acc.add(p);
-      shapeOf(v, p, acc);
+      // Declared data: the path is part of the shape, its keys are not.
+      if (!stop.includes(p)) shapeOf(v, p, acc, stop);
     }
   return acc;
 };
@@ -364,12 +379,13 @@ const beforeRef = base
 const afterOf = (f) => (staged ? gitShow(`:${f}`) : base ? gitShow(`HEAD:${f}`) : existsSync(f) ? readFileSync(f, "utf8") : null);
 
 const shapeCache = new Map();
-const shapeChanged = (f) => {
-  if (shapeCache.has(f)) return shapeCache.get(f);
+const shapeChanged = (f, dataKeys = []) => {
+  const cacheKey = JSON.stringify([f, ...dataKeys]);
+  if (shapeCache.has(cacheKey)) return shapeCache.get(cacheKey);
   const shape = (src) => {
     if (src === null) return null;
     try {
-      return [...shapeOf(JSON.parse(src), "", new Set())].sort().join("\n");
+      return [...shapeOf(JSON.parse(src), "", new Set(), dataKeys)].sort().join("\n");
     } catch {
       return null;
     }
@@ -378,7 +394,7 @@ const shapeChanged = (f) => {
   const now = shape(afterOf(f));
   // Added, deleted or unparseable on either side - not a data edit to vouch for.
   const changed = before === null || now === null || before !== now;
-  shapeCache.set(f, changed);
+  shapeCache.set(cacheKey, changed);
   return changed;
 };
 
@@ -391,7 +407,7 @@ for (const [cap, entries] of Object.entries(compiled)) {
     if (!claimed(entries, f)) return false; // not this capability's, or handed to a sibling
     const matched = entries.filter((e) => !e.excludes && e.re.test(f));
     // A content-coupled glob wins over a shape-coupled one matching the same file.
-    const couples = matched.some((e) => e.couples !== "shape" || shapeChanged(f));
+    const couples = matched.some((e) => e.couples !== "shape" || shapeChanged(f, e.dataKeys ?? []));
     if (!couples) dataOnly.add(f);
     return couples;
   });
