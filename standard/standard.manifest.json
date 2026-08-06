@@ -45,7 +45,7 @@
       "profile": "core",
       "since": "1.0.0",
       "rule": "R2",
-      "sha256": "5987191fa354b14273545c299e94feabc6e90389ef123169ca7e6b32f59772e8"
+      "sha256": "c05df2346660b8b07076eac88391c276ee17d366600ffb2fe5019ed7a0bc1be3"
     },
     {
       "path": "CLAUDE.md",
@@ -136,7 +136,7 @@
       "profile": "core",
       "since": "0.4.0",
       "rule": "R16",
-      "sha256": "9f582d2296efc9908e65bee46bdf76eb19935b3384eab5bc6ef5b3e9212feb61"
+      "sha256": "75aed033950463aac5aab19f1b14e84f381840cc95e56a100572df445dee979b"
     },
     {
       "path": "scripts/spec-structure.mjs",
@@ -228,7 +228,7 @@
         "spec-tasks/SKILL.md": "59cdabc8e4e8f3656d245c1aa20213f0d89cd5e7fc9915e05d3e7fa1af98b9f1",
         "spec-update/SKILL.md": "04ddb59820a62b53de5c7d2ce6862ee622dbc60f1fb7fe8dac353ac751db82cd",
         "timeline-update/SKILL.md": "e0770d9e33139bbddaa01be6bd59748845ab6d18b34fd9de489910f110cd584c",
-        "update-to-version/SKILL.md": "f320a0108b609659bd13ba8123bdd51eb90d1b9881aa86eb937f649cfd923166"
+        "update-to-version/SKILL.md": "c82cf671eb56b53e8846c75237787f3e2408ec352ab43b82bfff5a30aa90ec75"
       }
     },
     {

@@ -342,6 +342,67 @@ check(
   },
 );
 
+// Two Layer-2 stacks that coexist permanently - a framework beside a native engine - had no
+// way to register: the engine read one filename, so the second manifest was invisible, its
+// entries unchecked and its absence unreported. The last two cases here are the bound: a
+// file that only looks like a stack manifest is not one, and a stack manifest that cannot be
+// parsed is loud rather than skipped.
+const stackManifest = (technology, files) => `${JSON.stringify({ standard: `repository-standards/env-${technology}`, technology, version: "0.1.0", layer: 2, files }, null, 2)}\n`;
+const NEEDS = (path, purpose) => [{ path, purpose, adapt: "fill-from-repo", required: true, rule: "R20" }];
+
+check(
+  "a repo running two stacks at once registers both, and both count in the one drift number",
+  (dir) => {
+    writeFileSync(join(dir, "stack.manifest.json"), stackManifest("dart-flutter", NEEDS("pubspec.yaml", "the dart package manifest")));
+    writeFileSync(join(dir, "stack.native-engine.manifest.json"), stackManifest("native-engine", NEEDS("CMakeLists.txt", "the engine build")));
+  },
+  (r, expect) => {
+    expect(r.drift === base.drift + 2, `expected both stacks' unmet entries: drift ${base.drift + 2}, got ${r.drift}`);
+    expect(says(r, "pubspec.yaml missing"), "the first stack's entry was not checked");
+    expect(says(r, "CMakeLists.txt missing"), "the second stack's entry was not checked - it used to be invisible");
+    expect(says(r, "stack.native-engine.manifest.json: native-engine"), "the second stack manifest is not named in the report");
+  },
+);
+
+check(
+  "two stacks claiming one path are checked once each, and the doubling is stated rather than collapsed",
+  (dir) => {
+    // `.nvmrc` is in the tree, so the collision costs no drift and the case is only about
+    // what the run says: neither stack is this repo's to edit, and silently picking a
+    // winner would hide that they disagree about who owns the file.
+    writeFileSync(join(dir, "stack.manifest.json"), stackManifest("dart-flutter", NEEDS(".nvmrc", "the node version the tooling runs on")));
+    writeFileSync(join(dir, "stack.native-engine.manifest.json"), stackManifest("native-engine", NEEDS(".nvmrc", "the node version the build scripts run on")));
+  },
+  (r, expect) => {
+    expect(r.drift === base.drift, `a satisfied path is not drift however many stacks declare it: expected ${base.drift}, got ${r.drift}`);
+    expect(says(r, "is declared by both stack.manifest.json and stack.native-engine.manifest.json"), "the collision is not reported");
+    expect(r.applicable === base.applicable + 2, `expected the path to be checked once per declaration, got ${r.applicable - base.applicable} more checks`);
+  },
+);
+
+check(
+  "a file that only looks like a stack manifest is not read as one",
+  (dir) => {
+    writeFileSync(join(dir, "mystack.manifest.json"), stackManifest("invented", NEEDS("nothing-here.txt", "an entry no stack registered")));
+  },
+  (r, expect) => {
+    expect(r.drift === base.drift, `expected the baseline drift ${base.drift}, got ${r.drift}`);
+    expect(!says(r, "nothing-here.txt"), "a file whose name merely contains `manifest.json` was merged as a stack");
+  },
+);
+
+check(
+  "a second stack manifest that cannot be parsed is drift, not a silent skip",
+  (dir) => {
+    writeFileSync(join(dir, "stack.manifest.json"), stackManifest("dart-flutter", NEEDS("pubspec.yaml", "the dart package manifest")));
+    writeFileSync(join(dir, "stack.native-engine.manifest.json"), "{ not json");
+  },
+  (r, expect) => {
+    expect(r.drift === base.drift + 2, `expected the unparseable manifest to count: drift ${base.drift + 2}, got ${r.drift}`);
+    expect(says(r, "stack.native-engine.manifest.json is present but unparseable"), "the broken manifest was skipped without saying so");
+  },
+);
+
 // --- 3. the exception hatch is bounded and visible --------------------------------------
 
 check(
