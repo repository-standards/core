@@ -5,8 +5,8 @@
      agent-operated repository standard would claim, phrased so a reader who has never used
      this standard can run the same idea against their own. -->
 
-Twenty-something checks - **141**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **63** of them at least once and has fixed-and-re-verified **87** so far; the rest are logged as open (which includes any case where an attempted fix
+Twenty-something checks - **146**, precisely - that any repository standard
+claiming to be agent-operable should survive. This project failed **66** of them at least once and has fixed-and-re-verified **87** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -308,7 +308,7 @@ node standard/scripts/self-verify.mjs against a repo whose altPath target direct
 - **Given:** a capability map covering every source file of a real repo, with the $unclaimed declaration absent
 - **When:** $unclaimed is declared for the source tree only, and the audit is re-run
 - **Then:** the audit turns the check on and reports every remaining file in the repo - config, tests, tooling, root files - rather than silently scoping itself to src/
-- **Result:** passed every time it ran (2/2)
+- **Result:** passed every time it ran (4/4)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -321,7 +321,7 @@ node scripts/spec-guard.mjs --audit with and without $unclaimed present
 - **Given:** a repo that owns a database and carries no database/schema/ directory
 - **When:** self-verify runs the schema-pair guard
 - **Then:** R24 is reported as unmet - the absence of the directory the rule demands is the non-compliance, not evidence that the rule does not apply
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (2 fail, 2 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -334,7 +334,7 @@ run `node scripts/schema-pair.mjs --block` in a repo with CREATE TABLE statement
 - **Given:** a repo of over ten thousand tracked files whose capability map declares $unclaimed
 - **When:** spec-guard --audit runs and finds hundreds or thousands of unclaimed files
 - **Then:** the output tells the adopter where the work is - a per-directory rollup, and unclaimed files counted separately from map defects - instead of the first twenty paths in git order
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -589,6 +589,19 @@ run spec-specify against a request whose generated slug does not exact-string-ma
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 read spec-plan/SKILL.md's Load context and Phase 1 steps: does it read the diff, or the whole FEATURE_SPEC?
+```
+
+
+**SPEC-23 - a spec reconstructed from years-old production code can say so, instead of carrying the same status as a feature nobody has built**
+
+- **Given:** onboard.md step 5, which requires that an unclear branch or a spec-code discrepancy be recorded as an open marker rather than guessed, and the structure guard, which re-runs the clarify gate on any spec claiming ready-to-develop or live
+- **When:** a spec for shipped, running code is written honestly, with its open questions live
+- **Then:** the status vocabulary can express 'shipped, spec incomplete' - instead of forcing in-refinement, the same value a not-yet-built feature carries, so specs/ cannot distinguish what runs in production from what is only a draft
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+set Status: live on a reconstructed spec that carries open [NEEDS ...] markers and run node standard/scripts/spec-structure.mjs --block
 ```
 
 
@@ -1160,11 +1173,37 @@ run intake's lifecycle-signal check against ziglang/zig's real state (archived: 
 - **Given:** a repository whose own CONTRIBUTING says contributions go to a mailing list, with issues disabled and pull requests not merged (git/git: 4 merged of 2,005; vdukhovni/postfix: 0 ever)
 - **When:** the intake's measure-then-ask round runs and the router reaches its close (Open one focused PR)
 - **Then:** the contribution route is read and said back, and the close names an alternative for a project that has no pull requests, instead of instructing an agent to open one
-- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (3 fail, 0 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 read align-to-standards/SKILL.md step 0.1 for a contribution-route signal and step 7 for an alternative to Open one focused PR; check against the target's CONTRIBUTING and its merged-PR count
+```
+
+
+**INTAKE-10 - the intake reads the agent entry point itself for an agent policy, not only CONTRIBUTING.md**
+
+- **Given:** a repo whose AGENTS.md carries the prohibition ('Never create a PR. Never create an issue.') while its CONTRIBUTING.md separately permits LLM-assisted code with disclosure - caddyserver/caddy
+- **When:** align-to-standards' step 0 intake runs its red-flag scan
+- **Then:** the prohibition is found and played back before anything is written, instead of the run editing AGENTS.md - which step 3 does - without ever having read the rule it contains
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+grep skills/align-to-standards/SKILL.md's red-flag paragraph for AGENTS.md and CLAUDE.md
+```
+
+
+**INTAKE-12 - an AI policy that permits agent contribution while attaching a discretionary sanction is recognised as its own category, and the scan looks beyond a root CONTRIBUTING.md**
+
+- **Given:** honojs/hono's docs/CONTRIBUTING.md: 'You may use AI to contribute, but it must never waste a maintainer's time... a maintainer may close your PR without notice and block your account' - a permission with a sanction and no procedural condition, in a file the repo root does not carry
+- **When:** the intake's policy scan runs
+- **Then:** the policy is named and its consequence put to the user, instead of falling between the two shipped branches (outright ban, and conditional allow requiring a human to rewrite) because there is nothing procedural to say back
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+read skills/align-to-standards/SKILL.md step 0's AI-policy branches against honojs/hono's docs/CONTRIBUTING.md, and check which paths the scan is told to read
 ```
 
 
@@ -1201,7 +1240,7 @@ read skills/align-to-standards/stack.md's technology-detection step for multi-st
 - **Given:** a repo whose existing package/crate boundary already separates its capabilities
 - **When:** capability-map guidance is checked for whether that boundary can be used directly
 - **Then:** the guidance names this as a legitimate shortcut, not requiring a fresh capability map authored from scratch
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1214,7 +1253,7 @@ read skills/align-to-standards or docs/method guidance for a package/crate-bound
 - **Given:** a single-header, single-build-target micro-library (nlohmann/json) with no internal workspace boundary
 - **When:** capability-map guidance for archetype gaps is checked
 - **Then:** guidance exists for finding real internal capability structure one level down, even with no package/crate boundary to inherit from
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1253,7 +1292,7 @@ run stack detection against denoland/deno and check whether the 715 package.json
 - **Given:** a real repo nobody on this project wrote, with no pin and no skeleton (hagopj13/node-express-boilerplate)
 - **When:** the align router's brownfield path is run end to end and self-verify is measured before and after
 - **Then:** a real drift number is produced at the start, every entry it names is closeable by authoring rather than by exception, and the run ends at drift 0
-- **Result:** passed every time it ran (5/5)
+- **Result:** passed every time it ran (12/12)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1279,7 +1318,7 @@ node scripts/spec-guard.mjs --audit after authoring specs/capability-map.json
 - **Given:** a repo whose .gitignore excludes a directory the manifest places required entries under (16 of the manifest's 48 file entries live under docs/)
 - **When:** the standard's docs/ artifacts are authored there and node scripts/self-verify.mjs runs
 - **Then:** the ignored artifacts are reported as drift or as a warning, not as PASS - a file git will never carry is not knowledge that lives in the repo
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (3 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1292,7 +1331,7 @@ in a clone whose .gitignore contains `/docs/`, author docs/personas.md and docs/
 - **Given:** a brownfield repo far larger than any the manifest was written against
 - **When:** one adoption sitting authors the required entries and self-verify runs
 - **Then:** the reported number reflects how much of the repo is aligned, not how many manifest entries were satisfied - or the standard says plainly that it does not, where an adopter reads it
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1305,7 +1344,7 @@ adopt a >10,000-file repo to the point where every required manifest entry is me
 - **Given:** a brownfield repo mid-adoption whose capability map names more capabilities than it has specs
 - **When:** the shipped .github/workflows/spec-guard.yml lands as written
 - **Then:** the adopter has a stated option for the audit step too, so unrelated pull requests do not go red for the months the remaining specs take
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1318,7 +1357,7 @@ land standard/.github/workflows/spec-guard.yml in a repo whose capability-map ha
 - **Given:** a repository with no product owner and nobody to interview - a mailing-list project, a mirror of one maintainer's release tarballs
 - **When:** onboard.md step 1 (reconstruct the personas, interview the user) and the product artefacts are applied
 - **Then:** a roster is produced from the code's own evidence, marked inferred and unconfirmed with the interview in the backlog, and no north star is invented for a project that has none
-- **Result:** passed every time it ran (2/2)
+- **Result:** **failed at least once** (1 fail, 2 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1331,11 +1370,37 @@ author docs/personas.md from the repo's own audience evidence; node scripts/spec
 - **Given:** a decades-old repository being adopted, measured at three stages: manifest and pin only, plus the guard scripts, plus the rest of the copy class
 - **When:** self-verify is run at each stage and again at the end
 - **Then:** the percentage moves for what the repository authored, not chiefly for files the standard itself supplied, or the output says which it is reporting
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 node scripts/self-verify.mjs after writing only .standards-version + standard.manifest.json, again after copying the guard scripts, again after the rest of the copy class, and again at the end
+```
+
+
+**ADOPT-18 - the buildable-spec pass on a security-critical capability surfaces a defect in the target's code, not only in its documents**
+
+- **Given:** a security-critical capability specced buildable from the code (usebruno/bruno's script sandbox, whose runtime selection decides between a WebAssembly interpreter and node:vm)
+- **When:** the extract-then-synthesize pass writes the contracts verbatim with file anchors
+- **Then:** a real divergence in the code is found by the act of writing it down, rather than the spec merely restating what the documents already claimed
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+spec a target's highest-risk capability buildable and record whether the pass produced a finding about the code
+```
+
+
+**ADOPT-19 - the assessment's drift pass finds contradictions between a repo's own documents and its tree, and the better-documented the repo the more it finds**
+
+- **Given:** a repo with real internal documentation to check the code against (usebruno/bruno's .claude/ tree; drizzle-orm's CONTRIBUTING.md repository-structure section)
+- **When:** assessment pass 8 runs
+- **Then:** each contradiction is named with the file and the evidence, rather than the documents being read as the record
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+run assessment pass 8 against a documented repo and check each finding by grepping the tree rather than by trusting the document
 ```
 
 
@@ -1489,7 +1554,7 @@ read capability-spec.template.md's required buildable-tier sections and docs/met
 - **Given:** a target repo whose AGENTS.md already exists, is substantive, and routes agents to skills held in a separate repository
 - **When:** the align router's step 3 ('Put conventions in AGENTS.md (single source)') is followed literally
 - **Then:** the procedure says how to reconcile the two - the existing file is the repo's real conventions and the external skills are the R3 violation to name, and neither is resolved by writing sections underneath
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (4 fail, 0 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1584,7 +1649,7 @@ grep standard/SPEC.md for 'Node runtime' near its R16 bullet
 - **Given:** a repo with no registered Layer-2 stack, in a non-Node language
 - **When:** align-to-standards/SKILL.md's no-stack offer is read
 - **Then:** it says the guards (Node scripts) still carry a real cost, not only that rules and specs are 'unaffected'
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1664,7 +1729,7 @@ run the prescribed cycle-close commit-count command against each of the showcase
 - **Given:** three retroactive ADRs authored into docs/decision-records/adr/ during a real adoption, with the shipped index untouched
 - **When:** decision-records-check runs
 - **Then:** it names each unindexed record and fails, rather than passing because the files exist
-- **Result:** passed every time it ran (3/3)
+- **Result:** passed every time it ran (5/5)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
