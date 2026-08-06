@@ -49,7 +49,8 @@ Three properties were the point rather than the page:
   on Enterprise Cloud, which is precisely how a private backlog ends up on the open internet.
   `--anonymise` drops assignees and the owner a cycle names, at build time, for a page that
   leaves the building - structured fields only, since prose written by hand is reproduced as
-  written. The local `--serve` binds loopback for the same reason.
+  written. The local `--serve` binds loopback for the same reason, on a port nothing else
+  wants (9675) so it never takes the one the application under development is trying to use.
 
 The generated page is not committed. It is a function of the commit, so committing it would
 buy nothing and cost a large diff in every pull request plus a conflict on every parallel
