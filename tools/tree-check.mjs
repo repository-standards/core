@@ -155,6 +155,19 @@ for (const s of FACT_SURFACES) {
 }
 if (!factFails) ok("no hand-written derived facts on the checked surfaces (rule counts/ranges)");
 
+// --- 4c. the released version has a changelog entry ---------------------------------------
+// R18 makes a release one act: promote `## Unreleased` into a version heading, then bump
+// VERSION. Nothing checked the first half, and for thirteen bumps it did not happen - 32
+// commits between the 1.0.0 and 1.0.13 releases carry no entry anywhere, found by reading
+// rather than by any gate. The manifest already requires the file and the `## Unreleased`
+// heading to exist; only this ties the number in VERSION to a section describing it.
+// The trailing non-digit matters: without it, VERSION 1.0.1 is satisfied by `## 1.0.13`.
+const changelog = readFileSync("CHANGELOG.md", "utf8");
+const literal = version.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+const released = new RegExp(String.raw`^##\s+\[?${literal}\]?(\D|$)`, "m");
+if (released.test(changelog)) ok(`CHANGELOG.md records the released version (${version})`);
+else fail(`CHANGELOG.md has no "## ${version}" heading - VERSION says ${version} shipped, and a release is ## Unreleased promoted into a version section (R18)`);
+
 // --- 5. workflow pins are exact (R21 / ADR-017) -----------------------------------------
 // Both this repo's own workflows and the shipped templates: actions pinned by
 // 40-hex SHA, no `-latest` runner labels, no bare-major node versions or .nvmrc.
