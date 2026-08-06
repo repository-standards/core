@@ -1,0 +1,33 @@
+{
+  "$about": "field-1 round, 2026-08-06: the first L3 adoption in the project's history - the align router run against a real third-party repo rather than read. Closes the depth gap FIELD-1 and EXHIBIT-1 both name, for one repo of the three FIELD-1 asks for. Every observation below was produced by running the shipped scripts against the adopted working copy, not by reading the method docs.",
+  "observations": [
+    {
+      "case": "ADOPT-08",
+      "target": "repo:hagopj13/node-express-boilerplate",
+      "verdict": "pass",
+      "evidence": "First run against the untouched clone, with only the guards and the manifest copied in: 'self-verify: drift 14 - 56% adopted (18/32)', naming 10 missing files and 4 missing sections. The engine did not crash, guess, or fall back to the skeleton on a repo it had never seen. Every one of the 14 was closeable by authoring the artifact rather than by recording an exception - no entry turned out to be inapplicable to this repo shape, which is the part that would have shown the manifest was written only for its authors' own tree. Final run after the waves: 'self-verify: OK - drift 0 - 100% adopted (46/46), 0 excepted'. The denominator moves 32 -> 46 because entries that cannot be checked until a prior artifact exists become checkable once it does - the number is honest at both ends rather than flattering at the start.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "ADOPT-09",
+      "target": "repo:hagopj13/node-express-boilerplate",
+      "verdict": "pass",
+      "evidence": "The repo is organised by technical role - controllers/, services/, models/, routes/, validations/ - so onboard.md's 'existing package/crate boundary is often already the capability map' shortcut has nothing to bind to, and following it literally would have produced five 'capabilities' named after layers. Its own qualifier ('confirm the boundary is behavior-shaped, not a layering artifact like utils or common') is what stops that, and it held: the real boundaries are authentication (10 files), user-management (5) and transactional-email (1), each spanning four or five directories. spec-guard --audit: OK, 3 capability specs, all mapped, 16 globs, all matching.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "ADOPT-10",
+      "target": "repo:hagopj13/node-express-boilerplate",
+      "verdict": "pass",
+      "evidence": "With no $unclaimed key the audit reported 'the unclaimed-code check is OFF' and passed on 16 globs. Declaring $unclaimed for the source tree alone turned it on and immediately reported 39 unclaimed files - not just source, but .dockerignore, .husky/*, .travis.yml, CHANGELOG.md, LICENSE, tests/, jest.config.js. Silence had not meant coverage; it had meant the check was off. Closing it required declaring the whole repo, ending at 'OK (78 files, each claimed by a capability or declared unclaimed)'. Worth recording as a pass with a caveat: the feature is discoverable only from the audit's own output, and an adopter who never adds the key never learns the check exists.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "DOC-18",
+      "target": "repo:hagopj13/node-express-boilerplate",
+      "verdict": "pass",
+      "evidence": "Three ADRs were authored into docs/decision-records/adr/ and the shipped README index was deliberately left untouched. decision-records-check --block named all three ('has no row in docs/decision-records/adr/README.md') and exited non-zero. After adding the rows: 'OK (3 record(s), index and directory agree)'. The guard catches the exact failure mode a retroactive-ADR pass produces - records written in a batch, index updated from memory afterwards.",
+      "at": "2026-08-06"
+    }
+  ]
+}

@@ -1470,6 +1470,20 @@
       "depth": "L1",
       "round": "bf wave shapes (2026-08-04)",
       "note": "Full working tree; drift machine-measured at 14. 98 branches, default 19.0, four supported release lines plus master - the standard has zero vocabulary for a maintained release branch (the fourth independent confirmation of this gap this round). odoo/enterprise returns 404 (private), and public account-module code documents behaviour that only exists in that unreadable private module."
+    },
+    {
+      "slug": "hagopj13/node-express-boilerplate",
+      "kind": "repo",
+      "ecosystem": "Node/Express/Mongoose",
+      "size": "small-medium",
+      "quality": "good",
+      "quality_evidence": "~7k stars, coherent layered structure, real test suite, lint+prettier+husky wired; dormant since 2023-08-12, which for a boilerplate is a finished artifact rather than a decline signal",
+      "star_tier": "popular",
+      "stars_approx": "~7k",
+      "shape": "third-party API boilerplate - the first repo the align router was actually run against rather than read; layered by technical role, so capabilities cut across directories",
+      "depth": "L3",
+      "round": "field-1 (2026-08-06)",
+      "note": "THE FIRST L3 TARGET. Adopted for real on a local branch: guards+manifest+skills landed, three capability specs and a persona roster authored from the code, three retroactive ADRs written, nine backlog items filed, self-verify taken from drift 14 to drift 0 (46/46). Not pushed upstream - hagopj13 has not asked for this, and the adoption exists as evidence, not as an unsolicited pull request."
     }
   ]
 }

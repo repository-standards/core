@@ -5,7 +5,7 @@
      agent-operated repository standard would claim, phrased so a reader who has never used
      this standard can run the same idea against their own. -->
 
-Twenty-something checks - **116**, precisely - that any repository standard
+Twenty-something checks - **120**, precisely - that any repository standard
 claiming to be agent-operable should survive. This project failed **48** of them at least once and has fixed-and-re-verified **49** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
@@ -300,6 +300,19 @@ node standard/scripts/self-verify.mjs against a repo whose README.md/SECURITY.md
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 node standard/scripts/self-verify.mjs against a repo whose altPath target directory exists for an unrelated reason and contains none of the standard's real content
+```
+
+
+**ADOPT-10 - the coupling audit's unclaimed-code check covers the whole repo once enabled, not only the directories somebody remembered**
+
+- **Given:** a capability map covering every source file of a real repo, with the $unclaimed declaration absent
+- **When:** $unclaimed is declared for the source tree only, and the audit is re-run
+- **Then:** the audit turns the check on and reports every remaining file in the repo - config, tests, tooling, root files - rather than silently scoping itself to src/
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+node scripts/spec-guard.mjs --audit with and without $unclaimed present
 ```
 
 
@@ -1079,6 +1092,32 @@ run stack detection against denoland/deno and check whether the 715 package.json
 ```
 
 
+**ADOPT-08 - the align router takes a real third-party repo from unpinned to drift 0, and the drift number is honest at both ends**
+
+- **Given:** a real repo nobody on this project wrote, with no pin and no skeleton (hagopj13/node-express-boilerplate)
+- **When:** the align router's brownfield path is run end to end and self-verify is measured before and after
+- **Then:** a real drift number is produced at the start, every entry it names is closeable by authoring rather than by exception, and the run ends at drift 0
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+node scripts/self-verify.mjs before landing anything, then again after the waves
+```
+
+
+**ADOPT-09 - capability boundaries can be derived for a codebase organised by technical layer, where no capability owns a directory**
+
+- **Given:** a layered codebase (controllers/ services/ models/ routes/ validations/) where every capability cuts across every directory
+- **When:** onboard.md's capability-mapping step is applied, whose shortcut is 'an existing package/crate boundary is often already the capability map'
+- **Then:** the shortcut correctly does not apply, a per-file map is produced instead, and the audit passes
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+node scripts/spec-guard.mjs --audit after authoring specs/capability-map.json
+```
+
+
 ### shape
 
 **SHAPE-01 - a persona roster of one is a named, legitimate answer for a solo-consumer library**
@@ -1357,6 +1396,19 @@ grep .github/workflows/spec-guard.yml's `on:` block and compare against gitleaks
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 run the prescribed cycle-close commit-count command against each of the showcase's three closed cycles and compare to the stated outcome-block numbers
+```
+
+
+**DOC-18 - the shipped decision-record index guard catches a record written but never indexed**
+
+- **Given:** three retroactive ADRs authored into docs/decision-records/adr/ during a real adoption, with the shipped index untouched
+- **When:** decision-records-check runs
+- **Then:** it names each unindexed record and fails, rather than passing because the files exist
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+node scripts/decision-records-check.mjs --block
 ```
 
 

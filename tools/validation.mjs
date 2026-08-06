@@ -158,6 +158,10 @@ const byDepth = {};
 for (const t of targets) byDepth[t.depth] = (byDepth[t.depth] ?? 0) + 1;
 
 const repoTargets = targets.filter((t) => t.kind === "repo");
+// Third-party repos actually adopted, not just read. The honesty paragraph is computed from
+// this rather than asserted, so it stops claiming "nobody's repo has been adopted" the moment
+// one has - and stops claiming otherwise if a row is ever removed.
+const adoptedRepos = repoTargets.filter((t) => t.depth === "L3" || t.depth === "L4");
 const fixtureTargets = targets.filter((t) => t.kind === "fixture");
 
 const byRound = {};
@@ -247,9 +251,12 @@ written rather than generated.
 - **Assessment is not adoption.** ${targets.filter((t) => t.depth === "L1").length} of ${targets.length} targets were assessed at
   depth **L1** - a read-only clone, method passes applied, nothing changed. "We assessed
   ${repoTargets.length} public repositories" and "we adopted ${repoTargets.length} repositories" are different
-  claims, and only the first one is true. \`FIELD-1\` in \`backlog.md\` names the gap this leaves:
-  until a real team runs the align router against a repo nobody on this project wrote, "walks
-  a messy repo back to health" remains a design claim supported by dry runs.
+  claims, and only the first one is true.
+  ${
+    adoptedRepos.length === 0
+      ? "No repository this project did not write has been adopted at all. `FIELD-1` in `backlog.md` names the gap: until the align router is run against somebody else's repo, \"walks a messy repo back to health\" is a design claim supported by dry runs."
+      : `**${adoptedRepos.length} third-party ${adoptedRepos.length === 1 ? "repository has" : "repositories have"} been adopted for real** (depth L3 or better, listed by slug in \`targets.json\`): ${adoptedRepos.map((t) => `\`${t.slug}\``).join(", ")}. That is what moves this from a design claim to a demonstrated one - and ${adoptedRepos.length === 1 ? "one repository is one repository" : `${adoptedRepos.length} repositories are still a small sample`}. \`FIELD-1\` asks for three, of different sizes and stack situations, and stays open until it has them.`
+  }
 - **Both sides of the fixtures share an author.** \`test-greenfield-core\` and
   \`test-greenfield-node\` - the two **L4** targets, the only ones that lived a full lifecycle
   loop - were built by the same people who wrote the standard being tested against them. They

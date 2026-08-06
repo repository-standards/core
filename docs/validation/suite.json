@@ -2841,6 +2841,71 @@
       "then": "a documented path exists for a decision with no code fingerprint and no in-repo trace, rather than only the code-archaeology route plus docs/discovery/, which ADR-024 makes explicitly non-normative and so unable to hold the record",
       "procedure": "read skills/align-to-standards/onboard.md's decisions step; grep the target repo's README/CONTRIBUTING/docs for the founding rationale",
       "status": "run"
+    },
+    {
+      "id": "ADOPT-08",
+      "title": "the align router takes a real third-party repo from unpinned to drift 0, and the drift number is honest at both ends",
+      "area": "adoption",
+      "tests": [
+        "R16",
+        "R17"
+      ],
+      "promise": "Adoption and updates MUST adapt, never blind-copy; aligned means self-verify reports drift 0 - SPEC.md R16/R17",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a real repo nobody on this project wrote, with no pin and no skeleton (hagopj13/node-express-boilerplate)",
+      "when": "the align router's brownfield path is run end to end and self-verify is measured before and after",
+      "then": "a real drift number is produced at the start, every entry it names is closeable by authoring rather than by exception, and the run ends at drift 0",
+      "procedure": "node scripts/self-verify.mjs before landing anything, then again after the waves",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-09",
+      "title": "capability boundaries can be derived for a codebase organised by technical layer, where no capability owns a directory",
+      "area": "adoption",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a layered codebase (controllers/ services/ models/ routes/ validations/) where every capability cuts across every directory",
+      "when": "onboard.md's capability-mapping step is applied, whose shortcut is 'an existing package/crate boundary is often already the capability map'",
+      "then": "the shortcut correctly does not apply, a per-file map is produced instead, and the audit passes",
+      "procedure": "node scripts/spec-guard.mjs --audit after authoring specs/capability-map.json",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-10",
+      "title": "the coupling audit's unclaimed-code check covers the whole repo once enabled, not only the directories somebody remembered",
+      "area": "gates",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a capability map covering every source file of a real repo, with the $unclaimed declaration absent",
+      "when": "$unclaimed is declared for the source tree only, and the audit is re-run",
+      "then": "the audit turns the check on and reports every remaining file in the repo - config, tests, tooling, root files - rather than silently scoping itself to src/",
+      "procedure": "node scripts/spec-guard.mjs --audit with and without $unclaimed present",
+      "status": "run"
+    },
+    {
+      "id": "DOC-18",
+      "title": "the shipped decision-record index guard catches a record written but never indexed",
+      "area": "docs",
+      "tests": [
+        "R5"
+      ],
+      "promise": "A contestable, re-litigable choice MUST be recorded as a decision record - SPEC.md R5",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "three retroactive ADRs authored into docs/decision-records/adr/ during a real adoption, with the shipped index untouched",
+      "when": "decision-records-check runs",
+      "then": "it names each unindexed record and fails, rather than passing because the files exist",
+      "procedure": "node scripts/decision-records-check.mjs --block",
+      "status": "run"
     }
   ]
 }
