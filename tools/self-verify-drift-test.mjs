@@ -15,7 +15,7 @@
 // Zone 1 tooling - never shipped.
 
 import { spawnSync } from "node:child_process";
-import { cpSync, mkdtempSync, readFileSync, renameSync, rmSync, unlinkSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -32,8 +32,8 @@ const fixture = () => {
   return dir;
 };
 
-const run = (dir) => {
-  const r = spawnSync("node", [join(dir, "scripts/self-verify.mjs")], { cwd: dir, encoding: "utf8" });
+const run = (dir, args = []) => {
+  const r = spawnSync("node", [join(dir, "scripts/self-verify.mjs"), ...args], { cwd: dir, encoding: "utf8" });
   const out = `${r.stdout ?? ""}${r.stderr ?? ""}`;
   const m = out.match(/self-verify: (?:OK - )?drift (\d+) - (\d+)% adopted \((\d+)\/(\d+)\), (\d+) excepted/);
   if (!m) throw new Error(`self-verify printed no readable verdict:\n${out}`);
@@ -55,12 +55,12 @@ const base = (() => {
 })();
 
 let failures = 0;
-const check = (name, mutate, assert) => {
+const check = (name, mutate, assert, args = []) => {
   const dir = fixture();
   let r;
   try {
     mutate(dir);
-    r = run(dir);
+    r = run(dir, args);
   } finally {
     // Keep the tree on failure so the run can be reproduced by hand.
     if (r) rmSync(dir, { recursive: true, force: true });
@@ -457,9 +457,51 @@ check(
   },
 );
 
+// --- 5. an update nobody applied ---------------------------------------------------------
+
+// The sham update in full: bump `.standards-version`, copy the target version's manifest,
+// apply none of the release's file changes, and run the exact check step 6 of
+// `update-to-version` nominates as proof of completion. The case above builds that shape by
+// hand-writing one hash; here the target manifest is GENERATED from a real newer tree by
+// `tools/manifest-hashes.mjs`, so the two halves of the mechanism have to agree - the tool
+// that records content and the verifier that reads it. A recorder that hashed bytes where
+// the verifier normalizes CRLF would pass every hand-written case and miss every real
+// update, and nothing else here would notice.
+check(
+  "a sham update carrying the target version's generated manifest is drift, under the invocation the skill nominates",
+  (dir) => {
+    // The target version, in the three shapes a release moves a copy entry in: a procedure
+    // added, a procedure rewritten, a shipped document rewritten.
+    const next = mkdtempSync(join(tmpdir(), "drift-check-next-"));
+    cpSync(TREE, join(next, "standard"), { recursive: true });
+    mkdirSync(join(next, "standard/.claude/skills/lock-the-doors"));
+    writeFileSync(join(next, "standard/.claude/skills/lock-the-doors/SKILL.md"), "# a procedure the target version ships\n");
+    writeFileSync(join(next, "standard/.claude/skills/adr-write/SKILL.md"), "# adr-write, as the target version rewrote it\n");
+    writeFileSync(join(next, "standard/SPEC.md"), `${readFileSync(join(TREE, "SPEC.md"), "utf8")}\n- **R99.** a rule the target version added.\n`);
+    const gen = spawnSync("node", [join(process.cwd(), "tools/manifest-hashes.mjs")], { cwd: next, encoding: "utf8" });
+    if (gen.status !== 0) throw new Error(`manifest-hashes failed on the target tree:\n${gen.stdout ?? ""}${gen.stderr ?? ""}`);
+    const target = JSON.parse(readFileSync(join(next, "standard/standard.manifest.json"), "utf8"));
+    rmSync(next, { recursive: true, force: true });
+
+    // The sham itself: the pin and the manifest move, not one file of the release.
+    target.version = "9.9.9";
+    writeFileSync(join(dir, "standard.manifest.json"), `${JSON.stringify(target, null, 2)}\n`);
+    writeFileSync(join(dir, ".standards-version"), "9.9.9\n");
+  },
+  (r, expect) => {
+    expect(r.drift === base.drift + 2, `expected the two unapplied copy entries to count: drift ${base.drift + 2}, got ${r.drift}`);
+    expect(says(r, "1 missing (lock-the-doors/SKILL.md)"), "a procedure the target version ships was not reported absent");
+    expect(says(r, "1 changed (adr-write/SKILL.md)"), "a procedure the target version rewrote read as current");
+    expect(says(r, "SPEC.md differs from the standard's copy"), "the previous version's SPEC.md read as the target's");
+    expect(!/\.standards-version is /.test(r.out), "the pin check fired - the drift has to come from the files, not from the record the sham did move");
+    expect(r.exit === 1, `expected exit 1, so the update cannot be opened as a PR on a green check, got ${r.exit}`);
+  },
+  ["--version", "9.9.9"],
+);
+
 console.log();
 if (failures) {
   console.error(`self-verify-drift-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("self-verify-drift-test: OK - 19 cases, the drift number moves when the content does");
+console.log("self-verify-drift-test: OK - 20 cases, the drift number moves when the content does");
