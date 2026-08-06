@@ -529,16 +529,16 @@
       "since": "unreleased",
       "rule": "R15",
       "sha256": {
-        "index.mjs": "45cadd2459b3ac931cbb6fb7bc1a87bab408978a0b4d54ac8a68a6195e3acb83",
+        "index.mjs": "0afb18b88b9e65e4fc604ba311af704cb24a59abc6c1544f0f64fc1dfc4453d8",
         "src/gate.css": "63a0b56a4491c5e3686835e15886d1440be4cc497a306a9caaa2a4678d15f07c",
-        "src/gate.js": "c7f62c2fc08bbbb252395f5ea4f429059226ef4d6a3ab4beef1cc5463d5e2495",
+        "src/gate.js": "741e6d0e9115aff4e44930021875f632044857b9bc3b5fb7522fa79f9b07105e",
         "src/page.css": "49a655af270a823e69e616d71f230e3e9a72f5282f38699c3bd47288b91f61e7",
-        "src/page.js": "4f1b108463e5454a2938b4f598b19736d1468f81dbcaa681c5489fd905ad3ffd"
+        "src/page.js": "b62ff9e42107f4bbaa6348f353fa2e180b6e5ddfcb25e9551c2473163072a030"
       }
     },
     {
-      "path": ".github/workflows/work-dashboard.yml",
-      "purpose": "builds the dashboard on every push to main; publishes it only when the repository is public, because Pages on a private repository is served publicly",
+      "path": ".github/workflows/dashboard.yml",
+      "purpose": "builds the dashboard on every push to main; publishes it only when the repository is public or the build is locked with a password, because Pages on a private repository is served publicly",
       "adapt": "merge",
       "required": false,
       "profile": "core",

@@ -408,7 +408,7 @@ and a number somebody has to decide whether to believe.
 ## One page, for the people who never open the repository
 
 Markdown in a repository is the right home for this and the wrong reading surface for a
-sponsor, a client, or somebody who joined on Monday. `scripts/work-dashboard.mjs` renders the
+sponsor, a client, or somebody who joined on Monday. `scripts/generate-dashboard/` renders the
 three files - plus the decision records, the specs and the changelog - into one static page:
 what is in flight now, the cycles against a calendar, the pool, a handful of reports, the
 history, and every record with a search across it.
@@ -417,7 +417,7 @@ It is a projection, never a second place the work is tracked. It writes nothing 
 people running it on the same commit get the same bytes.
 
 ```
-node scripts/generate-dashboard/index.mjs            # once, into site/work/index.html
+node scripts/generate-dashboard/index.mjs            # once, into site/dashboard/index.html
 node scripts/generate-dashboard/index.mjs --serve     # rebuilds on change; the open page refreshes itself
 ```
 
@@ -450,11 +450,11 @@ is what makes every option below cheap.
    the page at build time and ships the ciphertext; the reader types the password and their
    browser decrypts it. Nothing on the host is readable without it, so a host with no
    authentication of its own is no longer the problem. The shipped workflow does this for you:
-   set a repository secret called `WORK_DASHBOARD_PASSWORD` and the publish step opens up even
+   set a repository secret called `DASHBOARD_PASSWORD` and the publish step opens up even
    for a private repository, because what sits on the URL gives nothing away.
 
    ```
-   WORK_DASHBOARD_PASSWORD='…' node scripts/generate-dashboard/index.mjs --lock
+   DASHBOARD_PASSWORD='…' node scripts/generate-dashboard/index.mjs --lock
    ```
 
    AES-256-GCM, the key stretched from your passphrase with 600,000 rounds of PBKDF2. Be

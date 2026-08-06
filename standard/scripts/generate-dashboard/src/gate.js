@@ -4,7 +4,7 @@
 const SALT = '__SALT__'
 const IV = '__IV__'
 const ROUNDS = __ROUNDS__
-const KEEP = 'work-dashboard:pw'
+const KEEP = 'dashboard:pw'
 
 const form = document.getElementById('gate')
 const field = document.getElementById('pw')
