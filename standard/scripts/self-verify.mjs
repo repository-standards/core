@@ -141,7 +141,14 @@ if (manifest) {
       fail("stack", `${file} is present but unparseable: ${e.message}`);
       continue;
     }
-    note("stack", `${file}: ${stack.technology || "unnamed"} - technology layer counted in the same drift number (ADR-016/022)`);
+    // The stack's own version was carried and never spoken: the run named the technology and
+    // stopped, so a repo sitting on a stack version several releases behind read exactly like
+    // one on the newest. Printing it does not detect staleness - nothing here knows what the
+    // stack repo currently ships (ADR-022: linked, not version-locked) - but an unspoken
+    // number cannot even be compared by hand.
+    const stackVersion = stack.version ? `@ ${stack.version}` : "with no version declared";
+    note("stack", `${file}: ${stack.technology || "unnamed"} ${stackVersion} - technology layer counted in the same drift number (ADR-016/022)`);
+    if (!stack.version) warning("stack", `${file} declares no version - nothing records which state of the stack this repo aligned to`);
     // Two stacks claiming one path is not drift and is not this repo's to resolve - but it
     // does mean the same file is checked twice and counted twice, so the number needs the
     // caveat out loud rather than a quiet collapse that picks a winner.
@@ -161,8 +168,15 @@ if (manifest) {
 // scale = check everything. solo/team are accepted as deprecated aliases.
 const profileArg = profileFlag || (manifest && manifest.profile) || "scale";
 const coreOnly = profileArg === "core" || profileArg === "solo";
-if (!profileFlag && manifest && manifest.profile) {
-  if (["core", "scale", "solo", "team"].includes(manifest.profile)) {
+if (!profileFlag && manifest) {
+  if (!manifest.profile) {
+    // The shipped manifest declares the field, so a copy without it predates that or lost it
+    // in a merge - and both this and the shipped CI gate then fall back to scale. Falling
+    // back is right (the stricter tier, never the looser one); doing it without saying so is
+    // not: a core repo reads "compliant" while being measured against gates ADR-011 scopes to
+    // scale, and R11's own *(scale)* marker becomes text nothing acts on.
+    warning("profile", "the manifest copy declares no profile - defaulted to scale; declare core or scale so the tier is a decision, not a fallback (ADR-011)");
+  } else if (["core", "scale", "solo", "team"].includes(manifest.profile)) {
     note("profile", `profile "${manifest.profile}" declared in the manifest copy - used as the default`);
   } else {
     warning("profile", `manifest declares unknown profile "${manifest.profile}" - treated as scale (valid: core, scale)`);
@@ -728,10 +742,13 @@ if (manifest) {
 // A warning, never drift: substance stays the judgment tier's call.
 let hollow = false; // no capability spec here - what drift 0 does not say (2e below)
 if (!skeleton) {
-  // The three shapes the shipped templates actually use, and nothing wider:
-  //   {{NORTH_STAR}}   mustache, in PRODUCT
+  // The shapes the shipped templates actually use, and nothing wider:
+  //   {{NORTH_STAR}}   mustache, in PRODUCT and SECURITY
   //   <repo>, <team language>, <declare per artifact - default English>   angle, in prose
   //   | ... | ... |   a table row whose every cell is an ellipsis, in AGENTS.md/ARCHITECTURE.md
+  //   > **Template …  the "rewrite this and delete this note" banner, in PRINCIPLES
+  // The first and last are read from the raw file and the middle two after code spans are
+  // stripped; the split, and why, is at RAW_PLACEHOLDER_RE below.
   // `:` `/` `=` and a leading `/` stay out of the angle form, so markdown autolinks
   // (`<https://x>`), HTML attributes (`<img src="x">`) and closing tags (`</div>`) are not
   // placeholders. That was not enough on its own: `<picture>`, `<code>` and friends have the
@@ -765,22 +782,18 @@ if (!skeleton) {
   const hasPlaceholder = (body, re = PLACEHOLDER_RE) => {
     for (const m of body.matchAll(re)) {
       const angle = m[1];
-      if (angle === undefined) return true; // the mustache and ellipsis-row forms are never anything else
+      if (angle === undefined) return true; // the ellipsis-row form is never anything else
       if (!/\s/.test(angle) && HTML_ELEMENTS.has(angle.toLowerCase())) continue;
       return true;
     }
     return false;
   };
 
-  // Code spans and fenced blocks are stripped first, because generic notation lives there and
-  // a *correctly filled* repo keeps it: `specs/<capability>`, `docs/discovery/<topic>/`,
-  // `blocked:<id>`. Without this the warning can never be cleared - AGENTS.md ships
-  // `specs/<capability>` in its own altitude ladder - and a warning nobody can clear is one
-  // everybody learns to skip, on the single file this check exists for.
-  //
-  // The cost is a real placeholder written inside backticks going unseen. That is why the
-  // shipped templates put fill markers in prose and keep code formatting for notation; the
-  // convention is what makes the check precise, not the regex alone.
+  // Code spans and fenced blocks are stripped before the forms above, because generic
+  // notation lives there and a *correctly filled* repo keeps it: `specs/<capability>`,
+  // `docs/discovery/<topic>/`, `blocked:<id>`. Without this the warning can never be cleared
+  // - AGENTS.md ships `specs/<capability>` in its own altitude ladder - and a warning nobody
+  // can clear is one everybody learns to skip, on the single file this check exists for.
   const stripCode = (s) => s.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, "").replace(/`[^`\n]*`/g, "");
 
   // Decision records are in scope too, and they are found by the record filename pattern
@@ -871,9 +884,25 @@ if (!skeleton) {
       .replace(/\s+/g, " ")
       .trim();
 
+  // Two forms are read from the RAW body instead, because stripping was silently passing the
+  // files the check exists for: the shipped SECURITY.md writes `{{SECURITY_CONTACT}}` inside
+  // backticks and docs/personas.md wrote its roster marker the same way, so a fake security
+  // contact and an empty persona roster both reached drift 0 with nothing said.
+  //
+  //   {{UPPER_SNAKE}}   a fill marker and nothing else, wherever it is written. Restricted to
+  //                     that shape on purpose: `${{ github.token }}` and `{{ user.name }}` are
+  //                     real content in a filled repo's README, and neither starts with a
+  //                     capital or stays inside [A-Z0-9_].
+  //   > **Template …    the banner a shipped template puts at the top of itself, telling the
+  //                     reader to rewrite the file and delete the note. docs/PRINCIPLES.md
+  //                     carries no marker of any other form, so nothing at all fired on it -
+  //                     while its own banner says shipping it unread adopts commitments
+  //                     nobody agreed to. Deleting the note, as it instructs, clears this.
+  const RAW_PLACEHOLDER_RE = /\{\{[A-Z][A-Z0-9_]*\}\}|^>\s*\*\*Template\b/m;
+
   for (const p of fillPaths) {
     const raw = readFileSync(p, "utf8");
-    if (hasPlaceholder(stripCode(raw))) {
+    if (RAW_PLACEHOLDER_RE.test(raw) || hasPlaceholder(stripCode(raw))) {
       warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
       continue;
     }
@@ -889,8 +918,9 @@ if (!skeleton) {
   // shapes only, and for placeholders alone - a record's substance is what it decided, which
   // no pattern here can weigh.
   for (const p of recordFiles("docs/decision-records")) {
-    const body = stripCode(readFileSync(p, "utf8"));
-    if (hasPlaceholder(body, UNAMBIGUOUS_RE)) warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
+    const raw = readFileSync(p, "utf8");
+    if (RAW_PLACEHOLDER_RE.test(raw) || hasPlaceholder(stripCode(raw), UNAMBIGUOUS_RE))
+      warning("fill", `${p} still carries template placeholders - filled shells, not copied ones, are the point`);
   }
 
   // 2e. drift 0 on a repo that has specified nothing.
@@ -944,6 +974,38 @@ if (!skeleton) {
   if (!capabilitySpecs.length) {
     hollow = true;
     warning("spec", 'no capability spec exists here yet (specs/<capability>/spec.md) - drift measures the manifest, so it reaches 0 on a repo that has specified no behaviour at all; the shape is right, which is not the same claim as "the method has been used here"');
+  }
+}
+
+// 2c. a committed dependency tree ------------------------------------------------
+// Version-control hygiene the rest of the machine silently assumes: the coupling guard's
+// globs are matched against whatever git reports as changed, so with a dependency tree
+// tracked, a `**/`-prefixed capability glob matches paths inside it and a dependency bump
+// trips a blocking gate for a capability nobody touched. spec-guard now ignores those paths;
+// this says why they are there, because the repo is the thing that needs fixing.
+//
+// A warning, not drift: drift counts unmet MANIFEST entries (ADR-005), and no entry declares
+// this. Naming it is what a later decision to make it cost something would be built on.
+if (!skeleton) {
+  try {
+    // The pathspec is the cheap pre-filter (git's default `*` crosses `/`, so this reaches a
+    // workspace's nested trees too); the segment test after it is what makes the answer exact,
+    // so a directory merely named `my_node_modules` is not reported. maxBuffer is raised for
+    // the case this check exists for: a committed dependency tree is a lot of paths, and the
+    // default would turn the loudest instance into the silent one.
+    const tracked = execSync('git ls-files -- "*node_modules/*"', {
+      encoding: "utf8",
+      maxBuffer: 64 * 1024 * 1024,
+      stdio: ["ignore", "pipe", "ignore"],
+    })
+      .split("\n")
+      .filter((f) => f.split("/").includes("node_modules"));
+    if (tracked.length) {
+      const ignored = exists(".gitignore") ? "" : " - and this repo has no .gitignore at all";
+      warning("vcs", `${tracked.length} file(s) under node_modules/ are tracked in git${ignored}: a committed dependency tree is what a capability glob matches by accident`);
+    }
+  } catch {
+    /* no git, or nothing matched - nothing to report */
   }
 }
 
