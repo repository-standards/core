@@ -6,7 +6,7 @@
      this standard can run the same idea against their own. -->
 
 Twenty-something checks - **124**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **52** so far; the rest are logged as open (which includes any case where an attempted fix
+claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **53** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -1268,7 +1268,7 @@ grep -rni fuzz across the entire standard checkout
 - **Given:** a Windows checkout with Git's autocrlf default, or a real .gitattributes like PowerToys ships (`* text=auto`)
 - **When:** one of the 10 shipped bash guard scripts is invoked against a real dangerous command (e.g. a destructive database command, a force-push)
 - **Then:** the script denies the command with its normal message, instead of exiting 127 with empty stdout because it checked out CRLF line endings
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```

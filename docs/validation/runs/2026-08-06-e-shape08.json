@@ -1,0 +1,13 @@
+{
+  "$about": "2026-08-06, later the same day: recording a fix that shipped in PR #25 and was not written down at the time. Catching that omission is the reason the run-ordering guard in this change exists - a fix nobody records is indistinguishable from a fix nobody made.",
+  "observations": [
+    {
+      "case": "SHAPE-08",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "standard/.gitattributes now ships, forcing `text eol=lf` on *.sh, *.mjs, .claude/hooks/* and scripts/spec/*. Verified with git's own resolver rather than by inspection: `git check-attr text eol -- standard/.claude/hooks/lib.sh` reports `text: set` and `eol: lf`, same for standard/scripts/spec/common.sh and standard/scripts/self-verify.mjs. The file is registered in standard.manifest.json as a required core entry (rule R19, adapt: merge), so a repo that loses it reports drift rather than silently reverting to the broken state - confirmed by `cd standard && node scripts/self-verify.mjs --skeleton`, which lists `.gitattributes` as PASS and reports drift 0 (70/70). The failure this closes: on a checkout with eol=crlf all ten shipped .sh guards exited 127 with empty stdout, so a hook whose only job is to deny a dangerous command neither denied nor complained.",
+      "at": "2026-08-06",
+      "fix": "https://github.com/repository-standards/core/pull/25"
+    }
+  ]
+}
