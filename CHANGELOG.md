@@ -16,6 +16,29 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The pull-request template asked about one decision stream out of two (2026-08-06)
+
+The shipped template's impact section was headed `ADR impact` and offered four choices that
+all said ADR. So the question a reviewer is asked at the last gate before merge was: does this
+touch a technical decision? What a change is *forbidden* to do - a licence boundary, a vendor
+or customer contract, a regulatory limit, a persona call - is a business constraint, and it
+lives in a BDR's `What this rules out`, the only section that states a capability's non-goals.
+Reading the ADRs alone answers a different question, and answers it "none".
+
+This is the same blind spot the impact-analysis procedure carried one layer up, fixed
+separately. The template is the second surface, the human-facing one, and it was named in that
+change's record rather than quietly left.
+
+The section is now `Decision-record impact`, reads both streams, and gains the state the four
+old choices had no room for: **contradicts an accepted record**. That is the case that must
+stop a pull request rather than be described in it, and none of "none / updates / adds /
+supersedes" could express it - so a change contradicting an Accepted record could be ticked
+honestly as "none" and merged.
+
+The declared restatements move with it: the manifest entry's purpose (and the generated file
+map), the shipped tree's own index, and the pre-pr-review procedure's step 6, which now says
+to answer from both streams rather than naming one.
+
 ### Six files saying "TODO." bought sixteen percentage points (2026-08-06)
 
 `self-verify` scores three classes of manifest entry differently, and one of them was scored on

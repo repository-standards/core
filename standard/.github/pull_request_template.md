@@ -8,14 +8,21 @@
 
 <!-- Link the ticket / issue. What problem does this solve? -->
 
-## ADR impact
+## Decision-record impact
 
-<!-- Tick one. Accepted ADRs are binding - do not silently contradict one. -->
+<!-- Tick one. Accepted records are binding - do not silently contradict one.
+     Read BOTH streams. An ADR says how the thing is built; a BDR says what the
+     business has ruled out - a licence boundary, a vendor or customer contract, a
+     regulatory limit, a persona call - and that lives in a BDR's `What this rules
+     out`, the only section stating a capability's non-goals. Reading the ADRs alone
+     answers a different question, and answers it "none". -->
 
-- [ ] None - does not touch an accepted decision
-- [ ] Updates a living standard only (no new ADR)
-- [ ] Adds a new ADR (link it)
-- [ ] Supersedes an existing ADR (link both)
+- [ ] None - touches no accepted decision, in either stream
+- [ ] Updates a living standard only (no new record)
+- [ ] Adds a new record (link it, and say which stream)
+- [ ] Supersedes an existing record (link both)
+- [ ] Contradicts an accepted record - resolve that first. The record comes first,
+      and it is superseded by a new record, never edited (R6)
 
 ## Test plan
 
