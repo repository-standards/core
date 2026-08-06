@@ -247,12 +247,15 @@ for (const c of CASES) {
   }
 }
 
-// --- the status that depends on the gate ---------------------------------------------
+// --- the spec shape the gate depends on ----------------------------------------------
 // `**Status:** ready-to-develop` is what the rest of the method reads as "settled", and
 // nothing read or wrote it - so it sat on specs whose gate fails, with every other guard
 // green. spec-structure re-runs the real gate on any spec claiming it, which is the half
 // that can be mechanical; these cases assert it in both directions, including the one that
 // matters most for adoption - an honest draft must not be a violation.
+//
+// The same guard also holds the shape the gate reads: the gate greps for the FIRST
+// `## Clarifications`, so a spec carrying two of them passes with half its record hidden.
 const STRUCTURE = join(process.cwd(), "standard/scripts/spec-structure.mjs");
 
 const ROSTER = "# Personas\n\n## The roster\n\n| Persona | Cares about |\n|---|---|\n| `Owner-operator Olga` | money arriving |\n";
@@ -272,7 +275,7 @@ const structure = (specBody, personas = ROSTER) => {
 
 const withStatus = (status, body) => `# Payments\n\n**Serves:** \`Owner-operator Olga\`\n**Status:** ${status}\n\n${body}`;
 
-const STATUS_CASES = [
+const STRUCTURE_CASES = [
   {
     name: "a spec claiming live while the gate fails is reported",
     fails: true,
@@ -313,9 +316,66 @@ const STATUS_CASES = [
     personas: "# Persony\n\n## Zespol\n\n| Persona | Zalezy jej na |\n|---|---|\n| `Owner-operator Olga` | pieniadze |\n",
     body: withStatus("in-refinement", "## Requirements\n\n- The system MUST capture.\n"),
   },
+
+  // A duplicated section heading. The spec below passes the clarify gate - the gate stops
+  // at the first `## Clarifications` - so nothing else in the toolchain can see the split.
+  {
+    name: "a second Clarifications heading is reported instead of passing",
+    fails: true,
+    says: "appears more than once",
+    body: withStatus(
+      "ready-to-develop",
+      `${CLARIFIED}\n## Requirements\n\n- The system MUST capture.\n\n${CLARIFIED}\n## Open questions\n\nNone known.\n`,
+    ),
+  },
+  {
+    name: "the duplicate report names the heading and both line numbers",
+    fails: true,
+    says: "'## Clarifications' at lines",
+    body: withStatus(
+      "in-refinement",
+      `${CLARIFIED}\n## Requirements\n\n- The system MUST capture.\n\n${CLARIFIED}`,
+    ),
+  },
+  {
+    name: "two sessions under one Clarifications heading - the shape the skill asks for - pass",
+    fails: false,
+    says: "OK",
+    body: withStatus(
+      "ready-to-develop",
+      "## Clarifications\n\n### Session 2026-08-04\n\n- Q: which currency? -> A: the capture's.\n\n### Session 2026-08-05\n\n- Q: partial refunds? -> A: yes.\n\n## Requirements\n\n- The system MUST capture.\n\n## Open questions\n\nNone known.\n",
+    ),
+  },
+  {
+    name: "a repeated third-level heading is not a duplicate - they repeat by design",
+    fails: false,
+    says: "OK",
+    body: withStatus(
+      "in-refinement",
+      "## Requirements\n\n### Capture\n\n- The system MUST capture.\n\n## Cross-capability interactions\n\n### Capture\n\nThe ledger reads it.\n",
+    ),
+  },
+  {
+    name: "a heading quoted inside a fenced block is not the spec's own structure",
+    fails: false,
+    says: "OK",
+    body: withStatus(
+      "in-refinement",
+      "## Requirements\n\n- The system MUST capture.\n\n## Core concepts\n\nA session is recorded like this:\n\n```markdown\n## Clarifications\n\n### Session 2026-08-04\n```\n\n```markdown\n## Clarifications\n\n### Session 2026-08-05\n```\n",
+    ),
+  },
+  {
+    name: "a heading inside an HTML comment is guidance, not a second section",
+    fails: false,
+    says: "OK",
+    body: withStatus(
+      "in-refinement",
+      `${CLARIFIED}\n<!--\n## Clarifications\n\nkeep every session under the one heading above\n-->\n\n## Requirements\n\n- The system MUST capture.\n`,
+    ),
+  },
 ];
 
-for (const c of STATUS_CASES) {
+for (const c of STRUCTURE_CASES) {
   const { code, out } = structure(c.body, c.personas);
   const want = c.fails ? 1 : 0;
   if (code !== want) {
@@ -407,7 +467,7 @@ for (const c of BRIDGE_CASES) {
   }
 }
 
-const total = CASES.length + STATUS_CASES.length + BRIDGE_CASES.length;
+const total = CASES.length + STRUCTURE_CASES.length + BRIDGE_CASES.length;
 if (failures) {
   console.log(`\nclarify-gate-test: FAIL - ${failures} of ${total} cases`);
   process.exit(1);

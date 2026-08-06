@@ -16,6 +16,22 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A spec could carry two `## Clarifications` sections and every guard stayed green (2026-08-06)
+
+The clarify gate greps for `^## Clarifications` and stops at the first hit. A spec that grew
+a second one - written instead of a new `### Session YYYY-MM-DD` under the heading already
+there - therefore passed the gate with half its clarification record below the split and
+invisible to it, and to anyone scanning the file for the section. Reproduced on a spec with
+sessions at lines 11 and 21: `spec-structure: OK (1 spec paths)`, exit 0, and the gate
+granting `ready-to-develop`.
+
+`spec-structure.mjs` now refuses a level-2 heading that appears twice in one capability spec,
+naming the heading and every line it sits on. Level 2 only: `### Session <date>` and
+`### <Other capability>` repeat by design one level down. Headings inside fenced blocks and
+HTML comments are quotation and guidance, not the document's own structure, so a spec that
+shows the shape it is teaching is not a violation. `tools/clarify-gate-test.mjs` gains six
+cases - the duplicate fails and names its lines, and the four legitimate shapes still pass.
+
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 
 `update-to-version` step 2 called the diff of the two versions' `standard.manifest.json`

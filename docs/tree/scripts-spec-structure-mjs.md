@@ -15,6 +15,11 @@ invented in the spec itself.
 
 **A spec missing the sections that make it usable** at the tier it declares.
 
+**A section heading written twice.** The clarify gate greps for the first `## Clarifications`
+and stops; so does a reader. A second one hides everything under it from both while every
+guard stays green. A later clarify session is a new `### Session YYYY-MM-DD` under the
+heading that is already there.
+
 ## Why the roster is a table
 
 Because a guard has to read it. That is also why the shipped `personas.md` keeps its worked
