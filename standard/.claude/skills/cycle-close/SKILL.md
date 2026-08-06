@@ -62,7 +62,14 @@ who did what, stop - that is the tracker's.
      actually landed back in the backlog (step 0), and it can only do that if the row says
      which ones
    - unplanned work absorbed, if any
-   - commits in the window: `git log --oneline --since=<opened> --until=<closed> | wc -l`
+   - commits in the window:
+     `git log --oneline --since="<opened> 00:00:00" --until="<closed> 23:59:59" | wc -l`.
+     **Write the times out.** Git resolves a bare `--since=<date>` to that date at *the
+     current time of day*, so the same command returns a different count in the morning
+     than in the evening, and the two commits that sit on the boundary days by definition -
+     the cycle-open and cycle-close commits - are both counted only when the open commit
+     happened later in the day than the close one, which is not how a cycle runs. A count
+     nobody can reproduce is worse than no count.
    - days elapsed, opened to closed
    Flip `Status` to `closed` and record the actual close date, which is often not the target.
 
