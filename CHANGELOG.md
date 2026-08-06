@@ -16,6 +16,23 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The coupling audit could not see a capability until somebody staged it (2026-08-06)
+
+`spec-guard --audit` listed the repo with `git ls-files` and fell back to walking the
+filesystem only when git listed **nothing at all**. One already-tracked spec was therefore
+enough to make every new directory invisible. Reproduced before the fix, on a repo with one
+tracked spec and one brand-new unmapped one: `--audit` reported
+`OK (1 capability specs, all mapped)` before `git add` and failed naming the orphan
+immediately after - the same tree, two answers, and the local one was the wrong one. It is
+the audit's own case: the capability most likely to be unmapped is the one somebody just
+created.
+
+The audit now reads tracked and untracked files together, with git's ignore rules still
+applied. Three things that must not start failing are held by their own cases: untracked
+code inside a capability's globs is claimed rather than unclaimed, ignored build output is
+not code nobody claims, and a glob whose only matches are untracked is no longer reported as
+a guard watching nothing - which it was, as a false positive, for the same reason.
+
 ### A spec could declare the buildable tier and carry none of what makes it buildable (2026-08-06)
 
 The capability template marks `## Data contracts`, `## Interface contracts` and
