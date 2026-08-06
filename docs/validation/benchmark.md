@@ -6,7 +6,7 @@
      this standard can run the same idea against their own. -->
 
 Twenty-something checks - **133**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **57** of them at least once and has fixed-and-re-verified **85** so far; the rest are logged as open (which includes any case where an attempted fix
+claiming to be agent-operable should survive. This project failed **57** of them at least once and has fixed-and-re-verified **86** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -857,7 +857,7 @@ read standard/.claude/skills/discovery-digest/SKILL.md for same-handover cross-d
 - **Given:** a single mail thread pasted as one handover, in which two people contradict each other
 - **When:** discovery-digest's step 3 (diff against every earlier entry) runs
 - **Then:** the contradiction is recorded in the `## Contradictions to resolve` table, instead of counting as one entry with an empty set of earlier entries to diff against
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -870,7 +870,7 @@ file a mail thread containing an internal contradiction as one discovery-digest 
 - **Given:** new material that changes an already-shipped spec, routed discovery-digest -> spec-impact -> spec-update (the documented path for this exact case)
 - **When:** the spec is changed in the same session specifically to resolve the discovery entry's contradiction
 - **Then:** the dossier's 'Last reconciled' stamp advances and the entry's state updates, instead of permanently reading 'never' and 'new' because spec-update is not one of the 'spec-*' skills discovery.md names as moving the stamp
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1108,7 +1108,7 @@ align JuliaLang/julia's AGENTS.md (a disclosure mandate) against the standard's 
 - **Given:** a repo with `archived: false` that has moved its real development to another forge entirely (ziglang/zig, moved to Codeberg)
 - **When:** intake's lifecycle-signal check runs
 - **Then:** the move is caught, instead of the signal list checking only the archived flag and commit recency and missing a repo that departed rather than declined
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1188,7 +1188,7 @@ read skills/align-to-standards/stack.md's technology-detection step against a we
 - **Given:** denoland/deno: 715 package.json + 243 node_modules/ paths + 62 tsconfig.json files, all npm-compat test fixtures, against just 1 real Cargo.toml
 - **When:** stack detection runs
 - **Then:** the Rust stack is identified as the real build system, instead of the sheer count of Node-shaped files reading as evidence for a Node stack with no quality check on what kind of file is doing the counting
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1452,7 +1452,7 @@ read SPEC.md R3, R11 and R15 for an embargoed/confidential-work exception, and c
 - **Given:** a capability whose correctness oracle is a human sense (a braille user), an absent sensor, or a corpus of reference images (38 in one real case)
 - **When:** the buildable-tier requirement and its one escape hatch (the behavioral tier) are checked against that shape
 - **Then:** the behavioral tier is available for exactly this shape, instead of being the one escape hatch onboard.md forbids using for it
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
