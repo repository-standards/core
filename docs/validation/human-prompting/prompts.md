@@ -39,7 +39,7 @@ Adoption, from a stranger's keyboard.
 | A19 | `czy to ma sens dla dwuosobowego zespolu?` | assistant | the profile axis |
 | A20 | `czym to sie rozni od zwyklego lintera?` | assistant | positioning, asked adversarially |
 | A21 | `take this repo onto repositorystandards.com with the node stack` | assistant | the **half-remembered** entry line - close enough to the shipped one to be typed by somebody who skimmed the landing page, and wrong in the one way that matters: it names a stack instead of asking to be interviewed. It opened this corpus by mistake and was corrected; it earns a row because people will type it |
-| A22 | `adopt the standard here - it is not my repo, i just want to see what it would say` | assistant | **the read-only adopter.** No write access, no fork, nothing to push. Every entry run in sequence d raised this unprompted and no row covered it |
+| A22 | `adopt the standard here - it is not my repo, i just want to see what it would say` | assistant | **the read-only adopter.** No write access, no fork, nothing to push. Raised unprompted across sequence d's entry conversations, with no row covering it |
 | A23 | `ok zrob to, tylko u nas nie ma pull requestow` | assistant | the landing question on a project that does not use pull requests. The shipped adoption guide's last gate is "pull requests opened", so this asks the product what it does when its own exit condition cannot exist |
 
 ## Part 2 - the loop, on real product content
@@ -152,9 +152,9 @@ Two things fall out of it, and both change how a run is read:
 
 Written by people who know the product. Least trustworthy:
 
-- **Wrong mental model** (`A12`-`A15`) - the misconceptions a stranger actually arrives with
+- **Wrong mental model** (`A14`-`A17`) - the misconceptions a stranger actually arrives with
   are the ones neither author has.
-- **Sloppiness** (`A6`-`A8`) - real sloppiness has a texture an insider imitates badly.
+- **Sloppiness** (`A8`-`A10`) - real sloppiness has a texture an insider imitates badly.
 - Anything from somebody who read the landing page once and half-remembers it.
 
 Which is why a reported failure outranks anything invented here, and why every one earns a
