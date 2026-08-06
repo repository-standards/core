@@ -5,8 +5,8 @@
      agent-operated repository standard would claim, phrased so a reader who has never used
      this standard can run the same idea against their own. -->
 
-Twenty-something checks - **114**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **46** of them at least once and has fixed-and-re-verified **49** so far; the rest are logged as open (which includes any case where an attempted fix
+Twenty-something checks - **116**, precisely - that any repository standard
+claiming to be agent-operable should survive. This project failed **48** of them at least once and has fixed-and-re-verified **49** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -864,6 +864,32 @@ run spec-impact against a real change contradicting a runbook, a persona descrip
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 read spec-update, spec-reconcile and spec-impact's SKILL.md files for their retired-spec handling against a spec whose retired content is now provably false
+```
+
+
+**DEC-12 - the decision catalog has a category for a repo whose release gate is owned by a third party, not by its own CI or maintainer**
+
+- **Given:** a repo whose published releases are gated by an external body that can reject or archive them on its own policy, independent of the repo's CI and maintainers (Rdatatable/data.table, gated by CRAN)
+- **When:** the decision catalog's delivery/release axis is checked for a category covering an externally-owned gate
+- **Then:** a category exists for it, rather than the axis defaulting to 'the maintainer cuts releases' as though the repo controlled the gate
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+grep -ri 'cran\|external release gate\|gatekeep' docs/method/checklist.md docs/method/changelog-process.md standard/SPEC.md
+```
+
+
+**DEC-13 - the retroactive-decision reconstruction has a path for a founding decision that left no trace in the code or in the repo at all**
+
+- **Given:** a repo whose existence is itself the largest decision it embodies, made before its first commit and documented only outside it (opentofu/opentofu, forked from Terraform over a license change)
+- **When:** onboard.md's retroactive-decision step - which reconstructs decisions 'already chosen' by reading the code - is applied to that decision
+- **Then:** a documented path exists for a decision with no code fingerprint and no in-repo trace, rather than only the code-archaeology route plus docs/discovery/, which ADR-024 makes explicitly non-normative and so unable to hold the record
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+read skills/align-to-standards/onboard.md's decisions step; grep the target repo's README/CONTRIBUTING/docs for the founding rationale
 ```
 
 
