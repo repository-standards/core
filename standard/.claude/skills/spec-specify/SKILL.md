@@ -7,6 +7,15 @@ description: Use when someone describes a feature, a behaviour, or something the
 <!-- PATCHED(repository-standards): ADR-010 - clarify chains automatically after specify -->
 **Clarify chains automatically after specify.** When this command completes, immediately continue into the clarify loop (`/spec-clarify`) in the same session - do not stop and wait to be asked. The loop is AI-led: propose answers, ask the user only what genuinely needs their call, and record every deferral ("leaving this to the technical side") in the spec's `## Clarifications` section instead of dropping it. Plan and tasks are gated: they refuse a spec that has no `## Clarifications` section or still contains open markers of the `[NEEDS ...` family (that gate is what earns `Status: ready-to-develop`).
 
+<!-- PATCHED(repository-standards): ADR-033 - a record that already governs the request is
+     read before the request is drafted, not discovered afterwards -->
+**Decision intake (before drafting, and before the dossier).** Read `docs/decision-records/`'s index - the README table, not every record - and open in full only the records whose subject overlaps this request. Cheap by construction: one table, then the two or three rows that match. The index is only safe to read *instead of* the directory because `decision-records-check` fails a record that exists on disk and is missing from the table; if that guard is not running here, list the directory too - a record the index forgot is exactly the one nobody remembers.
+
+- **An Accepted record in scope is not a question and not a suggestion - it is already the answer.** What it settles goes into the draft as settled content citing the record, never as a `[NEEDS DECISION]` marker and never as something to ask about.
+- **If the request contradicts an Accepted record, stop before drafting** and say which record. The two legitimate routes are: change the request to fit, or supersede the record (`/adr-write`, `/bdr-write`) - a spec written around a record is the thing R6 exists to stop, and nothing downstream detects it.
+- **If a record retired the capability this request would extend, do not draft into it** - step 2 below owns what to do instead, and is where the protocol is written; it is not repeated here.
+- A record that is `Proposed`, `Rejected` or `Superseded` binds nothing: follow the supersession link and use the record that is current.
+
 <!-- PATCHED(repository-standards): ADR-024 - discovery dossiers feed specify -->
 **Discovery intake (before drafting).** Check `docs/discovery/` for a dossier related to this feature's topic. If one plausibly matches but you are not sure, ask the user which (never guess between dossiers). If a dossier exists:
 
@@ -28,6 +37,10 @@ You **MUST** consider the user input before proceeding (if not empty).
 The text the user typed after `/spec-specify` in the triggering message **is** the feature description. Assume you always have it available in this conversation even if `$ARGUMENTS` appears literally below. Do not ask the user to repeat it unless they provided an empty command.
 
 Given that feature description, do this:
+
+<!-- PATCHED(repository-standards): ADR-033 - the eye goes to the numbered list, and the two
+     intakes above it read as preamble. They are not: either can end the run before step 1. -->
+**Decision intake and discovery intake, above, run before step 1** - they are steps, not preamble, and the first of them can stop the run before a name is ever generated.
 
 1. **Generate a concise short name** (2-4 words) for the feature:
    - Analyze the feature description and extract the most meaningful keywords
@@ -51,10 +64,16 @@ Given that feature description, do this:
       <!-- PATCHED(repository-standards): ADR-002 capability paths - the directory is
            specs/<slug>/ named after the capability/domain, with NO numeric or timestamp
            prefix. Never create NNN-slug or YYYYMMDD-HHMMSS-slug directories. -->
-      - The directory name is the short name alone: `<short-name>` (e.g., `user-auth`) - it names a capability/domain, so it must be stable and prefix-free
+      - The directory name **for a genuinely new capability** is the short name alone: `<short-name>` (e.g., `user-auth`) - it names a capability/domain, so it must be stable and prefix-free
       - Do NOT add a numeric prefix (`003-user-auth`) or timestamp prefix (`20260319-143022-user-auth`)
-      - If `specs/<short-name>/` already exists, this is the same capability: update the existing spec in place instead of minting a new sibling directory
-      - Set `SPECIFY_FEATURE_DIRECTORY` to `specs/<short-name>`
+      <!-- PATCHED(repository-standards): ADR-033 - this check ran on the slug alone and read
+           no status, so a near-miss name minted a rival spec for a subject the repo already
+           had, and "update in place" applied to a retired capability as readily as a live one.
+           It is first because step 1's short name is a guess that invites exactly that. -->
+      - **`ls specs/` FIRST and match on subject, not on slug.** The short name step 1 generated is yours, not the repo's: `shift-reminders` and `shift-notifications` are the same capability under two names, and `specs/shift-reminders/` not existing proves nothing. An existing capability covering this subject is the one this request belongs to, whatever it is called
+      - **Read the matched spec's `Status` before editing it.** `retired` means stop and do not draft: the capability was ended by a decision record, and the file stays as the record of what was built, not as somewhere to add to. Name that record, say what it decided, and let the user choose - a genuinely new capability specced fresh may well be right, and the record often says so, but that is the user's call to make with the record in front of them. What you must not do is proceed on your own, under either the old slug or a new one
+      - Otherwise, if a directory matched, this is the same capability: update the existing spec in place instead of minting a new sibling directory
+      - Set `SPECIFY_FEATURE_DIRECTORY` to the matched capability's directory, or to `specs/<short-name>` when nothing matched. The generated short name only names the directory when the capability is genuinely new - adopting it over a matched capability's existing name is how the rival spec gets minted anyway, one bullet after the check that caught it
 
    **Create the directory and spec file**:
    - `mkdir -p SPECIFY_FEATURE_DIRECTORY`
@@ -160,6 +179,8 @@ Given that feature description, do this:
             rebuild and verify this capability from the spec alone; behavioral says why not
       - [ ] Contracts quote real identifiers verbatim, never paraphrase (buildable tier)
       - [ ] Serves names a persona from `docs/personas.md`
+      - [ ] Nothing here contradicts an Accepted decision record, and what a record
+            settles is written as settled, citing it
       - [ ] Success metric names the KPI this capability moves, or says why "n/a"
       - [ ] All applicable template sections completed, section order preserved
 

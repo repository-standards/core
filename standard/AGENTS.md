@@ -108,7 +108,8 @@ Before any of it, the toolchain the shipped guards need must be present -
 A numbered, repo-specific list of things that must halt an agent. Make each concrete:
 
 1. Writing to a remote database (DML/DDL/migrations) - deliver a `.sql` instead.
-2. Contradicting an Accepted ADR - propose a superseding ADR first.
+2. Contradicting an Accepted ADR **or BDR** - propose a superseding record first. Both
+   streams bind; the product-side one is the one a feature request actually collides with.
 3. Adding a new dependency without an ADR.
 4. A breaking schema / contract change.
 5. Hardcoded secrets.

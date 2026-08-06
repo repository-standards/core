@@ -17,7 +17,9 @@ A change passes only if it is consistent with, in altitude order:
 
 ## Hard stops
 
-- The change contradicts an Accepted ADR -> stop; propose a superseding ADR first.
+- The change contradicts an Accepted ADR **or BDR** -> stop; propose a superseding record
+  first. Both streams are in the altitude list above and both bind; naming only one here
+  reads as though the product-side stream is advisory.
 - The change trips an `AGENTS.md` red flag -> stop; get maintainer sign-off.
 - The change needs a decision that has no record -> stop; write the ADR / BDR first.
 

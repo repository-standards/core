@@ -4,8 +4,13 @@ description: Use right after a spec is drafted, or whenever one still has open q
 ---
 
 <!-- Vendored from github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED(repository-standards) hunks are marked inline; CHERRY-PICKED hunks name the upstream commit they came from. -->
+<!-- PATCHED(repository-standards): ADR-033 - records outrank the dossier and the user; the
+     dossier was documented as the sole pre-user answer source, so a question a decision had
+     already settled was asked anyway, and whatever the user said that day won -->
+**Records first, then discovery, then the user.** Before the dossier and before any question, read `docs/decision-records/`'s index and open in full only the records whose subject overlaps this spec - and where `decision-records-check` is not running to prove the index lists everything on disk, list the directory too. An **Accepted** record in scope has already answered: write its answer into the spec citing it (`per ADR-0NN`), and do not ask. `Proposed` / `Rejected` / `Superseded` bind nothing - follow the supersession link to the record that is current.
+
 <!-- PATCHED(repository-standards): ADR-024 - the dossier answers before the user does -->
-**Discovery first, the user second.** Before asking the user anything, check `docs/discovery/` for the topic's dossier. Answers may already be there: use entries **newer** than the dossier README's `Last reconciled:` stamp (plus entries still `new`/`open`) as an answer source, and record their provenance in `## Clarifications` ("per discovery/<topic>/<entry>"). Never re-ask what an entry marked `folded-into-spec` or `superseded-by:` already settled, and never treat a dossier-vs-spec difference as a question - a dossier is not normative; the spec has already won. The marker family is wider than questions: `NEEDS DECISION` / `NEEDS INPUT` / `NEEDS ASSET` markers are not clarify questions - report them as the outstanding gap list (what is missing, who brings it) and leave them open until the decision/input/asset lands. When this loop folds dossier material into the spec, mark those entries and update the stamp.
+**Discovery second.** Before asking the user anything, check `docs/discovery/` for the topic's dossier. Answers may already be there: use entries **newer** than the dossier README's `Last reconciled:` stamp (plus entries still `new`/`open`) as an answer source, and record their provenance in `## Clarifications` ("per discovery/<topic>/<entry>"). Never re-ask what an entry marked `folded-into-spec` or `superseded-by:` already settled, and never treat a dossier-vs-spec difference as a question - a dossier is not normative; the spec has already won. The marker family is wider than questions: `NEEDS DECISION` / `NEEDS INPUT` / `NEEDS ASSET` markers are not clarify questions - report them as the outstanding gap list (what is missing, who brings it) and leave them open until the decision/input/asset lands. When this loop folds dossier material into the spec, mark those entries and update the stamp.
 
 ## User Input
 
@@ -118,8 +123,8 @@ Execution steps:
       A question the user cannot tell the point of costs more than it buys.
     - Rank by (Impact x Uncertainty). Prefer the question whose answer unblocks a whole section
       over three that each polish one line.
-    - Exclude anything already answered in the spec, in `## Clarifications`, or in the discovery
-      dossier.
+    - Exclude anything already answered in the spec, in `## Clarifications`, in an Accepted
+      decision record, or in the discovery dossier.
 
 5. Ask, in rounds, and **stop on coverage rather than on a number**:
     - **Batch by contract, not one question per message forever.** Questions that belong to the
@@ -168,6 +173,10 @@ Execution steps:
          that" - record it, and write the matching typed marker so the gate holds it.
        - If the answer is ambiguous, ask once for disambiguation - it is the same question, not a
          new one.
+       <!-- PATCHED(repository-standards): ADR-033 -->
+       - **An answer that contradicts an Accepted record is a supersession, not a clarification.**
+         Do not write it into the spec. Say which record it collides with and route to
+         `/adr-write` or `/bdr-write`; the spec follows the record, never the other way round (R6).
        - Record it, then integrate it (step 6) before moving on.
     - Never reveal queued questions in advance.
     - If nothing is unclear at the start, say so plainly and stop.
