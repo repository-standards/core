@@ -24,7 +24,7 @@ import { readFileSync, readdirSync, writeFileSync, mkdirSync, existsSync, watch 
 import { join, dirname, basename, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { execFileSync } from 'node:child_process'
-import { createHash } from 'node:crypto'
+import { createHash, createCipheriv, pbkdf2Sync } from 'node:crypto'
 import { createServer } from 'node:http'
 
 const here = dirname(fileURLToPath(import.meta.url))
@@ -551,6 +551,73 @@ data.counts = {
 return data
 }
 
+/* ---------- one password, no server ---------- */
+
+// `--lock` encrypts the page and ships the ciphertext. What is hosted is unreadable without
+// the passphrase, so a host with no authentication of its own - GitHub Pages, an S3 bucket,
+// anything static - carries it safely. AES-256-GCM, key stretched with PBKDF2-SHA-256 at
+// 600,000 iterations, decrypted in the browser by WebCrypto.
+//
+// What it is: a real lock. The bytes on the host are ciphertext; a wrong password fails the
+// GCM tag and yields nothing. What it is not: per-person access. One shared secret, revoked
+// by changing it and rebuilding, and an attacker can take the ciphertext away and try
+// passwords offline - so use a passphrase worth attacking, not the company name and a year.
+const PBKDF2_ROUNDS = 600_000
+const password = process.env.WORK_DASHBOARD_PASSWORD || ''
+const locked = argv.includes('--lock')
+if (locked && password.length < 8) {
+  console.error('work-dashboard: --lock needs WORK_DASHBOARD_PASSWORD set to at least 8 characters')
+  console.error('  (an environment variable, never an argument - arguments reach shell history and CI logs)')
+  process.exit(1)
+}
+
+function lock(html, data) {
+  // Salt and nonce are derived from the plaintext, so the same content encrypts to the same
+  // bytes and the build stays reproducible. Different content gives a different nonce, which
+  // is the property AES-GCM actually needs; identical content giving identical ciphertext is
+  // what "deterministic" means here, and this page's fingerprint is not a secret anyway.
+  const digest = (label) => createHash('sha256').update(label + data.meta.fingerprint).digest()
+  const salt = digest('work-dashboard/salt').subarray(0, 16)
+  const iv = digest('work-dashboard/iv').subarray(0, 12)
+  const key = pbkdf2Sync(password, salt, PBKDF2_ROUNDS, 32, 'sha256')
+
+  const cipher = createCipheriv('aes-256-gcm', key, iv)
+  const body = Buffer.concat([cipher.update(html, 'utf8'), cipher.final(), cipher.getAuthTag()])
+
+  const gate = readFileSync(join(here, 'work-dashboard.gate.js'), 'utf8')
+    .replace('__SALT__', salt.toString('base64'))
+    .replace('__IV__', iv.toString('base64'))
+    .replace('__ROUNDS__', String(PBKDF2_ROUNDS))
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Work</title>
+<style>
+${readFileSync(join(here, 'work-dashboard.gate.css'), 'utf8')}</style>
+</head>
+<body>
+<form id="gate" autocomplete="on">
+  <!-- The repository is not named until the password names it. A locked page that announces
+       whose backlog it is has given away the one thing the reader's employer may care about. -->
+  <h1>Work <span>- locked</span></h1>
+  <p>This page is encrypted. Enter the password you were given.</p>
+  <label for="pw">Password</label>
+  <input id="pw" name="password" type="password" autocomplete="current-password" autofocus>
+  <button type="submit">Open</button>
+  <p id="err" role="alert" hidden>That password does not open this page.</p>
+</form>
+<script type="application/octet-stream" id="payload">${body.toString('base64')}</script>
+<script>
+${gate}</script>
+</body>
+</html>
+`
+}
+
 /* ---------- emit ---------- */
 
 const out = outFlag >= 0 ? resolve(argv[outFlag + 1]) : join(root, 'site/work/index.html')
@@ -582,12 +649,16 @@ ${readFileSync(join(here, 'work-dashboard.client.js'), 'utf8')}</script>
 `
 
   mkdirSync(dirname(out), { recursive: true })
-  writeFileSync(out, html)
+  writeFileSync(out, locked ? lock(html, data) : html)
   // Read by the open page every couple of minutes: same commit, same fingerprint, no nag.
+  // A locked build says only that the content moved - the commit and the branch are two more
+  // facts about a repository somebody has not opened yet, and this file is not encrypted.
   writeFileSync(
     stateFile,
     JSON.stringify(
-      { fingerprint: data.meta.fingerprint, commit: data.meta.commit, branch: data.meta.branch, built: new Date().toISOString() },
+      locked
+        ? { fingerprint: data.meta.fingerprint, built: new Date().toISOString() }
+        : { fingerprint: data.meta.fingerprint, commit: data.meta.commit, branch: data.meta.branch, built: new Date().toISOString() },
       null,
       2,
     ),
