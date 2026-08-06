@@ -1030,7 +1030,7 @@ read docs/method/adoption.md's lifecycle-signal list for a move/mirror check
 - **Given:** a policy forbidding autonomous agent contributions, or forbidding CI outright, stated inside the repo's own AGENTS.md rather than in CONTRIBUTING.md or a dedicated policy file
 - **When:** the red-flag detection list runs
 - **Then:** the policy is caught, instead of the scan only checking CONTRIBUTING.md/named policy files and missing a ban stated in the one file the standard itself calls authoritative
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1043,7 +1043,7 @@ grep docs/method/adoption.md's red-flag detection list for a check against AGENT
 - **Given:** a repo whose AGENTS.md requires AI co-authorship on commits and mandatory AI-disclosure on every PR (JuliaLang/julia)
 - **When:** the standard's own conventions.md, which forbids AI attribution outright, merges into that same AGENTS.md at adoption
 - **Then:** the contradiction produces a stop or a visible drift signal, instead of every subsequent PR becoming silently non-compliant with no signal anywhere
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
