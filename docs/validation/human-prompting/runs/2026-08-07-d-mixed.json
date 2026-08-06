@@ -11,12 +11,12 @@
   "$not_reached": [
     "usebruno/bruno and vim/vim - not run at all. No entry prompt, no loop prompt, no volunteered behaviour. Recorded as not reached rather than silently dropped.",
     "Loop prompts (L, R, N, D, P) - no standalone observation in this sequence. Two were queued against the adopted branches of postfix and git and both launches were refused for lack of capacity.",
-    "Volunteered behaviours - no standalone observation either, for the same reason. Two did occur unprompted inside an entry-path conversation and are recorded in the A21/postfix observation, where they happened."
+    "Volunteered behaviours - no standalone observation either, for the same reason. Two did occur unprompted inside an entry-path conversation and are recorded in the A26/postfix observation, where they happened."
   ],
-  "$prompt_ids": "This round began against the previous numbering and the corpus was renumbered mid-run. Remapped here to current ids: old A3->A5, old A4->A6, old A12->A14, old A13->A15, old A14->A16, old A6->A8. The line that opened four of these runs - `take this repo onto repositorystandards.com with the node stack` - was withdrawn from the corpus as not what the product ships. It was actually typed four times, so it is registered as A21 with source assistant rather than dropped.",
+  "$prompt_ids": "This round began against the previous numbering and the corpus was renumbered mid-run. Remapped here to current ids: old A3->A5, old A4->A6, old A12->A14, old A13->A15, old A14->A16, old A6->A8. The line that opened four of these runs - `take this repo onto repositorystandards.com with the node stack` - was withdrawn from the corpus as not what the product ships. It was actually typed four times, so it is registered as A26 with source assistant rather than dropped.",
   "observations": [
     {
-      "prompt": "A21",
+      "prompt": "A26",
       "target": "repo:git/git (pre-adoption base)",
       "mode": "full-loop",
       "fixture": "clean",
@@ -55,7 +55,7 @@
       "evidence": "The strongest run in this file and the only one on a clean fixture with a maintainer answering. Three things it did that nothing coached it to do: it found the entire standard on the public web and needed no access to the standards repository; it caught the shipped adoption guide asserting two prerequisites - write access, and pull requests opened as the closing gate - that are both false for this repository, and stopped on that rather than proceeding to a gate it could not meet; and at turn three it converted the closing gate into patches or a bundle instead of proposing a pull request nobody would merge. It also reported two inconsistencies in the published documentation without being asked: the spec page places decision records at docs/decision-records/ while the taxonomy page says decision-records/, and PRODUCT.md appears at the root in one place and under docs/ in another. It said it would resolve those from standard.manifest.json at execution time rather than guess."
     },
     {
-      "prompt": "A21",
+      "prompt": "A26",
       "target": "repo:vdukhovni/postfix (pre-adoption base)",
       "mode": "full-loop",
       "fixture": "contaminated:worktree-pair",
@@ -94,7 +94,7 @@
       "evidence": "Verified by me directly, not taken on the probe's word. `ls -a .claude/` in the adopted postfix and git trees returns hooks and skills and no settings.json, while hono and drizzle both have it - so the defect is present in two of the four repositories in this set. The manifest entry at standard.manifest.json:299-302 is `.claude/settings.json`, adapt merge, required false. The hono copy of .claude/settings.json is the proof of mechanism: its only functional content is a hooks.PreToolUse block wiring no-remote-db-writes.sh, no-force-push.sh and no-ci-secret-writes.sh by path. Without that file the same three scripts sit inert. The coordinator reports the JS wave hit this independently on an unrelated repository, which makes two reproductions on unrelated trees and puts it beyond incidental. The workflow entry is at standard.manifest.json:365-373, required true, requiredKeys ['on.pull_request']; no repository in this set recorded any exception for it (exceptions are: hono none, drizzle one on .nvmrc content, git two on CHANGELOG.md, postfix two on CHANGELOG.md). The manifest's own $about confirms the probe's reading of the hatch: there is no guard kind, a guard's script cannot be excepted by kind file, and an exception 'keeps it in the adoption denominator so excepting can never raise the percentage'. The Makefile count reproduces exactly: 56 Makefile.in under postfix/, 52 carrying `^tests:`, and zero in postfix/Makefile.in."
     },
     {
-      "prompt": "A21",
+      "prompt": "A26",
       "target": "repo:honojs/hono (pre-adoption base)",
       "mode": "stop-and-ask",
       "fixture": "contaminated:worktree-pair",
@@ -120,7 +120,7 @@
       "evidence": "The clearest demonstration in this file that the website alone is enough to bootstrap an agent that has never seen the product: it planned against the published stack manifest, not against a guess, and it cited the stack's own adapting guide to justify refusing the migration. The substantive finding is one the product should want back: the node stack's pnpm requirement has no migration path from bun, and the only repository in this set that uses bun is the one the stack most obviously targets."
     },
     {
-      "prompt": "A21",
+      "prompt": "A26",
       "target": "repo:drizzle-team/drizzle-orm (pre-adoption base)",
       "mode": "stop-and-ask",
       "fixture": "contaminated:worktree-pair",
@@ -146,7 +146,7 @@
       "evidence": "The product being asked, unprompted, to justify itself against the repository in front of it. Both JS/TS runs in this file arrived independently at the same conclusion - application paved road, library monorepo, most entries become exceptions - which is a positioning finding rather than a bug, and worth more than either run's plan."
     },
     {
-      "prompt": "A21",
+      "prompt": "A26",
       "target": "repo:git/git (pre-adoption base)",
       "mode": "stop-and-ask",
       "fixture": "contaminated:worktree-pair",

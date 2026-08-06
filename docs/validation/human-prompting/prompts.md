@@ -38,9 +38,9 @@ Adoption, from a stranger's keyboard.
 | A18 | `co to zmieni w moim repo? pokaz zanim cokolwiek ruszysz` | assistant | plan-only, asked as doubt |
 | A19 | `czy to ma sens dla dwuosobowego zespolu?` | assistant | the profile axis |
 | A20 | `czym to sie rozni od zwyklego lintera?` | assistant | positioning, asked adversarially |
-| A21 | `take this repo onto repositorystandards.com with the node stack` | assistant | the **half-remembered** entry line - close enough to the shipped one to be typed by somebody who skimmed the landing page, and wrong in the one way that matters: it names a stack instead of asking to be interviewed. It opened this corpus by mistake and was corrected; it earns a row because people will type it |
-| A22 | `adopt the standard here - it is not my repo, i just want to see what it would say` | assistant | **the read-only adopter.** No write access, no fork, nothing to push. Raised unprompted across sequence d's entry conversations, with no row covering it |
-| A23 | `ok zrob to, tylko u nas nie ma pull requestow` | assistant | the landing question on a project that does not use pull requests. The shipped adoption guide's last gate is "pull requests opened", so this asks the product what it does when its own exit condition cannot exist |
+| A26 | `take this repo onto repositorystandards.com with the node stack` | assistant | the **half-remembered** entry line - close enough to the shipped one to be typed by somebody who skimmed the landing page, and wrong in the one way that matters: it names a stack instead of asking to be interviewed. It opened this corpus by mistake and was corrected; it earns a row because people will type it |
+| A27 | `adopt the standard here - it is not my repo, i just want to see what it would say` | assistant | **the read-only adopter.** No write access, no fork, nothing to push. Raised unprompted across sequence d's entry conversations, with no row covering it |
+| A28 | `ok zrob to, tylko u nas nie ma pull requestow` | assistant | the landing question on a project that does not use pull requests. The shipped adoption guide's last gate is "pull requests opened", so this asks the product what it does when its own exit condition cannot exist |
 
 ## Part 2 - the loop, on real product content
 
