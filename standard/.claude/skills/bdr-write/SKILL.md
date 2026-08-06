@@ -82,5 +82,7 @@ never edited into a different decision.
   asserts it" or "nothing yet", and the ADR it links says how the job works.
 - **Do not soften the cost.** The section exists so a future reader can tell whether the
   trade was worth it, and a BDR whose costs are all upside teaches them the records lie.
-- **Do not record a decision the user is still thinking about.** That is an idea
-  (`docs/ideas/`) until approved.
+- **Do not record a decision the user is still thinking about.** That is an idea until
+  approved, and **`idea-write`** is the skill that catches it - named here because it, not
+  the `docs/ideas/` folder, carries the template, the persona check and the graduation
+  contract. Writing the file by hand skips all three.
