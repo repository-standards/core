@@ -146,7 +146,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R16",
-      "sha256": "3f13e23133aa05aa578db9b6e0edb3e848e147983bcf949ddd8fc8acec55dda1"
+      "sha256": "e87bf6633a224d0b6860dbc6f6253ada7b71256865f228378e3641afea14be2c"
     },
     {
       "path": "scripts/facts-check.mjs",

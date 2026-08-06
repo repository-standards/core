@@ -142,16 +142,28 @@ if (personasPath) {
   for (const f of hasRosterHeading && !rosterUnreadable ? capSpecs : []) {
     let body;
     try { body = readFileSync(f, "utf8"); } catch { continue; }
-    // The whole `**Serves:**` value, not only its first backticked name: a spec routinely
-    // serves two or three personas and says how it serves each, and reading one name would
-    // make the rest invisible to the check.
-    const serves = body.match(/\*\*Serves:\*\*[ \t]*(.*)/i);
-    const claim = serves ? serves[1].replace(/<!--.*$/, "").replace(/`/g, "").trim() : "";
+    // The whole `**Serves:**` value: all of its names, and all of its lines. A spec routinely
+    // serves two or three personas and says how it serves each, so reading only the first
+    // backticked name would make the rest invisible - and a value long enough to say that is
+    // a value long enough to wrap, so it is read on to the lines that continue it. Stopping
+    // at the blank line, next `**Field:**`, heading, list or table keeps the rest of the spec
+    // out of the value: the point of scoping to the field is that the field is the claim.
+    const lines = body.split("\n");
+    const at = lines.findIndex((l) => /\*\*Serves:\*\*/i.test(l));
+    let claim = "";
+    if (at >= 0) {
+      claim = lines[at].replace(/^[\s\S]*?\*\*Serves:\*\*/i, "");
+      for (const l of lines.slice(at + 1)) {
+        if (!l.trim() || /^\s*(\*\*|#{1,6}\s|\||[-*+]\s|\d+[.)]\s)/.test(l)) break;
+        claim += ` ${l}`;
+      }
+      claim = claim.replace(/<!--[\s\S]*?(-->|$)/g, "").replace(/`/g, "").trim();
+    }
     // `<persona from docs/personas.md>` is the shipped template's placeholder - the question,
-    // not an answer. An unfilled one counts as no field at all, so a spec copied from the
-    // template and never filled in is reported as serving nobody rather than as serving a
-    // persona named "<persona from docs/personas.md>".
-    const filled = claim && !/^<[^>]*>$/.test(claim);
+    // not an answer. A value that is nothing but placeholders counts as no field at all, so a
+    // spec copied from the template and never filled in is reported as serving nobody rather
+    // than as serving a persona named "<persona from docs/personas.md>".
+    const filled = /[\p{L}\p{N}]/u.test(claim.replace(/<[^>]*>/g, ""));
     // A spec with no `Serves` field can still name its persona in prose - the roster is what
     // must recognise the name, not the field. What no longer counts: a name the roster has
     // never heard of, and prose that merely asks the question ("for whom") without answering
