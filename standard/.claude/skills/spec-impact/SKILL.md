@@ -26,8 +26,15 @@ then find the ripple. This is analysis - do not edit code yet.
 3. **Find the ripple:**
    - **Other capability specs** whose behavior this touches (cross-domain). A
      payments change may touch `bookings`, `refunds`, `notifications`.
-   - **ADRs** - does the change need a new/superseding decision, or contradict an
-     Accepted ADR? If it contradicts one, stop: an ADR comes first.
+   - **Decision records, BDRs as well as ADRs** - does the change need a new or
+     superseding record, or contradict an Accepted one? Read **both streams**:
+     what a change is *forbidden* to do is usually a business constraint - a
+     licence boundary, a vendor or customer contract, a regulatory limit, a
+     persona call - and it is written in a BDR's `What this rules out`, the only
+     section that states a capability's non-goals. Reading the ADRs alone answers
+     a different question, and answers it "none". If the change contradicts an
+     Accepted record, stop: the record comes first, and it is superseded by a new
+     record, never edited (R6).
    - **Code / files** - which areas change (from the capability map + reading code):
      domain services, APIs, schemas, migrations, events, integrations, tests, UI,
      feature flags. Direct and indirect behavioral impact.
@@ -44,7 +51,7 @@ then find the ripple. This is analysis - do not edit code yet.
 
 - Primary capability.
 - Affected capabilities, with their spec paths.
-- ADR impact: none / new / supersede (link).
+- Decision-record impact, ADR **and** BDR: none / new / supersede / contradicts (link).
 - Code areas to change.
 - Anything filed to the backlog because this change will not address it now.
 
