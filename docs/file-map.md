@@ -82,11 +82,7 @@ copied into your repository as folder READMEs that then age in place.
 | `scripts/verifyAgentGuards.sh` | drives every guard with real commands - they only emit output on a denial, so a broken guard is otherwise silent | optional, core | `copy` | [R19](../standard/SPEC.md) |
 | `scripts/spec-guard.mjs` | code<->spec coupling guard (+ --audit) - the tool ships at core, the blocking CI gate is scale (R11) | **required**, core | `copy` | [R11](../standard/SPEC.md) |
 | `scripts/cycle-guard.mjs` | proves the one-place invariant the pool and the cycles depend on | optional, scale | `copy` | [R15](../standard/SPEC.md) |
-| `scripts/work-dashboard.mjs` | renders the work state - pool, cycles, timeline, records, changelog - as one static page for the people who never open the repository; a projection, never a second place work is tracked | optional, core | `copy` | [R15](../standard/SPEC.md) |
-| `scripts/work-dashboard.css` | the dashboard's styling, inlined into the page at build time | optional, core | `copy` | [R15](../standard/SPEC.md) |
-| `scripts/work-dashboard.client.js` | the dashboard's rendering, inlined into the page at build time - no network, no dependencies | optional, core | `copy` | [R15](../standard/SPEC.md) |
-| `scripts/work-dashboard.gate.js` | the password gate of a locked build - derives the key and decrypts the page in the browser; only present in the page when --lock is used | optional, core | `copy` | [R15](../standard/SPEC.md) |
-| `scripts/work-dashboard.gate.css` | the password gate's styling, inlined into a locked page at build time | optional, core | `copy` | [R15](../standard/SPEC.md) |
+| `scripts/generate-dashboard` | renders the work state - pool, cycles, timeline, records, changelog - as one static page for the people who never open the repository; index.mjs is the generator, src/ the page and password-gate material it inlines. A projection, never a second place work is tracked | optional, core | `copy` | [R15](../standard/SPEC.md) |
 
 ## `.claude/` - the procedures, in Claude Code's reference form
 

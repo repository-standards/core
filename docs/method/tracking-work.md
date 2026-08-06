@@ -417,8 +417,8 @@ It is a projection, never a second place the work is tracked. It writes nothing 
 people running it on the same commit get the same bytes.
 
 ```
-node scripts/work-dashboard.mjs            # once, into site/work/index.html
-node scripts/work-dashboard.mjs --serve     # rebuilds on change; the open page refreshes itself
+node scripts/generate-dashboard/index.mjs            # once, into site/work/index.html
+node scripts/generate-dashboard/index.mjs --serve     # rebuilds on change; the open page refreshes itself
 ```
 
 `--serve` listens on **localhost:9675** - loopback only, and a port nothing else wants, so it
@@ -454,7 +454,7 @@ is what makes every option below cheap.
    for a private repository, because what sits on the URL gives nothing away.
 
    ```
-   WORK_DASHBOARD_PASSWORD='…' node scripts/work-dashboard.mjs --lock
+   WORK_DASHBOARD_PASSWORD='…' node scripts/generate-dashboard/index.mjs --lock
    ```
 
    AES-256-GCM, the key stretched from your passphrase with 600,000 rounds of PBKDF2. Be
