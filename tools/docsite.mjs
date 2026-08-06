@@ -814,6 +814,10 @@ a.nav-tree-link:hover { background: var(--active-bg); color: var(--fg); }
 .bd-id { font-size: 11px; font-weight: 700; font-family: var(--font-mono); }
 .bd-title { fill: var(--fg); font-size: 12px; font-family: var(--font-sans); }
 .bd-tag, .bd-who { fill: var(--muted); font-size: 10.5px; font-family: var(--font-sans); }
+/* What a card is waiting on. Blocked is a status the schema declares and the lanes have no
+   column for, so the reference rides on the card that carries it - a blocked item with
+   nowhere to say what blocks it loses the one fact the board existed to show. */
+.bd-blocked { fill: #e0685f; font-size: 10.5px; font-weight: 600; font-family: var(--font-mono); }
 .bd-size { fill: var(--muted); font-size: 11px; font-weight: 600; font-family: var(--font-mono); text-anchor: end; }
 /* Rendered output, framed as what it is: an answer that came back from a session. The bar
    carries the sentence that produced it, so the ask and the answer are one object rather
