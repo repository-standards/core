@@ -138,6 +138,72 @@ check("advisory without --block: reports and exits 0", {
   expect: ["missing from disk"],
 });
 
+// The row form nobody documents: an author who has just written ADR-001-title.md writes
+// `[ADR-001](ADR-001-title.md)` in the index, because at the time the shipped README template
+// carried only the `| - | (none yet) | - |` placeholder and no worked row. Before the fix that row was
+// invisible to the guard, which then reported the record as "missing from the index" - about a
+// record whose row was on screen. Found on a real repository (caddyserver/caddy).
+check("a link label carrying the stream prefix is still an index row", {
+  files: {
+    "docs/decision-records/adr/README.md": adrReadme("| [ADR-001](ADR-001-first.md) | something | Accepted |"),
+    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+  },
+  code: 0,
+});
+
+// The other direction: accepting the prefixed label must not make a genuinely missing row pass.
+check("a prefixed label for one record does not cover a second, unindexed one", {
+  files: {
+    "docs/decision-records/adr/README.md": adrReadme("| [ADR-001](ADR-001-first.md) | something | Accepted |"),
+    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+    "docs/decision-records/adr/ADR-002-second.md": "# ADR-002\n",
+  },
+  code: 1,
+  expect: ["missing from the index", "ADR-002-second.md"],
+});
+
+// A bare row may carry the prefix too, and in a flat layout the prefix is the only thing that
+// distinguishes BDR-004's row from ADR-004's - so it is read, not discarded.
+check("a bare prefixed row indexes its own stream, not the other one", {
+  files: {
+    "docs/decision-records/README.md": adrReadme("| ADR-004 | something | Accepted |", "| BDR-004 | something | Accepted |"),
+    "docs/decision-records/ADR-004-tech.md": "# ADR-004\n",
+    "docs/decision-records/BDR-004-business.md": "# BDR-004\n",
+  },
+  code: 0,
+});
+
+// An example row inside an HTML comment is what every other shipped template uses to show
+// its own format, and this guard read it as a real index entry - so the index README was the
+// one file that could not document itself. Both directions: a commented example is ignored,
+// and an uncommented row for a file that is not there still fails.
+check("an example row inside an HTML comment is not an index entry", {
+  files: {
+    "docs/decision-records/adr/README.md":
+      `${adrReadme(row("001", "ADR-001-first.md"))}\n<!-- Filled, a row reads like this:\n\n| [002](ADR-002-example.md) | an example | Accepted |\n-->\n`,
+    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+  },
+  code: 0,
+});
+
+check("a fenced example row is not an index entry either", {
+  files: {
+    "docs/decision-records/adr/README.md":
+      `${adrReadme(row("001", "ADR-001-first.md"))}\n\`\`\`\n| [002](ADR-002-example.md) | an example | Accepted |\n\`\`\`\n`,
+    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+  },
+  code: 0,
+});
+
+check("an uncommented row for a missing file still fails after comment stripping", {
+  files: {
+    "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md"), row("002", "ADR-002-example.md")),
+    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+  },
+  code: 1,
+  expect: ["missing from disk", "ADR-002-example.md"],
+});
+
 // The shipped skeleton itself, verbatim - a fresh degit must not trip its own guard.
 {
   const dir = fixture({});
@@ -170,4 +236,4 @@ if (failures) {
   console.error(`decision-records-check-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("decision-records-check-test: OK - 11 cases, the index and the directory are cross-checked both ways");
+console.log("decision-records-check-test: OK - 17 cases, the index and the directory are cross-checked both ways");
