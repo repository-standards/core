@@ -78,7 +78,7 @@ adapted where the code diverged), and write that line's changelog entry under it
 branching decision where a contributor will find it - a line nobody knows is supported
 is a line that silently regresses. What is never a legal base is another open pull
 request's branch, whatever it is named
-([ADR-033](https://github.com/repository-standards/core/blob/main/docs/decision-records/ADR-033-maintained-release-lines-are-integration-targets.md)).
+([ADR-035](https://github.com/repository-standards/core/blob/main/docs/decision-records/ADR-035-maintained-release-lines-are-integration-targets.md)).
 
 Turn on the platform's linear-history protection so the rule is enforced, not
 remembered, and set the merge button to the method this repo recorded. Why this

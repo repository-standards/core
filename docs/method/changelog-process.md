@@ -88,7 +88,7 @@ claiming four releases at once. That is the mechanism above working per line rat
 than an exception to it: FFmpeg's `Changelog` has kept a section per version for
 exactly this reason for years. The ordering rule comes with it - the fix lands on the
 mainline first, then each supported line as its own PR
-([ADR-033](../decision-records/ADR-033-maintained-release-lines-are-integration-targets.md)) -
+([ADR-035](../decision-records/ADR-035-maintained-release-lines-are-integration-targets.md)) -
 so no supported line is ever ahead of the mainline in fixes it has and the mainline
 does not.
 

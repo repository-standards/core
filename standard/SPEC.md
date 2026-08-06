@@ -176,7 +176,7 @@ binds every repo, a solo one included.
   never rewrites; every requirement in this rule binds it exactly as it binds
   the mainline. A fix that applies to more than one line MUST land on the
   mainline first and reach each supported line as its own PR against that line,
-  unless the mainline no longer carries the affected code (ADR-033).
+  unless the mainline no longer carries the affected code (ADR-035).
   A PR MUST land by **rebase-merge** (the paved
   road) or squash-merge - decided once and recorded with the branching decision
   (R7); the platform's linear-history protection SHOULD enforce it. Rebase-merge

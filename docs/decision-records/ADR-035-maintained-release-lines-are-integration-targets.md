@@ -1,4 +1,4 @@
-# ADR-033: A maintained release line is an integration target, not a stacked branch
+# ADR-035: A maintained release line is an integration target, not a stacked branch
 
 | | |
 | --- | --- |

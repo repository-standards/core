@@ -44,7 +44,7 @@ same one mechanism applied per line, not a second one.
 
 The decision, and the five shapes rejected on the way to it - including a new numbered
 rule, which would have left R23 still forbidding what the new rule permitted - is
-[ADR-033](docs/decision-records/ADR-033-maintained-release-lines-are-integration-targets.md).
+[ADR-035](docs/decision-records/ADR-035-maintained-release-lines-are-integration-targets.md).
 The conventions block, the decision checklist's branching fork and the changelog process
 carry the same rule for the reader who never opens the spec. Making the support set
 machine-checkable was considered and rejected for now: a branch existing is not a branch
