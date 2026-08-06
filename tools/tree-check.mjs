@@ -183,6 +183,34 @@ if (existsSync(nvmrcPath) && !/^\d+\.\d+\.\d+\s*$/.test(readFileSync(nvmrcPath, 
 }
 if (!pinFails) ok(`workflow pins are exact - SHAs, fixed runners, full node versions (${ymlFiles.length} workflows)`);
 
+// --- every tracked text file stays diffable ----------------------------------------------
+// A stray NUL in a source file makes git classify the whole file as binary. Everything
+// still runs, so no test fails - but `git diff` reports "Binary files differ" and `grep`
+// finds nothing in it, which means the file silently stops being reviewable. It happened
+// here (tools/validation.mjs, 2026-08-06): a NUL landed where a space was meant, every
+// other gate passed, and it was found only by trying to read the diff during review.
+// A file nobody can diff is a file nobody can review, so this is a hard check.
+{
+  let nulFails = 0;
+  // Files that are meant to be binary are not our business - skip before reading, so a
+  // large asset is never pulled into memory just to be ignored.
+  const isBinaryByExt = (f) => /\.(png|jpg|jpeg|gif|webp|ico|pdf|woff2?|ttf|zip|gz)$/i.test(f);
+  const tracked = execSync("git ls-files", { encoding: "utf8" }).split("\n").filter(Boolean);
+  let scanned = 0;
+  for (const f of tracked) {
+    if (isBinaryByExt(f) || !existsSync(f)) continue;
+    scanned++;
+    const buf = readFileSync(f);
+    const nul = buf.indexOf(0);
+    if (nul !== -1) {
+      const line = buf.subarray(0, nul).toString("utf8").split("\n").length;
+      fail(`${f}:${line} contains a NUL byte - git will treat this file as binary, so it cannot be diffed or grepped`);
+      nulFails++;
+    }
+  }
+  if (!nulFails) ok(`no NUL bytes in tracked text (${scanned} files) - every file stays diffable`);
+}
+
 // --- verdict ---------------------------------------------------------------------------
 if (failures) {
   console.log(`\ntree-check: FAIL - ${failures} problem(s)`);
