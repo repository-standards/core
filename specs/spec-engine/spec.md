@@ -97,6 +97,17 @@ fails naming each one that carries neither the substring `github/spec-kit v0.13.
 - **A question MUST be a question.** Each asked item leads with a full interrogative that can be answered as written, never a topic label, section heading or requirement id (an id MAY trail the question), and carries one plain-language line on what changes depending on the answer. A label is a subject; answering it means guessing what was meant, which is how a clarify round returns nothing usable.
 - **Provenance duty.** The upstream MIT licence MUST ship at `scripts/spec/LICENSE` (Copyright GitHub, Inc.); every extracted file MUST carry a provenance line naming github/spec-kit v0.13.2, with standard-authored hunks and files marked `PATCHED(repository-standards)`. A hunk taken from upstream **after** the extraction point MUST be marked `CHERRY-PICKED` with the upstream commit it came from - the baseline stays v0.13.2, and every deviation from it is readable in place.
 - **Staying current with upstream is a manual, per-release scan** and MUST stay one: the prompts are ours (ADR-015), so at each release the maintainer reads github/spec-kit's prompt changes since v0.13.2 and cherry-picks what earns it. No mechanical sync exists by design - it would overwrite the patches that make the engine speak this standard's spec shape.
+- **Re-entry is a first-class case, not a first run repeated** (ADR-032). When `/spec-plan` runs against a
+  capability whose `plan.md` already carried content or whose `tasks.md` exists, it MUST read what is there before
+  generating over it, take the spec's own delta (`git diff <base> -- <FEATURE_SPEC>` - the delta `spec-update`
+  establishes and nothing previously consumed), and report what the change **adds**, what it **invalidates** and what
+  it leaves **untouched**. An invalidated task that is already built is drift, and MUST be filed or fixed rather than
+  dropped from the new list, which would leave shipped behaviour nothing describes.
+- **A regenerated task list MUST preserve progress and MUST NOT be keyed on from outside.** `/spec-tasks` over an
+  existing `tasks.md` carries forward the status of every task that survives the change, and names what is new and
+  what is gone. Task ids are **positional and deliberately unstable across rounds** - `T003` in one round is not
+  `T003` in the next - so nothing outside `tasks.md` may key on a task id and assume it means the same work later.
+  Tracker identity is an extension's concern, solved by content fingerprints, never by position.
 - **Never run upstream specify.** Never install or run upstream spec-kit's own `specify` here - it mints `specs/NNN-feature/` directories that violate the capability layout. The shipped, patched skills are the sanctioned form of the engine.
 - **The engine speaks the standard's spec shape.** Every skill that reads or writes a spec MUST address the sections `specs/capability-spec.template.md` declares, and MUST NOT introduce upstream's User Scenarios, Functional Requirements, Success Criteria or Key Entities. No skill MAY gate a spec on "no implementation details": the buildable tier is the default and its contracts quote real field names, enums, endpoints and error codes verbatim. What stays out of a spec is the *implementation* - which library, which framework - never the contract.
 - **Tests follow the repo's recorded testing strategy**, never a per-feature request. `/spec-tasks` MUST emit the tiers that decision names, and MUST treat money, security, external-contract and data-integrity paths as non-negotiable; where no such record exists, the missing decision is itself emitted as a task. Every acceptance criterion MUST have a task that verifies it.
@@ -118,11 +129,18 @@ fails naming each one that carries neither the substring `github/spec-kit v0.13.
 
 - `/spec-plan` and `/spec-tasks` MUST NOT proceed on a spec that fails the clarify gate - enforced both by the skills' own MANDATORY PRECHECK and mechanically inside `setup-plan.sh` / `setup-tasks.sh`.
 - `specs/feature.json` MUST always point at the capability directory the loop is operating on.
+- Re-planning a capability MUST NOT silently overwrite in-flight scaffolding: either the delta is reported, or the
+  run stops because the delta is empty.
 - No shipped engine file MUST lack provenance (LICENSE reference or PATCHED marker).
 
 ## Acceptance criteria
 
 - **Gate pass.** GIVEN a spec with `## Clarifications` and no open markers WHEN the gate runs THEN it prints the PASS line and exits 0.
+- **Re-entry reports rather than overwrites.** GIVEN a capability with an existing `tasks.md` and a spec that has
+  changed WHEN `/spec-plan` runs THEN it reports what the change adds, invalidates and leaves untouched, instead of
+  regenerating the plan as though this were a first run.
+- **Empty delta stops.** GIVEN existing scaffolding and a spec whose diff against the base is empty WHEN `/spec-plan`
+  runs THEN it says so and does not regenerate identical artifacts.
 - **Gate fail: markers.** GIVEN a spec with 2 open CLARIFICATION markers WHEN the gate runs THEN both are listed with line numbers on stderr and exit is 1.
 - **Gate fail: typed family.** GIVEN a spec with one open DECISION marker naming a BDR and its owner, and no CLARIFICATION markers, WHEN the gate runs THEN the marker is listed and exit is 1 - a missing decision blocks ready-to-develop exactly like an open question (ADR-024).
 - **Gate fail: a translated marker.** GIVEN a spec written in another language whose open markers were translated with it WHEN the gate runs THEN each is listed as marker-shaped but unrecognised, the failure names the marker forms as syntax that stays ASCII, and exit is 1 - it does not PASS.
