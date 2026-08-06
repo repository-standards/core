@@ -24,9 +24,9 @@ sibling capability living inside an already-claimed folder gets a coupling of it
 of both specs being demanded on every edit.
 
 Where the map declares `$unclaimed` - the paths that belong to no capability by decision -
-the diff mode also reports **changed files that neither claims nor declares**. That is the
-state a map is in when the code went somewhere its globs do not look: every glob matches
-nothing, and a guard watching an empty set reports OK forever.
+the diff mode also reports **a changed file that no capability claims and `$unclaimed` does
+not declare**. That is the state a map is in when the code went somewhere its globs do not
+look: every glob matches nothing, and a guard watching an empty set reports OK forever.
 
 ## What it cannot catch
 

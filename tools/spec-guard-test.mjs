@@ -293,6 +293,37 @@ const CASES = [
     act: () => write("services/widget-sync.js", "export const sync = 1;\n"),
     undo: () => rmSync(join(repo, "services"), { recursive: true, force: true }),
   },
+  {
+    // Deleting unclaimed code is the change that FIXES the map, so blocking it would leave
+    // the author with a failing guard and nothing to do about it.
+    name: "deleting a file nobody claimed is not reported as unclaimed change",
+    fires: false,
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["shared/paymob.ts"] }));
+      rmSync(join(repo, "tooling/build.mjs"));
+    },
+  },
+  {
+    name: "editing that same file still is",
+    fires: true,
+    says: "tooling/build.mjs",
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["shared/paymob.ts"] }));
+      write("tooling/build.mjs", "export const build = 2;\n");
+    },
+  },
+  {
+    name: "an exclusion in $unclaimed is refused - it has no claim to narrow",
+    fires: true,
+    says: "$unclaimed",
+    act: () => write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["tooling/**", "!tooling/build.mjs"] })),
+  },
+  {
+    name: "a non-string in $unclaimed is refused",
+    fires: true,
+    says: "must be a glob string",
+    act: () => write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["tooling/**", { glob: "shared/**" }] })),
+  },
 ];
 
 let failures = 0;
