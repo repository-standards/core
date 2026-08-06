@@ -123,7 +123,42 @@ is written and a correction after.
 
 ---
 
-## ## The standard is reachable from its domain, not from its name
+## ## The whole flow, uncoached, end to end
+
+The counterweight to everything below, and the first time it has been observed rather than
+claimed. `A1` run against `simonw/llm` by an agent given the repository and the line, nothing
+else. It found the site, read the two layers, and adopted the repository.
+
+`self-verify` reported **drift 0 - 97% adopted (58/60), 2 recorded exceptions**.
+
+What makes it evidence rather than a demo is the judgement inside it:
+
+- **It refused the stack for the right reason.** Python has no registered stack, so it named
+  the honest miss the framework designs for rather than forcing a Next.js and Fastify starter
+  onto a Python CLI.
+- **It did not vandalise the published docs.** That repository's `docs/` is the Sphinx source
+  behind a live site. Rather than writing governance markdown into it, the agent added targeted
+  `exclude_patterns` and **verified with a real Sphinx build** that the site still builds with
+  no new warnings.
+- **It refused to rename a file to satisfy the manifest.** `docs/changelog.md` against the
+  required `docs/CHANGELOG.md` is a genuine case mismatch; renaming would move a published URL,
+  so it recorded two manifest exceptions with reasons instead.
+- **It declined to arm the CI it had just installed**, documenting that the audit gate would
+  turn red immediately with seven of eight capabilities unspecced. Third independent
+  reproduction of that finding, from an agent that had not seen the other two.
+
+**And writing one spec found two real bugs in the target.** Against the credentials capability:
+`keys.json` is not re-chmod'd on every write, and a corrupt `keys.json` is silently discarded
+on `keys set`. Filed as backlog rows rather than fixed quietly. That is the product's central
+claim - a spec forces someone to read code nobody was reading - working on somebody else's
+repository, for the fourth time in this effort and the first without any coaching at all.
+
+**It also reproduces the honest gap.** `drift 0` sits beside `spec-guard --audit` reporting
+seven unspecced capabilities, and the agent wrote that down as a known gap in the standard
+rather than routing around it by mis-mapping. Drift 0 does not mean specced, and this run says
+so in its own words without having been told.
+
+## The standard is reachable from its domain, not from its name
 
 The single most useful thing the first full wave produced, and it pairs with the substitution
 failure above to make one finding rather than two.
