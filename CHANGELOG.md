@@ -34,9 +34,13 @@ disagreement. It needs no list of where the versions are, so it covers the sixth
 somebody adds next. `<svg>` bodies are masked out first and are the only exemption: path data
 is a coordinate stream that reads as a version to any regex, and the header's GitHub mark
 alone contributes thirteen, seventeen across the page's marks. Masked rather than deleted,
-so the reported line numbers still belong to the real file. Comments and stylesheets stay in
-scope - the frozen previous landing, the one surface that legitimately names an old version,
-is `site/previous.html`, which this gate has never read.
+so the reported line numbers still belong to the real file.
+
+Comments and stylesheets stay in scope. A version in a comment is still a version somebody has
+to keep true, and a CSS number has one decimal point, so a stylesheet cannot produce a false hit
+in the first place. The one surface that does legitimately carry an old version is the frozen
+previous landing, `site/previous.html` (v0.7.2 throughout), which this gate has never read and
+which the web-surface spec already places outside it.
 
 No new `facts.json` patterns: the other four places are prose, footer layout and hero copy, and
 `facts-check` fails loudly when a declared pattern stops matching, so declaring them would block
@@ -56,11 +60,13 @@ the page would have blanked out everything up to the following mark - a stale ve
 and the guard would have reported the page clean. The opening tag now has to be a real container.
 A guard that goes quiet is worse than the defect it looks for.
 
-The validation record moves with it: `DOC-12`'s observation from the 2026-08-04 round was
-re-run against the live tree and flipped to `pass` rather than left reading "open (logged, not
-fixed)" on a published punch list, and `runs/2026-08-06-doc12.json` carries the full evidence
-against `repo:repository-standards/core` - a new target row, deliberately depth L1 and labelled
-self-assessment, because this project cannot adopt itself and no count here may suggest it did.
+The validation record moves with it. `runs/2026-08-06-i-doc12.json` carries the evidence against
+`repo:repository-standards/core` - the `self` target, never counted among the third-party
+repositories tested - and a second observation retires this case's 2026-08-04 row, which was
+filed against the greenfield fixture because that whole round was. The fixture has no landing
+page, so the case cannot pass or fail against it; the verdict there is `not-applicable` and the
+finding lives where it actually happened. The 2026-08-04 file is left exactly as written, which
+is what the superseding machinery landed earlier today is for.
 
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 

@@ -64,7 +64,7 @@ jobs:
         run: node tools/file-map.mjs --check
       - name: validation suite (render matches the data; no unwaived open failure)
         run: node tools/validation.mjs --check
-      - name: site (generate + check landing and docs) + the landing gate's own cases
+      - name: site (generate + check landing and docs) + the landing gate's test
         run: |
           node tools/docsite.mjs
           node tools/site-check.mjs

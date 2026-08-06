@@ -64,10 +64,10 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 |---|---|
 | Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **194** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-doc12, 2026-08-06-e-shape08, 2026-08-06-f-upd) |
+| Observations recorded | **195** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-i-doc12) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 100 pass, 90 fail, 1 not-applicable, 3 partial |
-| Failures found | **168** - **85 fixed and re-verified** (across 22 merged pull requests), **83 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 100 pass, 90 fail, 2 not-applicable, 3 partial |
+| Failures found | **167** - **85 fixed and re-verified** (across 22 merged pull requests), **82 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 8 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -184,7 +184,6 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `GREEN-05` | self-verify's own runtime output points an adopter at a file that exists in their repo, not a docs/self-verify.md path that is adopted by reference and never copied | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `GREEN-06` | the four skills that touch `checklists/requirements.md` (create it, read and block on it, classify it, clean it up) agree on what the file is | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `GREEN-07` | the greenfield intake has a legitimate answer for 'we have not chosen the technology yet', and the fallback document it names has a real template and manifest entry | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `DOC-12` | the published landing page states the current version consistently, so a reader does not see 1.0.12 in four places and 1.0.13 in a fifth on the same page | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DOC-13` | every surface that states the standard's current version is covered by facts-check, so a page saying '1.0.0' when the real version has moved on eleven times since is caught rather than shipped | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DOC-14` | the workflow that says compliance is gated 'from the first push' actually triggers on a push, not only on a pull_request | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DOC-15` | the denial message a Bash-tooling guard prints when `jq` is missing points at a path that actually exists in the surface the reader is on | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
