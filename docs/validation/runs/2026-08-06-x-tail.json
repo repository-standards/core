@@ -1,0 +1,159 @@
+{
+  "$about": "2026-08-06, the tail of the punch list: the 21 cases left in the stack, update, greenfield, discovery, loop, security, intake and adoption areas after the other rounds of the day took their own. Every one was re-run against the current tree BEFORE anything was changed, on the rule that a finding is open only while it still reproduces - three of them did not, and are recorded closed with the commit that closed them rather than fixed again. Four are defects in repository-standards/node and cannot be closed by a pull request against this repository; they are measured here and left open with the reason. The rest are fixed in this change, each with a test that was checked to fail against the pre-fix code. Observations keep the target label of the round they supersede (2026-08-03 for STACK-01, 2026-08-04 for the rest) so they replace those findings on the punch list. No `fix` URL is claimed: the pull request carrying these fixes is not merged, and the evidence says which tree each run was executed against. UPD-04 was in this batch and is deliberately not re-recorded - the sixth round of the same day re-ran it and its observation stands.",
+  "observations": [
+    {
+      "case": "DISC-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced first by reading what the prior fix actually covers. `standard/.claude/skills/discovery-digest/SKILL.md` lines 22-29 handle \"more than one source landed in the same handover\" - each source its own entry, each diffed against the ones this handover already added. A single mail thread in which two people contradict each other is ONE source, so it is one entry, and step 3's instruction (\"Diff against every earlier entry\") has nothing to diff it against: on a new dossier there are no earlier entries, and the disagreement is inside this one. That is exactly the shape the 2026-08-04 round recorded as persisting after the same-handover fix. Fixed here: the skill now diffs an entry's own attributed points against each other before step 3 looks outward, raises the contradiction row naming the two people as the sources (`kickoff-meeting - Dana` vs `kickoff-meeting - Marcus`), and says not to resolve it by picking whoever sounds more certain - which is the specific thing the reproducing agent did by hand and called its own invention.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "DISC-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced: `grep -n -i template standard/.claude/skills/discovery-digest/SKILL.md` returned nothing, while `standard/docs/discovery/_template.md` ships with a first line that says to copy it to `docs/discovery/<topic>/README.md`. Step 1 instead listed four things to write by hand. Fixed here: step 1 copies the shipped template and names what the rest of the loop reads back out of it - the `Last reconciled:` stamp, the `| Date | Source | State |` entry table, the contradictions table - with a written fallback for an older adoption that does not carry the template. One half of the case's parenthetical is unchanged and worth stating: `grep -rn 'Last reconciled' standard/scripts/` still returns nothing, so no SCRIPT parses the stamp. The readers are the spec skills, which grep it; making it machine-parsed would be a new guard, and the case's `then` asks for the copy instruction, which is what landed.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "DISC-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced by count: `grep -c -i -E 'discovery|dossier|Last reconciled'` returned 0 for spec-update, spec-impact, spec-reconcile, spec-tasks and spec-implement, against 6 for spec-specify and 4 for spec-clarify - so the documented route for material about an already-shipped capability (discovery-digest -> spec-impact -> spec-update) touched the dossier at neither end, and the stamp read `never` for the life of every capability that was specced once and changed afterwards. Fixed here: spec-impact step 2 reads the dossier and its Output names the unreconciled entries; spec-update gains a step 7 that marks the consumed entries, strikes the contradiction rows the new spec text settles, and advances the stamp - with the explicit instruction to leave it alone when nothing was folded in, since advancing it past unread material is how a question stops being asked without being answered. `docs/method/discovery.md` rule 4 now names which skill moves the stamp on which path instead of saying \"the spec-* skills\".",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "GREEN-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced against the script's own regex, per file, raw vs after `stripCode`: SECURITY.md `{{SECURITY_CONTACT}}` -> raw hit, stripped miss; docs/personas.md `` `<Name + role>` `` -> raw hit, stripped miss; docs/PRINCIPLES.md -> miss on both, no marker of either form. Five of the eight listed files fired, three could not. Fixed here by splitting the scan: `{{UPPER_SNAKE}}` and the `> **Template …` banner are read from the raw file, the angle and ellipsis-row forms still from the code-stripped body, and personas.md's marker moves to the mustache form. The mustache form is deliberately narrow - `${{ github.token }}` and `{{ user.name }}` are real content in a filled repo and neither matches. Measured after: a fresh tree + pin, unfilled, now emits 8 WARN fill lines and `self-verify: OK - drift 0 - 100% adopted (78/78)` once `specs/capability-map.json` is written. tools/self-verify-fill-test.mjs gains 7 cases; the four that assert the new behaviour were run against the reverted script and all four failed, and the 12 pre-existing fill cases still pass in both directions. Moving personas.md's marker exposed a second defect, found in this change's own self-review and fixed with it: `spec-structure` recognised only the angle form as \"not a persona\", separately in the roster parser and in the `**Serves:**` reader, so the untouched template would have supplied a live roster entry named after the placeholder AND satisfied a spec's Serves field with the same string - a spec passing the R10 gate serving nobody. Both readers now share one `isPlaceholder`, asserted by a new clarify-gate-test case that fails against the marker change alone.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "GREEN-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "fix": "https://github.com/repository-standards/core/pull/16",
+      "evidence": "Does not reproduce - closed before this round and not fixed again here. `standard/scripts/self-verify.mjs:59` now holds `const METHOD_DOC = \"https://github.com/repository-standards/core/blob/main/docs/method/self-verify.md\"`, used in the decisions note, so the line every run prints in every adopted repo names a URL rather than a path that repo does not have. `skills/align-to-standards/SKILL.md` links `../../docs/method/self-verify.md`, which resolves inside this repository, where that skill lives and runs. `git log -S METHOD_DOC` names the closing commit (`e42d39a`, 2026-08-04, \"self-verify checks what a file contains, not only that it exists\"), which `gh pr view 16` lists among its commits; CHANGELOG.md's \"Every run in every adopted repo printed a path that does not exist there\" entry is the same fix, and records that three sibling instances were swept with it.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "GREEN-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced end to end: a tree with `specs/booking/spec.md` and `specs/booking/checklists/requirements.md` - the file spec-specify's step 7a creates while minting the spec - ran through the shipped `spec-structure.mjs` and printed `WARN - engine scaffolding is committed (ephemeral - remove when the work closes): specs/booking/checklists/requirements.md`, one command after the standard's own skill told the author to write it. The four skills disagreed: spec-specify creates it, spec-clarify reads and re-validates it, spec-structure classed it as removable, spec-reconcile - the only step that deletes anything - never removed it. R13 and ADR-010 name `plan.md` and `tasks.md` and nothing else, so the guard's list was the outlier. Fixed here by splitting one regex into two: `NOT_A_CAP_SPEC` (what the persona gate has no opinion about) keeps `checklists/`, `REMOVABLE_SCAFFOLDING` (check 4's warning) does not; spec-reconcile step 9 now names the checklist among what survives the close. tools/clarify-gate-test.mjs gains 3 cases; the checklist one fails against the reverted script and the two asserting plan.md/tasks.md still warn pass in both directions.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "GREEN-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "partial",
+      "evidence": "Both halves reproduced. The intake's technology question offered a registered stack or a no-match fallback and no third answer, while greenfield.md's own \"Not this\" says the process is not stack-first - so an undecided user had to name a technology to get past a question the phase does not actually need answered yet. And `grep -rn stack-decisions` finds the fallback deliverable named in SKILL.md:365, greenfield.md:102, ADR-021, CONTRIBUTING.md and the stack-request issue template, with no template file, no manifest `files` entry and no taxonomy row anywhere - so it is skippable at drift 0, which is what the prior round measured. The first half is fixed here: \"we have not decided yet\" is now a legal intake answer with what follows it written down (Layer 1 completes, the stack step defers, the decision closes as an ADR or a stack pick later), and greenfield step 4 says to skip itself and file a backlog item - with the explicit instruction NOT to generate the fallback document for a technology nobody has named, since it researches a named one. The second half is not built. The two ways to close it cost differently: a `docs/stack-decisions.md` template plus a `required: false` manifest entry and a taxonomy row makes the artifact real and puts it in the adoption denominator for every repo that never needs it; leaving it a skill-generated file and deleting the promise from ADR-021 and the issue template costs the demand signal that ADR-021 exists for. Left for the maintainer rather than guessed.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "INTAKE-09",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "fix": "https://github.com/repository-standards/core/pull/11",
+      "evidence": "Does not reproduce - closed before this round and not fixed again here. `skills/align-to-standards/SKILL.md`'s lifecycle-signal step carries the signal this case says is missing, naming the exact target: \"A repo can be extremely active and still be the wrong place to work - moved to another forge entirely. The archived flag alone misses this: a repo that migrated (e.g. 'Moved to Codeberg' in the description, a README saying 'this repository is not mirrored', a permanently frozen history despite an `archived: false` flag) is not declining, it left... Read the description and README for a move/mirror statement, not only the archived flag and commit recency.\" `git log -S 'Moved to Codeberg'` names commit a263f70 (2026-08-04), which is PR #11 - the same PR the 2026-08-04 round already credited with closing this defect under its earlier id INTAKE-05, while still recording the case itself as fail. That verdict is what this observation corrects.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "LOOP-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "partial",
+      "evidence": "The glob half reproduced exactly and is fixed; the compliance half reproduced and is not. `globToRegExp('**/swap/**')` compiles to `^(?:[^/]+\\/)*swap\\/.+$`, which was verified to match `node_modules/pkg/swap/a.js` and `node_modules/.pnpm/x/node_modules/y/swap/b.ts`. The audit's filesystem walk already skipped `node_modules`, but its `git ls-files` path and the diff the guard blocks on did not, so with a dependency tree tracked or merely unignored a dependency bump broke the blocking gate for a capability nobody touched, and the audit read vendored files as code nobody claims. Both are fixed here with one shared `isVendored`, applied wherever a path list enters the guard, and the guard reports how many paths it dropped. tools/spec-guard-test.mjs gains 3 cases: the two asserting the new behaviour fail against the reverted guard, and the third - a source file named `node_modules_shim.ts` must still couple - guards the fix against over-broad matching. What is NOT closed is the case's first clause. `self-verify` now names a tracked dependency tree and whether the repo has a `.gitignore` at all - asserted in three directions in tools/self-verify-drift-test.mjs: a tracked tree warns, a workspace's nested `packages/api/node_modules/` warns while a sibling directory named `my_node_modules` does not, and a git repo with neither says nothing. But it is a warning, so the repo still prints `drift 0 - 100% adopted - compliant with the standard`. Making it cost drift needs one of two decisions, neither an author's to take: a `.gitignore` manifest entry puts it in the adoption denominator of every adopter, including those that never had the problem; a non-manifest drift class has no `exceptions` hatch, so a repo that vendors deliberately could not record the deviation R17 promises it can.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "LOOP-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced on both sides: `Object.keys(standard.manifest.json)` returned `$about, standard, version, layer, adaptRules, files, references, sections, guards, decisions, specs, exceptions` with no `profile`, while `standard/.github/workflows/spec-guard.yml:34` computes `PROFILE=$(node -p \"… .profile || 'scale'\")` and self-verify's own profile resolution reads the same field the same way - so every repo carrying the shipped manifest verbatim took the scale-tier blocking gate by default, including the solo repos the core profile exists for, and R11's `*(scale)*` marker was text nothing acted on. Fixed here: the manifest ships `\"profile\": \"scale\"` (the default made visible rather than a new behaviour), the `$about` says align rewrites it in the repo's copy from the intake answer, and self-verify emits a warning when a carried copy has no profile at all instead of defaulting in silence - the fallback stays `scale`, which is the stricter tier and the right direction to fail. Both are asserted in tools/self-verify-drift-test.mjs, both new cases fail against the reverted manifest and script, and each also asserts that it is not drift. Shipping the field exposed a consequence caught in this change's own self-review: `update-to-version` step 5 replaces the manifest wholesale with the target version's copy, so without carrying `profile` forward the way it already carries `exceptions`, a core repo would have been moved onto the scale gate by its next update. Step 5 now says so.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "SEC-03",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced by reading both shipped templates: `standard/docs/decision-records/adr/_template.md` carried Status, Date, Author and Tags, and the BDR template Status, Date and Author - so a decision taken by a chartered committee under a technical charter had nowhere to record the vote that conferred the authority, and \"who could overturn this?\" was answered with the name of whoever typed it. Fixed here: both templates carry a **Decided by** row defaulting to \"the author\" - the true answer for most records, and one word - with a comment saying it records what made the decision binding rather than who wrote it, and to record a body's vote the way that body defines one (name, date, tally, quorum met). The adr-write and bdr-write skills gain the matching prompt, so the field is asked for rather than left to be noticed. Both templates are `fill-from-repo` entries carrying no `sha256`, so this moves no manifest hash.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "SEC-04",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Reproduced, and the shape of it is narrower and worse than the note said. R9 (`standard/SPEC.md:73`) makes buildable the default and the behavioral tier \"an escape hatch that MUST be justified\"; `standard/specs/README.md:70` defines behavioral as \"prose invariants and edge cases without the full contract detail\"; onboard.md:192 says \"do not drop to `behavioral` to save effort\", which is qualified and so does not literally forbid this shape. The real gap is that neither tier fits it. A capability whose correctness oracle is a braille user, an absent sensor or a corpus of reference images can have exact contracts - the missing thing is not detail, it is a machine that can run the check - so buildable's own bar (\"an agent could rebuild and verify this from the spec alone\") is unreachable while behavioral describes a different deficiency entirely. Nothing in the shipped tree names an oracle outside the machine.",
+      "waiver": "Open by decision, not by budget: the two ways to close it are a standard-design call, not an author's. Widening the behavioral tier to cover an external oracle is cheap and matches this case's own wording, but it makes one word mean two unrelated things - \"we did not write the contracts\" and \"no machine can check them\" - so a reader can no longer tell from the tier how much detail to expect. Keeping such a capability `buildable` and adding a declared verification-oracle field (who or what exercises it, how the result is recorded) keeps the contracts and names the real gap, but it is a new required field in the spec template, and prose alone would not make it stick - spec-structure or the clarify gate would have to read it. Left failing rather than guessed at.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "STACK-01",
+      "target": "fixture:test-greenfield-node",
+      "verdict": "fail",
+      "evidence": "Reproduced against a current checkout of repository-standards/node at origin/main (5afd40d): `grep -rn 'DECISIONS' starter/` finds seven `../DECISIONS.md` / `../../DECISIONS.md` references across six files - `starter/README.md` (lines 4 and 80), `starter/docker-compose.test.yml:2`, `starter/vitest.config.ts:3`, `starter/apps/web/next.config.ts:2`, `starter/apps/api/src/config.ts:1` and `starter/apps/api/src/server.ts:1`. The composition rule in greenfield.md degits `starter/` into the target repo's ROOT, so every one of them resolves to a path outside the composed repository, which is the same six-file set the 2026-08-03 round recorded. Nothing about this has changed, and the 2026-08-03 evidence's separate point stands too: the CHANGELOG entry claiming this fix cites PRs whose diffs do not touch any starter file.",
+      "waiver": "Not fixable from this repository. Every affected file lives in repository-standards/node, which is a separate repo with its own release clock (ADR-022: stacks are linked, never version-locked), so no pull request against repository-standards/core can close it. The fix is a node-repo change - either point the references at the stack repo's DECISIONS by URL, the way the core tree adopts its own method docs by reference, or have the composition rule rewrite them - and the choice between those two belongs with the stack's owner. Recorded here as measured-and-still-open so it is not mistaken for unexamined.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "STACK-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "partial",
+      "evidence": "Reproduced, and one clause of the case turned out already false: `self-verify` did produce a note for a carried stack manifest, but it named only the technology - `stack manifest present: node - technology layer counted in the same drift number` - so the version was carried and never spoken, and a repo several stack releases behind read exactly like one on the newest. Fixed here: the note prints `node @ 0.3.1`, and a stack manifest declaring no version at all now warns, since nothing then records which state of the stack the repo aligned to. Both are asserted in tools/self-verify-drift-test.mjs and both fail against the reverted script. What is not built is staleness DETECTION, and it cannot be built where the case asks for it: nothing in an adopted repo knows what the stack repo currently ships, because ADR-022 links the layers without a version lock, so \"stale\" has no local referent. Closing that needs either a stack-side pin the update-watch workflow can compare (it hardcodes the core repo slug today) or a registry lookup at verify time, which would make a dependency-free local guard reach the network. Neither is taken here.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "STACK-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Does not reproduce - closed before this round and not fixed again here; the 2026-08-04 record left it open explicitly because the exit-gate walk had not been re-verified, and this is that verification. `grep -c capability-map skills/align-to-standards/greenfield.md` now returns 2, both in step 1, which writes `specs/capability-map.json` with the exact JSON body to use and says why it is written on day one with nothing to map. The walk was executed: the shipped tree plus the pin an adopter writes reports `FAIL file specs/capability-map.json missing` and `drift 1 - 99% adopted (77/78)`, and adding that one file exactly as step 1 dictates gives `self-verify: OK - drift 0 - 100% adopted (78/78)` - so the doc's own drift-0 exit gate is reachable by following it literally. The round's secondary point is closed too: `standard/specs/README.md` exists, so greenfield step 6's reference resolves. The closing commit is 1ed3d3c (2026-08-04, \"author the capability map on the greenfield path, and keep it current\"), which `gh pr list --search` places in PR #13 - the PR the prior round had already suspected.",
+      "fix": "https://github.com/repository-standards/core/pull/13",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "STACK-08",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Reproduced by reading the scripts rather than by running them, which is enough to settle it: in repository-standards/node at origin/main (5afd40d), `starter/package.json` defines `test:all` as `pnpm test:unit && pnpm test:integration && pnpm test:e2e`, and `bootstrap:test-stack` (`docker compose -f docker-compose.test.yml up -d --wait`) as a separate script that `test:all` never invokes. CI gets it right and the README does not: `starter/.github/workflows/e2e.yml` runs `pnpm bootstrap:test-stack` at line 42 before `pnpm test:integration` at line 45, and `playwright install --with-deps chromium` at line 51 before `pnpm test:e2e` at line 54. `node/README.md:87` claims \"Sign-up to dashboard works with no setup, and `pnpm test:all` proves it\" - which on a pristine clone means integration tests against a database nobody started and e2e against a browser nobody installed.",
+      "waiver": "Not fixable from this repository: `package.json`, the README claim and the workflows all live in repository-standards/node. The fix is a node-repo change and the form of it is a real choice - make `test:all` bootstrap and tear down the stack itself (one command truly proves the starter, at the cost of a Docker daemon requirement in a script people run casually), or leave the chain alone and correct the README to state the two setup steps CI performs. Measured and left open rather than assumed.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "UPD-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced by reading step 3 against the manifest it operates on: the step listed \"has not diverged\" and \"was removed in the target\" and nothing else, while `merge` and `fill-from-repo` entries are adapted at adoption by definition - so almost every one of them is diverged the moment a release touches it, and the branch that covers them did not exist. The silence is total: those entries carry no `sha256`, so a skipped file leaves `self-verify` reporting drift 0 with the release's additions unapplied. Fixed here: step 3 gains the changed-upstream-and-diverged-locally branch as the ordinary case rather than the exception, describing the three-way merge (the current version's file as base, the target's as theirs, the repo's as ours), what to do when the two genuinely collide, and the instruction to report every file merged that way; \"Not this\" now lists the silent skip beside the silent clobber it already warned about.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "UPD-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced: `grep -rn 'degit repository-standards'` across the tree returns hits in llms.txt, README.md:203, docs/quick-start.md, ADR-014, the site and align-to-standards/SKILL.md - and none in `update-to-version/SKILL.md`, `standard/AGENTS.md` or `standard/.github/workflows/standards-update-watch.yml`, whose issue body sends the adopter straight into the skill's steps. So the only documented way to obtain the thing step 2 reads lived in a file the adopter does not carry and is told to gitignore. Fixed here, with one deliberate difference from the case's own procedure: the command written into the skill is `git clone https://github.com/repository-standards/core.git`, not the `npx degit` the procedure greps for. Step 2 reads the standards repo at TWO refs and says so in its own text - a degit is a snapshot with no history, so the form the procedure looks for would not actually work. The step also says to clone outside the repo or into a gitignored path, and that a repo following a fork clones that instead, which is the same pointer the watch workflow's `STANDARD_REPO` names.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "UPD-07",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "fail",
+      "evidence": "Reproduced against a current checkout of repository-standards/node at origin/main (5afd40d), and every number the case names still holds: `git tag | wc -l` is 0; the repo root carries no CHANGELOG.md and no RELEASE-NOTES.md (ADAPTING.md, DECISIONS.md, SHIPPED.md and QUICKSTART.md are topical, not version-keyed); and of the 12 entries in `stack.manifest.json`'s `files`, 0 carry a `since` field, against a manifest `version` of 0.3.1. So update-to-version's stop condition - \"if you cannot determine the delta between the versions, stop and say so\" - fires permanently for every Layer-2 update, which is a worse failure than a partial delta because it stops rather than degrades.",
+      "waiver": "Not fixable from this repository. Every candidate delta source - a tag, a CHANGELOG, or `since` fields on the manifest entries - is a change to repository-standards/node, and which one to build is the stack owner's call (tags bind the stack to a release ritual it does not have; `since` fields index entries but not content; a changelog covers content but is prose). There is a smaller core-side improvement available and deliberately not taken here: step 2 could say that the stack layer's ENTRY delta is determinable without any of the three, by diffing the carried `stack.manifest.json` copy against the stack repo's current one, leaving only the content of `merge` entries unenumerated. That would soften the stop condition to a partial-delta report, which is what the case is really about - but it changes what an update promises for Layer 2, and it is written down here rather than slipped in.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "ADOPT-05",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "partial",
+      "evidence": "Reproduced: the technology-detection step (`skills/align-to-standards/SKILL.md`, the intake's Technology bullet - stack.md has no detection step of its own, it consumes the answer) listed `package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml` and `*.csproj`, and already handled two neighbouring shapes - the library/monorepo archetype, and more than one legitimate stack in one repo - but named no manifest that composes other REPOSITORIES. The detection half is fixed here: a workspace manifest (`west.yml`, `repo`'s `manifest.xml`, `.gitmodules`) is now evidence in its own right, because a repo composing 79 siblings may build almost nothing by itself, and what such a manifest pins is named as a supply-chain decision belonging in an ADR. The half this records as partial is the case's own remedy: the step states the opposite boundary - THIS repository is the adoption unit and the composed siblings are not adopted transitively - rather than creating the per-workspace adoption unit the case asks for. That is a decision, not an omission, and it is the conservative one: the siblings have their own owners, licences and lifecycles, and a unit spanning them would make align responsible for repositories the user does not control. A real per-workspace unit would need its own manifest scope, a self-verify that can report across trees, and an answer for a sibling that is already adopted at a different version - none of which exists, and none of which an author should invent.",
+      "at": "2026-08-06"
+    },
+    {
+      "case": "ADOPT-06",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced by reading the step for the rule that is missing: the technology bullet named which manifests to look for and said nothing at all about what a match is worth, so a raw count of Node-shaped files was the only signal available and hundreds of test fixtures weighed the same as one build-system-defining manifest. Fixed here: the step now weighs what a manifest is doing rather than counting matches - the root manifest the repo's own CI invokes to build and test itself outweighs any number of the same filename elsewhere, and fixture trees, example trees, vendored dependency directories and compatibility surfaces a repo implements FOR another ecosystem are discounted by name. The deno shape the case is built on is written in as the worked example (715 `package.json`, 62 `tsconfig.json` and a vendored `node_modules/` against one `Cargo.toml` that actually builds it - counted it reads Node, weighed it reads Rust), and the step asks for the deciding file to be named so a wrong call is arguable rather than mysterious.",
+      "at": "2026-08-06"
+    }
+  ]
+}

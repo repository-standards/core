@@ -16,6 +16,136 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A committed dependency tree read as this repo's code (2026-08-06)
+
+`**/swap/**` compiles to `(?:[^/]+/)*swap/.+`, which matches `node_modules/pkg/swap/a.js`.
+The coupling guard's audit had always known that - its filesystem walk skipped
+`node_modules` - but every path list it took from git did not, and neither did the diff it
+actually blocks on. So in a repo with a dependency tree tracked, or merely unignored, a
+dependency bump broke the blocking gate for a capability nobody touched, and the audit
+reported thousands of vendored files as code nobody claims. One answer now, applied wherever
+a path list enters the guard, and the guard says how many paths it dropped rather than
+skipping them silently. Only whole path segments count, so a source file named
+`node_modules_shim.ts` is still this repo's code.
+
+The repo-side condition was invisible too: `self-verify` now names a tracked dependency tree
+and, where there is one, says whether the repo has a `.gitignore` at all. It is a warning,
+not drift - drift counts unmet manifest entries and none declares this - so a repo in that
+state still certifies compliant. Making it cost something is a separate decision: a
+`.gitignore` manifest entry would put it in the drift arithmetic for every adopter, and a new
+non-manifest drift class would have no `exceptions` hatch to record a deliberate deviation
+with. Neither is taken here.
+
+### The profile every gate reads was on no manifest (2026-08-06)
+
+The shipped `spec-guard.yml` computes `PROFILE=… .profile || 'scale'` and `self-verify` reads
+the same field, and the manifest they read it from carried no such key - so every repo took
+the scale-tier gate by default, including the solo ones the core profile exists for, and
+R11's own *(scale)* marker was text nothing acted on. The key ships now, set to `scale`, and
+align rewrites it in the repo's copy from the intake answer. A copy that lost the field still
+falls back to `scale` - the stricter tier is the right fallback - but `self-verify` says so
+instead of defaulting in silence. `update-to-version` step 5 now carries the field forward
+beside the `exceptions`, since replacing the manifest wholesale with the target version's copy
+would otherwise move a core repo onto the scale gate on its next update.
+
+### Three files the fill check listed and could never fire on (2026-08-06)
+
+The placeholder scan strips code spans before matching, on the convention that angle brackets
+in prose mean "replace me" and angle brackets in code are notation. The shipped templates did
+not keep their side of it: `SECURITY.md` wrote `{{SECURITY_CONTACT}}` inside backticks and
+`docs/personas.md` wrote its roster marker the same way, so a fake security contact and an
+empty persona roster both reached drift 0 with nothing said, and `docs/PRINCIPLES.md` carried
+no marker of either form at all - while its own banner says shipping it unread adopts
+commitments nobody in the team agreed to.
+
+Two forms are now read from the raw file instead of the stripped one: `{{UPPER_SNAKE}}`, which
+is a fill marker wherever it is written, and the `> **Template …` banner a shipped template
+puts at the top of itself. The mustache form is restricted to that shape on purpose -
+`${{ github.token }}` is real content in a filled repo's README. The angle form still reads
+the stripped body, because `specs/<capability>` is notation a correctly filled repo keeps.
+
+Moving `personas.md`'s roster marker to the mustache form found a second defect on the way in:
+`spec-structure` recognised only the angle form as "not a persona", in two separate places, so
+an untouched template would have both supplied a live roster entry named after the placeholder
+and satisfied a spec's `**Serves:**` field with the same string - a spec passing the R10 gate
+serving nobody. Both readers now share one test, and it covers both shapes.
+
+### The guard told authors to delete a file the standard had just told them to write (2026-08-06)
+
+`spec-structure` classified everything under `specs/<cap>/checklists/` as engine scaffolding
+to remove when the work closes. `spec-specify` creates `checklists/requirements.md` while
+minting the spec and `spec-clarify` re-validates it on every later round, so following the
+documented workflow in order produced a WARN one command after the file was created - and
+`spec-reconcile`, the only step that deletes anything, never removed it. R13 and ADR-010 make
+`plan.md` and `tasks.md` ephemeral and name nothing else; the warning now matches that, and
+`spec-reconcile` says the checklist is one of the things that survives the close.
+
+### The change path never closed the discovery loop (2026-08-06)
+
+A dossier's `Last reconciled:` stamp was moved only by the skills that mint or clarify a
+spec. The documented route for material about an already-shipped capability is
+`discovery-digest` -> `spec-impact` -> `spec-update`, and neither of the last two mentioned
+discovery at all - so a spec could be changed in the same session specifically to resolve a
+dossier entry and the dossier would still read "Last reconciled: never", with the entry still
+`new` and its contradiction still listed. Everything under the stamp was then re-raised as
+fresh material on every later round, forever. `spec-impact` now reads the dossier and names
+the unreconciled entries in its output; `spec-update` marks what it folded in and moves the
+stamp, and says plainly that nothing folded in means the stamp stays where it is.
+
+Two other things the digest could not see. A single handover that contradicts *itself* - one
+mail thread where two people say opposite things, which is usually why it was handed over -
+was filed as one entry and diffed only against earlier entries, of which a new dossier has
+none; the entry's own attributed points are now diffed against each other first, and the
+contradiction row names the two people. And the dossier README was built by hand rather than
+copied from the shipped `docs/discovery/_template.md`, so the exact shapes the rest of the
+loop greps for were a matter of the writing agent's memory.
+
+### The update skill named no way to get the thing it reads (2026-08-06)
+
+`update-to-version` step 2 needs a checkout of the standards repo at two refs, and the only
+documented fetch command lived in the standard's own README - a file the adopter does not
+carry and is told to gitignore. The `git clone` is now in the skill, with the note that it is
+a clone and never a `degit`, because the step needs history rather than a snapshot.
+
+Step 3 also had no branch for the ordinary case: a file that changed upstream *and* diverged
+locally. `merge` and `fill-from-repo` entries are adapted at adoption by definition, so almost
+every one of them is diverged the moment a release touches it - and with only "not diverged"
+and "removed" written down, the diverged ones were skipped. They carry no `sha256`, so nothing
+downstream ever notices: the release's additions go unapplied while `self-verify` reports
+drift 0. The skill now describes the three-way merge against the entry's reference copy, and
+lists the silent skip beside the silent clobber in "Not this".
+
+### A decision record could not say what made it binding (2026-08-06)
+
+The ADR and BDR templates carried an **Author** row and nothing else, so a decision taken by
+a chartered committee - a TSC vote under a legally binding technical charter - had nowhere to
+record the vote that conferred the authority, and a reader asking "who could overturn this?"
+got the name of whoever held the keyboard. Both templates now carry **Decided by**, defaulting
+to "the author" because that is the true answer for most records, with the writing skills
+asking for the body, date, tally and quorum where a body decided.
+
+### Stack detection counted files instead of weighing them (2026-08-06)
+
+The technology question listed the manifests to look for and said nothing about what a match
+is worth. Deno's repository carries 715 `package.json` files, 62 `tsconfig.json` and a
+vendored `node_modules/` - all npm-compatibility fixtures - against one `Cargo.toml` that
+actually builds it: counted, that reads "probably Node". The step now weighs what a manifest
+is *doing*, discounts fixture and vendored trees and compatibility surfaces, and asks for the
+file that decided it to be named so a wrong call is arguable.
+
+Beside it, the layer above: a workspace manifest that composes other *repositories* into one
+tree - Zephyr's `west.yml` pulls in 79 - is now detected as evidence in its own right, with
+the boundary stated rather than left to assumption: this repository is the adoption unit, the
+composed siblings are not adopted transitively, and what the composing manifest pins is a
+supply-chain decision that belongs in an ADR.
+
+Also here: the greenfield intake accepts "we have not decided the technology yet", which the
+phase's own "not stack-first" rule always implied and the question never allowed. Layer 1
+completes without it and the stack step is simply deferred; the no-match fallback document is
+explicitly not generated for a technology nobody has named. And `self-verify` prints the stack
+layer's own version rather than only its technology, so a repo several stack releases behind
+no longer reads exactly like one on the newest.
+
 ### The tools index listed ten of eighteen tools (2026-08-06)
 
 `tools/README.md`'s Contents table is meant to say what everything in the folder does. It
