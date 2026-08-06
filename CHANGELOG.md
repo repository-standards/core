@@ -16,6 +16,47 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The spec loop reads the decision log before it writes (2026-08-06)
+
+Two `severe` validation findings, one defect seen from two sides.
+
+Neither `/spec-specify` nor `/spec-clarify` read `docs/decision-records/` at all
+(`SPEC-18`). What both were told to read before asking the user anything was
+`docs/discovery/` - which ADR-024 makes explicitly non-normative. The loop's entry point
+therefore consulted, by documented procedure, the source that binds nothing and never the
+one that binds everything, so a spec contradicting an Accepted record passed the clarify
+gate and every guard. The only backstop, `AGENTS.md`'s red-flag list, named ADRs and not
+BDRs - the product-side stream a feature request actually collides with.
+
+And retirement awareness had reached only one of the loop's two entry points (`SPEC-17`).
+`/spec-impact`, `/spec-update` and `discovery-digest` each stop on a `retired` capability;
+`/spec-specify` - the door the product points a PO at - contained the word zero times while
+instructing that an existing capability directory means "update the existing spec in place".
+
+Now: both skills read the decision-record index before drafting or asking, bounded by the
+index and opening in full only the records whose subject overlaps. An Accepted record
+outranks the dossier, the draft and the user's answer in the moment; a contradiction stops
+the run with exactly two routes - change the request, or supersede the record. `/spec-clarify`
+can now refuse an answer for that reason.
+
+`/spec-specify` also stopped matching capabilities by the slug it had just invented: it lists
+`specs/` and matches on subject first, because `shift-reminders` and `shift-notifications` are
+one capability under two names and the near-miss is how a repo acquires two rival specs for
+one subject - and how a retirement gets routed around without anyone deciding to. It then
+reads the matched spec's `Status` and stops before drafting on `retired`, naming the record
+and handing the call back: a fresh capability is frequently the right answer and the retiring
+record often says so, but that is the user's call, not the agent's.
+
+R6 now states the binding half it was already being cited for; the capability spec template
+says what retirement means for later work; and `AGENTS.md`'s red flag and the constitution
+template's hard stop name both record streams rather than only ADRs. Recorded as ADR-033.
+
+Both fixes were tested by dry run against the `test-greenfield-core` fixture rather than by
+inspection, and the run broke the first draft twice - once on the index-bounded read (the
+fixture's BDR index omits the very record that governs the request, so the skills now say the
+bound rests on `decision-records-check` and to list the directory where that guard is not
+running), once on a retirement clause that forbade what the retiring record itself called for.
+
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 
 `update-to-version` step 2 called the diff of the two versions' `standard.manifest.json`
