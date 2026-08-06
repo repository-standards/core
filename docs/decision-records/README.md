@@ -43,6 +43,8 @@ one settled.
 | [031](ADR-031-one-domain-surface-first-urls.md) | One domain, surface first in the URL | `/` and `/docs/` are the core's, `/node/` and `/docs/node/` a stack's; each repo knows only `site_root` and `base_path`, every internal link is root-absolute, and the ecosystem switcher derives "here" from its own base rather than being told | Accepted |
 | [032](ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md) | Re-entering a spec mid-development is core; tracker sync is an extension | going back to a spec while work is in flight is one of the loop's core assumptions and was unsupported: nothing downstream read the spec delta, and positional task ids collided with already-exported tracker items so new work was silently skipped. Re-entry detection lands in core for every adopter; identity and reconciliation move to an optional per-capability sidecar a repo without a tracker never sees | Accepted |
 
+| [036](ADR-036-capabilities-whose-code-is-not-here.md) | A capability may be bound to a repository this one does not own | a capability whose implementation lives in a satellite repo, plugin or vendor SDK declares `{ external, reason }` in the capability map instead of a glob that matches nothing; nothing is enforced for it, the spec still lives here, and every audit run names it | Accepted |
+
 Add one row per record; the template ships in the tree
 (`standard/docs/decision-records/adr/_template.md`). Numbers are gapless and never
 reused.

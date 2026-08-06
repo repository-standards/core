@@ -14,6 +14,16 @@
 // change and does. Without that distinction a data edit demands a spec update
 // with nothing to write, and the cheapest way out is a cosmetic one.
 //
+// A third form, { "external": "<repo>", "reason": "..." }, is for a capability whose
+// implementation lives in a repository this one does not own - a plugin, a satellite
+// `rules_*` repo, a vendor SDK. No glob here can reach that code, so the map had no way
+// to say it: the choice was a glob matching nothing (which --audit reports, correctly, as
+// a guard watching an empty set) or leaving the capability out of the map (which --audit
+// reports as an orphan spec). Both are wrong about a real, common shape, and being wrong
+// in a way the author has to route around is how the map stops being maintained. An
+// external entry couples nothing mechanically - the code is not here to watch - so it
+// carries a reason and is counted out loud in --audit's line.
+//
 // Two keys in that file are metadata rather than capabilities: `$about` (a note)
 // and `$unclaimed` (globs for the paths that belong to no capability by decision -
 // config, tooling, docs). --audit reads the second to tell code nobody claims from
@@ -52,7 +62,8 @@ const declared = JSON.parse(readFileSync(MAP, "utf8"));
 
 const bad = (msg) => {
   console.error(`\nspec-guard: ${MAP} - ${msg}`);
-  console.error('  an entry is "<glob>" or { "glob": "<glob>", "couples": "content" | "shape" }\n');
+  console.error('  an entry is "<glob>", { "glob": "<glob>", "couples": "content" | "shape" },');
+  console.error('  or { "external": "<repo this one does not own>", "reason": "<why no glob here reaches it>" }\n');
   process.exit(1);
 };
 
@@ -71,6 +82,16 @@ const unclaimedGlobs = declared.$unclaimed ?? null;
 if (unclaimedGlobs !== null && !Array.isArray(unclaimedGlobs)) bad('"$unclaimed" must hold a list of globs');
 const parseEntry = (e, cap) => {
   if (typeof e === "string") return { glob: e, couples: "content" };
+  // An external binding says where the code is, and why it cannot be watched from here.
+  // The reason is required: without it this is just a way to take a capability out of the
+  // guard's reach, and nobody reading the map later can tell the two apart.
+  if (e !== null && typeof e === "object" && "external" in e) {
+    if (typeof e.external !== "string" || !e.external.trim())
+      bad(`"external" under "${cap}" must name the repository holding the code: ${JSON.stringify(e)}`);
+    if (typeof e.reason !== "string" || !e.reason.trim())
+      bad(`the external entry "${e.external}" under "${cap}" carries no reason - an unwatchable capability has to say why, or it is an escape hatch rather than a record`);
+    return { external: e.external.trim(), reason: e.reason.trim() };
+  }
   const couples = e?.couples ?? "content";
   if (typeof e?.glob !== "string" || (couples !== "content" && couples !== "shape"))
     bad(`unusable entry under "${cap}": ${JSON.stringify(e)}`);
@@ -115,9 +136,12 @@ if (audit) {
   // node_modules and .git are dropped by name as well, so a repo that has not ignored them
   // gets the same answer as the filesystem fallback rather than several thousand orphans.
   const listed = (what) => {
+    // git's own stderr is discarded here: outside a repository every one of these prints
+    // "fatal: not a git repository", and the filesystem fallback below is the answer, not
+    // an error. A shipped guard does not narrate a case it handles.
     const collect = (cmd) => {
       try {
-        return sh(cmd).split("\n").filter(Boolean);
+        return execSync(cmd, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim().split("\n").filter(Boolean);
       } catch {
         return []; // no git, or nothing tracked yet
       }
@@ -153,10 +177,13 @@ if (audit) {
     ),
   );
 
+  // An external binding names code in another repository, so it matches nothing here by
+  // definition - checking it for emptiness would report the one shape it exists to describe.
   const emptyGlobs = [];
   for (const [cap, entries] of Object.entries(coupling)) {
     if (retired.has(cap)) continue;
     for (const e of entries) {
+      if (e.external) continue;
       const re = globToRegExp(e.glob);
       if (!treeFiles.some((f) => re.test(f))) emptyGlobs.push({ cap, glob: e.glob });
     }
@@ -166,6 +193,7 @@ if (audit) {
   // lives there too. Everything else is claimed by a capability or declared.
   const claims = Object.values(coupling)
     .flat()
+    .filter((e) => !e.external)
     .map((e) => globToRegExp(e.glob));
   const unclaimedRes = (unclaimedGlobs ?? []).map(globToRegExp);
   const unclaimed =
@@ -174,14 +202,21 @@ if (audit) {
       : treeFiles.filter((f) => !f.startsWith("specs/") && !claims.some((re) => re.test(f)) && !unclaimedRes.some((re) => re.test(f)));
 
   const problems = orphans.length + specless.length + emptyGlobs.length + unclaimed.length;
+  const external = Object.entries(coupling).flatMap(([cap, entries]) => entries.filter((e) => e.external).map((e) => ({ cap, ...e })));
+  // Said out loud whatever the verdict: code this repo cannot watch is exactly the thing a
+  // reader should be told about, and a hatch nobody sees is a hatch that widens.
+  for (const { cap, external: where, reason } of external) {
+    console.log(`spec-guard: note - "${cap}" is bound to ${where}, a repository this one does not own - no coupling is enforced here (${reason})`);
+  }
   if (problems === 0) {
-    const globCount = Object.values(coupling).flat().length;
+    const globCount = Object.values(coupling).flat().filter((e) => !e.external).length;
     const claimCheck =
       unclaimedGlobs === null
         ? 'the unclaimed-code check is OFF - declare "$unclaimed" (the paths that belong to no capability) to turn it on'
         : `${treeFiles.length} files, each claimed by a capability or declared unclaimed`;
     const retiredNote = retired.size ? `; ${retired.size} retired capability/ies not checked for empty globs` : "";
-    console.log(`spec-guard --audit: OK (${capDirs.size} capability specs, all mapped; ${globCount} globs, all matching; ${claimCheck}${retiredNote})`);
+    const externalNote = external.length ? `; ${external.length} external binding(s) not enforced here` : "";
+    console.log(`spec-guard --audit: OK (${capDirs.size} capability specs, all mapped; ${globCount} globs, all matching; ${claimCheck}${retiredNote}${externalNote})`);
     process.exit(0);
   }
 
@@ -278,7 +313,9 @@ const shapeChanged = (f) => {
 const violations = [];
 const dataOnly = new Set();
 for (const [cap, entries] of Object.entries(coupling)) {
-  const res = entries.map((e) => ({ ...e, re: globToRegExp(e.glob) }));
+  // External bindings name code in another repository: there is nothing in this diff for
+  // them to match, and turning one into a regex would match every path or none.
+  const res = entries.filter((e) => !e.external).map((e) => ({ ...e, re: globToRegExp(e.glob) }));
   const specTouched = files.some((f) => f.startsWith(`specs/${cap}/`));
   const codeTouched = files.some((f) => {
     if (f.startsWith("specs/")) return false;

@@ -130,10 +130,68 @@ const CASES = [
     says: "unknown metadata key",
     act: () => write("specs/capability-map.json", json({ ...MAP, $unclaimd: ["tooling/**"] })),
   },
+  // A capability whose code is in a repository this one does not own. Without vocabulary
+  // for it the author's only moves were a glob matching nothing (reported, correctly, as a
+  // guard watching an empty set) or no map entry at all (reported as an orphan spec) - so
+  // the map was wrong about a real shape, and being wrong in a way you have to route around
+  // is how a map stops being maintained. The hatch is bounded by its reason and is printed
+  // on every run, so it cannot widen quietly.
+  {
+    name: "a capability bound to a repository this one does not own passes, and is named out loud",
+    fires: false,
+    args: ["--audit"],
+    says: "bound to bazelbuild/rules_go, a repository this one does not own",
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["*", "tooling/**", "shared/paymob.ts"], "rules-go": [{ external: "bazelbuild/rules_go", reason: "the Go rule implementations live in a satellite repo" }] }));
+      write("specs/rules-go/spec.md", "# Go rules\n");
+    },
+    undo: () => rmSync(join(repo, "specs/rules-go"), { recursive: true, force: true }),
+  },
+  {
+    name: "an external binding is not reported as a glob watching nothing",
+    fires: false,
+    args: ["--audit"],
+    says: "1 external binding(s) not enforced here",
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["*", "tooling/**", "shared/paymob.ts"], "rules-go": [{ external: "bazelbuild/rules_go", reason: "the Go rule implementations live in a satellite repo" }] }));
+      write("specs/rules-go/spec.md", "# Go rules\n");
+    },
+    undo: () => rmSync(join(repo, "specs/rules-go"), { recursive: true, force: true }),
+  },
+  {
+    name: "an external binding with no reason is refused, not treated as a quiet exemption",
+    fires: true,
+    says: "carries no reason",
+    act: () => write("specs/capability-map.json", json({ ...MAP, "rules-go": [{ external: "bazelbuild/rules_go" }] })),
+  },
+  {
+    name: "an external binding still needs a spec here - the capability is this repo's, only its code is not",
+    fires: true,
+    args: ["--audit"],
+    says: "no spec",
+    act: () => write("specs/capability-map.json", json({ ...MAP, "rules-go": [{ external: "bazelbuild/rules_go", reason: "the Go rule implementations live in a satellite repo" }] })),
+  },
+  {
+    name: "a capability that also owns code here keeps coupling on that code",
+    fires: true,
+    says: "code changed in these capabilities without a spec update",
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, widgets: ["src/**", { external: "acme/widget-sdk", reason: "the renderer is a vendor SDK" }] }));
+      write("src/index.js", "export const widget = 4;\n");
+    },
+  },
+  {
+    name: "code the external binding names is not claimed by it - a repo path is not a glob",
+    fires: true,
+    args: ["--audit"],
+    says: "tooling/build.mjs",
+    act: () => write("specs/capability-map.json", json({ ...MAP, $unclaimed: [], widgets: ["src/**", { external: "acme/widget-sdk", reason: "the renderer is a vendor SDK" }] })),
+  },
+
   // --audit before `git add`. The audit used to read the tracked list and fall back to the
   // filesystem only when git listed nothing at all, so any repo with one tracked spec made
   // new directories invisible: OK locally, failing in CI on the same tree, the moment the
-  // author staged it. The three cases after these two are the other direction - what must
+  // author staged it. The last three cases in this group are the other direction - what must
   // not start failing now that untracked files are in scope.
   {
     name: "--audit sees a capability directory that is not staged yet",

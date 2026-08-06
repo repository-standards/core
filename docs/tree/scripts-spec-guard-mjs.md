@@ -27,6 +27,10 @@ A qualified entry narrows it: `{"glob": "config/rules.json", "couples": "shape"}
 change to the file's **key structure** rather than to its values, so editing a number is not
 a behaviour change while adding a field is.
 
+`{"external": "<repo>", "reason": "..."}` says the implementation lives in a repository this
+one does not own. Nothing is enforced for it - the code is not here to watch - and the audit
+names it on every run, so a capability cannot leave the guard's reach quietly.
+
 ## What it cannot catch
 
 **A spec edited to say nothing.** Touching the file satisfies the guard. That is the known
