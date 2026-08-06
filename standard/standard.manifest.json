@@ -256,7 +256,7 @@
       "adapt": "copy",
       "required": true,
       "profile": "core",
-      "since": "1.0.14",
+      "since": "unreleased",
       "rule": "R16",
       "sha256": {
         "glob.mjs": "eb9b6075b0cab654039d18b8b643b0b58e7e9a182413434051e82a7ee9eeb3ca"

@@ -27,6 +27,12 @@ let failures = 0;
 const fail = (msg) => { failures++; console.log(`  FAIL  ${msg}`); };
 const ok = (msg) => console.log(`  ok    ${msg}`);
 
+// `--self` runs the built-in cases for the `since` rule and exits, the way provenance-check
+// does. It has to be decided here, before anything below reads the tree: every check in this
+// file runs at module top level, so there is nothing to import without running all of it.
+// The cases themselves live beside the check they exercise (section 4c).
+if (process.argv.includes("--self")) selfCheckSince();
+
 // --- 1. leaks ----------------------------------------------------------------------
 const walk = (dir, acc = []) => {
   for (const e of readdirSync(dir)) {
@@ -131,6 +137,78 @@ const spec = readFileSync(`${TREE}/SPEC.md`, "utf8");
 let vFails = 0;
 if (!spec.includes(`Version ${version}`)) { fail(`${TREE}/SPEC.md header does not say "Version ${version}" (VERSION file is ${version})`); vFails++; }
 if (!vFails) ok(`SPEC.md agrees with VERSION (${version})`);
+
+// --- 4c. no manifest entry claims a version that has never shipped -----------------------
+// `since` names the release that first shipped an entry, and an entry riding the next cut
+// says the literal `unreleased` - which is what every other not-yet-released entry in this
+// manifest says. One said `1.0.14`: a guess at what the next release would be called,
+// written while VERSION said 1.0.13 and no such release existed.
+//
+// It is not a typo class. A `since` ahead of VERSION cannot match any real commit, so the
+// field stops being reconstructible from history - which is the whole reason it exists - and
+// the manifest quietly asserts a release the maintainer has not cut (R18 reserves that to
+// them). It shipped inside an unrelated fix and nothing said a word, which is what this
+// check is for.
+function versionParts(v) {
+  return /^\d+\.\d+\.\d+$/.test(v) ? v.split(".").map(Number) : null;
+}
+
+// Returns null when the value is fine, or the reason it is not.
+function sinceProblem(since, version) {
+  if (since === undefined || since === null || since === "") return "declares no `since` - the release it first shipped in is what makes the entry traceable";
+  if (since === "unreleased") return null;
+  const parts = versionParts(since);
+  if (!parts) return `declares since "${since}", which is neither an x.y.z release nor the literal "unreleased"`;
+  const now = versionParts(version);
+  if (!now) return null; // VERSION itself is malformed - reported by the check above, not here
+  // Numeric, part by part: as strings "1.0.9" sorts after "1.0.13" and the ahead-of-VERSION
+  // case this exists for would read as fine.
+  for (let i = 0; i < 3; i++) {
+    if (parts[i] > now[i]) return `declares since "${since}", a version that has never shipped (VERSION is ${version}) - an entry riding the next release says "unreleased"; naming the number guesses what the maintainer will cut`;
+    if (parts[i] < now[i]) return null;
+  }
+  return null;
+}
+
+function selfCheckSince() {
+  const CASES = [
+    ["the literal unreleased", "unreleased", "1.0.13", true],
+    ["the current version", "1.0.13", "1.0.13", true],
+    ["an older release", "0.7.2", "1.0.13", true],
+    ["an older patch that sorts later as a string", "1.0.9", "1.0.13", true],
+    ["the next patch, which nobody has cut", "1.0.14", "1.0.13", false],
+    ["a future minor", "1.1.0", "1.0.13", false],
+    ["a future major", "2.0.0", "1.0.13", false],
+    ["a two-part version", "1.0", "1.0.13", false],
+    ["a release candidate of an uncut version", "1.0.14-rc.1", "1.0.13", false],
+    ["a word that is not the literal", "next", "1.0.13", false],
+    ["nothing at all", undefined, "1.0.13", false],
+  ];
+  let bad = 0;
+  for (const [name, since, version, expectOk] of CASES) {
+    const problem = sinceProblem(since, version);
+    const pass = (problem === null) === expectOk;
+    if (!pass) bad++;
+    console.log(`  ${pass ? "ok  " : "FAIL"}  ${name} (${expectOk ? "must pass" : "must fail"}${problem ? `; said: ${problem}` : ""})`);
+  }
+  console.log(bad ? `\ntree-check --self: FAIL - ${bad} of ${CASES.length} cases` : `\ntree-check --self: OK - ${CASES.length} cases`);
+  process.exit(bad ? 1 : 0);
+}
+
+{
+  let sinceFails = 0;
+  let sinceChecked = 0;
+  for (const [key, value] of Object.entries(manifest)) {
+    if (!Array.isArray(value)) continue;
+    for (const entry of value) {
+      if (!entry || typeof entry !== "object") continue;
+      sinceChecked++;
+      const problem = sinceProblem(entry.since, version);
+      if (problem) { fail(`${TREE}/standard.manifest.json ${key}[] entry "${entry.path ?? entry.id ?? entry.heading ?? "?"}" ${problem}`); sinceFails++; }
+    }
+  }
+  if (!sinceFails) ok(`every manifest entry's \`since\` names a shipped release or "unreleased" (${sinceChecked} entries)`);
+}
 
 // --- 4b. derived facts are never hand-written on surfaces --------------------------------
 // A fact derivable from a source (the rule count, a rule range) must not be restated

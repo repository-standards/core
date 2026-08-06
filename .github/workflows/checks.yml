@@ -17,8 +17,10 @@ jobs:
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: "24.18.0"
-      - name: tree-check (one tree, no leaks, skeleton verifies)
-        run: node tools/tree-check.mjs
+      - name: tree-check (one tree, no leaks, skeleton verifies) + its cases
+        run: |
+          node tools/tree-check.mjs
+          node tools/tree-check.mjs --self
       - name: link-check (every relative md link resolves)
         run: node tools/link-check.mjs
       - name: prose-check (no line renders as something it is not) + its cases
