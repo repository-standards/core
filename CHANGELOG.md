@@ -16,6 +16,38 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The persona gate never opened the roster (2026-08-06)
+
+`spec-structure`'s persona check was a three-way OR, and its first arm decided almost every
+case: a `**Serves:**` field holding any non-placeholder string passed, without reading
+`docs/personas.md` at all. The two arms behind it were the roster-aware ones, so they could
+never fire. A spec serving `Whoever I like` passed. A spec with no persona and the phrase
+"for whom" somewhere in its prose passed, on an arm whose own comment claimed it stood for
+prose that reasons about who the capability is for. And stripping the backticks off every
+roster row - which empties the parsed roster - changed no verdict, because nothing was being
+compared against it. All three reproduced exit 0 before this change, and R10 plus
+`personas-write`'s "a persona missing from the roster does not exist as far as R10 is
+concerned" both say otherwise.
+
+The roster is now the constraint. A filled `**Serves:**` must name somebody on it - the whole
+value is read, not just its first backticked name, so a spec serving two or three personas is
+checked on all of them - and the failure quotes back both the claim and the roster. A spec
+with no `Serves` field may still name its persona in prose, which is the hatch the error
+message always advertised; "for whom" on its own no longer counts.
+
+An unreadable roster is now reported rather than obeyed. Every arm of this check is a
+membership test, so a roster that parses to nothing passes everything by having nothing left
+to contradict - which is how the defect stayed invisible. When `docs/personas.md` exists,
+capability specs exist, and no roster row parses, the run says the roster could not be read
+and names the row shape it expects. The hatches that were already there stay: a repo with no
+`personas.md` and no specs yet, templates and READMEs, and an unfilled `<persona ...>`
+placeholder still reported as serving nobody rather than as serving a persona by that name.
+
+`tools/clarify-gate-test.mjs` gains 12 cases covering both directions, including the three
+reproductions above and each preserved hatch. `docs/tree/docs-personas-md.md` had been
+showing roster rows without backticks, a table this guard reads as empty; it now shows the
+form the guard parses.
+
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 
 `update-to-version` step 2 called the diff of the two versions' `standard.manifest.json`
