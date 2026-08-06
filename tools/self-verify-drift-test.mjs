@@ -291,7 +291,9 @@ check(
   "the stack layer's own version is printed, not only its technology",
   (dir) => writeFileSync(join(dir, "stack.manifest.json"), stackManifest({ version: "0.1.0" })),
   (r, expect) => {
-    expect(says(r, "stack manifest present: node @ 0.1.0"), "the stack's version was carried but never said out loud");
+    // The note is prefixed by the manifest's filename rather than a fixed phrase, because a
+    // repo whose stacks coexist carries more than one and the line has to say which.
+    expect(says(r, "stack.manifest.json: node @ 0.1.0"), "the stack's version was carried but never said out loud");
     expect(r.drift === base.drift, `naming the stack version must not move drift: expected ${base.drift}, got ${r.drift}`);
   },
 );
@@ -938,7 +940,11 @@ check(
     // the caveat trading places with a structure failure: personas.md is fill-from-repo, and
     // R10 holds every capability spec to a persona from its roster.
     const personas = join(dir, "docs/personas.md");
-    writeFileSync(personas, readFileSync(personas, "utf8").replace("| `<Name + role>` | yes |", "| `Booker Bea` | yes |"));
+    // Whichever shape the shipped roster's placeholder currently takes: the marker moved from
+    // the angle form to the mustache form, and a hard-coded copy of it quietly stopped
+    // matching - leaving the roster unfilled and this case failing on the persona gate
+    // instead of measuring what it is about.
+    writeFileSync(personas, readFileSync(personas, "utf8").replace(/\|\s*`(?:\{\{[^}]*\}\}|<[^>]*>)`\s*\|/, "| `Booker Bea` |"));
     mkdirSync(join(dir, "specs/booking"), { recursive: true });
     writeFileSync(
       join(dir, "specs/booking/spec.md"),
