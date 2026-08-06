@@ -40,6 +40,20 @@ binds every repo, a solo one included.
 - **R3.** Project knowledge - documentation, specs, decisions, conventions - MUST
   live in the repo, versioned with the code. A rule that exists only in chat, a
   wiki or someone's personal agent config does not exist.
+  **In a repo is not the same as in public.** Work whose *publication* is itself the
+  harm - an unfixed vulnerability before its fix ships, a third party's material the
+  repo is contractually bound not to publish, an unannounced commercial move with a
+  set date - MAY be held in a private mirror of the repo (the platform's private
+  advisory fork is the paved road) and MUST rejoin the mainline when the embargo
+  lifts. This defers publication and waives nothing: every rule binds inside that
+  mirror - the spec, the coupled change (R11), the backlog intent (R15) and the
+  changelog entry are written there, while the work happens, not reconstructed
+  afterwards. An embargo MUST name its lifting condition and its owner the moment it
+  starts; one with no stated end is knowledge kept out of the repo, which is exactly
+  what this rule forbids. "Not written up yet", "it is in the chat", and work someone
+  would rather not publish are not embargoes. A repo that is already private needs
+  none of this: its knowledge is in the repo, which is all this rule ever asked
+  (ADR-034).
 - **R4.** Documents are living: they MUST be updated in place. The current version
   is the truth; git is the history. When a change reverses something a future
   reader will need, the document SHOULD say so in one line. History MUST NOT
