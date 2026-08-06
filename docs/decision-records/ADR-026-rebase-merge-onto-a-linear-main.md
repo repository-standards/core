@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Accepted |
+| **Status** | Accepted; the base-on-the-mainline clause narrowed by [ADR-035](ADR-035-maintained-release-lines-are-integration-targets.md) - a declared, never-rewritten release line is a legal base too |
 | **Date** | 2026-07-31 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | git, workflow, contribution, history |

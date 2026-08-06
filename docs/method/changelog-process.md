@@ -74,6 +74,26 @@ folder: a `## Unreleased` entry says who a change is for in its own words, and t
 writes the release notes from that.
 
 
+## More than one supported release line
+
+A project that still ships fixes to `3.x` while `4.x` is current has more than one
+present tense, and the single `## Unreleased` heading is not one slot they share - it is
+one heading **per line**. Each maintained release line (R23) carries its own
+`CHANGELOG.md` on its own branch, with its own `## Unreleased` and its own cut:
+promoting Unreleased on `3.x` moves `3.x`'s version and touches nothing on `main`.
+
+So a security fix shipping to four supported lines is four entries, one per branch it
+lands on, each written for the release it will actually appear in - not one entry
+claiming four releases at once. That is the mechanism above working per line rather
+than an exception to it: FFmpeg's `Changelog` has kept a section per version for
+exactly this reason for years. The ordering rule comes with it - the fix lands on the
+mainline first, then each supported line as its own PR
+([ADR-035](../decision-records/ADR-035-maintained-release-lines-are-integration-targets.md)) -
+so no supported line is ever ahead of the mainline in fixes it has and the mainline
+does not.
+
+Most repos have one line and can read this section as not applying to them.
+
 ## At release (the maintainer cuts it)
 
 1. **Changelog - mechanical.** Promote the `## Unreleased` section into a new
