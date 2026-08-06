@@ -28,6 +28,17 @@ Before any phase runs, one intake pass:
      blind would have asked what the repo had already, plainly, said. Play the
      signal back as a confirmation ("this reads as deprecated as of <date> - is that
      still true?") instead of running the full round unconditionally.
+   - **Some repos state their governance as machine-readable config, and it answers
+     the intake round before you ask it.** OpenJDK's `.jcheck/conf` names the reviewer
+     role, how many reviewers a change needs, the issue tracker and the commit-message
+     form; a `.gitreview` (Qt, LibreOffice) names the review host and project, which
+     answers "where does review happen" with "not on the git host you are reading".
+     `CODEOWNERS` and `.github/ISSUE_TEMPLATE/config.yml` are the same kind of evidence.
+     Both named files come from repositories this standard was assessed against.
+     Open them before the question round and play each back as a confirmation, exactly
+     as the tracker inference below is played back - asking a repo what it has already
+     written down in a config file is the fastest way to look like a tool that did not
+     read it.
    - **A repo can be extremely active and still be the wrong place to work** - moved
      to another forge entirely. The archived flag alone misses this: a repo that
      migrated (e.g. "Moved to Codeberg" in the description, a README saying "this
