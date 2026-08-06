@@ -12,12 +12,12 @@
 #   private repository  -> the page is a build artifact, readable by whoever can read the repo
 #
 # Pages has no password of its own, so a private repository that wants a link sets the
-# WORK_DASHBOARD_PASSWORD secret: the build is then encrypted and the publish step opens up,
+# DASHBOARD_PASSWORD secret: the build is then encrypted and the publish step opens up,
 # because what sits on the URL is ciphertext. Without that secret a private repository stops
 # at the artifact - which is also a fine answer, and the one that needs no decision.
 #
 # Add `--anonymise` to the build if the page should carry no colleague's name.
-name: work-dashboard
+name: dashboard
 
 on:
   push:
@@ -28,7 +28,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: work-dashboard
+  group: dashboard
   cancel-in-progress: true
 
 jobs:
@@ -49,26 +49,26 @@ jobs:
 
       # No dependencies, no install: the generator is Node built-ins only.
       #
-      # Set a repository secret named WORK_DASHBOARD_PASSWORD and the build is encrypted -
+      # Set a repository secret named DASHBOARD_PASSWORD and the build is encrypted -
       # what gets hosted is ciphertext, opened in the reader's browser by that one password.
       # That is what makes publishing from a private repository safe below.
       - name: Build the page
         id: build
         env:
-          WORK_DASHBOARD_PASSWORD: ${{ secrets.WORK_DASHBOARD_PASSWORD }}
+          DASHBOARD_PASSWORD: ${{ secrets.DASHBOARD_PASSWORD }}
         run: |
-          if [ -n "$WORK_DASHBOARD_PASSWORD" ]; then
-            node scripts/generate-dashboard/index.mjs --lock --out _work/index.html
+          if [ -n "$DASHBOARD_PASSWORD" ]; then
+            node scripts/generate-dashboard/index.mjs --lock --out _dashboard/index.html
             echo "locked=true" >> "$GITHUB_OUTPUT"
           else
-            node scripts/generate-dashboard/index.mjs --out _work/index.html
+            node scripts/generate-dashboard/index.mjs --out _dashboard/index.html
             echo "locked=false" >> "$GITHUB_OUTPUT"
           fi
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: work-dashboard
-          path: _work
+          name: dashboard
+          path: _dashboard
           retention-days: 30
 
   publish:
@@ -89,10 +89,10 @@ jobs:
     steps:
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          name: work-dashboard
-          path: _work
+          name: dashboard
+          path: _dashboard
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
-          path: _work
+          path: _dashboard
       - id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
