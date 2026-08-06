@@ -1,0 +1,69 @@
+{
+  "$about": "2026-08-06: the eight mechanical spec-area findings still open on the punch list (SPEC-01, SPEC-12 to SPEC-16, SPEC-19, SPEC-21), each reproduced against the current tree BEFORE anything was changed, then fixed and re-run. All eight reproduced - none had been closed in passing by a sibling fix - and the reproduction output is quoted in each evidence field beside the output of the same command after the change. The five guard-shaped fixes carry cases in the harnesses (tools/clarify-gate-test.mjs, tools/spec-guard-test.mjs, tools/self-verify-fill-test.mjs) covering both directions: the defect now fails, and the legitimate shapes it neighbours still pass. The three template and skill fixes are shape changes with no script behind them - SPEC-14's is asserted against the shipped template by tools/clarify-gate-test.mjs, and SPEC-19's and SPEC-21's are stated in specs/spec-engine/spec.md and the record templates, where reading is the only check that exists. The `fix` field on all eight names pull request 42, which carries every change quoted here and is open rather than merged as this round is written - the re-runs were executed against that branch's tree, which is what the evidence describes.",
+  "observations": [
+    {
+      "case": "SPEC-01",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced first: a capability spec carrying `## Clarifications` at lines 11 and 21 (a second heading instead of a second `### Session` under the first), `**Status:** ready-to-develop`, and a roster to satisfy the persona gate, gave `spec-structure: OK (1 spec paths)`, exit 0 - and the clarify gate passed it too, because that gate greps for the first `^## Clarifications` and stops. spec-structure.mjs gained a duplicate-heading check; the same fixture now prints `a section heading appears more than once in one spec: - specs/booking/spec.md   '## Clarifications' at lines 11, 21`, exit 1. Level 2 only, and fenced blocks and HTML comments are skipped, so the shapes that legitimately repeat are unaffected: six cases in tools/clarify-gate-test.mjs cover both directions (two sessions under one heading, a repeated `###`, a heading quoted in a fence, a heading inside a comment - all still pass).",
+      "at": "2026-08-06",
+      "fix": "https://github.com/repository-standards/core/pull/42"
+    },
+    {
+      "case": "SPEC-12",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced first, exactly as the 2026-08-04 round recorded it: a `swap` capability implemented under the plan template's own default layer folders (`src/services/proxy-swap.ts`, `src/models/swap-audit.ts`) against the example map's domain-shaped globs (`packages/swap/**`, `src/**/swap/**`) gave `spec-guard: OK`, exit 0, with the spec untouched. `--audit` did report it (2 dead globs, 2 unclaimed files), but the manifest ships only the diff run as a guard entry, so an adopted repo never hears it. Fixed on both sides of the mismatch: plan-template.md's default single-project structure is now sliced by capability, matching the decision checklist's own paved road, and where the map declares `$unclaimed` the diff run reports changed files that neither a capability claims nor `$unclaimed` declares. The same fixture now prints `1 changed file(s) belong to no capability: - src/services/proxy-swap.ts`, exit 1. Three cases in tools/spec-guard-test.mjs: the unmapped layout fires, the same file couples to its capability once the map binds where the code is, and a map with no `$unclaimed` keeps its old behaviour (the check stays off).",
+      "at": "2026-08-06",
+      "fix": "https://github.com/repository-standards/core/pull/42"
+    },
+    {
+      "case": "SPEC-13",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced first, in the three steps the finding describes, on `src/swap/request.ts` + `src/swap/audit.ts` owned by two capabilities: with `swap-request: [src/swap/**]` and a narrow `swap-audit: [src/swap/audit.ts]`, editing the audit file alone fired BOTH capabilities; and an attempted `\"!src/swap/audit.ts\"` was read as a literal path, reported by `--audit` as a glob matching no file. The map now understands a `!` prefix as an exclusion: the same edit prints `code changed in these capabilities without a spec update: - swap-audit` alone (exit 1), an edit to `request.ts` names `swap-request` alone, and `--audit` reports `OK (2 capability specs, all mapped; 3 globs, all matching; 5 files, each claimed by a capability or declared unclaimed)`. The ways it could become a hole were tested rather than assumed: an exclusion that hands a file to nobody is reported as unclaimed code (verified: `1 file(s) belong to no capability: - src/swap/audit.ts`), one that stops matching is reported like any dead glob, a capability of only exclusions is refused, and the object form is refused rather than given a coupling mode. Nine cases in tools/spec-guard-test.mjs, including a `never` assertion - a case that only checks the exit code cannot tell the right capability firing from both firing.",
+      "at": "2026-08-06",
+      "fix": "https://github.com/repository-standards/core/pull/42"
+    },
+    {
+      "case": "SPEC-14",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced by inventory: `grep -c '^## ' standard/specs/capability-spec.template.md` returned 16, none of them `## Clarifications`, and the only mention of it in the file was inside an HTML comment about the gate - so spec-clarify's instruction to create the section 'just after the highest-level contextual/overview section per the spec template' had no anchor to resolve against, and Purpose, Scope and Core concepts are all plausible readings. The template now carries a `CLARIFY-ANCHOR` comment at line 43, between `## Purpose` and `## Scope`, and spec-clarify names that position instead of describing it, plus an explicit never-write-a-second-heading rule. The heading is still absent from the template on purpose - `grep -c '^## Clarifications'` returns 0 - because the gate greps for it and a template carrying it would grant that check to a spec no clarify session ever touched. tools/clarify-gate-test.mjs asserts all three against the shipped file: the anchor exists, it sits between those two headings, and the heading itself is not there.",
+      "at": "2026-08-06",
+      "fix": "https://github.com/repository-standards/core/pull/42"
+    },
+    {
+      "case": "SPEC-15",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced first: all 8 entries in standard.manifest.json's `decisions` array carried `required: true`, and `node scripts/self-verify.mjs --skeleton` printed `8 catalogued decisions to confirm recorded at review` - a count in a report whose other numbers are drift and adoption, against R7's own text ('names no subset and asserts no count') and checklist.md's ('deliberately no minimum count and no required subset'). The field is gone from all eight (`decisions: 8 with required: 0`), and the line now reads `the decision catalog applies where it applies - confirm at review that every area this repo DOES decide is recorded, and that one it does not says so once (R7 names no subset and asserts no count ...)`. A `decisions` entry that declares `required` is now itself drift, naming R7 - nothing read that field there, so it could only ever assert the subset the rule denies. Four cases in tools/self-verify-fill-test.mjs cover both directions: the catalog is still surfaced for review, the line carries no number, the shipped manifest declares no required area, and a manifest that declares one FAILs.",
+      "at": "2026-08-06",
+      "fix": "https://github.com/repository-standards/core/pull/42"
+    },
+    {
+      "case": "SPEC-16",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced first, in the CI invocation form the finding names: on a branch that has run the plan step, `node standard/scripts/spec-structure.mjs --base main --block` exited 1 with `capability specs with no persona named (ADR-006): specs/booking/contracts/booking-api.md, specs/booking/data-model.md, specs/booking/quickstart.md, specs/booking/research.md` - four files that are not capability specs and never carry a Serves field. The scaffolding exclusion covered only plan.md, tasks.md and checklists/; it now covers all six artifacts /spec-plan and /spec-tasks write plus contracts/, and the same command on the same branch prints `spec-structure: OK (5 spec paths)`, exit 0. The full-tree warning about committed scaffolding grows the same four, which is where being loud is correct. Two cases in tools/clarify-gate-test.mjs build the plan-stage branch for real: the plan's outputs pass, and a genuine sub-spec with no persona on the same branch is still reported.",
+      "at": "2026-08-06",
+      "fix": "https://github.com/repository-standards/core/pull/42"
+    },
+    {
+      "case": "SPEC-19",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced by reading the skill, which is where this defect lives: the only collision test in spec-specify was `If specs/<short-name>/ already exists, this is the same capability` - an exact-string match on the slug the same step had just generated - beside `You must only create one feature per /spec-specify invocation` and an explicit `Do not ask the user here`. A request spanning two capabilities therefore had no instruction at all, and a slug that did not string-match an overlapping capability minted a sibling in silence. The skill gains step 1b: read the Purpose, Scope and Out of scope of the near capabilities before minting anything (the name is the one thing that will not match - the same behaviour arrives worded as the actor, the surface or the ticket), update in place when one already owns the behaviour, and for a two-capability sentence write one spec plus a typed DECISION marker naming the boundary and the other capability. That marker blocks the clarify gate, so the call is made by /spec-clarify, which is allowed to ask. Recorded as a requirement in specs/spec-engine/spec.md; a skill instruction has no script behind it, so reading is the check.",
+      "at": "2026-08-06",
+      "fix": "https://github.com/repository-standards/core/pull/42"
+    },
+    {
+      "case": "SPEC-21",
+      "target": "fixture:test-greenfield-core",
+      "verdict": "pass",
+      "evidence": "Reproduced by comparing the two templates: the ADR template's 7 sections included `## Confirmation`, the BDR template's 9 did not, and the only occurrence of 'confirm' in bdr-write was `Status: Accepted on confirmation` - a different meaning - beside `Do not write the technical consequence here`. So a business decision with a technical enforcement point recorded how the team would know it was wrong and nothing about how they would know it had stopped being followed. The BDR template now carries `## Confirmation` (line 41) between Consequences and What this rules out, and bdr-write asks for it as its own question ('what would catch us breaking this?'), distinguishing it from the detection signal beside it. The boundary that caused the omission is resolved rather than dropped: naming where compliance is checked is required, designing it stays the ADR's job, and 'nothing yet' is a stated answer. Shape change with no script behind it - the record templates and docs/tree/docs-decision-records.md are where it is asserted.",
+      "at": "2026-08-06",
+      "fix": "https://github.com/repository-standards/core/pull/42"
+    }
+  ]
+}

@@ -13,7 +13,7 @@
       "case": "GATE-16",
       "target": "fixture:test-greenfield-core",
       "verdict": "pass",
-      "evidence": "Re-verified 2026-08-05: live-tested `check-spec-clarified.sh` against a spec with a `## Clarifications` heading and four markers translated into Chinese (`[\u9700\u8981\u6f84\u6e05: ...]`, `[\u9700\u8981\u51b3\u5b9a: ...]`, `[\u9700\u8981\u8f93\u5165: ...]`, `[\u9700\u8981\u8d44\u4ea7: ...]`) - correctly FAILs, naming all four as \"bracketed token(s) shaped like an open marker but not one of the four forms the gate can read\", exit 1 (does not silently pass a translated-but-unresolved spec).",
+      "evidence": "Re-verified 2026-08-05: live-tested `check-spec-clarified.sh` against a spec with a `## Clarifications` heading and four markers translated into Chinese (`[需要澄清: ...]`, `[需要决定: ...]`, `[需要输入: ...]`, `[需要资产: ...]`) - correctly FAILs, naming all four as \"bracketed token(s) shaped like an open marker but not one of the four forms the gate can read\", exit 1 (does not silently pass a translated-but-unresolved spec).",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/13"
     },
@@ -53,7 +53,7 @@
       "case": "GATE-21",
       "target": "fixture:test-greenfield-core",
       "verdict": "pass",
-      "evidence": "Re-verified 2026-08-05: extracted `self-verify.mjs`'s placeholder regex (`\\p{L}`-based, Unicode-aware) and live-tested it - it does not flag `<picture>`/`<code>` HTML tags as placeholders, and does catch real Cyrillic (`<\u043d\u0443\u0436\u043d\u043e \u0437\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u044c>`) and Chinese (`<\u89d2\u8272\u540d>`) placeholders. Separately ran `spec-structure.mjs` against a Cyrillic persona roster + spec with `<picture>`/`<code>` markup in its body - no false persona-check failure.",
+      "evidence": "Re-verified 2026-08-05: extracted `self-verify.mjs`'s placeholder regex (`\\p{L}`-based, Unicode-aware) and live-tested it - it does not flag `<picture>`/`<code>` HTML tags as placeholders, and does catch real Cyrillic (`<нужно заполнить>`) and Chinese (`<角色名>`) placeholders. Separately ran `spec-structure.mjs` against a Cyrillic persona roster + spec with `<picture>`/`<code>` markup in its body - no false persona-check failure.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/13"
     },
@@ -175,7 +175,7 @@
       "verdict": "fail",
       "evidence": "refinement-bridge F6: the glob compiler requires a path segment matching the capability's domain name exactly. Reproduced: implementation under src/services/proxy-swap.ts + src/models/swap-audit.ts (the template's own default) gave 'spec-guard: OK' with zero coupling detection; moving the identical code under a domain folder (src/swap/proxy.ts) triggered it correctly. Not fixed this round.",
       "at": "2026-08-04",
-      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+      "fix": "https://github.com/repository-standards/core/pull/42"
     },
     {
       "case": "SPEC-13",
@@ -183,7 +183,7 @@
       "verdict": "fail",
       "evidence": "refinement-bridge F7, reproduced in three steps: (a) unmapped - the wrong capability is demanded; (b) a narrow entry added - both capabilities fire simultaneously; (c) the only escape is hand-enumerating files with no overlap warning, and --audit forces an entry to exist so leaving it unmapped is not an option either. Not fixed this round.",
       "at": "2026-08-04",
-      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+      "fix": "https://github.com/repository-standards/core/pull/42"
     },
     {
       "case": "SPEC-14",
@@ -191,7 +191,7 @@
       "verdict": "fail",
       "evidence": "refinement-bridge F8: no marked section exists among the template's 16 headings for spec-clarify's instruction to anchor against, so two runs can legitimately place the section differently, causing diff churn, while spec-specify separately demands section order be preserved. Not fixed this round.",
       "at": "2026-08-04",
-      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+      "fix": "https://github.com/repository-standards/core/pull/42"
     },
     {
       "case": "SPEC-15",
@@ -199,7 +199,7 @@
       "verdict": "fail",
       "evidence": "greenfield-core F8, independently confirmed with a real-world repo count in bf-ml F15: all eight manifest decision entries (including datastore/api-contract/auth-model) are marked required:true and self-verify prints '8 catalogued decisions to confirm recorded at review' on every run, directly contradicting checklist.md's own repeated 'deliberately no minimum count and no required subset.' bf-ml F15 found none of five real ML repos assessed has any of the three most commonly-required entries, evidence the asserted subset does not generalize. Not fixed this round.",
       "at": "2026-08-04",
-      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+      "fix": "https://github.com/repository-standards/core/pull/42"
     },
     {
       "case": "SPEC-16",
@@ -207,7 +207,7 @@
       "verdict": "fail",
       "evidence": "Confirmed independently twice, at the same severity: refinement-bridge F5 and skills-maintain F8 both reproduced spec-structure --block failing on data-model.md/quickstart.md/research.md between plan and reconcile, in exactly the CI invocation form used in practice (--base main --block), exit 1 naming all four files each time. Not fixed this round.",
       "at": "2026-08-04",
-      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+      "fix": "https://github.com/repository-standards/core/pull/42"
     },
     {
       "case": "SPEC-17",
@@ -231,7 +231,7 @@
       "verdict": "fail",
       "evidence": "po-rescue F4: spec-specify is explicitly barred from asking the user ('specify does not ask - it hands off... Do not ask the user here'), yet has no guidance for a sentence describing two capabilities in one; collision detection is exact-string on the generated slug. Reproduced: a request slug (manager-shift-reassignment) did not string-match the existing shift-swap-request capability it overlapped, so no collision fired - 'the exact ADR-002 failure the standard exists to prevent.' Not fixed this round.",
       "at": "2026-08-04",
-      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+      "fix": "https://github.com/repository-standards/core/pull/42"
     },
     {
       "case": "SPEC-21",
@@ -239,7 +239,7 @@
       "verdict": "fail",
       "evidence": "skills-write F13: adr-write requires a Confirmation section, calling it 'what stops the record being decoration'; the BDR template has no such section, and bdr-write explicitly forbids naming the technical enforcement in the record ('Do not write the technical consequence here'). Writing a real BDR (a privacy constraint) recorded how the team would know they were wrong (a detection field) but not how they would stop being wrong - on exactly the class of decision where it matters most. Not fixed this round.",
       "at": "2026-08-04",
-      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+      "fix": "https://github.com/repository-standards/core/pull/42"
     },
     {
       "case": "TRACK-07",

@@ -122,7 +122,7 @@
       "verdict": "fail",
       "evidence": "Near-miss caught mid Track-B-scenario-2 (not itself a scored defect in the 36): a duplicated `## Clarifications` heading was added instead of a new `### Session` under the existing one, and spec-structure.mjs did not flag it. Logged as a candidate mechanical check, not fixed - still open as of this log.",
       "at": "2026-08-03",
-      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+      "fix": "https://github.com/repository-standards/core/pull/42"
     },
     {
       "case": "SPEC-03",
