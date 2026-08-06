@@ -144,6 +144,22 @@ supersede-not-edit, cooldown discipline - are review-verified: honestly outside 
 number, listed in the judgment tier below. A repo can be drift 0 and still sloppy at
 review; the number is the floor, not the ceiling.
 
+**What the adopted percentage does not measure (ADR-037).** It is a *structural* reading. A
+`copy` entry is compared against its recorded hash and a `merge` entry against its declared
+keys, but a **`fill-from-repo`** entry - `AGENTS.md`, `docs/personas.md`, `docs/PRODUCT.md`,
+`docs/ARCHITECTURE.md`, `SECURITY.md`, `CONTRIBUTING.md` and the rest the adopter authors -
+carries neither, and cannot: the content is yours, so there is nothing to compare it against.
+Those entries score on presence. Measured on a sparse repo, six files reading `# Title` and
+`TODO.` moved it from `21% adopted` to `37% adopted` with its real substance unchanged.
+
+So the percentage answers "how much of the standard's structure is in place", never "how good
+is what was written". A file that reads as unfilled - nothing beyond its headings, or nothing
+but a `TODO`/`TBD`/`WIP` marker - raises a **warning, never drift**, and the verdict line then
+states that the percentage counts entries present rather than substance written. The warning
+deliberately detects only *visibly nothing written*: a terse but real `SECURITY.md` naming an
+address and a response time is complete, and a length threshold that failed it would teach
+adopters to pad. Whether what is written is any good is the judgment tier's call, below.
+
 **Drift as a number.** Each unmet required check scores one, so `drift N` is a measurable
 distance from the standard, and an update's job is to drive it back to `0`. Mostly that is one
 point per manifest entry, with one deliberate exception: a missing `.standards-version` scores
@@ -221,6 +237,11 @@ A machine cannot (yet) decide these; they are checked when the PR is reviewed:
   passes the check with a `paths:` filter that excludes everything, disabled at the
   platform, or with a `runs-on` label no runner answers. What proves the gate is a recent
   run on a pull request; `self-verify` reads the checkout and cannot see one.
+- **The authored files say something** - every `fill-from-repo` entry is content you wrote, so
+  the mechanical tier can only see that it exists and flag the ones that visibly do not (ADR-037).
+  Whether `docs/PRODUCT.md` describes this product, whether `docs/ARCHITECTURE.md` matches the
+  code, whether `SECURITY.md` names a contact somebody actually reads - that is read here, at
+  review, and it is the difference between an adopted repo and a decorated one.
 
 ## Staying current - the record is a bookmark, not a lock
 

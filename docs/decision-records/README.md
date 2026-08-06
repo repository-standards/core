@@ -51,6 +51,8 @@ one settled.
 
 | [037](ADR-037-a-repo-may-register-more-than-one-stack.md) | A repo may register more than one technology stack | a repo whose stacks coexist permanently carries `stack.<technology>.manifest.json` per stack beside the unchanged single-stack name; every one is read, the drift stays one number, an unparseable one is drift, and two stacks claiming one path is reported rather than collapsed | Accepted |
 
+| [037](ADR-037-adopted-percentage-is-structural-substance-is-judgment.md) | The adopted percentage measures structure; substance stays the judgment tier | a `fill-from-repo` entry is content the adopter writes, so it can carry neither a hash nor required keys and scored on existence alone - six files reading `TODO.` moved a sparse repo from 21% to 37% adopted with its substance unchanged. Required sections and length thresholds were both rejected as converting substance into ceremony; instead the number says what it counts, the warning detects only "visibly nothing written", and the file list comes from the manifest rather than a hardcoded list | Accepted |
+
 Add one row per record; the template ships in the tree
 (`standard/docs/decision-records/adr/_template.md`). Numbers are gapless and never
 reused.
