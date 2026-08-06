@@ -31,6 +31,17 @@ then find the ripple. This is analysis - do not edit code yet.
    - **Code / files** - which areas change (from the capability map + reading code):
      domain services, APIs, schemas, migrations, events, integrations, tests, UI,
      feature flags. Direct and indirect behavioral impact.
+   - **The other artifacts the repo keeps** - a change that contradicts a runbook is
+     wrong at 3 a.m. whatever the spec says, and a specs-records-code sweep never looks
+     there. Take each of these that exists and say which sentence this change falsifies,
+     or that it is untouched: `docs/runbooks/` (a procedure that walks an operator
+     through the behaviour being changed), `docs/personas.md` (a persona whose stated
+     job, or whose "must never lose", this removes), `docs/PRODUCT.md` (a scope or KPI
+     claim it contradicts), `docs/analytics.md` (an event it renames, drops or re-times)
+     and the backlog (a row whose definition of done this change now meets, or makes
+     impossible to meet). Grep the capability's own terms across `docs/` rather than
+     re-reading everything: a sentence that contradicts this change is a sentence that
+     names the thing being changed.
 
 4. **File what this change will not address now.** A ripple found above - an
    affected capability, a needed ADR/BDR, a code area - that this change deliberately
@@ -46,6 +57,8 @@ then find the ripple. This is analysis - do not edit code yet.
 - Affected capabilities, with their spec paths.
 - ADR impact: none / new / supersede (link).
 - Code areas to change.
+- Other artifacts contradicted (runbooks, personas, PRODUCT, analytics, backlog rows) -
+  each one named with the line, or "none".
 - Anything filed to the backlog because this change will not address it now.
 
 This drives `spec-update` (which specs to edit) and the technical plan.
