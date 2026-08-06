@@ -547,13 +547,20 @@ if (!skeleton) {
   // generator fills it, and every record ever written carried it to drift 0. The pattern
   // excludes `_template.md` and the stream READMEs for free - a template is supposed to hold
   // placeholders, and warning about it is how a warning gets ignored.
+  // Directory entries, never stat: an entry is recursed into only when it IS a directory, so
+  // a symlink is a leaf here and a link loop cannot hang the check. An unreadable or absent
+  // directory is not this check's business - the files[] entry above owns whether it must exist.
   const recordFiles = (dir) => {
-    if (!existsSync(dir)) return [];
+    let entries;
+    try {
+      entries = readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return [];
+    }
     const out = [];
-    for (const e of readdirSync(dir)) {
-      const p = `${dir}/${e}`;
-      if (statSync(p).isDirectory()) out.push(...recordFiles(p));
-      else if (/^(?:ADR|BDR)-\d+-.+\.md$/.test(e)) out.push(p);
+    for (const e of entries) {
+      if (e.isDirectory()) out.push(...recordFiles(`${dir}/${e.name}`));
+      else if (/^(?:ADR|BDR)-\d+-.+\.md$/.test(e.name)) out.push(`${dir}/${e.name}`);
     }
     return out;
   };
