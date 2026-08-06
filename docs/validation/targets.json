@@ -1498,6 +1498,48 @@
       "depth": "L4",
       "round": "ongoing",
       "note": "Used where a case is verified by reading or running the shipped tree rather than by applying it to somebody else's repo."
+    },
+    {
+      "slug": "honojs/hono",
+      "kind": "repo",
+      "ecosystem": "TypeScript (Bun toolchain, published to npm and JSR)",
+      "size": "484 tracked files; 178 non-test .ts under src/",
+      "quality": "good",
+      "quality_evidence": "31,604 stars; CI pins every action to a 40-hex SHA with permissions: contents: read and per-job elevation, runs the suite against Node 20/22/24, Deno, Bun, Bun on Windows, workerd, Fastly Compute, AWS Lambda and Lambda@Edge, and comments bundle-size and type-instantiation deltas on every pull request; zero runtime dependencies; against it: no SECURITY.md, no root CONTRIBUTING.md, no CHANGELOG in the tree",
+      "star_tier": "large",
+      "stars_approx": "31,604",
+      "shape": "single-package web framework with a 76-entry subpath export map and nine runtime adapters - the archetype neither the package-boundary shortcut nor the micro-library guidance describes",
+      "depth": "L3",
+      "round": "adopt-wave-js (2026-08-07)",
+      "note": "Aligned for real on a local branch, drift 20 -> drift 0 (55/55, 0 excepted). 15 capabilities mapped from behaviour rather than from the directory tree, 2 specced buildable (http-authentication, request-routing), 3 ADRs and 1 BDR reconstructed from the code, 14 backlog items. Produced three defects: a required workflow entry depending on the optional .nvmrc (ADOPT-15), .claude/hooks passing its content check while inert without .claude/settings.json (ADOPT-16), and an AI usage policy that fits neither of the intake's two policy branches and sits at docs/CONTRIBUTING.md rather than the root (INTAKE-10). Not pushed upstream; the repository's own policy makes an unsolicited pull request a bannable act, which is itself part of the finding."
+    },
+    {
+      "slug": "drizzle-team/drizzle-orm",
+      "kind": "repo",
+      "ecosystem": "TypeScript (pnpm workspace, Turbo build graph)",
+      "size": "1,389 tracked files; 946 .ts/.js; eight published packages",
+      "quality": "good",
+      "quality_evidence": "35,379 stars; CONTRIBUTING.md documents the repository structure, the commit-message shape, signed commits and an all-core-contributors approval rule; the primary suite is containerised integration tests per dialect and driver; dprint-enforced formatting and a declared Turbo build graph; against it: main last moved 2026-07-23 while other branches are current, and drizzle-kit's package.json declares MIT where the root LICENSE and seven sibling packages declare Apache-2.0",
+      "star_tier": "large",
+      "stars_approx": "35,379",
+      "shape": "multi-package library monorepo - the package boundary is a real capability signal and needed correcting in both directions: one package holding six capabilities, and four packages holding one",
+      "depth": "L3",
+      "round": "adopt-wave-js (2026-08-07)",
+      "note": "Aligned for real on a local branch, drift 21 -> drift 0 (57/58, 1 excepted). The exception is the repo's own Node 22 pin in .nvmrc, recorded as a content deviation rather than overwritten. 13 capabilities mapped, 2 specced buildable (sql-expressions - the library's injection boundary and its three deliberate escape hatches; schema-to-validator - one capability across four published packages, verified by diffing them), 3 ADRs and 1 BDR, 14 backlog items including two verified drift findings: CONTRIBUTING.md still documents an examples/ directory deleted on 2025-05-15 in commit 91081c04, and the drizzle-kit licence mismatch above. Produced one defect: the shipped agent deny list denies drizzle-kit, which is this repository's own build and test command (ADOPT-13). Not pushed upstream."
+    },
+    {
+      "slug": "usebruno/bruno",
+      "kind": "repo",
+      "ecosystem": "JavaScript/TypeScript (npm workspaces, Electron + React + Redux, plus a CLI)",
+      "size": "4,100 tracked files; 2,448 .js/.jsx/.ts/.tsx; 1,740 under packages/*/src; sixteen workspaces",
+      "quality": "good",
+      "quality_evidence": "46,160 stars; CODEOWNERS, a coding-standards document, a contribution guide, a security policy, Playwright suites on Linux, macOS and Windows, a flaky-test detector workflow, and an unusually mature committed agent configuration under .claude/ with path-scoped rules and a written maintainer guide; against it: its own architecture reference disagrees with the tree in three places",
+      "star_tier": "large",
+      "stars_approx": "46,160",
+      "shape": "application-product monorepo - a shipped desktop app plus a CLI, and an L3 target that arrived with a deliberately designed agent configuration of its own",
+      "depth": "L3",
+      "round": "adopt-wave-js (2026-08-07)",
+      "note": "Aligned for real on a local branch, drift 21 -> drift 0 (54/56, 2 excepted). The two exceptions are both the repo's own decisions preserved: its Node v22.12.0 pin, and its own code-review skill kept in place of the standard's pre-pr-review, recorded as a per-member content exception. 14 capabilities mapped, 2 specced buildable (script-sandbox, collection-file-format), 3 ADRs and 1 BDR, 17 backlog items. The most consequential finding of the wave came from the buildable-spec pass rather than from any guard: the script sandbox-mode mapping exists in three places and the CLI's copy fails open into the unsandboxed node:vm runtime where the other two fail closed - latent rather than live, because the CLI's yargs option defaults to safe in a different file. Four code-versus-document drift findings alongside it. Also produced ADOPT-11 and ADOPT-12. Not pushed upstream."
     }
   ]
 }

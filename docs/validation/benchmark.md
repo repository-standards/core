@@ -5,8 +5,8 @@
      agent-operated repository standard would claim, phrased so a reader who has never used
      this standard can run the same idea against their own. -->
 
-Twenty-something checks - **124**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **53** so far; the rest are logged as open (which includes any case where an attempted fix
+Twenty-something checks - **135**, precisely - that any repository standard
+claiming to be agent-operable should survive. This project failed **59** of them at least once and has fixed-and-re-verified **53** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -313,6 +313,19 @@ node standard/scripts/self-verify.mjs against a repo whose altPath target direct
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 node scripts/spec-guard.mjs --audit with and without $unclaimed present
+```
+
+
+**GATE-33 - the '## The roster' heading docs/personas.md must carry is discoverable before the structure guard fires on it**
+
+- **Given:** docs/personas.md is a fill-from-repo entry, so an adopter is expected to author it rather than fill the shipped file in place
+- **When:** a roster is written from scratch without that literal heading and a capability spec exists
+- **Then:** the requirement was stated somewhere the author would have read first - the manifest entry's purpose, the file map, or the method docs - rather than only in the guard's error message and the shipped template
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+author docs/personas.md from scratch with a roster table under any other heading, run node scripts/spec-structure.mjs --block, then grep the manifest, docs/file-map.md and docs/method/ for the heading
 ```
 
 
@@ -1064,6 +1077,19 @@ run intake's lifecycle-signal check against ziglang/zig's real state (archived: 
 ```
 
 
+**INTAKE-10 - an AI policy that permits agent contribution while attaching a discretionary sanction is recognised as its own category, and the scan looks beyond a root CONTRIBUTING.md**
+
+- **Given:** honojs/hono's docs/CONTRIBUTING.md: 'You may use AI to contribute, but it must never waste a maintainer's time... a maintainer may close your PR without notice and block your account' - a permission with a sanction and no procedural condition, in a file the repo root does not carry
+- **When:** the intake's policy scan runs
+- **Then:** the policy is named and its consequence put to the user, instead of falling between the two shipped branches (outright ban, and conditional allow requiring a human to rewrite) because there is nothing procedural to say back
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+read skills/align-to-standards/SKILL.md step 0's AI-policy branches against honojs/hono's docs/CONTRIBUTING.md, and check which paths the scan is told to read
+```
+
+
 ### adoption
 
 **ADOPT-01 - the churn-hotspot assessment pass states when a shallow clone makes it categorically unrunnable, instead of silently under-reporting**
@@ -1097,7 +1123,7 @@ read skills/align-to-standards/stack.md's technology-detection step for multi-st
 - **Given:** a repo whose existing package/crate boundary already separates its capabilities
 - **When:** capability-map guidance is checked for whether that boundary can be used directly
 - **Then:** the guidance names this as a legitimate shortcut, not requiring a fresh capability map authored from scratch
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1110,7 +1136,7 @@ read skills/align-to-standards or docs/method guidance for a package/crate-bound
 - **Given:** a single-header, single-build-target micro-library (nlohmann/json) with no internal workspace boundary
 - **When:** capability-map guidance for archetype gaps is checked
 - **Then:** guidance exists for finding real internal capability structure one level down, even with no package/crate boundary to inherit from
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1149,7 +1175,7 @@ run stack detection against denoland/deno and check whether the 715 package.json
 - **Given:** a real repo nobody on this project wrote, with no pin and no skeleton (hagopj13/node-express-boilerplate)
 - **When:** the align router's brownfield path is run end to end and self-verify is measured before and after
 - **Then:** a real drift number is produced at the start, every entry it names is closeable by authoring rather than by exception, and the run ends at drift 0
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (4/4)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1167,6 +1193,123 @@ node scripts/self-verify.mjs before landing anything, then again after the waves
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 node scripts/spec-guard.mjs --audit after authoring specs/capability-map.json
+```
+
+
+**ADOPT-11 - a target repo that already carries its own agent configuration is adapted around, not overwritten**
+
+- **Given:** a repo with an existing, deliberately designed agent config (usebruno/bruno: .claude/CLAUDE.md, path-scoped rules, an on-demand reference, its own skills, a settings.json with its own deny rule, and a written decision to have no root CLAUDE.md)
+- **When:** the align router's brownfield path runs to drift 0
+- **Then:** the repo's own skills survive untouched, its settings file is merged rather than replaced, a shipped artifact it deliberately declines is recordable as a per-member exception, and its no-root-CLAUDE.md decision is satisfied by the manifest's altPath rather than overridden
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+align a repo with a pre-existing .claude/ tree; check self-verify never names the repo's own skills, that { kind: content, match: '.claude/skills/<one>/SKILL.md' } waives exactly one member of the directory entry, and that AGENTS.md satisfies the CLAUDE.md entry
+```
+
+
+**ADOPT-12 - the align procedure checks the target's existing skill descriptions for a collision before copying the shipped set in beside them**
+
+- **Given:** a target repo shipping a skill whose description matches the same request as one of the standard's (usebruno/bruno's code-review against the standard's pre-pr-review: both answer 'review my branch before I push')
+- **When:** align-to-standards step 3 lands the shipped skills
+- **Then:** the collision is detected and put to the user, instead of two competing skills each winning that request half the time - the failure the standard's own AGENTS.md names
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+read skills/align-to-standards/SKILL.md step 3 for a step that reads the target's existing skill descriptions before copying
+```
+
+
+**ADOPT-13 - the shipped agent deny list is adapted for a repo that builds one of the tools it defensively denies**
+
+- **Given:** a repo that publishes a migration CLI the shipped deny list names (drizzle-team/drizzle-orm against 'Bash(drizzle-kit *)'; the same shape for prisma/prisma, knex/knex, typeorm/typeorm)
+- **When:** the settings file is merged during alignment
+- **Then:** the entry is narrowed to the genuinely destructive subcommands rather than denying the repo's own development and test commands wholesale
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+read skills/align-to-standards/SKILL.md step 3's settings guidance for the case where the target repo is the tool being denied, not a consumer of it
+```
+
+
+**ADOPT-14 - seeding the whole capability map in the first brownfield pass and the coupling audit's every-entry-needs-a-spec rule are simultaneously satisfiable**
+
+- **Given:** a brownfield repo with more capabilities than one pass can spec (hono 15, drizzle-orm 13, bruno 14, two specced in each)
+- **When:** onboard.md step 2's instruction to write the whole map is followed and spec-guard --audit --block runs, as the required spec-guard.yml wires it at every profile
+- **Then:** there is a documented way through that neither writes every spec in one big-bang pass (which onboard.md forbids) nor shrinks the map to what has specs (which makes the guard watch a fraction of the tree and report success, the trap ADOPT-10 recorded)
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+author specs/capability-map.json from the whole code, spec two capabilities, run node scripts/spec-guard.mjs --audit, and look for guidance covering the gap
+```
+
+
+**ADOPT-15 - a required manifest entry does not depend on an optional one, so a repo at drift 0 does not ship a broken CI step**
+
+- **Given:** a repo that pins its runtime somewhere other than .nvmrc (honojs/hono uses .tool-versions, and its own ci.yml already feeds that file to setup-node)
+- **When:** the required .github/workflows/spec-guard.yml lands and self-verify runs
+- **Then:** either .nvmrc's optionality or the workflow's hard reference to it is resolved, instead of drift 0 being reported for a repo whose required workflow names a file that is not in the tree
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+grep standard/.github/workflows/spec-guard.yml for node-version-file and compare against the .nvmrc entry's required flag in standard.manifest.json
+```
+
+
+**ADOPT-16 - landing .claude/hooks without .claude/settings.json is visible, because the guards never run without the wiring**
+
+- **Given:** a repo carrying the manifest, self-verify and .claude/hooks, with no .claude/settings.json
+- **When:** self-verify runs
+- **Then:** the missing PreToolUse wiring is reported, instead of the hooks passing their content check while never executing - a deny-guard that is silently inert is the failure mode .gitattributes exists to prevent, reached from the other side
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+copy standard.manifest.json, scripts/self-verify.mjs and .claude/hooks into an empty repo and run node scripts/self-verify.mjs
+```
+
+
+**ADOPT-17 - the procedure has a named shape for an adoption with nobody to interview, distinct from an interview that is merely postponed**
+
+- **Given:** an adoption where no maintainer of the target is available at all - an unsolicited alignment, or an outside team's repo
+- **When:** the intake asks for the profile (core or scale, written into the manifest and read by CI) and onboard.md step 1 asks for the persona interview every spec must cite
+- **Then:** both have a documented answer for 'there is no addressee', rather than reusing the paragraph written for an interview that is postponed until someone returns
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+read skills/align-to-standards/SKILL.md step 0 and onboard.md step 1 for a no-addressee case, distinct from the person-on-holiday case
+```
+
+
+**ADOPT-18 - the buildable-spec pass on a security-critical capability surfaces a defect in the target's code, not only in its documents**
+
+- **Given:** a security-critical capability specced buildable from the code (usebruno/bruno's script sandbox, whose runtime selection decides between a WebAssembly interpreter and node:vm)
+- **When:** the extract-then-synthesize pass writes the contracts verbatim with file anchors
+- **Then:** a real divergence in the code is found by the act of writing it down, rather than the spec merely restating what the documents already claimed
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+spec a target's highest-risk capability buildable and record whether the pass produced a finding about the code
+```
+
+
+**ADOPT-19 - the assessment's drift pass finds contradictions between a repo's own documents and its tree, and the better-documented the repo the more it finds**
+
+- **Given:** a repo with real internal documentation to check the code against (usebruno/bruno's .claude/ tree; drizzle-orm's CONTRIBUTING.md repository-structure section)
+- **When:** assessment pass 8 runs
+- **Then:** each contradiction is named with the file and the evidence, rather than the documents being read as the record
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+run assessment pass 8 against a documented repo and check each finding by grepping the tree rather than by trusting the document
 ```
 
 
@@ -1456,7 +1599,7 @@ run the prescribed cycle-close commit-count command against each of the showcase
 - **Given:** three retroactive ADRs authored into docs/decision-records/adr/ during a real adoption, with the shipped index untouched
 - **When:** decision-records-check runs
 - **Then:** it names each unindexed record and fails, rather than passing because the files exist
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```

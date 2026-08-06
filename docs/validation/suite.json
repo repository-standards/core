@@ -2972,6 +2972,182 @@
       "then": "nothing matches work by task id; each item is matched by a fingerprint of its own content, so changed work is reported rather than skipped and new work is created rather than swallowed",
       "procedure": "read docs/method/tracker-sync.md's fingerprint table and spec-tasks/SKILL.md step 1a; confirm no shipped file keys on a task id across rounds",
       "status": "run"
+    },
+    {
+      "id": "ADOPT-11",
+      "title": "a target repo that already carries its own agent configuration is adapted around, not overwritten",
+      "area": "adoption",
+      "tests": [
+        "R17"
+      ],
+      "promise": "Adoption and updates MUST adapt, never blind-copy - SPEC.md R17",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repo with an existing, deliberately designed agent config (usebruno/bruno: .claude/CLAUDE.md, path-scoped rules, an on-demand reference, its own skills, a settings.json with its own deny rule, and a written decision to have no root CLAUDE.md)",
+      "when": "the align router's brownfield path runs to drift 0",
+      "then": "the repo's own skills survive untouched, its settings file is merged rather than replaced, a shipped artifact it deliberately declines is recordable as a per-member exception, and its no-root-CLAUDE.md decision is satisfied by the manifest's altPath rather than overridden",
+      "procedure": "align a repo with a pre-existing .claude/ tree; check self-verify never names the repo's own skills, that { kind: content, match: '.claude/skills/<one>/SKILL.md' } waives exactly one member of the directory entry, and that AGENTS.md satisfies the CLAUDE.md entry",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-12",
+      "title": "the align procedure checks the target's existing skill descriptions for a collision before copying the shipped set in beside them",
+      "area": "adoption",
+      "tests": [
+        "R22"
+      ],
+      "promise": "the standard as executable procedures - the lifecycle skills manifest entry, R22",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a target repo shipping a skill whose description matches the same request as one of the standard's (usebruno/bruno's code-review against the standard's pre-pr-review: both answer 'review my branch before I push')",
+      "when": "align-to-standards step 3 lands the shipped skills",
+      "then": "the collision is detected and put to the user, instead of two competing skills each winning that request half the time - the failure the standard's own AGENTS.md names",
+      "procedure": "read skills/align-to-standards/SKILL.md step 3 for a step that reads the target's existing skill descriptions before copying",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-13",
+      "title": "the shipped agent deny list is adapted for a repo that builds one of the tools it defensively denies",
+      "area": "adoption",
+      "tests": [
+        "R19"
+      ],
+      "promise": "agent settings baseline - permission lists, and which guards run; the .claude/settings.json manifest entry, R19",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a repo that publishes a migration CLI the shipped deny list names (drizzle-team/drizzle-orm against 'Bash(drizzle-kit *)'; the same shape for prisma/prisma, knex/knex, typeorm/typeorm)",
+      "when": "the settings file is merged during alignment",
+      "then": "the entry is narrowed to the genuinely destructive subcommands rather than denying the repo's own development and test commands wholesale",
+      "procedure": "read skills/align-to-standards/SKILL.md step 3's settings guidance for the case where the target repo is the tool being denied, not a consumer of it",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-14",
+      "title": "seeding the whole capability map in the first brownfield pass and the coupling audit's every-entry-needs-a-spec rule are simultaneously satisfiable",
+      "area": "adoption",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a brownfield repo with more capabilities than one pass can spec (hono 15, drizzle-orm 13, bruno 14, two specced in each)",
+      "when": "onboard.md step 2's instruction to write the whole map is followed and spec-guard --audit --block runs, as the required spec-guard.yml wires it at every profile",
+      "then": "there is a documented way through that neither writes every spec in one big-bang pass (which onboard.md forbids) nor shrinks the map to what has specs (which makes the guard watch a fraction of the tree and report success, the trap ADOPT-10 recorded)",
+      "procedure": "author specs/capability-map.json from the whole code, spec two capabilities, run node scripts/spec-guard.mjs --audit, and look for guidance covering the gap",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-15",
+      "title": "a required manifest entry does not depend on an optional one, so a repo at drift 0 does not ship a broken CI step",
+      "area": "adoption",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Aligned means self-verify reports drift 0 - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo that pins its runtime somewhere other than .nvmrc (honojs/hono uses .tool-versions, and its own ci.yml already feeds that file to setup-node)",
+      "when": "the required .github/workflows/spec-guard.yml lands and self-verify runs",
+      "then": "either .nvmrc's optionality or the workflow's hard reference to it is resolved, instead of drift 0 being reported for a repo whose required workflow names a file that is not in the tree",
+      "procedure": "grep standard/.github/workflows/spec-guard.yml for node-version-file and compare against the .nvmrc entry's required flag in standard.manifest.json",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-16",
+      "title": "landing .claude/hooks without .claude/settings.json is visible, because the guards never run without the wiring",
+      "area": "adoption",
+      "tests": [
+        "R19"
+      ],
+      "promise": "agent settings baseline - permission lists, and which guards run; the .claude/settings.json manifest entry, R19",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repo carrying the manifest, self-verify and .claude/hooks, with no .claude/settings.json",
+      "when": "self-verify runs",
+      "then": "the missing PreToolUse wiring is reported, instead of the hooks passing their content check while never executing - a deny-guard that is silently inert is the failure mode .gitattributes exists to prevent, reached from the other side",
+      "procedure": "copy standard.manifest.json, scripts/self-verify.mjs and .claude/hooks into an empty repo and run node scripts/self-verify.mjs",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-17",
+      "title": "the procedure has a named shape for an adoption with nobody to interview, distinct from an interview that is merely postponed",
+      "area": "adoption",
+      "tests": [
+        "R10"
+      ],
+      "promise": "No spec is written before the persona roster exists - ADR-006, enforced by the R10 persona gate",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "an adoption where no maintainer of the target is available at all - an unsolicited alignment, or an outside team's repo",
+      "when": "the intake asks for the profile (core or scale, written into the manifest and read by CI) and onboard.md step 1 asks for the persona interview every spec must cite",
+      "then": "both have a documented answer for 'there is no addressee', rather than reusing the paragraph written for an interview that is postponed until someone returns",
+      "procedure": "read skills/align-to-standards/SKILL.md step 0 and onboard.md step 1 for a no-addressee case, distinct from the person-on-holiday case",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-18",
+      "title": "the buildable-spec pass on a security-critical capability surfaces a defect in the target's code, not only in its documents",
+      "area": "adoption",
+      "tests": [
+        "R9"
+      ],
+      "promise": "buildable is the default spec tier; writing the contracts is what surfaces the bugs - SPEC.md R9, ADR-003",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a security-critical capability specced buildable from the code (usebruno/bruno's script sandbox, whose runtime selection decides between a WebAssembly interpreter and node:vm)",
+      "when": "the extract-then-synthesize pass writes the contracts verbatim with file anchors",
+      "then": "a real divergence in the code is found by the act of writing it down, rather than the spec merely restating what the documents already claimed",
+      "procedure": "spec a target's highest-risk capability buildable and record whether the pass produced a finding about the code",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-19",
+      "title": "the assessment's drift pass finds contradictions between a repo's own documents and its tree, and the better-documented the repo the more it finds",
+      "area": "adoption",
+      "tests": [
+        "docs/method/repo-assessment.md"
+      ],
+      "promise": "the 8 assessment passes, drift as a number - VALIDATION-PLAN.md area table",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a repo with real internal documentation to check the code against (usebruno/bruno's .claude/ tree; drizzle-orm's CONTRIBUTING.md repository-structure section)",
+      "when": "assessment pass 8 runs",
+      "then": "each contradiction is named with the file and the evidence, rather than the documents being read as the record",
+      "procedure": "run assessment pass 8 against a documented repo and check each finding by grepping the tree rather than by trusting the document",
+      "status": "run"
+    },
+    {
+      "id": "INTAKE-10",
+      "title": "an AI policy that permits agent contribution while attaching a discretionary sanction is recognised as its own category, and the scan looks beyond a root CONTRIBUTING.md",
+      "area": "intake",
+      "tests": [
+        "R19"
+      ],
+      "promise": "a repo's own policy can forbid or condition what this skill does - align-to-standards step 0's red-flag and conditional-allow branches",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "honojs/hono's docs/CONTRIBUTING.md: 'You may use AI to contribute, but it must never waste a maintainer's time... a maintainer may close your PR without notice and block your account' - a permission with a sanction and no procedural condition, in a file the repo root does not carry",
+      "when": "the intake's policy scan runs",
+      "then": "the policy is named and its consequence put to the user, instead of falling between the two shipped branches (outright ban, and conditional allow requiring a human to rewrite) because there is nothing procedural to say back",
+      "procedure": "read skills/align-to-standards/SKILL.md step 0's AI-policy branches against honojs/hono's docs/CONTRIBUTING.md, and check which paths the scan is told to read",
+      "status": "run"
+    },
+    {
+      "id": "GATE-33",
+      "title": "the '## The roster' heading docs/personas.md must carry is discoverable before the structure guard fires on it",
+      "area": "gates",
+      "tests": [
+        "R10"
+      ],
+      "promise": "the persona roster the R10 gate checks specs against - the docs/personas.md manifest entry",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "docs/personas.md is a fill-from-repo entry, so an adopter is expected to author it rather than fill the shipped file in place",
+      "when": "a roster is written from scratch without that literal heading and a capability spec exists",
+      "then": "the requirement was stated somewhere the author would have read first - the manifest entry's purpose, the file map, or the method docs - rather than only in the guard's error message and the shipped template",
+      "procedure": "author docs/personas.md from scratch with a roster table under any other heading, run node scripts/spec-structure.mjs --block, then grep the manifest, docs/file-map.md and docs/method/ for the heading",
+      "status": "run"
     }
   ]
 }
