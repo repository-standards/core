@@ -10,7 +10,8 @@ Maintainer machinery for the standard repo itself; a consuming repo gets `script
 | [tree-check.mjs](tree-check.mjs) | guards the single shipped tree (`standard/`): no repo-own leaks, every manifest promise present, and the tree passes its own `self-verify --skeleton` |
 | [link-check.mjs](link-check.mjs) | every relative markdown link in the repo resolves; template placeholder lines are skipped |
 | [docsite.mjs](docsite.mjs) | renders the docs site (`site/docs/`, gitignored) from the repo's own md - one source, two surfaces |
-| [site-check.mjs](site-check.mjs) | the e2e gate for our own surfaces: landing tags balanced + quotes the positioning one-liner verbatim + GitHub-only hosts; generated docs pages complete, internal links resolve, no md leaks |
+| [site-check.mjs](site-check.mjs) | the e2e gate for our own surfaces: landing tags balanced + quotes the positioning one-liner verbatim + GitHub-only hosts + every version string on the page is the one in `VERSION`; generated docs pages complete, internal links resolve, no md leaks |
+| [site-check-test.mjs](site-check-test.mjs) | drives the landing gate over fixture sites - a page carrying a second, stale version fails, and SVG path data still does not count as one |
 | [spec-guard-test.mjs](spec-guard-test.mjs) | drives the coupling guard through cases that must fail - a guard nobody tests is a guard that quietly stops firing |
 | [schema-pair-test.mjs](schema-pair-test.mjs) | the same for the DDL/typed-twin pair check |
 | [facts-check-test.mjs](facts-check-test.mjs) | the same for the derived-facts check, including a surface reworded past its own declaration |
