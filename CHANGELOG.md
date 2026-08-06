@@ -16,6 +16,19 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The clarify record had no fixed place in the spec, so two runs could put it in two (2026-08-06)
+
+`/spec-clarify` was told to create `## Clarifications` "just after the highest-level
+contextual/overview section per the spec template". None of the template's 16 headings is that
+section by name, so the instruction resolves by judgement and two independent runs could place
+it differently - churn in a file whose section order `/spec-specify` separately requires be
+preserved, and the run that guesses differently writes a second heading the gate cannot see
+past. The template now marks the position (immediately after `## Purpose`, before `## Scope`)
+and the skill names it instead of describing it. The heading itself is still not shipped in the
+template, deliberately: the gate greps for it, so a template carrying it would grant that check
+to a spec where no clarify session ever ran. `tools/clarify-gate-test.mjs` asserts all three -
+the anchor exists, it sits between those two headings, and the heading is absent.
+
 ### A business decision could say how it would fail and not how it is held (2026-08-06)
 
 `adr-write` requires a `Confirmation` section and calls it "what stops the record being

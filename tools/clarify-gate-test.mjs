@@ -247,6 +247,35 @@ for (const c of CASES) {
   }
 }
 
+// --- where the clarify record goes -----------------------------------------------------
+// The skill used to say "just after the highest-level contextual/overview section per the
+// spec template", which is a judgement over 16 headings: two runs could place the section
+// differently, and the second one that guesses wrong writes a duplicate heading. The
+// template now marks the position. Both halves are asserted, because a template that simply
+// shipped the heading would satisfy the first: the gate greps for `^## Clarifications`, so
+// carrying it in the template would pass every spec where no clarify session ever ran.
+const TEMPLATE_BODY = readFileSync(TEMPLATE, "utf8");
+const anchorCases = () => {
+  const lines = TEMPLATE_BODY.split("\n");
+  const anchor = lines.findIndex((l) => l.includes("CLARIFY-ANCHOR"));
+  const purpose = lines.findIndex((l) => /^## Purpose\s*$/.test(l));
+  const scope = lines.findIndex((l) => /^## Scope\s*$/.test(l));
+  return [
+    ["the template marks where the clarify record goes", anchor >= 0],
+    ["the anchor sits between Purpose and Scope, so two runs agree", anchor > purpose && anchor < scope && purpose >= 0 && scope >= 0],
+    ["the template does not ship the heading itself, which would pass the gate for free", !/^## Clarifications/m.test(TEMPLATE_BODY)],
+  ];
+};
+
+for (const [name, ok] of anchorCases()) {
+  if (ok) {
+    console.log(`  ok    ${name}`);
+  } else {
+    failures++;
+    console.log(`  FAIL  ${name} - ${TEMPLATE}`);
+  }
+}
+
 // --- the spec shape the gate depends on ----------------------------------------------
 // `**Status:** ready-to-develop` is what the rest of the method reads as "settled", and
 // nothing read or wrote it - so it sat on specs whose gate fails, with every other guard
@@ -678,7 +707,8 @@ for (const c of BRIDGE_CASES) {
   }
 }
 
-const total = CASES.length + STRUCTURE_CASES.length + PERSONA_CASES.length + PLAN_STAGE_CASES.length + BRIDGE_CASES.length;
+const total =
+  CASES.length + anchorCases().length + STRUCTURE_CASES.length + PERSONA_CASES.length + PLAN_STAGE_CASES.length + BRIDGE_CASES.length;
 if (failures) {
   console.log(`\nclarify-gate-test: FAIL - ${failures} of ${total} cases`);
   process.exit(1);
