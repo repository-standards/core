@@ -7,7 +7,7 @@
 
 ## Purpose
 
-Guard the single authored shipped tree (`standard/`, ADR-014): nothing repo-own leaks in, everything the manifest promises is present, every shipped file is a manifest entry, workflow pins stay exact, derived facts stay derived, the released version is described where releases are described, and the tree passes its own verifier. Plus: no relative markdown link anywhere in the repo is dead.
+Guard the single authored shipped tree (`standard/`, ADR-014): nothing repo-own leaks in, everything the manifest promises is present, every shipped file is a manifest entry, no entry claims a release that has never shipped, workflow pins stay exact, derived facts stay derived, the released version is described where releases are described, and the tree passes its own verifier. Plus: no link anywhere in the repo is dead - neither a relative markdown link nor a by-reference link into this repo's own main branch.
 
 ## Clarifications
 
@@ -49,7 +49,7 @@ What it reads, and where each shape is defined:
 | `VERSION` | text, one line | this repo's own: `x.y.z`, the version the standard currently ships. |
 | `standard/.nvmrc` | text, one line | Node's: an exact `x.y.z`, no range and no bare major. |
 | `.github/workflows/*.yml`, `standard/.github/workflows/*.yml` | YAML | GitHub Actions'. Read line-wise rather than parsed - only `uses:`, `runs-on:` and `node-version:` are inspected, for pin exactness (R21). |
-| every tracked and untracked `*.md`, plus every tracked non-binary file | text | none - link targets and byte content are read as text. |
+| every tracked and untracked `*.md`, and every other non-binary file git knows about | text | none - link targets, by-reference URLs and byte content are read as text. |
 
 The recorded content hashes are the one shape this capability asserts rather than borrows:
 a `copy` entry's `sha256` is SHA-256 over the file's text with CRLF normalized to LF, hex,
@@ -86,16 +86,35 @@ Output: one `  FAIL  <message>` line per problem, `  ok    <message>` per clean 
 - targets starting with `https?:`, `mailto:`, or `#` (absolute, mail, pure anchor),
 - anything inside backticks - inline code is neutralized before matching (prose about a link is never a checked link).
 
-Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-check: FAIL - <n> dead relative link(s)`; clean run prints `link-check: OK - all relative links resolve (<n> md files)`, with `, <u> untracked` appended when untracked files were scanned.
+**By-reference links.** The same run also checks every link into this repo's own main
+branch - `https://github.com/repository-standards/core/blob|tree/main/<path>` - against the
+local tree, over **every tracked and untracked text file** (binary extensions skipped), not
+only markdown. This is the shipped tree's half of link integrity: method docs are adopted by
+reference ([ADR-023](../../docs/decision-records/ADR-023-method-docs-live-beside-the-tree.md)),
+so the tree points at them by full URL, and a URL naming a path that is not here is a dead
+promise made to every adopted repo - invisible to the relative check by construction. It is
+scanned outside markdown because the instances found by hand were in a shell script's denial
+message and a JSON example as often as in prose. An anchor and trailing sentence punctuation
+are stripped from the path before it is resolved (`.../prerequisites.md.` at the end of a
+sentence names a file), and a URL whose path carries a `<placeholder>` is the form written
+out rather than a link, so it is skipped.
+
+Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), with the by-reference
+ones carrying a trailing note naming the rule, then `link-check: FAIL - <n> dead relative
+link(s)`, `<n> by-reference link(s) naming a path that is not here`, or both; a clean run
+prints `link-check: OK - all relative links resolve (<n> md files)`, with `, <u> untracked`
+appended when untracked files were scanned, and the count of by-reference links that
+resolved.
 
 ### Exit codes
 
 | Tool | Exit | Condition |
 |---|---|---|
 | tree-check | 0 | every check clean |
-| tree-check | 1 | any check above failing: a leak, an unmet manifest promise, an unresolved reference, a shipped file no manifest entry covers, a skeleton self-verify failure, a stale or missing recorded hash, a spec version mismatch, a released version with no changelog entry, a hand-written derived fact, or a loose workflow pin (count in the verdict) |
-| link-check | 0 | every relative link resolves |
-| link-check | 1 | one or more dead relative links (count in the verdict) |
+| tree-check | 1 | any check above failing: a leak, an unmet manifest promise, an unresolved reference, a shipped file no manifest entry covers, a skeleton self-verify failure, a stale or missing recorded hash, a spec version mismatch, a released version with no changelog entry, a `since` naming a release that has never shipped, a hand-written derived fact, or a loose workflow pin (count in the verdict) |
+| tree-check --self | 0 / 1 | the `since` rule's own cases all behave / any of them does not |
+| link-check | 0 | every relative link resolves, and every by-reference link resolves in this repo |
+| link-check | 1 | one or more dead relative links, or by-reference links naming a path that is not here (counts in the verdict) |
 
 ## Requirements
 
