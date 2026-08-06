@@ -6,8 +6,8 @@
 // byte-identical output, so the page is a projection of the repo and never a second place
 // where work is tracked. Sources that a repo does not have are skipped, not faked.
 //
-//   node scripts/work-dashboard.mjs [repo-root] [--out <file>] [--watch] [--serve [port]]
-//                                   [--anonymise]
+//   node scripts/generate-dashboard/index.mjs [repo-root] [--out <file>] [--watch] [--serve [port]]
+//                                            [--anonymise]
 //
 // --watch rebuilds when a source file changes; --serve adds a local server so an open page
 // notices and offers a refresh. Neither ever touches git: a page going stale is a display
@@ -39,7 +39,7 @@ const port = serveFlag >= 0 && /^\d+$/.test(argv[serveFlag + 1] || '') ? Number(
 const watching = argv.includes('--watch') || serveFlag >= 0
 const anonymise = argv.includes('--anonymise') || argv.includes('--anonymize')
 const root = resolve(
-  argv.find((a, n) => !a.startsWith('--') && n !== outFlag + 1 && !(serveFlag >= 0 && n === serveFlag + 1)) || join(here, '..'),
+  argv.find((a, n) => !a.startsWith('--') && n !== outFlag + 1 && !(serveFlag >= 0 && n === serveFlag + 1)) || join(here, '..', '..'),
 )
 
 const read = (p) => readFileSync(join(root, p), 'utf8')
@@ -584,7 +584,7 @@ function lock(html, data) {
   const cipher = createCipheriv('aes-256-gcm', key, iv)
   const body = Buffer.concat([cipher.update(html, 'utf8'), cipher.final(), cipher.getAuthTag()])
 
-  const gate = readFileSync(join(here, 'work-dashboard.gate.js'), 'utf8')
+  const gate = readFileSync(join(here, 'src', 'gate.js'), 'utf8')
     .replace('__SALT__', salt.toString('base64'))
     .replace('__IV__', iv.toString('base64'))
     .replace('__ROUNDS__', String(PBKDF2_ROUNDS))
@@ -597,7 +597,7 @@ function lock(html, data) {
 <meta name="robots" content="noindex">
 <title>Work</title>
 <style>
-${readFileSync(join(here, 'work-dashboard.gate.css'), 'utf8')}</style>
+${readFileSync(join(here, 'src', 'gate.css'), 'utf8')}</style>
 </head>
 <body>
 <form id="gate" autocomplete="on">
@@ -625,6 +625,14 @@ const stateFile = join(dirname(out), 'state.json')
 
 function build() {
   const data = collect()
+
+  // Pointed at the wrong directory, every parser finds nothing and the page renders as an
+  // empty but entirely convincing dashboard. Say it instead - the usual cause is a path.
+  if (!data.items.length && !data.cycles.length && !data.entries.length && !data.decisions.length && !data.specs.length) {
+    console.error(`work-dashboard: found no backlog, cycles, changelog, decision records or specs under ${root}`)
+    console.error('  pass the repository root as the first argument if it is not the parent of this script')
+    process.exit(1)
+  }
   // The fingerprint is of the content, not of the moment - so the page stays byte-identical
   // for a given commit, and an open page can still tell that the content moved.
   const payload = JSON.stringify(data)
@@ -638,12 +646,12 @@ function build() {
 <meta name="robots" content="noindex">
 <title>Work - ${esc(data.meta.name)}</title>
 <style>
-${readFileSync(join(here, 'work-dashboard.css'), 'utf8')}</style>
+${readFileSync(join(here, 'src', 'page.css'), 'utf8')}</style>
 </head>
 <body>
 <script type="application/json" id="work-data">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>
 <script>
-${readFileSync(join(here, 'work-dashboard.client.js'), 'utf8')}</script>
+${readFileSync(join(here, 'src', 'page.js'), 'utf8')}</script>
 </body>
 </html>
 `

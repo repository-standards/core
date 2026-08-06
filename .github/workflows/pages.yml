@@ -55,7 +55,7 @@ jobs:
       # already is: the page shows nothing a reader could not read in the tree. An adopter
       # decides this separately, which is what the shipped workflow's visibility gate is for.
       - name: build /work/ - the standard's own work state
-        run: node standard/scripts/work-dashboard.mjs . --out site/work/index.html
+        run: node standard/scripts/generate-dashboard/index.mjs . --out site/work/index.html
 
       - name: build every registered stack into its prefix
         run: |

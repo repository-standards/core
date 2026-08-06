@@ -1,4 +1,4 @@
-/* Work dashboard - client rendering. All data is inlined by tools/work-dashboard.mjs;
+/* Work dashboard - client rendering. All data is inlined by index.mjs;
    nothing here fetches, so the page works from a file:// path and offline. */
 
 const D = JSON.parse(document.getElementById('work-data').textContent)
@@ -1139,7 +1139,7 @@ document.body.append(
   el('footer', {}, [
     wrap([
       el('span', { text: 'Generated from this repository: backlog, cycles, changelog, decision records, specs. Nothing here is typed twice.' }),
-      el('span', { html: '<code>node tools/work-dashboard.mjs</code>' }),
+      el('span', { html: '<code>node scripts/generate-dashboard/index.mjs</code>' }),
     ]),
   ]),
 )
