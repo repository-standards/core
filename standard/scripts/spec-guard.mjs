@@ -78,6 +78,14 @@ for (const k of Object.keys(declared)) {
 const map = Object.fromEntries(Object.entries(declared).filter(([k]) => !k.startsWith("$")));
 const unclaimedGlobs = declared.$unclaimed ?? null;
 if (unclaimedGlobs !== null && !Array.isArray(unclaimedGlobs)) bad('"$unclaimed" must hold a list of globs');
+for (const g of unclaimedGlobs ?? []) {
+  if (typeof g !== "string" || !g.trim()) bad(`"$unclaimed" holds ${JSON.stringify(g)} - every entry must be a glob string`);
+  // `!` narrows one capability's claim. `$unclaimed` is already the not-a-capability list,
+  // so an exclusion there has nothing to narrow and would be read as a literal path with a
+  // `!` in its name - a glob matching nothing, in the one list the audit does not check for
+  // emptiness. Refused where it is written rather than discovered later.
+  if (g.startsWith("!")) bad(`"$unclaimed" holds the exclusion ${JSON.stringify(g)} - an exclusion narrows a capability's claim, and $unclaimed is not a claim`);
+}
 const parseEntry = (e, cap) => {
   if (typeof e === "string") {
     if (!e.startsWith("!")) return { glob: e, couples: "content", excludes: false };
@@ -323,12 +331,19 @@ for (const [cap, entries] of Object.entries(compiled)) {
 // Only when `$unclaimed` is declared: that declaration is the author saying the map is
 // meant to cover everything, and without it the guard cannot tell code nobody claims from
 // code deliberately claimed by nobody. Same rule as --audit, one diff narrower.
+//
+// Deletions are excluded, and that is not symmetry with the coupling check above - it is
+// the opposite case. A deleted file the map never covered is a map problem the deletion
+// SOLVES: reporting it would block the pull request that fixes the tree and leave the
+// author with nothing to do about it.
 const declaredUnclaimed = (unclaimedGlobs ?? []).map(globToRegExp);
 const claimsAny = (f) => Object.values(compiled).some((entries) => claimed(entries, f));
 const unclaimedChanges =
   unclaimedGlobs === null
     ? []
-    : files.filter((f) => !f.startsWith("specs/") && !claimsAny(f) && !declaredUnclaimed.some((re) => re.test(f)));
+    : files.filter(
+        (f) => !f.startsWith("specs/") && afterOf(f) !== null && !claimsAny(f) && !declaredUnclaimed.some((re) => re.test(f)),
+      );
 
 // Say when the guard decided not to fire - a silent skip is indistinguishable
 // from a guard that stopped working.

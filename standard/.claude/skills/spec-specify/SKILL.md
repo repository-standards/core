@@ -56,7 +56,7 @@ Given that feature description, do this:
 
     - **An existing capability already owns this behaviour** -> update that spec in place.
       Name it and say why in the Completion Report; do not mint a sibling.
-    - **The request spans two capabilities** - one sentence, two boundaries - -> write the
+    - **The request spans two capabilities** (one sentence, two boundaries) -> write the
       spec for the one it is primarily about, and record the other in `## Out of scope` as
       `[NEEDS DECISION: <the boundary question>; owner: <who>]`, naming the capability it may
       belong to. Never absorb the second silently, and never mint both in one invocation.

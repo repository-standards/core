@@ -456,6 +456,14 @@ const PLAN_STAGE_CASES = [
     says: "specs/payments/refunds.md",
     files: { ...PLAN_OUTPUTS, "specs/payments/refunds.md": "# Refunds\n\nWhat happens on a refund.\n" },
   },
+  {
+    // `contracts` and `checklists` are ordinary words. Exempting them by name anywhere under
+    // specs/ would hand a whole capability an exemption for being called that.
+    name: "a capability genuinely named contracts is not read as scaffolding",
+    fails: true,
+    says: "specs/contracts/spec.md",
+    files: { "specs/contracts/spec.md": "# Contracts\n\nWhat the legal team signs.\n" },
+  },
 ];
 
 for (const c of [...STRUCTURE_CASES.map((s) => ({ ...s, kind: "tree" })), ...PLAN_STAGE_CASES.map((s) => ({ ...s, kind: "diff" }))]) {
