@@ -569,9 +569,27 @@ if (manifest) {
   if (coreOnly && scaleSkipped > 0) {
     note("profile", `${scaleSkipped} scale-only entr${scaleSkipped === 1 ? "y" : "ies"} skipped (--profile core)`);
   }
-  // decisions are judgment-tier: a human confirms they are actually recorded at review
+  // Decisions are judgment-tier: a human confirms they are actually recorded at review.
+  //
+  // The catalog is a MENU, and the summary here used to print its length - "8 catalogued
+  // decisions to confirm recorded at review" - which reads as eight records this repo owes,
+  // on every run, in a report whose other numbers are exactly that. R7 says the opposite in
+  // as many words: which areas apply is a property of what is being built, so the rule
+  // "names no subset and asserts no count". Five real ML repositories assessed against it
+  // had none of the three most commonly assumed entries, and were not in breach. So the
+  // line says what the reader has to do instead of how many things there are to count.
   if ((manifest.decisions || []).length) {
-    note("decision", `${manifest.decisions.length} catalogued decisions to confirm recorded at review (judgment tier - see ${METHOD_DOC})`);
+    note("decision", `the decision catalog applies where it applies - confirm at review that every area this repo DOES decide is recorded, and that one it does not says so once (R7 names no subset and asserts no count - see ${METHOD_DOC})`);
+  }
+  // A decisions entry claiming `required` is a manifest asserting the subset R7 refuses to
+  // assert. Nothing reads the field there - `required` decides drift-vs-note for files and
+  // sections - so it could only ever be a claim about the standard that the standard denies.
+  // Refused loudly rather than ignored: the eight shipped entries carried it for four
+  // versions and the contradiction was found by reading, not by any check.
+  for (const d of manifest.decisions || []) {
+    if (d?.required !== undefined) {
+      fail("decision", `the decisions entry "${d.id ?? "(no id)"}" declares required:${d.required} - a decision area cannot be required by the manifest (R7 names no subset and asserts no count; which areas apply is a property of what this repo is building). Drop the field: nothing reads it here, and an area that must be enforced is a guard, not a flag`);
+    }
   }
   // A recorded deviation that no longer deviates is stale bookkeeping: it reads as "this
   // repo chose otherwise" long after the repo chose otherwise back.
