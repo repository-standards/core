@@ -64,10 +64,10 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 |---|---|
 | Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **203** across 13 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-n-vocab) |
+| Observations recorded | **205** across 14 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-k-shape, 2026-08-06-n-vocab) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 108 pass, 90 fail, 2 not-applicable, 3 partial |
-| Failures found | **163** - **89 fixed and re-verified** (across 24 merged pull requests), **74 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 16 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 110 pass, 90 fail, 2 not-applicable, 3 partial |
+| Failures found | **161** - **89 fixed and re-verified** (across 24 merged pull requests), **72 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 18 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -162,10 +162,8 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `STACK-05` | a Layer-2 stack manifest's own `version` field is checked and printed by self-verify, so a stale carried stack version produces a visible note, not silence | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `STACK-07` | the greenfield path's drift-0 exit gate is reachable without silently missing the one manifest-required file the brownfield path names seven times and the greenfield path names zero | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `STACK-08` | the node starter's own documented one-command proof (`pnpm test:all` on a fresh clone) actually passes on a fresh clone, the same as CI runs it | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `SHAPE-03` | a CI workflow existing and passing is not read as evidence the PR gate actually fires, when the workflow itself never triggers on pull_request | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SHAPE-04` | intake reads a repo's own machine-readable governance file (`.jcheck/conf`, `.gitreview`) for the role/reviewer-count/tracker/host answers it already declares, before asking the interview questions those answers would settle | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SHAPE-05` | the standard has vocabulary for a binary-compatibility contract whose source of truth is a previously-compiled binary, so spec-reconcile does not document a compatibility shim as current, intended behaviour | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `SHAPE-06` | R23's mainline-integration rule, and the manifest's release-process vocabulary generally, has a place for a maintained parallel release branch - the shape that makes an ordinary security backport possible | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SHAPE-07` | the security-baseline axis catalog has an adversarial/fuzz-testing axis, for a repo whose primary security control is fuzzing rather than a disclosure process | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SHAPE-09` | the R19 settings baseline and R16's runtime-cost disclosure name a real command vocabulary for Windows, not only macOS/Linux tools (`sudo`, `diskutil`, `launchctl`, `crontab`) and the one dependency (`jq`) R16 currently omits | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SHAPE-13` | the decision checklist or capability-map guidance has a category for a repo whose real coupling edge is a build-system graph independent of its directory layout | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
