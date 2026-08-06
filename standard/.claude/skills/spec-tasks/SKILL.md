@@ -28,6 +28,23 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 1. **Setup**: Run `scripts/spec/setup-tasks.sh --json` from repo root and parse FEATURE_DIR, TASKS_TEMPLATE, and AVAILABLE_DOCS list. `FEATURE_DIR` and `TASKS_TEMPLATE` must be absolute paths when provided. `AVAILABLE_DOCS` is a list of document names/relative paths available under `FEATURE_DIR` (for example `research.md` or `contracts/`). For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
+<!-- PATCHED(repository-standards): ADR-032 - re-entry. Regenerating a task list over one
+     that is already being worked, or already exported, used to be indistinguishable from
+     a first run. -->
+1a. **Re-entry check - does a task list already exist?** If `tasks.md` is already present with
+   real tasks in it, this is a **regeneration** over work that may be in progress or already
+   exported to a tracker. Before writing anything:
+   - Carry over the status of every task that survives the change: a task marked done or in
+     progress that the spec still asks for stays marked, and does not silently reset to
+     unchecked. Losing that is losing the only record of where the work had got to.
+   - Name what is **new** in this round and what is **gone**, in the reply. Both matter to
+     whoever is mid-build.
+   - **Task ids are positional and are not stable across rounds.** `T003` in this list is not
+     the `T003` of the previous one. Nothing outside this file may key on a task id and assume
+     it means the same work later - if this repo syncs to a tracker, that is the extension's
+     problem to solve, and it solves it with fingerprints rather than positions
+     ([tracker-sync (by reference)](https://github.com/repository-standards/core/blob/main/docs/method/tracker-sync.md)).
+
 <!-- PATCHED(repository-standards): the spec is a capability spec - it has no user stories and
      no P1/P2/P3 priorities. Its Requirements areas, each with the Acceptance criteria that
      verify them, are the unit tasks group by; this file calls that a **requirement slice**. -->

@@ -1484,6 +1484,20 @@
       "depth": "L3",
       "round": "field-1 (2026-08-06)",
       "note": "THE FIRST L3 TARGET. Adopted for real on a local branch: guards+manifest+skills landed, three capability specs and a persona roster authored from the code, three retroactive ADRs written, nine backlog items filed, self-verify taken from drift 14 to drift 0 (46/46). Not pushed upstream - hagopj13 has not asked for this, and the adoption exists as evidence, not as an unsolicited pull request."
+    },
+    {
+      "slug": "repository-standards/core",
+      "kind": "self",
+      "ecosystem": "the standard's own tree",
+      "size": "n/a",
+      "quality": "n/a",
+      "quality_evidence": "the subject itself, dogfooding the standard on itself - deliberately kind 'self' rather than 'repo' so it is never counted among the third-party repositories tested",
+      "star_tier": "n/a",
+      "stars_approx": "n/a",
+      "shape": "the shipped tree, read directly - the target for cases about what the standard itself says and does",
+      "depth": "L4",
+      "round": "ongoing",
+      "note": "Used where a case is verified by reading or running the shipped tree rather than by applying it to somebody else's repo."
     }
   ]
 }

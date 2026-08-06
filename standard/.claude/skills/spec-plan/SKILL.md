@@ -32,6 +32,25 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 2. **Load context**: Read FEATURE_SPEC and, IF EXISTS, `specs/constitution.md`. Load IMPL_PLAN template (already copied).
 
+<!-- PATCHED(repository-standards): ADR-032 - re-entry. Planning a live capability again is
+     the normal case, not the exception, and it used to overwrite silently. -->
+2a. **Re-entry check - are you planning this capability for the second time?** If `plan.md`
+   already carried content before this run, or `tasks.md` exists, then work is in flight and
+   this is a **re-plan**, not a first plan. Do not overwrite and move on. Instead:
+   - Read what is already there **before** generating anything over it.
+   - Get the spec's own delta: `git diff <base> -- <FEATURE_SPEC>` (the branch's base, usually
+     `main`). `spec-update` establishes that diff as the change; this is where it gets used.
+   - Report three lists before you write, and keep them in the plan: **what the change adds**
+     (no existing task covers it), **what it invalidates** (an existing task now describes
+     behaviour the spec no longer asks for), and **what is untouched** (still correct, already
+     built or in progress - do not re-plan it).
+   - If the delta is empty but scaffolding exists, say so and stop rather than regenerating
+     identical artifacts.
+
+   An invalidated task that is **already built** is not a planning problem, it is drift:
+   file it (`add-to-backlog`) or fix it in this change, and say which. Silently dropping it
+   from the new task list leaves shipped behaviour nothing describes.
+
 3. **Execute plan workflow**: Follow the structure in IMPL_PLAN template to:
    - Fill Technical Context (mark unknowns as "NEEDS CLARIFICATION")
    - Fill Constitution Check section from constitution
