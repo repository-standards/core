@@ -349,8 +349,27 @@ const verifyContent = (f) => {
   if (exceptionFor("file", f.path)) return; // the whole entry is already a recorded deviation
   if (!exists(f.path)) {
     const alt = (f.altPaths || []).find((x) => exists(x));
-    if (alt && typeof f.sha256 !== "string") verifyPortedTree(f, alt);
-    else note("content", `${f.path} resolved through an alternate path - content not compared (an alternate location holds the repo's own form of it)`);
+    // Unreachable through the files loop, which only calls this once a path resolved -
+    // said out loud rather than returned silently, because a content check that quietly
+    // examines nothing is the failure this whole section is about.
+    if (!alt) {
+      note("content", `${f.path} is absent and no alternate path resolved - content not compared (reported by the files check)`);
+      return;
+    }
+    if (typeof f.sha256 !== "string") {
+      verifyPortedTree(f, alt);
+      return;
+    }
+    // A DIRECTORY at an alternate path may legitimately be a port - a different format,
+    // checked by name above. A FILE cannot: an altPath says the standard's file lives
+    // somewhere else here, not that something else lives there instead. This was the same
+    // hole one entry-shape over - the entry resolved, nothing was compared, and the run
+    // said so in a dim note nobody reads as "unverified".
+    if (contentHash(alt) === f.sha256) {
+      pass("content", `${alt} stands in for ${f.path} and carries the standard's copy`);
+      return;
+    }
+    failOrExcept("content", f.path, "content", `${alt} stands in for ${f.path} but its content is not the standard's - an alternate path is a different location for the standard's file, not permission for a different file (${CONTENT_HINT})`);
     return;
   }
   if (typeof f.sha256 === "string") {
