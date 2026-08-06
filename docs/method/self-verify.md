@@ -103,7 +103,7 @@ supersede-not-edit, cooldown discipline - are review-verified: honestly outside 
 number, listed in the judgment tier below. A repo can be drift 0 and still sloppy at
 review; the number is the floor, not the ceiling.
 
-**What the adopted percentage does not measure (ADR-037).** It is a *structural* reading. A
+**What the adopted percentage does not measure (ADR-038).** It is a *structural* reading. A
 `copy` entry is compared against its recorded hash and a `merge` entry against its declared
 keys, but a **`fill-from-repo`** entry - `AGENTS.md`, `docs/personas.md`, `docs/PRODUCT.md`,
 `docs/ARCHITECTURE.md`, `SECURITY.md`, `CONTRIBUTING.md` and the rest the adopter authors -
@@ -192,7 +192,7 @@ A machine cannot (yet) decide these; they are checked when the PR is reviewed:
   buildable, not merely described.
 - **No unrecorded drift** - no known spec<->code contradiction is left unresolved.
 - **The authored files say something** - every `fill-from-repo` entry is content you wrote, so
-  the mechanical tier can only see that it exists and flag the ones that visibly do not (ADR-037).
+  the mechanical tier can only see that it exists and flag the ones that visibly do not (ADR-038).
   Whether `docs/PRODUCT.md` describes this product, whether `docs/ARCHITECTURE.md` matches the
   code, whether `SECURITY.md` names a contact somebody actually reads - that is read here, at
   review, and it is the difference between an adopted repo and a decorated one.

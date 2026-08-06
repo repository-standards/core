@@ -555,7 +555,12 @@ if (!skeleton) {
     .filter((f) => f.adapt === "fill-from-repo")
     .map((f) => [f.path, ...(f.altPaths || [])].find((x) => exists(x) && !isDir(x)))
     .filter(Boolean);
-  const fillPaths = [...new Set([...fillFiles, "AGENTS.md", "README.md", "docs/PRINCIPLES.md", "docs/backlog.md"].filter((p) => exists(p) && !isDir(p)))];
+  // The original eight stay as a floor rather than being replaced by the derived set. Without
+  // a manifest there is nothing to derive from - the skeleton fallback - and dropping to the
+  // derived set alone would have quietly stopped scanning SECURITY.md, PRODUCT, ARCHITECTURE
+  // and the roster on exactly the repos least likely to have filled them in.
+  const FLOOR = ["AGENTS.md", "README.md", "SECURITY.md", "docs/PRINCIPLES.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md"];
+  const fillPaths = [...new Set([...fillFiles, ...FLOOR].filter((p) => exists(p) && !isDir(p)))];
 
   // A stub the adopter wrote themselves carries no template placeholder, so the check above
   // cannot see it. Six files reading "# Title\n\nTODO." moved a sparse repo from 21% to 37%
@@ -570,10 +575,15 @@ if (!skeleton) {
   // and both are cleared by writing one real sentence - which is the whole ask.
   //
   // Still a warning, never drift. Whether what IS written is any good stays the judgment tier's
-  // call (ADR-037), and the adopted percentage counts entries present, not substance present.
+  // call (ADR-038), and the adopted percentage counts entries present, not substance present.
   const NOTHING_YET = /^(?:to\s?do|todo|tbd|t\.b\.d\.?|fixme|xxx|n\/?a|none|coming soon|to be (?:written|filled|done|completed)|fill (?:me )?in|placeholder|wip|work in progress)\b[\s.!:;-]*$/i;
+  // Deliberately does NOT strip code. That strip exists for the placeholder check, where the
+  // question is notation-versus-prose; here the question is whether anything was written at
+  // all, and a SECURITY.md whose whole body is the command to file an advisory has told the
+  // reader what to do. Stripping it warned on that file, which is a false positive on a
+  // warning - and a warning that fires on a finished file is one everybody learns to skip.
   const proseOf = (raw) =>
-    stripCode(raw)
+    raw
       .replace(/<!--[\s\S]*?-->/g, "")
       .split("\n")
       .filter((l) => !/^\s*#{1,6}\s/.test(l))
@@ -650,7 +660,7 @@ const scope = manifest
 // there is nothing to compare it against and it scores on presence: six files reading
 // "# Title / TODO." moved a sparse repo from 21% to 37% adopted with its substance unchanged.
 // Saying so where the number is printed is the honest fix; scoring prose mechanically would
-// turn substance into ceremony (ADR-037). The fill warnings above name the ones that read as
+// turn substance into ceremony (ADR-038). The fill warnings above name the ones that read as
 // empty, and whether the rest say anything worth saying is reviewed at PR.
 const fillWarnings = results.filter((r) => r.isWarning && r.name === "fill").length;
 const substance = fillWarnings

@@ -260,6 +260,20 @@ checkSubstance("a terse but real file does not warn - substance is not length", 
   warnsAbout: [["SECURITY.md", false], ["CONTRIBUTING.md", false]],
 });
 
+// Found by probing the boundary rather than by a case failing: the placeholder scan strips
+// code before matching, and reusing that stripped body for the emptiness test warned on a
+// SECURITY.md whose whole content is the command to file an advisory - a finished file. Code
+// is content here, even though it is notation there.
+checkSubstance("a file whose only content is a fenced command is not empty", {
+  files: { "SECURITY.md": "# Security\n\n```\ngh security-advisory create --repo acme/api\n```\n" },
+  warnsAbout: [["SECURITY.md", false]],
+});
+
+checkSubstance("a support table with no prose is content", {
+  files: { "SECURITY.md": "# Security\n\n| Version | Supported |\n|---|---|\n| 2.x | yes |\n" },
+  warnsAbout: [["SECURITY.md", false]],
+});
+
 checkSubstance("a heading plus a real list is content, not an empty shell", {
   files: { "docs/ARCHITECTURE.md": "# Architecture\n\n## Shape\n\n- A Fastify API behind a Next proxy.\n- Postgres, one schema.\n" },
   warnsAbout: [["docs/ARCHITECTURE.md", false]],
