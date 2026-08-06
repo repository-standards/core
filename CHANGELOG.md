@@ -16,6 +16,29 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A repo running two technology stacks could register one of them (2026-08-06)
+
+R20 promises one drift number across both layers, and `self-verify` read exactly one
+filename to get the second one. A repo whose stacks coexist permanently - the shape this was
+measured on is a Dart framework beside a native engine, neither migrating to the other -
+could register one stack, and the other was invisible: its entries unchecked, its absence
+uncounted, and nothing in the output saying a manifest had been ignored. Reproduced on the
+current tree first: a fixture carrying two stack manifests reported only the first, and the
+second's required entry never appeared in the run at all.
+
+`stack.manifest.json` is unchanged and stays the name for a repo with one stack. A repo
+whose stacks coexist adds `stack.<technology>.manifest.json` per stack; every match at the
+repo root is read in filename order, each is named in the report with its technology, and
+they all land in the same single drift number
+([ADR-037](docs/decision-records/ADR-037-a-repo-may-register-more-than-one-stack.md)).
+
+Two decisions inside that are deliberate. An unparseable stack manifest is drift naming the
+file - silence there would reproduce this same defect one level down. And two stacks
+declaring the same path is **reported, not resolved**: the path is checked once per
+declaration, the run names both files, and nothing picks a winner between two upstream repos
+this one does not own. A file that merely resembles the name, `mystack.manifest.json`, is
+not read as a stack, and has a case saying so.
+
 ### The capability map had no way to say "that code is not in this repository" (2026-08-06)
 
 R11 binds every capability to code globs, which assumes the code is here. Plenty of real
