@@ -26,6 +26,15 @@ and stops; so does a reader. A second one hides everything under it from both wh
 guard stays green. A later clarify session is a new `### Session YYYY-MM-DD` under the
 heading that is already there.
 
+## What it deliberately ignores
+
+The scaffolding `/spec-plan` and `/spec-tasks` write beside a spec - `plan.md`, `tasks.md`,
+`research.md`, `data-model.md`, `quickstart.md`, `contracts/`, `checklists/` - is ephemeral by
+rule (ADR-010) and is not a capability spec, so none of it is held to the persona gate. A PR
+opened between `/spec-plan` and `/spec-reconcile` legitimately carries all of it. In full-tree
+mode the same list is reported as a warning instead: still committed once the work closed
+means the cleanup did not run.
+
 ## Why the roster is a table
 
 Because a guard has to read it. That is also why the shipped `personas.md` keeps its worked

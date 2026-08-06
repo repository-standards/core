@@ -16,6 +16,24 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The persona gate failed CI on four of the six files a plan writes (2026-08-06)
+
+`spec-structure.mjs` excluded `plan.md`, `tasks.md` and `checklists/` from the persona gate as
+engine scaffolding, but `/spec-plan` is documented to produce four more: `research.md` in
+Phase 0, and `data-model.md`, `quickstart.md` and `contracts/` in Phase 1. Every PR opened
+between `/spec-plan` and `/spec-reconcile` therefore failed the gate on files that are not
+capability specs and never carry a `Serves` field. Reproduced in the form CI runs,
+`--base main --block` on a branch that has run the plan step: exit 1 naming
+`contracts/booking-api.md`, `data-model.md`, `quickstart.md` and `research.md` - a
+mid-workflow state the guard's own comment beside the full-tree check calls legitimate.
+
+All six artifacts plus `contracts/` and `checklists/` are now one list. The full-tree warning
+about committed scaffolding grows the same four, which is the direction that should be loud:
+still there after the work closed means `/spec-reconcile`'s cleanup did not run.
+`tools/clarify-gate-test.mjs` gains a diff-mode helper that builds the plan-stage branch for
+real, and two cases on it - the plan's outputs pass, and a genuine sub-spec with no persona on
+the same branch is still reported.
+
 ### A spec could carry two `## Clarifications` sections and every guard stayed green (2026-08-06)
 
 The clarify gate greps for `^## Clarifications` and stops at the first hit. A spec that grew

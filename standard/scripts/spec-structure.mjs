@@ -87,7 +87,13 @@ for (const f of files) {
 
 // --- check 2: every capability spec serves a persona on the roster (ADR-006, R10) -----
 // A capability spec is specs/<capability>/<file>.md (depth >= 3), not a template or README.
-const ENGINE_ARTIFACTS = /\/(plan|tasks)\.md$|\/checklists\//; // scaffolding the engine writes (ADR-010: ephemeral)
+// Scaffolding the engine writes and `/spec-reconcile` removes (ADR-010: ephemeral). All six
+// of them: `/spec-plan` is documented to produce research.md in Phase 0 and data-model.md,
+// quickstart.md and contracts/ in Phase 1, and only plan.md and tasks.md were listed here -
+// so `--base <ref> --block`, the form CI runs, failed the persona gate on the other four in
+// every PR opened between /spec-plan and /spec-reconcile, a mid-workflow state the comment
+// beside the full-tree check already calls legitimate.
+const ENGINE_ARTIFACTS = /\/(plan|tasks|research|data-model|quickstart)\.md$|\/(checklists|contracts)\//;
 const isCapSpec = (f) =>
   f.split("/").length >= 3 && f.endsWith(".md") && !f.includes(".template.") && !/\/readme\.md$/i.test(f) && !ENGINE_ARTIFACTS.test(f);
 
