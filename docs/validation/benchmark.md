@@ -1577,7 +1577,7 @@ bash standard/scripts/spec/check-spec-clarified.sh against an unclarified spec (
 - **Given:** a raw degit'd tree, with only .standards-version, a `"profile":"core"` key, and an empty specs/capability-map.json written on top
 - **When:** self-verify.mjs runs
 - **Then:** drift is not reported as 0/100%/compliant, since the repo has no capability spec at all and AGENTS.md/README.md/ARCHITECTURE.md still ship as unfilled skeletons
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
