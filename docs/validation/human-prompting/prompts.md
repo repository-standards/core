@@ -123,7 +123,30 @@ is written and a correction after.
 
 ---
 
-## ## The whole flow, uncoached, end to end
+## ## Two shapes the standard has no form for
+
+Both raised unprompted by uncoached runs, both verified here.
+
+**A repository that is simultaneously a project and a generator payload.** The Express
+boilerplate is published as `npx create-nodejs-express-app`: every file in it is copied into
+somebody else's new project. Adopting the standard there means the standard's own files ride
+along, and **everyone running that generator silently inherits it** - a standard imposed on
+people who never chose it, which is the opposite of what adoption means.
+
+The agent noticed without being told, and taught the generator to strip the standard's files
+from what it emits. Nothing in the method covers this shape; it was handled by judgement.
+
+**A shipped procedure that points at a directory the profile excludes.** `cycle-open`'s step 6
+links to `docs/cycles/_template.md`. That entry is `profile: scale, required: false`, so a
+core-profile repository does not have it - and every adopter carries all twenty skills whatever
+profile they chose, so a core repo ships a procedure whose link is dead on arrival.
+
+Verified: the link is at `cycle-open/SKILL.md:54` and the manifest entry is scale-only. Whether
+it is worth fixing is an owner's call - a core repo has little reason to run a cycle skill - but
+"we ship you a procedure that cannot work here, and say nothing" is the kind of small dishonesty
+this corpus exists to notice.
+
+## The whole flow, uncoached, end to end
 
 The counterweight to everything below, and the first time it has been observed rather than
 claimed. `A1` run against `simonw/llm` by an agent given the repository and the line, nothing
