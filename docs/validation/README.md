@@ -19,11 +19,11 @@ written rather than generated.
 
 ## What this does not prove - read this before the numbers
 
-- **Assessment is not adoption.** 103 of 107 targets were assessed at
+- **Assessment is not adoption.** 103 of 110 targets were assessed at
   depth **L1** - a read-only clone, method passes applied, nothing changed. "We assessed
-  104 public repositories" and "we adopted 104 repositories" are different
+  107 public repositories" and "we adopted 107 repositories" are different
   claims, and only the first one is true.
-  **1 third-party repository has been adopted for real** (depth L3 or better, listed by slug in `targets.json`): `hagopj13/node-express-boilerplate`. That is what moves this from a design claim to a demonstrated one - and one repository is one repository. `FIELD-1` asks for three, of different sizes and stack situations, and stays open until it has them.
+  **4 third-party repositories have been adopted for real** (depth L3 or better, listed by slug in `targets.json`): `hagopj13/node-express-boilerplate`, `simonw/llm`, `pydantic/pydantic-ai`, `Textualize/textual`. That is what moves this from a design claim to a demonstrated one - and 4 repositories are still a small sample. `FIELD-1` asked for three of different sizes and stack situations and has them; what it still lacks is a *programme* - every adoption so far is one wave, not a counted backlog drained over weeks - and an adopting agent that is not this project's own. `EXHIBIT-1` is unaffected by the count: every adoption lives on a local branch, so there is still nothing a sceptic can open.
 - **Both sides of the fixtures share an author.** `test-greenfield-core` and
   `test-greenfield-node` - the two **L4** targets, the only ones that lived a full lifecycle
   loop - were built by the same people who wrote the standard being tested against them. They
@@ -62,12 +62,12 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 
 | | |
 |---|---|
-| Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
-| Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **193** across 8 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd) |
-| Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 99 pass, 90 fail, 1 not-applicable, 3 partial |
-| Failures found | **167** - **84 fixed and re-verified** (across 21 merged pull requests), **83 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
+| Cases in the catalogue | **190** (`181` executed at least once, `9` specified but not yet run) |
+| Portable cases (the benchmark subset) | **130** (68% of the catalogue); local (tests a path only this tree has): 60 |
+| Observations recorded | **211** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-07-b-adopt-py) |
+| Targets assessed | **110** (107 real repositories, 2 synthetic fixtures) |
+| Verdicts | 106 pass, 97 fail, 1 not-applicable, 7 partial |
+| Failures found | **174** - **84 fixed and re-verified** (across 21 merged pull requests), **90 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -77,21 +77,21 @@ number stops matching the data behind it.
 
 | Area | Cases | Executed | Specified only | Portable |
 |---|---|---|---|---|
-| `intake` | 9 | 9 | 0 | 8 |
-| `adoption` | 9 | 9 | 0 | 8 |
+| `intake` | 10 | 10 | 0 | 9 |
+| `adoption` | 10 | 10 | 0 | 9 |
 | `greenfield` | 7 | 7 | 0 | 2 |
-| `spec` | 22 | 19 | 3 | 17 |
-| `gates` | 33 | 33 | 0 | 23 |
+| `spec` | 23 | 20 | 3 | 18 |
+| `gates` | 34 | 34 | 0 | 24 |
 | `track` | 22 | 20 | 2 | 20 |
 | `decisions` | 13 | 13 | 0 | 10 |
 | `discovery` | 7 | 7 | 0 | 6 |
 | `trigger` | 6 | 4 | 2 | 5 |
-| `docs` | 18 | 18 | 0 | 6 |
+| `docs` | 19 | 19 | 0 | 7 |
 | `loop` | 4 | 3 | 1 | 3 |
 | `update` | 7 | 6 | 1 | 0 |
 | `stack` | 8 | 8 | 0 | 2 |
 | `security` | 4 | 4 | 0 | 3 |
-| `shape` | 15 | 15 | 0 | 11 |
+| `shape` | 16 | 16 | 0 | 12 |
 
 Every declared area carries at least one case.
 
@@ -103,7 +103,7 @@ Every declared area carries at least one case.
 |---|---|---|
 | L1 | read-only assessment pass, nothing changed | 103 |
 | L2 | dry adoption - the align router's decisions worked out for real, still no changes | 0 |
-| L3 | the standard actually applied to a working copy, drift measured | 1 |
+| L3 | the standard actually applied to a working copy, drift measured | 4 |
 | L4 | the repo then lived the loop for at least one full cycle of real work | 3 |
 
 ## The punch list - what is actually still broken
@@ -198,6 +198,13 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `ADOPT-07` | the honest-miss path's one deliverable (docs/stack-decisions.md, for a technology with no registered Layer-2 stack) exists in the manifest, a SPEC rule, and the taxonomy - the three places every other required deliverable exists in | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DEC-12` | the decision catalog has a category for a repo whose release gate is owned by a third party, not by its own CI or maintainer | `repo:Rdatatable/data.table` | **open** (logged, not fixed) |
 | `DEC-13` | the retroactive-decision reconstruction has a path for a founding decision that left no trace in the code or in the repo at all | `repo:opentofu/opentofu` | **open** (logged, not fixed) |
+| `ADOPT-11` | the brownfield phase's own intermediate state - the capability map complete, the specs partial - can pass the coupling audit it tells the adopter to wire up | `repo:pydantic/pydantic-ai` | **open** (logged, not fixed) |
+| `SHAPE-16` | the standard's docs/ tree lands in a repo where docs/ is already the published documentation source | `repo:simonw/llm` | **open** (logged, not fixed) |
+| `SHAPE-16` | the standard's docs/ tree lands in a repo where docs/ is already the published documentation source | `repo:pydantic/pydantic-ai` | **open** (logged, not fixed) |
+| `SHAPE-16` | the standard's docs/ tree lands in a repo where docs/ is already the published documentation source | `repo:Textualize/textual` | **open** (logged, not fixed) |
+| `ADOPT-07` | the honest-miss path's one deliverable (docs/stack-decisions.md, for a technology with no registered Layer-2 stack) exists in the manifest, a SPEC rule, and the taxonomy - the three places every other required deliverable exists in | `repo:simonw/llm` | **open** (logged, not fixed) |
+| `SPEC-23` | a spec reconstructed from years-old production code can say so, instead of carrying the same status as a feature nobody has built | `repo:simonw/llm` | **open** (logged, not fixed) |
+| `INTAKE-10` | the intake reads an AI policy that gates contribution on prior maintainer approval, not only ones that ban agents or constrain authorship | `repo:Textualize/textual` | **open** (logged, not fixed) |
 
 ## Fixed and re-verified this round
 

@@ -5,8 +5,8 @@
      agent-operated repository standard would claim, phrased so a reader who has never used
      this standard can run the same idea against their own. -->
 
-Twenty-something checks - **124**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **51** of them at least once and has fixed-and-re-verified **53** so far; the rest are logged as open (which includes any case where an attempted fix
+Twenty-something checks - **130**, precisely - that any repository standard
+claiming to be agent-operable should survive. This project failed **55** of them at least once and has fixed-and-re-verified **53** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -308,11 +308,24 @@ node standard/scripts/self-verify.mjs against a repo whose altPath target direct
 - **Given:** a capability map covering every source file of a real repo, with the $unclaimed declaration absent
 - **When:** $unclaimed is declared for the source tree only, and the audit is re-run
 - **Then:** the audit turns the check on and reports every remaining file in the repo - config, tests, tooling, root files - rather than silently scoping itself to src/
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 node scripts/spec-guard.mjs --audit with and without $unclaimed present
+```
+
+
+**GATE-33 - a required section is checked at the file entry's own declared altPath, not only at the primary filename**
+
+- **Given:** a repo whose changelog lives at docs/CHANGELOG.md, which is exactly what the CHANGELOG.md manifest entry's altPaths declares
+- **When:** self-verify runs
+- **Then:** the file entry passes AND its required section is read from the same file - rather than the file passing and the section failing with 'CHANGELOG.md missing', a drift with no legitimate way to close it short of moving the file back to the path the altPath exists to avoid
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+node standard/scripts/self-verify.mjs against a fixture whose CHANGELOG.md is at docs/CHANGELOG.md; covered both directions by tools/self-verify-drift-test.mjs
 ```
 
 
@@ -511,6 +524,19 @@ run spec-specify against a request whose generated slug does not exact-string-ma
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 read spec-plan/SKILL.md's Load context and Phase 1 steps: does it read the diff, or the whole FEATURE_SPEC?
+```
+
+
+**SPEC-23 - a spec reconstructed from years-old production code can say so, instead of carrying the same status as a feature nobody has built**
+
+- **Given:** onboard.md step 5, which requires that an unclear branch or a spec-code discrepancy be recorded as an open marker rather than guessed, and the structure guard, which re-runs the clarify gate on any spec claiming ready-to-develop or live
+- **When:** a spec for shipped, running code is written honestly, with its open questions live
+- **Then:** the status vocabulary can express 'shipped, spec incomplete' - instead of forcing in-refinement, the same value a not-yet-built feature carries, so specs/ cannot distinguish what runs in production from what is only a draft
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+set Status: live on a reconstructed spec that carries open [NEEDS ...] markers and run node standard/scripts/spec-structure.mjs --block
 ```
 
 
@@ -1064,6 +1090,19 @@ run intake's lifecycle-signal check against ziglang/zig's real state (archived: 
 ```
 
 
+**INTAKE-10 - the intake reads an AI policy that gates contribution on prior maintainer approval, not only ones that ban agents or constrain authorship**
+
+- **Given:** SKILL.md step 0's two AI-policy branches - a red-flag stop for a ban, and a conditional allow for a policy that constrains authorship, disclosure or pasted output - against a real third-party policy that instead requires every pull request to link to an issue or discussion where a maintainer already approved a solution
+- **When:** the intake runs on that repo
+- **Then:** the router recognises a sequencing condition as a third shape and adjusts what it produces first - the approved discussion before the branch - rather than routing it to the authorship branch, whose remedy (a human rewrites and submits the artifacts) does not satisfy it
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+run the intake against a repo whose AI_POLICY.md gates on prior maintainer approval and check which branch the router takes and what it produces first
+```
+
+
 ### adoption
 
 **ADOPT-01 - the churn-hotspot assessment pass states when a shallow clone makes it categorically unrunnable, instead of silently under-reporting**
@@ -1149,7 +1188,7 @@ run stack detection against denoland/deno and check whether the 715 package.json
 - **Given:** a real repo nobody on this project wrote, with no pin and no skeleton (hagopj13/node-express-boilerplate)
 - **When:** the align router's brownfield path is run end to end and self-verify is measured before and after
 - **Then:** a real drift number is produced at the start, every entry it names is closeable by authoring rather than by exception, and the run ends at drift 0
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (4/4)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1167,6 +1206,19 @@ node scripts/self-verify.mjs before landing anything, then again after the waves
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 node scripts/spec-guard.mjs --audit after authoring specs/capability-map.json
+```
+
+
+**ADOPT-11 - the brownfield phase's own intermediate state - the capability map complete, the specs partial - can pass the coupling audit it tells the adopter to wire up**
+
+- **Given:** onboard.md step 2 (map every capability), step 5 ('a capability you are not specing this pass is a backlog item - not a behavioral placeholder written to look done') and step 8 (wire the guards forward), followed literally on a repo with more capabilities than one wave can spec
+- **When:** node scripts/spec-guard.mjs --audit --block is run, as the shipped .github/workflows/spec-guard.yml does on every pull request at every profile
+- **Then:** the audit distinguishes a capability not yet specced from a map entry that is wrong, instead of reporting the designed state as a blocking problem whose only green escape is a map that claims almost nothing
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+author a complete capability-map.json, spec a subset, run node standard/scripts/spec-guard.mjs --audit --block; then rerun with a map naming only the specced capabilities and everything else under $unclaimed, and compare
 ```
 
 
@@ -1315,6 +1367,19 @@ read capability-spec.template.md's required buildable-tier sections and docs/met
 ```
 
 
+**SHAPE-16 - the standard's docs/ tree lands in a repo where docs/ is already the published documentation source**
+
+- **Given:** 16 manifest entries rooted at docs/ (12 of them core-profile), and a repo whose docs/ is the source root of a Sphinx or mkdocs site - the ordinary shape for a Python project
+- **When:** the manifest is applied literally
+- **Then:** the governance documents land somewhere the documentation build does not treat as user-facing content, or the manifest offers a declared alternative root - rather than the adopter's only options being to publish their own governance tree, break the docs build, or record a wall of exceptions that can never raise the adoption percentage
+- **Result:** **failed at least once** (3 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+build the target's docs before and after landing the manifest's docs/ entries, and compare the warning or failure count
+```
+
+
 ### security
 
 **SEC-01 - the security-baseline axis catalog has a negative-scope axis - what is deliberately not a vulnerability, and why**
@@ -1456,11 +1521,24 @@ run the prescribed cycle-close commit-count command against each of the showcase
 - **Given:** three retroactive ADRs authored into docs/decision-records/adr/ during a real adoption, with the shipped index untouched
 - **When:** decision-records-check runs
 - **Then:** it names each unindexed record and fails, rather than passing because the files exist
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 node scripts/decision-records-check.mjs --block
+```
+
+
+**DOC-19 - an index row labelled with the record's own id is an index row, and a rejected row is not reported as a missing record**
+
+- **Given:** an adopter who writes their ADR index rows as `| [ADR-001](ADR-001-x.md) | ... |` - the record's own id as the link label, which is the shape people reach for first
+- **When:** the decision-record index guard runs
+- **Then:** the row counts as an index row; and where a record genuinely has no row, the failure names the cell forms the guard can read instead of sending the reader to add a row that is already there
+- **Result:** passed every time it ran (1/1)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+node standard/scripts/decision-records-check.mjs --block against an index using the prefixed form; covered both directions by tools/decision-records-check-test.mjs
 ```
 
 

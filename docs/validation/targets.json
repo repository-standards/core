@@ -699,7 +699,7 @@
       "shape": "the owner's own pick - a fifth language context where the product's public API is not English (Portuguese keywords, one with a diacritic)",
       "depth": "L1",
       "round": "bf wave language (2026-08-04)",
-      "note": "Measured drift 9, adopted 61% (14/23). Found via gh search (single hit for 'programação em português' with >500 stars). The standard declares public APIs non-negotiably English; egua's public API is Portuguese keywords."
+      "note": "Measured drift 9, adopted 61% (14/23). Found via gh search (single hit for 'programa\u00e7\u00e3o em portugu\u00eas' with >500 stars). The standard declares public APIs non-negotiably English; egua's public API is Portuguese keywords."
     },
     {
       "slug": "mochajs/mocha",
@@ -1498,6 +1498,48 @@
       "depth": "L4",
       "round": "ongoing",
       "note": "Used where a case is verified by reading or running the shipped tree rather than by applying it to somebody else's repo."
+    },
+    {
+      "slug": "simonw/llm",
+      "kind": "repo",
+      "ecosystem": "Python",
+      "size": "116 tracked files, 52 .py, 1,245 commits since 2023-04-01",
+      "quality": "good",
+      "quality_evidence": "~12k stars, actively pushed (last commit 2026-08-05), pytest with recorded HTTP cassettes and syrupy snapshots, ruff + black + mypy in CI, Trusted Publishing already wired; effectively single-maintainer (1,445 of 1,587 commits authored across all refs)",
+      "star_tier": "popular",
+      "stars_approx": "~12k",
+      "shape": "small single-package Python CLI plus library, plugin architecture over pluggy entry points; one 4,306-line cli.py implements every command group, so capability boundaries cannot be expressed as file globs without claiming it several times",
+      "depth": "L3",
+      "round": "adopt-py (2026-08-07)",
+      "note": "Adopted for real on a local branch at the core profile: three personas, three retroactive ADRs, a seven-capability map, three buildable capability specs, a Python stack-decisions record and a fourteen-item backlog. self-verify taken from drift 15 (63%, 26/41) to drift 0 (43/43). spec-guard --audit ends at 4 problems - the four mapped-but-unspecced capabilities, recorded rather than hidden. Not pushed upstream; no issue or PR opened. The adoption also found a real defect in the target: AGENTS.md documented `pip install -e '.[test]'` for an extra pyproject.toml does not define, so the documented setup installs 31 packages without pytest and its next step fails."
+    },
+    {
+      "slug": "pydantic/pydantic-ai",
+      "kind": "repo",
+      "ecosystem": "Python",
+      "size": "2,324 tracked files, 2,653 commits since 2024-06-14, 551 contributors",
+      "quality": "excellent",
+      "quality_evidence": "~19k stars, pushed the day of the adoption; uv workspace with a committed lock and --frozen installs, pyright, 715 of 727 workflow `uses:` SHA-pinned, Trusted Publishing with the publish action SHA-pinned, and a 7-day dependency cooldown via [tool.uv] exclude-newer",
+      "star_tier": "large",
+      "stars_approx": "~19k",
+      "shape": "uv workspace publishing four distributions; a mature agent-instruction system already in place (root AGENTS.md, CLAUDE.md as a symlink to it, thirteen AGENTS.md files, eight of them scoped to a subdirectory of pydantic_ai_slim/pydantic_ai/, its own .claude/skills/ and a second .agents/skills/ tree) - so the adoption was a merge into an existing convention rather than a scaffold",
+      "depth": "L3",
+      "round": "adopt-py (2026-08-07)",
+      "note": "Adopted for real on a local branch at the scale profile: three personas, two retroactive ADRs, a ten-capability map, one buildable capability spec, a Python stack-decisions record and an eleven-item backlog. self-verify taken from drift 16 (68%, 34/50) to drift 0 (53/53). spec-guard --audit ends at 9 problems, all of them mapped-but-unspecced capabilities. The repository is where the audit tension was measured both ways on the same commit: the honest ten-entry map reports 9 problems, a map naming only the one specced capability reports OK across 2,324 files. Not pushed upstream; no issue or PR opened."
+    },
+    {
+      "slug": "Textualize/textual",
+      "kind": "repo",
+      "ecosystem": "Python",
+      "size": "2,120 tracked files, 13,103 commits since 2021-04-08, 202 contributors",
+      "quality": "good, with a hole",
+      "quality_evidence": "~37k stars, large snapshot test suite, pre-commit, mypy, Black in CI; but two lockfiles are tracked and one of them (uv.lock, 52 bytes, no packages, added in a commit titled 'test fixes') is not real, and poetry.lock has not been refreshed since 2025-10-22",
+      "star_tier": "large",
+      "stars_approx": "~37k",
+      "shape": "single published package, 247 modules at the top level of src/textual/ plus eight subpackages, so the capability map had to be derived one level below the package with no workspace boundary to inherit; ships an AI_POLICY.md that permits agent contributions only when a maintainer has already approved a solution in an issue or discussion",
+      "depth": "L3",
+      "round": "adopt-py (2026-08-07)",
+      "note": "Adopted for real on a local branch at the scale profile: an AGENTS.md the repository did not have, three personas, one retroactive ADR, an eight-capability map, one buildable capability spec, a Python stack-decisions record and a twelve-item backlog. self-verify taken from drift 15 (66%, 29/44) to drift 0 (47/47). spec-guard --audit ends at 7 problems. The AI policy is the reason this target matters to the intake: it is neither a ban nor an authorship condition but a sequencing one, a shape SKILL.md step 0 has no branch for. Nothing was pushed and no issue or PR was opened - which is also what the policy would require."
     }
   ]
 }
