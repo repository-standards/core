@@ -7,7 +7,7 @@
 
 ## Purpose
 
-Guard the single authored shipped tree (`standard/`, ADR-014): nothing repo-own leaks in, everything the manifest promises is present, every shipped file is a manifest entry, workflow pins stay exact, derived facts stay derived, and the tree passes its own verifier. Plus: no relative markdown link anywhere in the repo is dead.
+Guard the single authored shipped tree (`standard/`, ADR-014): nothing repo-own leaks in, everything the manifest promises is present, every shipped file is a manifest entry, workflow pins stay exact, derived facts stay derived, the released version is described where releases are described, and the tree passes its own verifier. Plus: no relative markdown link anywhere in the repo is dead.
 
 ## Clarifications
 
@@ -52,6 +52,7 @@ Verifying an adopted repo ([verify-engine](../verify-engine/spec.md)); checking 
 3b. **Recorded content hashes are the tree's own.** `node tools/manifest-hashes.mjs --check` must exit 0: every `copy`-class entry carries a `sha256` matching what the tree ships, and no other entry carries one. The hashes are generated (`node tools/manifest-hashes.mjs`), never hand-written, and they are what lets an adopted repo detect a file whose content stopped being the standard's - so a stale one is a lie shipped to every aligned repo. The skeleton run above proves the same thing for the entries it reaches; only this check distinguishes *no hash recorded* from *hash recorded and matching*, and an unhashed copy entry is silently unverified downstream.
 4. **Version surface.** `VERSION` is read; `standard/SPEC.md` must contain `Version <V>`. The README is deliberately **not** checked for `@<V>`: that assertion required the quick start to instruct an adopter to pin a version, which is the model [ADR-025](../../docs/decision-records/ADR-025-the-standard-is-living-latest-is-the-target.md) removed. A guard that demands phrasing a decision deleted keeps reinstating it, and this one did - it failed the moment the README was corrected.
 4b. **Derived facts stay derived.** The surfaces in `FACT_SURFACES` (`README.md`, `llms.txt`, `AGENTS.md`, `docs/ecosystem.md`, `site/index.html`, `standard/README.md`) must not hand-write a rule range (`R1-R<n>`) or a rule count (`<number|word> [numbered] rules`); a match FAILs, quoting the offending text. Facts derivable from `SPEC.md` are stated as "the numbered rules" or derived, never restated by hand. **Markup is stripped (`<[^>]+>` -> a space) before matching**: one of the surfaces is HTML, and a count split across a tag - `20<small>rules` - reads as a count to a human and as two unrelated tokens to a naive regex, which is exactly how a stale number survived on the landing page while this check reported green.
+4c. **The released version has a changelog entry.** `CHANGELOG.md` at the repo root must contain a heading `## <V>` (an optional `[V]` bracket allowed, and the character after the version must not be a digit, or `0.8.1` would be satisfied by `## 0.8.13`). R18 makes a release one act - promote `## Unreleased` into a version section, then bump `VERSION` - and nothing checked the first half of it: thirteen bumps between the 0.8.0 and 0.8.13 releases shipped with no entry at all, 32 commits found by reading rather than by a gate. The manifest already requires the file and its `## Unreleased` heading to exist, which is not the same claim: a repo can hold both and still release into silence. The historical gap is not backfilled - `CHANGELOG.md` records it as a gap, with the commit range to read - because reconstructing twelve entries from commit subjects and a nineteen-commit span nobody split at the time would be a guess in the file whose job is to be checkable.
 5. **Workflow pins are exact (R21/ADR-017).** Every workflow under `.github/workflows/` and `standard/.github/workflows/`: each `uses:` names a full 40-hex commit SHA (local `./` actions exempt; comment-only lines - first non-space char `#` - are skipped), no `runs-on` label containing `-latest`, no bare-major `node-version`, and `standard/.nvmrc` (when present) is an exact `x.y.z`.
 
 Output: one `  FAIL  <message>` line per problem, `  ok    <message>` per clean check, then the verdict: `tree-check: OK - one tree, shippable` or `tree-check: FAIL - <n> problem(s)`.
@@ -69,7 +70,7 @@ Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-c
 | Tool | Exit | Condition |
 |---|---|---|
 | tree-check | 0 | every check clean |
-| tree-check | 1 | any check above failing: a leak, an unmet manifest promise, an unresolved reference, a shipped file no manifest entry covers, a skeleton self-verify failure, a stale or missing recorded hash, a spec version mismatch, a hand-written derived fact, or a loose workflow pin (count in the verdict) |
+| tree-check | 1 | any check above failing: a leak, an unmet manifest promise, an unresolved reference, a shipped file no manifest entry covers, a skeleton self-verify failure, a stale or missing recorded hash, a spec version mismatch, a released version with no changelog entry, a hand-written derived fact, or a loose workflow pin (count in the verdict) |
 | link-check | 0 | every relative link resolves |
 | link-check | 1 | one or more dead relative links (count in the verdict) |
 
@@ -91,6 +92,7 @@ Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-c
 - The pristine tree MUST pass its own `self-verify --skeleton`.
 - Every `copy`-class manifest entry MUST carry a hash of what the tree actually ships, and no hash may be authored by hand.
 - No tracked text file MUST contain a NUL byte.
+- The version in `VERSION` MUST have a `## <version>` section in the root `CHANGELOG.md` - a released number with nothing describing it is a release nobody can read.
 
 ## Acceptance criteria
 
@@ -107,6 +109,8 @@ Failure format: `  FAIL  <file>:<line> -> <target>` (1-based line), then `link-c
 - **Untracked dead link.** GIVEN a freshly created, not yet `git add`-ed md file links a relative target that does not exist WHEN link-check runs THEN it FAILs exactly as for a tracked file, exit 1.
 
 - **Version mismatch.** GIVEN `VERSION` is `9.9.9` and SPEC.md says `Version 0.7.2` WHEN tree-check runs THEN the SPEC mismatch is reported and exit is 1.
+- **A released version with no entry.** GIVEN `VERSION` is `0.8.7` and `CHANGELOG.md` has headings for `0.8.13` and `0.8.0` only WHEN tree-check runs THEN a FAIL says `0.8.7` has no heading and names R18, and exit is 1 - `## 0.8.13` does not satisfy `0.8.7` despite sharing its digits.
+- **The gap note is not an entry.** GIVEN `CHANGELOG.md` carries the recorded-gap heading naming 0.9.0, 0.9.1 and 0.8.2 - 0.8.12 WHEN `VERSION` reads `0.9.0` THEN the check still FAILs: the note says those versions have no entry, and a heading that begins with prose cannot be mistaken for the section that would.
 - **The README is not required to name a version.** GIVEN a README whose quick start contains no `@<version>` at all WHEN tree-check runs THEN no version failure is raised - latest is the only target, so a quick start naming one would be the defect.
 - **Unmanifested file.** GIVEN `standard/docs/stray.md` exists and no manifest entry or `EXEMPT` row covers it WHEN tree-check runs THEN a FAIL names it and exit is 1.
 - **Floating pin.** GIVEN a workflow line `uses: actions/checkout@v4` (not a 40-hex SHA) WHEN tree-check runs THEN a FAIL quotes it; a commented-out `# uses: ...@v4` line is skipped.

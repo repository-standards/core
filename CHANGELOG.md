@@ -43,6 +43,27 @@ cycles span, carry whole-minute timestamps with author and committer date identi
 counts over them are real; the times they land on were chosen, which is part of why a morning
 open and an evening close made the ambiguity so easy to hit.
 
+### Thirteen version bumps had no changelog entry, and no gate would have caught the next one (2026-08-06)
+
+R18 makes a release one act: promote `## Unreleased` into a version heading, then bump
+`VERSION`. Only the second half ever happened for a stretch of this repo's life, and no gate
+looked. `tools/tree-check.mjs` now fails when `VERSION` names a version with no matching
+`## <version>` heading in `CHANGELOG.md`. It cannot judge whether the section says anything
+useful; it does stop a number shipping with no section at all, which is the failure that
+actually happened.
+
+The historical gap is recorded rather than backfilled. Read off `git log -p -- VERSION`:
+thirteen commits moved the file between the 0.8.0 and 0.8.13 releases - 0.9.0, 0.9.1 and
+0.8.2 through 0.8.12 - across a 32-commit span, exactly one of which touched `CHANGELOG.md`
+at all, and that one only to rewrite an organization name inside older entries. `VERSION`
+never held 0.8.1: two ordinary PRs shipped as 0.9.0 and 0.9.1 when R25 matched its own
+trigger, and the walk-back wrote 0.8.2 directly. The note cut with 0.8.13 says "twelve version
+bumps" and names 0.8.1 through 0.8.12, so it counts a version that never existed and misses
+two that did; the released section is left as it was cut and a new section states the
+correction. Twelve of the thirteen bumps are one commit each and could have been transcribed
+from their subjects, but 0.9.0 sits twenty commits after 0.8.0 and splitting those nineteen
+across headings would be a guess - in the one file whose value is that it is checkable.
+
 ### R23 forbade the ordinary security backport, so a maintained release line is now a base a PR may have (2026-08-06)
 
 "Every PR MUST be based on the mainline, never on another open PR's branch" was written
@@ -1216,6 +1237,43 @@ described in detail in `docs/method/changelog-process.md` as shipping with the t
 does not exist anywhere in it. R25 now describes what the *release* does, not the PR;
 the missing script and the unrecorded twelve versions are logged, not fixed here -
 they're a backfill/tooling task, not a wording fix.
+
+## No entries were written for 0.9.0, 0.9.1 and 0.8.2 - 0.8.12 (recorded 2026-08-06)
+
+Thirteen commits moved `VERSION` between the 0.8.0 release below and the 0.8.13 release above,
+and not one of them wrote an entry here. Nothing is being backfilled: this heading is the
+record of the gap, and the pointer to where the truth actually lives.
+
+What `git log -p -- VERSION` shows, and it is worth reading before trusting the note in the
+0.8.13 section:
+
+- The versions that existed, in the order the file held them: 0.9.0, 0.9.1, 0.8.2, 0.8.3,
+  0.8.4, 0.8.5, 0.8.6, 0.8.7, 0.8.8, 0.8.9, 0.8.10, 0.8.11, 0.8.12. Thirteen bumps, every
+  one of them on 2026-08-03.
+- `VERSION` never held **0.8.1**. Two ordinary pull requests came out as 0.9.0 and 0.9.1
+  because R25, on the day it was added, matched its own trigger; `a82c470` walked the number
+  back and wrote 0.8.2 directly, since that is where the second of those two PRs lands from
+  0.8.0. That message names 0.8.1 as the number the first of the two should have carried, and
+  that is the whole of its existence: no commit ever wrote 0.8.1 into `VERSION`.
+- The unrecorded span is `07ad235..4b1179d`: **32 commits**. Exactly one of them touched this
+  file at all - `4e038e5`, which rewrote the organization name inside older entries and added
+  nothing.
+
+So the note under 0.8.13 is wrong in both directions. It says "twelve version bumps with no
+record" and names 0.8.1 through 0.8.12: that counts a version the file never held and misses
+the two it did hold. The released section is left exactly as it was cut - a release is
+history, not a draft - and this is the correction to it.
+
+**Nothing here is reconstructed, on purpose.** Twelve of the thirteen bumps are a single
+commit each, so twelve entries could be copied from twelve commit subjects. The thirteenth
+cannot: 0.9.0 arrived twenty commits after 0.8.0, and deciding which of those nineteen
+unversioned commits belonged to which release would be a guess, written in the one file whose
+entire job is to be checkable. A gap that says so, with the range to read, is worth more than
+a tidy history nobody can source. The range is `git log --oneline 07ad235..4b1179d`.
+
+This exact failure cannot repeat: `tools/tree-check.mjs` now fails when `VERSION` names a
+version with no matching heading in this file, so a bump that promoted nothing stops at the
+gate instead of shipping unnoticed.
 
 ## 0.8.0 - 2026-08-02
 
