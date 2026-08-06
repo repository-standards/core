@@ -19,11 +19,11 @@ written rather than generated.
 
 ## What this does not prove - read this before the numbers
 
-- **Assessment is not adoption.** 103 of 111 targets were assessed at
+- **Assessment is not adoption.** 103 of 118 targets were assessed at
   depth **L1** - a read-only clone, method passes applied, nothing changed. "We assessed
-  108 public repositories" and "we adopted 108 repositories" are different
+  115 public repositories" and "we adopted 115 repositories" are different
   claims, and only the first one is true.
-  **5 third-party repositories have been adopted for real** (depth L3 or better, listed by slug in `targets.json`): `hagopj13/node-express-boilerplate`, `matomo-org/matomo`, `git/git`, `vim/vim`, `vdukhovni/postfix`. That is what moves this from a design claim to a demonstrated one - and 5 repositories are still a small sample. `FIELD-1` asks for three, of different sizes and stack situations, and stays open until it has them.
+  **12 third-party repositories have been adopted for real** (depth L3 or better, listed by slug in `targets.json`): `hagopj13/node-express-boilerplate`, `matomo-org/matomo`, `git/git`, `vim/vim`, `vdukhovni/postfix`, `caddyserver/caddy`, `simonw/llm`, `pydantic/pydantic-ai`, `Textualize/textual`, `honojs/hono`, `drizzle-team/drizzle-orm`, `usebruno/bruno`. That is what moves this from a design claim to a demonstrated one - and 12 repositories are still a small sample. `FIELD-1` asks for three, of different sizes and stack situations, and stays open until it has them.
 - **Both sides of the fixtures share an author.** `test-greenfield-core` and
   `test-greenfield-node` - the two **L4** targets, the only ones that lived a full lifecycle
   loop - were built by the same people who wrote the standard being tested against them. They
@@ -63,12 +63,12 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 
 | | |
 |---|---|
-| Cases in the catalogue | **206** (`197` executed at least once, `9` specified but not yet run) |
-| Portable cases (the benchmark subset) | **141** (68% of the catalogue); local (tests a path only this tree has): 65 |
-| Observations recorded | **314** across 27 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-k-shape, 2026-08-06-l-dochonesty, 2026-08-06-m-drift, 2026-08-06-n-vocab, 2026-08-06-o-specmech, 2026-08-06-p-shape, 2026-08-06-q-track, 2026-08-06-s-field3, 2026-08-06-t-decisions, 2026-08-06-u-gatedoc, 2026-08-06-v-ledger, 2026-08-06-w-tracked, 2026-08-06-x-tail, 2026-08-06-y-substance, 2026-08-07-c-adopt-old) |
-| Targets assessed | **111** (108 real repositories, 2 synthetic fixtures) |
-| Verdicts | 187 pass, 118 fail, 2 not-applicable, 7 partial |
-| Failures found | **185** - **154 fixed and re-verified** (across 31 merged pull requests, plus 17 re-verified against the tree without a pull request cited), **31 still open right now** (of which 1 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 87 earlier fails superseded by a later re-run and no longer counted open |
+| Cases in the catalogue | **211** (`202` executed at least once, `9` specified but not yet run) |
+| Portable cases (the benchmark subset) | **146** (69% of the catalogue); local (tests a path only this tree has): 65 |
+| Observations recorded | **358** across 30 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-k-shape, 2026-08-06-l-dochonesty, 2026-08-06-m-drift, 2026-08-06-n-vocab, 2026-08-06-o-specmech, 2026-08-06-p-shape, 2026-08-06-q-track, 2026-08-06-r-field2, 2026-08-06-s-field3, 2026-08-06-t-decisions, 2026-08-06-u-gatedoc, 2026-08-06-v-ledger, 2026-08-06-w-tracked, 2026-08-06-x-tail, 2026-08-06-y-substance, 2026-08-07-a-adopt-js, 2026-08-07-b-adopt-py, 2026-08-07-c-adopt-old) |
+| Targets assessed | **118** (115 real repositories, 2 synthetic fixtures) |
+| Verdicts | 210 pass, 135 fail, 2 not-applicable, 11 partial |
+| Failures found | **202** - **154 fixed and re-verified** (across 31 merged pull requests, plus 17 re-verified against the tree without a pull request cited), **48 still open right now** (of which 6 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 87 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -78,10 +78,10 @@ number stops matching the data behind it.
 
 | Area | Cases | Executed | Specified only | Portable |
 |---|---|---|---|---|
-| `intake` | 10 | 10 | 0 | 9 |
-| `adoption` | 16 | 16 | 0 | 13 |
+| `intake` | 12 | 12 | 0 | 11 |
+| `adoption` | 18 | 18 | 0 | 15 |
 | `greenfield` | 7 | 7 | 0 | 2 |
-| `spec` | 22 | 19 | 3 | 17 |
+| `spec` | 23 | 20 | 3 | 18 |
 | `gates` | 41 | 41 | 0 | 29 |
 | `track` | 22 | 20 | 2 | 20 |
 | `decisions` | 14 | 14 | 0 | 11 |
@@ -104,7 +104,7 @@ Every declared area carries at least one case.
 |---|---|---|
 | L1 | read-only assessment pass, nothing changed | 103 |
 | L2 | dry adoption - the align router's decisions worked out for real, still no changes | 0 |
-| L3 | the standard actually applied to a working copy, drift measured | 5 |
+| L3 | the standard actually applied to a working copy, drift measured | 12 |
 | L4 | the repo then lived the loop for at least one full cycle of real work | 3 |
 
 ## The punch list - what is actually still broken
@@ -127,6 +127,8 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `SHAPE-09` | the R19 settings baseline and R16's runtime-cost disclosure name a real command vocabulary for Windows, not only macOS/Linux tools (`sudo`, `diskutil`, `launchctl`, `crontab`) and the one dependency (`jq`) R16 currently omits | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SEC-04` | R9's 'rebuild and verify from the spec alone' escape hatch (the behavioral tier) is reachable for a capability whose correctness oracle is a person or piece of hardware, not only for the shapes onboard.md already forbids using it for | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `ADOPT-07` | the honest-miss path's one deliverable (docs/stack-decisions.md, for a technology with no registered Layer-2 stack) exists in the manifest, a SPEC rule, and the taxonomy - the three places every other required deliverable exists in | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
+| `ADOPT-07` | the honest-miss path's one deliverable (docs/stack-decisions.md, for a technology with no registered Layer-2 stack) exists in the manifest, a SPEC rule, and the taxonomy - the three places every other required deliverable exists in | `repo:caddyserver/caddy` | **open** (logged, not fixed) |
+| `ADOPT-11` | self-verify measures the working tree, so an artifact the repo's own .gitignore excludes is still counted as adopted | `repo:caddyserver/caddy` | **open** (logged, not fixed) |
 | `ADOPT-11` | self-verify measures the working tree, so an artifact the repo's own .gitignore excludes is still counted as adopted | `repo:matomo-org/matomo` | **open** (logged, not fixed) |
 | `ADOPT-12` | the drift number is bounded by the manifest's entry count, so it says the same thing about a 78-file boilerplate and a 13,591-file multi-year platform | `repo:matomo-org/matomo` | **open** (logged, not fixed) |
 | `ADOPT-13` | the adoption percentage rises from copying the standard's own shipped files, before any repo-specific content is authored | `repo:matomo-org/matomo` | **open** (logged, not fixed) |
@@ -138,6 +140,21 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `GATE-36` | a content exception on a merge-class entry can never apply, and self-verify reports it as a deviation the repo no longer has | `repo:matomo-org/matomo` | **open** (logged, not fixed) |
 | `SHAPE-16` | the intake has a step for a repo that already carries an AGENTS.md whose operational rules live in a different repository | `repo:matomo-org/matomo` | **open** (logged, not fixed) |
 | `DOC-19` | the shipped ADR/BDR index shows the row format its own guard accepts | `repo:matomo-org/matomo` | **open** (logged, not fixed) |
+| `ADOPT-12` | the drift number is bounded by the manifest's entry count, so it says the same thing about a 78-file boilerplate and a 13,591-file multi-year platform | `repo:usebruno/bruno` | attempted, still open - [skills/align-to-standards/SKILL.md step 3 now tells the aligner to read the target's existing skill descriptions before copying the shipped set in, name every collision to the user, and record the resolution as a per-member `content` exception when the repo's own skill wins. The bruno run is the worked example in the text.](skills/align-to-standards/SKILL.md step 3 now tells the aligner to read the target's existing skill descriptions before copying the shipped set in, name every collision to the user, and record the resolution as a per-member `content` exception when the repo's own skill wins. The bruno run is the worked example in the text.) did not fully hold (see evidence in `runs/2026-08-07-a-adopt-js.json`) |
+| `ADOPT-13` | the adoption percentage rises from copying the standard's own shipped files, before any repo-specific content is authored | `repo:drizzle-team/drizzle-orm` | attempted, still open - [skills/align-to-standards/SKILL.md step 3's settings guidance now says the deny list is written from a consuming application's point of view and to check whether the target repo *is* one of the tools it denies, narrowing the entry to the destructive subcommands rather than dropping it. drizzle-kit is the named example.](skills/align-to-standards/SKILL.md step 3's settings guidance now says the deny list is written from a consuming application's point of view and to check whether the target repo *is* one of the tools it denies, narrowing the entry to the destructive subcommands rather than dropping it. drizzle-kit is the named example.) did not fully hold (see evidence in `runs/2026-08-07-a-adopt-js.json`) |
+| `ADOPT-14` | the three offered options for landing the CI workflow cover the self-verify step only, and the full-tree audit it also lands is unconditionally blocking | `repo:honojs/hono` | **open** (logged, not fixed) |
+| `ADOPT-15` | the copy-class .nvmrc overwrites the runtime pin a repo already has, and its content is the repo's, not the standard's | `repo:honojs/hono` | attempted, still open - [skills/align-to-standards/SKILL.md step 3 now states that spec-guard.yml reads .nvmrc, that .nvmrc is optional, and that the aligner must either land it or point the step at the pin the repo already has - with hono's .tool-versions as the worked example.](skills/align-to-standards/SKILL.md step 3 now states that spec-guard.yml reads .nvmrc, that .nvmrc is optional, and that the aligner must either land it or point the step at the pin the repo already has - with hono's .tool-versions as the worked example.) did not fully hold (see evidence in `runs/2026-08-07-a-adopt-js.json`) |
+| `ADOPT-16` | the persona and product gates produce something real for infrastructure with no product owner, instead of blocking or fabricating one | `repo:honojs/hono` | attempted, still open - [SKILL.md step 3 now says to land .claude/hooks and .claude/settings.json together or not at all, and states why: both entries are optional, the hooks only run because settings.json wires them into PreToolUse, and a silently inert deny-guard is worse than an absent one.](skills/align-to-standards/SKILL.md step 3 now says to land .claude/hooks and .claude/settings.json together or not at all, and states why: both entries are optional, the hooks only run because settings.json wires them into PreToolUse, and a silently inert deny-guard is worse than an absent one.) did not fully hold (see evidence in `runs/2026-08-07-a-adopt-js.json`) |
+| `GATE-33` | schema-pair skips precisely the repos that have not complied with R24, and no manifest entry requires database/schema/ at all | `repo:usebruno/bruno` | **open** (logged, not fixed) |
+| `INTAKE-12` | an AI policy that permits agent contribution while attaching a discretionary sanction is recognised as its own category, and the scan looks beyond a root CONTRIBUTING.md | `repo:honojs/hono` | attempted, still open - [align-to-standards/SKILL.md step 0 gains a third policy shape - a permission with a sanction and no procedural condition, hono's wording quoted - and an instruction to look past the repo root and to read README.md, because hono's policy is in docs/CONTRIBUTING.md and its root carries no CONTRIBUTING.md at all.](skills/align-to-standards/SKILL.md step 0 gains a third policy shape - a permission with a sanction and no procedural condition, hono's wording quoted - and an instruction to look past the repo root and to read README.md, because hono's policy is in docs/CONTRIBUTING.md and its root carries no CONTRIBUTING.md at all.) did not fully hold (see evidence in `runs/2026-08-07-a-adopt-js.json`) |
+| `ADOPT-17` | the drift number and the adoption percentage say which of two things they measure - the standard's entries, or the repository | `repo:honojs/hono` | **open** (logged, not fixed) |
+| `ADOPT-11` | self-verify measures the working tree, so an artifact the repo's own .gitignore excludes is still counted as adopted | `repo:pydantic/pydantic-ai` | **open** (logged, not fixed) |
+| `SHAPE-16` | the intake has a step for a repo that already carries an AGENTS.md whose operational rules live in a different repository | `repo:simonw/llm` | **open** (logged, not fixed) |
+| `SHAPE-16` | the intake has a step for a repo that already carries an AGENTS.md whose operational rules live in a different repository | `repo:pydantic/pydantic-ai` | **open** (logged, not fixed) |
+| `SHAPE-16` | the intake has a step for a repo that already carries an AGENTS.md whose operational rules live in a different repository | `repo:Textualize/textual` | **open** (logged, not fixed) |
+| `ADOPT-07` | the honest-miss path's one deliverable (docs/stack-decisions.md, for a technology with no registered Layer-2 stack) exists in the manifest, a SPEC rule, and the taxonomy - the three places every other required deliverable exists in | `repo:simonw/llm` | **open** (logged, not fixed) |
+| `SPEC-23` | a spec reconstructed from years-old production code can say so, instead of carrying the same status as a feature nobody has built | `repo:simonw/llm` | **open** (logged, not fixed) |
+| `INTAKE-11` | the intake asks where a change would actually land, so a project whose contribution route is not pull requests is recognised before the router promises one | `repo:Textualize/textual` | **open** (logged, not fixed) |
 | `ADOPT-17` | the drift number and the adoption percentage say which of two things they measure - the standard's entries, or the repository | `repo:git/git` | **open** (logged, not fixed) |
 | `INTAKE-11` | the intake asks where a change would actually land, so a project whose contribution route is not pull requests is recognised before the router promises one | `repo:git/git` | **open** (logged, not fixed) |
 | `INTAKE-11` | the intake asks where a change would actually land, so a project whose contribution route is not pull requests is recognised before the router promises one | `repo:vdukhovni/postfix` | **open** (logged, not fixed) |
