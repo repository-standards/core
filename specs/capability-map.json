@@ -45,11 +45,7 @@
     "standard/scripts/schema-pair.mjs",
     "standard/scripts/verifyAgentGuards.sh",
     "standard/scripts/decision-records-check.mjs",
-    "standard/scripts/work-dashboard.mjs",
-    "standard/scripts/work-dashboard.css",
-    "standard/scripts/work-dashboard.client.js",
-    "standard/scripts/work-dashboard.gate.js",
-    "standard/scripts/work-dashboard.gate.css",
+    "standard/scripts/generate-dashboard/**",
     "standard/scripts/lib/**"
   ]
 }
