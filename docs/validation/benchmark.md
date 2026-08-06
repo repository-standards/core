@@ -623,7 +623,7 @@ node standard/scripts/cycle-guard.mjs against two teams' cycles both containing 
 - **Given:** a backlog item split at a cycle boundary per ADR-029 into a done slice and a returned slice
 - **When:** cycle-close records the split and cycle-guard.mjs's staleness check runs against a `blocked:` reference to the split item
 - **Then:** a declared status value exists for the split row, and the staleness check recognizes a split-but-finished item as done - instead of a fifth status invented outside the enum defeating the check that a finished item's block is stale
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -649,7 +649,7 @@ read standard/.claude/skills/timeline-update/SKILL.md's cold-start branch agains
 - **Given:** tracking-work.md's and add-to-backlog's own claim that every backlog item has a source
 - **When:** a real backlog row's ten declared columns are read
 - **Then:** one of them is a source column, instead of the claim being true only if the author folds provenance into `why` as an undocumented convention
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -662,7 +662,7 @@ grep docs/backlog.md's column header for a source column
 - **Given:** an open cycle with a `blocked:SPEC-1` item
 - **When:** tracking-work.md's rendered board is produced
 - **Then:** the blocked item's reference is visible on the board, instead of the board's three lanes (done/doing/todo) having nowhere to render the fourth declared status at all
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -675,7 +675,7 @@ render the promised board against a real open cycle with a blocked:SPEC-1 item
 - **Given:** two teams whose cycles overlap in time, each closing a cycle with cycle-close's prescribed `git log --oneline --since=<opened> --until=<closed> | wc -l`
 - **When:** both teams record their cycle's commit count
 - **Then:** the two counts are genuinely different, scoped to each team's own work, instead of both recording the identical repo-wide blended number - contradicting timeline-update's own rule to never blend throughput across teams
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -688,7 +688,7 @@ run cycle-close's prescribed git log command for two teams' overlapping cycle wi
 - **Given:** an internal/documentation-debt backlog item, the doc's own headline content category
 - **When:** add-to-backlog's Definition of Ready check runs
 - **Then:** the item can name a persona (an internal-work persona, or an explicit non-user-facing allowance), instead of being 'parked, not queued' because the persona roster holds only end-user personas
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -701,7 +701,7 @@ file an internal/documentation-debt item through add-to-backlog and check whethe
 - **Given:** an intent copied into a cycle without being cut from the pool, with the pool row's id then renumbered while its title is kept identical
 - **When:** cycle-guard.mjs runs
 - **Then:** the guard recognizes the two rows as one piece of work duplicated, instead of reporting the one-place invariant holding because it keys entirely on the first-cell id and never compares titles
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```

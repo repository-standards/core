@@ -56,7 +56,8 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
   cited PR added the `split:<id>` status value to the template's vocabulary but never touched
   `cycle-guard.mjs`'s staleness check, so a live re-run reproduced the exact original failure (a
   finished-but-split item's block still reads "live") - the fix was real and half-landed, and it
-  stays `fail` rather than being counted as resolved because it read as landed.
+  stayed `fail` rather than being counted as resolved because it read as landed. The mechanism
+  half landed the following day; the verdict moved when a re-run said so, not when a PR claimed it.
 
 ## The headline numbers
 
@@ -64,10 +65,10 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 |---|---|
 | Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **193** across 8 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd) |
+| Observations recorded | **201** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-q-track) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 99 pass, 90 fail, 1 not-applicable, 3 partial |
-| Failures found | **167** - **84 fixed and re-verified** (across 21 merged pull requests), **83 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 107 pass, 90 fail, 1 not-applicable, 3 partial |
+| Failures found | **159** - **84 fixed and re-verified** (across 21 merged pull requests), **75 still open right now** (of which 1 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 15 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -139,14 +140,6 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `SPEC-18` | spec-specify and spec-clarify read docs/decision-records/ for a record that already governs the request, before asking the user anything | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SPEC-19` | spec-specify has explicit guidance for a sentence that describes two capabilities at once, so the capability-split decision is not made silently by the one skill forbidden from asking | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SPEC-21` | a business decision written as a BDR has a Confirmation section stating how compliance is verified, the same as an ADR | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `TRACK-10` | the vocabulary for a cycle-boundary split (ADR-029) includes a real status value, so the fixture does not have to invent one outside the declared enum | `fixture:test-greenfield-core` | attempted, still open - [core/pull/15](https://github.com/repository-standards/core/pull/15) did not fully hold (see evidence in `runs/2026-08-04.json`) |
-| `TRACK-12` | the backlog's ledger row carries a source field, so 'every item has a source' is a schema guarantee rather than an undocumented convention folded into `why` | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `TRACK-13` | the promised three-lane board has a place to render a `blocked` item, the fourth status the backlog schema itself declares | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `TRACK-14` | cycle-close's prescribed commit-count measurement is scoped to the team and window it is measuring, not a repo-wide count two overlapping teams both silently share | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `TRACK-15` | backlog and cycle hygiene - a done row removed from the pool, a stale cycle pointer removed, a cycle's declared item count matching its real rows - is checked mechanically, not left to the aligner's memory | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `TRACK-16` | internal or documentation-debt backlog items have a persona to name, so the Definition of Ready's persona requirement does not park the doc's own headline content category by design | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `TRACK-17` | the backlog's id convention (type-scoped vs. capability-scoped) is stated once and used consistently across every method doc and worked example, since the id is the only field joining the pool to a cycle | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `TRACK-18` | cycle-guard's one-place invariant is keyed on the intent, not only on its id, so a copy-then-renumber does not pass as compliant | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DEC-06` | idea-write is reachable by handoff from the two skills that claim to point at it, not only by name recognition | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DEC-07` | graduating an approved idea that changes an existing capability routes to spec-update, not to spec-specify's new-capability path | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DEC-08` | a decision that a request would extend a licensing- or contract-forbidden capability is caught by the ripple search that names itself the reason spec-impact exists | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
