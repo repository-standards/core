@@ -16,6 +16,60 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The decision machinery: eight open failures, one of them a contradiction between three rules (2026-08-06)
+
+A round against the `decisions` area of the validation suite. Seven of the eight findings
+reproduced against the current tree; one had been half-closed by a later commit and is
+recorded as the narrower defect it now is.
+
+**The idea path was unreachable in practice.** `adr-write` and `bdr-write` both claim to
+refuse a record for a maybe and point at the idea skill instead - and both pointed at the
+`docs/ideas/` folder, never at `idea-write` by name. A folder is not a handoff: writing the
+file directly skips the template, the "an idea that serves no persona is parked" check and
+the graduation contract, which is all the skill is. Graduating an approved idea then sent
+the spec half to `spec-specify` unconditionally, and an idea's slug names the idea, not a
+capability - so an approved idea changing existing behaviour minted `specs/<idea-slug>/`
+next to the spec that already described it. Routing now goes through `spec-impact`, and
+`spec-specify` itself no longer treats a name miss as evidence that a capability is new.
+
+**A retired spec had no legal way to stop being false.** `spec-update` said stop before
+editing anything retired; `spec-reconcile` said cross-spec contradictions must be resolved;
+`spec-impact` checked retired status on the primary capability only, so a retired ripple
+target was never detected at all. `ADR-036` resolves it rather than picking one quietly:
+`retired` freezes behaviour, not truth. The spec never gains behaviour, and it is corrected
+whenever a change makes one of its statements false, in that change's own pull request,
+bounded to what the capability did and what superseded it. The record names the three
+alternatives it rejects and claims no guard, because no check can tell a correction from an
+extension by reading a diff.
+
+**The ripple search stopped at specs, records and code**, so a change could contradict a
+runbook, a persona's stated job, a product scope claim and a backlog row's definition of
+done with every named check reporting clean. `spec-impact` now produces a verdict per
+artifact.
+
+**An unfilled record author was invisible.** The record templates ship
+`| **Author** | {{AUTHOR}} |`, nothing fills it, and `self-verify`'s placeholder warning read
+a fixed list of eight entry documents that never included the records - so an unsubstituted
+author reached drift 0. The scan now reaches the records, found by the record filename
+pattern so it works in both shipped layouts and leaves the templates alone, and the two
+record skills say to fill the row with a person rather than a role or a persona.
+
+**Two shapes the brownfield decisions step could not handle.** A repo running its own live,
+formal decision process wired into its merge gate had only "file it as discovery material
+and write a retroactive record"; it now takes a **pointer record** - the decision stated
+in-repo, the upstream document linked as the authority, nothing paraphrased - for the
+decisions this repo's specs actually cite. And a founding decision that leaves no fingerprint
+in the code (why the project exists, why it was forked, why it is licensed as it is) is now
+written from stated rationale with its sources named, marked as reconstructed from outside
+the repo, and held at `Proposed` until a human confirms it - a dossier cannot hold it,
+because a dossier is never normative.
+
+**The decision catalog's delivery axis assumed the repo owns its release gate.** Its paved
+road is "the maintainer cuts releases", which is not true of a repo whose published versions
+a registry can re-check and archive on its own schedule. The new fork asks for the three
+decidable things: name the gate and what it can do to a published release, decide who
+watches it and how the repo learns, and decide the response before it fires.
+
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 
 `update-to-version` step 2 called the diff of the two versions' `standard.manifest.json`
