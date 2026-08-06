@@ -45,7 +45,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R2",
-      "sha256": "078c85d8263ca7981e90ef288275b9329fe833af02e6789470c68e419c92e1d7"
+      "sha256": "599d4ea7ddc8ab2133f3bd0e4fae76a2ca9a3e7c0f1d28836500e4b8048b5c23"
     },
     {
       "path": "CLAUDE.md",

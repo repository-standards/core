@@ -136,7 +136,10 @@ binds every repo, a solo one included.
 - **R18.** A PR MUST NOT add a version heading to the changelog and MUST NOT bump
   a version; the maintainer cuts every release. A PR describes its change under
   the changelog's Unreleased heading - at every profile, with no second
-  mechanism.
+  mechanism. A repo that maintains more than one release line (R23) carries one
+  changelog per line, each with its own Unreleased heading, and a PR writes its
+  entry under the heading on the branch it targets - the same one mechanism
+  applied per line, never a second one.
 - **R19.** Secrets MUST NOT enter the repo - environment and a secret manager only.
   The shipped secret scan SHOULD gate CI, and agent access to remote databases
   SHOULD be write-blocked by the shipped settings baseline. The security baseline
@@ -183,8 +186,15 @@ binds every repo, a solo one included.
 
 - **R23.** The mainline's history MUST read as one finished unit of work per PR.
   A branch is brought up to date by **rebasing onto its base**; the base MUST NOT
-  be merged back into the branch. Every PR MUST be based on the mainline, never
-  on another open PR's branch. A PR MUST land by **rebase-merge** (the paved
+  be merged back into the branch. Every PR MUST be based on the branch it will
+  merge into - the mainline, or a **maintained release line** - never on another
+  open PR's branch. A maintained release line is a long-lived, protected branch
+  that the repo has declared as supported with its branching decision (R7) and
+  never rewrites; every requirement in this rule binds it exactly as it binds
+  the mainline. A fix that applies to more than one line MUST land on the
+  mainline first and reach each supported line as its own PR against that line,
+  unless the mainline no longer carries the affected code (ADR-035).
+  A PR MUST land by **rebase-merge** (the paved
   road) or squash-merge - decided once and recorded with the branching decision
   (R7); the platform's linear-history protection SHOULD enforce it. Rebase-merge
   publishes every commit, so it MUST NOT be chosen unless each commit is a
