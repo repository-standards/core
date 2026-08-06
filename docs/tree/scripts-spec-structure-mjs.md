@@ -9,7 +9,13 @@ node scripts/spec-structure.mjs --block
 
 **A spec that serves nobody.** Every capability spec names a persona from `docs/personas.md`,
 and this reads that table as the live roster. "The user" is not a persona; neither is a name
-invented in the spec itself.
+invented in the spec itself, and a `**Serves:**` value is checked against the roster rather
+than merely for being filled in.
+
+**A roster it cannot read.** If the table parses to no personas - rows without backticks
+around the name, or a placeholder never filled - the run fails saying so. Every check here is
+a membership test, so an empty roster would otherwise pass every spec by having nothing left
+to contradict, which is how this check once switched itself off.
 
 **A spec shaped like a ticket.** Layout by capability, not `001-feature/`.
 

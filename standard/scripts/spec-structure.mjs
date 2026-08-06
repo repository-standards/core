@@ -6,9 +6,11 @@
 //      e.g. a leaked GitHub Spec Kit `specs/001-core/` folder. Capability specs live at
 //      `specs/<capability>/spec.md` (or named sub-specs `specs/<capability>/<name>.md`) -
 //      domain names, never numbers.
-//   2. Every capability spec names a **persona** it serves (ADR-006), when the repo has a
-//      `docs/personas.md` roster - a spec that serves no one is incomplete. Checked by a
-//      `**Serves:** \`<persona>\`` field, a roster-name mention, or a personas.md reference.
+//   2. Every capability spec names a **persona from the roster** it serves (ADR-006, R10),
+//      when the repo has a `docs/personas.md` - a spec that serves no one is incomplete,
+//      and so is one that serves someone who does not exist. The roster table is the
+//      constraint: a `**Serves:**` value naming nobody on it fails, and a roster the guard
+//      cannot read is reported rather than treated as a roster that forbids nothing.
 //   3. A spec's `**Status:**` is earned, not typed: one claiming `ready-to-develop` or
 //      `live` must pass the clarify gate. Nothing read or wrote that field, so the status
 //      the whole method reads as "this is settled" was decorative - a spec with four
@@ -80,19 +82,23 @@ for (const f of files) {
   if (segment) numbered.push({ file: f, segment });
 }
 
-// --- check 2: every capability spec names a persona (ADR-006) ------------------
+// --- check 2: every capability spec serves a persona on the roster (ADR-006, R10) -----
 // A capability spec is specs/<capability>/<file>.md (depth >= 3), not a template or README.
 const ENGINE_ARTIFACTS = /\/(plan|tasks)\.md$|\/checklists\//; // scaffolding the engine writes (ADR-010: ephemeral)
 const isCapSpec = (f) =>
   f.split("/").length >= 3 && f.endsWith(".md") && !f.includes(".template.") && !/\/readme\.md$/i.test(f) && !ENGINE_ARTIFACTS.test(f);
 
-const personaless = [];
+const personaless = []; // names nobody at all
+const offRoster = []; // names somebody the roster has never heard of
 let rosterMissing = false; // capability specs exist but no roster - the R10 gate has nothing to hold
 let rosterHeadingMissing = false; // a roster file the guard cannot find the roster in
+let rosterUnreadable = null; // a roster section no persona parses out of - an empty set forbids nothing
+let rosterNames = [];
 const personasPath = ["docs/personas.md", "personas.md"].find((p) => existsSync(p));
 if (!personasPath && files.some(isCapSpec)) rosterMissing = true;
 if (personasPath) {
   const roster = new Set();
+  let rosterLines = 0; // table lines under the heading, however they are written
   const personaLines = readFileSync(personasPath, "utf8").split("\n");
   // Only the roster section counts. The shipped file also carries a filled worked example,
   // and scanning the whole file reads those names as live personas - which would let a spec
@@ -114,23 +120,47 @@ if (personasPath) {
       continue;
     }
     if (!inRoster) continue;
+    if (/^\|/.test(line) && !/^\|[\s|:-]*\|?\s*$/.test(line)) rosterLines++; // not the |---| separator
     const m = line.match(/^\|\s*`([^`]+)`\s*\|/); // roster rows: | `Name` | ...
-    if (m && !m[1].includes("<")) roster.add(m[1].toLowerCase());
+    if (m && !m[1].includes("<")) roster.add(m[1]); // as written - the failure quotes it back
   }
-  for (const f of hasRosterHeading ? files.filter(isCapSpec) : []) {
+  rosterNames = [...roster];
+
+  // An empty roster is not a permissive roster, it is an unread one. Every arm below is a
+  // membership test, so a roster that parses to nothing would pass every spec by having
+  // nothing left to contradict - which is exactly how this check hid: its first arm passed
+  // any non-placeholder `**Serves:**` string without consulting the roster at all, so
+  // stripping the backticks off every row changed no verdict. Say the roster could not be
+  // read; do not quietly check against an empty set.
+  const capSpecs = files.filter(isCapSpec);
+  if (hasRosterHeading && roster.size === 0 && capSpecs.length) rosterUnreadable = { lines: rosterLines };
+
+  const onRoster = (text) => {
+    const low = text.toLowerCase();
+    return rosterNames.some((n) => low.includes(n.toLowerCase()));
+  };
+  for (const f of hasRosterHeading && !rosterUnreadable ? capSpecs : []) {
     let body;
     try { body = readFileSync(f, "utf8"); } catch { continue; }
-    const low = body.toLowerCase();
-    const serves = body.match(/\*\*serves:\*\*\s*`([^`]+)`/i); // Serves: `Name`, not placeholder
-    const hasServes = serves && !serves[1].includes("<");
-    const namesRoster = [...roster].some((n) => low.includes(n));
-    // Deliberately NOT a plain `includes("personas.md")`: the shipped capability template
-    // carries `**Serves:** <persona from docs/personas.md>` in its placeholder, so that test
-    // passed every spec instantiated from the template - the template defeating the guard
-    // the template exists to satisfy. Prose that genuinely reasons about who this is for
-    // still counts, and an unfilled `Serves` placeholder no longer does.
-    const refsPersonas = /for whom/i.test(body);
-    if (!hasServes && !namesRoster && !refsPersonas) personaless.push(f);
+    // The whole `**Serves:**` value, not only its first backticked name: a spec routinely
+    // serves two or three personas and says how it serves each, and reading one name would
+    // make the rest invisible to the check.
+    const serves = body.match(/\*\*Serves:\*\*[ \t]*(.*)/i);
+    const claim = serves ? serves[1].replace(/<!--.*$/, "").replace(/`/g, "").trim() : "";
+    // `<persona from docs/personas.md>` is the shipped template's placeholder - the question,
+    // not an answer. An unfilled one counts as no field at all, so a spec copied from the
+    // template and never filled in is reported as serving nobody rather than as serving a
+    // persona named "<persona from docs/personas.md>".
+    const filled = claim && !/^<[^>]*>$/.test(claim);
+    // A spec with no `Serves` field can still name its persona in prose - the roster is what
+    // must recognise the name, not the field. What no longer counts: a name the roster has
+    // never heard of, and prose that merely asks the question ("for whom") without answering
+    // it, both of which used to satisfy this check on their own.
+    if (filled) {
+      if (!onRoster(claim)) offRoster.push({ file: f, claim });
+    } else if (!onRoster(body)) {
+      personaless.push(f);
+    }
   }
 }
 
@@ -187,7 +217,7 @@ if (gateMissing) {
   console.error("so a spec claiming `ready-to-develop` or `live` cannot be checked against it. Ship");
   console.error("`scripts/spec/` with the guards (it is a required manifest entry) to turn the check on.");
 }
-if (numbered.length === 0 && personaless.length === 0 && unearned.length === 0 && !rosterMissing && !rosterHeadingMissing) {
+if (numbered.length === 0 && personaless.length === 0 && offRoster.length === 0 && unearned.length === 0 && !rosterMissing && !rosterHeadingMissing && !rosterUnreadable) {
   const note = personasPath ? "" : " (persona check skipped - no personas.md)";
   console.log(`spec-structure: OK (${files.length} spec paths)${note}`);
   process.exit(0);
@@ -203,10 +233,22 @@ if (numbered.length) {
   console.error("create or edit capability specs with /spec-update instead.");
 }
 
+const rosterList = () => (rosterNames.length > 8 ? `${rosterNames.slice(0, 8).join(", ")}, ...` : rosterNames.join(", "));
+
 if (personaless.length) {
   console.error("\nspec-structure: capability specs with no persona named (ADR-006 - a spec serves someone):");
   for (const f of personaless) console.error(`  - ${f}`);
   console.error('\nAdd a `**Serves:** `<persona>`` field (from docs/personas.md) - or name the persona in the spec.');
+  console.error(`The roster reads: ${rosterList()}.`);
+}
+
+if (offRoster.length) {
+  console.error("\nspec-structure: capability specs serving a persona who is not on the roster (R10):");
+  for (const { file, claim } of offRoster) console.error(`  - ${file}   serves "${claim}"`);
+  console.error(`\nThe roster in ${personasPath} is the constraint, and it reads: ${rosterList()}.`);
+  console.error("A persona described anywhere else - in the spec, in the worked example, in somebody's");
+  console.error("head - does not exist as far as R10 is concerned. Either serve one who is on the roster,");
+  console.error("or add this one to the roster table first, which is the decision the gate is asking for.");
 }
 
 if (unearned.length) {
@@ -227,6 +269,15 @@ if (rosterHeadingMissing) {
   console.error("'## The roster' even when the personas themselves are written in another language, because");
   console.error("a translated heading does not make the check speak that language, it makes it read the");
   console.error("whole file and pass a spec that serves an example.");
+}
+
+if (rosterUnreadable) {
+  console.error(`\nspec-structure: no persona could be read from the roster in ${personasPath}`);
+  console.error(`(${rosterUnreadable.lines} table line(s) seen under '## The roster'). A roster row is`);
+  console.error("`| `Name + role` | ... |` - the name in backticks, and a `<placeholder>` name is not filled in.");
+  console.error("This is a failure rather than a skip on purpose: the persona gate is a membership test,");
+  console.error("so a roster that parses to nothing passes every spec by having nothing left to contradict.");
+  console.error("An unreadable roster and an obeyed one looked identical here for a release.");
 }
 
 if (rosterMissing) {
