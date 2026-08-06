@@ -308,7 +308,8 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
   cited PR added the \`split:<id>\` status value to the template's vocabulary but never touched
   \`cycle-guard.mjs\`'s staleness check, so a live re-run reproduced the exact original failure (a
   finished-but-split item's block still reads "live") - the fix was real and half-landed, and it
-  stays \`fail\` rather than being counted as resolved because it read as landed.`;
+  stayed \`fail\` rather than being counted as resolved because it read as landed. The mechanism
+  half landed the following day; the verdict moved when a re-run said so, not when a PR claimed it.`;
 
 const readme = `# Validation - proving the standard's claims with data, not prose
 
