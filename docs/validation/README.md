@@ -19,12 +19,11 @@ written rather than generated.
 
 ## What this does not prove - read this before the numbers
 
-- **Assessment is not adoption.** 103 of 105 targets were assessed at
+- **Assessment is not adoption.** 103 of 106 targets were assessed at
   depth **L1** - a read-only clone, method passes applied, nothing changed. "We assessed
-  103 public repositories" and "we adopted 103 repositories" are different
-  claims, and only the first one is true. `FIELD-1` in `backlog.md` names the gap this leaves:
-  until a real team runs the align router against a repo nobody on this project wrote, "walks
-  a messy repo back to health" remains a design claim supported by dry runs.
+  104 public repositories" and "we adopted 104 repositories" are different
+  claims, and only the first one is true.
+  **1 third-party repository has been adopted for real** (depth L3 or better, listed by slug in `targets.json`): `hagopj13/node-express-boilerplate`. That is what moves this from a design claim to a demonstrated one - and one repository is one repository. `FIELD-1` asks for three, of different sizes and stack situations, and stays open until it has them.
 - **Both sides of the fixtures share an author.** `test-greenfield-core` and
   `test-greenfield-node` - the two **L4** targets, the only ones that lived a full lifecycle
   loop - were built by the same people who wrote the standard being tested against them. They
@@ -63,11 +62,11 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 
 | | |
 |---|---|
-| Cases in the catalogue | **176** (`167` executed at least once, `9` specified but not yet run) |
-| Portable cases (the benchmark subset) | **116** (66% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **178** across 3 rounds (2026-08-03, 2026-08-04, 2026-08-06) |
-| Targets assessed | **105** (103 real repositories, 2 synthetic fixtures) |
-| Verdicts | 89 pass, 86 fail, 1 not-applicable, 2 partial |
+| Cases in the catalogue | **180** (`171` executed at least once, `9` specified but not yet run) |
+| Portable cases (the benchmark subset) | **120** (67% of the catalogue); local (tests a path only this tree has): 60 |
+| Observations recorded | **182** across 4 rounds (2026-08-03, 2026-08-04, 2026-08-06-field1, 2026-08-06) |
+| Targets assessed | **106** (104 real repositories, 2 synthetic fixtures) |
+| Verdicts | 93 pass, 86 fail, 1 not-applicable, 2 partial |
 | Failures found | **164** - **78 fixed and re-verified** (across 18 merged pull requests), **86 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
@@ -79,15 +78,15 @@ number stops matching the data behind it.
 | Area | Cases | Executed | Specified only | Portable |
 |---|---|---|---|---|
 | `intake` | 9 | 9 | 0 | 8 |
-| `adoption` | 7 | 7 | 0 | 6 |
+| `adoption` | 9 | 9 | 0 | 8 |
 | `greenfield` | 7 | 7 | 0 | 2 |
 | `spec` | 21 | 18 | 3 | 16 |
-| `gates` | 32 | 32 | 0 | 22 |
+| `gates` | 33 | 33 | 0 | 23 |
 | `track` | 19 | 17 | 2 | 17 |
 | `decisions` | 13 | 13 | 0 | 10 |
 | `discovery` | 7 | 7 | 0 | 6 |
 | `trigger` | 6 | 4 | 2 | 5 |
-| `docs` | 17 | 17 | 0 | 5 |
+| `docs` | 18 | 18 | 0 | 6 |
 | `loop` | 4 | 3 | 1 | 3 |
 | `update` | 7 | 6 | 1 | 0 |
 | `stack` | 8 | 8 | 0 | 2 |
@@ -104,7 +103,7 @@ Every declared area carries at least one case.
 |---|---|---|
 | L1 | read-only assessment pass, nothing changed | 103 |
 | L2 | dry adoption - the align router's decisions worked out for real, still no changes | 0 |
-| L3 | the standard actually applied to a working copy, drift measured | 0 |
+| L3 | the standard actually applied to a working copy, drift measured | 1 |
 | L4 | the repo then lived the loop for at least one full cycle of real work | 2 |
 
 ## The punch list - what is actually still broken
