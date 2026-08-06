@@ -1,0 +1,163 @@
+{
+  "$about": "adopt-old round, 2026-08-07: three L3 adoptions of codebases whose history begins in the 1990s or 2000s - git/git (81,873 commits since 2005-04-07), vdukhovni/postfix (a mirror of a tarball line whose HISTORY starts 1998-01-05) and vim/vim (git history from 2004-06-13, the editor from 1991). Chosen for one property the catalogue had never tested: two of the three do not accept pull requests, and the third does but is older than the convention. Every number below was produced by running a shipped script against the adopted working copy and can be reproduced from the procedure in its case. All three reached drift 0; none was pushed anywhere and no issue or pull request was opened against any of them.",
+  "observations": [
+    {
+      "case": "ADOPT-08",
+      "target": "repo:git/git",
+      "verdict": "pass",
+      "evidence": "Blobless clone (`--filter=blob:none`, full history: 81,873 commits, 4,845 tracked files, 2,440 all-time authors, 3,804 commits from 212 authors in the last 12 months). Untouched clone with the manifest and pin only: `self-verify: drift 19 - 24% adopted (6/25)`. After the guard scripts: `drift 16 - 62% (26/42)`. After the rest of the copy class: `drift 12 - 77% (41/53)`. After authoring the persona roster, the capability map, one buildable spec, four ADRs, one BDR, the backlog and AGENTS.md, and merging the standard's `.gitattributes` rules into Git's own: `self-verify: OK - drift 0 - 96% adopted (55/57), 2 excepted`. The engine did not crash, guess, or fall back to the skeleton on a repository it had never seen, and every intermediate number is reproducible. Cost, best of three runs on the adopted tree: self-verify 0.19 s, `spec-guard --audit` 0.10 s.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-08",
+      "target": "repo:vim/vim",
+      "verdict": "pass",
+      "evidence": "Blobless clone, full history: 24,218 commits since 2004-06-13, 8,425 tracked files, 868 all-time authors, 2,401 commits from 340 authors in the last 12 months. `drift 18 - 33% adopted (9/27)` on the untouched clone with manifest and pin, `drift 11 - 80% (44/55)` after the copy class, `self-verify: OK - drift 0 - 97% adopted (56/58), 2 excepted` at the end. Vim is the only target of the three whose **required** `AGENTS.md` entry was already occupied, and not by a stub: 325 lines written for AI coding agents, with a commit-format section, a C-conventions table, a test-conventions section and a release policy. It also satisfies the optional `CLAUDE.md` entry through that entry's `AGENTS.md` altPath, so nine checks passed on the untouched clone against git/git's six. It is `fill-from-repo`, so it passed on presence from the first run; the three required `sections` entries are what caught anything. The adoption kept every line of it and added the altitude ladder above and the two required behaviour sections below, each marked as added and each saying that Vim's own rules win on conflict. Self-verify cost 0.20 s, audit 0.08 s.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-08",
+      "target": "repo:vdukhovni/postfix",
+      "verdict": "pass",
+      "evidence": "Full clone: 1,453 commits since 1999-01-01, 2,522 tracked files, and **three author names** - 1,446 of the commits are Wietse Venema's. The commits are release snapshots (`postfix-3.12-20260805`), not changes. `drift 20 - 13% adopted (3/23)` with manifest and pin at profile `core`; `drift 13 - 73% (35/48)` after the copy class; `self-verify: OK - drift 0 - 96% adopted (50/52), 2 excepted` at the end. Two things this target ruled out that a younger repo cannot: none of the 63 files the adoption commit added is excluded by the repository's own `.gitignore` (checked with `git check-ignore` on every path in `git show --name-only`), and the `.nvmrc` copy entry - which has been a genuine conflict on a repo with its own Node - is unambiguous here, because the repository has no Node at all and the file declares only the guards' runtime. Self-verify cost 0.19 s.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-17",
+      "target": "repo:git/git",
+      "verdict": "fail",
+      "evidence": "Drift reached 0 in a single sitting on a 21-year, 4,845-file, 81,873-commit codebase, and the same happened on the other two targets of this round (vim: 18 -> 0; postfix: 20 -> 0). The percentages move for a reason that has nothing to do with the repository: measured in three stages on git/git, the adoption percentage went 24% -> 62% -> 77% **before a single sentence was authored**, purely from copying files the standard itself ships and which pass their own content hashes by construction. The six passing checks at the 24% mark, read off the output rather than summarised: the version pin, the two files the adoption had just written (`.standards-version`, `standard.manifest.json`), and three Git has had for years for its own reasons (`.gitattributes`, `README.md`, `SECURITY.md`). `CONTRIBUTING.md` is not among them - Git keeps it at `.github/CONTRIBUTING.md`, a location the entry has no altPath for, so a file that exists and does the job reads as absent (optional, so no drift, but also no credit). At the final `drift 0 - 96%`, the same tree reports `spec-guard --audit: 10 problem(s)` - ten of eleven mapped capabilities have no spec - and a 13-item backlog. Drift is honest about what it measures and never claimed to measure the repository; the defect is that nothing in the output says which of the two a reader is looking at, and the align router's re-entry section calls the number 'the progress bar'.",
+      "at": "2026-08-07",
+      "waiver": "Open, and deliberately not patched: every option changes what an existing adopter's number means. Either the percentage separates what the standard supplied from what the repo authored, or the verdict line names which it is measuring, or the manifest gains entries that scale with the repository. Recorded here as a second, independent reproduction rather than as a new discovery."
+    },
+    {
+      "case": "INTAKE-11",
+      "target": "repo:git/git",
+      "verdict": "fail",
+      "evidence": "Git's `.github/CONTRIBUTING.md` opens with 'the Git community does not use github.com for their contributions. Instead, we use a mailing list (git@vger.kernel.org) for code submissions, code reviews, and bug reports'; issues are disabled; `Documentation/DecisionMaking.adoc` and `Documentation/SubmittingPatches` describe the whole process; `.b4-config` and `.b4-cover-template` configure the kernel community's patch-series tool. The numbers: **2,005 pull requests opened against git/git, 4 merged** (372 open, 1,629 closed unmerged; `gh api search/issues`, 2026-08-07). The align router's intake reads exactly three kinds of policy signal - a lifecycle banner, a move to another forge, and an AI policy (ban or conditional allow) - and has no branch for the process itself being something other than pull requests. Downstream, the router's step 7 is 'Open one focused PR', step 3's three CI options all describe what pull requests will do, and the shipped `spec-guard.yml` is triggered `on: pull_request`. Following the procedure literally on this repository produces an instruction that cannot be carried out, and an agent that has not read CONTRIBUTING.md will carry it out anyway - into the 372 open pull requests nobody will merge.",
+      "at": "2026-08-07",
+      "waiver": "Open. The fix is a fourth signal in intake step 1 - read the contribution route (CONTRIBUTING/AGENTS/host settings: are issues enabled, are pull requests merged) and say it back - plus a named alternative for step 7 when the answer is not pull requests: produce the patch series or the change, and hand it to the human. Writing the intake question is cheap; deciding what the router's PR-shaped steps and the shipped workflow become on such a repository is a design decision, so it is proposed rather than made."
+    },
+    {
+      "case": "INTAKE-11",
+      "target": "repo:vdukhovni/postfix",
+      "verdict": "fail",
+      "evidence": "The stronger form of the same shape, and the one that rules out 'the agent could just open a pull request anyway': this repository has **0 pull requests in 13 years** (`gh api search/issues q=repo:vdukhovni/postfix is:pr` returns `total_count: 0`) and issues disabled, because it is a git mirror of a tarball line - `postfix/README` routes everything to `postfix-users@postfix.org`, and `postfix/src/global/mail_version.h:15-21` documents the release naming that the commit subjects use. So the target of an alignment is a repository that cannot receive the work, and the actual upstream is not a repository at all. The intake never asks where the work would land; it asks intent, technology, appetite, profile, where work is tracked and what other knowledge exists. The adoption was completed on a local branch and recorded as evidence, which is the honest outcome, but nothing in the procedure produced that conclusion - the operator did.",
+      "at": "2026-08-07",
+      "waiver": "Open, same fix as the git/git observation: an intake question about the contribution route, and a named 'the target repo cannot receive this' outcome alongside 'assessment only'. Deciding whether a mirror should be adopted at all - and what the artefacts mean if it is - is the design half."
+    },
+    {
+      "case": "GATE-40",
+      "target": "repo:vdukhovni/postfix",
+      "verdict": "fail",
+      "evidence": "Measured, not argued. `.github/workflows/spec-guard.yml` is a required manifest entry with `requiredKeys: [\"on.pull_request\"]`. On a repository with no pull requests the only event it could fire on is `push`, so the workflow's trigger was rewritten to `on: push` with `branches: [master]` and self-verify re-run: `FAIL key .github/workflows/spec-guard.yml is missing the \"on.pull_request\" key`. Restoring the shipped trigger cleared it. So the entry that exists to make R16's gate real is satisfied only by a configuration that can never run here, and the adaptation the router elsewhere encourages ('translate the gate's intent into that system's own config') is drift when the translation is within GitHub Actions itself. There is a second cost behind the first: the workflow's own steps use `github.base_ref`, which is empty on push, so a push-triggered variant needs its steps rewritten as well - the key is the visible half of the problem, not all of it.",
+      "at": "2026-08-07",
+      "waiver": "Open. The narrow fix is to accept either trigger - `requiredKeys` naming `on` alone, or a rule that at least one of `on.pull_request` / `on.push` is present - plus a push-safe base in the steps. That weakens a check that currently guarantees the gate runs per change, so the choice is the owner's; the alternative is a recorded `key` exception, which every no-pull-request repository would then carry identically, which is the shape of a missing feature rather than a deviation."
+    },
+    {
+      "case": "GATE-40",
+      "target": "repo:git/git",
+      "verdict": "fail",
+      "evidence": "The same entry, on a repository where pull requests exist but are not the mechanism. Git's own CI already runs in three systems - `.github/workflows/main.yml` (`on: [push, pull_request]`), `.gitlab-ci.yml` and `.cirrus.yml` - so the shipped `spec-guard.yml` landed as a fourth CI surface whose verdict is only visible on GitHub, on events (pull requests) that are never merged. The router's step 3 offers three landing options and all three are about *when* to accept red CI; none covers 'the CI product this workflow is written for is not where this project's verdict comes from'. Landed as shipped, and recorded in the adopted repo's ADR-001 and backlog as a gate that guards nothing.",
+      "at": "2026-08-07",
+      "waiver": "Open, same as the postfix observation, plus the multi-CI half: nothing in the manifest can express 'this gate runs in the CI product this repo actually uses'. The standard deliberately ships no per-CI adapters (an unbounded surface), so the honest fix is probably a manifest entry that accepts any CI config carrying the two commands, rather than one named GitHub Actions file."
+    },
+    {
+      "case": "GATE-39",
+      "target": "repo:git/git",
+      "verdict": "pass",
+      "evidence": "Found, reproduced, fixed and re-verified in this change. On the untouched clone, self-verify reported `WARN fill README.md still carries template placeholders`. The cause is Git's own README.md:26-27, which reads `documentation of each command with \\`man git-<commandname>\\` or \\`git help` / `<commandname>\\`.` - the code span wraps a line break, and `stripCode`'s span pattern was `` /`[^`\\n]*`/g ``, which refuses to cross one. The leftover `<commandname>` on line 27 was then read as an unfilled template placeholder, in a file the standard never wrote and an adopter cannot fill. The fix pairs backtick RUNS across newlines while refusing to cross a blank line, and it is covered in both directions by `tools/self-verify-fill-test.mjs`: a wrapped span does not warn, a real placeholder after one still does, and an unmatched backtick cannot swallow a later placeholder. Re-run against the same clone with the fixed script: no fill warning, `drift 0` unchanged.",
+      "at": "2026-08-07",
+      "fix": "../../tools/self-verify-fill-test.mjs"
+    },
+    {
+      "case": "GATE-39",
+      "target": "repo:vim/vim",
+      "verdict": "pass",
+      "evidence": "The second instance, in the other markdown code form, and the one that made the first fix insufficient. Vim's own `AGENTS.md:92` carries `Signed-off-by: Author Name <email>` inside a four-space-indented code block - the pre-fence form an older document uses - which `stripCode` never stripped, so `<email>` warned. Stripping indented blocks cleared it and exposed a third: `AGENTS.md:261` `- \\`<Key>\\` or \\`CTRL-X\\` - special keys` began warning once spans could cross lines, because line 260 contains `` \\`\\` \\`:cmd\\` \\`\\` `` - a double-backtick span - and pairing one backtick at a time left an odd one behind, shifting every following span by one position. Matching the delimiter as a RUN (`` /(`+)([\\s\\S]*?)\\1/g ``) fixed the pairing. All three shapes now have a test on both sides in `tools/self-verify-fill-test.mjs`, including 'notation after a double-backtick span is still notation' and 'a placeholder in an indented list continuation still warns' - the latter guarding the false-negative direction, because four spaces under a bullet is a continuation paragraph, not code. Re-run on all three of this round's adopted trees with the fixed script: zero fill warnings.",
+      "at": "2026-08-07",
+      "fix": "../../tools/self-verify-fill-test.mjs"
+    },
+    {
+      "case": "DEC-14",
+      "target": "repo:git/git",
+      "verdict": "fail",
+      "evidence": "Git already keeps decisions, in three shapes, none of which is an ADR directory. `Documentation/BreakingChanges.adoc` is a decision log in all but name - it states at lines 36-45 that its intent is 'to track upcoming deprecations for future breaking releases', that it 'also tracks what will _not_ be deprecated ... such that the outcome of discussions document both when the discussion favors deprecation, but also when it rejects a deprecation', and that items must carry 'a clear summary of the reasons why we do or do not want to make the described change that can be easily understood without having to read the mailing list discussions'. That is Context, Decision and rejected Options, in AsciiDoc: 18 top-level items across `== Procedure`, `== Git 3.0` (split into `=== Changes` and `=== Removals`) and `== Superseded features that will not be deprecated`. Four of them cite their own provenance the only way this project can - `Cf. <2f5de416-04ba-c23d-1e0b-83bb655829a7@zombino.com>` and friends, which are mailing-list Message-IDs. `Documentation/technical/` holds 36 design documents. And `Documentation/DecisionMaking.adoc:71-74` says the rest lives outside the repository entirely: 'the mailing list archives contain a more-or-less complete history of project discussions and decisions'. The standard's machinery has one shape and one path: `docs/decision-records/` is a required `fill-from-repo` entry, `decision-records-check` reads a fixed index format, and the ADR template has no field for provenance that lives elsewhere. Following it produced a fourth decision home in a repository that already had three - which is the drift R4 exists to prevent - and the only way to say so was to spend the first retroactive ADR (ADR-002 in the adopted repo) on the fact itself.",
+      "at": "2026-08-07",
+      "waiver": "Open, and the cheapest half is prose: onboard.md's decisions step already handles material the *user* hands over (`docs/discovery/`, ADR-024) and material that contradicts the code, but not a decision stream the repository already maintains in its own format. It needs a fourth outcome - 'the repo already records this; cite it, do not restate it' - and a way to say so in the record and in the index. The larger half is whether `docs/decision-records/` should be waivable by a repo whose decisions genuinely live elsewhere, which is a manifest change with the same shape as the CHANGELOG one recorded in SHAPE-17."
+    },
+    {
+      "case": "DEC-14",
+      "target": "repo:vim/vim",
+      "verdict": "fail",
+      "evidence": "The same shape with a twist that makes it harder to dismiss as a git-only quirk: Vim's design goals and release policy live in `runtime/doc/develop.txt` - a **user-facing help file**, reachable as `:help design-goals` and `:help design-policy`, which states the release cycle, the stability period and the deprecation rules (lines 727-744). It is documentation and decision record at once, and it is shipped to users. The standard's altitude ladder has no rung for that: decisions go in `docs/decision-records/`, docs go elsewhere, and a file that is both has to be either duplicated or ignored. The adoption cited it from every record rather than restating it, and filed 'decide where a decision belongs' as the first item of the adopted repo's records epic - which is a question the standard should answer, not one each adopter should re-open.",
+      "at": "2026-08-07",
+      "waiver": "Open, same as the git/git observation."
+    },
+    {
+      "case": "SHAPE-17",
+      "target": "repo:git/git",
+      "verdict": "fail",
+      "evidence": "Three repositories, three history formats, no `CHANGELOG.md` anywhere: Git keeps `Documentation/RelNotes/` (542 files, one per release, with `2.56.0.adoc` accumulating the release in progress), Vim keeps `included_patches[]` in `src/version.c` (916 entries at 9.2, queried at runtime as `has(\"patch-9.2.916\")`) plus `runtime/doc/version9.txt`, and Postfix keeps `postfix/HISTORY` (31,888 lines of dated entries since 1998-01-05) plus `RELEASE_NOTES` per release line. The manifest's entry is the literal path `CHANGELOG.md` with one altPath, `docs/CHANGELOG.md`, and a required `## Unreleased` section whose purpose reads: 'nothing else holds history, and drift 0 must not be reachable with no changelog at all'. The only mechanism available is the exception hatch, and using it does exactly what the purpose forbids: all three repositories reached `drift 0` with **no changelog at all**, each paying two points of coverage (96%, 96%, 97%, 2 excepted). The hatch is bounded in one direction - a guard cannot be excepted, and a guard's script cannot be excepted by `kind: \"file\"` - and unbounded here, on the entry whose own text says it must not be reachable around.",
+      "at": "2026-08-07",
+      "waiver": "Open, with three options and a real cost each. (a) `altPaths` on the CHANGELOG entry, which cannot enumerate `Documentation/RelNotes/` or a C array. (b) An `exceptable: false` flag on entries whose purpose says they must not be waivable - honest, and it turns three repositories that are doing the right thing into permanently non-compliant ones. (c) Accept it and change the purpose text to say that an exception is the supported answer, which is the smallest change and the one that makes the current behaviour intentional rather than accidental. Not guessed on the owner's behalf."
+    },
+    {
+      "case": "SHAPE-18",
+      "target": "repo:vdukhovni/postfix",
+      "verdict": "fail",
+      "evidence": "`onboard.md`'s capability-mapping step says to confirm a boundary is 'behavior-shaped, not a layering artifact like utils or common'. In Postfix, `postfix/src/util/` (499 tracked files) and `postfix/src/global/` (423) are **922 of the 2,522 files this repository tracks**, and they are not a layering artifact in the sense the guidance means: they are Postfix's own replacements for libc and stdio, each file carrying its own manual page in its header comment (`vstring.c` 'arbitrary-length string manager', `vstream.c` 'light-weight buffered I/O package', `mymalloc.c`, `msg.c`, the `attr_*` typed inter-process protocol), and every other capability is a caller. Following the guidance literally leaves the largest and most-depended-upon component of the repository claimed by nobody; the only other legal home is `$unclaimed`, which means 'belongs to no capability by decision' and would be a lie. The same shape appeared on both other targets: Git's `strbuf`/`hashmap`/`string-list`/`run-command` layer (61 globs of root files) and Vim's `alloc`/`misc1`/`misc2`/`strings`/`hashtab`. All three maps ended up with a `runtime-library` entry and a note in `$about` explaining why - three adopters inventing the same workaround is a missing rule, not three coincidences.",
+      "at": "2026-08-07",
+      "waiver": "Open. The prose fix is one sentence in onboard.md: a project's own runtime library IS a capability when other capabilities depend on its documented behaviour, and the `utils`/`common` warning is about a folder that exists because nobody chose a home. The design half is whether such an entry should be marked in the map (a `$platform` key, say) so the audit can treat it differently from a behaviour capability - which is a schema change to `capability-map.json` and therefore not made here."
+    },
+    {
+      "case": "ADOPT-16",
+      "target": "repo:git/git",
+      "verdict": "pass",
+      "evidence": "The probe was whether the persona and product machinery means anything for infrastructure with no product owner. It does, and the escape hatch is the reason. `onboard.md` step 1 says to interview the user and, when nobody can answer, to 'seed the roster with the roles the code proves, mark it explicitly as inferred and unconfirmed, and put the interview in the backlog'. That is exactly the available move here: there is no product owner to ask (`Documentation/DecisionMaking.adoc` describes consensus on a mailing list plus a leadership committee), and asking on the list would itself be a contribution act this adoption declined to take. The code carried more than expected: the first attribute of each of `command-list.txt`'s 193 entries is an audience - 46 `mainporcelain`, 45 plumbing (25 interrogators + 20 manipulators), 19 `purehelpers`, 17 `ancillaryinterrogators`, 13 `guide` pages, 12 `ancillarymanipulators`, 11 `developerinterfaces`, 10 `foreignscminterface`, 8 `userinterfaces` - which is a persona split the project maintains for its own reasons, and `Documentation/BreakingChanges.adoc` states the tie-break (the script author's contract outranks user convenience outside a breaking release) in the project's own words. The roster passed `spec-structure`'s R10 check and the spec written against it names `script-author`. What the pass does not carry: the roster is unconfirmed and says so in its own first paragraph, and `docs/PRODUCT.md` is optional in the manifest, so nothing forced a north star nobody could state - which is the manifest making the right call rather than the procedure doing so.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-16",
+      "target": "repo:vdukhovni/postfix",
+      "verdict": "pass",
+      "evidence": "Re-run on the hardest version of the same question: a mirror of one person's release tarballs. The roster came out as five personas with evidence for each - `postmaster` (primary; the entire configuration surface is two files read by `postconf`, and the shipped manual pages are sections 1, 5 and 8 rather than 3), `mail-sender`, `packager`, `integrator`, `contributor` - and the tie-break is written in code rather than in prose: `compatibility_level` (`postfix/src/global/mail_params.h:54-62`) exists so an upgrade never changes behaviour under a running site, and `smtp_tls_security_level`'s default is not a constant but an expression over that level (`mail_params.h:1503-1506`). That is a product decision the code states, and it became the adopted repo's BDR-001. The gate held: `spec-structure` read the roster, the capability spec names a persona from it, and nothing had to be invented. The caveat is the same one the git/git observation carries - unconfirmed, and confirming it means contacting a maintainer, which is outside what an adoption may do.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-09",
+      "target": "repo:git/git",
+      "verdict": "pass",
+      "evidence": "The extreme case of 'no capability owns a directory': **244 of Git's C files sit at the repository root**, so a map derived from folders would have had one entry. Eleven capabilities were derived from behaviour instead (object-store, references, index-and-worktree, history-traversal, diff-and-merge, transport-and-protocol, configuration-and-setup, submodules, notes-and-annotations, identity-and-signing, runtime-library), with `builtin/` deliberately not a capability - it is one file per command-line verb, and a verb is a surface - so each of its 130 files is claimed by the capability whose behaviour it exposes. The audit earned its keep twice here: the empty-glob check named **7 globs watching nothing** (`streaming.c`, `builtin/status.c`, `revert.c`, `builtin/cherry.c`, `builtin/cherry-pick.c`, `builtin/submodule.c` - all files this adoption assumed existed and do not - plus `sha1collisiondetection/**`, which is a gitlink and therefore a bare path), and the unclaimed check found 335 files after the first pass. Final state: `spec-guard --audit` reports 0 unclaimed files and 0 empty globs, with 10 unspecced capabilities as the remaining backlog.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-09",
+      "target": "repo:vim/vim",
+      "verdict": "pass",
+      "evidence": "The interesting half here was not `src/` but `runtime/`, which reads as documentation and is not: in the twelve months to 2026-08-06 the churn ranks `src` 4,223 file touches, then `runtime/syntax/testdir/dumps` 1,806, `runtime/doc` 1,529, `src/testdir/dumps` 1,247, `src/testdir` 1,140, `runtime/syntax` 833, `runtime/ftplugin` 290 - more than a third of all activity is under `runtime/`, which has its own test suites (`runtime/syntax/testdir/`, `runtime/indent/testdir/`). It was mapped as shipped behaviour across three capabilities rather than declared unclaimed. What no mechanism could express: individual runtime files have individual maintainers and sometimes an upstream that is not this repository (Vim's own AGENTS.md: 'If the file has a maintainer, changes should go via them'), so the map claims paths the project does not fully own. Recorded as ADR-002 and a backlog item in the adopted repo. 16 capabilities, `spec-guard --audit` at 0 unclaimed files.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-10",
+      "target": "repo:vim/vim",
+      "verdict": "pass",
+      "evidence": "Re-run at a size that makes the point sharper than the original: with `$unclaimed` absent the audit says `the unclaimed-code check is OFF`, and with a first, considered declaration in place it reported **477 files belonging to no capability** on an 8,425-file repository - the whole `runtime/lang` (153), `runtime/tutor` (70), `runtime/macros` (37), `runtime/print` (33), `runtime/tools` (24) trees, every root config file, and 100+ build and platform files under `src/`. None of that is source nobody thought about; it is a repository whose non-code half is larger than most repositories. Closing it to 0 took 67 more `$unclaimed` globs, for 83 in total. The caveat from the original observation holds and is worth restating: the feature is discoverable only from the audit's own output, and an adopter who never adds the key never learns the check exists.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "ADOPT-01",
+      "target": "repo:vim/vim",
+      "verdict": "pass",
+      "evidence": "The churn pass ran on real history from a blobless clone (`--filter=blob:none`), which omits historical file contents but keeps every commit and tree, so `git log --since=2025-08-06 --name-only` ranks hotspots normally: `src` 4,223, `runtime/syntax/testdir/dumps` 1,806, `runtime/doc` 1,529, `src/testdir/dumps` 1,247, `src/testdir` 1,140. Two of the top five are screendump directories - the expected output of screen-rendering tests - which is a signal about how this project tests rather than about where its behaviour changes, and a reader of the raw ranking would mistake one for the other. The pass's shallow-clone caveat is the right one and a blobless clone is not caught by it, which is the same conclusion an earlier round reached on a different repository: 'has real history' and 'has real file contents' are different properties, and only the first is needed here.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "DOC-18",
+      "target": "repo:vdukhovni/postfix",
+      "verdict": "pass",
+      "evidence": "Reproduced deliberately rather than encountered: with four ADRs and one BDR authored and both indexes filled, `decision-records-check --block` reported `OK (5 record(s), index and directory agree)`. Copying one record to `docs/decision-records/adr/ADR-005-probe.md` without adding a row produced `docs/decision-records/adr/ADR-005-probe.md has no row in docs/decision-records/adr/README.md`, `1 problem(s)`, exit code **1**; removing the probe restored `OK`. The guard catches the exact failure mode a retroactive-ADR pass produces, and it does so on a repository whose decision records were all written in one sitting by a machine - which is the case most likely to leave an index behind.",
+      "at": "2026-08-07"
+    }
+  ]
+}

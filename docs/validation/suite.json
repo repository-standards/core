@@ -1,5 +1,5 @@
 {
-  "$about": "The regression-case catalogue backfilled from the 2026-08-03 testing round. Every case traces to research/testing-log-2026-08-03.md (defect rows, the 8 Track B lifecycle scenarios, or the known-gaps list) or to VALIDATION-PLAN.md's own 15 exemplar cases. 'tests' cites SPEC.md rule numbers (R1-R25) or a docs/PRODUCT.md anchor where no rule fits. Eight of VALIDATION-PLAN.md's 15 exemplar cases cited a rule number that does not match their own description once checked against standard/SPEC.md (GATE-01: R17->R16; GATE-02/GATE-03: R13->R11; GATE-06: R14->R15; GATE-07: R12->R9; TRACK-03/TRACK-06: R14->R15; UPD-01: R19->R17) - corrected here; see the codify report for the detail. status: run = executed at least once with a recorded verdict in runs/2026-08-03.json; planned = specified, not yet executed; needs-procedure = the log describes a real finding but not enough to reconstruct a reproduction, so procedure is left empty rather than invented. The field-3 round (2026-08-06) adds eleven cases from the first at-scale adoption (matomo-org/matomo, 13,591 files, 19 years): ADOPT-11..15, GATE-33..37, SHAPE-16 and DOC-19 - most of them about what the drift number and the audit output stop meaning at that size.",
+  "$about": "The regression-case catalogue backfilled from the 2026-08-03 testing round. Every case traces to research/testing-log-2026-08-03.md (defect rows, the 8 Track B lifecycle scenarios, or the known-gaps list) or to VALIDATION-PLAN.md's own 15 exemplar cases. 'tests' cites SPEC.md rule numbers (R1-R25) or a docs/PRODUCT.md anchor where no rule fits. Eight of VALIDATION-PLAN.md's 15 exemplar cases cited a rule number that does not match their own description once checked against standard/SPEC.md (GATE-01: R17->R16; GATE-02/GATE-03: R13->R11; GATE-06: R14->R15; GATE-07: R12->R9; TRACK-03/TRACK-06: R14->R15; UPD-01: R19->R17) - corrected here; see the codify report for the detail. status: run = executed at least once with a recorded verdict in runs/2026-08-03.json; planned = specified, not yet executed; needs-procedure = the log describes a real finding but not enough to reconstruct a reproduction, so procedure is left empty rather than invented.",
   "cases": [
     {
       "id": "GATE-01",
@@ -3200,6 +3200,138 @@
       "when": "self-verify runs",
       "then": "the entries are drift and the failure names the ignore rule excluding them, instead of reporting PASS on files that are in no commit and absent from a fresh clone",
       "procedure": "in a git repository, write `/docs/` to .gitignore, author a required entry under docs/, run `node scripts/self-verify.mjs`; then `git add -f` the same file and re-run - the first must fail naming the rule, the second must pass",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-16",
+      "title": "the persona and product gates produce something real for infrastructure with no product owner, instead of blocking or fabricating one",
+      "area": "adoption",
+      "tests": [
+        "R10",
+        "docs/PRODUCT.md"
+      ],
+      "promise": "No spec is written before docs/personas.md exists - ADR-006, and the R10 gate reads the roster",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repository with no product owner and nobody to interview - a mailing-list project, a mirror of one maintainer's release tarballs",
+      "when": "onboard.md step 1 (reconstruct the personas, interview the user) and the product artefacts are applied",
+      "then": "a roster is produced from the code's own evidence, marked inferred and unconfirmed with the interview in the backlog, and no north star is invented for a project that has none",
+      "procedure": "author docs/personas.md from the repo's own audience evidence; node scripts/spec-structure.mjs --block to confirm the R10 gate reads it; check whether docs/PRODUCT.md was forced",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-17",
+      "title": "the drift number and the adoption percentage say which of two things they measure - the standard's entries, or the repository",
+      "area": "adoption",
+      "tests": [
+        "R16"
+      ],
+      "promise": "aligned means self-verify reports drift 0 - SPEC.md R16; and the align router calls the falling number the progress bar",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a decades-old repository being adopted, measured at three stages: manifest and pin only, plus the guard scripts, plus the rest of the copy class",
+      "when": "self-verify is run at each stage and again at the end",
+      "then": "the percentage moves for what the repository authored, not chiefly for files the standard itself supplied, or the output says which it is reporting",
+      "procedure": "node scripts/self-verify.mjs after writing only .standards-version + standard.manifest.json, again after copying the guard scripts, again after the rest of the copy class, and again at the end",
+      "status": "run"
+    },
+    {
+      "id": "INTAKE-11",
+      "title": "the intake asks where a change would actually land, so a project whose contribution route is not pull requests is recognised before the router promises one",
+      "area": "intake",
+      "tests": [
+        "docs/method/adoption.md"
+      ],
+      "promise": "the standard reads the repo before asking - VALIDATION-PLAN.md area table; align-to-standards step 0 measures, then asks",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repository whose own CONTRIBUTING says contributions go to a mailing list, with issues disabled and pull requests not merged (git/git: 4 merged of 2,005; vdukhovni/postfix: 0 ever)",
+      "when": "the intake's measure-then-ask round runs and the router reaches its close (Open one focused PR)",
+      "then": "the contribution route is read and said back, and the close names an alternative for a project that has no pull requests, instead of instructing an agent to open one",
+      "procedure": "read align-to-standards/SKILL.md step 0.1 for a contribution-route signal and step 7 for an alternative to Open one focused PR; check against the target's CONTRIBUTING and its merged-PR count",
+      "status": "run"
+    },
+    {
+      "id": "GATE-39",
+      "title": "the template-placeholder warning does not fire on a repository's own prose written in markdown's older code forms",
+      "area": "gates",
+      "tests": [
+        "R16"
+      ],
+      "promise": "filled shells, not copied ones, are the point - and a warning nobody can clear is one everybody learns to skip (self-verify.mjs's own note)",
+      "portable": true,
+      "severity_if_failed": "minor",
+      "given": "a foreign README or AGENTS.md carrying notation in a code span that wraps a line break, in a four-space-indented code block, or after a double-backtick span",
+      "when": "self-verify's fill check runs",
+      "then": "no fill warning is raised for any of the three, while a real placeholder in prose - including one right after them - still warns",
+      "procedure": "node tools/self-verify-fill-test.mjs; and node scripts/self-verify.mjs against a clone carrying the real shapes (git/git README.md:26-27, vim/vim AGENTS.md:92 and :257-262)",
+      "status": "run"
+    },
+    {
+      "id": "GATE-40",
+      "title": "the shipped CI gate can be moved to the only event a repository actually emits, without that being drift",
+      "area": "gates",
+      "tests": [
+        "R16"
+      ],
+      "promise": "the CI workflow that wires self-verify + both guards - how R16's gate actually runs (manifest entry purpose)",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repository that never receives pull requests, so the shipped .github/workflows/spec-guard.yml can only fire on push",
+      "when": "the workflow's trigger is changed to on: push and self-verify is re-run",
+      "then": "the entry is still satisfied, or the standard names the supported way to run the gate on such a repository - rather than reporting the required key on.pull_request as missing",
+      "procedure": "rewrite the workflow trigger to on: push, run node scripts/self-verify.mjs, and read the key result",
+      "status": "run"
+    },
+    {
+      "id": "DEC-14",
+      "title": "the retroactive-decision pass has a route for a repository that already keeps its decisions in another shape, or outside the repository entirely",
+      "area": "decisions",
+      "tests": [
+        "R5",
+        "R4"
+      ],
+      "promise": "A contestable, re-litigable choice MUST be recorded as a decision record - SPEC.md R5; a fact has one home - R4",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repository with an existing decision stream in its own format (git/git's Documentation/BreakingChanges.adoc, which records rejected proposals too; vim/vim's runtime/doc/develop.txt, a user-facing help file) and the rest of its rationale in a mailing-list archive",
+      "when": "onboard.md's retroactive-decision step runs",
+      "then": "the existing stream is cited rather than restated, and the record carries where the real argument happened - instead of creating a second decision home in a repository that already has one",
+      "procedure": "read onboard.md step 4 for an outcome covering a decision stream the repo already maintains; check the ADR template for a provenance field pointing outside the repo",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-17",
+      "title": "a repository whose history has a real home under another name can satisfy the changelog entry without waiving it",
+      "area": "shape",
+      "tests": [
+        "R18",
+        "R25",
+        "R17"
+      ],
+      "promise": "the only home of history (ADR-018); nothing else holds history, and drift 0 must not be reachable with no changelog at all - the manifest entry's own purpose",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a repository that keeps history in its own long-standing format - Documentation/RelNotes/ (542 files), included_patches[] in a C file plus runtime/doc/version9.txt, or a 31,888-line HISTORY",
+      "when": "the CHANGELOG.md entry and its required ## Unreleased section are checked",
+      "then": "the real home satisfies the entry, or the exception that waives it does not leave drift 0 reachable with no changelog at all - the state the entry's purpose says must not be reachable",
+      "procedure": "node scripts/self-verify.mjs on a repo with no CHANGELOG.md, then again after recording file and section exceptions for it; read the resulting verdict line",
+      "status": "run"
+    },
+    {
+      "id": "SHAPE-18",
+      "title": "a project's own runtime library gets a home in the capability map, instead of falling between a forbidden layer entry and a false unclaimed declaration",
+      "area": "shape",
+      "tests": [
+        "R11"
+      ],
+      "promise": "Every capability MUST have an entry in specs/capability-map.json binding it to code globs - SPEC.md R11; onboard.md: confirm the boundary is behavior-shaped, not a layering artifact like utils or common",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a long-lived C codebase whose largest component is its own replacement for libc and stdio - 922 of postfix's 2,522 tracked files, 61 globs of root files in git/git, a comparable set in vim",
+      "when": "onboard.md's capability-mapping step is applied, including its warning against a layering artifact like utils or common",
+      "then": "the guidance names what to do with a runtime library every other capability depends on, rather than leaving only a forbidden capability or an untrue $unclaimed declaration",
+      "procedure": "read onboard.md's capability-mapping step for a runtime-library case; run node scripts/spec-guard.mjs --audit with those files unclaimed and see what the check says about them",
       "status": "run"
     }
   ]

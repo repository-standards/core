@@ -1,5 +1,5 @@
 {
-  "$about": "Backfilled 2026-08-03 round (32 real repos + 2 synthetic greenfield fixtures + 6 wave-6 stub rows) plus the 2026-08-04 round's 71 new repository rows across 12 brownfield waves (bf-governance, bf-language, bf-lifecycle, bf-notcode, bf-platform, bf-thin, bf-monorepo, bf-ml, bf-critical, bf-review, bf-shapes, bf-closing) and the completed wave-6 backfill (bf-wave6-backfill, replacing the 6 earlier stub rows with real assessed data). depth follows VALIDATION-PLAN.md's L1-L4 scale; every 2026-08-04 row is L1 (read-only assessment, nothing changed) unless its note says otherwise - several were assessed from blobless/checkout-failed clones (no working tree, structure and content reads only) or metadata + gh api only where a full clone was infeasible; each such row's note says which. Fields left as 'not stated' in a source finding report are recorded as such here rather than guessed. The field-3 round (2026-08-06) adds matomo-org/matomo as the second L3 row and the first at scale.",
+  "$about": "Backfilled 2026-08-03 round (32 real repos + 2 synthetic greenfield fixtures + 6 wave-6 stub rows) plus the 2026-08-04 round's 71 new repository rows across 12 brownfield waves (bf-governance, bf-language, bf-lifecycle, bf-notcode, bf-platform, bf-thin, bf-monorepo, bf-ml, bf-critical, bf-review, bf-shapes, bf-closing) and the completed wave-6 backfill (bf-wave6-backfill, replacing the 6 earlier stub rows with real assessed data). depth follows VALIDATION-PLAN.md's L1-L4 scale; every 2026-08-04 row is L1 (read-only assessment, nothing changed) unless its note says otherwise - several were assessed from blobless/checkout-failed clones (no working tree, structure and content reads only) or metadata + gh api only where a full clone was infeasible; each such row's note says which. Fields left as 'not stated' in a source finding report are recorded as such here rather than guessed. The field-3 round (2026-08-06) adds matomo-org/matomo as the second L3 row and the first at scale. The adopt-old round (2026-08-07) adds three L3 rows for codebases whose history begins in the 1990s or 2000s: git/git, vim/vim and vdukhovni/postfix.",
   "targets": [
     {
       "slug": "psf/requests",
@@ -1512,6 +1512,48 @@
       "depth": "L4",
       "round": "ongoing",
       "note": "Used where a case is verified by reading or running the shipped tree rather than by applying it to somebody else's repo."
+    },
+    {
+      "slug": "git/git",
+      "kind": "repo",
+      "ecosystem": "C (244 source files at the repository root), plus optional Rust behind NO_RUST / the meson rust option, shell, Perl; make and meson side by side",
+      "size": "very large",
+      "quality": "good",
+      "quality_evidence": "3,804 commits from 212 distinct authors in the 12 months to 2026-08-06, HEAD dated the day before the run; 1,055 shell test scripts under t/ and CI in three products (.github/workflows/main.yml on push and pull_request, .gitlab-ci.yml, .cirrus.yml); a written security-embargo process in SECURITY.md and a written decision process in Documentation/DecisionMaking.adoc. The debt is age, not neglect: a permanent gap at object type 5, a dual-hash transition whose design document was first committed on 2017-09-27 and which still has not flipped the default, and a compatibility document (Documentation/BreakingChanges.adoc) whose whole job is to schedule what may finally be broken",
+      "star_tier": "very popular",
+      "stars_approx": "62,433 (gh repo view git/git, 2026-08-07)",
+      "shape": "81,873 commits since 2005-04-07 (21 years), 4,845 tracked files, 2,440 all-time authors; a publish-only GitHub mirror of a mailing-list project - issues disabled, 2,005 pull requests opened and 4 merged; 542 per-release files under Documentation/RelNotes and 36 design documents under Documentation/technical",
+      "depth": "L3",
+      "round": "adopt-old (2026-08-07)",
+      "note": "Adopted for real on a local branch from a blobless clone with full history: guards, manifest and skills landed, an 11-capability map derived from behaviour (244 root C files leave no directory structure to inherit, and builtin/ is deliberately not a capability), one buildable spec of the object store with file:line anchors, four retroactive ADRs and one BDR that cite Git's own decision streams instead of restating them, a 13-item backlog, self-verify taken from drift 19 to drift 0 (96%, 2 excepted). Nothing was pushed and no pull request or issue was opened - the project does not accept them, which is the finding this target exists for."
+    },
+    {
+      "slug": "vim/vim",
+      "kind": "repo",
+      "ecosystem": "C (182 source files under src/, C95 plus eight named C99 features), Vim script and Vim9 script, with embedded Python/Perl/Lua/Ruby/Tcl/MzScheme interpreters",
+      "size": "very large",
+      "quality": "good",
+      "quality_evidence": "2,401 commits from 340 distinct authors in the 12 months to 2026-08-06, HEAD dated the day of the run; nine CI workflows (Linux, Linux+ASan, macOS, Windows, CodeQL, Coverity, link-check); a mechanical style gate the project points AI contributors at (src/testdir/test_codestyle.vim); 916 numbered patches at 9.2 in src/version.c, with runtime/doc/version9.txt as the user-facing per-patch record. Its own AGENTS.md, 325 lines, predates this adoption",
+      "star_tier": "very popular",
+      "stars_approx": "40,731 (gh repo view vim/vim, 2026-08-07)",
+      "shape": "24,218 commits since 2004-06-13 in git, for an editor first released in 1991; 8,425 tracked files, 868 all-time authors; GitHub-shaped where the other two targets are not (10,841 pull requests, 437 merged, issues open) while still forwarding patches to the vim-dev mailing list; more than a third of all churn is under runtime/, which is shipped behaviour with per-file maintainers and its own test suites",
+      "depth": "L3",
+      "round": "adopt-old (2026-08-07)",
+      "note": "Adopted for real on a local branch from a blobless clone with full history: guards, manifest and skills landed, Vim's own 325-line AGENTS.md kept verbatim with the altitude ladder above it and the two required behaviour sections below it (each marked as added, each saying Vim's rules win on conflict), a 16-capability map that treats runtime/ as behaviour rather than documentation, one buildable spec of the undo file format, three retroactive ADRs and one BDR, a 12-item backlog, self-verify taken from drift 18 to drift 0 (97%, 2 excepted). Not pushed; no pull request or issue opened, even though this repository would accept one - CONTRIBUTING.md requires AI involvement to be disclosed by the human who submits, and there is no such human here."
+    },
+    {
+      "slug": "vdukhovni/postfix",
+      "kind": "repo",
+      "ecosystem": "C, with Postfix's own runtime library (src/util + src/global) in place of libc and stdio; make only, no package manager, no external dependencies",
+      "size": "large",
+      "quality": "good",
+      "quality_evidence": "77 commits in the 12 months to 2026-08-06, HEAD dated 2026-08-05 - low volume because each commit is a release snapshot, not a change. 52 of the src/*/Makefile.in files carry a tests: target and the newer ones use a unit-test framework with mocks (src/ptest, src/testing). No CI, no linter config, and no test entry point covering the whole tree; the documentation is generated from the /*++ */ comment blocks at the top of each C file by postfix/mantools",
+      "star_tier": "small",
+      "stars_approx": "563 (gh api repos/vdukhovni/postfix, 2026-08-07)",
+      "shape": "1,453 commits since 1999-01-01 carrying three author names, 1,446 of them Wietse Venema's; 2,522 tracked files, all but three of them (.gitignore, LICENSE, README) under a postfix/ subdirectory because the repository wraps a release tarball. A git mirror of a line developed off-forge: issues disabled and zero pull requests in 13 years, with contributions routed to postfix-users@postfix.org. History lives in postfix/HISTORY, 31,888 lines of dated entries since 1998-01-05",
+      "depth": "L3",
+      "round": "adopt-old (2026-08-07)",
+      "note": "Adopted for real on a local branch: guards, manifest and skills landed at profile core, a 14-capability map derived from behaviour rather than from the src/ directories (which are units of deployment - one daemon each), one buildable spec of the queue file format and queue state machine with file:line anchors, four retroactive ADRs and one BDR, a 12-item backlog, self-verify taken from drift 20 to drift 0 (96%, 2 excepted). The sharpest target of the round for one reason: an alignment has nowhere to land. The mirror cannot receive a change, the upstream is not a repository, and the shipped CI gate triggers on an event that has never once occurred here."
     }
   ]
 }

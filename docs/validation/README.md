@@ -19,11 +19,11 @@ written rather than generated.
 
 ## What this does not prove - read this before the numbers
 
-- **Assessment is not adoption.** 103 of 108 targets were assessed at
+- **Assessment is not adoption.** 103 of 111 targets were assessed at
   depth **L1** - a read-only clone, method passes applied, nothing changed. "We assessed
-  105 public repositories" and "we adopted 105 repositories" are different
+  108 public repositories" and "we adopted 108 repositories" are different
   claims, and only the first one is true.
-  **2 third-party repositories have been adopted for real** (depth L3 or better, listed by slug in `targets.json`): `hagopj13/node-express-boilerplate`, `matomo-org/matomo`. That is what moves this from a design claim to a demonstrated one - and 2 repositories are still a small sample. `FIELD-1` asks for three, of different sizes and stack situations, and stays open until it has them.
+  **5 third-party repositories have been adopted for real** (depth L3 or better, listed by slug in `targets.json`): `hagopj13/node-express-boilerplate`, `matomo-org/matomo`, `git/git`, `vim/vim`, `vdukhovni/postfix`. That is what moves this from a design claim to a demonstrated one - and 5 repositories are still a small sample. `FIELD-1` asks for three, of different sizes and stack situations, and stays open until it has them.
 - **Both sides of the fixtures share an author.** `test-greenfield-core` and
   `test-greenfield-node` - the two **L4** targets, the only ones that lived a full lifecycle
   loop - were built by the same people who wrote the standard being tested against them. They
@@ -63,12 +63,12 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 
 | | |
 |---|---|
-| Cases in the catalogue | **198** (`189` executed at least once, `9` specified but not yet run) |
-| Portable cases (the benchmark subset) | **133** (67% of the catalogue); local (tests a path only this tree has): 65 |
-| Observations recorded | **293** across 26 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-k-shape, 2026-08-06-l-dochonesty, 2026-08-06-m-drift, 2026-08-06-n-vocab, 2026-08-06-o-specmech, 2026-08-06-p-shape, 2026-08-06-q-track, 2026-08-06-s-field3, 2026-08-06-t-decisions, 2026-08-06-u-gatedoc, 2026-08-06-v-ledger, 2026-08-06-w-tracked, 2026-08-06-x-tail, 2026-08-06-y-substance) |
-| Targets assessed | **108** (105 real repositories, 2 synthetic fixtures) |
-| Verdicts | 175 pass, 109 fail, 2 not-applicable, 7 partial |
-| Failures found | **174** - **152 fixed and re-verified** (across 30 merged pull requests, plus 17 re-verified against the tree without a pull request cited), **22 still open right now** (of which 1 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 87 earlier fails superseded by a later re-run and no longer counted open |
+| Cases in the catalogue | **206** (`197` executed at least once, `9` specified but not yet run) |
+| Portable cases (the benchmark subset) | **141** (68% of the catalogue); local (tests a path only this tree has): 65 |
+| Observations recorded | **314** across 27 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-k-shape, 2026-08-06-l-dochonesty, 2026-08-06-m-drift, 2026-08-06-n-vocab, 2026-08-06-o-specmech, 2026-08-06-p-shape, 2026-08-06-q-track, 2026-08-06-s-field3, 2026-08-06-t-decisions, 2026-08-06-u-gatedoc, 2026-08-06-v-ledger, 2026-08-06-w-tracked, 2026-08-06-x-tail, 2026-08-06-y-substance, 2026-08-07-c-adopt-old) |
+| Targets assessed | **111** (108 real repositories, 2 synthetic fixtures) |
+| Verdicts | 187 pass, 118 fail, 2 not-applicable, 7 partial |
+| Failures found | **185** - **154 fixed and re-verified** (across 31 merged pull requests, plus 17 re-verified against the tree without a pull request cited), **31 still open right now** (of which 1 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 87 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -78,13 +78,13 @@ number stops matching the data behind it.
 
 | Area | Cases | Executed | Specified only | Portable |
 |---|---|---|---|---|
-| `intake` | 9 | 9 | 0 | 8 |
-| `adoption` | 14 | 14 | 0 | 11 |
+| `intake` | 10 | 10 | 0 | 9 |
+| `adoption` | 16 | 16 | 0 | 13 |
 | `greenfield` | 7 | 7 | 0 | 2 |
 | `spec` | 22 | 19 | 3 | 17 |
-| `gates` | 39 | 39 | 0 | 27 |
+| `gates` | 41 | 41 | 0 | 29 |
 | `track` | 22 | 20 | 2 | 20 |
-| `decisions` | 13 | 13 | 0 | 10 |
+| `decisions` | 14 | 14 | 0 | 11 |
 | `discovery` | 7 | 7 | 0 | 6 |
 | `trigger` | 6 | 4 | 2 | 5 |
 | `docs` | 20 | 20 | 0 | 7 |
@@ -92,7 +92,7 @@ number stops matching the data behind it.
 | `update` | 7 | 6 | 1 | 0 |
 | `stack` | 8 | 8 | 0 | 2 |
 | `security` | 4 | 4 | 0 | 3 |
-| `shape` | 16 | 16 | 0 | 12 |
+| `shape` | 18 | 18 | 0 | 14 |
 
 Every declared area carries at least one case.
 
@@ -104,7 +104,7 @@ Every declared area carries at least one case.
 |---|---|---|
 | L1 | read-only assessment pass, nothing changed | 103 |
 | L2 | dry adoption - the align router's decisions worked out for real, still no changes | 0 |
-| L3 | the standard actually applied to a working copy, drift measured | 2 |
+| L3 | the standard actually applied to a working copy, drift measured | 5 |
 | L4 | the repo then lived the loop for at least one full cycle of real work | 3 |
 
 ## The punch list - what is actually still broken
@@ -138,6 +138,15 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `GATE-36` | a content exception on a merge-class entry can never apply, and self-verify reports it as a deviation the repo no longer has | `repo:matomo-org/matomo` | **open** (logged, not fixed) |
 | `SHAPE-16` | the intake has a step for a repo that already carries an AGENTS.md whose operational rules live in a different repository | `repo:matomo-org/matomo` | **open** (logged, not fixed) |
 | `DOC-19` | the shipped ADR/BDR index shows the row format its own guard accepts | `repo:matomo-org/matomo` | **open** (logged, not fixed) |
+| `ADOPT-17` | the drift number and the adoption percentage say which of two things they measure - the standard's entries, or the repository | `repo:git/git` | **open** (logged, not fixed) |
+| `INTAKE-11` | the intake asks where a change would actually land, so a project whose contribution route is not pull requests is recognised before the router promises one | `repo:git/git` | **open** (logged, not fixed) |
+| `INTAKE-11` | the intake asks where a change would actually land, so a project whose contribution route is not pull requests is recognised before the router promises one | `repo:vdukhovni/postfix` | **open** (logged, not fixed) |
+| `GATE-40` | the shipped CI gate can be moved to the only event a repository actually emits, without that being drift | `repo:vdukhovni/postfix` | **open** (logged, not fixed) |
+| `GATE-40` | the shipped CI gate can be moved to the only event a repository actually emits, without that being drift | `repo:git/git` | **open** (logged, not fixed) |
+| `DEC-14` | the retroactive-decision pass has a route for a repository that already keeps its decisions in another shape, or outside the repository entirely | `repo:git/git` | **open** (logged, not fixed) |
+| `DEC-14` | the retroactive-decision pass has a route for a repository that already keeps its decisions in another shape, or outside the repository entirely | `repo:vim/vim` | **open** (logged, not fixed) |
+| `SHAPE-17` | a repository whose history has a real home under another name can satisfy the changelog entry without waiving it | `repo:git/git` | **open** (logged, not fixed) |
+| `SHAPE-18` | a project's own runtime library gets a home in the capability map, instead of falling between a forbidden layer entry and a false unclaimed declaration | `repo:vdukhovni/postfix` | **open** (logged, not fixed) |
 
 ## Fixed and re-verified this round
 
@@ -300,6 +309,8 @@ from the PR merging, not inferred from the verdict flipping:
 | `TRACK-21` | a tracker story whose scope changed because its spec changed is updated, or the divergence is surfaced to a human | `repo:repository-standards/core` | [../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md](../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md) |
 | `TRACK-22` | no external system keys on a positional task id, and a re-export can tell same-work-whose-description-changed from genuinely-new work | `repo:repository-standards/core` | [../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md](../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md) |
 | `DOC-12` | the published landing page states the current version consistently, so a reader does not see 0.8.12 in four places and 0.8.13 in a fifth on the same page | `repo:repository-standards/core` | [core/pull/28](https://github.com/repository-standards/core/pull/28) |
+| `GATE-39` | the template-placeholder warning does not fire on a repository's own prose written in markdown's older code forms | `repo:git/git` | [../tools/self-verify-fill-test.mjs](../../tools/self-verify-fill-test.mjs) |
+| `GATE-39` | the template-placeholder warning does not fire on a repository's own prose written in markdown's older code forms | `repo:vim/vim` | [../tools/self-verify-fill-test.mjs](../../tools/self-verify-fill-test.mjs) |
 
 ## How to run it yourself
 

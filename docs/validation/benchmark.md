@@ -5,8 +5,8 @@
      agent-operated repository standard would claim, phrased so a reader who has never used
      this standard can run the same idea against their own. -->
 
-Twenty-something checks - **133**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **57** of them at least once and has fixed-and-re-verified **86** so far; the rest are logged as open (which includes any case where an attempted fix
+Twenty-something checks - **141**, precisely - that any repository standard
+claiming to be agent-operable should survive. This project failed **63** of them at least once and has fixed-and-re-verified **87** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -308,7 +308,7 @@ node standard/scripts/self-verify.mjs against a repo whose altPath target direct
 - **Given:** a capability map covering every source file of a real repo, with the $unclaimed declaration absent
 - **When:** $unclaimed is declared for the source tree only, and the audit is re-run
 - **Then:** the audit turns the check on and reports every remaining file in the repo - config, tests, tooling, root files - rather than silently scoping itself to src/
-- **Result:** passed every time it ran (1/1)
+- **Result:** passed every time it ran (2/2)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -365,6 +365,32 @@ time `node scripts/self-verify.mjs`, `spec-structure.mjs --block`, `facts-check.
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 in a git repository, write `/docs/` to .gitignore, author a required entry under docs/, run `node scripts/self-verify.mjs`; then `git add -f` the same file and re-run - the first must fail naming the rule, the second must pass
+```
+
+
+**GATE-39 - the template-placeholder warning does not fire on a repository's own prose written in markdown's older code forms**
+
+- **Given:** a foreign README or AGENTS.md carrying notation in a code span that wraps a line break, in a four-space-indented code block, or after a double-backtick span
+- **When:** self-verify's fill check runs
+- **Then:** no fill warning is raised for any of the three, while a real placeholder in prose - including one right after them - still warns
+- **Result:** passed every time it ran (2/2)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+node tools/self-verify-fill-test.mjs; and node scripts/self-verify.mjs against a clone carrying the real shapes (git/git README.md:26-27, vim/vim AGENTS.md:92 and :257-262)
+```
+
+
+**GATE-40 - the shipped CI gate can be moved to the only event a repository actually emits, without that being drift**
+
+- **Given:** a repository that never receives pull requests, so the shipped .github/workflows/spec-guard.yml can only fire on push
+- **When:** the workflow's trigger is changed to on: push and self-verify is re-run
+- **Then:** the entry is still satisfied, or the standard names the supported way to run the gate on such a repository - rather than reporting the required key on.pull_request as missing
+- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+rewrite the workflow trigger to on: push, run node scripts/self-verify.mjs, and read the key result
 ```
 
 
@@ -1010,6 +1036,19 @@ read skills/align-to-standards/onboard.md's decisions step; grep the target repo
 ```
 
 
+**DEC-14 - the retroactive-decision pass has a route for a repository that already keeps its decisions in another shape, or outside the repository entirely**
+
+- **Given:** a repository with an existing decision stream in its own format (git/git's Documentation/BreakingChanges.adoc, which records rejected proposals too; vim/vim's runtime/doc/develop.txt, a user-facing help file) and the rest of its rationale in a mailing-list archive
+- **When:** onboard.md's retroactive-decision step runs
+- **Then:** the existing stream is cited rather than restated, and the record carries where the real argument happened - instead of creating a second decision home in a repository that already has one
+- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+read onboard.md step 4 for an outcome covering a decision stream the repo already maintains; check the ADR template for a provenance field pointing outside the repo
+```
+
+
 ### intake
 
 **INTAKE-01 - intake reads a repo's own lifecycle signal (archived, frozen, deprecated) before running the appetite/tracker/profile interview**
@@ -1116,6 +1155,19 @@ run intake's lifecycle-signal check against ziglang/zig's real state (archived: 
 ```
 
 
+**INTAKE-11 - the intake asks where a change would actually land, so a project whose contribution route is not pull requests is recognised before the router promises one**
+
+- **Given:** a repository whose own CONTRIBUTING says contributions go to a mailing list, with issues disabled and pull requests not merged (git/git: 4 merged of 2,005; vdukhovni/postfix: 0 ever)
+- **When:** the intake's measure-then-ask round runs and the router reaches its close (Open one focused PR)
+- **Then:** the contribution route is read and said back, and the close names an alternative for a project that has no pull requests, instead of instructing an agent to open one
+- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+read align-to-standards/SKILL.md step 0.1 for a contribution-route signal and step 7 for an alternative to Open one focused PR; check against the target's CONTRIBUTING and its merged-PR count
+```
+
+
 ### adoption
 
 **ADOPT-01 - the churn-hotspot assessment pass states when a shallow clone makes it categorically unrunnable, instead of silently under-reporting**
@@ -1123,7 +1175,7 @@ run intake's lifecycle-signal check against ziglang/zig's real state (archived: 
 - **Given:** a shallow-cloned repo assessed with the 8-pass brownfield methodology
 - **When:** pass 8 (churn-hotspot) runs
 - **Then:** it states the shallow-clone limitation instead of silently under-reporting hotspots it cannot see
-- **Result:** passed every time it ran (2/2)
+- **Result:** passed every time it ran (3/3)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1201,7 +1253,7 @@ run stack detection against denoland/deno and check whether the 715 package.json
 - **Given:** a real repo nobody on this project wrote, with no pin and no skeleton (hagopj13/node-express-boilerplate)
 - **When:** the align router's brownfield path is run end to end and self-verify is measured before and after
 - **Then:** a real drift number is produced at the start, every entry it names is closeable by authoring rather than by exception, and the run ends at drift 0
-- **Result:** passed every time it ran (2/2)
+- **Result:** passed every time it ran (5/5)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1214,7 +1266,7 @@ node scripts/self-verify.mjs before landing anything, then again after the waves
 - **Given:** a layered codebase (controllers/ services/ models/ routes/ validations/) where every capability cuts across every directory
 - **When:** onboard.md's capability-mapping step is applied, whose shortcut is 'an existing package/crate boundary is often already the capability map'
 - **Then:** the shortcut correctly does not apply, a per-file map is produced instead, and the audit passes
-- **Result:** passed every time it ran (2/2)
+- **Result:** passed every time it ran (4/4)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -1258,6 +1310,32 @@ adopt a >10,000-file repo to the point where every required manifest entry is me
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 land standard/.github/workflows/spec-guard.yml in a repo whose capability-map has entries without specs, and run its last step: `node scripts/spec-guard.mjs --audit --block`
+```
+
+
+**ADOPT-16 - the persona and product gates produce something real for infrastructure with no product owner, instead of blocking or fabricating one**
+
+- **Given:** a repository with no product owner and nobody to interview - a mailing-list project, a mirror of one maintainer's release tarballs
+- **When:** onboard.md step 1 (reconstruct the personas, interview the user) and the product artefacts are applied
+- **Then:** a roster is produced from the code's own evidence, marked inferred and unconfirmed with the interview in the backlog, and no north star is invented for a project that has none
+- **Result:** passed every time it ran (2/2)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+author docs/personas.md from the repo's own audience evidence; node scripts/spec-structure.mjs --block to confirm the R10 gate reads it; check whether docs/PRODUCT.md was forced
+```
+
+
+**ADOPT-17 - the drift number and the adoption percentage say which of two things they measure - the standard's entries, or the repository**
+
+- **Given:** a decades-old repository being adopted, measured at three stages: manifest and pin only, plus the guard scripts, plus the rest of the copy class
+- **When:** self-verify is run at each stage and again at the end
+- **Then:** the percentage moves for what the repository authored, not chiefly for files the standard itself supplied, or the output says which it is reporting
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+node scripts/self-verify.mjs after writing only .standards-version + standard.manifest.json, again after copying the guard scripts, again after the rest of the copy class, and again at the end
 ```
 
 
@@ -1419,6 +1497,32 @@ run the align router's intake and step 3 against a repo carrying an AGENTS.md th
 ```
 
 
+**SHAPE-17 - a repository whose history has a real home under another name can satisfy the changelog entry without waiving it**
+
+- **Given:** a repository that keeps history in its own long-standing format - Documentation/RelNotes/ (542 files), included_patches[] in a C file plus runtime/doc/version9.txt, or a 31,888-line HISTORY
+- **When:** the CHANGELOG.md entry and its required ## Unreleased section are checked
+- **Then:** the real home satisfies the entry, or the exception that waives it does not leave drift 0 reachable with no changelog at all - the state the entry's purpose says must not be reachable
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+node scripts/self-verify.mjs on a repo with no CHANGELOG.md, then again after recording file and section exceptions for it; read the resulting verdict line
+```
+
+
+**SHAPE-18 - a project's own runtime library gets a home in the capability map, instead of falling between a forbidden layer entry and a false unclaimed declaration**
+
+- **Given:** a long-lived C codebase whose largest component is its own replacement for libc and stdio - 922 of postfix's 2,522 tracked files, 61 globs of root files in git/git, a comparable set in vim
+- **When:** onboard.md's capability-mapping step is applied, including its warning against a layering artifact like utils or common
+- **Then:** the guidance names what to do with a runtime library every other capability depends on, rather than leaving only a forbidden capability or an untrue $unclaimed declaration
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+read onboard.md's capability-mapping step for a runtime-library case; run node scripts/spec-guard.mjs --audit with those files unclaimed and see what the check says about them
+```
+
+
 ### security
 
 **SEC-01 - the security-baseline axis catalog has a negative-scope axis - what is deliberately not a vulnerability, and why**
@@ -1560,7 +1664,7 @@ run the prescribed cycle-close commit-count command against each of the showcase
 - **Given:** three retroactive ADRs authored into docs/decision-records/adr/ during a real adoption, with the shipped index untouched
 - **When:** decision-records-check runs
 - **Then:** it names each unindexed record and fails, rather than passing because the files exist
-- **Result:** passed every time it ran (2/2)
+- **Result:** passed every time it ran (3/3)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
