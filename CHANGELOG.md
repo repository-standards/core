@@ -23,18 +23,19 @@ JS/TS stack (hono, drizzle-orm) and two that are old and not pull-request shaped
 postfix). Recorded in
 [`docs/validation/human-prompting/runs/2026-08-07-d-mixed.json`](docs/validation/human-prompting/runs/2026-08-07-d-mixed.json).
 
-**The entry path works when the prompt carries the domain.** Runs that were handed a line
-containing `repositorystandards.com` fetched the site unprompted, read the layer model, the
-stack registry and the stack's own adapting guide off the public web, and planned against the
-real entry list. None of them needed the standards repository. **Runs handed only the product's
-name did not think to look**: one grepped the tree, found nothing, and asked the user to supply
-the standard it had just been named. That is one discovery gap, and it is the difference
-between the two halves of the corpus rather than a property of the agent.
+**The entry path works when the prompt carries the domain.** Runs handed a line containing
+`repositorystandards.com` fetched the site unprompted, read the layer model, the stack registry
+and the stack's own adapting guide off the public web, and planned against the real entry list.
+The one run on a clean fixture reached a correct answer from the website alone, with no copy of
+the standard anywhere on its machine. **Runs handed only the product's name did not think to
+look**: one grepped the tree, found nothing, and asked the user to supply the standard it had
+just been named. That is one discovery gap, and it tracks which half of the corpus the prompt
+came from rather than anything about the agent.
 
 **The adoption guide's exit condition does not exist in every repository.** The published guide
 lists write access as a prerequisite and ends its last gate with pull requests opened. On a
 project whose contributions go to a mailing list, both are false, and an agent that reads the
-guide honestly stops there rather than finishing. Three new prompt rows and one new volunteered
+guide honestly stops there rather than finishing. Two new prompt rows and one new volunteered
 behaviour were added for the shape this exposes: the adopter who does not own the repository,
 the project with no pull-request route, and the sentence the agent has to say when the last
 step of the adoption cannot happen.
