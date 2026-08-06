@@ -1,0 +1,37 @@
+{
+  "$about": "2026-08-06 re-run after ADR-032 landed. Honest split: the re-entry half is now a mechanism and passes; the silent-loss defect is closed; but task ids are deliberately still positional, so the case that asked for STABLE ids is recorded partial, not pass - the promise changed rather than being met.",
+  "observations": [
+    {
+      "case": "SPEC-22",
+      "target": "repo:repository-standards/core",
+      "verdict": "pass",
+      "evidence": "spec-plan/SKILL.md now carries step 2a, which fires when plan.md already had content or tasks.md exists. It reads what is there before generating over it, takes the spec's own delta via `git diff <base> -- <FEATURE_SPEC>` - which is where spec-update's step 5 delta finally gets consumed - and must report three lists: what the change adds, what it invalidates, what is untouched. It also refuses to regenerate identical artifacts when the delta is empty, and routes an invalidated-but-already-built task to add-to-backlog as drift rather than dropping it silently. Verified present in the shipped copy and the manifest content hash regenerated to match.",
+      "at": "2026-08-06",
+      "fix": "../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md"
+    },
+    {
+      "case": "TRACK-20",
+      "target": "repo:repository-standards/core",
+      "verdict": "partial",
+      "evidence": "Deliberately not met as literally written, and worth being exact about. Task ids remain positional and unstable across rounds - ADR-032 rejected content-derived ids in core, because their only consumer is an exporter most repos never run. What IS fixed is the failure the case existed to catch: nothing outside tasks.md may key on a task id any more (spec-tasks step 1a states it), and the export path keys on content fingerprints instead (tracker-sync.md). So the silent work loss is closed while the case's own `then` - stable ids - is now something the standard explicitly declines to provide. Superseded by TRACK-22, which states what actually has to hold.",
+      "at": "2026-08-06",
+      "fix": "../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md"
+    },
+    {
+      "case": "TRACK-21",
+      "target": "repo:repository-standards/core",
+      "verdict": "pass",
+      "evidence": "The no-overwrite rule is kept - it was right - and the missing half is added: tracker-sync.md's fingerprint table makes 'present, changed' a REPORT rather than a rewrite, and lists 'in the file, gone from the repo' as a fourth reportable state nobody had named. The adapter rules now say plainly that a changed fingerprint is not permission to rewrite a card, it is a line in the run's output for a human to decide on.",
+      "at": "2026-08-06",
+      "fix": "../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md"
+    },
+    {
+      "case": "TRACK-22",
+      "target": "repo:repository-standards/core",
+      "verdict": "pass",
+      "evidence": "New case recording what replaced TRACK-20's premise. Verified: grepping the shipped tree for anything keying on a task id across rounds returns nothing; spec-tasks step 1a states the instability explicitly so no future adapter author assumes otherwise; tracker-sync.md defines the four fingerprint outcomes (unchanged / changed / absent / vanished) and what an adapter does with each. The sidecar is registered as a manifest REFERENCE, not a file, so self-verify notes it and never file-checks it - confirmed by running self-verify with no tracker.json anywhere: drift 0, unchanged.",
+      "at": "2026-08-06",
+      "fix": "../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md"
+    }
+  ]
+}

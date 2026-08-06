@@ -19,7 +19,7 @@ written rather than generated.
 
 ## What this does not prove - read this before the numbers
 
-- **Assessment is not adoption.** 103 of 106 targets were assessed at
+- **Assessment is not adoption.** 103 of 107 targets were assessed at
   depth **L1** - a read-only clone, method passes applied, nothing changed. "We assessed
   104 public repositories" and "we adopted 104 repositories" are different
   claims, and only the first one is true.
@@ -62,12 +62,12 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 
 | | |
 |---|---|
-| Cases in the catalogue | **180** (`171` executed at least once, `9` specified but not yet run) |
-| Portable cases (the benchmark subset) | **120** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **182** across 4 rounds (2026-08-03, 2026-08-04, 2026-08-06-field1, 2026-08-06) |
-| Targets assessed | **106** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 93 pass, 86 fail, 1 not-applicable, 2 partial |
-| Failures found | **164** - **78 fixed and re-verified** (across 18 merged pull requests), **86 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden |
+| Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
+| Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
+| Observations recorded | **189** across 6 rounds (2026-08-03, 2026-08-04, 2026-08-06-adr032, 2026-08-06-field1, 2026-08-06-planning-loop, 2026-08-06) |
+| Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
+| Verdicts | 96 pass, 89 fail, 1 not-applicable, 3 partial |
+| Failures found | **170** - **81 fixed and re-verified** (across 19 merged pull requests), **89 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -80,9 +80,9 @@ number stops matching the data behind it.
 | `intake` | 9 | 9 | 0 | 8 |
 | `adoption` | 9 | 9 | 0 | 8 |
 | `greenfield` | 7 | 7 | 0 | 2 |
-| `spec` | 21 | 18 | 3 | 16 |
+| `spec` | 22 | 19 | 3 | 17 |
 | `gates` | 33 | 33 | 0 | 23 |
-| `track` | 19 | 17 | 2 | 17 |
+| `track` | 22 | 20 | 2 | 20 |
 | `decisions` | 13 | 13 | 0 | 10 |
 | `discovery` | 7 | 7 | 0 | 6 |
 | `trigger` | 6 | 4 | 2 | 5 |
@@ -95,7 +95,7 @@ number stops matching the data behind it.
 
 Every declared area carries at least one case.
 
-**Rules with zero cases (of R1-R25):** `R13`, `R21`.
+**Rules with zero cases (of R1-R25):** `R21`.
 
 ## Targets, by depth level
 
@@ -104,7 +104,7 @@ Every declared area carries at least one case.
 | L1 | read-only assessment pass, nothing changed | 103 |
 | L2 | dry adoption - the align router's decisions worked out for real, still no changes | 0 |
 | L3 | the standard actually applied to a working copy, drift measured | 1 |
-| L4 | the repo then lived the loop for at least one full cycle of real work | 2 |
+| L4 | the repo then lived the loop for at least one full cycle of real work | 3 |
 
 ## The punch list - what is actually still broken
 
@@ -199,6 +199,9 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `ADOPT-05` | the technology-detection step names a repo's second, workspace-composing layer (a west/repo manifest pulling in dozens of sibling repositories), not only the single root package manifest | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `ADOPT-06` | stack detection has an evidence-quality rule, so 715 `package.json` matches inside npm-compat test fixtures do not read as 'maybe Node' on a repo whose real build system is something else entirely | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `ADOPT-07` | the honest-miss path's one deliverable (docs/stack-decisions.md, for a technology with no registered Layer-2 stack) exists in the manifest, a SPEC rule, and the taxonomy - the three places every other required deliverable exists in | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
+| `SPEC-22` | re-planning a spec that has already been developed produces an INCREMENTAL plan from the spec's own delta, not a plan for the whole capability again | `repo:repository-standards/core` | **open** (logged, not fixed) |
+| `TRACK-20` | task ids are stable across re-planning rounds, so a tracker item keyed by task id still means the same work on the second round | `repo:repository-standards/core` | **open** (logged, not fixed) |
+| `TRACK-21` | a tracker story whose scope changed because its spec changed is updated, or the divergence is surfaced to a human | `repo:repository-standards/core` | **open** (logged, not fixed) |
 | `DEC-12` | the decision catalog has a category for a repo whose release gate is owned by a third party, not by its own CI or maintainer | `repo:Rdatatable/data.table` | **open** (logged, not fixed) |
 | `DEC-13` | the retroactive-decision reconstruction has a path for a founding decision that left no trace in the code or in the repo at all | `repo:opentofu/opentofu` | **open** (logged, not fixed) |
 
@@ -289,6 +292,9 @@ from the PR merging, not inferred from the verdict flipping:
 | `STACK-06` | the one documented package-manager migration path (`pnpm import`) is verified against real bun- and yarn-managed repositories before being offered as the escape hatch | `fixture:test-greenfield-core` | [node/pull/1](https://github.com/repository-standards/node/pull/1) |
 | `GREEN-01` | the clarify gate is actually invoked by the scripts that begin planning, so an unclarified spec cannot be planned or tasked just because nothing calls the gate that would stop it | `fixture:test-greenfield-core` | [core/pull/19](https://github.com/repository-standards/core/pull/19) |
 | `GREEN-04` | the greenfield spec-writing step points a newcomer at a file that actually ships, for the single hardest artifact they will write | `fixture:test-greenfield-core` | [core/pull/19](https://github.com/repository-standards/core/pull/19) |
+| `SPEC-22` | re-planning a spec that has already been developed produces an INCREMENTAL plan from the spec's own delta, not a plan for the whole capability again | `repo:repository-standards/core` | [../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md](../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md) |
+| `TRACK-21` | a tracker story whose scope changed because its spec changed is updated, or the divergence is surfaced to a human | `repo:repository-standards/core` | [../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md](../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md) |
+| `TRACK-22` | no external system keys on a positional task id, and a re-export can tell same-work-whose-description-changed from genuinely-new work | `repo:repository-standards/core` | [../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md](../decision-records/ADR-032-re-entry-is-core-tracker-sync-is-an-extension.md) |
 
 ## How to run it yourself
 
