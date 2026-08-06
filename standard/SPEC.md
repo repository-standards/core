@@ -95,7 +95,10 @@ binds every repo, a solo one included.
 - **R11.** Every capability MUST have an entry in `specs/capability-map.json`
   binding it to code globs. A change to a capability's code MUST land in the same
   PR as its spec update. *(scale)* The coupling guard blocks any PR that breaks
-  this.
+  this. A capability whose implementation lives in a repository this one does not
+  own MUST still have an entry: it names that repository, with a recorded reason,
+  in place of the globs it cannot have. No coupling can be enforced for that part,
+  and the audit names it on every run (ADR-036).
 - **R12.** A spec MUST pass the clarify gate before planning or implementation:
   zero open questions, with explicit deferrals recorded as answers, never dropped.
 - **R13.** Plan and task scaffolding is ephemeral and MUST be removed when the work

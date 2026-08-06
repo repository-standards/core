@@ -96,6 +96,21 @@ mechanism changes. What matters is that the globs match **the tree you actually 
 `--audit` reports one that matches nothing, because a map full of globs matching no files is
 a guard watching an empty set.
 
+**When the code is not here at all** - a plugin, a satellite `rules_*` repo, a vendor SDK -
+the entry says so instead of pretending:
+
+```json
+{ "channel-sync": [{ "external": "acme/channel-connectors", "reason": "each connector is released from its own repository" }] }
+```
+
+No glob in this repo can reach that code, so nothing is enforced for it; the capability
+still carries its spec here, and `--audit` names every external binding on every run. The
+reason is required, because without it this is a way to move a capability out of the
+guard's reach rather than a record of where its code lives. Before this existed the only
+moves were a glob matching nothing or no map entry at all - both reported as defects, so
+the map was wrong about a shape that is entirely normal, and a map you have to route around
+is a map that stops being maintained.
+
 **Glob syntax** - one translator (`scripts/lib/glob.mjs`) for every guard that reads a
 glob, so two guards cannot answer the same question differently. `*` matches within one
 path segment; `**` matches any number of segments **including none**, which is what makes
