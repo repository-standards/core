@@ -14,6 +14,18 @@ file still carrying `{{TOKENS}}`, `<markers>` or a table row of ellipsis cells i
 never counted as drift. Filled shells, not copied ones, are the point - but converting that
 judgment into an integer is how a number starts being gamed.
 
+**What `drift 0` claims, and what it does not.** It claims the repo is *shaped* like the
+standard. It does not claim the method has been used on it, and the verdict now says so
+rather than leaving the reader to infer it. A raw greenfield tree plus three declarative
+files - `.standards-version`, a `profile` key, an empty `specs/capability-map.json` - used to
+reach `OK - drift 0 - 100% adopted, compliant with the standard` with not one capability spec
+written. The number was right; the sentence was not. So when no capability spec exists, the
+drift-0 line carries the caveat in the same breath as the number. It is **reported, never
+scored**: the greenfield walk scaffolds the repo in step 1 and writes the first spec in
+step 6, and step 1 promises "empty but valid: self-verify passes". Scoring the gap would put
+drift 0 out of reach of an honest brand-new repo for the whole length of the interview, and a
+failure nobody can clear is one everybody learns to route around.
+
 ## Mechanical tier - the hard gate
 
 Run the shipped checker; it exits non-zero on any failure, so CI can gate on it:
@@ -84,6 +96,28 @@ It checks:
   `scripts/spec-structure.mjs`, `scripts/schema-pair.mjs`); `self-verify` skips itself
   to avoid recursion. A guard whose subject is absent - no `database/schema/`, say -
   reports that and passes; R24 binds repos that own a database.
+- **A guard that could not run is not a guard that failed.** A missing tool is a fact about
+  the machine; drift is a fact about the repo, and
+  [`prerequisites.md`](prerequisites.md) already says the number scores the second.
+  They used to be the same integer: on a machine with no `pnpm`, the Layer 2 guard
+  `pnpm check:all` exited with a bare `command not found` and printed
+  `drift 1 - 99% adopted (78/79)` - byte for byte what three real lint errors print on a
+  compliant repo. So a guard whose prerequisites are absent is **NOT RUN**: reported as
+  `SKIP`, counted as neither drift nor adoption, and named in the verdict line, because the
+  one thing a skipped blocking check must never be is quiet. Prerequisites come from two
+  places: whatever the guard entry declares -
+  `"requires": [{ "kind": "command", "match": "pnpm" }, { "kind": "path", "match": "node_modules" }]` -
+  and, for guards that declare nothing, any bare command word in `run` that is no shell
+  builtin and resolves nowhere on `PATH`. The `path` kind is what keeps the check free of
+  side effects: with a package manager present and its dependency tree absent, *running* the
+  guard is what pulls hundreds of megabytes off the network, and looking first is the only
+  way not to. Inference errs toward running the guard in every direction it can be wrong:
+  quoted text is blanked before splitting, so a word inside an error message is never
+  mistaken for a tool, and `a || b` is read as a fallback rather than two requirements.
+  **This loosened the gate** - a guard failing on a missing tool used to exit 1 and now does
+  not - so `OK` is dropped from the verdict whenever a check did not run. The exit code
+  answers "does this repo comply", and a check that never started has no opinion on that;
+  the count and the missing word are what keep it from reading as a clean bill of health.
 
 The code<->spec **coupling** guard (`scripts/spec-guard.mjs`, `kind: diff`) runs in CI on
 the PR diff rather than in this static check - but it is part of the same gate.
@@ -228,6 +262,10 @@ A red self-verify is a compliance failure, not a warning to defer:
 - Missing `.standards-version` -> the repo was never aligned; run `align-to-standards`.
 - Version mismatch after an update -> the bump did not land; finish `update-to-version`.
 - A guard failure -> fix the structure/coupling before merging.
+- A guard reported `SKIP` -> nothing is wrong with the repo and nothing was learned about it
+  either. Install what the line names ([`prerequisites.md`](prerequisites.md)) and re-run;
+  CI is where that must not be tolerated, because a runner missing a tool checks less than
+  the same command checked yesterday.
 - A judgment-tier gap -> record the decision, deepen the spec, or file the backlog item.
 
 The mechanical gate belongs in CI so "compliant with the standard" is an assertion the
