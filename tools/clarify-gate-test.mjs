@@ -340,6 +340,22 @@ const STRUCTURE_CASES = [
     body: withStatus("in-refinement | ready-to-develop | in-development | live | retired", "## Requirements\n\n- The system MUST capture.\n"),
   },
   {
+    // An unfilled marker is not a persona, in either shape the shipped templates use. The
+    // angle form was excluded from the roster and the mustache form was not, so a repo that
+    // shipped personas.md untouched handed the gate a live roster entry named after the
+    // placeholder - and a spec quoting it passed the persona gate serving nobody.
+    //
+    // Once neither shape parses, this roster holds no persona at all, and an empty roster is
+    // reported as unreadable rather than as a spec that happens to serve nobody - a stricter
+    // answer to the same defect, because an unreadable roster is a membership test with
+    // nothing left to contradict.
+    name: "an unfilled roster marker is not a persona a spec can serve",
+    fails: true,
+    says: "no persona could be read from the roster",
+    personas: "# Personas\n\n## The roster\n\n| Persona | Primary? |\n|---|---|\n| `{{PERSONA_NAME_AND_ROLE}}` | yes |\n",
+    body: "# Payments\n\n**Serves:** `{{PERSONA_NAME_AND_ROLE}}`\n**Status:** in-refinement\n\n## Requirements\n\n- The system MUST capture.\n",
+  },
+  {
     // The same silent-disable shape, one check over: scoping the roster scan to a heading
     // meant a translated heading fell back to reading the whole file, worked example
     // included, and widened the roster instead of narrowing it.
@@ -755,6 +771,44 @@ for (const c of [...PERSONA_CASES.map((s) => ({ ...s, kind: "tree" })), ...PLAN_
   } else if (!out.includes(c.says)) {
     failures++;
     console.log(`  FAIL  ${c.name} - exit ${code} is right but the output never says "${c.says}"\n${out.replace(/^/gm, "        ")}`);
+  } else {
+    console.log(`  ok    ${c.name}`);
+  }
+}
+
+// --- what counts as scaffolding the close removes --------------------------------------
+// The guard warned about `checklists/` as ephemeral engine debris, and spec-specify's own
+// step 7a creates `checklists/requirements.md` while minting the spec - so following the
+// documented workflow in order produced a WARN telling the author to delete a file the
+// standard had told them to write one command earlier, and spec-reconcile (the only step
+// that deletes anything) never removed it. R13 and ADR-010 name plan.md and tasks.md and
+// nothing else. Both directions: the checklist must not be warned about, and the two files
+// that ARE ephemeral must still be.
+const CLEAN_SPEC = withStatus("in-refinement", "## Requirements\n\n- The system MUST capture.\n");
+const SCAFFOLDING_CASES = [
+  {
+    name: "the quality checklist spec-specify writes is not scaffolding to remove",
+    files: { "specs/payments/checklists/requirements.md": "# Spec quality checklist\n\n- [x] No vague requirements\n" },
+    warns: false,
+  },
+  {
+    name: "a committed plan.md is still scaffolding to remove",
+    files: { "specs/payments/plan.md": "# Plan\n\nleft behind after the work closed\n" },
+    warns: true,
+  },
+  {
+    name: "a committed tasks.md is still scaffolding to remove",
+    files: { "specs/payments/tasks.md": "# Tasks\n\n- [x] done\n" },
+    warns: true,
+  },
+];
+
+for (const c of SCAFFOLDING_CASES) {
+  const { out } = structure(CLEAN_SPEC, ROSTER, { extraFiles: c.files });
+  const named = Object.keys(c.files).some((f) => out.includes(f) && out.includes("engine scaffolding is committed"));
+  if (named !== c.warns) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - expected the scaffolding warning to ${c.warns ? "" : "not "}name it\n${out.replace(/^/gm, "        ")}`);
   } else {
     console.log(`  ok    ${c.name}`);
   }
