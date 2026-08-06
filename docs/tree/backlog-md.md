@@ -14,22 +14,27 @@ not), fix it now (the pull request doubles), or say it out loud and move on.
 
 ## What goes in here
 
-One row per intent, each carrying who it is for and what done looks like:
+One row per intent, each carrying who it is for, where it came from and what done looks like
+(the file itself declares more columns than this - see `docs/backlog.md` for the full row):
 
 ```markdown
-| Id | Intent | For whom | Done when | Source |
+| Id | Intent | For whom | Source | Done when |
 |---|---|---|---|---|
-| INV-4 | Export retries on timeout | Ops lead Ola | a timed-out export resumes without a manual replay | noticed in #212 |
+| INV-4 | Export retries on timeout | Ops lead Ola | asked: #212 | a timed-out export resumes without a manual replay |
 ```
 
 An intent names its persona, because work that serves nobody is how a backlog becomes a
-graveyard. And it names **what done looks like**, because an item without that never leaves:
-there is no moment at which anyone can say it is finished.
+graveyard - and internal work names the internal one rather than borrowing a customer. It
+names its **source**, one of five declared categories, because "every item has a source" is
+only a rule while it is a column somebody has to fill. And it names **what done looks like**,
+because an item without that never leaves: there is no moment at which anyone can say it is
+finished.
 
 At the `scale` profile the file also carries an **In flight** section: which intents left
 the pool and into which cycle. An intent is in the pool **or** in exactly one cycle, never
 both, and `cycle-guard` fails the build when that stops being true. That table is why the
-pool stays the single place to start reading.
+pool stays the single place to start reading - so the guard checks the table too: each row
+must name a cycle that exists and is still open, and state how many intents it really holds.
 
 ## What does not go in here
 
