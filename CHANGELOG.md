@@ -16,6 +16,41 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
+
+`update-to-version` step 2 called the diff of the two versions' `standard.manifest.json`
+"the precise delta". It is not one. Between the 1.0.12 and 1.0.13 manifests, that diff
+reports no file added, no file removed, and 50 entries changed on nothing but their `since`
+and `purpose` strings - while the release itself moved 4 payload files, 47 insertions and
+22 deletions, including a three-hunk behaviour change in `cycle-guard.mjs`. The content
+hashes added since do not close it: only `copy` entries carry a `sha256`, and `merge` and
+`fill-from-repo` entries are adapted on purpose and carry none, so 37 of the 82 files the
+tree ships have no content recorded anywhere in the manifest. Reproduced on the current
+tree: a release touching `specs/capability-spec.template.md`, `.github/workflows/spec-guard.yml`
+and `AGENTS.md` - three required entries - moves nothing in the manifest but the version
+string, and an agent following step 2 literally enumerates zero work to do.
+
+Step 2 now names the file diff between the two versions' shipped trees as the delta, and
+demotes the other two sources to what they are: the manifest diff indexes which *entries*
+arrived, changed shape or went away, and the changelog carries the prose. When the current
+version's tree cannot be had, the skill says to report a partial delta as partial - the
+carried manifest's hashes still identify every `copy` file exactly, and every `merge` and
+`fill-from-repo` file is then unenumerated - rather than present half a delta as the whole.
+
+Two neighbouring findings from the same round were re-run first and did not hold. A sham
+update - bump the pin, copy the target's manifest, apply none of its files - is caught
+today. Built on the 1.0.12 payload with 1.0.13's manifest and pin, the verifier of the day
+reported `drift 0 - 100% adopted (49/49)`; the same sham built on the released-1.0.13
+payload under today's manifest and verifier reports `drift 10 - 87% adopted (68/78)`,
+naming the stale `SPEC.md` and the absent skill.
+`tools/self-verify-drift-test.mjs` gains a twentieth case so it stays caught, and unlike the
+existing one it builds the target manifest with `tools/manifest-hashes.mjs` from a real
+newer tree instead of a hand-written hash - which is the only way the recorder and the
+verifier are held to the same idea of what a file's content is. Recording a deviation as an
+`exceptions` entry and reaching drift 0 also both work now (`drift 0 - 99% adopted (76/77),
+1 excepted`), but only in the tree: no released version carries the code, and R18 leaves
+that to the maintainer, so the suite keeps that one open.
+
 ### A fixed defect now reads as fixed - 76 observations re-verified against the live tree, not relabelled (2026-08-05)
 
 The validation suite's own convention - "a fixed defect keeps its fail verdict and gains a
