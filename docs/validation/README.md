@@ -64,10 +64,10 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 |---|---|
 | Cases in the catalogue | **184** (`175` executed at least once, `9` specified but not yet run) |
 | Portable cases (the benchmark subset) | **124** (67% of the catalogue); local (tests a path only this tree has): 60 |
-| Observations recorded | **193** across 8 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd) |
+| Observations recorded | **201** across 9 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-t-decisions) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
-| Verdicts | 99 pass, 90 fail, 1 not-applicable, 3 partial |
-| Failures found | **167** - **84 fixed and re-verified** (across 21 merged pull requests), **83 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 107 pass, 90 fail, 1 not-applicable, 3 partial |
+| Failures found | **159** - **84 fixed and re-verified** (across 21 merged pull requests), **75 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 15 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -120,7 +120,6 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `GATE-12` | self-verify can register more than one simultaneous Layer-2 stack manifest for a repo that genuinely needs two | `repo:flutter/flutter` | **open** (logged, not fixed) |
 | `SPEC-01` | a duplicated section heading (e.g. two `## Clarifications` headings) is mechanically flagged, not only conventionally avoided | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `SPEC-10` | the `retired` status (or an adjacent field) has vocabulary for a capability that supersedes a different, external predecessor product with no history in this repo | `repo:PowerShell/PowerShell` | **open** (logged, not fixed) |
-| `DEC-03` | the standard offers a way to defer to an existing, richer decision process instead of only filing legacy discovery material | `repo:rust-lang/rust` | **open** (logged, not fixed) |
 | `SHAPE-11` | a repo whose governance has no pull requests at all, or batches many PRs into one merge-queue commit, can still satisfy the integration rule | `repo:torvalds/linux` | **open** (logged, not fixed) |
 | `SHAPE-11` | a repo whose governance has no pull requests at all, or batches many PRs into one merge-queue commit, can still satisfy the integration rule | `repo:rust-lang/rust` | **open** (logged, not fixed) |
 | `STACK-01` | the node stack's starter composes into a target repo with working links to DECISIONS.md, not relative links that resolve outside the composed repo | `fixture:test-greenfield-node` | **open** (logged, not fixed) |
@@ -147,12 +146,7 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `TRACK-16` | internal or documentation-debt backlog items have a persona to name, so the Definition of Ready's persona requirement does not park the doc's own headline content category by design | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `TRACK-17` | the backlog's id convention (type-scoped vs. capability-scoped) is stated once and used consistently across every method doc and worked example, since the id is the only field joining the pool to a cycle | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `TRACK-18` | cycle-guard's one-place invariant is keyed on the intent, not only on its id, so a copy-then-renumber does not pass as compliant | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `DEC-06` | idea-write is reachable by handoff from the two skills that claim to point at it, not only by name recognition | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `DEC-07` | graduating an approved idea that changes an existing capability routes to spec-update, not to spec-specify's new-capability path | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DEC-08` | a decision that a request would extend a licensing- or contract-forbidden capability is caught by the ripple search that names itself the reason spec-impact exists | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `DEC-09` | spec-impact's ripple search covers every artifact type the manifest requires, not only specs, ADRs and code | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `DEC-10` | a stale, now-false sentence in a spec whose Status is retired has a documented procedure to correct it, instead of every documented rule pointing a different, mutually-exclusive way | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `DEC-11` | the decision-record templates' author field is filled by the same convention self-verify's placeholder check already recognizes, not a second, uncovered mustache token | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DISC-05` | discovery-digest diffs a contradiction between two people inside one pasted handover, not only between two separately-filed entries | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DISC-06` | discovery-digest builds the dossier from the standard's own shipped template, not a hand-built shape that diverges from what spec-clarify and spec-specify actually read | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `DISC-07` | discovery entries filed through discovery-digest advance the same 'Last reconciled' stamp regardless of which spec skill actually folds them in, including spec-update | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
@@ -196,8 +190,6 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `ADOPT-05` | the technology-detection step names a repo's second, workspace-composing layer (a west/repo manifest pulling in dozens of sibling repositories), not only the single root package manifest | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `ADOPT-06` | stack detection has an evidence-quality rule, so 715 `package.json` matches inside npm-compat test fixtures do not read as 'maybe Node' on a repo whose real build system is something else entirely | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
 | `ADOPT-07` | the honest-miss path's one deliverable (docs/stack-decisions.md, for a technology with no registered Layer-2 stack) exists in the manifest, a SPEC rule, and the taxonomy - the three places every other required deliverable exists in | `fixture:test-greenfield-core` | **open** (logged, not fixed) |
-| `DEC-12` | the decision catalog has a category for a repo whose release gate is owned by a third party, not by its own CI or maintainer | `repo:Rdatatable/data.table` | **open** (logged, not fixed) |
-| `DEC-13` | the retroactive-decision reconstruction has a path for a founding decision that left no trace in the code or in the repo at all | `repo:opentofu/opentofu` | **open** (logged, not fixed) |
 
 ## Fixed and re-verified this round
 

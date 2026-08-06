@@ -833,7 +833,7 @@ follow discovery-digest -> spec-impact -> spec-update end to end and check the d
 - **Given:** a repo with its own live, formal decision system wired into its real merge gate (rust-lang/rust's RFCs + MCPs, wired into bors)
 - **When:** onboard.md's decision-record guidance is checked for a 'point at the upstream record instead of duplicating it' path
 - **Then:** only 'file it as discovery material, write a retroactive ADR' exists - no defer-to-upstream mode
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -872,7 +872,7 @@ write a new BDR following bdr-write's numbering instruction against an index mis
 - **Given:** adr-write's and bdr-write's own claim that both 'refuse to write a record for a maybe and point here instead'
 - **When:** either skill is run against a genuine maybe
 - **Then:** the handoff names idea-write by skill name, instead of pointing only at the docs/ideas/ folder - which an agent can write to directly, bypassing the template, persona check, and graduation contract
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -885,7 +885,7 @@ grep -rn idea-write across standard/.claude/skills/ for a reference from adr-wri
 - **Given:** an approved idea that changes an existing capability's behaviour (an approval-rule change to an already-shipped capability)
 - **When:** idea-write's graduation instructions are followed
 - **Then:** the change reaches the existing capability's spec via spec-update, instead of spec-specify's own logic minting a sibling capability directory from the idea's slug
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -911,7 +911,7 @@ run spec-impact's documented ripple-search step against a change an Accepted BDR
 - **Given:** runbooks, personas, PRODUCT.md and analytics docs - all required by the manifest - alongside a real change that contradicts four of them at once
 - **When:** spec-impact's ripple search runs
 - **Then:** at least one of the four contradicted artifacts is flagged, instead of the search only ever naming 'other capability specs,' 'ADRs,' and 'Code/files'
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -924,7 +924,7 @@ run spec-impact against a real change contradicting a runbook, a persona descrip
 - **Given:** a retired spec (Status: retired per an Accepted BDR) whose contract section is now factually wrong under an unrelated change elsewhere
 - **When:** spec-update (stop before editing anything retired), spec-reconcile (resolve cross-spec contradictions) and spec-impact (retired check scoped to the primary capability only) are each checked against this exact case
 - **Then:** at least one of the three names a legal path to the correction, instead of all three rules contradicting each other with none actually usable
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -937,7 +937,7 @@ read spec-update, spec-reconcile and spec-impact's SKILL.md files for their reti
 - **Given:** a repo whose published releases are gated by an external body that can reject or archive them on its own policy, independent of the repo's CI and maintainers (Rdatatable/data.table, gated by CRAN)
 - **When:** the decision catalog's delivery/release axis is checked for a category covering an externally-owned gate
 - **Then:** a category exists for it, rather than the axis defaulting to 'the maintainer cuts releases' as though the repo controlled the gate
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
@@ -950,7 +950,7 @@ grep -ri 'cran\|external release gate\|gatekeep' docs/method/checklist.md docs/m
 - **Given:** a repo whose existence is itself the largest decision it embodies, made before its first commit and documented only outside it (opentofu/opentofu, forked from Terraform over a license change)
 - **When:** onboard.md's retroactive-decision step - which reconstructs decisions 'already chosen' by reading the code - is applied to that decision
 - **Then:** a documented path exists for a decision with no code fingerprint and no in-repo trace, rather than only the code-archaeology route plus docs/discovery/, which ADR-024 makes explicitly non-normative and so unable to hold the record
-- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+- **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
