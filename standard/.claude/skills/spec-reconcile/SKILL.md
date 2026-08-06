@@ -98,11 +98,14 @@ truth - so the spec, the code, and the tests must agree.
    `data-model.md`, `quickstart.md` or `contracts/` the plan stage produced, and clear
    `specs/feature.json`. Report what was removed.
 
-   Two things survive on purpose: the spec, and anything the scaffolding recorded that is
-   still true - a decision belongs in a record, an unfinished thread in the backlog, an
-   unresolved question in the spec's **Open questions**. Move it before deleting; a task
-   list kept "just in case" is a second, staler description of a capability that already
-   has a living one, and the next reader cannot tell which is current.
+   Three things survive on purpose: the spec, `checklists/requirements.md` (the spec's own
+   quality record - `spec-specify` writes it when the spec is minted and `spec-clarify`
+   re-validates it on every later round, so it belongs to the spec and not to this piece of
+   work), and anything the scaffolding recorded that is still true - a decision belongs in a
+   record, an unfinished thread in the backlog, an unresolved question in the spec's
+   **Open questions**. Move it before deleting; a task list kept "just in case" is a second,
+   staler description of a capability that already has a living one, and the next reader
+   cannot tell which is current.
 
    If the work is not finished, say so and stop - the scaffolding stays until it is.
 

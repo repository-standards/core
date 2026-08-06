@@ -93,19 +93,31 @@ for (const f of files) {
 
 // --- check 2: every capability spec serves a persona on the roster (ADR-006, R10) -----
 // A capability spec is specs/<capability>/<file>.md (depth >= 3), not a template or README.
-// Scaffolding the engine writes and `/spec-reconcile` removes (ADR-010: ephemeral). All six
-// of them: `/spec-plan` is documented to produce research.md in Phase 0 and data-model.md,
-// quickstart.md and contracts/ in Phase 1, and only plan.md and tasks.md were listed here -
-// so `--base <ref> --block`, the form CI runs, failed the persona gate on the other four in
+// Files under specs/ that the engine writes and that are not themselves capability specs -
+// so the persona gate below has no opinion about them. All six of them: `/spec-plan` is
+// documented to produce research.md in Phase 0 and data-model.md, quickstart.md and
+// contracts/ in Phase 1, and only plan.md and tasks.md were listed here - so
+// `--base <ref> --block`, the form CI runs, failed the persona gate on the other four in
 // every PR opened between /spec-plan and /spec-reconcile, a mid-workflow state the comment
 // beside the full-tree check already calls legitimate.
+//
 // The directory forms are anchored at `specs/<capability>/` on purpose: `contracts` and
 // `checklists` are ordinary words, and an unanchored `/contracts/` would read a capability
 // genuinely called that - `specs/contracts/spec.md` in a repo whose domain is contracts -
 // as scaffolding and exempt its whole directory from the persona gate.
-const ENGINE_ARTIFACTS = /\/(plan|tasks|research|data-model|quickstart)\.md$|^specs\/[^/]+\/(checklists|contracts)\//;
+//
+// What is removable when the work closes is a narrower set and lives at
+// REMOVABLE_SCAFFOLDING below: not every file the engine writes is one the close deletes.
+const NOT_A_CAP_SPEC = /\/(plan|tasks|research|data-model|quickstart)\.md$|^specs\/[^/]+\/(checklists|contracts)\//;
 const isCapSpec = (f) =>
-  f.split("/").length >= 3 && f.endsWith(".md") && !f.includes(".template.") && !/\/readme\.md$/i.test(f) && !ENGINE_ARTIFACTS.test(f);
+  f.split("/").length >= 3 && f.endsWith(".md") && !f.includes(".template.") && !/\/readme\.md$/i.test(f) && !NOT_A_CAP_SPEC.test(f);
+
+// An unfilled marker is not a persona, in either shape the shipped templates use. Only the
+// angle form was recognised, and the two readers below each tested for it separately - so
+// when personas.md moved its roster marker to the mustache form, an untouched template both
+// supplied a live roster entry named after the placeholder and satisfied a spec's `Serves`
+// field with the same string. One answer, both readers.
+const isPlaceholder = (s) => s.includes("<") || s.includes("{{");
 
 const personaless = []; // names nobody at all
 const offRoster = []; // names somebody the roster has never heard of
@@ -141,7 +153,7 @@ if (personasPath) {
     if (!inRoster) continue;
     if (/^\|/.test(line) && !/^\|[\s|:-]*\|?\s*$/.test(line)) rosterLines++; // not the |---| separator
     const m = line.match(/^\|\s*`([^`]+)`\s*\|/); // roster rows: | `Name` | ...
-    if (m && !m[1].includes("<")) roster.add(m[1]); // as written - the failure quotes it back
+    if (m && !isPlaceholder(m[1])) roster.add(m[1]); // as written - the failure quotes it back
   }
   rosterNames = [...roster];
 
@@ -181,8 +193,10 @@ if (personasPath) {
     // `<persona from docs/personas.md>` is the shipped template's placeholder - the question,
     // not an answer. A value that is nothing but placeholders counts as no field at all, so a
     // spec copied from the template and never filled in is reported as serving nobody rather
-    // than as serving a persona named "<persona from docs/personas.md>".
-    const filled = /[\p{L}\p{N}]/u.test(claim.replace(/<[^>]*>/g, ""));
+    // than as serving a persona named "<persona from docs/personas.md>". Both marker shapes
+    // the templates use are stripped: when personas.md moved its roster marker to the
+    // mustache form, an angle-only test read the untouched placeholder as a filled claim.
+    const filled = /[\p{L}\p{N}]/u.test(claim.replace(/<[^>]*>/g, "").replace(/\{\{[^}]*\}\}/g, ""));
     // A spec with no `Serves` field can still name its persona in prose - the roster is what
     // must recognise the name, not the field. What no longer counts: a name the roster has
     // never heard of, and prose that merely asks the question ("for whom") without answering
@@ -342,7 +356,16 @@ for (const f of files.filter(isCapSpec)) {
 // --- check 6 (warn only): committed engine scaffolding - ephemeral by rule -------
 // plan.md/tasks.md are working scaffolds the engine writes and the close removes.
 // Full-tree mode only (mid-work diffs legitimately carry them); never a violation.
-const staleScaffolding = !staged && !base ? files.filter((f) => ENGINE_ARTIFACTS.test(f)) : [];
+//
+// `checklists/` is deliberately NOT here, though it is not a capability spec either.
+// R13 and ADR-010 make plan.md and tasks.md ephemeral and name nothing else, and
+// spec-reconcile - the only step that actually deletes scaffolding - removes exactly
+// those. `checklists/requirements.md` is written by spec-specify when the spec is minted
+// and re-validated by spec-clarify on every later round, so warning about it told the
+// author to remove a file the standard's own skill had just told them to create, one
+// command earlier.
+const REMOVABLE_SCAFFOLDING = /\/(plan|tasks)\.md$/;
+const staleScaffolding = !staged && !base ? files.filter((f) => REMOVABLE_SCAFFOLDING.test(f)) : [];
 
 // --- report --------------------------------------------------------------------
 if (staleScaffolding.length) {
