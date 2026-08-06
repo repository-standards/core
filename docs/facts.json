@@ -94,6 +94,22 @@
       {
         "file": "standard/standard.manifest.json",
         "pattern": "\"version\": \"(\\d+\\.\\d+\\.\\d+)\""
+      },
+      {
+        "file": "README.md",
+        "pattern": "^\\*\\*(\\d+\\.\\d+\\.\\d+)\\*\\* - the first stable line"
+      },
+      {
+        "file": "docs/faq.md",
+        "pattern": "The standard is at (\\d+\\.\\d+\\.\\d+)"
+      },
+      {
+        "file": "llms.txt",
+        "pattern": "^- \\*\\*(\\d+\\.\\d+\\.\\d+), still the first stable line"
+      },
+      {
+        "file": "site/llms.txt",
+        "pattern": "^- \\*\\*(\\d+\\.\\d+\\.\\d+), still the first stable line"
       }
     ]
   },

@@ -61,7 +61,7 @@ Written, all of it generated and none of it hand-edited:
 |---|---|
 | `OUT_DIR/<out>` per PAGE MAP entry | HTML: the shared shell plus the rendered source, ending in the generated footer that names the source file. |
 | `OUT_DIR/README.md` | Markdown declaring the folder generated and naming the generator by URL, so it still reads correctly inside a satellite repo. |
-| `site/llms.txt` | a byte copy of the repo root's `llms.txt` - only `site/` is deployed, so the copy is how the file reaches the deployed root. |
+| `site/llms.txt` | a byte copy of the repo root's `llms.txt` - only `site/` is deployed, so the copy is how the file reaches the deployed root. It restates the standard's version, and **both copies** are declared in `docs/facts.json`: the generated one is covered separately from its source, so a root edit that was never regenerated is caught rather than assumed. |
 
 ## Interface contracts
 
