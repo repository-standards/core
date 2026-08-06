@@ -120,12 +120,17 @@ binds every repo, a solo one included.
 - **R16.** Compliance MUST be enforced by tooling, not prose: `self-verify`
   (against the recorded manifest) and `spec-structure` MUST gate CI; *(scale)*
   `spec-guard` too. Aligned means self-verify reports drift 0. These guards, and
-  `facts-check`/`schema-pair`, are dependency-free Node scripts (`scripts/*.mjs`) -
-  a Node runtime MUST be present to run them regardless of the repo's own
-  language or stack (`prerequisites.md`, by reference - it is not a file in this
-  repo). This is a real cost for a
-  non-Node repo, not a rounding error, and adoption should say so plainly rather
-  than let it surface as a surprise the first time CI runs.
+  `facts-check`/`schema-pair`, are dependency-free Node scripts (`scripts/*.mjs`),
+  and the agent guards R19 relies on are shell scripts that read their input with
+  `jq`. A Node runtime, a POSIX shell and `jq` MUST therefore be present to run
+  what the standard ships, regardless of the repo's own language, stack or
+  operating system - the complete list, and what each absence actually does,
+  is `prerequisites.md` (by reference - it is not a file in this
+  repo). This is a real cost for a non-Node repo and for a team on a platform
+  with no POSIX shell, not a rounding error: adoption states it plainly, and a
+  repo that cannot meet it records the guards it consequently does not run as a
+  deviation - rather than letting it surface the first time CI runs, or never
+  surfacing at all, which is what an absent guard does.
 - **R17.** Adoption and updates MUST adapt, never blind-copy: align reconciles a
   repo to the standard - always the latest; the record then names the state
   aligned to, and an update applies the delta between that and latest,
