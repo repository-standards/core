@@ -136,7 +136,7 @@
       "profile": "core",
       "since": "0.4.0",
       "rule": "R16",
-      "sha256": "23969d44c75123aa95b27761c567cd67331dda86d4d2c5237241c26042c6e19f"
+      "sha256": "ee3e23154c8a44f0ee301c820c1f6c0487408b83c458190039eb6b199ef28aba"
     },
     {
       "path": "scripts/spec-structure.mjs",
@@ -210,8 +210,8 @@
       "rule": "R22",
       "sha256": {
         "add-to-backlog/SKILL.md": "151571dfcf9a2aae38db59fff6383000505dc7d8fe753910af6b00edd729ea22",
-        "adr-write/SKILL.md": "cd6948133b5fb69e214f07cac124c69e77eecfd5db81a3c49ae807d435ac1a40",
-        "bdr-write/SKILL.md": "0792778940339c77fb41c0c4faf3f48ebec02057e26738c9bdb742d118fcfda3",
+        "adr-write/SKILL.md": "663276a872c658cefa8db89dbdf2679b8d8d0c006ce652f528ea92b81bf366df",
+        "bdr-write/SKILL.md": "8e87ca6142adc1ed745deed962448ce5d572dc7c3fb726c34836f7f13d4abfde",
         "cycle-close/SKILL.md": "72bad295dd461eebae9bd356ad07db33a76274c7b3011ad1d52d1158f0b82147",
         "cycle-open/SKILL.md": "2e9f3b417584523cd56c8763a20aa4667db366905110c3719a9087f4910d19c4",
         "discovery-digest/SKILL.md": "bc7f25b8a7eb9be3adaa0917febb5c2b452d378e1d5836c5b1bf47add2094d09",
