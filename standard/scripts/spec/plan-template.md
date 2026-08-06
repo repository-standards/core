@@ -64,14 +64,24 @@ specs/[feature]/
   real paths (e.g., apps/admin, packages/something). The delivered plan must
   not include Option labels.
 -->
+<!-- PATCHED(repository-standards): Option 1 sliced by capability, not by layer.
+     Upstream's default (models/ services/ cli/ lib/) contradicts the decision
+     checklist's own paved road - "slice by capability/domain, not by layer or page"
+     - and it is the layout the coupling guard cannot see: a capability's globs name
+     its domain, so an implementation spread across layer folders left every glob
+     matching nothing and spec-guard reporting OK on code whose spec was never
+     touched. Whichever layout is chosen, bind it in specs/capability-map.json and
+     run `node scripts/spec-guard.mjs --audit`, which reports a glob that matches no
+     file - the shape a map takes when the code went somewhere else. -->
 
 ```text
 # [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+├── <capability>/        # one folder per capability - the map's globs name these
+│   ├── <capability>.ts
+│   └── ...
+├── <another-capability>/
+└── shared/              # what genuinely belongs to no capability
 
 tests/
 ├── contract/
@@ -102,7 +112,9 @@ ios/ or android/
 ```
 
 **Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+directories captured above, then bind those paths in `specs/capability-map.json` -
+a capability whose globs describe a layout the code does not have is a coupling
+guard watching an empty set. `node scripts/spec-guard.mjs --audit` reports it]
 
 ## Complexity Tracking
 

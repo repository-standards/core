@@ -260,6 +260,39 @@ const CASES = [
     says: "empty exclusion",
     act: () => write("specs/capability-map.json", json({ ...MAP, widgets: ["src/**", "!"] })),
   },
+
+  // Code the map does not describe at all. The per-capability loop can only fire on a file
+  // some glob matches, so a capability built where its globs do not look changed with
+  // `spec-guard: OK` - and the diff run is the only spec-guard the manifest ships as a gate.
+  {
+    name: "a capability implemented where its globs do not look is reported instead of passing",
+    fires: true,
+    says: "belong to no capability",
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, widgets: ["src/widgets/**"], $unclaimed: ["tooling/**", "shared/paymob.ts"] }));
+      write("services/widget-sync.js", "export const sync = 1;\n");
+    },
+    undo: () => rmSync(join(repo, "services"), { recursive: true, force: true }),
+  },
+  {
+    name: "the same file couples to its capability once the map binds where the code is",
+    fires: true,
+    says: "- widgets ",
+    never: "belong to no capability",
+    act: () => {
+      write("specs/capability-map.json", json({ ...MAP, widgets: ["src/**", "services/widget-*.js"], $unclaimed: ["tooling/**", "shared/paymob.ts"] }));
+      write("services/widget-sync.js", "export const sync = 1;\n");
+    },
+    undo: () => rmSync(join(repo, "services"), { recursive: true, force: true }),
+  },
+  {
+    // Without `$unclaimed` the map never claimed to cover everything, so the guard has no
+    // basis to call anything unclaimed - the same rule --audit already applies.
+    name: "the unclaimed-code check stays off in a map that declares no $unclaimed",
+    fires: false,
+    act: () => write("services/widget-sync.js", "export const sync = 1;\n"),
+    undo: () => rmSync(join(repo, "services"), { recursive: true, force: true }),
+  },
 ];
 
 let failures = 0;
