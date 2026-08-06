@@ -45,7 +45,7 @@
       "profile": "core",
       "since": "1.0.0",
       "rule": "R2",
-      "sha256": "6c66189918688382bbab7350acfec5ac07a714e696145b03c9efa20e5a928ba3"
+      "sha256": "7c85f42a39ff9a04e69667d3cd2e3fe465f6a959cc7d5cd4423409757570aece"
     },
     {
       "path": "CLAUDE.md",
@@ -220,7 +220,7 @@
         "pre-pr-review/SKILL.md": "d72bee4edf7979968dc08f2cc493826953a396090a212f36132af557cde55960",
         "product-write/SKILL.md": "21bdc82897281178f915cb0f51dd669d35228d17748977cbacdc1993f2843b98",
         "spec-clarify/SKILL.md": "26da90f61886188eec6fc6c4a92c60fd825b6c1bb47bd90c16257f14a4471cdd",
-        "spec-impact/SKILL.md": "557be97a4f0e6fb3cc232e4b5bc8bc16c820bb3314b33ac047ff09efdde94441",
+        "spec-impact/SKILL.md": "b674cd53f243a6dd72ddb8ad751cd444b2322421b5e7ddbca4a93ba3f8c5d0d1",
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",
         "spec-plan/SKILL.md": "00d877467e5d5f971fbdcce2cc5b20afb03e6645198363c92cbc57f13a4e3ae3",
         "spec-reconcile/SKILL.md": "2df8cf62c9df25ac4d165908f8a7345531006381aef1a841f82447d37a3d460a",

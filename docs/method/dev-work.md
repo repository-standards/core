@@ -56,7 +56,10 @@ to write it is now, not at review:
 
 You get context, the decision, the options you did not take with why, the consequences, and
 a **revisit-when**. That last field is the difference between a record and an opinion: it
-names the concrete signal that would reopen the question.
+names the concrete signal that would reopen the question. What reads it back is
+`discovery-digest`: every handover of new material is checked against every record's
+revisit-when, and a match becomes a row for a human rather than an agent remembering.
+Which is also the limit - a signal true in the world but never filed here reaches nothing.
 
 **The test for whether something needs a record:** would reversing it cost a rewrite, or a
 search-and-replace? A rewrite is a decision. A search-and-replace is a convention, and it

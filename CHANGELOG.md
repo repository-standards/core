@@ -16,6 +16,60 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Three severe findings re-run: embargoed work gets a name, the ripple reads both record streams, the revisit reader was already there (2026-08-06)
+
+The 2026-08-04 round logged `SEC-02`, `LOOP-03` and `DEC-08` as severe and open. Re-run
+against the current tree before anything was written, one of the three had already closed.
+
+**`SEC-02` - the standard had no word for work that is real, recorded and not yet
+publishable.** R3 (knowledge lives in the repo), R11 (spec and code in the same pull
+request) and R15 (the backlog holds the intents), followed literally in a **public** repo,
+publish an unfixed vulnerability the moment somebody starts fixing it - and the same
+reading publishes a customer's confidential detail and an unannounced commercial move.
+Confirmed on the tree: no rule carried an embargo or confidentiality clause, and the
+manifest's `exceptions` has four kinds (`file`, `section`, `content`, `key`) with no
+embargo among them.
+
+The fix is not a hole in R3. R3 conflated *the repo* with *the public*: material whose
+publication is itself the harm may be held in a private mirror of the repo - the platform's
+private advisory fork is the paved road - and MUST rejoin the mainline when the embargo
+lifts. Every rule binds inside that mirror, so the spec, the coupled change, the backlog
+intent and the changelog entry are written while the work happens rather than reconstructed
+at disclosure; which is why only one rule moved, and R11 and R15 needed no exception at
+all. An embargo names its lifting condition and its owner the moment it starts - one with
+no stated end is knowledge kept out of the repo, which R3 already forbade - and the near
+misses are named so the clause cannot be read as a general licence: "not written up yet",
+"it is in the chat", and work someone would rather not publish are not embargoes. Recorded
+as ADR-033 with the two rejected shapes: an "unless confidential" clause on each of the
+three rules, and a new `embargo` kind in the manifest's `exceptions` (which records a
+repo's standing structural deviation and lowers its adoption percentage - the wrong
+mechanism for a temporary state of one piece of work). `security-baseline.md` gains the
+matching axis, so R19's recorded baseline answers where embargoed work lives and who lifts
+it before an incident rather than during one.
+
+**`DEC-08` - the ripple search read one of the two decision-record streams.**
+`spec-impact` step 3 said `ADRs`, while the standard and that same skill one step later
+distinguish ADR from BDR. Reproduced literally against the fixture: a change adding
+auto-approval to `shift-swap-request` (spec `Status: in-refinement`, so step 1's retirement
+check does not fire) is explicitly forbidden by Accepted `BDR-001`'s `What this rules out` -
+and the step sends the agent to a directory holding one ADR about Postgres, which reports
+no impact without `docs/decision-records/bdr/` ever being opened. The step now names both
+streams and points at `What this rules out`, the only section carrying a capability's
+non-goals, because what a change may not do is usually a business constraint - a licence
+boundary, a vendor or customer contract, a regulatory limit, a persona call. The output
+line reports decision-record impact across both, with `contradicts` as its own outcome.
+
+**`LOOP-03` did not reproduce and is closed rather than fixed.** The finding was that a
+decision record's `Revisit when` had two writers and no reader, so the trigger fired only
+when the same agent happened to remember writing it. `discovery-digest` gained that reader
+the same evening the finding was logged, and the round never re-ran: the grep the case
+specifies now returns two writers and one reader across the skills. Verified mechanically
+rather than by reading the step - pulling every `Revisit when` block across the fixture's
+records and matching new material against them lands on `BDR-001` for "approval fatigue",
+with no agent memory involved. What that closes is a tripwire on material entering through
+discovery, which is what the case asked for; a signal true in the world and never written
+down here still reaches nothing, and the step says so itself.
+
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 
 `update-to-version` step 2 called the diff of the two versions' `standard.manifest.json`
