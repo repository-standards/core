@@ -1,4 +1,4 @@
-# ADR-036: A capability may be bound to a repository this one does not own
+# ADR-039: A capability may be bound to a repository this one does not own
 
 | | |
 | --- | --- |
