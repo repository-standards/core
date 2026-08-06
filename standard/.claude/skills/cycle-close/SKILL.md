@@ -62,23 +62,55 @@ who did what, stop - that is the tracker's.
      actually landed back in the backlog (step 0), and it can only do that if the row says
      which ones
    - unplanned work absorbed, if any
-   - commits in the window:
-     `git log --oneline --since="<opened> 00:00:00" --until="<closed> 23:59:59" | wc -l`.
-     **Write the times out.** Git resolves a bare `--since=<date>` to that date at *the
-     current time of day*, so the same command returns a different count in the morning
-     than in the evening, and the two commits that sit on the boundary days by definition -
-     the cycle-open and cycle-close commits - are both counted only when the open commit
-     happened later in the day than the close one, which is not how a cycle runs. A count
-     nobody can reproduce is worse than no count.
+   - **commits in the window, scoped to whoever was holding this cycle's work** (below)
    - days elapsed, opened to closed
    Flip `Status` to `closed` and record the actual close date, which is often not the target.
 
-6. **Remove the pointer row** from the backlog's active-cycles table.
+6. **Scope the commit count, and say what it is scoped to.** A window on its own is not a
+   scope: two teams whose cycles overlap in time both record every commit in the overlap, so
+   both write down a number about the repository and neither writes down one about itself.
+   That contradicts `/timeline-update`'s own rule never to blend throughput across teams.
 
-7. **Prove it.** `node scripts/cycle-guard.mjs --block` - every returned row must now be in
+   The cycle already holds the scope - its `assignee` column. Check the names resolve first:
+
+   ```
+   git log --since="<opened> 00:00:00" --until="<closed> 23:59:59" --format='%an' | sort | uniq -c | sort -rn
+   ```
+
+   Then count only those authors (repeat `--author`; git treats them as "any of"):
+
+   ```
+   git log --oneline --since="<opened> 00:00:00" --until="<closed> 23:59:59" --author='Ada' --author='Ravi' | wc -l
+   ```
+
+   **Write the times out**, in both commands. Git resolves a bare `--since=<date>` to that
+   date at *the current time of day*, so the same command returns a different count in the
+   morning than in the evening, and the two commits that sit on the boundary days by
+   definition - the cycle-open and cycle-close commits - are both counted only when the open
+   commit happened later in the day than the close one, which is not how a cycle runs. A
+   count nobody can reproduce is worse than no count, scoped or not.
+
+   Three results are worth stating rather than absorbing:
+   - **An assignee missing from the roster.** Their name in the repo is not the name in the
+     cycle, or they landed nothing in the window. Say which - a silently smaller number is
+     the same defect one step down.
+   - **Zero commits over the whole window.** Report it as a finding. Empty history far more
+     often means the dates or the mapping are wrong than that the team wrote nothing, and the
+     unscoped command fails to zero without complaining.
+   - **No usable mapping at all** (say, a squash-merge repo where every author is a bot).
+     Then record the repo-wide count and **label it repo-wide**. An honest wide number is
+     usable; an unlabelled one gets read as this team's.
+
+   Write the scope beside the number: `Commits in the window: 5, by Ada and Ravi`. A
+   single-team repo may use the repo-wide count and should still name it as such - the day a
+   second team appears, an unlabelled number is already wrong and nobody can tell.
+
+7. **Remove the pointer row** from the backlog's active-cycles table.
+
+8. **Prove it.** `node scripts/cycle-guard.mjs --block` - every returned row must now be in
    exactly one place again.
 
-8. **Offer the retrospective the data supports, and no more.** Say what the numbers show -
+9. **Offer the retrospective the data supports, and no more.** Say what the numbers show -
    "planned seven, finished four, absorbed two unplanned" - and stop. Do not narrate why.
    A single cycle is one data point; `/timeline-update` is what turns several into
    throughput, and it refuses to project from too few.
@@ -97,8 +129,10 @@ it should not hide the rows that did not make it.
 - [ ] Every intent was checked against its DoD and the result reported
 - [ ] Unfinished rows are back in the pool at their position, not at the bottom, with the
       assignee cleared
-- [ ] Anything that overran was split, not re-sized
+- [ ] Anything that overran was split, not re-sized - `split:<new-id>` on the row leaving,
+      and the row `<new-id>` names actually cut into the pool
 - [ ] The outcome block is written and `Status` is `closed`
+- [ ] The commit count names the scope it was taken over, not just a window
 - [ ] The pointer row is gone from the backlog
 - [ ] `cycle-guard --block` passes
 - [ ] A readable close table was shown, including what did not finish
