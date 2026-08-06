@@ -49,6 +49,20 @@ during work" step.
    already says what "done" looks like, so the row costs one line, and skipping it
    leaves the delta indistinguishable from a gap nobody noticed.
 
+7. **Close the loop in the dossier - this path moves the stamp too.** Where the change
+   folded in discovery material (the entries `spec-impact` named, or any the edit
+   answered on the way), mark each of those entries `folded-into-spec` in
+   `docs/discovery/<topic>/README.md`, strike the contradiction rows the new spec text
+   settles, and set `Last reconciled: <today> (specs/<capability> @ <commit>)`.
+   `spec-specify` does this when a spec is minted, and the route for an already-shipped
+   capability is `discovery-digest` -> `spec-impact` -> **here** - so a stamp only
+   `spec-specify` ever moved would read `never` for the whole life of every capability
+   that was specced once and changed afterwards, and every entry under it would be
+   re-raised as fresh material on every later round. Nothing folded in means nothing to
+   mark: leave the stamp alone rather than advancing it to look tidy, because advancing
+   it past material nobody read is how a question stops being asked without being
+   answered.
+
 Only after the specs describe the target do you plan and implement - `/spec-plan`,
 then `/spec-tasks` and `/spec-implement`. Cross-spec contradictions are caught by
 `spec-reconcile` at the end of the change; do not knowingly leave one now.

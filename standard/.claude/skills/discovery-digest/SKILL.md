@@ -28,13 +28,35 @@ the kind of contradiction step 3 exists to catch, and they only surface if each
 entry is diffed against everything already filed, including entries this same
 handover just added.
 
+**One source can contradict itself, and that is the commonest shape of all** - a
+single mail thread or meeting where two people say opposite things, which is usually
+*why* somebody handed it over. It is one source, so it is one entry, and diffing that
+entry against everything filed earlier finds nothing: on a new dossier there is
+nothing earlier, and the disagreement is inside the entry rather than between
+entries. So diff the entry's own attributed points **against each other** before
+step 3 looks outward, and raise a contradiction row naming the two *people* as the
+sources (`kickoff-meeting - Dana` vs `kickoff-meeting - Marcus`). Do not resolve it,
+and do not pick the one who sounds more certain, even where one of them is plainly
+wrong against a spec: whose version holds is the humans' call, and the row is what
+puts it in front of them.
+
 ## Procedure
 
 1. **Resolve the dossier.** Slugify the topic (`booking-changes`, not a spec
    or ticket name - a dossier is per discovery topic, ADR-024). If
-   `docs/discovery/<topic>/` does not exist, create it with a `README.md`
-   holding: a one-paragraph summary, `Last reconciled: never`, an empty
-   entries list, and an empty `## Contradictions to resolve` section.
+   `docs/discovery/<topic>/` does not exist, create it by **copying the shipped
+   `docs/discovery/_template.md` to `docs/discovery/<topic>/README.md`** and filling
+   its title and summary - that template's own first line says to copy it, and it carries the
+   exact shapes the rest of the loop reads back: the `Last reconciled:` stamp the
+   spec skills compare entry dates against, the `| Date | Source | State |` entry
+   table, and the `## Contradictions to resolve` table. A hand-built README with the
+   same sections in a different shape looks right and reads wrong - the stamp line is
+   the one every `spec-*` skill greps for. Set the stamp to `never` and leave both
+   tables empty.
+
+   Where the template is not in the repo (an older adoption), write those four things
+   by hand in the template's shape - summary, `Last reconciled: never`, the entry
+   table, the contradictions table - and say that the template is missing.
 
 2. **Write the entry - essence, not transcript.** Create
    `docs/discovery/<topic>/YYYY-MM-DD-<source>.md` (source names where it came
