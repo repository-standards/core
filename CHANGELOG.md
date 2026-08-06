@@ -46,7 +46,15 @@ them all without being told where they are; the reasoning is recorded in the web
 `tools/site-check-test.mjs` is new and drives the gate over fixture sites: a clean landing
 passes, a stale version in the footer fails with exactly one problem reported (proving the SVG
 mask holds), a stale version inside the hero script fails, a version ahead of the release fails,
-and a landing naming no version at all still fails the original advertise check.
+a stale version sitting behind a self-closing `<svg/>` fails, and a landing naming no version at
+all still fails the original advertise check. Reverting the scan turns five of the six cases
+red, which is the property that makes them a test rather than a description of the code.
+
+That self-closing case is a defect this change's own review found before it merged. The first
+mask paired any `<svg` with the next `</svg>`, so a self-closing `<svg class="x"/>` earlier on
+the page would have blanked out everything up to the following mark - a stale version included -
+and the guard would have reported the page clean. The opening tag now has to be a real container.
+A guard that goes quiet is worse than the defect it looks for.
 
 The validation record moves with it: `DOC-12`'s observation from the 2026-08-04 round was
 re-run against the live tree and flipped to `pass` rather than left reading "open (logged, not
