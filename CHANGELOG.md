@@ -62,6 +62,60 @@ page renders as an empty but entirely convincing dashboard - zero items, zero hi
 error. It now refuses to write that page and names the directory it looked in, because the
 failure mode of a status page nobody can check is that somebody believes it.
 
+### The profile boundary stops being a headcount, and the picker stops overselling it (2026-08-07)
+
+`adoption.md` told an adopter to "flip to `scale` when the second regular contributor
+arrives", which made a pair of developers the enterprise ADR-011 exists to spare - its own
+constraint is that "a solo adopter must not be asked to carry enterprise ceremony", and two
+people at one desk need neither a tracker bridge nor curated release notes nor a UX research
+cadence to know what the other did this morning.
+[ADR-040](docs/decision-records/ADR-040-the-scale-profile-binds-on-reach-not-headcount.md)
+revises the trigger without touching ADR-011's mechanism: `scale` binds on what leaves the
+room - work handed off asynchronously, a contributor from outside the conversation, an
+outside reader of execution state, a release audience that is not the authors, users nobody
+here is. Read as a set, that is what the scale entries already were: contribution mechanics
+for people who cannot be told them in person, research about users nobody in the repo is,
+and work cycles for a team that has to agree what it committed to. None of them arrives with
+a second pair of hands.
+
+**Measured, because the second half of the complaint was that the split is too weak to carry
+the weight.** `--profile scale` checks 91 entries and `--profile core` checks 82; self-verify
+prints `9 scale-only entries skipped`, and in `SPEC.md` only R11's blocking coupling guard
+and R16's `spec-guard` step carry a *(scale)* marker. Choosing `core` therefore discounts
+about a tenth of the tree and two clauses.
+
+**Three of the six things the picker offered a solo adopter were not in that tenth, and one
+was backwards.** `.github/workflows/spec-guard.yml` is a **required entry at `core`**, and
+R16 puts `self-verify` and `spec-structure` in CI for every repo with only `spec-guard`
+marked *(scale)* - the shipped workflow agrees with the rule, running the coupling guard
+advisory at core and the full-tree audit blocking at every profile. A solo adopter who read
+"guards run locally/pre-commit", skipped CI and expected drift 0 got drift 1 on a required
+entry and found out from a red pull request. `docs/personas.md` (R10) and
+`docs/ARCHITECTURE.md` are core entries, so "full persona roster" and "C4 discipline" are
+depth in a file the repo carries either way, measured by nothing. And the tracker bridge and
+release-notes curation are required at no profile at all - tracker sync has been an optional
+per-capability extension since ADR-032 and release-notes curation has never been a manifest
+entry, so neither was a discount, because neither was ever charged.
+
+**`SPEC.md` is amended in the same change**, because the normative page said it in the same
+wrong words: the *(scale)* marker bound "team repos", and R20 described scale as "the
+coordination artifacts teams need". Both now say reach, and R20 names the conditions. No rule
+was added or renumbered.
+
+The picker now names the nine entries instead of characterising them, says what the flag does
+not change, and gives the 2-5 person range a route rather than a third profile: declare
+`scale` and except the documents you do not carry, or declare `core` and carry what a
+condition actually triggered. The route stops where the hatch does, and writing that down
+turned out to sharpen the choice rather than complicate it - `scripts/cycle-guard.mjs` and
+the two guards cannot be excepted at all, because waiving a live check removes it instead of
+recording a deviation from it, so declaring `scale` means accepting that R11's coupling guard
+**blocks** rather than advises. That single question is a better thing for a small team to
+decide than how many people are on it. The count is declared in `docs/facts.json` against the
+manifest, so an entry that changes profile fails `facts-check` rather than rotting in four
+places. `PROF-3` holds the remaining question - whether more of the tree belongs to `scale` -
+gated on an adoption by a repo with two to five people: every field run inferred its profile
+from committer counts, and the smallest team any of them records is 38 authors.
+
 ### Three adoptions of code older than the conventions the standard uses (2026-08-07)
 
 git/git, vim/vim and vdukhovni/postfix, taken to drift 0 on local branches: 21, 35 and 28
