@@ -50,6 +50,13 @@ An adopter needs a file we keep repo-own.
 `Revisit when` is not decoration. It names the concrete signal that would reopen the
 decision, which is the difference between a record and an opinion.
 
+Neither is `Confirmation`, and it belongs to **both** streams. It names how you would find
+out the decision is not being kept - a guard, a test, a CI check, a review step, the spec it
+changed - which is a different question from `Revisit when` (when to reopen it) and, in a
+BDR, from `How we would know we were wrong` (that the call itself was a mistake). A business
+decision with a technical consequence and no named check is the one that quietly stops being
+followed; naming where compliance is checked is not designing it, which stays the ADR's job.
+
 ## What does not go in here
 
 **How it behaves.** That is the [capability spec](specs.md). A decision record
