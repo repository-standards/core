@@ -118,13 +118,13 @@
     "what": "how many cases the validation suite's catalogue carries",
     "home": {
       "match": {
-        "file": "docs/validation/counts.json",
+        "file": "docs/validation/ai-prompting/counts.json",
         "pattern": "\"totalCases\": (\\d+)"
       }
     },
     "claims": [
       {
-        "file": "docs/validation/README.md",
+        "file": "docs/validation/ai-prompting/README.md",
         "pattern": "Cases in the catalogue \\| \\*\\*(\\d+)\\*\\*"
       }
     ]
@@ -134,17 +134,17 @@
     "what": "how many of the validation suite's cases are portable - offered as the benchmark subset",
     "home": {
       "match": {
-        "file": "docs/validation/counts.json",
+        "file": "docs/validation/ai-prompting/counts.json",
         "pattern": "\"portableCases\": (\\d+)"
       }
     },
     "claims": [
       {
-        "file": "docs/validation/README.md",
+        "file": "docs/validation/ai-prompting/README.md",
         "pattern": "Portable cases \\(the benchmark subset\\) \\| \\*\\*(\\d+)\\*\\*"
       },
       {
-        "file": "docs/validation/benchmark.md",
+        "file": "docs/validation/ai-prompting/benchmark.md",
         "pattern": "checks - \\*\\*(\\d+)\\*\\*, precisely"
       }
     ]
@@ -154,13 +154,13 @@
     "what": "how many case/target observations the validation suite has recorded, across every round in runs/",
     "home": {
       "match": {
-        "file": "docs/validation/counts.json",
+        "file": "docs/validation/ai-prompting/counts.json",
         "pattern": "\"totalObservations\": (\\d+)"
       }
     },
     "claims": [
       {
-        "file": "docs/validation/README.md",
+        "file": "docs/validation/ai-prompting/README.md",
         "pattern": "Observations recorded \\| \\*\\*(\\d+)\\*\\*"
       }
     ]
@@ -170,17 +170,17 @@
     "what": "how many repositories and fixtures the validation suite has run cases against",
     "home": {
       "match": {
-        "file": "docs/validation/counts.json",
+        "file": "docs/validation/ai-prompting/counts.json",
         "pattern": "\"totalTargets\": (\\d+)"
       }
     },
     "claims": [
       {
-        "file": "docs/validation/README.md",
+        "file": "docs/validation/ai-prompting/README.md",
         "pattern": "Targets assessed \\| \\*\\*(\\d+)\\*\\*"
       },
       {
-        "file": "docs/validation/README.md",
+        "file": "docs/validation/ai-prompting/README.md",
         "pattern": "\\*\\*(\\d+)\\*\\* \\(\\d+ real repositories"
       }
     ]
@@ -190,13 +190,13 @@
     "what": "how many real (non-fixture) repositories the validation suite has assessed",
     "home": {
       "match": {
-        "file": "docs/validation/counts.json",
+        "file": "docs/validation/ai-prompting/counts.json",
         "pattern": "\"reposTested\": (\\d+)"
       }
     },
     "claims": [
       {
-        "file": "docs/validation/README.md",
+        "file": "docs/validation/ai-prompting/README.md",
         "pattern": "\\((\\d+) real repositories"
       }
     ]

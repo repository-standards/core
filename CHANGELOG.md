@@ -16,6 +16,49 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Validation splits into two named halves, and the second one is new (2026-08-06)
+
+The proof-of-work suite measured the machinery: do the guards fire, does drift mean something,
+does every published number trace to a row. It could not measure the thing the product is
+actually for - whether somebody who does not know it can get a result by typing what they
+would naturally type. A repository can pass every mechanical check and be useless to a person,
+and the suite would report `drift 0` the whole way.
+
+`docs/validation/` now holds two peers rather than one suite and an implied annex:
+
+- **`ai-prompting/`** - the existing suite, moved unchanged. Reproducible: same input, same
+  verdict, forever.
+- **`human-prompting/`** - the corpus of what people actually type. Not reproducible, and that
+  is the point: what it records is not a pass rate but what the agent actually did, in enough
+  detail to argue with.
+
+Naming both halves was deliberate. Leaving one as "the suite" would have made the other
+optional, which is backwards - the machine half is the floor and the human half is the product.
+
+**The corpus carries three things.** Prompts people type, in the languages and the moods they
+type them. Sentences the agent must produce **unasked** - which cannot be typed at all, so the
+situation is built and the test is whether it speaks *before* the damage rather than after.
+And one invariant scored on every single run, not per case:
+
+> On every prompt the agent should try to ask, to check, and to suggest - not just execute.
+
+So every observation carries `asked`, `checked` and `suggested` beside its verdict, and the
+headline this suite produces is three published fractions rather than a pass rate.
+
+**A first reading, taken before any prompt was run**, says the invariant is instructed unevenly:
+20 of 20 shipped skills tell the agent to read existing state, 19 of 20 to ask, and **11 of 20
+to name a next step**. The nine that do not are `adr-write`, `bdr-write`, `pre-pr-review`,
+`spec-impact`, `spec-plan`, `spec-reconcile`, `spec-tasks`, `spec-update` and
+`timeline-update`. The shape matters more than the count: `spec-clarify` hands off, so a spec
+that settles gets a proposal to plan it, but `spec-plan` does not then propose tasks and
+`spec-tasks` does not propose implementing. The hand-holding is instructed at the front of the
+loop and stops in the middle. Recorded as a keyword proxy, not a semantic read, and labelled
+that way where it is written down.
+
+**The corpus is public and meant to be broken.** A prompt somebody reports as mishandled earns
+a permanent row and keeps it after the fix, because that is what makes it a regression test
+rather than an anecdote. Rows written by people who know the product are marked as the weaker
+half, since they systematically produce prompts the product can already handle.
 ### A hash map keyed by filename read as a schema change (2026-08-07)
 
 The coupling guard treats a `couples: "shape"` file's key paths as its contract: values and

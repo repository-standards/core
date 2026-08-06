@@ -1,0 +1,15 @@
+{
+  "$about": "A static reading of the shipped procedures, not a live run - taken before any prompt was executed, to see whether the hand-holding invariant is even instructed. Method: each of the 20 shipped SKILL.md files searched for language instructing the agent to ask, to read existing state, and to name a next step. This is a keyword proxy and not a semantic read: a skill can name the next step in words this search misses, and a skill can match without really doing it. Treat it as a pointer to where to look, never as a verdict. No repository was adopted and no prompt was typed.",
+  "observations": [
+    {
+      "prompt": "INVARIANT",
+      "target": "repo:repository-standards/core",
+      "mode": "static-read",
+      "verdict": "partial",
+      "asked": true,
+      "checked": true,
+      "suggested": false,
+      "evidence": "checked: 20 of 20 shipped skills instruct reading existing state before answering. asked: 19 of 20 instruct asking; the one that does not is pre-pr-review, which reviews rather than interviews and is arguably right to be silent. suggested: 11 of 20. NINE skills never name a next step: adr-write, bdr-write, pre-pr-review, spec-impact, spec-plan, spec-reconcile, spec-tasks, spec-update, timeline-update. The shape of the gap matters more than the count: spec-clarify does hand off, so a spec that settles gets a proposal to plan it, but spec-plan does not then propose tasks and spec-tasks does not propose implementing. The hand-holding is instructed at the front of the loop and stops in the middle of it, which is exactly where a user who did not know the product would be left holding the next decision. Recorded as partial rather than fail because two of the three axes are near-universal, and because a keyword search cannot tell an instruction that works from one that reads well."
+    }
+  ]
+}
