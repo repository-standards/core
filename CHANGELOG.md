@@ -16,6 +16,70 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Three Python repositories adopted for real, and what the run found (2026-08-07)
+
+`simonw/llm`, `pydantic/pydantic-ai` and `Textualize/textual` were each taken from unpinned
+to `self-verify` drift 0 on a local branch: **15 -> 0 (43/43)**, **16 -> 0 (53/53)** and
+**15 -> 0 (47/47)**. Nothing was pushed to any of them and no issue or pull request was
+opened against them. Python has no registered stack, so all three also walked the
+honest-miss path end to end - three `docs/stack-decisions.md` documents written from
+measured evidence rather than from a template, and no upstream stack request filed, because
+consent for one was never given.
+
+Two defects were found and fixed in the same change.
+
+A required **section is now resolved through its file entry's own declared `altPaths`**.
+`llm` keeps a 1,137-line changelog at `docs/changelog.md`, which is precisely what the
+`CHANGELOG.md` entry's `altPaths` exists for - and `self-verify` passed the file entry and
+then failed its section with "CHANGELOG.md missing", about a file that was not missing, with
+no way to close the drift except moving the file to the path the alternate exists to avoid.
+The file check read `altPaths`; the section check read only the primary name.
+
+The **decision-record index guard now reads a row labelled with the record's own id**.
+Writing `| [ADR-001](ADR-001-plugins.md) |` - the shape people reach for first - matched
+neither accepted cell form, so the row was skipped before any comparison happened and all
+three records were reported as unindexed while their rows sat in the table. The shipped
+`adr/README.md` carries only a placeholder row, so the accepted syntax was documented
+nowhere an adopter reads; the failure message now names all four forms.
+
+Four findings are recorded open, with their options written out rather than guessed at.
+
+**The brownfield phase's own intermediate state fails the audit it tells you to wire up.**
+`onboard.md` says map every capability, says a capability not specced this pass is a backlog
+item rather than a placeholder spec, and says wire the guards forward. Doing all three on
+`pydantic-ai` gives `spec-guard --audit: 9 problem(s)`, every one of them a mapped capability
+with no spec - and the shipped workflow runs `--audit --block` on every pull request at every
+profile. The escape was measured on the same commit: a map naming only the one specced
+capability reports `OK ... 2324 files, each claimed by a capability or declared unclaimed`,
+where 2,306 of those files are green because they were declared to belong to nothing. Red on
+the honest map, green on the one that says nothing.
+
+**The shipped `docs/` tree collides with the published documentation source.** Sixteen
+manifest entries are rooted at `docs/`, and in all three repositories - the ordinary Python
+convention - `docs/` is the Sphinx or mkdocs source root. On `llm` the docs build goes from
+14 warnings to 30: seven governance pages published to the user-facing site, and nine broken
+cross-references, because a persona roster and a decision record naturally cite the backlog
+and the specs, both of which live outside `docs/` and so cannot be resolved from inside a
+documentation source root. On `pydantic-ai` it is not warnings:
+`mkdocs.yml` sets `strict: true`, and the production build fails.
+
+**A spec reconstructed from years-old production code cannot say so.** Recording open
+questions honestly is what `onboard.md` requires; a spec carrying one open marker cannot
+claim `live`; so every brownfield spec is `in-refinement`, the same value a feature nobody
+has built carries.
+
+**An AI policy can gate on prior maintainer approval rather than on authorship.**
+`textual`'s `AI_POLICY.md` accepts agent-written pull requests only when a maintainer has
+already approved a solution in an issue or discussion. Intake has a branch for a ban and a
+branch for an authorship condition; this is a sequencing condition, where the first
+deliverable is a proposal rather than a change, and there is no branch for it.
+
+Also recorded: the honest-miss deliverable still exists in no manifest entry, no rule and no
+taxonomy row, so producing it or skipping it leaves drift 0 either way; and the consent gate
+that stops an agent filing a stack request upstream is prose, unlike every other gate in the
+tree.
+
+
 ### The update delta was read off the manifest, which cannot see most of a release (2026-08-06)
 
 `update-to-version` step 2 called the diff of the two versions' `standard.manifest.json`
