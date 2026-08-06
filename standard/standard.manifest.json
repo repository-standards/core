@@ -136,7 +136,7 @@
       "profile": "core",
       "since": "0.4.0",
       "rule": "R16",
-      "sha256": "d3b8370deb9716f317d1f440183c92d97b492e8e26b8bf1df84b10987ce59fed"
+      "sha256": "10137a1abbc1484a4316b4117da5547586ce86ed42463b014b36a5cda280e680"
     },
     {
       "path": "scripts/spec-structure.mjs",
@@ -784,7 +784,6 @@
       "prompt": "Monorepo vs polyrepo?",
       "record": "ADR",
       "catalog": "foundation",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -793,7 +792,6 @@
       "prompt": "Where are the module/domain seams? (slice by capability, not layer)",
       "record": "ADR",
       "catalog": "foundation",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -802,7 +800,6 @@
       "prompt": "Primary datastore & persistence model?",
       "record": "ADR",
       "catalog": "data",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -811,7 +808,6 @@
       "prompt": "API / contract style & versioning?",
       "record": "ADR",
       "catalog": "interfaces",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -820,7 +816,6 @@
       "prompt": "Authn mechanism + authz model?",
       "record": "ADR",
       "catalog": "interfaces",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -829,7 +824,6 @@
       "prompt": "Test tiers and where each runs?",
       "record": "ADR",
       "catalog": "quality",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -838,7 +832,6 @@
       "prompt": "The floor below which nothing ships?",
       "record": "ADR",
       "catalog": "quality",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     },
@@ -847,7 +840,6 @@
       "prompt": "Branching & release strategy (who cuts releases)?",
       "record": "ADR",
       "catalog": "delivery",
-      "required": true,
       "since": "0.5.0",
       "rule": "R7"
     }

@@ -210,9 +210,62 @@ checkDrift("the shipped tree carries every required section - no false positive"
   ],
 });
 
+// The decision catalog is a menu, and the run must not describe it as a quota. R7 "names no
+// subset and asserts no count", while the manifest marked all eight entries required:true and
+// the summary printed "8 catalogued decisions to confirm recorded at review" on every run -
+// a number in a report whose other numbers are drift and adoption. Both halves are asserted,
+// because deleting the line would satisfy the first one alone.
+const decisionNote = (edit) => {
+  const dir = fixtureTree();
+  if (edit) {
+    const p = join(dir, "standard.manifest.json");
+    const m = JSON.parse(readFileSync(p, "utf8"));
+    edit(m);
+    writeFileSync(p, `${JSON.stringify(m, null, 2)}\n`);
+  }
+  const r = spawnSync("node", [join(dir, "scripts/self-verify.mjs"), "--skeleton"], { cwd: dir, encoding: "utf8" });
+  const out = `${r.stdout ?? ""}${r.stderr ?? ""}`;
+  rmSync(dir, { recursive: true, force: true });
+  return out.split("\n").filter((l) => /^\s*(····|FAIL)\s+decision\b/.test(l));
+};
+
+const expect = (name, ok, detail) => {
+  if (ok) console.log(`  ok    ${name}`);
+  else {
+    failures++;
+    console.error(`  FAIL ${name}\n       ${detail}`);
+  }
+};
+
+const shippedNote = decisionNote();
+expect(
+  "the run still surfaces the decision catalog for review",
+  shippedNote.some((l) => l.includes("confirm at review")),
+  `no decision note in the run: ${shippedNote.join(" | ") || "(none)"}`,
+);
+expect(
+  "the decision note asserts no count",
+  shippedNote.every((l) => !/\d/.test(l.replace(/https?:\/\/\S+/g, "").replace(/\bR\d+\b/g, ""))),
+  `a decision line still carries a number: ${shippedNote.join(" | ")}`,
+);
+expect(
+  "the shipped manifest marks no decision area required",
+  !decisionNote().some((l) => l.includes("cannot be required by the manifest")),
+  "the shipped manifest still declares a required decision area",
+);
+expect(
+  "a manifest that marks a decision area required is drift",
+  decisionNote((m) => {
+    m.decisions[0].required = true;
+  }).some((l) => l.trim().startsWith("FAIL") && l.includes("cannot be required by the manifest")),
+  "self-verify accepted a decisions entry claiming required:true",
+);
+
 console.log();
 if (failures) {
   console.error(`self-verify-fill-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("self-verify-fill-test: OK - the fill warning is clearable, still fires, reads any script, catches an ellipsis row, and a removed required AGENTS.md section is reported as drift");
+console.log(
+  "self-verify-fill-test: OK - the fill warning is clearable, still fires, reads any script, catches an ellipsis row, a removed required AGENTS.md section is reported as drift, and the decision catalog is surfaced without asserting a count",
+);
