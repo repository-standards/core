@@ -15,6 +15,9 @@
 //      `live` must pass the clarify gate. Nothing read or wrote that field, so the status
 //      the whole method reads as "this is settled" was decorative - a spec with four
 //      guards green and a failing gate still said ready-to-develop.
+//   4. A section heading appears once. A second `## Clarifications` - written instead of a
+//      new `### Session` under the existing one - splits the section every reader and the
+//      clarify gate take the first match of.
 //
 // This is the "structure lint" half of specs/enforcement.md, made mechanical - the
 // complement to the coupling guard (spec-guard.mjs).
@@ -213,7 +216,60 @@ if (!existsSync(gatePath)) {
   }
 }
 
-// --- check 4 (warn only): committed engine scaffolding - ephemeral by rule -------
+// --- check 4: a section heading appears once -------------------------------------
+// The clarify gate greps for `^## Clarifications` and stops at the first hit; a reader
+// scanning for a section does the same. So a spec that grew a SECOND `## Clarifications`
+// - written instead of a new `### Session <date>` under the existing one - hides
+// everything below the split from both, and every guard stays green. Level 2 only:
+// `### Session <date>` and `### <Other capability>` repeat by design one level down.
+//
+// Fenced blocks and HTML comments are skipped: a spec quoting markdown, and the shipped
+// template's own guidance, are not the document's own structure. Line-by-line rather than
+// a strip-then-scan, so the report can name the lines that collide.
+const level2Headings = (body) => {
+  const found = [];
+  let inFence = false;
+  let inComment = false;
+  body.split("\n").forEach((raw, i) => {
+    let text = raw;
+    if (inComment) {
+      const end = text.indexOf("-->");
+      if (end < 0) return;
+      text = text.slice(end + 3);
+      inComment = false;
+    }
+    text = text.replace(/<!--[\s\S]*?-->/g, "");
+    const open = text.indexOf("<!--");
+    if (open >= 0) {
+      text = text.slice(0, open);
+      inComment = true;
+    }
+    if (/^\s*(```|~~~)/.test(text)) {
+      inFence = !inFence;
+      return;
+    }
+    if (inFence) return;
+    const m = text.match(/^##\s+(\S.*?)\s*$/);
+    if (m) found.push({ line: i + 1, heading: m[1] });
+  });
+  return found;
+};
+
+const duplicated = [];
+for (const f of files.filter(isCapSpec)) {
+  let body;
+  try { body = readFileSync(f, "utf8"); } catch { continue; }
+  const byName = new Map();
+  for (const h of level2Headings(body)) {
+    const key = h.heading.toLowerCase().replace(/\s+/g, " ");
+    byName.set(key, [...(byName.get(key) ?? []), h]);
+  }
+  for (const hits of byName.values()) {
+    if (hits.length > 1) duplicated.push({ file: f, heading: hits[0].heading, lines: hits.map((h) => h.line) });
+  }
+}
+
+// --- check 5 (warn only): committed engine scaffolding - ephemeral by rule -------
 // plan.md/tasks.md are working scaffolds the engine writes and the close removes.
 // Full-tree mode only (mid-work diffs legitimately carry them); never a violation.
 const staleScaffolding = !staged && !base ? files.filter((f) => ENGINE_ARTIFACTS.test(f)) : [];
@@ -229,7 +285,7 @@ if (gateMissing) {
   console.error("so a spec claiming `ready-to-develop` or `live` cannot be checked against it. Ship");
   console.error("`scripts/spec/` with the guards (it is a required manifest entry) to turn the check on.");
 }
-if (numbered.length === 0 && personaless.length === 0 && offRoster.length === 0 && unearned.length === 0 && !rosterMissing && !rosterHeadingMissing && !rosterUnreadable) {
+if (numbered.length === 0 && personaless.length === 0 && offRoster.length === 0 && unearned.length === 0 && duplicated.length === 0 && !rosterMissing && !rosterHeadingMissing && !rosterUnreadable) {
   const note = personasPath ? "" : " (persona check skipped - no personas.md)";
   console.log(`spec-structure: OK (${files.length} spec paths)${note}`);
   process.exit(0);
@@ -272,6 +328,17 @@ if (unearned.length) {
   console.error("\n`ready-to-develop` and `live` assert that the gate passed. They are earned mechanically,");
   console.error("not typed in: fix what the gate names, or set the status back to `in-refinement` - which is");
   console.error("a healthy state and can last weeks. A status nothing checks is a status nobody can trust.");
+}
+
+if (duplicated.length) {
+  console.error("\nspec-structure: a section heading appears more than once in one spec:");
+  for (const { file, heading, lines } of duplicated) {
+    console.error(`  - ${file}   '## ${heading}' at lines ${lines.join(", ")}`);
+  }
+  console.error("\nEverything a reader and the clarify gate look for is taken from the FIRST match, so the");
+  console.error("second section is invisible to both while every guard stays green. Merge them: a later");
+  console.error("clarify session is a new `### Session YYYY-MM-DD` under the existing `## Clarifications`,");
+  console.error("not a second copy of the heading.");
 }
 
 if (rosterHeadingMissing) {
