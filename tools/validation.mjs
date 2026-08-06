@@ -238,6 +238,10 @@ that fixed it, or stating plainly that it has not been fixed yet. A subset of th
 should hold, not only this one; that subset is offered as a benchmark in
 [\`benchmark.md\`](benchmark.md) for a reader who has never heard of this project.
 
+What counts as a case, what a depth level means, and which claims this data is **not**
+permitted to support are defined in [\`method.md\`](method.md) - the one page here that is
+written rather than generated.
+
 ## What this does not prove - read this before the numbers
 
 - **Assessment is not adoption.** ${targets.filter((t) => t.depth === "L1").length} of ${targets.length} targets were assessed at
