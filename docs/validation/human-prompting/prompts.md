@@ -123,7 +123,37 @@ is written and a correction after.
 
 ---
 
-## ## Two shapes the standard has no form for
+## ## A live break in an adoption the mechanical suite had passed
+
+The most useful single result of the whole round, because it is not an opinion about
+documentation - it is a repository that does not work.
+
+`adopt-textual`'s own `.gitignore` line 30 is `lib/`. That silently swallowed
+`scripts/lib/glob.mjs` out of the adoption commit. The file is on disk, so `self-verify` read
+`drift 0` and the adoption was recorded as complete. Both `spec-guard.mjs` and
+`facts-check.mjs` open with `import { globToRegExp } from "./lib/glob.mjs"`.
+
+**On a fresh clone - which is what CI does - the workflow the adoption installed dies with
+`ERR_MODULE_NOT_FOUND` before a single guard runs.** The first pull request would have been the
+discovery.
+
+Every part verified here rather than taken from the report: the file is absent from the index,
+present on disk, matched by `.gitignore:30`, imported by both guards, and tracked correctly in
+the two sibling Python adoptions.
+
+**And it is the case for the fix that shipped the same day.** Run the patched verifier against
+that repository and it says so:
+
+```
+FAIL  file  scripts/lib exists on this disk but is git-ignored and untracked
+            (.gitignore:30:lib/) - it is not in the repository, so a fresh clone does not have it
+```
+
+That change was built from a synthetic fixture and a finding on a 19-year platform. This is the
+first time it has caught a live break on a real repository nobody built for it - which is worth
+more than the fixture that motivated it.
+
+## Two shapes the standard has no form for
 
 Both raised unprompted by uncoached runs, both verified here.
 
