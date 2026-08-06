@@ -21,6 +21,17 @@ being true. This table is why the pool remains the single place to start reading
 | payments | checkout stops losing carts | 2026-08-29 | `cycles/payments/august.md` | 3 |
 -->
 
+`/cycle-open` writes a row here and `/cycle-close` removes it, and `cycle-guard` checks all
+of that rather than trusting it: the `Cycle` cell must name a cycle file that exists and is
+still **open**, and `Items` must be the number of intent rows that cycle actually holds.
+
+Once the table carries any row, **every** open cycle must have one - so deleting the row for
+a cycle you would rather not explain is not a way past the other two checks. Emptying the
+table completely is: a pool with no pointer rows is a pool not running cycles from its own
+side, and that is exactly the state this template ships in, so it cannot be a failure. The
+line is drawn where it can be drawn honestly - a table half kept is worse than no table, and
+a repo that deletes this section is making a choice rather than hiding one.
+
 ## You have this case - say this
 
 **Something surfaced mid-work and it is not this PR.** The most common case, and the
@@ -59,15 +70,24 @@ not a comment on this row.
 
 ## What feeds this backlog
 
-Items arrive from four places - never invent work that has no source:
+Items arrive from five places, and each row **names its own** in the `source` column -
+never invent work that has no source:
 
-- **Onboarding** (the align router's brownfield phase): capabilities to spec, decisions to record, drift to
-  resolve, guards to wire.
-- **Spec deltas** (`spec-update`): a spec changed to a target the code has not caught
+- **`onboarding`** (the align router's brownfield phase): capabilities to spec, decisions to
+  record, drift to resolve, guards to wire.
+- **`spec-delta`** (`spec-update`): a spec changed to a target the code has not caught
   up to yet.
-- **Code<->spec drift** (`spec-reconcile`): the code and the spec disagree and the fix
+- **`drift`** (`spec-reconcile`): the code and the spec disagree and the fix
   is not this PR.
-- **Missing decisions** (`spec-impact`): a change needs an ADR/BDR that does not exist.
+- **`decision`** (`spec-impact`): a change needs an ADR/BDR that does not exist.
+- **`asked`**: somebody said it out loud - the mid-work "park it" that `/add-to-backlog`
+  exists for.
+
+Write the category, then where it came from if there is anywhere to point:
+`drift: spec-reconcile 2026-08-04`, `asked: #212`, `onboarding`. Six months on, that is the
+difference between a row that can justify itself and a row nobody dares delete. It is a
+column rather than a habit because "every item has a source" was the claim, and folding
+provenance into `why` made the claim true only for whoever happened to remember.
 
 A finished item leaves the backlog only when its **definition of done** is met - the
 spec is buildable, the ADR is Accepted, the drift is resolved - not when someone looks
@@ -81,12 +101,31 @@ under epics; keep the ordering honest (if it is not really next, it is not at th
 
 ## Format
 
-One item per row. `id` is stable (`CAP-3`, `ADR-auth`), `cap` links the capability,
-`persona` names who it serves (from `personas.md` - an item that serves no
-persona is parked, not queued; ADR-006), `owner` names the **role that must act** -
-`product` (business: `PRODUCT.md`, BDRs, personas confirmation), `architect` (ADRs,
-boundaries), `dev` (specs, code, guards) or `agent` (mechanical work the agent does
-alone), `why` is one line, `DoD` is the observable finish line.
+One item per row. `cap` links the capability, `persona` names who it serves (from
+`personas.md`; see below), `owner` names the **role that must act** - `product` (business:
+`PRODUCT.md`, BDRs, personas confirmation), `architect` (ADRs, boundaries), `dev` (specs,
+code, guards) or `agent` (mechanical work the agent does alone), `why` is one line, `source`
+is where the item came from (the five categories above), `DoD` is the observable finish line.
+
+### The id
+
+**One convention, and it is this: the id's prefix names the thing the item belongs to.**
+Read the `cap` cell and the prefix follows from it, with no judgement left over:
+
+- **`cap` names a capability** - the prefix is that capability, however you already
+  abbreviate it: `INV-3` for invoicing, `PAY-2` for payments, `SCH-9` for scheduling.
+  Whether the work is a spec, a drift fix or a feature does not change the prefix; the
+  capability is what the item belongs to, and `owner` and `source` already say what kind
+  of work it is.
+- **`cap` is `-`** - the prefix is the artifact type instead, because there is nothing else
+  to name it after: `ADR-auth` for a decision no capability owns yet, `DRIFT-2` for drift in
+  code no capability claims, `SPEC-1` for a spec that has no home yet.
+
+Then a number or a short slug, stable and never reused.
+
+That is stated here and nowhere else on purpose. The id is the only field joining this pool
+to a cycle, and this file used to mix both forms in one sentence while the worked examples
+elsewhere used only the other - which reads as two conventions and makes the join a guess.
 
 `assignee` is the **person**, and it is empty here by definition: an item in the pool is
 not yet anyone's. It fills when the item is pulled into a cycle.
@@ -99,39 +138,63 @@ is **split, not re-sized**.
 
 ### Epic: <name>
 
-| id | title | cap | persona | owner | assignee | size | why | DoD | status |
-|----|-------|-----|---------|-------|----------|------|-----|-----|--------|
-| | | | | | | | | | |
+| id | title | cap | persona | owner | assignee | size | why | source | DoD | status |
+|----|-------|-----|---------|-------|----------|------|-----|--------|-----|--------|
+| | | | | | | | | | | |
 
 <!-- Example rows, from a rental-property product - delete this block once the table above is
      yours. They are here rather than in the table because a row left in the table reads as
      work this repo owes itself:
 
-| SPEC-1 | Spec `pricing` to buildable | pricing | Owner-operator Olga | dev | | M | money path, behavioral-only today | pricing spec has data + algorithm contracts, cited from code | todo |
-| ADR-1 | Record datastore choice | - | (infra) | architect | | S | re-litigated in review, decision only in code | ADR Accepted, states rejected options | todo |
-| DRIFT-1 | Reconcile refund flow | refunds | Owner-operator Olga | agent | | S | README says X, code does Y | spec matches real behavior; guard green | blocked:SPEC-1 |
+| PRICE-1 | Spec `pricing` to buildable | pricing | Owner-operator Olga | dev | | M | money path, behavioral-only today | onboarding | pricing spec has data + algorithm contracts, cited from code | todo |
+| ADR-store | Record datastore choice | - | Maintainer (internal) | architect | | S | re-litigated in review, decision only in code | decision: spec-impact on pricing | ADR Accepted, states rejected options | todo |
+| REFUND-2 | Reconcile refund flow | refunds | Owner-operator Olga | agent | | S | README says X, code does Y | drift: spec-reconcile 2026-08-04 | spec matches real behavior; guard green | blocked:PRICE-1 |
 -->
 
 
 Statuses: `todo` / `doing` / `blocked` / `done` (drop `done` rows on release, or let the
-Backlog.md tool archive them).
+Backlog.md tool archive them). A cycle row can also carry `split:<id>` - see
+`docs/cycles/_template.md`; it is written by `/cycle-close` and never by hand here.
 
-**`blocked` takes a reference**: write `blocked:SPEC-1` to name what blocks it. Blocking gets
+**`blocked` takes a reference**: write `blocked:PRICE-1` to name what blocks it. Blocking gets
 no column of its own - the status already carries `blocked` and what it lacked was *what*.
 `cycle-guard` checks that the named intent exists, is not the row itself, and is not already
-done: a block pointing at something finished or deleted is the failure that costs time
+finished - `done`, or `split:<id>`, which is finished work whose remainder moved to another
+row. A block pointing at something finished or deleted is the failure that costs time
 silently, because the row looks legitimately stuck.
+
+**The title is checked too.** `cycle-guard` treats one title appearing in two files under two
+ids as one intent in two places, because copying a row into a cycle and renumbering the copy
+left behind passes every check keyed on the id. Give a genuinely different intent a different
+title; a `split:<id>` pair is the one place two rows may share one.
+
+## Who an internal item serves
+
+An item that serves no persona is parked, not queued (ADR-006) - and the roster in
+`personas.md` holds end users, while a large share of this pool is documentation, spec and
+decision debt that no end user will ever notice. Both are true, so name it rather than
+stretching a customer persona over infrastructure work:
+
+**Write the internal persona: `Maintainer (internal)`.** Anyone who has to work in this repo
+afterwards - a person or an agent. It is a real answer to "for whom", and it is what makes
+the persona gate a gate: an item that cannot name even that one is a wish.
+
+Nothing checks backlog personas mechanically, which is exactly why it is written here rather
+than left as something a careful author would work out: a rule with no guard behind it is
+carried by the page that states it, and an answer nobody can find is an answer nobody uses.
 
 ## Definition of Ready (before an item is pulled)
 
-An item is **ready** when it is **INVEST**-shaped and has: a named `persona`, a linked `cap`
-(or `-`), an `owner` role, a one-line `why`, and an observable **DoD**. INVEST = Independent, Negotiable,
-Valuable (to that persona), Estimable, Small (fits one flow), Testable. An item that fails
-this is refined or split first - the PO stage does not start on a vague item.
+An item is **ready** when it is **INVEST**-shaped and has: a named `persona` (the internal one
+counts), a linked `cap` (or `-`), an `owner` role, a one-line `why`, a `source`, and an
+observable **DoD**. INVEST = Independent, Negotiable, Valuable (to that persona), Estimable,
+Small (fits one flow), Testable. An item that fails this is refined or split first - the PO
+stage does not start on a vague item.
 
 ## Not this
 
-- Not a dumping ground for vague wishes - every item has a source, a persona, and a DoD.
+- Not a dumping ground for vague wishes - every item has a `source`, a persona, and a DoD,
+  and the first of those is a column so the claim is checkable by reading one.
 - Not a second issue tracker to keep in sync by hand - this is the in-repo, agent-first
   view; mirror to an external tracker only if the team already lives there.
 - Not a place to pre-decide - "write an ADR for X" is a backlog item; the decision
