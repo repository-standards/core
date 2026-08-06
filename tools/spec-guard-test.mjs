@@ -116,6 +116,41 @@ const CASES = [
     says: "each claimed by a capability or declared unclaimed",
     act: () => write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["tooling/**", "shared/paymob.ts"] })),
   },
+  // git quotes a non-ASCII path by default, and the quoted string matches no glob - so
+  // --audit reported such a file as unclaimed no matter what the map said, with no glob an
+  // author could write to claim it. Found on caddyserver/caddy, whose test data includes a
+  // file named in Arabic. Both directions: a covering glob must claim it, and removing the
+  // glob must bring the complaint back.
+  {
+    name: "--audit claims a non-ASCII filename that a glob covers",
+    fires: false,
+    args: ["--audit"],
+    says: "each claimed by a capability or declared unclaimed",
+    act: () => {
+      write("tooling/\u0645\u0644\u0641.txt", "arabic filename\n");
+      git("add", "-A");
+      write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["tooling/**", "shared/paymob.ts"] }));
+    },
+    undo: () => {
+      git("rm", "-q", "-f", "tooling/\u0645\u0644\u0641.txt");
+      git("reset", "-q");
+    },
+  },
+  {
+    name: "--audit still reports a non-ASCII filename no glob covers",
+    fires: true,
+    args: ["--audit"],
+    says: "\u0645\u0644\u0641.txt",
+    act: () => {
+      write("tooling/\u0645\u0644\u0641.txt", "arabic filename\n");
+      git("add", "-A");
+      write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["tooling/build.mjs", "shared/paymob.ts"] }));
+    },
+    undo: () => {
+      git("rm", "-q", "-f", "tooling/\u0645\u0644\u0641.txt");
+      git("reset", "-q");
+    },
+  },
   {
     name: "$unclaimed is metadata, not a capability whose spec can never be touched",
     fires: false,

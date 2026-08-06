@@ -146,7 +146,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R16",
-      "sha256": "67f463a1d4296bbd62243c09c2999bfe03fef5bfebdc96d218f40702b2f4609a"
+      "sha256": "688b5e55ef7bda9402ea3797f86aa31973d33a3888ed59f5e3907270c5223ab7"
     },
     {
       "path": "scripts/facts-check.mjs",
@@ -358,7 +358,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R11",
-      "sha256": "eac82889fdc92feeb22541f1cab02f048d76b5d6c1cc03d36748f7f92d49790e"
+      "sha256": "1e2aae8c89cb64c1caa742e02fe4d6d2fef6bd4e7a4c256dc68e1c1e2136b6c2"
     },
     {
       "path": ".github/workflows/spec-guard.yml",
