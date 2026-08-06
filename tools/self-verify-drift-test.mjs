@@ -400,6 +400,47 @@ check(
   },
 );
 
+// --- 3b. a section follows its file to the alternate path the manifest itself declares ---
+
+check(
+  "a required section is read at the file entry's declared altPath, not only at its primary name",
+  (dir) => {
+    // The shape a real adoption produced: the repo keeps its changelog under docs/, which is
+    // exactly what the CHANGELOG.md entry's altPaths exist for. Before the fix the file
+    // entry passed and the section entry failed with "CHANGELOG.md missing" - about a file
+    // that was there, and unclosable without moving it back.
+    mkdirSync(join(dir, "docs"), { recursive: true });
+    renameSync(join(dir, "CHANGELOG.md"), join(dir, "docs/CHANGELOG.md"));
+  },
+  (r, expect) => {
+    expect(r.drift === base.drift, `expected the baseline drift ${base.drift}, got ${r.drift}`);
+    expect(says(r, 'docs/CHANGELOG.md > "Unreleased"'), "the section PASS does not name the path it actually read");
+    expect(!says(r, 'CHANGELOG.md missing, so "Unreleased" cannot be checked'), "a present file is still reported as missing");
+  },
+);
+
+check(
+  "a section still fails when the heading is absent from the altPath copy",
+  (dir) => {
+    mkdirSync(join(dir, "docs"), { recursive: true });
+    unlinkSync(join(dir, "CHANGELOG.md"));
+    writeFileSync(join(dir, "docs/CHANGELOG.md"), "# Changelog\n\n## 1.0.0\n\n- released\n");
+  },
+  (r, expect) => {
+    expect(r.drift === base.drift + 1, `expected drift ${base.drift + 1}, got ${r.drift}`);
+    expect(says(r, 'docs/CHANGELOG.md is missing the "Unreleased" section'), "the FAIL does not name the file it read");
+  },
+);
+
+check(
+  "a section whose file is absent from every declared path is still missing",
+  (dir) => unlinkSync(join(dir, "CHANGELOG.md")),
+  (r, expect) => {
+    expect(r.drift === base.drift + 2, `expected drift ${base.drift + 2} (the file and its section), got ${r.drift}`);
+    expect(says(r, 'CHANGELOG.md missing, so "Unreleased" cannot be checked'), "an absent changelog no longer reports its section as uncheckable");
+  },
+);
+
 // --- 4. the yardstick, and the filesystem's opinion about case ---------------------------
 
 check(
@@ -504,4 +545,4 @@ if (failures) {
   console.error(`self-verify-drift-test: ${failures} case(s) failed`);
   process.exit(1);
 }
-console.log("self-verify-drift-test: OK - 20 cases, the drift number moves when the content does");
+console.log("self-verify-drift-test: OK - 25 cases, the drift number moves when the content does");
