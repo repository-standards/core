@@ -16,6 +16,23 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Four public surfaces said the standard was at 1.0.0, eleven versions ago (2026-08-06)
+
+`docs/faq.md`, `README.md`, `llms.txt` and its deployed copy `site/llms.txt` each stated the
+standard is at 1.0.0 while `VERSION` read 1.0.13 - and none of the four was among the five
+version surfaces `facts-check` covers, so nothing was ever going to say so. Two of them are
+what a person or a model reads first about the project.
+
+All four now state the real version and are declared in `docs/facts.json`, which is the part
+that lasts: a fact restated in prose either agrees with its source or fails the build, and a
+surface reworded past its own pattern fails too rather than falling quietly out of coverage.
+`site/llms.txt` is covered separately from the root copy it is generated from, so a root edit
+that was never regenerated is caught rather than assumed.
+
+The cost is real and is the mechanism working: cutting a release now has to move nine
+restatements instead of five, and every one of them is a place that was previously free to
+be wrong.
+
 ### A repo running two technology stacks could register one of them (2026-08-06)
 
 R20 promises one drift number across both layers, and `self-verify` read exactly one
