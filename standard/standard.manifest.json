@@ -45,7 +45,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R2",
-      "sha256": "4ab88471d8710d2d60837dcbbe6e48a13530b7592f43d90eb6682591d7e06a6e"
+      "sha256": "078c85d8263ca7981e90ef288275b9329fe833af02e6789470c68e419c92e1d7"
     },
     {
       "path": "CLAUDE.md",
@@ -220,7 +220,7 @@
         "pre-pr-review/SKILL.md": "d72bee4edf7979968dc08f2cc493826953a396090a212f36132af557cde55960",
         "product-write/SKILL.md": "21bdc82897281178f915cb0f51dd669d35228d17748977cbacdc1993f2843b98",
         "spec-clarify/SKILL.md": "30fef4062b6c3797292b19b7128e86a06318f2c5d9bf30d2688931154d3ca64b",
-        "spec-impact/SKILL.md": "557be97a4f0e6fb3cc232e4b5bc8bc16c820bb3314b33ac047ff09efdde94441",
+        "spec-impact/SKILL.md": "b674cd53f243a6dd72ddb8ad751cd444b2322421b5e7ddbca4a93ba3f8c5d0d1",
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",
         "spec-plan/SKILL.md": "00d877467e5d5f971fbdcce2cc5b20afb03e6645198363c92cbc57f13a4e3ae3",
         "spec-reconcile/SKILL.md": "2df8cf62c9df25ac4d165908f8a7345531006381aef1a841f82447d37a3d460a",
@@ -517,68 +517,6 @@
       "since": "0.8.0",
       "rule": "R15",
       "sha256": "2d01c193d687b931b987c37065231842e7b01f2af52caf6f63fb42d54dfebd65"
-    },
-    {
-      "path": "scripts/work-dashboard.mjs",
-      "purpose": "renders the work state - pool, cycles, timeline, records, changelog - as one static page for the people who never open the repository; a projection, never a second place work is tracked",
-      "adapt": "copy",
-      "required": false,
-      "profile": "core",
-      "since": "unreleased",
-      "rule": "R15",
-      "sha256": "2bab5c3fa97f6b5f94458f52630c82dca4c82c4dac6836f6d8f7a47dad5f275b"
-    },
-    {
-      "path": "scripts/work-dashboard.css",
-      "purpose": "the dashboard's styling, inlined into the page at build time",
-      "adapt": "copy",
-      "required": false,
-      "profile": "core",
-      "since": "unreleased",
-      "rule": "R15",
-      "sha256": "9f16f1ac18ab8f0a4f005d5bc9b936f65927bac3893887a3aa6ef1ecbf516dec"
-    },
-    {
-      "path": "scripts/work-dashboard.client.js",
-      "purpose": "the dashboard's rendering, inlined into the page at build time - no network, no dependencies",
-      "adapt": "copy",
-      "required": false,
-      "profile": "core",
-      "since": "unreleased",
-      "rule": "R15",
-      "sha256": "f72430fdeb2cc48729c5f1c9870b2df8d70b0590020a023b15cbb669f72944ba"
-    },
-    {
-      "path": "scripts/work-dashboard.gate.js",
-      "purpose": "the password gate of a locked build - derives the key and decrypts the page in the browser; only present in the page when --lock is used",
-      "adapt": "copy",
-      "required": false,
-      "profile": "core",
-      "since": "unreleased",
-      "rule": "R15",
-      "sha256": "c7f62c2fc08bbbb252395f5ea4f429059226ef4d6a3ab4beef1cc5463d5e2495"
-    },
-    {
-      "path": "scripts/work-dashboard.gate.css",
-      "purpose": "the password gate's styling, inlined into a locked page at build time",
-      "adapt": "copy",
-      "required": false,
-      "profile": "core",
-      "since": "unreleased",
-      "rule": "R15",
-      "sha256": "63a0b56a4491c5e3686835e15886d1440be4cc497a306a9caaa2a4678d15f07c"
-    },
-    {
-      "path": ".github/workflows/work-dashboard.yml",
-      "purpose": "builds the dashboard on every push to main; publishes it only when the repository is public, because Pages on a private repository is served publicly",
-      "adapt": "merge",
-      "required": false,
-      "profile": "core",
-      "since": "unreleased",
-      "rule": "R15",
-      "requiredKeys": [
-        "on.push"
-      ]
     }
   ],
   "references": [
