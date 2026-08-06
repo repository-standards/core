@@ -5,10 +5,17 @@
 | **Status** | Proposed |
 | **Date** | YYYY-MM-DD |
 | **Author** | {{AUTHOR}} |
+| **Decided by** | the author |
 
 <!-- An Accepted record is never edited into a different decision. When it stops being
      true, flip Status to `Superseded` and name the record that replaced it in the row
      above; the text below stays as it was written. -->
+
+<!-- "Decided by" is what made this binding, not who typed it - and on the business side it
+     is the row most often needed: a steering group, a client sign-off, a board or committee
+     vote. "The author" is a real answer where the author could genuinely make the call.
+     Where a body decided, record it as that body defines a decision - name, date, tally,
+     quorum met. -->
 
 ## Context
 

@@ -49,6 +49,11 @@ instead of re-typing a right one.
 - **Revisit when.** The concrete signal that reopens it - a scale threshold, a version, a
   cost. Not "if it becomes a problem". Ask: *what would have to be true for us to change our
   minds?*
+- **Decided by - what made it binding.** Usually "the author" or "the maintainers", and one
+  word is the whole answer. Ask for more only where the repo's own governance says a body
+  decides: a chartered technical committee, a steering group, a client sign-off. Then record
+  it the way that body defines a decision - name, date, tally, quorum met - because "who
+  could overturn this?" is a question about the body, not about who held the keyboard.
 
 ## Then
 
