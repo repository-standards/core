@@ -67,7 +67,7 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 | Observations recorded | **193** across 8 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd) |
 | Targets assessed | **107** (104 real repositories, 2 synthetic fixtures) |
 | Verdicts | 99 pass, 90 fail, 1 not-applicable, 3 partial |
-| Failures found | **166** - **83 fixed and re-verified** (across 20 merged pull requests), **83 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
+| Failures found | **167** - **84 fixed and re-verified** (across 21 merged pull requests), **83 still open right now** (of which 2 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 7 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -278,6 +278,7 @@ from the PR merging, not inferred from the verdict flipping:
 | `TRACK-11` | timeline-update's cold-start behaviour and the backlog template's ban on converting a size to a duration agree with each other | `fixture:test-greenfield-core` | [core/pull/15](https://github.com/repository-standards/core/pull/15) |
 | `TRACK-19` | spec-impact and spec-update are among the skills add-to-backlog documents as automatic backlog feeders, and each actually files what it claims to | `fixture:test-greenfield-core` | [core/pull/14](https://github.com/repository-standards/core/pull/14) |
 | `DEC-05` | a decision record's number is assigned from a real enumeration of the records on disk, not from a stale index a guard would have caught | `fixture:test-greenfield-core` | [core/pull/14](https://github.com/repository-standards/core/pull/14) |
+| `UPD-02` | the delta between two versions is computed from the real file changes between them, not only from a keyed manifest-entry diff that can report zero added/removed across an 18-file release | `fixture:test-greenfield-core` | [core/pull/30](https://github.com/repository-standards/core/pull/30) |
 | `UPD-03` | self-verify's drift-0 result after an update distinguishes an actually-applied update from a sham one that only bumped the pin and copied the manifest | `fixture:test-greenfield-core` | [core/pull/16](https://github.com/repository-standards/core/pull/16) |
 | `TRIG-02` | the section of AGENTS.md that produces unprompted ask-and-volunteer behaviour is actually loaded into context on every turn, not left behind a markdown link an agent can leave unread | `fixture:test-greenfield-core` | [core/pull/18](https://github.com/repository-standards/core/pull/18) |
 | `TRIG-03` | deleting the section of AGENTS.md that produces unprompted behaviour, or removing a required lifecycle skill, changes the reported drift number | `fixture:test-greenfield-core` | [core/pull/18](https://github.com/repository-standards/core/pull/18) |
