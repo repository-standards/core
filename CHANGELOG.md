@@ -48,9 +48,16 @@ Three properties were the point rather than the page:
   public - GitHub Pages on a private repository is served publicly unless the organisation is
   on Enterprise Cloud, which is precisely how a private backlog ends up on the open internet.
   Pages has no password to put in front of it and a prompt written in the page's own
-  JavaScript is theatre, so the method doc answers the private case with what the build
-  already is - one self-contained HTML file, no external requests - and says to put it where
-  the organisation's authentication already is before adding a host that has one.
+  JavaScript is theatre, so the private case gets a real lock instead: `--lock` encrypts the
+  page at build time (AES-256-GCM, key stretched from the passphrase with 600,000 rounds of
+  PBKDF2) and ships the ciphertext, which the reader's browser decrypts. What sits on the URL
+  is unreadable without the password, so any static host will do - including Pages, and the
+  workflow's publish step opens for a private repository exactly when the
+  `WORK_DASHBOARD_PASSWORD` secret is set. The locked page names nothing until it opens: the
+  title is "Work" and the repository is not mentioned. It is one shared secret rather than
+  per-person access, revoked by changing it and rebuilding, and the ciphertext can be attacked
+  offline - all three stated where somebody choosing it will read them, next to the hosted
+  identity gates that are the answer when one password is genuinely not enough.
   `--anonymise` drops assignees and the owner a cycle names, at build time, for a page that
   leaves the building - structured fields only, since prose written by hand is reproduced as
   written. The local `--serve` binds loopback for the same reason, on a port nothing else

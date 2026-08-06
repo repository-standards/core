@@ -85,6 +85,8 @@ copied into your repository as folder READMEs that then age in place.
 | `scripts/work-dashboard.mjs` | renders the work state - pool, cycles, timeline, records, changelog - as one static page for the people who never open the repository; a projection, never a second place work is tracked | optional, core | `copy` | [R15](../standard/SPEC.md) |
 | `scripts/work-dashboard.css` | the dashboard's styling, inlined into the page at build time | optional, core | `copy` | [R15](../standard/SPEC.md) |
 | `scripts/work-dashboard.client.js` | the dashboard's rendering, inlined into the page at build time - no network, no dependencies | optional, core | `copy` | [R15](../standard/SPEC.md) |
+| `scripts/work-dashboard.gate.js` | the password gate of a locked build - derives the key and decrypts the page in the browser; only present in the page when --lock is used | optional, core | `copy` | [R15](../standard/SPEC.md) |
+| `scripts/work-dashboard.gate.css` | the password gate's styling, inlined into a locked page at build time | optional, core | `copy` | [R15](../standard/SPEC.md) |
 
 ## `.claude/` - the procedures, in Claude Code's reference form
 

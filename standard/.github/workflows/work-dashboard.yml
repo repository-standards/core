@@ -11,13 +11,12 @@
 #   public repository   -> the page is published, and being able to point at it is a feature
 #   private repository  -> the page is a build artifact, readable by whoever can read the repo
 #
-# Pages has no password of its own to put in front of it, so a private repository that wants
-# a link has three answers, in the order worth trying: put the file where your authentication
-# already is (wiki, shared drive, an app already behind your SSO - it is one self-contained
-# HTML file with no external requests, so it travels), leave it as the artifact this job
-# already uploads, or add a static host with an identity layer and replace the publish job
-# with that upload. Add `--anonymise` to the build if the page should carry no colleague's
-# name.
+# Pages has no password of its own, so a private repository that wants a link sets the
+# WORK_DASHBOARD_PASSWORD secret: the build is then encrypted and the publish step opens up,
+# because what sits on the URL is ciphertext. Without that secret a private repository stops
+# at the artifact - which is also a fine answer, and the one that needs no decision.
+#
+# Add `--anonymise` to the build if the page should carry no colleague's name.
 name: work-dashboard
 
 on:
@@ -36,6 +35,8 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
+    outputs:
+      locked: ${{ steps.build.outputs.locked }}
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
@@ -44,8 +45,22 @@ jobs:
           package-manager-cache: false
 
       # No dependencies, no install: the generator is Node built-ins only.
+      #
+      # Set a repository secret named WORK_DASHBOARD_PASSWORD and the build is encrypted -
+      # what gets hosted is ciphertext, opened in the reader's browser by that one password.
+      # That is what makes publishing from a private repository safe below.
       - name: Build the page
-        run: node scripts/work-dashboard.mjs --out _work/index.html
+        id: build
+        env:
+          WORK_DASHBOARD_PASSWORD: ${{ secrets.WORK_DASHBOARD_PASSWORD }}
+        run: |
+          if [ -n "$WORK_DASHBOARD_PASSWORD" ]; then
+            node scripts/work-dashboard.mjs --lock --out _work/index.html
+            echo "locked=true" >> "$GITHUB_OUTPUT"
+          else
+            node scripts/work-dashboard.mjs --out _work/index.html
+            echo "locked=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -55,8 +70,11 @@ jobs:
 
   publish:
     needs: build
-    # The gate. A private repository never reaches this job, whatever the Pages settings say.
-    if: github.event.repository.visibility == 'public'
+    # The gate: publish when the repository is public and there is nothing to protect, or
+    # when the build is encrypted and the URL gives away nothing without the password. A
+    # private repository with no password set never reaches this job, whatever the Pages
+    # settings say - which is the accident this exists to prevent.
+    if: github.event.repository.visibility == 'public' || needs.build.outputs.locked == 'true'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
