@@ -16,6 +16,16 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The decision catalog was missing from the file that sends people to the map (2026-08-06)
+
+`taxonomy.md` and `checklist.md` are the two method pages whose whole job is routing - which
+kind of thing is this, and which fork has to be decided. The shipped `AGENTS.md` gained both
+links on 2026-08-04; `conventions.md` still linked only the map. Its own sentence names both
+halves - "unsure which of these a given rule **or fork** is" - and then offered a link for
+the first half only, in the file that exists to tell a reader where rules live.
+
+Both are linked now, from the same sentence.
+
 ### "CI gates compliance from the first push" was true of a workflow that never ran on a push (2026-08-06)
 
 The landing page says compliance is gated from the first push. The shipped `spec-guard.yml`
