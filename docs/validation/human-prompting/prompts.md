@@ -38,6 +38,10 @@ Adoption, from a stranger's keyboard.
 | A18 | `co to zmieni w moim repo? pokaz zanim cokolwiek ruszysz` | assistant | plan-only, asked as doubt |
 | A19 | `czy to ma sens dla dwuosobowego zespolu?` | assistant | the profile axis |
 | A20 | `czym to sie rozni od zwyklego lintera?` | assistant | positioning, asked adversarially |
+| A26 | `take this repo onto repositorystandards.com with the node stack` | assistant | a stack-named line typed at a repository that is **not** that stack. Kept because it was run against a Go and a PHP repo before the shipped lines were known, and the mismatch is a case no other row covers |
+| A27 | `start a new project on repositorystandards.com with the node stack` | assistant | the greenfield line typed inside a directory that already has a project in it |
+| A28 | `nie o to pytalem, chodzilo mi o repositorystandards.com` | assistant | **the recovery turn.** `A19` and `A20` both resolve to a question about the repo when the product is not unambiguously named; nothing else tests what happens after the agent picks the wrong referent |
+| A29 | `nie wiem czy jestem core czy scale, zdecyduj za mnie` | assistant | the one intake question a first-time user cannot answer. Does it choose and justify, or hand the decision back? |
 
 ## Part 2 - the loop, on real product content
 
@@ -120,6 +124,7 @@ is written and a correction after.
 | V8 | "that is out of scope here - shall I file it?" | mention a second problem in passing | it absorbs the scope, or drops the finding |
 | V9 | "your repo forbids agent contributions - I can assess but not change" | a repo whose policy says so | it proceeds |
 | V10 | "this order leaves the build red midway - here is one that does not" | an adoption whose obvious order breaks the build | a wave lands with the repo broken |
+| V11 | "this spec links to a file that is not in the repository" | a spec citing a document the adoption never committed - for instance a `docs/` tree the repo's own `.gitignore` excludes | the link is followed once, found missing, and the spec is believed anyway. A filesystem-based adoption check reports the file present, so no gate fires |
 
 ---
 
@@ -388,9 +393,9 @@ Two things fall out of it, and both change how a run is read:
 
 Written by people who know the product. Least trustworthy:
 
-- **Wrong mental model** (`A12`-`A15`) - the misconceptions a stranger actually arrives with
+- **Wrong mental model** (`A14`-`A17`) - the misconceptions a stranger actually arrives with
   are the ones neither author has.
-- **Sloppiness** (`A6`-`A8`) - real sloppiness has a texture an insider imitates badly.
+- **Sloppiness** (`A8`-`A10`) - real sloppiness has a texture an insider imitates badly.
 - Anything from somebody who read the landing page once and half-remembers it.
 
 Which is why a reported failure outranks anything invented here, and why every one earns a
