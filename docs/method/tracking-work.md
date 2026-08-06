@@ -97,11 +97,12 @@ of quiet obligations.
 
 This is a direct read, not a skill's output - the file already answers it, which is the
 point of it being a file. "Nobody has picked up" is answered trivially, since the pool's
-`assignee` is empty by definition. "During the adoption" specifically is the part that is
-honestly weaker: a row carries no `source` field of its own, so pinning one to onboarding
-relies on which epic the onboarding phase happened to file it under, not a tag that
-survives the row being re-ordered or re-grouped later. That is a real gap in the format,
-not a missing skill - a `source` column would close it if it starts mattering.
+`assignee` is empty by definition. "During the adoption" is answered by the `source` column:
+every row names where it came from - `onboarding`, `spec-delta`, `drift`, `decision` or
+`asked` - so the answer survives the row being re-ordered or re-grouped, which pinning it to
+whichever epic the onboarding phase filed it under did not. That column exists because the
+claim "every item has a source" was made in three places while the row schema had nowhere to
+put one, and provenance folded into `why` is a convention rather than a field.
 
 ### You do not have to use any of this
 
@@ -248,7 +249,7 @@ file per cycle, one directory per team.
 <div class="win">
   <div class="win-bar"><span class="win-dots"><i></i><i></i><i></i></span><span class="win-ask">&gt; how is the dispatch cycle going?</span></div>
   <div class="win-body">
-<svg viewBox="0 0 700 236" role="img" aria-label="Cycle board: two items done, two in progress, two not started">
+<svg viewBox="0 0 700 300" role="img" aria-label="Cycle board: two items done, three in progress of which one is blocked on NOTIF-6, one not started">
   <text class="bd-lane" x="5" y="14" fill="#34d399">done &#183; 2</text>
   <line class="bd-rule" x1="5" y1="22" x2="223" y2="22" stroke="#34d399"/>
   <rect class="bd-card" x="5" y="34" width="218" height="78" rx="9"/>
@@ -261,7 +262,7 @@ file per cycle, one directory per team.
   <text class="bd-title" x="17" y="166">A job is overrunning past</text>
   <text class="bd-title" x="17" y="180">its end</text>
   <text class="bd-who" x="17" y="195">Ada</text>
-  <text class="bd-lane" x="238" y="14" fill="#ff7a2f">doing &#183; 2</text>
+  <text class="bd-lane" x="238" y="14" fill="#ff7a2f">doing &#183; 3</text>
   <line class="bd-rule" x1="238" y1="22" x2="456" y2="22" stroke="#ff7a2f"/>
   <rect class="bd-card" x="238" y="34" width="218" height="78" rx="9"/>
   <text class="bd-id" x="250" y="55" fill="#ff7a2f">OVR-3</text>
@@ -273,18 +274,20 @@ file per cycle, one directory per team.
   <text class="bd-title" x="250" y="166">Downstream impact: jobs</text>
   <text class="bd-title" x="250" y="180">now at risk</text>
   <text class="bd-who" x="250" y="195">Ravi</text>
-  <text class="bd-lane" x="471" y="14" fill="#8a8595">todo &#183; 2</text>
+  <rect class="bd-card" x="238" y="218" width="218" height="78" rx="9"/>
+  <rect x="238" y="218" width="3.5" height="78" rx="2" fill="#e0685f"/>
+  <text class="bd-id" x="250" y="239" fill="#e0685f">OVR-5</text>
+  <text class="bd-tag" x="310" y="239">blocked</text>
+  <text class="bd-title" x="250" y="258">`delayed` notification fires</text>
+  <text class="bd-blocked" x="250" y="273">waiting on NOTIF-6</text>
+  <text class="bd-who" x="250" y="288">Mira</text>
+  <text class="bd-lane" x="471" y="14" fill="#8a8595">todo &#183; 1</text>
   <line class="bd-rule" x1="471" y1="22" x2="689" y2="22" stroke="#8a8595"/>
   <rect class="bd-card" x="471" y="34" width="218" height="78" rx="9"/>
-  <text class="bd-id" x="483" y="55" fill="#8a8595">OVR-5</text>
-  <text class="bd-title" x="483" y="74">`delayed` notification</text>
-  <text class="bd-title" x="483" y="88">fires</text>
+  <text class="bd-id" x="483" y="55" fill="#8a8595">OVR-6</text>
+  <text class="bd-title" x="483" y="74">Dana can silence a known</text>
+  <text class="bd-title" x="483" y="88">overrun</text>
   <text class="bd-who" x="483" y="103">nobody yet</text>
-  <rect class="bd-card" x="471" y="126" width="218" height="78" rx="9"/>
-  <text class="bd-id" x="483" y="147" fill="#8a8595">OVR-6</text>
-  <text class="bd-title" x="483" y="166">Dana can silence a known</text>
-  <text class="bd-title" x="483" y="180">overrun</text>
-  <text class="bd-who" x="483" y="195">nobody yet</text>
 </svg>
   </div>
 </div>
@@ -296,6 +299,15 @@ board is the rest of it.
 Every intent names its **current holder** - not who will eventually do it, not who suggested
 it. An intent with an empty assignee is a gap you can see rather than one you find out about
 at the end.
+
+**A blocked item stays in `doing` and says what it is waiting on.** `blocked` is the fourth
+status the schema declares and it gets no lane of its own, because "blocked" is not a place
+work sits - it is a thing that is true about work somebody is holding. What matters is the
+reference, and OVR-5 above carries it: waiting on `NOTIF-6`, which is a decision still in the
+pool. A board that dropped the reference, or crammed the row into `todo` without it, would
+lose the one fact worth looking at. `cycle-guard` checks the same reference from the other
+side - a block naming work that is finished, split or deleted is a row that looks
+legitimately stuck and is not.
 
 **Closing one** is the step people skip and the one that pays:
 
