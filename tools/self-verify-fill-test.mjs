@@ -350,8 +350,14 @@ const fixtureTree = () => {
   return dir;
 };
 
-const checkDrift = (name, { editAgents, editChangelog, failsAbout }) => {
+const checkDrift = (name, { editAgents, editChangelog, renameChangelog, failsAbout }) => {
   const dir = fixtureTree();
+  if (renameChangelog) {
+    const from = join(dir, "CHANGELOG.md");
+    const body = readFileSync(from, "utf8");
+    rmSync(from);
+    writeFileSync(join(dir, renameChangelog), body);
+  }
   if (editAgents) {
     const p = join(dir, "AGENTS.md");
     writeFileSync(p, editAgents(readFileSync(p, "utf8")));
@@ -364,7 +370,10 @@ const checkDrift = (name, { editAgents, editChangelog, failsAbout }) => {
   const out = `${r.stdout ?? ""}${r.stderr ?? ""}`;
   rmSync(dir, { recursive: true, force: true });
 
-  const failLines = out.split("\n").filter((l) => l.trim().startsWith("FAIL"));
+  // WARN counts as a reported line here: the case-twin hazard is a warning by design, because the
+  // file genuinely is missing and the drift number should say so - what must not be silent is the
+  // fact that creating it destroys something.
+  const failLines = out.split("\n").filter((l) => /^\s*(FAIL|WARN)\b/.test(l));
   const named = (needle) => failLines.some((l) => l.includes(needle));
   const wrong = failsAbout.some(([needle, expected]) => named(needle) !== expected);
 
@@ -406,6 +415,19 @@ checkDrift("the shipped tree carries every required section - no false positive"
 //
 // The rewrite has a false-positive edge the fix has to hold: a table row sits directly above a
 // `|---|---|` delimiter, which reads exactly like a setext underline if the check is careless.
+// The same name in another case, on a filesystem that cannot tell them apart. Reporting the file
+// missing is correct; what the adopter does next is not. Writing `CHANGELOG.md` beside an existing
+// `ChangeLog.md` on APFS or NTFS lands on the existing file and destroys it - reproduced, a
+// repository's whole release history gone by following the procedure exactly. The report has to
+// carry the warning, because the report is what sends somebody to create the file.
+checkDrift("a required file whose case twin is present warns instead of sending you to overwrite it", {
+  renameChangelog: "ChangeLog.md",
+  failsAbout: [
+    ["DO NOT CREATE CHANGELOG.md", true],
+    ["ChangeLog.md is here - the same name in another case", true],
+  ],
+});
+
 checkDrift("a setext Unreleased heading is a heading", {
   editChangelog: () => "Changelog\n=========\n\nUnreleased\n----------\n\nTBD\n",
   failsAbout: [['CHANGELOG.md is missing the "Unreleased" section', false]],
