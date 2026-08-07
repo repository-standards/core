@@ -73,7 +73,11 @@ clients get them by reference (ADR-004), never as copies.
   never hand-written), `node tools/validation.mjs --check` (the validation suite's
   rendered pages match `docs/validation/ai-prompting/suite.json`/`targets.json`/`runs/*.json`, every
   case has a verdict, and every open failure carries an explicit waiver rather than a
-  silent gap), `node tools/docsite.mjs && node tools/site-check.mjs &&
+  silent gap), `node tools/human-prompting.mjs --check` +
+  `node tools/human-prompting-test.mjs` (the other suite: prompt ids unique and contiguous,
+  every observation citing a row that exists, and the three published fractions counted from
+  the runs rather than asserted in their prose),
+  `node tools/docsite.mjs && node tools/site-check.mjs &&
   node tools/site-behaviour.mjs && node tools/site-check-test.mjs` (the landing and the
   generated docs are shippable, the navigation behaves as it claims, and the landing gate
   still fails a page carrying a second version). The list is the set CI
