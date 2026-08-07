@@ -16,6 +16,39 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The human suite counts its own headline instead of asserting it (2026-08-07)
+
+`docs/validation/human-prompting/README.md` calls three fractions - `asked`, `checked`,
+`suggested` - "the headline number this suite produces". Nothing produced them. Three waves ran
+and each counted its own by hand into prose, while the mechanical half next door had a generator
+and a `--check` that fails CI on any number that drifts from its rows.
+
+The cost arrived in one week. Three branches minted the same prompt ids because nothing said an
+id was taken; one of them cited its own `A21` five times, so merging it as written would have
+reattached a whole round's observations to a stranger's sentence. All three were caught by
+grepping during integration, which is not a control - it is one person remembering.
+
+`tools/human-prompting.mjs` renders
+[`results.md`](docs/validation/human-prompting/results.md) from the run files and refuses four
+things: a prompt id used twice, a hole in a series (a prompt is never removed once it lands, so a
+hole is a renumbering that lost one), an observation citing a row that does not exist, and a run
+whose own prose states a fraction its rows do not support. That last rule is what facts-check
+already does for the repo, applied to a suite that publishes numbers about itself.
+
+**It found drift on its first run.** One field run stated `asked 27/33`, `checked 32/32`,
+`suggested 31/32`; its rows say 27/31, 34/34, 33/34, and the four turns it describes as failing
+are four, not six. The prose had been written against an earlier state of the file. Corrected
+against the data.
+
+Two units are computed and published side by side, because a run may honestly score at either:
+per agent turn, and per observation. A stated fraction passes if it matches one of them. Turns
+that cannot be scored at all - most often because a run was recorded from the repository state it
+left behind rather than the agent's words, which shows what it did and not what it asked - are
+printed as unscored rather than absorbed into a denominator.
+
+`tools/human-prompting-test.mjs` drives every refusal, and its last case is the real corpus: a
+check tuned until the fixtures pass but the tree fails would be worse than no check.
+
 ### The page is called the dashboard, and the masthead stopped pitching the product (2026-08-07)
 
 The surface was called `work` in every path and label - `/work/`, `site/work/index.html`,
