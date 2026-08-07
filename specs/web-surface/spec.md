@@ -24,7 +24,7 @@ work on this capability goes through the loop.
 
 The docsite generator, the site-check gate, and the `site/` directory they operate on. Repo-own tooling - never shipped.
 
-The landing's hero is an animated agent-session window (the ask typed, the align played out, looped; rendered statically under `prefers-reduced-motion`). `site/previous.html` is a frozen snapshot of the prior landing, kept while the final landing template is being chosen - deployed as-is and deliberately outside site-check's landing checks, which gate `site/index.html` only.
+The landing's hero is an animated agent-session window (the ask typed, the align played out, looped; rendered statically under `prefers-reduced-motion`). `site/previous.html` is a frozen snapshot of the prior landing, kept while the final landing template is being chosen - deployed as-is and deliberately outside site-check's landing checks, which gate `site/index.html` only. **Frozen means frozen for repo-wide edits too**: a vocabulary rename swept it up once, and a snapshot that quietly follows the current wording is no longer a record of what the landing said - it is a second live landing nobody is checking.
 
 ## Out of scope
 
