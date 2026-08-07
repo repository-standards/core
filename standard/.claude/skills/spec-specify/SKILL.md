@@ -4,6 +4,10 @@ description: Use when someone describes a feature, a behaviour, or something the
 ---
 
 <!-- Vendored from github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE). PATCHED(repository-standards) hunks are marked inline. -->
+<!-- PATCHED(repository-standards): em and en dashes normalised to ASCII hyphens throughout.
+     standard/docs/conventions.md forbids them, and this file ships into every adopting repo,
+     so the vendored punctuation would have carried a rule break into each one. Prose only -
+     no instruction, path or example changed. Enforced by tools/prose-check.mjs. -->
 <!-- PATCHED(repository-standards): ADR-010 - clarify chains automatically after specify -->
 **Clarify chains automatically after specify.** When this command completes, immediately continue into the clarify loop (`/spec-clarify`) in the same session - do not stop and wait to be asked. The loop is AI-led: propose answers, ask the user only what genuinely needs their call, and record every deferral ("leaving this to the technical side") in the spec's `## Clarifications` section instead of dropping it. Plan and tasks are gated: they refuse a spec that has no `## Clarifications` section or still contains open markers of the `[NEEDS ...` family (that gate is what earns `Status: ready-to-develop`).
 
@@ -141,7 +145,7 @@ Given that feature description, do this:
 
    **IMPORTANT**:
    - You must only create one feature per `/spec-specify` invocation - a request that spans two capabilities is handled by step 1b (write one, mark the boundary), never by folding the second one in unnamed
-   - The spec directory name and the git branch name are independent — they may be the same but that is the user's choice
+   - The spec directory name and the git branch name are independent - they may be the same but that is the user's choice
 
 3. Load `specs/capability-spec.template.md` to understand required sections. <!-- PATCHED(repository-standards): the standard's template is the single source of the spec shape -->
 
@@ -267,8 +271,8 @@ Given that feature description, do this:
 ## Completion Report
 
 Report completion to the user with:
-- `SPECIFY_FEATURE_DIRECTORY` — the feature directory path
-- `SPEC_FILE` — the spec file path
+- `SPECIFY_FEATURE_DIRECTORY` - the feature directory path
+- `SPEC_FILE` - the spec file path
 - The capability collisions considered (step 1b): which existing capabilities were read, which was ruled the same or a neighbour, and any boundary left as a `NEEDS DECISION` marker <!-- PATCHED(repository-standards) -->
 - Checklist results summary
 - Readiness for the next phase (`/spec-clarify` or `/spec-plan`)

@@ -23,7 +23,7 @@ jobs:
           node tools/tree-check.mjs --self
       - name: link-check (every relative md link resolves)
         run: node tools/link-check.mjs
-      - name: prose-check (no line renders as something it is not) + its cases
+      - name: prose-check (no line renders as something it is not, no long dash) + its cases
         run: |
           node tools/prose-check.mjs
           node tools/prose-check.mjs --self
