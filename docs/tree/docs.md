@@ -19,7 +19,7 @@ writing something down is never a question of taste and finding it is never a se
 | `discovery/` | provenance-stamped raw material | where did this come from |
 | `ideas/` | speculation under a status | should this exist at all |
 | `runbooks/` | operating knowledge and postmortems | it is broken, now what |
-| `research/`, `journeys/`, `cycles/` | evidence, paths, commitments | *(scale)* |
+| `research/`, `journeys/`, `sprints/` | evidence, paths, commitments | *(scale)* |
 
 Behaviour is deliberately absent from that list. It lives in `specs/`, one folder up,
 because it is the one kind of knowledge that has to be checkable against the code.
@@ -36,7 +36,7 @@ that will be wrong, and the wrong one is invisible until somebody acts on it.
 ## What does not go in here
 
 **Anything the code already says.** Documentation that restates a function signature is a
-second copy with a slower update cycle.
+second copy with a slower update sprint.
 
 **Anything with no home in the table above.** If you cannot say which row it belongs to,
 that is the useful signal: the standard's taxonomy exists to answer exactly that question,

@@ -48,8 +48,8 @@ jobs:
         run: node tools/clarify-gate-test.mjs
       - name: schema-pair test (the R24 pair check catches a drifted twin)
         run: node tools/schema-pair-test.mjs
-      - name: cycle-guard test (an intent cannot be in two places)
-        run: node tools/cycle-guard-test.mjs
+      - name: sprint-guard test (an intent cannot be in two places)
+        run: node tools/sprint-guard-test.mjs
       - name: self-verify fill + drift test (placeholder warning clearable; removed skill/section is drift)
         run: node tools/self-verify-fill-test.mjs
       - name: self-verify drift test (content, declared keys and the bounds on exceptions)

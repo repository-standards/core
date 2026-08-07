@@ -20,7 +20,7 @@ Hub for this repo's docs. Start where you need:
 | [journeys/](journeys/) | per-persona journey maps coupled to capabilities *(scale)* |
 | [research/](research/) | anonymized research studies feeding personas, ideas and specs *(scale)* |
 | [runbooks/](runbooks/) | operational runbooks and postmortems - followable at 3 a.m. |
-| [cycles/](cycles/) | what a team committed to and by when; an intent is in the pool or in exactly one cycle *(scale)* |
+| [sprints/](sprints/) | what a team committed to and by when; an intent is in the pool or in exactly one sprint *(scale)* |
 | [analytics.md](analytics.md) | the event taxonomy / tracking plan *(scale)* |
 | [facts.example.json](facts.example.json) | the shape of `facts.json` - a fact's home and every declared restatement |
 

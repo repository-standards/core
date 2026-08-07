@@ -75,7 +75,7 @@ Everything below is this project eating its own cooking, and each is readable he
 - **[Our case studies](case-studies/README.md)** - times the loop caught something, and times it
   did not
 
-The backlog, the cycles and the changelog are the same story in files rather than pages.
+The backlog, the sprints and the changelog are the same story in files rather than pages.
 
 ## What this repository does not do
 

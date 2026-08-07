@@ -12,7 +12,7 @@
       "case": "GATE-02",
       "target": "fixture:test-greenfield-core",
       "verdict": "pass",
-      "evidence": "Held throughout the session - PR #8's own test plan confirms the guard still catches a genuinely moved-without-spec change after the deletion fix landed ('Confirmed the guard still catches a genuinely duplicated row' is the cycle-guard analogue; spec-guard's basic move-without-spec case is unchanged by the deletion fix and continued to fire correctly in every scenario that touched it, e.g. scenario 4's cross-capability check in Track B).",
+      "evidence": "Held throughout the session - PR #8's own test plan confirms the guard still catches a genuinely moved-without-spec change after the deletion fix landed ('Confirmed the guard still catches a genuinely duplicated row' is the sprint-guard analogue; spec-guard's basic move-without-spec case is unchanged by the deletion fix and continued to fire correctly in every scenario that touched it, e.g. scenario 4's cross-capability check in Track B).",
       "at": "2026-08-03"
     },
     {
@@ -43,7 +43,7 @@
       "case": "GATE-06",
       "target": "fixture:test-greenfield-core",
       "verdict": "pass",
-      "evidence": "Track B scenario 8: cycle-guard.mjs correctly held the one-place invariant (6 intents across 3 places, each in exactly one) across the pool plus both the old closed cycle and the new one in the same pass - the scenario found no defect, logged as a genuine positive result.",
+      "evidence": "Track B scenario 8: sprint-guard.mjs correctly held the one-place invariant (6 intents across 3 places, each in exactly one) across the pool plus both the old closed sprint and the new one in the same pass - the scenario found no defect, logged as a genuine positive result.",
       "at": "2026-08-03"
     },
     {
@@ -58,7 +58,7 @@
       "case": "GATE-08",
       "target": "fixture:test-greenfield-core",
       "verdict": "pass",
-      "evidence": "Re-verified 2026-08-05 as part of GATE-18/TRACK-08/TRACK-09's live cycle-guard fixtures: a closed cycle's `## Outcome` close table (reusing intent ids on purpose) is not read as a second copy of `## Intents` - only rows under the literal `## Intents` H2 count, confirmed by inspection of `scan()`'s heading-scoping and by the TRACK-08 live run below, where the Outcome block's prose is parsed by a separate, dedicated regex rather than folded into the intents table.",
+      "evidence": "Re-verified 2026-08-05 as part of GATE-18/TRACK-08/TRACK-09's live sprint-guard fixtures: a closed sprint's `## Outcome` close table (reusing intent ids on purpose) is not read as a second copy of `## Intents` - only rows under the literal `## Intents` H2 count, confirmed by inspection of `scan()`'s heading-scoping and by the TRACK-08 live run below, where the Outcome block's prose is parsed by a separate, dedicated regex rather than folded into the intents table.",
       "at": "2026-08-03",
       "fix": "https://github.com/repository-standards/core/pull/2"
     },
@@ -197,7 +197,7 @@
       "case": "TRACK-04",
       "target": "fixture:test-greenfield-core",
       "verdict": "pass",
-      "evidence": "Re-verified 2026-08-05: `standard/.claude/skills/timeline-update/SKILL.md` step 2 states throughput is derived per team from that team's own closed cycles only, with a worked example (\"two teams at two and one closed cycles has no team at three yet\") ruling out blending across teams.",
+      "evidence": "Re-verified 2026-08-05: `standard/.claude/skills/timeline-update/SKILL.md` step 2 states throughput is derived per team from that team's own closed sprints only, with a worked example (\"two teams at two and one closed sprints has no team at three yet\") ruling out blending across teams.",
       "at": "2026-08-03",
       "fix": "https://github.com/repository-standards/core/pull/9"
     },
@@ -205,7 +205,7 @@
       "case": "TRACK-05",
       "target": "fixture:test-greenfield-core",
       "verdict": "pass",
-      "evidence": "PR #2's own test plan: 'Confirmed the guard still catches a genuinely duplicated row (copied instead of moved between the pool and a cycle)' and 'Confirmed the guard still catches a stale blocked: reference.'",
+      "evidence": "PR #2's own test plan: 'Confirmed the guard still catches a genuinely duplicated row (copied instead of moved between the pool and a sprint)' and 'Confirmed the guard still catches a stale blocked: reference.'",
       "at": "2026-08-03"
     },
     {
@@ -497,7 +497,7 @@
       "case": "DOC-07",
       "target": "fixture:test-greenfield-core",
       "verdict": "pass",
-      "evidence": "Re-verified 2026-08-05: `docs/method/prerequisites.md` line 38 now names `cycle-guard` in its guard enumeration, and its gitleaks trade-off (line 48) correctly states no pre-commit hook installer ships with the tree, rather than claiming local pre-commit scanning is lost. Both specific claims this case tests now hold. Incidental, unrelated finding while checking this: `decision-records-check.mjs` (added after this fix, also a required guard per the manifest) is not named in the same enumeration - flagged separately below, not folded into this case's verdict since it is outside what DOC-07 tests.",
+      "evidence": "Re-verified 2026-08-05: `docs/method/prerequisites.md` line 38 now names `sprint-guard` in its guard enumeration, and its gitleaks trade-off (line 48) correctly states no pre-commit hook installer ships with the tree, rather than claiming local pre-commit scanning is lost. Both specific claims this case tests now hold. Incidental, unrelated finding while checking this: `decision-records-check.mjs` (added after this fix, also a required guard per the manifest) is not named in the same enumeration - flagged separately below, not folded into this case's verdict since it is outside what DOC-07 tests.",
       "at": "2026-08-03",
       "fix": "https://github.com/repository-standards/core/pull/9"
     },

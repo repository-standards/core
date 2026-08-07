@@ -452,7 +452,7 @@ dialog .close:hover { color: var(--ink); }
 .count { margin-top: 12px; }
 .entry.clickable { cursor: pointer; }
 
-/* cycle progress ---------------------------------------------------------- */
+/* sprint progress ---------------------------------------------------------- */
 
 .progress { display: flex; height: 6px; border-radius: 999px; background: var(--raised); overflow: hidden; margin: 12px 0 10px; }
 .progress .seg { display: block; height: 100%; }

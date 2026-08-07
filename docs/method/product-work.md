@@ -107,11 +107,11 @@ what, say so - it is routed to the technical side rather than dropped:
 
 **Remember a command.** There are none. Describe the situation.
 
-## The work itself - backlog, cycles, when it lands
+## The work itself - backlog, sprints, when it lands
 
 Writing behaviour is half the job. The other half is knowing what is owed, what somebody
 picked up, and when it lands - three files with their own page:
-[backlog, cycles, timeline](tracking-work.md).
+[backlog, sprints, timeline](tracking-work.md).
 
 The one habit worth forming now: when something surfaces mid-conversation and it is not this
 change, say so and keep going.

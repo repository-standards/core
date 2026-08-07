@@ -64,8 +64,8 @@ const GROUPS = [
   {
     title: "Running the cadence",
     lead:
-      "For a team that commits to work in periods and has to answer when things will land. Optional - a solo repo can run the whole loop above without ever opening a cycle.",
-    skills: ["cycle-open", "cycle-close", "timeline-update"],
+      "For a team that commits to work in periods and has to answer when things will land. Optional - a solo repo can run the whole loop above without ever opening a sprint.",
+    skills: ["sprint-open", "sprint-close", "timeline-update"],
   },
   {
     title: "Staying on the standard",

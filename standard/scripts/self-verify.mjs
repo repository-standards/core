@@ -763,7 +763,7 @@ if (manifest) {
     if (g.kind === "diff") { note("guard", `${g.id} is diff-based - runs in CI on the PR diff, not here`); continue; }
     const script = (g.run.match(/scripts\/[\w.-]+\.mjs/) || [])[0];
     // Not installed = not run, because optional guards legitimately are not (no database,
-    // no cycles). That tolerance is why a guard's script may not be excepted: excepting it
+    // no sprints). That tolerance is why a guard's script may not be excepted: excepting it
     // would turn "missing required file" into "check silently absent". See EXCEPTION_KINDS.
     // It used to be a dim note, which is most of the way to silent - it now goes through the
     // same category as a missing prerequisite and is counted in the verdict.
@@ -873,7 +873,7 @@ if (!skeleton) {
   // The ellipsis-row form is the other shape a template leaves behind: "your rows go here"
   // in the shipped AGENTS.md and ARCHITECTURE.md, kept verbatim by a showcase repo's own entry
   // file and unnoticed by either alternative above. A row of EMPTY cells is deliberately not
-  // matched: an empty table is a legitimate steady state (no cycles in flight yet), and a
+  // matched: an empty table is a legitimate steady state (no sprints in flight yet), and a
   // warning that state cannot clear is one everybody learns to skip.
   const HTML_ELEMENTS = new Set(
     ("a abbr address area article aside audio b bdi bdo big blockquote body br button canvas caption center cite code col colgroup " +

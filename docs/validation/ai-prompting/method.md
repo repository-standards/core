@@ -47,7 +47,7 @@ required field, not an optional one:
 | **L1 read** | the method's assessment passes applied to a read-only clone; nothing changed |
 | **L2 dry adoption** | the align router's decisions worked out for real - what would land, which of R1-R25 are satisfiable, the honest drift number - still no changes to the target |
 | **L3 aligned** | the standard actually applied to a working copy, guards run, drift measured to 0 or to a recorded stop |
-| **L4 operated** | the repo then lived the loop for at least one full cycle of real work |
+| **L4 operated** | the repo then lived the loop for at least one full sprint of real work |
 
 The distribution across levels is published on [`README.md`](README.md) and is the first thing
 to read there. A suite that is all L1 has demonstrated its assessment method and nothing about
@@ -73,8 +73,8 @@ A case in `suite.json` carries `id`, `title`, `area`, `tests` (the rule numbers 
 `then`, `procedure`, and `status`. An observation in `runs/<date>.json` carries `case`,
 `target`, `verdict`, `evidence`, an optional `fix` (the merged pull request), and `at`.
 
-Verdicts: `pass`, `fail`, `partial`, `not-applicable` (**with the reason** - e.g. a cycle case
-against a solo repo, where cycles are off by design), and `not-run` for a case that is specified
+Verdicts: `pass`, `fail`, `partial`, `not-applicable` (**with the reason** - e.g. a sprint case
+against a solo repo, where sprints are off by design), and `not-run` for a case that is specified
 but not yet executed. A specified-but-unrun case is shown as planned, never hidden.
 
 ## Areas
@@ -88,8 +88,8 @@ the honest gap list, which is the part a sceptic reads first.
 | `ADOPT` | brownfield adoption | the 8 assessment passes, drift as a number, waves |
 | `GREEN` | greenfield creation | zero to drift 0, in the documented order |
 | `SPEC` | spec lifecycle | specify, clarify, plan, tasks, implement, reconcile |
-| `GATE` | the mechanical gates | clarify gate, coupling guard, cycle guard, self-verify, facts-check, schema-pair |
-| `TRACK` | backlog, cycles, timeline | the pool, one-place invariant, assignment, close, forecast |
+| `GATE` | the mechanical gates | clarify gate, coupling guard, sprint guard, self-verify, facts-check, schema-pair |
+| `TRACK` | backlog, sprints, timeline | the pool, one-place invariant, assignment, close, forecast |
 | `DEC` | decision records | ADR / BDR / idea routing, supersession, status regression |
 | `DISC` | discovery | intake of raw material, provenance, contradiction detection |
 | `TRIG` | triggering and hand-holding | does ordinary speech reach the right skill; the PO leg without developer rescue |

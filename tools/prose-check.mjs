@@ -91,7 +91,7 @@ export function findLongDashes(src) {
 }
 
 const CASES = [
-  ["dash wrapped onto a new line", "the cycle closes whether or not it finished\n- that is the point", 1],
+  ["dash wrapped onto a new line", "the sprint closes whether or not it finished\n- that is the point", 1],
   ["parenthetical dash after a code span", "it reads `standard.manifest.json`\n- the standard describing itself", 1],
   ["real list after a blank line", "Two readers need two things:\n\n- an engineer wants the record\n- a stakeholder wants the story", 0],
   ["real list straight after a colon", "Two readers need two things:\n- an engineer wants the record", 0],

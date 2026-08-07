@@ -329,7 +329,7 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 - **From the 2026-08-05 re-verification pass:** every "fail" observation carrying a "fix" field was
   re-run against the current tree rather than trusted from the PR that claimed it. \`TRACK-10\`'s
   cited PR added the \`split:<id>\` status value to the template's vocabulary but never touched
-  \`cycle-guard.mjs\`'s staleness check, so a live re-run reproduced the exact original failure (a
+  \`sprint-guard.mjs\`'s staleness check, so a live re-run reproduced the exact original failure (a
   finished-but-split item's block still reads "live") - the fix was real and half-landed, and it
   stayed \`fail\` rather than being counted as resolved because it read as landed. The mechanism
   half landed the following day; the verdict moved when a re-run said so, not when a PR claimed it.`;
@@ -422,7 +422,7 @@ ${rulesWithZeroCases.length ? `**Rules with zero cases (of R1-R${highestRule}):*
 | L1 | read-only assessment pass, nothing changed | ${byDepth.L1 ?? 0} |
 | L2 | dry adoption - the align router's decisions worked out for real, still no changes | ${byDepth.L2 ?? 0} |
 | L3 | the standard actually applied to a working copy, drift measured | ${byDepth.L3 ?? 0} |
-| L4 | the repo then lived the loop for at least one full cycle of real work | ${byDepth.L4 ?? 0} |
+| L4 | the repo then lived the loop for at least one full sprint of real work | ${byDepth.L4 ?? 0} |
 
 ## The punch list - what is actually still broken
 

@@ -217,7 +217,7 @@ Before any phase runs, one intake pass:
    - **Where work is tracked.** The repo always keeps the **intents** - that is R15 and it
      is not the question. The question is where **execution** lives, and it decides what
      gets scaffolded, so it is asked rather than assumed:
-     - **In the repo.** `docs/backlog.md` is the whole system; at `scale`, work cycles and
+     - **In the repo.** `docs/backlog.md` is the whole system; at `scale`, work sprints and
        a timeline on top of it (ADR-028). Nothing to buy, nothing to log into, and the
        agent can read the plan the same way it reads the code.
      - **In a tracker.** The team already lives in Jira, Linear, GitHub Issues, GitLab

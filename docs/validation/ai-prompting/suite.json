@@ -83,7 +83,7 @@
     },
     {
       "id": "GATE-06",
-      "title": "the cycle guard fails when one intent sits in the pool and in a cycle, and when it sits in two cycles",
+      "title": "the sprint guard fails when one intent sits in the pool and in a sprint, and when it sits in two sprints",
       "area": "gates",
       "tests": [
         "R15"
@@ -91,10 +91,10 @@
       "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "severe",
-      "given": "6 intents distributed across the backlog pool, one closed cycle and one open cycle",
-      "when": "cycle-guard.mjs runs after a backlog item is split at a cycle boundary (ADR-029: happy path stays done in the closed cycle, edge cases return to the pool as a new intent)",
+      "given": "6 intents distributed across the backlog pool, one closed sprint and one open sprint",
+      "when": "sprint-guard.mjs runs after a backlog item is split at a sprint boundary (ADR-029: happy path stays done in the closed sprint, edge cases return to the pool as a new intent)",
       "then": "the guard holds the one-place invariant across all three locations in the same pass, with no duplicate and no orphan",
-      "procedure": "node standard/scripts/cycle-guard.mjs against docs/backlog.md plus the closed and open cycle files, after a split-at-boundary edit",
+      "procedure": "node standard/scripts/sprint-guard.mjs against docs/backlog.md plus the closed and open sprint files, after a split-at-boundary edit",
       "status": "run"
     },
     {
@@ -115,7 +115,7 @@
     },
     {
       "id": "GATE-08",
-      "title": "cycle-guard reads a correctly-closed cycle's own close table as a report, not as a second copy of live intents",
+      "title": "sprint-guard reads a correctly-closed sprint's own close table as a report, not as a second copy of live intents",
       "area": "gates",
       "tests": [
         "R15"
@@ -123,10 +123,10 @@
       "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "moderate",
-      "given": "a cycle closed exactly as cycle-close/SKILL.md documents it - a close table under `## Outcome` reusing the same intent ids on purpose",
-      "when": "cycle-guard.mjs runs against the closed cycle file",
+      "given": "a sprint closed exactly as sprint-close/SKILL.md documents it - a close table under `## Outcome` reusing the same intent ids on purpose",
+      "when": "sprint-guard.mjs runs against the closed sprint file",
       "then": "the guard does not report the close table's rows as duplicates of the `## Intents` table",
-      "procedure": "node standard/scripts/cycle-guard.mjs against a cycle file closed with the documented `## Outcome` close table",
+      "procedure": "node standard/scripts/sprint-guard.mjs against a sprint file closed with the documented `## Outcome` close table",
       "status": "run"
     },
     {
@@ -403,7 +403,7 @@
     },
     {
       "id": "TRACK-02",
-      "title": "a backlog item that spans a cycle boundary splits into a done slice and a returned slice, rather than being re-sized",
+      "title": "a backlog item that spans a sprint boundary splits into a done slice and a returned slice, rather than being re-sized",
       "area": "track",
       "tests": [
         "R15"
@@ -411,8 +411,8 @@
       "promise": "an item leaves the backlog pool only when its DoD is met - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "moderate",
-      "given": "a backlog item (size L) that ships its happy path but not its edge cases by the cycle's target date",
-      "when": "the cycle closes",
+      "given": "a backlog item (size L) that ships its happy path but not its edge cases by the sprint's target date",
+      "when": "the sprint closes",
       "then": "it is split per ADR-029 into a done item (happy path) and a new item returned to the pool (edge cases), not re-sized in place",
       "procedure": null,
       "status": "run"
@@ -427,7 +427,7 @@
       "promise": "the repo backlog holds intents, each with a definition of done - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "moderate",
-      "given": "an intent in the backlog pool or a cycle",
+      "given": "an intent in the backlog pool or a sprint",
       "when": "its holder field is read",
       "then": "an empty holder is visibly flagged as a gap, not silently treated as assigned",
       "procedure": null,
@@ -435,7 +435,7 @@
     },
     {
       "id": "TRACK-04",
-      "title": "timeline-update states whether its three-closed-cycles threshold is per-team or global",
+      "title": "timeline-update states whether its three-closed-sprints threshold is per-team or global",
       "area": "track",
       "tests": [
         "R15"
@@ -443,15 +443,15 @@
       "promise": "the repo backlog holds intents... execution state and work history live in the tracker - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "minor",
-      "given": "a repo with two teams, one at 3 closed cycles and one at 1",
+      "given": "a repo with two teams, one at 3 closed sprints and one at 1",
       "when": "timeline-update runs",
       "then": "the threshold is applied per team, never blended, and the skill says so explicitly",
-      "procedure": "read standard/.claude/skills/timeline-update/SKILL.md for a per-team vs. global statement of the three-cycle threshold",
+      "procedure": "read standard/.claude/skills/timeline-update/SKILL.md for a per-team vs. global statement of the three-sprint threshold",
       "status": "run"
     },
     {
       "id": "TRACK-05",
-      "title": "cycle-guard still catches a genuinely duplicated intent row and a stale `blocked:` reference after the close-table scoping fix",
+      "title": "sprint-guard still catches a genuinely duplicated intent row and a stale `blocked:` reference after the close-table scoping fix",
       "area": "track",
       "tests": [
         "R15"
@@ -459,15 +459,15 @@
       "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "moderate",
-      "given": "an intent copied (not moved) between the pool and a cycle, or a stale `blocked:` reference",
-      "when": "cycle-guard.mjs runs after the close-table scoping fix (GATE-08)",
+      "given": "an intent copied (not moved) between the pool and a sprint, or a stale `blocked:` reference",
+      "when": "sprint-guard.mjs runs after the close-table scoping fix (GATE-08)",
       "then": "the guard still fails on the genuine duplicate and the stale reference - the fix narrowed the false positive without opening a false negative",
-      "procedure": "node standard/scripts/cycle-guard.mjs against a cycle file with a genuinely duplicated intent row",
+      "procedure": "node standard/scripts/sprint-guard.mjs against a sprint file with a genuinely duplicated intent row",
       "status": "run"
     },
     {
       "id": "TRACK-06",
-      "title": "the timeline refuses a measured date below three closed cycles and labels the estimate in the file",
+      "title": "the timeline refuses a measured date below three closed sprints and labels the estimate in the file",
       "area": "track",
       "tests": [
         "R15"
@@ -475,7 +475,7 @@
       "promise": "execution state and work history live in the tracker - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "moderate",
-      "given": "a team with fewer than three closed cycles",
+      "given": "a team with fewer than three closed sprints",
       "when": "timeline-update is asked when work will land",
       "then": "it gives no measured date, and the output labels any number it does give as estimated rather than measured",
       "procedure": null,
@@ -974,7 +974,7 @@
       "severity_if_failed": "minor",
       "given": "docs/method/prerequisites.md's guard enumeration and its gitleaks trade-off claim",
       "when": "the enumeration is checked against standard/scripts/ and the gitleaks claim against the shipped tree",
-      "then": "cycle-guard.mjs is named, and the gitleaks trade-off does not claim a local pre-commit hook that does not ship",
+      "then": "sprint-guard.mjs is named, and the gitleaks trade-off does not claim a local pre-commit hook that does not ship",
       "procedure": "diff docs/method/prerequisites.md's guard list against `ls standard/scripts/*.mjs`",
       "status": "run"
     },
@@ -1173,7 +1173,7 @@
     },
     {
       "id": "GATE-18",
-      "title": "cycle-guard reads intents from the exact table shape the adopter-facing manual itself demonstrates, not only a table under a literal `## Intents` H2",
+      "title": "sprint-guard reads intents from the exact table shape the adopter-facing manual itself demonstrates, not only a table under a literal `## Intents` H2",
       "area": "gates",
       "tests": [
         "R15"
@@ -1181,10 +1181,10 @@
       "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "severe",
-      "given": "a cycle file written in the shape docs/tree/docs-cycles.md's own worked example shows (no `## Intents` heading, a compound id+title first cell)",
-      "when": "cycle-guard.mjs runs against a real one-place violation written in that exact shape",
+      "given": "a sprint file written in the shape docs/tree/docs-sprints.md's own worked example shows (no `## Intents` heading, a compound id+title first cell)",
+      "when": "sprint-guard.mjs runs against a real one-place violation written in that exact shape",
       "then": "the guard reads zero rows and reports OK, instead of catching the violation",
-      "procedure": "node standard/scripts/cycle-guard.mjs against a cycle file shaped like docs/tree/docs-cycles.md's own example, with a real duplicated intent",
+      "procedure": "node standard/scripts/sprint-guard.mjs against a sprint file shaped like docs/tree/docs-sprints.md's own example, with a real duplicated intent",
       "status": "run"
     },
     {
@@ -1595,7 +1595,7 @@
     },
     {
       "id": "TRACK-07",
-      "title": "cycle-open, cycle-close and every mid-cycle prompt promised by tracking-work.md resolve the backlog at the manifest's declared altPath, the same way cycle-guard does",
+      "title": "sprint-open, sprint-close and every mid-sprint prompt promised by tracking-work.md resolve the backlog at the manifest's declared altPath, the same way sprint-guard does",
       "area": "track",
       "tests": [
         "R15"
@@ -1604,14 +1604,14 @@
       "portable": true,
       "severity_if_failed": "moderate",
       "given": "a repo satisfying the manifest at its primary backlog path (docs/backlog.md as an altPath of backlog.md, or vice versa)",
-      "when": "cycle-open or cycle-close is run",
-      "then": "both skills resolve the same altPath cycle-guard.mjs already resolves, instead of hardcoding one path and instructing edits to a file that does not exist there",
-      "procedure": "run cycle-open/cycle-close against a repo whose backlog lives only at the manifest's declared altPath",
+      "when": "sprint-open or sprint-close is run",
+      "then": "both skills resolve the same altPath sprint-guard.mjs already resolves, instead of hardcoding one path and instructing edits to a file that does not exist there",
+      "procedure": "run sprint-open/sprint-close against a repo whose backlog lives only at the manifest's declared altPath",
       "status": "run"
     },
     {
       "id": "TRACK-08",
-      "title": "cycle-guard checks that an intent a closed cycle's outcome block declares 'returned to the pool' is actually there, not only that no intent appears in more than one place",
+      "title": "sprint-guard checks that an intent a closed sprint's outcome block declares 'returned to the pool' is actually there, not only that no intent appears in more than one place",
       "area": "track",
       "tests": [
         "R15"
@@ -1619,15 +1619,15 @@
       "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "severe",
-      "given": "a closed cycle whose Outcome block claims an item was returned to the pool",
-      "when": "cycle-guard.mjs runs, and the item is nowhere in the pool or anywhere else in the repo",
+      "given": "a closed sprint whose Outcome block claims an item was returned to the pool",
+      "when": "sprint-guard.mjs runs, and the item is nowhere in the pool or anywhere else in the repo",
       "then": "the guard fails, because it checks 'at least one' as well as 'at most one' - not only the duplicate-detection direction",
-      "procedure": "node standard/scripts/cycle-guard.mjs against a closed cycle whose Outcome block names an item as returned to the pool, with that item absent from the pool",
+      "procedure": "node standard/scripts/sprint-guard.mjs against a closed sprint whose Outcome block names an item as returned to the pool, with that item absent from the pool",
       "status": "run"
     },
     {
       "id": "TRACK-09",
-      "title": "an id written in backticks or bold in a cycle or backlog table still resolves to the same intent as its bare form, and the id column is found by its header label rather than assumed to be column zero",
+      "title": "an id written in backticks or bold in a sprint or backlog table still resolves to the same intent as its bare form, and the id column is found by its header label rather than assumed to be column zero",
       "area": "track",
       "tests": [
         "R15"
@@ -1635,15 +1635,15 @@
       "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "moderate",
-      "given": "an id written as `` `SPEC-1` `` or `**SPEC-1**` (every doc backtick-quotes ids in prose) in two teams' cycle tables",
-      "when": "cycle-guard.mjs runs",
+      "given": "an id written as `` `SPEC-1` `` or `**SPEC-1**` (every doc backtick-quotes ids in prose) in two teams' sprint tables",
+      "when": "sprint-guard.mjs runs",
       "then": "the backticked/bold id is recognized as the same intent as its bare form and a genuine duplicate is caught - instead of an anchored regex silently never matching it",
-      "procedure": "node standard/scripts/cycle-guard.mjs against two teams' cycles both containing the identical id written with backticks",
+      "procedure": "node standard/scripts/sprint-guard.mjs against two teams' sprints both containing the identical id written with backticks",
       "status": "run"
     },
     {
       "id": "TRACK-10",
-      "title": "the vocabulary for a cycle-boundary split (ADR-029) includes a real status value, so the fixture does not have to invent one outside the declared enum",
+      "title": "the vocabulary for a sprint-boundary split (ADR-029) includes a real status value, so the fixture does not have to invent one outside the declared enum",
       "area": "track",
       "tests": [
         "R15"
@@ -1651,10 +1651,10 @@
       "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "moderate",
-      "given": "a backlog item split at a cycle boundary per ADR-029 into a done slice and a returned slice",
-      "when": "cycle-close records the split and cycle-guard.mjs's staleness check runs against a `blocked:` reference to the split item",
+      "given": "a backlog item split at a sprint boundary per ADR-029 into a done slice and a returned slice",
+      "when": "sprint-close records the split and sprint-guard.mjs's staleness check runs against a `blocked:` reference to the split item",
       "then": "a declared status value exists for the split row, and the staleness check recognizes a split-but-finished item as done - instead of a fifth status invented outside the enum defeating the check that a finished item's block is stale",
-      "procedure": "node standard/scripts/cycle-guard.mjs against a cycle recording a split row with a stale `blocked:` reference to it",
+      "procedure": "node standard/scripts/sprint-guard.mjs against a sprint recording a split row with a stale `blocked:` reference to it",
       "status": "run"
     },
     {
@@ -1664,13 +1664,13 @@
       "tests": [
         "R15"
       ],
-      "promise": "measured time supersedes sizes only after three closed cycles; before that, a size is a splitting trigger, never a duration - ADR-029",
+      "promise": "measured time supersedes sizes only after three closed sprints; before that, a size is a splitting trigger, never a duration - ADR-029",
       "portable": true,
       "severity_if_failed": "severe",
-      "given": "a team with fewer than three closed cycles (the branch every adopter is in on day one)",
+      "given": "a team with fewer than three closed sprints (the branch every adopter is in on day one)",
       "when": "timeline-update is asked when work will land",
       "then": "the skill and the backlog template agree that no date is produced, and any number given is explicitly labelled an estimate - instead of the skill instructing 'project from sizes' while three other documents forbid ever converting a size letter into a duration",
-      "procedure": "read standard/.claude/skills/timeline-update/SKILL.md's cold-start branch against backlog.md, ADR-029 and work-cycles/spec.md's own bans on size-to-duration conversion",
+      "procedure": "read standard/.claude/skills/timeline-update/SKILL.md's cold-start branch against backlog.md, ADR-029 and work-sprints/spec.md's own bans on size-to-duration conversion",
       "status": "run"
     },
     {
@@ -1699,15 +1699,15 @@
       "promise": "the repo backlog holds intents, each with a definition of done - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "moderate",
-      "given": "an open cycle with a `blocked:SPEC-1` item",
+      "given": "an open sprint with a `blocked:SPEC-1` item",
       "when": "tracking-work.md's rendered board is produced",
       "then": "the blocked item's reference is visible on the board, instead of the board's three lanes (done/doing/todo) having nowhere to render the fourth declared status at all",
-      "procedure": "render the promised board against a real open cycle with a blocked:SPEC-1 item",
+      "procedure": "render the promised board against a real open sprint with a blocked:SPEC-1 item",
       "status": "run"
     },
     {
       "id": "TRACK-14",
-      "title": "cycle-close's prescribed commit-count measurement is scoped to the team and window it is measuring, not a repo-wide count two overlapping teams both silently share",
+      "title": "sprint-close's prescribed commit-count measurement is scoped to the team and window it is measuring, not a repo-wide count two overlapping teams both silently share",
       "area": "track",
       "tests": [
         "R15"
@@ -1715,15 +1715,15 @@
       "promise": "execution state and work history live in the tracker - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "moderate",
-      "given": "two teams whose cycles overlap in time, each closing a cycle with the repo-wide commit count cycle-close prescribes (unscoped by team or path, whatever window form it names)",
-      "when": "both teams record their cycle's commit count",
+      "given": "two teams whose sprints overlap in time, each closing a sprint with the repo-wide commit count sprint-close prescribes (unscoped by team or path, whatever window form it names)",
+      "when": "both teams record their sprint's commit count",
       "then": "the two counts are genuinely different, scoped to each team's own work, instead of both recording the identical repo-wide blended number - contradicting timeline-update's own rule to never blend throughput across teams",
-      "procedure": "run cycle-close's prescribed git log command for two teams' overlapping cycle windows on the same repo history",
+      "procedure": "run sprint-close's prescribed git log command for two teams' overlapping sprint windows on the same repo history",
       "status": "run"
     },
     {
       "id": "TRACK-15",
-      "title": "backlog and cycle hygiene - a done row removed from the pool, a stale cycle pointer removed, a cycle's declared item count matching its real rows - is checked mechanically, not left to the aligner's memory",
+      "title": "backlog and sprint hygiene - a done row removed from the pool, a stale sprint pointer removed, a sprint's declared item count matching its real rows - is checked mechanically, not left to the aligner's memory",
       "area": "track",
       "tests": [
         "R15"
@@ -1731,10 +1731,10 @@
       "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
       "portable": false,
       "severity_if_failed": "minor",
-      "given": "a pool with a done row still present, a 3-month-stale pointer row for a closed cycle, and a cycle whose declared item count does not match its rows",
-      "when": "cycle-guard.mjs and self-verify.mjs both run",
+      "given": "a pool with a done row still present, a 3-month-stale pointer row for a closed sprint, and a sprint whose declared item count does not match its rows",
+      "when": "sprint-guard.mjs and self-verify.mjs both run",
       "then": "at least one of the three hygiene violations is flagged, instead of all three passing as '100% adopted, compliant with the standard'",
-      "procedure": "node standard/scripts/cycle-guard.mjs against a pool with a done row, a stale closed-cycle pointer, and a mismatched item count, all three planted at once",
+      "procedure": "node standard/scripts/sprint-guard.mjs against a pool with a done row, a stale closed-sprint pointer, and a mismatched item count, all three planted at once",
       "status": "run"
     },
     {
@@ -1755,7 +1755,7 @@
     },
     {
       "id": "TRACK-17",
-      "title": "the backlog's id convention (type-scoped vs. capability-scoped) is stated once and used consistently across every method doc and worked example, since the id is the only field joining the pool to a cycle",
+      "title": "the backlog's id convention (type-scoped vs. capability-scoped) is stated once and used consistently across every method doc and worked example, since the id is the only field joining the pool to a sprint",
       "area": "track",
       "tests": [
         "R15"
@@ -1771,7 +1771,7 @@
     },
     {
       "id": "TRACK-18",
-      "title": "cycle-guard's one-place invariant is keyed on the intent, not only on its id, so a copy-then-renumber does not pass as compliant",
+      "title": "sprint-guard's one-place invariant is keyed on the intent, not only on its id, so a copy-then-renumber does not pass as compliant",
       "area": "track",
       "tests": [
         "R15"
@@ -1779,10 +1779,10 @@
       "promise": "an item leaves the backlog pool only when its DoD is met, and lives in exactly one place - SPEC.md R15",
       "portable": true,
       "severity_if_failed": "moderate",
-      "given": "an intent copied into a cycle without being cut from the pool, with the pool row's id then renumbered while its title is kept identical",
-      "when": "cycle-guard.mjs runs",
+      "given": "an intent copied into a sprint without being cut from the pool, with the pool row's id then renumbered while its title is kept identical",
+      "when": "sprint-guard.mjs runs",
       "then": "the guard recognizes the two rows as one piece of work duplicated, instead of reporting the one-place invariant holding because it keys entirely on the first-cell id and never compares titles",
-      "procedure": "node standard/scripts/cycle-guard.mjs against a pool-and-cycle pair created by copying an intent, then renumbering only the pool copy's id",
+      "procedure": "node standard/scripts/sprint-guard.mjs against a pool-and-sprint pair created by copying an intent, then renumbering only the pool copy's id",
       "status": "run"
     },
     {
@@ -1815,7 +1815,7 @@
       "given": "a bdr/README.md index missing one record that is on disk (an Accepted BDR retiring a capability, cited by a live spec)",
       "when": "bdr-write follows its own documented numbering instruction ('gapless, never reused, next free as of main') against that stale index",
       "then": "the collision is caught before a duplicate ships, instead of a second record sharing an existing number passing every guard as compliant",
-      "procedure": "write a new BDR following bdr-write's numbering instruction against an index missing one real record, then run self-verify.mjs, spec-structure.mjs, spec-guard.mjs --audit and cycle-guard.mjs",
+      "procedure": "write a new BDR following bdr-write's numbering instruction against an index missing one real record, then run self-verify.mjs, spec-structure.mjs, spec-guard.mjs --audit and sprint-guard.mjs",
       "status": "run"
     },
     {
@@ -2690,10 +2690,10 @@
       "promise": "A fact has one home - SPEC.md R4",
       "portable": true,
       "severity_if_failed": "severe",
-      "given": "the showcase repo's own cycle-close outcome blocks and the commit counts they state for its three closed cycles",
-      "when": "the command cycle-close prescribes for that number is actually run against the repo's real history",
+      "given": "the showcase repo's own sprint-close outcome blocks and the commit counts they state for its three closed sprints",
+      "when": "the command sprint-close prescribes for that number is actually run against the repo's real history",
       "then": "the numbers agree, and agree whatever hour the command is run at - which requires the prescription to state the window explicitly, since git resolves a bare --since/--until date at the current time of day",
-      "procedure": "run the prescribed cycle-close commit-count command against each of the showcase's three closed cycles and compare to the stated outcome-block numbers",
+      "procedure": "run the prescribed sprint-close commit-count command against each of the showcase's three closed sprints and compare to the stated outcome-block numbers",
       "status": "run"
     },
     {
@@ -2947,7 +2947,7 @@
       "tests": [
         "R15"
       ],
-      "promise": "'push the invoicing cycle to jira' - tracking-work.md's worked prompt, and the repo-holds-intents / tracker-holds-execution split of ADR-010",
+      "promise": "'push the invoicing sprint to jira' - tracking-work.md's worked prompt, and the repo-holds-intents / tracker-holds-execution split of ADR-010",
       "portable": true,
       "severity_if_failed": "moderate",
       "given": "a backlog intent already exported as a Story, whose spec then changes so the intent's scope is materially different",
@@ -3183,7 +3183,7 @@
       "given": "an adopted repository of over ten thousand tracked files",
       "when": "each shipped guard is timed, best of three runs, on the adopted tree",
       "then": "no guard takes long enough that a team turns it off - a guard measured in minutes is a guard nobody runs",
-      "procedure": "time `node scripts/self-verify.mjs`, `spec-structure.mjs --block`, `facts-check.mjs`, `schema-pair.mjs --block`, `cycle-guard.mjs --block`, `decision-records-check.mjs --block`, `spec-guard.mjs --audit --block` and `spec-guard.mjs --block` on a >10,000-file adopted repo, three runs each, and report the best wall time",
+      "procedure": "time `node scripts/self-verify.mjs`, `spec-structure.mjs --block`, `facts-check.mjs`, `schema-pair.mjs --block`, `sprint-guard.mjs --block`, `decision-records-check.mjs --block`, `spec-guard.mjs --audit --block` and `spec-guard.mjs --block` on a >10,000-file adopted repo, three runs each, and report the best wall time",
       "status": "run"
     },
     {

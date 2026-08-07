@@ -112,7 +112,7 @@ check("a filled table row does not warn, and neither does an empty one", {
   files: {
     // Empty cells are deliberately not a placeholder: a table with nothing in it yet is a
     // legitimate state, and a warning it cannot clear is one everybody learns to skip.
-    "README.md": `${FILLED_HEAD}| Capability | Owner |\n|---|---|\n| booking | platform |\n\n| Team | Cycle |\n|---|---|\n| | |\n`,
+    "README.md": `${FILLED_HEAD}| Capability | Owner |\n|---|---|\n| booking | platform |\n\n| Team | Sprint |\n|---|---|\n| | |\n`,
   },
   warnsAbout: [["README.md", false]],
 });
