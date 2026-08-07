@@ -16,6 +16,23 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A stack's spec pages linked back to a page only the core has (2026-08-07)
+
+The moment the node stack gained a `specs/` tree, the site deploy went red. Four generated spec
+pages carried a "Back" link to `/docs/node/how-this-repo-works.html`, which does not exist and
+was never going to: `how-this-repo-works` is in the core's page map, not the stack's.
+
+`ownSpecPages()` hardcoded that parent. It reads correctly in this repository and is wrong
+everywhere else, because the generator is the core's and **every registered stack runs it against
+its own page map** - that is what "one form, many sites" means. A parent named from our map is a
+link into a site that does not exist. It now names the parent only when the map being built
+actually has that page; a page with no parent gets no backlink, which is the right amount of
+navigation to invent for a map that did not ask for it.
+
+The deploy gate caught it, so nothing broken reached the site. Nothing caught it earlier, because
+this repository's own CI never builds a stack - `STACK-SITE-1` in `backlog.md` now asks for the
+fixture that would.
+
 ### A listed repository was being counted as an assessed one (2026-08-07)
 
 The validation page opened its honesty section with "103 of 118 targets were assessed at depth
