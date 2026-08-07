@@ -20,21 +20,39 @@ while IFS= read -r segment; do
 
   remote=0
 
+  # Every SQL client, not only the Postgres ones.
+  #
+  # This guard shipped Postgres-only for its whole life - psql, pgcli, `postgres://` - and a repo
+  # that runs MySQL got no protection at all. `mysql -h db.prod.example.com -e "DROP TABLE users"`
+  # ran straight through, and so did a `mysql2://` connection string, because neither the client
+  # name nor the scheme appeared in any pattern. A guard that only prints on refusal makes that
+  # indistinguishable from approval. Found by probing it during a Rails adoption, not by reading.
+  #
+  # Scope, said plainly so it is not read as more: WRITE_RE below is SQL vocabulary, so this covers
+  # the SQL family. A document or key-value store reached remotely is NOT covered - `mongosh` and
+  # `redis-cli` write with verbs this pattern does not know, and implying otherwise here would be
+  # worse than the gap itself.
+  SQL_CLIENT_RE='psql|pgcli|mysql|mysqlsh|mysqladmin|mariadb|mariadb-admin'
+  SQL_SCHEME_RE='postgres(ql)?|mysql2?|mariadb'
+
   # A connection URI whose host is not loopback.
-  urls=$(printf '%s' "${segment}" | grep -oiE "postgres(ql)?://[^[:space:]\"']+" || true)
+  urls=$(printf '%s' "${segment}" | grep -oiE "(${SQL_SCHEME_RE})://[^[:space:]\"']+" || true)
   if [ -n "${urls}" ]; then
     if printf '%s\n' "${urls}" \
-      | sed -E 's#^postgres(ql)?://([^@/]*@)?##' \
+      | sed -E "s#^(${SQL_SCHEME_RE})://([^@/]*@)?##" \
       | grep -viE "^${LOCAL_HOST_RE}" \
       | grep -q .; then
       remote=1
     fi
   fi
 
-  # A psql/pgcli invocation with an explicit non-loopback -h/--host. The flag match is
+  # A SQL client invocation with an explicit non-loopback -h/--host. The flag match is
   # case-sensitive on purpose: psql takes a lowercase -h, while -H is curl's header flag, and
   # reading one as the other denies a local psql whose argument merely came from a curl call.
-  if printf '%s' "${segment}" | grep -qiE '(^|[[:space:];|&])(psql|pgcli)([[:space:]]|$)'; then
+  # mysql and mariadb take the same lowercase -h, so the same reasoning covers them.
+  #
+  # `pg_dump` and `mysqldump` are deliberately absent: a dump is a read, and reads are allowed.
+  if printf '%s' "${segment}" | grep -qiE "(^|[[:space:];|&])(${SQL_CLIENT_RE})([[:space:]]|$)"; then
     hosts=$(printf '%s' "${segment}" \
       | grep -oE '(^|[[:space:]])(-h|--host)[[:space:]=]+[^[:space:]]+' \
       | sed -E 's/.*(-h|--host)[[:space:]=]+//' || true)

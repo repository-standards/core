@@ -24,6 +24,17 @@ const FACTS = [
     claims: [{ file: "README.md", pattern: "the (\\d+) shipped skills" }],
   },
   {
+    // A glob whose wildcard is its FIRST path segment, which is how a monorepo counts a file
+    // that exists once per top-level package. The walk started at the fixed part of the glob,
+    // that part was the empty string, and the count came back 0. Zero is the dangerous answer
+    // because it is a number: the run did not error, it reported `the source says "0"` and
+    // blamed the prose. A repository with thirteen component changelogs was told it had none.
+    id: "top-level-changelogs",
+    what: "how many component changelogs this monorepo carries",
+    home: { count: "*/CHANGELOG.md" },
+    claims: [{ file: "README.md", pattern: "(\\d+) component changelogs" }],
+  },
+  {
     id: "slug",
     what: "where the tree is degit'd from",
     home: { match: { file: "README.md", pattern: "npx degit (\\S+)" } },
@@ -43,7 +54,10 @@ const FACTS = [
 const BASE = {
   "tree/skills/one/SKILL.md": "# one\n",
   "tree/skills/two/SKILL.md": "# two\n",
-  "README.md": "the 2 shipped skills\n\nnpx degit owner/repo\n\nrules are numbered R1-R2\n",
+  "README.md": "the 2 shipped skills\n\nnpx degit owner/repo\n\nrules are numbered R1-R2\n\n3 component changelogs\n",
+  "actionpack/CHANGELOG.md": "# actionpack\n",
+  "activerecord/CHANGELOG.md": "# activerecord\n",
+  "railties/CHANGELOG.md": "# railties\n",
   "docs/adopt.md": "run npx degit owner/repo to start\n",
   "SPEC.md": "# Spec\n\n- **R1.** a rule\n- **R2.** another rule\n",
 };
@@ -95,6 +109,18 @@ const CASES = [
     says: "matches nothing",
     files: { "SPEC.md": "# Spec\n\nno rules here any more\n" },
   },
+  {
+    name: "a wildcard in the first path segment counts, instead of silently reporting zero",
+    fails: false,
+    says: "top-level-changelogs = 3",
+  },
+  {
+    name: "and that count still moves when a package is added",
+    fails: true,
+    says: 'says "3", the source says "4"',
+    files: { "actionmailer/CHANGELOG.md": "# actionmailer\n" },
+  },
+
   // A repo that declares no facts is not a repo with drift - the shipped guard runs
   // in every adopting repo and must stay quiet where nothing was declared.
   { name: "a repo with no declared facts passes", fails: false, says: "skipping", files: {}, args: [] },

@@ -16,6 +16,46 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Four defects two real adoptions found, one of them in a guard (2026-08-07)
+
+Real L3 adoptions onto `BurntSushi/ripgrep` and `rails/rails` - the first Rust and the first Ruby
+repository this standard has ever been run against for real. Every finding below was reproduced
+here before it was fixed.
+
+**The database guard was Postgres-only, and silence read as approval.**
+`no-remote-db-writes.sh` matched `psql`, `pgcli` and `postgres://` and nothing else, so
+`mysql -h db.prod.example.com -e "DROP TABLE users"` went straight through it, as did a
+`mysql2://` connection string. The guard prints only when it refuses, which makes a gap
+indistinguishable from a decision. Every one of the shipped verifier's cases passed the whole
+time, because not one of them was MySQL - which is what a case list proves when it only covers
+the shape somebody already had in mind. The SQL family is covered now, with eight new cases.
+`pg_dump` and `mysqldump` stay out of the client list on purpose: a dump is a read.
+
+**A setext heading is a heading.** The section check was ATX-only, so a changelog that underlines
+its headings - equally valid markdown, and what a changelog older than the ATX habit tends to
+use - was told its `Unreleased` section was missing while the word sat there in the file.
+ripgrep's changelog is setext throughout and its release checklist instructs maintainers to write
+it that way, so the only way to satisfy the check was to restyle somebody else's changelog. Three
+cases pin the fix, including the two false positives it must not produce: a table row above its
+delimiter, and a section shown inside a code fence.
+
+**`facts-check` answered 0 for a glob whose wildcard came first.** `*/CHANGELOG.md` is how a
+monorepo counts a file that exists once per package. The walk started at the glob's fixed part,
+that part was the empty string, and the count came back zero - reported not as an error but as
+`says "thirteen", the source says "0"`, blaming the prose and pointing the reader at the one
+thing that was right. Rails has thirteen component changelogs and was told it had none.
+
+**Nothing checked which branch the shipped workflows name.** All three carry `branches: [main]`,
+and `requiredKeys` can only assert that `on.push` exists, never what it contains. A repository
+whose default branch is `master` reaches drift 0 with a trigger that can never fire, while
+`spec-guard.yml`'s own comment claims it is gated from the first push. `self-verify` now warns
+when the named branch is not the repository's default, and stays silent when it cannot read one -
+a repo with no remote is not a repo with a problem.
+
+The adoption skill also still told adopters that `spec-guard.yml` reads `.nvmrc`. It has not for
+some time; the shipped workflow pins an exact version and its own comment explains why. Both
+adoptions quoted the instruction back. Corrected, and the branch trap documented beside it.
+
 ### A stack's spec pages linked back to a page only the core has (2026-08-07)
 
 The moment the node stack gained a `specs/` tree, the site deploy went red. Four generated spec

@@ -88,9 +88,24 @@ const readText = (file) => {
 const homeValue = (fact) => {
   const { home } = fact;
   if (home.count) {
-    const base = home.count.split("/").slice(0, -1).join("/").split("*")[0].replace(/\/$/, "");
+    // The directory to walk is the fixed part of the glob, up to the first wildcard. When the
+    // wildcard IS the first segment - `*/CHANGELOG.md`, which is how a monorepo counts a file
+    // that exists once per top-level package - that fixed part is the empty string, `walk("")`
+    // finds nothing, and the count comes back 0.
+    //
+    // Zero is the dangerous answer, because it is a number. The run does not error; it reports
+    // `says "thirteen", the source says "0"` and blames the prose, which is correct-looking,
+    // confidently wrong, and points the reader at the one thing that was right. A repository
+    // with thirteen changelogs was told it had none.
+    //
+    // Walking `.` then prefixes every result with `./`, which the glob's own regex does not
+    // expect, so the paths are normalised back before matching. Changing only the base still
+    // reported 0, by the second route.
+    const fixed = home.count.split("/").slice(0, -1).join("/").split("*")[0].replace(/\/$/, "");
+    const base = fixed === "" ? "." : fixed;
     const re = globToRegExp(home.count);
-    return String(walk(base).filter((f) => re.test(f)).length);
+    const found = walk(base).map((f) => (f.startsWith("./") ? f.slice(2) : f));
+    return String(found.filter((f) => re.test(f)).length);
   }
   if (home.read) return readText(home.read).trim();
   if (home.match) {
