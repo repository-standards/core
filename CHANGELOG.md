@@ -16,7 +16,30 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
-### Four defects two real adoptions found, one of them in a guard (2026-08-07)
+### The conversations are readable, and every typed line says who typed it (2026-08-07)
+
+The human suite published three fractions and, until now, no way to disagree with them. The
+conversation behind a verdict lived in a JSON file, reconstructable by eye if you were willing to
+read a turn array. So the numbers were auditable and the judgement behind them was not.
+
+`scenarios/` now carries one generated page per run: every observation rendered as the
+conversation it was, with what was typed, what the agent did, where it ended up, where a person
+would have given up, and why the verdict says what it says.
+
+Two rules shape the rendering, and both exist to stop the page flattering itself.
+
+**A user turn is quoted; an agent turn is not.** The typed lines are text somebody actually typed.
+The agent lines in these runs are the scorer's account of what happened, written afterwards - so
+they render as description, labelled as description, never styled as speech. Where the scorer
+quoted the agent, the quotation marks are theirs and stay inside their sentence.
+
+**Every typed line names its source, derived rather than asserted.** An observation's opening line
+is checked against the corpus row it cites and labelled verbatim when it matches. Every line after
+it is labelled as written by the person scoring the run, improvising a user who does not know the
+product. Nine of eighty-eight turns had said so by hand; the other seventy-nine read as though a
+stranger had typed them, which is the single assumption this suite cannot afford a reader to make.
+Fifteen turns carry that label now, and the shape it exposes is worth stating: most observations
+are one prompt and one reply, not a conversation.
 
 Real L3 adoptions onto `BurntSushi/ripgrep` and `rails/rails` - the first Rust and the first Ruby
 repository this standard has ever been run against for real. Every finding below was reproduced

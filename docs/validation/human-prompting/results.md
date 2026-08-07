@@ -42,6 +42,11 @@ Verdicts across every run: 41 pass, 25 partial, 11 fail.
 | [`2026-08-07-c-python.json`](runs/2026-08-07-c-python.json) | 34 | 39 agent turns | **22/36** (61%) <br><sub>3 n/a</sub> | **36/39** (92%) | **28/39** (72%) | 13 pass, 14 partial, 7 fail | `$mode_limitation` |
 | [`2026-08-07-d-mixed.json`](runs/2026-08-07-d-mixed.json) | 11 | 13 agent turns | **13/13** (100%) | **13/13** (100%) | **13/13** (100%) | 7 pass, 4 partial | `$method_caveat`<br>`$not_reached` |
 
+**Every conversation behind these numbers is readable.** One page per run under
+[`scenarios/`](scenarios/), rendered from the same rows: what was typed, what the agent did,
+where it ended up, and why the verdict says what it says. A number nobody can argue with is not
+evidence, so the argument is published next to it.
+
 **Read the caveats before the fractions.** The last column lists, verbatim, the keys each run
 declares about the limits of its own measurement - not a summary, because summarising them here
 would put a second version of the run's own words on a page it cannot correct. A run scoring
