@@ -25,7 +25,15 @@ That repository's changelog is `ChangeLog.md`. The manifest requires `CHANGELOG.
 case the manifest names is the case the repo has to carry. What follows from that report is the
 defect: the adopter creates the file, and on APFS or NTFS **that write lands on the existing
 `ChangeLog.md`**. Reproduced on APFS: after writing, the directory still lists one file and its
-contents are the new ones. 344 KB of release history, gone, by doing exactly what the run said.
+contents are the new ones. A 344 KB changelog replaced by a template, by doing exactly what the
+run said.
+
+**How bad, stated accurately, because the first version of this entry overstated it.** Inside a
+git repository the file is tracked, so the overwrite lands as ` M ChangeLog.md` and
+`git checkout --` restores it in full. It is not unrecoverable. What makes it dangerous is that it
+is *quiet*: an adoption commit runs to a hundred files and is staged with `git add -A`, so one
+modified line sits among a hundred added ones, describing a file the adopter never meant to touch.
+Read the diff and it is obvious. Do not, and a replaced changelog is committed looking deliberate.
 
 The trap is that the two halves disagree and both are right. `existsSync("CHANGELOG.md")` returns
 true, because the kernel resolves case-insensitively. The listing says false. `self-verify` uses
