@@ -334,12 +334,21 @@ npx degit repository-standards/core/standard
      accept red CI while the waves run, (b) hold them until the final wave, (c) land them
      now with the self-verify step set to `--warn` and flip it to blocking at drift 0.
      Never land them silently.
-   - **`spec-guard.yml` reads the Node version from `.nvmrc`, and `.nvmrc` is optional.**
-     A repo that pins its runtime elsewhere - `honojs/hono` pins node, bun and deno
-     together in `.tool-versions`, and its own CI already feeds that file to `setup-node` -
-     reaches drift 0 carrying a required workflow whose first setup step names a file that
-     is not there. Either land `.nvmrc` as well, or point the step at the pin the repo
-     already has. Do not leave the reference dangling because the manifest did not complain.
+   - **`spec-guard.yml` pins an exact Node version, and the repo probably pins one elsewhere.**
+     The shipped workflow says `node-version: "24.18.0"` rather than reading `.nvmrc`, because
+     the workflow is a required manifest entry and `.nvmrc` is an optional one: reading the file
+     made a required artifact depend on an optional one, and a repo that took the workflow
+     without the pin got a job that died at `setup-node` before a guard ran.
+     This entry is merge-class, so pointing the step at the pin the repo already has is a good
+     local adaptation - `honojs/hono` pins node, bun and deno together in `.tool-versions` and
+     already feeds that file to `setup-node`. Make it deliberately. Two runtimes named in one
+     repo, disagreeing, is worse than either.
+   - **Nothing checks which branch the shipped workflows name.** All three carry
+     `branches: [main]`, and the manifest's `requiredKeys` for them assert that `on.push` and
+     `on.pull_request` exist, never what they contain. A repo whose default branch is `master`
+     reaches drift 0 with a push trigger that can never fire, and the workflow's own comment
+     claiming it is gated from the first push is quietly false. `self-verify` warns about this
+     when it can read the default branch; change the value as you land the file.
    - `.github/workflows/spec-guard.yml` is a **reference implementation of the R16 gate**
      (run `self-verify`, block the PR on nonzero drift), written for GitHub Actions because
      that is the common case - it is not a mandate to use GitHub Actions. If the repo's

@@ -350,11 +350,15 @@ const fixtureTree = () => {
   return dir;
 };
 
-const checkDrift = (name, { editAgents, failsAbout }) => {
+const checkDrift = (name, { editAgents, editChangelog, failsAbout }) => {
   const dir = fixtureTree();
   if (editAgents) {
     const p = join(dir, "AGENTS.md");
     writeFileSync(p, editAgents(readFileSync(p, "utf8")));
+  }
+  if (editChangelog) {
+    const p = join(dir, "CHANGELOG.md");
+    writeFileSync(p, editChangelog(readFileSync(p, "utf8")));
   }
   const r = spawnSync("node", [join(dir, "scripts/self-verify.mjs"), "--skeleton"], { cwd: dir, encoding: "utf8" });
   const out = `${r.stdout ?? ""}${r.stderr ?? ""}`;
@@ -392,6 +396,29 @@ checkDrift("the shipped tree carries every required section - no false positive"
     ['missing the "The loop runs itself (unprompted)" section', false],
     ["missing the \"Volunteer, don't wait to be asked\" section", false],
   ],
+});
+
+// Markdown has two heading forms and the section check only ever saw one. A repository whose
+// changelog underlines its headings - setext, equally valid, and what a changelog older than the
+// ATX habit tends to use - was told its `Unreleased` section was missing while the word sat
+// there in the file. The only way to satisfy the check was to restyle somebody else's changelog,
+// which is the standard rewriting a repository to suit its own regex.
+//
+// The rewrite has a false-positive edge the fix has to hold: a table row sits directly above a
+// `|---|---|` delimiter, which reads exactly like a setext underline if the check is careless.
+checkDrift("a setext Unreleased heading is a heading", {
+  editChangelog: () => "Changelog\n=========\n\nUnreleased\n----------\n\nTBD\n",
+  failsAbout: [['CHANGELOG.md is missing the "Unreleased" section', false]],
+});
+
+checkDrift("a table row above its delimiter is not a heading", {
+  editChangelog: () => "# Changelog\n\n| Unreleased | notes |\n|---|---|\n| a | b |\n",
+  failsAbout: [['CHANGELOG.md is missing the "Unreleased" section', true]],
+});
+
+checkDrift("an Unreleased section shown inside a code fence is an example, not the section", {
+  editChangelog: () => "# Changelog\n\nWrite it like this:\n\n```\nUnreleased\n----------\n```\n",
+  failsAbout: [['CHANGELOG.md is missing the "Unreleased" section', true]],
 });
 
 // The decision catalog is a menu, and the run must not describe it as a quota. R7 "names no

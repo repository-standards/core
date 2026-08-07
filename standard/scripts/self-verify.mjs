@@ -205,6 +205,34 @@ if (manifest && pinned && manifest.version && manifest.version !== pinned) {
 
 // 2. manifest checks, or fallback skeleton --------------------------------------
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// Markdown has two heading forms and this only ever looked for one. `## Unreleased` matched;
+// `Unreleased` underlined with `---` or `===` - setext, equally valid, and what a changelog
+// written before ATX became the habit tends to use - did not. A repository whose changelog is
+// setext throughout was told its `Unreleased` section was missing while the heading sat there
+// in the file, and the only way to satisfy the check was to restyle somebody else's changelog.
+//
+// Setext underlines the PREVIOUS line, so the text and its marker are two lines that have to be
+// read together. Fenced blocks are skipped: a sample changelog inside a code fence is an example
+// of a section, not the section.
+const FENCE_LINE = /^\s*(?:```|~~~)/;
+function hasHeading(body, heading) {
+  const atx = new RegExp(`^#{1,6}\\s+.*${escapeRe(heading)}`, "mi");
+  if (atx.test(body)) return true;
+  const lines = body.split("\n");
+  const wanted = new RegExp(`^\\s*${escapeRe(heading)}\\b.*$`, "i");
+  let inFence = false;
+  for (let i = 0; i < lines.length - 1; i++) {
+    if (FENCE_LINE.test(lines[i])) { inFence = !inFence; continue; }
+    if (inFence) continue;
+    // A setext underline is a run of `=` or `-` alone on the line. A single `-` is a list item
+    // and a row of `---` under a table row is a delimiter, so the previous line has to read as
+    // a heading rather than as content.
+    if (!/^\s*(=+|-{2,})\s*$/.test(lines[i + 1])) continue;
+    if (wanted.test(lines[i])) return true;
+  }
+  return false;
+}
 const hasFile = (p, alts = []) => [p, ...alts].some((x) => exists(x));
 const isCore = (entry) => !entry.profile || entry.profile === "core"; // no profile = core (pre-ADR-011)
 
@@ -610,7 +638,51 @@ const missingPrerequisites = (g) => {
   return missing;
 };
 
+// The branch a shipped workflow triggers on.
+//
+// All three workflows ship `branches: [main]`, and the manifest can only require that a key
+// EXISTS - `on.push`, `on.pull_request` - never what it contains. So a repository whose default
+// branch is `master` takes the file verbatim, reaches drift 0, and carries a push trigger that
+// can never fire. `spec-guard.yml`'s own comment says it is gated from the first push; on that
+// repo the sentence was silently false, and nothing anywhere said so.
+//
+// A WARN, not drift: the file is merge-class and the branch name is exactly the kind of local
+// adaptation an adopter is expected to make. What was missing was anyone telling them.
+//
+// Silent when the default branch cannot be read - a repo with no remote is not a repo with a
+// problem, and guessing from the current branch would fire on every feature branch.
+const defaultBranch = () => {
+  try {
+    const ref = execSync("git symbolic-ref --short refs/remotes/origin/HEAD", {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+    return ref.replace(/^origin\//, "") || null;
+  } catch {
+    return null;
+  }
+};
+
+const checkWorkflowBranches = () => {
+  const branch = defaultBranch();
+  if (!branch) return;
+  for (const f of manifest.files || []) {
+    if (!/^\.github\/workflows\/.*\.ya?ml$/.test(f.path)) continue;
+    const at = [f.path, ...(f.altPaths || [])].find((x) => exists(x));
+    if (!at) continue;
+    const named = [...readFileSync(at, "utf8").matchAll(/^\s*branches:\s*\[([^\]]*)\]/gm)]
+      .flatMap((m) => m[1].split(",").map((b) => b.trim().replace(/^['"]|['"]$/g, "")))
+      .filter(Boolean);
+    if (!named.length || named.includes(branch)) continue;
+    warning(
+      "file",
+      `${at} triggers on ${named.map((b) => `"${b}"`).join(", ")} and this repo's default branch is "${branch}" - the trigger cannot fire, and nothing else reports it because the manifest can only require that the key exists, not what it names`,
+    );
+  }
+};
+
 if (manifest) {
+  checkWorkflowBranches();
   // method docs adopted by reference (ADR-004/023): named, never file-checked
   if ((manifest.references || []).length) {
     note("reference", `${manifest.references.length} method docs adopted by reference from the living standard - always latest (ADR-023/025); read them in the standards repo, never copy them here`);
@@ -650,8 +722,7 @@ if (manifest) {
       continue;
     }
     const body = readFileSync(at, "utf8");
-    const re = new RegExp(`^#{1,6}\\s+.*${escapeRe(s.heading)}`, "mi");
-    if (re.test(body)) pass("section", `${at} > "${s.heading}"`);
+    if (hasHeading(body, s.heading)) pass("section", `${at} > "${s.heading}"`);
     else if (s.required) failOrExcept("section", `${s.file}#${s.heading}`, "section", `${at} is missing the "${s.heading}" section - ${s.purpose}`);
   }
   // static guards (skip self to avoid recursion; diff guards run in CI on the PR diff)

@@ -137,7 +137,7 @@
       "profile": "core",
       "since": "0.4.0",
       "rule": "R16",
-      "sha256": "ab53c136e359f1557dd4cc3d41d8f9aa7d15c40611c1e728dcf51f2b9525fd5a"
+      "sha256": "3bd4e734da4d5c350b9812dc9fc2cdd9f52986ce7fd42d79c3a6d0facfba6187"
     },
     {
       "path": "scripts/spec-structure.mjs",
@@ -157,7 +157,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R4",
-      "sha256": "3afdeea3f19b27624b69bfb0d00e0ceb1165bdeec53692a630b4596113ed6edf"
+      "sha256": "b8dae5f0a88bc8a172deccedb26d54ffdc4e0ab6b8fdcef129e535f3e5a99cd8"
     },
     {
       "path": "docs/facts.json",
@@ -329,7 +329,7 @@
         "lib.sh": "06f1822d3110e5de9eb68d253bbafae6121326a30815955a48bd78578d428e34",
         "no-ci-secret-writes.sh": "db8381dd7b3e58b7a349c8bb3312a03ac792cffa0a04a781d790f2b14ef61793",
         "no-force-push.sh": "014a38425cf4716a9057183b6c09b68e86960e114645cabaa9e6cccdf9a3eb2a",
-        "no-remote-db-writes.sh": "bc15a3be91c420fddad1691efe3a548e3e0487c20acd4214a1fbf544c66ca686"
+        "no-remote-db-writes.sh": "08faa4574d14c73f49a8704705ec96788488800f337950eedb4270946c860e3c"
       }
     },
     {
@@ -340,7 +340,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R19",
-      "sha256": "93395fd0c51842747d49cc0beb58dbe78f94d399f0e8e02bb985f2a7f5699788"
+      "sha256": "a34e07785bdbc145ecd2d8f67e8311842b634fb08f378370ab7b38903689ca1c"
     },
     {
       "path": "docs/PRINCIPLES.md",
