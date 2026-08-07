@@ -100,7 +100,9 @@ document.body.append(
 /* ---------- tabs ---------- */
 
 // A tab whose source the repository does not keep is not rendered empty - it is absent.
-const reportable = D.cycles.some((c) => c.stats) || D.entries.length > 3
+// Reports come from closed cycles and nothing else. A repository without one gets no
+// tab rather than a page of activity charts dressed as reports.
+const reportable = D.cycles.some((c) => c.stats)
 const TABS = [
   { id: 'now', label: 'Now' },
   { id: 'timeline', label: 'Timeline', skip: !D.cycles.length },
@@ -733,8 +735,8 @@ if (views.reports) {
 
   add(
     v,
-    el('p', { class: 'eyebrow', text: 'Four questions, answered from the repository' }),
-    el('p', { class: 'lede', text: 'Only the reports a team actually acts on: did we finish what we said, how fast do we really go, how much is landing, and where is the effort going. Every number is read from a file in this repository - none of it is entered anywhere else.' }),
+    el('p', { class: 'eyebrow', text: 'Measured, from closed cycles' }),
+    el('p', { class: 'lede', text: 'Two questions a team acts on: did we finish what we said we would, and how fast do we actually go. Both are read from what cycle-close wrote when each cycle ended - no estimates feed them, and nothing is entered anywhere else.' }),
   )
 
   /* 1. did the cycle deliver what it planned */
@@ -817,109 +819,12 @@ if (views.reports) {
     )
   }
 
-  /* 3. how much is landing */
-  if (D.entries.length > 3) {
-    const state = { grain: 'week' }
-    const host = el('div')
-    const toggle = ['week', 'month'].map((g) =>
-      el('button', {
-        class: 'chip',
-        type: 'button',
-        'aria-pressed': String(g === 'week'),
-        text: 'by ' + g,
-        on: {
-          click: () => {
-            state.grain = g
-            for (const b of toggle) b.setAttribute('aria-pressed', String(b.textContent === 'by ' + g))
-            drawVolume()
-          },
-        },
-      }),
-    )
-
-    add(
-      v,
-      el('h2', { class: 'section', text: 'How much is landing' }),
-      el('p', { class: 'lede', text: 'Recorded changes per period, from the changelog. It answers "is the pace holding" without anyone counting commits by hand.' }),
-      el('div', { class: 'controls' }, toggle),
-      host,
-    )
-
-    function drawVolume() {
-      const buckets = new Map()
-      for (const e of D.entries) {
-        const d = new Date(stamp(e.date))
-        let key
-        if (state.grain === 'month') key = e.date.slice(0, 7)
-        else {
-          const m = new Date(d)
-          m.setUTCDate(m.getUTCDate() - ((m.getUTCDay() + 6) % 7))
-          key = isoOf(m.getTime())
-        }
-        buckets.set(key, (buckets.get(key) || 0) + 1)
-      }
-      const rows = [...buckets.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1)).slice(-14)
-      const max = Math.max(...rows.map((r) => r[1]), 1)
-      host.replaceChildren(
-        el('div', { class: 'card' }, [
-          el(
-            'div',
-            { class: 'bars tall' },
-            rows.map(([k, n]) =>
-              el('div', { class: 'barwrap', title: n + ' changes · ' + (state.grain === 'month' ? k : 'week of ' + nice(k)) }, [
-                el('div', { class: 'bar', style: 'height:' + Math.max(2, (n / max) * 100) + '%' }),
-                el('small', { text: state.grain === 'month' ? k.slice(5) : shortDate(k) }),
-              ]),
-            ),
-          ),
-          el('p', { class: 'meta', text: 'Busiest ' + state.grain + ': ' + max + ' changes. ' + D.entries.length + ' recorded in total.' }),
-        ]),
-      )
-    }
-    drawVolume()
-  }
-
-  /* 4. where the effort went */
-  {
-    const finished = D.cycles.flatMap((c) => c.items).concat(D.items).filter((i) => i.status === 'done' || i.status === 'split')
-    const byCat = new Map()
-    for (const i of finished) {
-      const k = i.cap || i.epic || 'unattributed'
-      byCat.set(k, (byCat.get(k) || 0) + 1)
-    }
-    const rows = [...byCat.entries()].sort((a, b) => b[1] - a[1])
-    if (rows.length > 1) {
-      const max = rows[0][1]
-      add(
-        v,
-        el('h2', { class: 'section', text: 'Where the effort went' }),
-        el('p', { class: 'lede', text: 'Finished items by the capability they belong to. It answers the question a stakeholder actually asks - "what did we spend the quarter on" - without a timesheet.' }),
-        el('div', { class: 'card' }, [
-          el(
-            'div',
-            { class: 'hbars' },
-            rows.map(([k, n]) =>
-              el('div', { class: 'hrow' }, [
-                el('span', { class: 'hlabel', text: k }),
-                el('span', { class: 'htrack' }, [
-                  el('i', { class: 'hseg', style: 'width:' + (n / max) * 100 + '%;background:' + catVar(k) }),
-                ]),
-                el('span', { class: 'hval', text: String(n) }),
-              ]),
-            ),
-          ),
-          el('p', { class: 'meta', text: finished.length + ' finished items counted, across ' + rows.length + ' areas.' }),
-        ]),
-      )
-    }
-  }
 }
 
 /* ---------- view: changelog ---------- */
 
 if (views.changelog) {
   const v = views.changelog
-  const max = Math.max(...D.weeks.map((w) => w.count), 1)
   const releaseByDate = new Map(D.releases.filter((r) => r.date).map((r) => [r.date, r]))
   const PER_DAY = 6
 
@@ -1025,12 +930,6 @@ if (views.docs) {
   add(
     v,
     el('p', { class: 'eyebrow', text: 'The reasoning, kept with the code' }),
-    tiles([
-      D.meta.rules ? tile('Rules', D.meta.rules, '', 'the normative core') : null,
-      tile('Decisions', D.decisions.length, '', 'forks taken, with reasons'),
-      tile('Capability specs', D.specs.length, '', 'one per thing the product does'),
-      D.meta.skills ? tile('Procedures', D.meta.skills, '', 'runnable by an agent') : null,
-    ]),
     el('div', { class: 'controls searchrow' }, [search]),
     GROUPS.length > 1 ? chipRow : null,
     host,

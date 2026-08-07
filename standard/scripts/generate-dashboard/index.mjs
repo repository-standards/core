@@ -447,33 +447,6 @@ function parseTimeline() {
   }
 }
 
-/* ---------- shipping rhythm ---------- */
-
-function weeklyActivity(entries) {
-  if (!entries.length) return []
-  const DAY = 86400000
-  const iso = (d) => d.toISOString().slice(0, 10)
-  const monday = (d) => {
-    const m = new Date(d)
-    m.setUTCDate(m.getUTCDate() - ((m.getUTCDay() + 6) % 7))
-    return m
-  }
-  const last = monday(new Date(entries[0].date + 'T00:00:00Z'))
-  const first = monday(new Date(entries[entries.length - 1].date + 'T00:00:00Z'))
-  const span = Math.min(12, Math.round((last - first) / (7 * DAY)) + 1)
-  const weeks = []
-  for (let i = span - 1; i >= 0; i--) {
-    const start = new Date(last.getTime() - i * 7 * DAY)
-    const end = new Date(start.getTime() + 7 * DAY)
-    weeks.push({
-      start: iso(start),
-      end: iso(new Date(end.getTime() - DAY)),
-      count: entries.filter((e) => e.date >= iso(start) && e.date < iso(end)).length,
-    })
-  }
-  return weeks
-}
-
 /* ---------- assemble ---------- */
 
 const git = (...args) => {
@@ -534,7 +507,6 @@ const data = {
   timeline: parseTimeline(),
   entries,
   releases,
-  weeks: weeklyActivity(entries),
   decisions: parseDecisions(),
   questions: parseQuestions(),
   ideas: parseIdeas(),
