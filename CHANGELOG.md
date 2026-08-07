@@ -16,6 +16,28 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A listed repository was being counted as an assessed one (2026-08-07)
+
+The validation page opened its honesty section with "103 of 118 targets were assessed at depth
+L1". Both numbers were generated and both were right about what they measured - and the sentence
+around them was not. **76 of the 118 rows have no observation in `runs/` at all.** They are
+repositories somebody put on the list, each carrying a `shape` and a `quality_evidence` line
+written from the repository's own metadata, which is a description rather than a method pass run
+against it.
+
+`assessed` was the wider word absorbing the difference, in the one section of the page whose
+whole job is to keep the numbers from being read as more than they are.
+
+The page now leads with the split, computed: how many rows exist, how many have at least one
+observation, and how many are listed and nothing more, broken out by depth. **42** is the number
+a coverage claim can rest on. The old sentence stays underneath, saying "rows" where it used to
+say "targets assessed", and pointing at the row above.
+
+One bug in the counting was caught before publishing rather than after: the first version
+stripped only the `repo:` prefix from an observation's target, so both fixtures read as
+unobserved - directly contradicting the paragraph two lines below, which calls them the only
+targets that lived a full lifecycle. Every `<kind>:` prefix is stripped now.
+
 ### The writing rule the tree shipped and broke (2026-08-07)
 
 `standard/docs/conventions.md` says "ASCII hyphen `-` only, everywhere (prose, docs, UI copy,

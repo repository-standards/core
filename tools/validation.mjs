@@ -244,6 +244,29 @@ const repoTargets = targets.filter((t) => t.kind === "repo");
 const adoptedRepos = repoTargets.filter((t) => t.depth === "L3" || t.depth === "L4");
 const fixtureTargets = targets.filter((t) => t.kind === "fixture");
 
+// A target row is a repository somebody put on the list. It is not, by itself, a result.
+// Most rows carry `quality_evidence` and `shape` written from the repository's own metadata,
+// which is a description rather than a method pass, and for a long time the honesty paragraph
+// said all of them "were assessed". Two thirds had no observation in `runs/` at all, so the
+// word was carrying weight the data could not hold. Split it: listed, and observed.
+// A target is written `<kind>:<slug>` in a run - `repo:`, `fixture:`, `self:` - and may carry
+// an `@ <ref>` suffix naming the commit it ran against. Strip both to reach the slug. Stripping
+// only `repo:` was the first version of this and it read every fixture as unobserved, which
+// contradicted the paragraph two lines below saying the fixtures are the only full lifecycles.
+const slugOf = (t) => t.replace(/^[a-z]+:/, "").split("@")[0].trim();
+const observedSlugs = new Set(
+  observations
+    .map((o) => o.target)
+    .filter((t) => typeof t === "string")
+    .map(slugOf),
+);
+// An observation against a target with no row is already refused above, so every slug in this
+// set resolves; what is new here is the other direction, which nothing looked at.
+const observedTargets = targets.filter((t) => observedSlugs.has(t.slug));
+const listedOnly = targets.filter((t) => !observedSlugs.has(t.slug));
+const listedOnlyByDepth = {};
+for (const t of listedOnly) listedOnlyByDepth[t.depth] = (listedOnlyByDepth[t.depth] ?? 0) + 1;
+
 const byRound = {};
 for (const t of targets) byRound[t.round] = (byRound[t.round] ?? 0) + 1;
 
@@ -332,10 +355,22 @@ written rather than generated.
 
 ## What this does not prove - read this before the numbers
 
-- **Assessment is not adoption.** ${targets.filter((t) => t.depth === "L1").length} of ${targets.length} targets were assessed at
+- **A listed target is not an observed one.** \`targets.json\` has ${targets.length} rows, and
+  **${observedTargets.length} of them have at least one observation in \`runs/\`**. The other
+  ${listedOnly.length} - ${
+    Object.keys(listedOnlyByDepth).length === 1
+      ? `all of them at ${Object.keys(listedOnlyByDepth)[0]}`
+      : Object.entries(listedOnlyByDepth).sort().map(([d, n]) => `${n} at ${d}`).join(", ")
+  } - are
+  listed and nothing more: a repository somebody put on the list, carrying a \`shape\` and a
+  \`quality_evidence\` line written from its own metadata rather than from a method pass run
+  against it. This page used to call all ${targets.length} of them "assessed", which was the
+  wider word doing work the data could not hold. **${observedTargets.length}** is the number any
+  claim about coverage has to be built on.
+- **Assessment is not adoption.** ${targets.filter((t) => t.depth === "L1").length} of ${targets.length} rows sit at
   depth **L1** - a read-only clone, method passes applied, nothing changed. "We assessed
   ${repoTargets.length} public repositories" and "we adopted ${repoTargets.length} repositories" are different
-  claims, and only the first one is true.
+  claims, and only the first one is even close to true - see the row above for how much closer.
   ${
     adoptedRepos.length === 0
       ? "No repository this project did not write has been adopted at all. `FIELD-1` in `backlog.md` names the gap: until the align router is run against somebody else's repo, \"walks a messy repo back to health\" is a design claim supported by dry runs."
