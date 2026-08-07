@@ -601,7 +601,7 @@ function lock(html, data) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Work</title>
+<title>Dashboard</title>
 <style>
 ${readFileSync(join(here, 'src', 'gate.css'), 'utf8')}</style>
 </head>
@@ -609,7 +609,7 @@ ${readFileSync(join(here, 'src', 'gate.css'), 'utf8')}</style>
 <form id="gate" autocomplete="on">
   <!-- The repository is not named until the password names it. A locked page that announces
        whose backlog it is has given away the one thing the reader's employer may care about. -->
-  <h1>Work <span>- locked</span></h1>
+  <h1>Dashboard <span>- locked</span></h1>
   <p>This page is encrypted. Enter the password you were given.</p>
   <label for="pw">Password</label>
   <input id="pw" name="password" type="password" autocomplete="current-password" autofocus>
@@ -652,7 +652,7 @@ function build() {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Work - ${esc(data.meta.name)}</title>
+<title>Dashboard - ${esc(data.meta.name)}</title>
 <style>
 ${readFileSync(join(here, 'src', 'page.css'), 'utf8')}</style>
 </head>

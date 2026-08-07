@@ -529,7 +529,7 @@
       "since": "unreleased",
       "rule": "R15",
       "sha256": {
-        "index.mjs": "0afb18b88b9e65e4fc604ba311af704cb24a59abc6c1544f0f64fc1dfc4453d8",
+        "index.mjs": "0534761755deb15a6cd488499ed61ddcd5e57135fb6ca415a1739f846fe9693e",
         "src/gate.css": "63a0b56a4491c5e3686835e15886d1440be4cc497a306a9caaa2a4678d15f07c",
         "src/gate.js": "741e6d0e9115aff4e44930021875f632044857b9bc3b5fb7522fa79f9b07105e",
         "src/page.css": "49a655af270a823e69e616d71f230e3e9a72f5282f38699c3bd47288b91f61e7",
