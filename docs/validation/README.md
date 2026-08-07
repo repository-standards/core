@@ -5,7 +5,7 @@ Does this actually work? Two halves answer it, and neither can answer it alone.
 | Suite | Asks | Reproducible |
 |---|---|---|
 | [**ai-prompting**](ai-prompting/README.md) | Does the machinery hold? Do the guards fire, does drift mean something, does every published number trace to a row of data? | Yes. Same input, same verdict, forever. |
-| [**human-prompting**](human-prompting/README.md) | Can somebody who does not know this product get a result by typing what they would naturally type? | No, and that is the point. |
+| [**human-prompting**](human-prompting/README.md) | Can somebody who does not know this product get a result by typing what they would naturally type? | No, and that is the point. [Results](human-prompting/results.md). |
 
 They are peers. A repository can pass every mechanical check and still be useless to a person,
 and the first suite would report `drift 0` the whole way down.

@@ -70,6 +70,10 @@ jobs:
         run: |
           node tools/validation.mjs --check
           node tools/validation-test.mjs
+      - name: human-prompting suite (ids unique, citations resolve, fractions match the rows) + its test
+        run: |
+          node tools/human-prompting.mjs --check
+          node tools/human-prompting-test.mjs
       - name: site (generate + check landing and docs) + the landing gate's test
         run: |
           node tools/docsite.mjs
