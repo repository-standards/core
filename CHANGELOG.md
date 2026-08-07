@@ -16,6 +16,29 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The writing rule the tree shipped and broke (2026-08-07)
+
+`standard/docs/conventions.md` says "ASCII hyphen `-` only, everywhere (prose, docs, UI copy,
+commits, PRs)". Six em dashes sat in two shipped skills, `spec-clarify` and `spec-specify`, and
+went out with every adoption.
+
+The rule *was* enforced, in the wrong place: `tools/site-check.mjs` fails a long dash on the
+generated site HTML. That catches it after rendering, on this project's own pages, and never
+touches the markdown an adopter actually receives. Nothing looked at the source, which is where
+writing happens.
+
+`tools/prose-check.mjs` now checks it there, alongside the orphan-bullet rule it already carried.
+A dash inside a code span or a fenced block passes, and that is not a loophole: the conventions
+page states the rule by naming the two characters, so a check that could not read its own rule
+would be unusable. Same shape as the landing gate's carve-out for SVG path data. Eight cases
+cover it, including the conventions line itself and a dash sitting outside a code span on a line
+that has one.
+
+Both files are vendored from spec-kit, so the punctuation is upstream's rather than ours. That
+does not exempt them: a vendored file ships into every adopting repository, and the tree cannot
+hand out a rule it breaks. Each carries a `PATCHED` marker naming the change and its scope -
+prose only, no instruction, path or example touched.
+
 ### The human suite counts its own headline instead of asserting it (2026-08-07)
 
 `docs/validation/human-prompting/README.md` calls three fractions - `asked`, `checked`,
