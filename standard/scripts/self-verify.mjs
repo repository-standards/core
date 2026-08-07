@@ -100,6 +100,27 @@ const exists = (p) => {
   return parts.length > 0;
 };
 
+// The same path, spelled differently, on a filesystem that cannot tell them apart.
+//
+// Reporting "CHANGELOG.md is missing" is correct - the manifest names that case and the repo does
+// not carry it. What follows from the report is not: the adopter writes the file, and on APFS or
+// NTFS that write lands ON the existing `ChangeLog.md` and destroys it. Reproduced on APFS: after
+// writing `CHANGELOG.md` beside a `ChangeLog.md`, the directory still lists one file and its
+// contents are the new ones. A repository's entire release history, gone, by following the
+// procedure exactly.
+//
+// So a missing required file is checked for a case twin before the adopter is told to create it.
+// `existsSync` resolves case-insensitively where the platform does, which is precisely the signal:
+// the listing says no and the kernel says yes.
+const caseTwin = (p) => {
+  const parts = String(p).split("/").filter((s) => s && s !== ".");
+  if (!parts.length) return null;
+  const name = parts[parts.length - 1];
+  const dir = parts.slice(0, -1).join("/") || ".";
+  const twin = [...listing(dir)].find((e) => e !== name && e.toLowerCase() === name.toLowerCase());
+  return twin ? (dir === "." ? twin : `${dir}/${twin}`) : null;
+};
+
 const results = [];
 const pass = (name, msg) => results.push({ ok: true, name, msg });
 const fail = (name, msg) => results.push({ ok: false, name, msg });
@@ -701,6 +722,15 @@ if (manifest) {
       verifyContent(f);
       verifyKeys(f);
       continue;
+    }
+    // Said before the branch, because every branch below ends with somebody creating the file -
+    // `fill-from-repo` most of all, since that class means "you will author this at adoption".
+    const twin = caseTwin(f.path);
+    if (twin) {
+      warning(
+        "file",
+        `${f.path} is missing and ${twin} is here - the same name in another case. DO NOT CREATE ${f.path}: on a case-insensitive filesystem (macOS, Windows) that write lands on ${twin} and its contents are lost. Record an exception for ${f.path}, or agree a rename with the repo's owners first`,
+      );
     }
     if (skeleton && f.adapt === "fill-from-repo") note("file", `${f.path} is authored at adoption - absent from the skeleton by design`);
     else if (f.required) failOrExcept("file", f.path, "file", `${f.path} missing - ${f.purpose}`);

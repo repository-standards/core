@@ -16,6 +16,28 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Following the procedure exactly could destroy a repository's release history (2026-08-07)
+
+Found by the first C++ adoption, on `nlohmann/json`, and reproduced here before it was believed.
+
+That repository's changelog is `ChangeLog.md`. The manifest requires `CHANGELOG.md`, so
+`self-verify` reported it missing - correctly, because the check reads directory listings and the
+case the manifest names is the case the repo has to carry. What follows from that report is the
+defect: the adopter creates the file, and on APFS or NTFS **that write lands on the existing
+`ChangeLog.md`**. Reproduced on APFS: after writing, the directory still lists one file and its
+contents are the new ones. 344 KB of release history, gone, by doing exactly what the run said.
+
+The trap is that the two halves disagree and both are right. `existsSync("CHANGELOG.md")` returns
+true, because the kernel resolves case-insensitively. The listing says false. `self-verify` uses
+the listing, deliberately - and then sends somebody to create a file the filesystem already has.
+
+A required file that is missing is now checked for a case twin before anything else is said about
+it, and the warning names the file, the hazard and the two safe routes. It fires on every entry
+class, `fill-from-repo` included - that class means "you will author this at adoption", which is
+precisely the moment the write happens.
+
+Nothing in the skill, the onboarding guide or the manifest mentioned filesystem case sensitivity.
+
 ### The conversations are readable, and every typed line says who typed it (2026-08-07)
 
 The human suite published three fractions and, until now, no way to disagree with them. The
