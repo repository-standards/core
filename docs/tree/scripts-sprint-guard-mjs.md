@@ -1,18 +1,18 @@
 Proves the one-place invariant: an intent lives in the backlog pool **or** in exactly one
-cycle, never both and never two.
+sprint, never both and never two.
 
 ```
-node scripts/cycle-guard.mjs --block
+node scripts/sprint-guard.mjs --block
 ```
 
-Scale profile. A repository that does not run cycles has nothing for it to check.
+Scale profile. A repository that does not run sprints has nothing for it to check.
 
 ## What it refuses to let happen
 
 **The same intent in two places.** That is how "what are we doing right now" stops being
 answerable from the files: two answers, both plausible, neither marked stale.
 
-**The same intent in two places under two ids.** Copy a row into a cycle, renumber the copy
+**The same intent in two places under two ids.** Copy a row into a sprint, renumber the copy
 left in the pool, and every check keyed on the id agrees that nothing is wrong. So the title
 is checked too: one title in two files under two ids is one piece of work in two places. The
 one legitimate pair - a `split:<id>` row and the remainder row it names - is exempt.
@@ -26,14 +26,14 @@ stale block is the most common way a board lies, because it looks like informati
 no such row exists, the remainder is work that vanished at the close - and reading the status
 as finished without checking it would make three words in a cell a way to retire any row.
 
-**A closed cycle still holding what it did not finish.** Work that did not land returns to
-the pool; a cycle keeping it makes the pool an incomplete list of what is owed.
+**A closed sprint still holding what it did not finish.** Work that did not land returns to
+the pool; a sprint keeping it makes the pool an incomplete list of what is owed.
 
-**A pool pointing at a cycle that closed, or counting it wrong.** The `## In flight` table is
-what keeps the pool the single place to start reading. `/cycle-open` writes its row and
-`/cycle-close` removes it, so a row naming a closed cycle is one nobody removed, and an item
-count that disagrees with the cycle's real rows is the pool describing work it cannot see.
-Once the table holds any row, an open cycle nothing points at is caught too - otherwise
+**A pool pointing at a sprint that closed, or counting it wrong.** The `## In flight` table is
+what keeps the pool the single place to start reading. `/sprint-open` writes its row and
+`/sprint-close` removes it, so a row naming a closed sprint is one nobody removed, and an item
+count that disagrees with the sprint's real rows is the pool describing work it cannot see.
+Once the table holds any row, an open sprint nothing points at is caught too - otherwise
 deleting the row would be the cheapest way past all of it.
 
 ## How it reads a row
@@ -48,13 +48,13 @@ case**, and are reported using that row's own spelling. `ADR-auth` and `INV-2b` 
 id shapes, so a verbatim comparison fails a difference the author cannot see, and uppercasing
 the reference to compare it - which this guard did - failed `ADR-auth` outright.
 
-The block checks run **with or without cycles present** - they were once inside the
-cycle-scanning branch, which meant a repository with no open cycle had its stale blocks
+The block checks run **with or without sprints present** - they were once inside the
+sprint-scanning branch, which meant a repository with no open sprint had its stale blocks
 checked by nothing.
 
 ## Decisions behind it
 
 - **[ADR-028](../decision-records/ADR-028-work-cycles-live-in-the-repo-and-bind-only-at-scale.md) -
-  cycles are the team layer.** A solo repository has a backlog and needs nothing else.
+  sprints are the team layer.** A solo repository has a backlog and needs nothing else.
 - **The invariant is mechanical rather than a convention.** "Remember to remove it from the
   pool" is exactly the kind of instruction that holds for three weeks.

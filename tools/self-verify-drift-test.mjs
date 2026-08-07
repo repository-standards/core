@@ -514,7 +514,7 @@ check(
     // because each exception left the denominator.
     const gone = ["AGENTS.md", "docs/personas.md", "docs/PRINCIPLES.md"];
     for (const p of gone) unlinkSync(join(dir, p));
-    const guards = ["spec-structure", "facts-check", "schema-pair", "spec-guard", "cycle-guard"];
+    const guards = ["spec-structure", "facts-check", "schema-pair", "spec-guard", "sprint-guard"];
     for (const g of guards) unlinkSync(join(dir, `scripts/${g}.mjs`));
     patchManifest(dir, (m) => {
       m.exceptions = [

@@ -458,7 +458,7 @@
       "quality_evidence": "own synthetic build - the fixture the 8 Track B feature-lifecycle scenarios and most gate/regression cases were run against",
       "star_tier": "n/a",
       "stars_approx": "n/a",
-      "shape": "greenfield Layer-1-only fixture, lived a full lifecycle loop (discovery, specs, decisions, backlog, cycles)",
+      "shape": "greenfield Layer-1-only fixture, lived a full lifecycle loop (discovery, specs, decisions, backlog, sprints)",
       "depth": "L4",
       "round": "2/3/4/wave3-5 (ongoing fixture)",
       "note": null
@@ -1357,7 +1357,7 @@
       "shape": "mailing-list review + the bespoke Commitfest tracker - GitHub accepts nothing",
       "depth": "L1",
       "round": "bf wave review (2026-08-04)",
-      "note": "git log --oneline | wc -l returned exactly 1 on all five clones; pass 8 unavailable. Drift 15 (12%, 2/17). In-repo CI has no pull_request trigger by design, with the reason stated in a code comment. Its Commitfest tracker carries fields (Author/Reviewer/Committer, 'Waiting on Author', 'Ready for Committer') the standard's backlog/cycle schema cannot express - independently the most useful external cycle-model design the round found."
+      "note": "git log --oneline | wc -l returned exactly 1 on all five clones; pass 8 unavailable. Drift 15 (12%, 2/17). In-repo CI has no pull_request trigger by design, with the reason stated in a code comment. Its Commitfest tracker carries fields (Author/Reviewer/Committer, 'Waiting on Author', 'Ready for Committer') the standard's backlog/sprint schema cannot express - independently the most useful external sprint-model design the round found."
     },
     {
       "slug": "FFmpeg/FFmpeg",

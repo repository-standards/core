@@ -73,6 +73,6 @@ Say at the end how many markers are left and that the file is usable with them i
 - **Do not write a product frame for a repo that is a library or a tool with no users beyond
   its callers.** `README.md` is the right file. Ask if unsure.
 - **Do not turn it into a roadmap.** What is being built and why, not when and in what order -
-  that is the backlog and the cycles, which change weekly while this should not.
+  that is the backlog and the sprints, which change weekly while this should not.
 - **Do not invent the metric.** See above; this is the single most common way this file
   becomes a thing nobody trusts.

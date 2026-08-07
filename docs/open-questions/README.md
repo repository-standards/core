@@ -39,7 +39,7 @@ outgrew itself - as its own meta entry predicted it would.)
 | [One source, two surfaces](docs-funnel.md) | docs site renders the same md agents read | in-place READMEs may not sequence into a learning path |
 | [Case-study anonymization](case-anonymization.md) | describe the situation, never the company | the identifiability line is unwritten judgment |
 | [Rebase-merge as the paved road](rebase-merge.md) | ADR-026: linear `main`, rebase-merge, squash as the alternative | squash asks less and delivers most of it; the option that wins on merits is missing from GitHub |
-| [What to call a bounded period of work](work-periods.md) | `cycle`, per team, several in parallel | the name is load-bearing and no candidate is obviously right; and whether the standard should carry work periods at all |
+| [What to call a bounded period of work](work-periods.md) | ADR-041: `sprint`, per team, several in parallel - `cycle` was tried first and lost to use | the borrowed word arrives carrying points and velocity, which the record has to deny in one place |
 | [Skills that co-author a document](authoring-skills.md) | one per document type - `adr-write`, `bdr-write`, `product-write`, `personas-write` | four sibling files can drift apart; the count objection fell away once the ceiling was measured rather than assumed |
 
 Stack-pick doubts (Better Auth, CSS Modules vs Tailwind) moved with Layer 2 to

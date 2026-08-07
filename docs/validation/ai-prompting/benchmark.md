@@ -56,29 +56,29 @@ bash standard/scripts/spec/check-spec-clarified.sh <spec.md>, on a spec with a `
 ```
 
 
-**GATE-06 - the cycle guard fails when one intent sits in the pool and in a cycle, and when it sits in two cycles**
+**GATE-06 - the sprint guard fails when one intent sits in the pool and in a sprint, and when it sits in two sprints**
 
-- **Given:** 6 intents distributed across the backlog pool, one closed cycle and one open cycle
-- **When:** cycle-guard.mjs runs after a backlog item is split at a cycle boundary (ADR-029: happy path stays done in the closed cycle, edge cases return to the pool as a new intent)
+- **Given:** 6 intents distributed across the backlog pool, one closed sprint and one open sprint
+- **When:** sprint-guard.mjs runs after a backlog item is split at a sprint boundary (ADR-029: happy path stays done in the closed sprint, edge cases return to the pool as a new intent)
 - **Then:** the guard holds the one-place invariant across all three locations in the same pass, with no duplicate and no orphan
 - **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-node standard/scripts/cycle-guard.mjs against docs/backlog.md plus the closed and open cycle files, after a split-at-boundary edit
+node standard/scripts/sprint-guard.mjs against docs/backlog.md plus the closed and open sprint files, after a split-at-boundary edit
 ```
 
 
-**GATE-08 - cycle-guard reads a correctly-closed cycle's own close table as a report, not as a second copy of live intents**
+**GATE-08 - sprint-guard reads a correctly-closed sprint's own close table as a report, not as a second copy of live intents**
 
-- **Given:** a cycle closed exactly as cycle-close/SKILL.md documents it - a close table under `## Outcome` reusing the same intent ids on purpose
-- **When:** cycle-guard.mjs runs against the closed cycle file
+- **Given:** a sprint closed exactly as sprint-close/SKILL.md documents it - a close table under `## Outcome` reusing the same intent ids on purpose
+- **When:** sprint-guard.mjs runs against the closed sprint file
 - **Then:** the guard does not report the close table's rows as duplicates of the `## Intents` table
 - **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-node standard/scripts/cycle-guard.mjs against a cycle file closed with the documented `## Outcome` close table
+node standard/scripts/sprint-guard.mjs against a sprint file closed with the documented `## Outcome` close table
 ```
 
 
@@ -186,16 +186,16 @@ bash standard/scripts/spec/check-spec-clarified.sh <spec.md> against a spec whos
 ```
 
 
-**GATE-18 - cycle-guard reads intents from the exact table shape the adopter-facing manual itself demonstrates, not only a table under a literal `## Intents` H2**
+**GATE-18 - sprint-guard reads intents from the exact table shape the adopter-facing manual itself demonstrates, not only a table under a literal `## Intents` H2**
 
-- **Given:** a cycle file written in the shape docs/tree/docs-cycles.md's own worked example shows (no `## Intents` heading, a compound id+title first cell)
-- **When:** cycle-guard.mjs runs against a real one-place violation written in that exact shape
+- **Given:** a sprint file written in the shape docs/tree/docs-sprints.md's own worked example shows (no `## Intents` heading, a compound id+title first cell)
+- **When:** sprint-guard.mjs runs against a real one-place violation written in that exact shape
 - **Then:** the guard reads zero rows and reports OK, instead of catching the violation
 - **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-node standard/scripts/cycle-guard.mjs against a cycle file shaped like docs/tree/docs-cycles.md's own example, with a real duplicated intent
+node standard/scripts/sprint-guard.mjs against a sprint file shaped like docs/tree/docs-sprints.md's own example, with a real duplicated intent
 ```
 
 
@@ -351,7 +351,7 @@ declare $unclaimed in a >10,000-file repo's capability-map.json and run `node sc
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-time `node scripts/self-verify.mjs`, `spec-structure.mjs --block`, `facts-check.mjs`, `schema-pair.mjs --block`, `cycle-guard.mjs --block`, `decision-records-check.mjs --block`, `spec-guard.mjs --audit --block` and `spec-guard.mjs --block` on a >10,000-file adopted repo, three runs each, and report the best wall time
+time `node scripts/self-verify.mjs`, `spec-structure.mjs --block`, `facts-check.mjs`, `schema-pair.mjs --block`, `sprint-guard.mjs --block`, `decision-records-check.mjs --block`, `spec-guard.mjs --audit --block` and `spec-guard.mjs --block` on a >10,000-file adopted repo, three runs each, and report the best wall time
 ```
 
 
@@ -620,118 +620,118 @@ read docs/backlog.md's escape-hatch bullets for a retired-target corner case
 ```
 
 
-**TRACK-02 - a backlog item that spans a cycle boundary splits into a done slice and a returned slice, rather than being re-sized**
+**TRACK-02 - a backlog item that spans a sprint boundary splits into a done slice and a returned slice, rather than being re-sized**
 
-- **Given:** a backlog item (size L) that ships its happy path but not its edge cases by the cycle's target date
-- **When:** the cycle closes
+- **Given:** a backlog item (size L) that ships its happy path but not its edge cases by the sprint's target date
+- **When:** the sprint closes
 - **Then:** it is split per ADR-029 into a done item (happy path) and a new item returned to the pool (edge cases), not re-sized in place
 - **Result:** passed every time it ran (1/1)
 
 
 **TRACK-03 - an intent carries a named current holder, and an empty holder is visible as a gap**
 
-- **Given:** an intent in the backlog pool or a cycle
+- **Given:** an intent in the backlog pool or a sprint
 - **When:** its holder field is read
 - **Then:** an empty holder is visibly flagged as a gap, not silently treated as assigned
 - **Result:** _not yet run - specified, no observation recorded_
 
 
-**TRACK-04 - timeline-update states whether its three-closed-cycles threshold is per-team or global**
+**TRACK-04 - timeline-update states whether its three-closed-sprints threshold is per-team or global**
 
-- **Given:** a repo with two teams, one at 3 closed cycles and one at 1
+- **Given:** a repo with two teams, one at 3 closed sprints and one at 1
 - **When:** timeline-update runs
 - **Then:** the threshold is applied per team, never blended, and the skill says so explicitly
 - **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-read standard/.claude/skills/timeline-update/SKILL.md for a per-team vs. global statement of the three-cycle threshold
+read standard/.claude/skills/timeline-update/SKILL.md for a per-team vs. global statement of the three-sprint threshold
 ```
 
 
-**TRACK-05 - cycle-guard still catches a genuinely duplicated intent row and a stale `blocked:` reference after the close-table scoping fix**
+**TRACK-05 - sprint-guard still catches a genuinely duplicated intent row and a stale `blocked:` reference after the close-table scoping fix**
 
-- **Given:** an intent copied (not moved) between the pool and a cycle, or a stale `blocked:` reference
-- **When:** cycle-guard.mjs runs after the close-table scoping fix (GATE-08)
+- **Given:** an intent copied (not moved) between the pool and a sprint, or a stale `blocked:` reference
+- **When:** sprint-guard.mjs runs after the close-table scoping fix (GATE-08)
 - **Then:** the guard still fails on the genuine duplicate and the stale reference - the fix narrowed the false positive without opening a false negative
 - **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-node standard/scripts/cycle-guard.mjs against a cycle file with a genuinely duplicated intent row
+node standard/scripts/sprint-guard.mjs against a sprint file with a genuinely duplicated intent row
 ```
 
 
-**TRACK-06 - the timeline refuses a measured date below three closed cycles and labels the estimate in the file**
+**TRACK-06 - the timeline refuses a measured date below three closed sprints and labels the estimate in the file**
 
-- **Given:** a team with fewer than three closed cycles
+- **Given:** a team with fewer than three closed sprints
 - **When:** timeline-update is asked when work will land
 - **Then:** it gives no measured date, and the output labels any number it does give as estimated rather than measured
 - **Result:** _not yet run - specified, no observation recorded_
 
 
-**TRACK-07 - cycle-open, cycle-close and every mid-cycle prompt promised by tracking-work.md resolve the backlog at the manifest's declared altPath, the same way cycle-guard does**
+**TRACK-07 - sprint-open, sprint-close and every mid-sprint prompt promised by tracking-work.md resolve the backlog at the manifest's declared altPath, the same way sprint-guard does**
 
 - **Given:** a repo satisfying the manifest at its primary backlog path (docs/backlog.md as an altPath of backlog.md, or vice versa)
-- **When:** cycle-open or cycle-close is run
-- **Then:** both skills resolve the same altPath cycle-guard.mjs already resolves, instead of hardcoding one path and instructing edits to a file that does not exist there
+- **When:** sprint-open or sprint-close is run
+- **Then:** both skills resolve the same altPath sprint-guard.mjs already resolves, instead of hardcoding one path and instructing edits to a file that does not exist there
 - **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-run cycle-open/cycle-close against a repo whose backlog lives only at the manifest's declared altPath
+run sprint-open/sprint-close against a repo whose backlog lives only at the manifest's declared altPath
 ```
 
 
-**TRACK-08 - cycle-guard checks that an intent a closed cycle's outcome block declares 'returned to the pool' is actually there, not only that no intent appears in more than one place**
+**TRACK-08 - sprint-guard checks that an intent a closed sprint's outcome block declares 'returned to the pool' is actually there, not only that no intent appears in more than one place**
 
-- **Given:** a closed cycle whose Outcome block claims an item was returned to the pool
-- **When:** cycle-guard.mjs runs, and the item is nowhere in the pool or anywhere else in the repo
+- **Given:** a closed sprint whose Outcome block claims an item was returned to the pool
+- **When:** sprint-guard.mjs runs, and the item is nowhere in the pool or anywhere else in the repo
 - **Then:** the guard fails, because it checks 'at least one' as well as 'at most one' - not only the duplicate-detection direction
 - **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-node standard/scripts/cycle-guard.mjs against a closed cycle whose Outcome block names an item as returned to the pool, with that item absent from the pool
+node standard/scripts/sprint-guard.mjs against a closed sprint whose Outcome block names an item as returned to the pool, with that item absent from the pool
 ```
 
 
-**TRACK-09 - an id written in backticks or bold in a cycle or backlog table still resolves to the same intent as its bare form, and the id column is found by its header label rather than assumed to be column zero**
+**TRACK-09 - an id written in backticks or bold in a sprint or backlog table still resolves to the same intent as its bare form, and the id column is found by its header label rather than assumed to be column zero**
 
-- **Given:** an id written as `` `SPEC-1` `` or `**SPEC-1**` (every doc backtick-quotes ids in prose) in two teams' cycle tables
-- **When:** cycle-guard.mjs runs
+- **Given:** an id written as `` `SPEC-1` `` or `**SPEC-1**` (every doc backtick-quotes ids in prose) in two teams' sprint tables
+- **When:** sprint-guard.mjs runs
 - **Then:** the backticked/bold id is recognized as the same intent as its bare form and a genuine duplicate is caught - instead of an anchored regex silently never matching it
 - **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-node standard/scripts/cycle-guard.mjs against two teams' cycles both containing the identical id written with backticks
+node standard/scripts/sprint-guard.mjs against two teams' sprints both containing the identical id written with backticks
 ```
 
 
-**TRACK-10 - the vocabulary for a cycle-boundary split (ADR-029) includes a real status value, so the fixture does not have to invent one outside the declared enum**
+**TRACK-10 - the vocabulary for a sprint-boundary split (ADR-029) includes a real status value, so the fixture does not have to invent one outside the declared enum**
 
-- **Given:** a backlog item split at a cycle boundary per ADR-029 into a done slice and a returned slice
-- **When:** cycle-close records the split and cycle-guard.mjs's staleness check runs against a `blocked:` reference to the split item
+- **Given:** a backlog item split at a sprint boundary per ADR-029 into a done slice and a returned slice
+- **When:** sprint-close records the split and sprint-guard.mjs's staleness check runs against a `blocked:` reference to the split item
 - **Then:** a declared status value exists for the split row, and the staleness check recognizes a split-but-finished item as done - instead of a fifth status invented outside the enum defeating the check that a finished item's block is stale
 - **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-node standard/scripts/cycle-guard.mjs against a cycle recording a split row with a stale `blocked:` reference to it
+node standard/scripts/sprint-guard.mjs against a sprint recording a split row with a stale `blocked:` reference to it
 ```
 
 
 **TRACK-11 - timeline-update's cold-start behaviour and the backlog template's ban on converting a size to a duration agree with each other**
 
-- **Given:** a team with fewer than three closed cycles (the branch every adopter is in on day one)
+- **Given:** a team with fewer than three closed sprints (the branch every adopter is in on day one)
 - **When:** timeline-update is asked when work will land
 - **Then:** the skill and the backlog template agree that no date is produced, and any number given is explicitly labelled an estimate - instead of the skill instructing 'project from sizes' while three other documents forbid ever converting a size letter into a duration
 - **Result:** passed every time it ran (1/1)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-read standard/.claude/skills/timeline-update/SKILL.md's cold-start branch against backlog.md, ADR-029 and work-cycles/spec.md's own bans on size-to-duration conversion
+read standard/.claude/skills/timeline-update/SKILL.md's cold-start branch against backlog.md, ADR-029 and work-sprints/spec.md's own bans on size-to-duration conversion
 ```
 
 
@@ -750,27 +750,27 @@ grep docs/backlog.md's column header for a source column
 
 **TRACK-13 - the promised three-lane board has a place to render a `blocked` item, the fourth status the backlog schema itself declares**
 
-- **Given:** an open cycle with a `blocked:SPEC-1` item
+- **Given:** an open sprint with a `blocked:SPEC-1` item
 - **When:** tracking-work.md's rendered board is produced
 - **Then:** the blocked item's reference is visible on the board, instead of the board's three lanes (done/doing/todo) having nowhere to render the fourth declared status at all
 - **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-render the promised board against a real open cycle with a blocked:SPEC-1 item
+render the promised board against a real open sprint with a blocked:SPEC-1 item
 ```
 
 
-**TRACK-14 - cycle-close's prescribed commit-count measurement is scoped to the team and window it is measuring, not a repo-wide count two overlapping teams both silently share**
+**TRACK-14 - sprint-close's prescribed commit-count measurement is scoped to the team and window it is measuring, not a repo-wide count two overlapping teams both silently share**
 
-- **Given:** two teams whose cycles overlap in time, each closing a cycle with the repo-wide commit count cycle-close prescribes (unscoped by team or path, whatever window form it names)
-- **When:** both teams record their cycle's commit count
+- **Given:** two teams whose sprints overlap in time, each closing a sprint with the repo-wide commit count sprint-close prescribes (unscoped by team or path, whatever window form it names)
+- **When:** both teams record their sprint's commit count
 - **Then:** the two counts are genuinely different, scoped to each team's own work, instead of both recording the identical repo-wide blended number - contradicting timeline-update's own rule to never blend throughput across teams
 - **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-run cycle-close's prescribed git log command for two teams' overlapping cycle windows on the same repo history
+run sprint-close's prescribed git log command for two teams' overlapping sprint windows on the same repo history
 ```
 
 
@@ -787,16 +787,16 @@ file an internal/documentation-debt item through add-to-backlog and check whethe
 ```
 
 
-**TRACK-18 - cycle-guard's one-place invariant is keyed on the intent, not only on its id, so a copy-then-renumber does not pass as compliant**
+**TRACK-18 - sprint-guard's one-place invariant is keyed on the intent, not only on its id, so a copy-then-renumber does not pass as compliant**
 
-- **Given:** an intent copied into a cycle without being cut from the pool, with the pool row's id then renumbered while its title is kept identical
-- **When:** cycle-guard.mjs runs
+- **Given:** an intent copied into a sprint without being cut from the pool, with the pool row's id then renumbered while its title is kept identical
+- **When:** sprint-guard.mjs runs
 - **Then:** the guard recognizes the two rows as one piece of work duplicated, instead of reporting the one-place invariant holding because it keys entirely on the first-cell id and never compares titles
 - **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-node standard/scripts/cycle-guard.mjs against a pool-and-cycle pair created by copying an intent, then renumbering only the pool copy's id
+node standard/scripts/sprint-guard.mjs against a pool-and-sprint pair created by copying an intent, then renumbering only the pool copy's id
 ```
 
 
@@ -954,7 +954,7 @@ ls standard/.claude/skills/ for idea-write, and confirm adr-write/bdr-write's do
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-write a new BDR following bdr-write's numbering instruction against an index missing one real record, then run self-verify.mjs, spec-structure.mjs, spec-guard.mjs --audit and cycle-guard.mjs
+write a new BDR following bdr-write's numbering instruction against an index missing one real record, then run self-verify.mjs, spec-structure.mjs, spec-guard.mjs --audit and sprint-guard.mjs
 ```
 
 
@@ -1713,14 +1713,14 @@ grep .github/workflows/spec-guard.yml's `on:` block and compare against gitleaks
 
 **DOC-16 - showcase-gap's headline honesty claim - the outcome blocks' stated commit counts - agrees with the repo's own real history when the prescribed command is actually run**
 
-- **Given:** the showcase repo's own cycle-close outcome blocks and the commit counts they state for its three closed cycles
-- **When:** the command cycle-close prescribes for that number is actually run against the repo's real history
+- **Given:** the showcase repo's own sprint-close outcome blocks and the commit counts they state for its three closed sprints
+- **When:** the command sprint-close prescribes for that number is actually run against the repo's real history
 - **Then:** the numbers agree, and agree whatever hour the command is run at - which requires the prescription to state the window explicitly, since git resolves a bare --since/--until date at the current time of day
 - **Result:** **failed at least once** (1 fail, 1 pass, across the targets it ran against)
 
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
-run the prescribed cycle-close commit-count command against each of the showcase's three closed cycles and compare to the stated outcome-block numbers
+run the prescribed sprint-close commit-count command against each of the showcase's three closed sprints and compare to the stated outcome-block numbers
 ```
 
 

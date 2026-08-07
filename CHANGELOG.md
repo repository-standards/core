@@ -16,6 +16,32 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The bounded period of work is a sprint (2026-08-07)
+
+It was a `cycle`, chosen against `sprint` on a recorded argument: borrowing the word borrows
+the ceremony - planning poker, retro, velocity as a commitment - and this is deliberately none
+of that. `cycle` was picked because Linear uses it for almost exactly this shape, so it was
+expected to arrive pre-explained.
+
+It did not. In use people read `cycle` and stop, spending their first question on whether it
+is a sprint, to which the answer is yes minus some ceremony. The dashboard made the cost
+visible: a page built for the people who never open the repository had a tab whose label
+needed a sentence of explanation before anything under it could be read. A design argument
+lost to an observation, which is the only thing that should have beaten it.
+
+Renamed everywhere: `docs/sprints/<team>/`, `sprint-open` and `sprint-close`,
+`scripts/sprint-guard.mjs`, the `work-sprints` capability spec, every manifest entry and every
+label on the dashboard. [ADR-041](docs/decision-records/ADR-041-the-bounded-period-of-work-is-called-a-sprint.md)
+carries the decision and defines the borrowed word against what it usually imports: no story
+points and no planning poker, no velocity as a commitment, an agreed date that may move rather
+than a timebox, and no prescribed ceremony - the two shipped procedures are not meetings.
+ADR-028 keeps its text and its filename; it is renamed, not superseded, since its substance
+never moved. The open question that first chose `cycle` now records that it was overturned by
+use rather than being deleted.
+
+Nothing carries the old paths from a release - there are none - so there is no migration to
+support, only one to perform: the showcase fixture moves in the same wave.
+
 ### Two of the four reports were invented here, and a repository with no cycles got them anyway (2026-08-07)
 
 The Reports tab promised "only the reports a team actually acts on" and then showed, on a

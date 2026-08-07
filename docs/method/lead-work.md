@@ -30,7 +30,7 @@ true. The point of this is not more documentation; it is documentation a guard f
 build over, so it cannot quietly stop being true.
 
 **"This is overhead."** Show the profile split. A solo repository carries `core` and nothing
-else - no cycles, no journeys, no research, no pull request template. Ceremony arrives with
+else - no sprints, no journeys, no research, no pull request template. Ceremony arrives with
 team size and not before, and a deviation is legal when it is recorded.
 
 **"We do not have time to write specs."** They are already writing them, in tickets that get

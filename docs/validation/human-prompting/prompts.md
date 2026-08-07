@@ -178,13 +178,13 @@ people who never chose it, which is the opposite of what adoption means.
 The agent noticed without being told, and taught the generator to strip the standard's files
 from what it emits. Nothing in the method covers this shape; it was handled by judgement.
 
-**A shipped procedure that points at a directory the profile excludes.** `cycle-open`'s step 6
-links to `docs/cycles/_template.md`. That entry is `profile: scale, required: false`, so a
+**A shipped procedure that points at a directory the profile excludes.** `sprint-open`'s step 6
+links to `docs/sprints/_template.md`. That entry is `profile: scale, required: false`, so a
 core-profile repository does not have it - and every adopter carries all twenty skills whatever
 profile they chose, so a core repo ships a procedure whose link is dead on arrival.
 
-Verified: the link is at `cycle-open/SKILL.md:54` and the manifest entry is scale-only. Whether
-it is worth fixing is an owner's call - a core repo has little reason to run a cycle skill - but
+Verified: the link is at `sprint-open/SKILL.md:54` and the manifest entry is scale-only. Whether
+it is worth fixing is an owner's call - a core repo has little reason to run a sprint skill - but
 "we ship you a procedure that cannot work here, and say nothing" is the kind of small dishonesty
 this corpus exists to notice.
 

@@ -64,7 +64,7 @@ Credited because the idea is theirs, even though nothing was copied.
 | **Conventional Commits** | the commit message shape the conventions require |
 | **Semantic Versioning** | how the standard's own versions move |
 | **Keep a Changelog** | the changelog's shape, including `## Unreleased` as the place a pull request writes |
-| **Linear** | the word **cycle** for a bounded period of work, in almost exactly this meaning - chosen over "sprint" because it arrives without the ceremony argument attached ([ADR-028](docs/decision-records/ADR-028-work-cycles-live-in-the-repo-and-bind-only-at-scale.md), [`work-periods`](docs/open-questions/work-periods.md)) |
+| **Linear** | the word **sprint** for a bounded period of work, in almost exactly this meaning - chosen over "sprint" because it arrives without the ceremony argument attached ([ADR-028](docs/decision-records/ADR-028-work-cycles-live-in-the-repo-and-bind-only-at-scale.md), [`work-periods`](docs/open-questions/work-periods.md)) |
 | **[Backlog.md](https://github.com/MrLesk/Backlog.md)** | not taken from, but deliberately stayed compatible with - the shipped backlog is markdown a team can put that tool on top of, rather than a custom engine |
 | **RFC 2119** | the meaning of MUST, SHOULD and MAY in the spec |
 | **Impact Mapping** (Gojko Adzic) | the goal -> persona -> impact -> deliverable technique the greenfield phase runs when breaking a product into capabilities |

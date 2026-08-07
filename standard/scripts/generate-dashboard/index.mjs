@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Renders a repository's work state as one static page: site/dashboard/index.html.
 //
-// Everything it shows is read from committed files - the backlog pool, the cycles, the
+// Everything it shows is read from committed files - the backlog pool, the sprints, the
 // changelog, the decision records, the specs. Two people who run it on the same commit get
 // byte-identical output, so the page is a projection of the repo and never a second place
 // where work is tracked. Sources that a repo does not have are skipped, not faked.
@@ -13,9 +13,9 @@
 // notices and offers a refresh. Neither ever touches git: a page going stale is a display
 // problem, and fixing it by moving somebody's branch would be a much worse one.
 //
-// --anonymise keeps names out of the structured fields: assignees, and the person a cycle
+// --anonymise keeps names out of the structured fields: assignees, and the person a sprint
 // names as its owner. It is not redaction - prose written by hand (an item's status note, a
-// cycle's outcome, a changelog entry) is reproduced as written, so a build that must carry no
+// sprint's outcome, a changelog entry) is reproduced as written, so a build that must carry no
 // names needs the sources checked too. The page never contains anything the repository does
 // not already contain, which is the whole security model: a private repository's page is
 // private data and belongs behind whatever gate the repository is behind.
@@ -196,7 +196,7 @@ function parseBacklog() {
       if (mode === 'inflight')
         inFlight.push(
           ...t.rows
-            .filter((r) => r.team || r.cycle)
+            .filter((r) => r.team || r.sprint)
             .map((r) => ({ team: r.team, goal: inline(r.goal), target: plain(r.target), items: r.items })),
         )
       i = t.end - 1
@@ -342,10 +342,10 @@ function parseSpecs() {
     })
 }
 
-/* ---------- cycles: the sprint view ---------- */
+/* ---------- sprints: the sprint view ---------- */
 
-function parseCycles() {
-  const dir = 'docs/cycles'
+function parseSprints() {
+  const dir = 'docs/sprints'
   if (!has(dir)) return []
   const out = []
   for (const team of readdirSync(join(root, dir), { withFileTypes: true })) {
@@ -381,7 +381,7 @@ function parseCycles() {
   return out.sort((a, b) => (a.slug < b.slug ? 1 : -1))
 }
 
-// /cycle-close writes one aggregate sentence per cycle. It is the only record of what a team
+// /sprint-close writes one aggregate sentence per sprint. It is the only record of what a team
 // believed it would finish, so the report reads those numbers rather than recounting rows.
 function outcomeStats(text) {
   const t = plain(text)
@@ -402,7 +402,7 @@ function outcomeStats(text) {
 
 // The projection the repo already writes for itself - read, never recomputed here.
 function parseTimeline() {
-  const file = 'docs/cycles/TIMELINE.md'
+  const file = 'docs/sprints/TIMELINE.md'
   if (!has(file)) return null
   const text = read(file)
   const lines = text.split('\n')
@@ -418,7 +418,7 @@ function parseTimeline() {
       stands.push(
         ...t.rows.map((r) => ({
           team: r.team,
-          cycle: plain(r.cycle),
+          sprint: plain(r.sprint),
           goal: inline(r.goal),
           target: plain(r.target),
           remaining: plain(r.remaining),
@@ -429,7 +429,7 @@ function parseTimeline() {
     } else if (section === 'evidence') {
       evidence.push(
         ...t.rows.map((r) => ({
-          cycle: plain(r.cycle),
+          sprint: plain(r.sprint),
           days: r.days,
           finished: r.finished,
           unplanned: r.unplanned,
@@ -460,7 +460,7 @@ const git = (...args) => {
 function collect() {
 const backlog = parseBacklog()
 const { entries, releases } = parseChangelog()
-const cycles = parseCycles()
+const sprints = parseSprints()
 const items = backlog.epics.flatMap((e) => e.items)
 
 const pkg = has('package.json') ? JSON.parse(read('package.json')) : {}
@@ -503,7 +503,7 @@ const data = {
   },
   backlog,
   items,
-  cycles,
+  sprints,
   timeline: parseTimeline(),
   entries,
   releases,
@@ -513,15 +513,15 @@ const data = {
   specs: parseSpecs(),
 }
 
-const inCycles = cycles.filter((c) => c.state === 'open').flatMap((c) => c.items)
+const inCycles = sprints.filter((c) => c.state === 'open').flatMap((c) => c.items)
 data.counts = {
   todo: items.filter((i) => i.status === 'todo').length,
   doing: items.filter((i) => i.status === 'doing').length,
   blocked: items.filter((i) => i.status === 'blocked').length,
   done: items.filter((i) => i.status === 'done').length,
-  cycleOpen: cycles.filter((c) => c.state === 'open').length,
-  cycleItems: inCycles.length,
-  cycleDone: inCycles.filter((i) => i.status === 'done').length,
+  sprintOpen: sprints.filter((c) => c.state === 'open').length,
+  sprintItems: inCycles.length,
+  sprintDone: inCycles.filter((i) => i.status === 'done').length,
   unreleased: entries.filter((e) => e.release === 'Unreleased').length,
   openQuestions: data.questions.filter((q) => q.open).length,
 }
@@ -607,9 +607,9 @@ function build() {
   // Pointed at the wrong directory, every parser finds nothing and the page renders as an
   // empty but entirely convincing dashboard. Thrown rather than exited: under --watch this
   // is one bad rebuild, and killing a running server over it would be the larger surprise.
-  if (!data.items.length && !data.cycles.length && !data.entries.length && !data.decisions.length && !data.specs.length) {
+  if (!data.items.length && !data.sprints.length && !data.entries.length && !data.decisions.length && !data.specs.length) {
     throw new Error(
-      `found no backlog, cycles, changelog, decision records or specs under ${root}\n` +
+      `found no backlog, sprints, changelog, decision records or specs under ${root}\n` +
         '  pass the repository root as the first argument if it is not the parent of this script',
     )
   }
@@ -653,7 +653,7 @@ ${readFileSync(join(here, 'src', 'page.js'), 'utf8')}</script>
   )
 
   console.log(
-    `dashboard: ${data.items.length} pool items, ${data.cycles.length} cycles (${data.counts.cycleItems} items), ` +
+    `dashboard: ${data.items.length} pool items, ${data.sprints.length} sprints (${data.counts.sprintItems} items), ` +
       `${data.entries.length} changelog entries, ${data.decisions.length} decisions, ${data.specs.length} specs -> ${out}`,
   )
   return data
@@ -673,7 +673,7 @@ try {
 if (watching) {
   const sources = ['backlog.md', 'docs/backlog.md', 'CHANGELOG.md', 'docs/CHANGELOG.md', 'PRODUCT.md', 'docs/PRODUCT.md']
     .filter(has)
-    .concat(['docs/cycles', 'docs/decision-records', 'docs/ideas', 'docs/open-questions', 'specs'].filter(has))
+    .concat(['docs/sprints', 'docs/decision-records', 'docs/ideas', 'docs/open-questions', 'specs'].filter(has))
 
   let pending = null
   for (const src of sources) {

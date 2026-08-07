@@ -35,7 +35,7 @@ const isoOf = (ms) => new Date(ms).toISOString().slice(0, 10)
 
 // Categorical colour, assigned in a fixed order over the capabilities this repo actually
 // has - so a filter that hides one never repaints the others. Past the palette, neutral.
-const CATS = [...new Set(D.items.concat(D.cycles.flatMap((c) => c.items)).map((i) => i.cap || i.epic).filter(Boolean))].sort()
+const CATS = [...new Set(D.items.concat(D.sprints.flatMap((c) => c.items)).map((i) => i.cap || i.epic).filter(Boolean))].sort()
 const catVar = (name) => {
   const n = CATS.indexOf(name)
   return n >= 0 && n < 6 ? 'var(--c' + (n + 1) + ')' : 'var(--ink-3)'
@@ -100,13 +100,13 @@ document.body.append(
 /* ---------- tabs ---------- */
 
 // A tab whose source the repository does not keep is not rendered empty - it is absent.
-// Reports come from closed cycles and nothing else. A repository without one gets no
+// Reports come from closed sprints and nothing else. A repository without one gets no
 // tab rather than a page of activity charts dressed as reports.
-const reportable = D.cycles.some((c) => c.stats)
+const reportable = D.sprints.some((c) => c.stats)
 const TABS = [
   { id: 'now', label: 'Now' },
-  { id: 'timeline', label: 'Timeline', skip: !D.cycles.length },
-  { id: 'cycles', label: 'Cycles', n: D.counts.cycleOpen || null, skip: !D.cycles.length },
+  { id: 'timeline', label: 'Timeline', skip: !D.sprints.length },
+  { id: 'sprints', label: 'Sprints', n: D.counts.sprintOpen || null, skip: !D.sprints.length },
   { id: 'backlog', label: 'Backlog', n: D.counts.todo + D.counts.doing + D.counts.blocked },
   { id: 'reports', label: 'Reports', skip: !reportable },
   { id: 'changelog', label: 'Changelog', n: D.entries.length, skip: !D.entries.length },
@@ -188,7 +188,7 @@ function openItem(i) {
   })
 }
 
-function openCycle(c) {
+function openSprint(c) {
   const done = c.items.filter((i) => i.status === 'done' || i.status === 'split').length
   openDetail({
     title: c.goal || c.slug,
@@ -203,7 +203,7 @@ function openCycle(c) {
             '. Unplanned work absorbed: ' + c.stats.unplanned + '. Days elapsed: ' + c.stats.days + '.'
           : done + ' of ' + c.items.length + ' items done so far.',
       ],
-      ['Outcome', c.outcome || (c.state === 'open' ? 'Written when the cycle closes, not before.' : '')],
+      ['Outcome', c.outcome || (c.state === 'open' ? 'Written when the sprint closes, not before.' : '')],
     ],
     nodes: [
       c.items.length
@@ -268,7 +268,7 @@ function tiles(list) {
 
 // A repo whose backlog has no assignee column is not a repo where everything is unassigned -
 // it is one where the question is not asked, so the card does not ask it.
-const tracksPeople = D.items.concat(D.cycles.flatMap((c) => c.items)).some((i) => i.assignee)
+const tracksPeople = D.items.concat(D.sprints.flatMap((c) => c.items)).some((i) => i.assignee)
 
 /* the kanban card - id, title, who. Everything else is one click away. */
 function card(i) {
@@ -336,9 +336,9 @@ function progress(items) {
 
 {
   const v = views.now
-  const openCycles = D.cycles.filter((c) => c.state === 'open')
-  const cycleItems = openCycles.flatMap((c) => c.items)
-  const pool = cycleItems.length ? cycleItems : D.items
+  const openSprints = D.sprints.filter((c) => c.state === 'open')
+  const sprintItems = openSprints.flatMap((c) => c.items)
+  const pool = sprintItems.length ? sprintItems : D.items
   const inFlight = pool.filter((i) => i.status === 'doing')
   const blocked = pool.filter((i) => i.status === 'blocked')
   const thisWeek = D.entries.filter((e) => daysAgo(e.date) <= 7).length
@@ -347,8 +347,8 @@ function progress(items) {
     v,
     el('p', { class: 'eyebrow', text: 'Where the work stands' }),
     tiles([
-      openCycles.length
-        ? tile('Cycle progress', D.counts.cycleDone + '/' + D.counts.cycleItems, 'is-done', 'items finished in the open cycle')
+      openSprints.length
+        ? tile('Sprint progress', D.counts.sprintDone + '/' + D.counts.sprintItems, 'is-done', 'items finished in the open sprint')
         : D.entries.length
           ? tile('Changes, 7 days', thisWeek, 'is-done', 'landed on the main line')
           : null,
@@ -444,16 +444,16 @@ if (views.timeline) {
   const v = views.timeline
   const now = stamp(today)
 
-  const lanes = D.cycles
+  const lanes = D.sprints
     .slice()
     .sort((a, b) => (a.opened < b.opened ? -1 : 1))
     .map((c) => {
       const start = c.opened ? stamp(c.opened) : null
       const target = c.target ? stamp(c.target) : null
       const done = c.items.filter((i) => i.status === 'done' || i.status === 'split').length
-      const stand = (D.timeline?.stands || []).find((s) => (s.cycle || '').includes(c.slug))
+      const stand = (D.timeline?.stands || []).find((s) => (s.sprint || '').includes(c.slug))
       const projected = c.state === 'open' ? parseProjected(stand?.projected, c.target) : null
-      // The in-cycle rate, stated as such: a small sample, and the reason a cycle drifts
+      // The in-sprint rate, stated as such: a small sample, and the reason a sprint drifts
       // quietly. Only shown once something has actually finished.
       const elapsed = start ? Math.max(1, Math.round((now - start) / DAY)) : null
       const left = c.items.length - done
@@ -464,7 +464,7 @@ if (views.timeline) {
     .filter((l) => l.start)
 
   if (!lanes.length) {
-    add(v, el('p', { class: 'empty', text: 'No cycle carries dates yet.' }))
+    add(v, el('p', { class: 'empty', text: 'No sprint carries dates yet.' }))
   } else {
     const t0 = Math.min(...lanes.map((l) => l.start))
     const t1 = Math.max(now, ...lanes.flatMap((l) => [l.end || 0, l.target || 0, l.pace || 0, l.projected?.[1] || 0]))
@@ -483,8 +483,8 @@ if (views.timeline) {
 
     add(
       v,
-      el('p', { class: 'eyebrow', text: 'Cycles against the calendar' }),
-      el('p', { class: 'lede', text: 'Each bar is one cycle, from the day it opened to the date its team agreed on. The dotted line is today; the projection is measured from closed cycles, never estimated.' }),
+      el('p', { class: 'eyebrow', text: 'Sprints against the calendar' }),
+      el('p', { class: 'lede', text: 'Each bar is one sprint, from the day it opened to the date its team agreed on. The dotted line is today; the projection is measured from closed sprints, never estimated.' }),
       el('div', { class: 'gantt' }, [
         el('div', { class: 'glegend' }, [
           el('span', {}, [el('i', { class: 'sw done' }), el('span', { text: 'finished' })]),
@@ -504,7 +504,7 @@ if (views.timeline) {
               const late = l.pace && l.target && l.pace > l.target
               const span = Math.max(0.6, at(l.end || l.target || now) - at(l.start))
               return el('div', { class: 'glane' + (isOpen ? ' is-open' : '') }, [
-                el('button', { class: 'gname', type: 'button', on: { click: () => openCycle(c) } }, [
+                el('button', { class: 'gname', type: 'button', on: { click: () => openSprint(c) } }, [
                   el('span', { class: 'gslug', text: c.slug }),
                   el('span', {
                     class: 'gmeta',
@@ -565,32 +565,32 @@ if (views.timeline) {
         el('p', {
           class: 'note' + (late ? ' warn' : ''),
           html:
-            'At the pace this cycle has actually run - ' + openLane.done + ' finished in ' +
+            'At the pace this sprint has actually run - ' + openLane.done + ' finished in ' +
             Math.max(1, Math.round((now - openLane.start) / DAY)) + ' days - the remaining ' +
             (openLane.c.items.length - openLane.done) + ' land around <strong>' + nice(isoOf(openLane.pace)) + '</strong>' +
             (late ? ', past the agreed ' + nice(openLane.c.target) + '.' : ', inside the agreed ' + nice(openLane.c.target) + '.') +
-            ' The in-cycle rate is a small sample; the projection above uses the historical one.',
+            ' The in-sprint rate is a small sample; the projection above uses the historical one.',
         }),
       )
     }
   }
 }
 
-/* ---------- view: cycles ---------- */
+/* ---------- view: sprints ---------- */
 
-// Only reached when the repository keeps cycles - the tab is absent otherwise, the same way
+// Only reached when the repository keeps sprints - the tab is absent otherwise, the same way
 // Timeline and Reports are. It used to explain their absence and then show the pool on a
-// board underneath, which put the backlog under a heading that says cycle and gave the tab
+// board underneath, which put the backlog under a heading that says sprint and gave the tab
 // something to display rather than something to say.
-if (views.cycles) {
-  const v = views.cycles
-  const open = D.cycles.filter((c) => c.state === 'open')
-  const closed = D.cycles.filter((c) => c.state !== 'open')
+if (views.sprints) {
+  const v = views.sprints
+  const open = D.sprints.filter((c) => c.state === 'open')
+  const closed = D.sprints.filter((c) => c.state !== 'open')
 
   add(
     v,
     el('p', { class: 'eyebrow', text: 'Bounded periods of work' }),
-    el('p', { class: 'lede', text: 'A cycle is a goal, an agreed end date and the items pulled in for it. An item is in the backlog pool or in exactly one cycle - never both, so no number is counted twice.' }),
+    el('p', { class: 'lede', text: 'A sprint is a goal, an agreed end date and the items pulled in for it. An item is in the backlog pool or in exactly one sprint - never both, so no number is counted twice.' }),
   )
 
   {
@@ -599,13 +599,13 @@ if (views.cycles) {
       add(
         v,
         el('h2', { class: 'section', text: c.team + ' · ' + c.slug }),
-        el('div', { class: 'card cycle' }, [
+        el('div', { class: 'card sprint' }, [
           el('div', { class: 'toprow' }, [
             pill('doing', 'open'),
             el('span', { class: 'meta', text: 'opened ' + shortDate(c.opened) + ' · target ' + shortDate(c.target) }),
             late ? el('span', { class: 'pill blocked', text: 'past its date' }) : null,
             c.owner ? el('span', { class: 'meta', text: 'owner ' + c.owner }) : null,
-            el('button', { class: 'chip ghost', type: 'button', text: 'open summary', on: { click: () => openCycle(c) } }),
+            el('button', { class: 'chip ghost', type: 'button', text: 'open summary', on: { click: () => openSprint(c) } }),
           ]),
           el('h3', { html: c.goal }),
           progress(c.items),
@@ -624,13 +624,13 @@ if (views.cycles) {
     if (closed.length) {
       add(
         v,
-        el('h2', { class: 'section', text: 'Closed cycles' }),
+        el('h2', { class: 'section', text: 'Closed sprints' }),
         el('p', { class: 'lede', text: 'What the team believed it would finish, and what actually happened. Open one for its outcome and its items.' }),
         el(
           'div',
           { class: 'grid two' },
           closed.map((c) =>
-            el('button', { class: 'card clickable', type: 'button', on: { click: () => openCycle(c) } }, [
+            el('button', { class: 'card clickable', type: 'button', on: { click: () => openSprint(c) } }, [
               el('div', { class: 'toprow' }, [
                 pill('done', 'closed'),
                 el('span', { class: 'meta', text: shortDate(c.opened) + ' → ' + shortDate(c.target) }),
@@ -706,7 +706,7 @@ if (views.cycles) {
   add(
     v,
     el('p', { class: 'eyebrow', text: 'The pool · ordered by risk x leverage, top is next' }),
-    el('p', { class: 'lede', text: 'Every item carries the reason it exists and what "done" means for it, both written before the work starts. An item leaves the pool only when that definition is met - or when it is pulled into a cycle.' }),
+    el('p', { class: 'lede', text: 'Every item carries the reason it exists and what "done" means for it, both written before the work starts. An item leaves the pool only when that definition is met - or when it is pulled into a sprint.' }),
     el('div', { class: 'controls searchrow' }, [search, doneChip]),
     epics.length > 1 ? chipRow : null,
     host,
@@ -731,21 +731,21 @@ if (views.cycles) {
 
 if (views.reports) {
   const v = views.reports
-  const closed = D.cycles.filter((c) => c.stats)
+  const closed = D.sprints.filter((c) => c.stats)
 
   add(
     v,
-    el('p', { class: 'eyebrow', text: 'Measured, from closed cycles' }),
-    el('p', { class: 'lede', text: 'Two questions a team acts on: did we finish what we said we would, and how fast do we actually go. Both are read from what cycle-close wrote when each cycle ended - no estimates feed them, and nothing is entered anywhere else.' }),
+    el('p', { class: 'eyebrow', text: 'Measured, from closed sprints' }),
+    el('p', { class: 'lede', text: 'Two questions a team acts on: did we finish what we said we would, and how fast do we actually go. Both are read from what sprint-close wrote when each sprint ended - no estimates feed them, and nothing is entered anywhere else.' }),
   )
 
-  /* 1. did the cycle deliver what it planned */
+  /* 1. did the sprint deliver what it planned */
   if (closed.length) {
     const max = Math.max(...closed.map((c) => c.stats.finished + c.stats.returned + c.stats.unplanned))
     add(
       v,
       el('h2', { class: 'section', text: 'Planned against delivered' }),
-      el('p', { class: 'lede', text: 'Per closed cycle: what was finished, what went back to the pool unfinished, and how much unplanned work arrived after the plan was made. Written by cycle-close, not re-counted here.' }),
+      el('p', { class: 'lede', text: 'Per closed sprint: what was finished, what went back to the pool unfinished, and how much unplanned work arrived after the plan was made. Written by sprint-close, not re-counted here.' }),
       el('div', { class: 'card' }, [
         el('div', { class: 'legend' }, [
           el('span', {}, [el('i', { class: 'sw done' }), el('span', { text: 'finished' })]),
@@ -774,7 +774,7 @@ if (views.reports) {
       el('p', {
         class: 'meta count',
         text:
-          'Across ' + closed.length + ' closed cycles: ' +
+          'Across ' + closed.length + ' closed sprints: ' +
           closed.reduce((n, c) => n + c.stats.finished, 0) + ' finished of ' +
           closed.reduce((n, c) => n + c.stats.planned, 0) + ' planned, with ' +
           closed.reduce((n, c) => n + c.stats.unplanned, 0) + ' unplanned items absorbed.',
@@ -813,7 +813,7 @@ if (views.reports) {
           class: 'meta',
           text:
             'Mean ' + mean.toFixed(2) + ' per day, spread ' + Math.min(...rates.map((r) => r.rate)).toFixed(2) + ' to ' +
-            top.toFixed(2) + ' across ' + rates.length + ' closed cycles.',
+            top.toFixed(2) + ' across ' + rates.length + ' closed sprints.',
         }),
       ]),
     )
@@ -1038,7 +1038,7 @@ if (views.docs) {
 document.body.append(
   el('footer', {}, [
     wrap([
-      el('span', { text: 'Generated from this repository: backlog, cycles, changelog, decision records, specs. Nothing here is typed twice.' }),
+      el('span', { text: 'Generated from this repository: backlog, sprints, changelog, decision records, specs. Nothing here is typed twice.' }),
       el('span', { html: '<code>node scripts/generate-dashboard/index.mjs</code>' }),
     ]),
   ]),

@@ -1,25 +1,25 @@
 #!/usr/bin/env node
-// Work-cycle guard (ADR-028).
+// Work-sprint guard (ADR-028).
 //
-// One intent is in the backlog pool OR in exactly one cycle - never both, never two.
+// One intent is in the backlog pool OR in exactly one sprint - never both, never two.
 // That property is what makes the pair trustworthy: a backlog that also lists what is
 // already in flight is a backlog nobody believes, and a convention held by discipline
 // stops being held. So it is checked rather than asked for.
 //
 // Six directions, all checked: an id in more than one place (the clash check below), the
 // same *work* in more than one place under two ids (the title check - a copy-then-renumber
-// passes every id-keyed check ever written), an id a closed cycle's outcome names as
+// passes every id-keyed check ever written), an id a closed sprint's outcome names as
 // "returned to the pool" that never actually lands there (the "at least one" check further
-// down), a cycle file whose rows this guard cannot find at all (`unreadable`, also below), a
+// down), a sprint file whose rows this guard cannot find at all (`unreadable`, also below), a
 // `blocked:`/`split:` status pointing at work that is finished or was never there, and the
-// pool's in-flight pointer rows against the cycles they name. Every one of them looks
+// pool's in-flight pointer rows against the sprints they name. Every one of them looks
 // identical to a clean repo from the outside, which is the only reason they are here.
 //
 // Usage:
-//   node scripts/cycle-guard.mjs            # report, exit 0 (advisory)
-//   node scripts/cycle-guard.mjs --block    # exit 1 on a violation (CI, scale profile)
+//   node scripts/sprint-guard.mjs            # report, exit 0 (advisory)
+//   node scripts/sprint-guard.mjs --block    # exit 1 on a violation (CI, scale profile)
 //
-// No dependencies (Node built-ins only). A repo with no cycle files is not using cycles -
+// No dependencies (Node built-ins only). A repo with no sprint files is not using sprints -
 // the guard says so and exits 0, at every profile.
 
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
@@ -29,10 +29,10 @@ const block = process.argv.includes("--block");
 // repo satisfying the manifest at its primary path must not silently lose half the check -
 // which is exactly what one hardcoded path did.
 const POOLS = ["docs/backlog.md", "backlog.md"];
-const CYCLES = "docs/cycles";
-// Derived or descriptive, not cycles. /timeline-update writes TIMELINE.md here and it
+const CYCLES = "docs/sprints";
+// Derived or descriptive, not sprints. /timeline-update writes TIMELINE.md here and it
 // legitimately names the intents it projects; counting it would make the timeline collide
-// with the cycles it was generated from, on a file the standard's own skill just wrote.
+// with the sprints it was generated from, on a file the standard's own skill just wrote.
 const NOT_A_CYCLE = new Set(["TIMELINE.md", "README.md"]);
 
 // An intent id: INV-3 or PAY-2 where the prefix is the row's capability, ADR-auth or DRIFT-2
@@ -74,7 +74,7 @@ const walk = (dir, acc = []) => {
 // into the existing cell keeps a wide table from getting wider.
 const BLOCKED_BY = /^blocked\s*:\s*([A-Z][A-Z0-9]*-[A-Za-z0-9-]+)$/i;
 
-// `split:PAY-8` on a row leaving a cycle: the row finished the part it still covers, and
+// `split:PAY-8` on a row leaving a sprint: the row finished the part it still covers, and
 // PAY-8 is the new backlog row cut for what remains (ADR-029). It is finished work, so a
 // block naming it has stopped applying exactly as a `done` one has - and reading it as
 // merely "some status" is how a block on finished work kept reporting itself live.
@@ -103,11 +103,11 @@ const OUTCOME = /^outcome\b/i;
 // every example row after it.
 //
 // The `## ` heading each line sits under travels with it, because scoping a scan to a
-// heading is how these checks switch themselves off. cycle-close's own documented output is
+// heading is how these checks switch themselves off. sprint-close's own documented output is
 // a close table under `## Outcome` whose rows start with the same intent ids on purpose - a
 // reader screenshots that table into a channel. Unscoped, this guard read it as a second
 // copy of every intent it names and reported the exact "copied, not moved" failure it exists
-// to catch, on a cycle that was closed correctly. Only an H2 changes the section: a `###`
+// to catch, on a sprint that was closed correctly. Only an H2 changes the section: a `###`
 // under `## Intents` is still inside it.
 function* lines(file) {
   let commented = false;
@@ -168,9 +168,9 @@ const columnNamed = (header, name) =>
 // Intent rows from a file's markdown tables, optionally only from one `## ` section.
 //
 // Scoping to a heading is also how the check switches itself off, which is why the scan
-// reports what it saw as well as what it found: a cycle file using `### Intents`, `## Work`
+// reports what it saw as well as what it found: a sprint file using `### Intents`, `## Work`
 // or the id-and-title-in-one-cell shape that the folder manual documented yielded zero
-// rows, and zero rows is indistinguishable from a clean cycle. Both are errors now, and
+// rows, and zero rows is indistinguishable from a clean sprint. Both are errors now, and
 // `sawSection` / `bodyRows` are what the caller needs to tell them apart.
 //
 // The id cell is found by the header row's `id` column, not by position. A hardcoded column
@@ -235,8 +235,8 @@ const readCycleStatus = (file) => {
   return null;
 };
 
-// `Returned to the pool: PAY-7, PAY-9` in a closed cycle's `## Outcome` block - the ids
-// cycle-close says went back to the backlog. The clash check above only ever notices an id
+// `Returned to the pool: PAY-7, PAY-9` in a closed sprint's `## Outcome` block - the ids
+// sprint-close says went back to the backlog. The clash check above only ever notices an id
 // in *two* places; it cannot notice one that ended up in *zero*, because a name in prose
 // that nothing points back to just looks like nothing was checked.
 const RETURNED_LINE = /^returned to the pool\s*:\s*(.*)$/i;
@@ -254,15 +254,15 @@ const returnedIdsIn = (file) => {
   return ids;
 };
 
-// The pool's `## In flight` table: which cycle each team is running, and how many intents it
-// holds. `/cycle-open` writes a row and `/cycle-close` removes it, so a row naming a closed
-// cycle is a pointer nobody removed and a count disagreeing with the cycle's real rows is
+// The pool's `## In flight` table: which sprint each team is running, and how many intents it
+// holds. `/sprint-open` writes a row and `/sprint-close` removes it, so a row naming a closed
+// sprint is a pointer nobody removed and a count disagreeing with the sprint's real rows is
 // the pool describing work it cannot see. Both read as a perfectly tidy pool.
 //
-// A markdown link (`[august](cycles/x/august.md)`) and a bare or backticked path are both in
+// A markdown link (`[august](sprints/x/august.md)`) and a bare or backticked path are both in
 // use in the wild, so the target is taken from the link when there is one.
 const LINK_TARGET = /\[[^\]]*\]\(([^)]+)\)/;
-const POINTER_COLUMNS = ["cycle", "team", "goal", "target", "items"];
+const POINTER_COLUMNS = ["sprint", "team", "goal", "target", "items"];
 const pointerRows = (file) => {
   const rows = [];
   const unreadable = [];
@@ -281,7 +281,7 @@ const pointerRows = (file) => {
       // The pointer table is recognised by its columns, not by being the first table under
       // the heading: a pool is free to write anything else here, and reading an intent table
       // as a broken pointer table would fail a repo doing nothing wrong. Naming *some* of
-      // the columns and not `cycle` is the case worth reporting - that is the shape a rename
+      // the columns and not `sprint` is the case worth reporting - that is the shape a rename
       // leaves behind, and it would otherwise switch this whole check off in silence.
       cols = POINTER_COLUMNS.some((n) => found[n] >= 0) ? found : null;
       continue;
@@ -292,7 +292,7 @@ const pointerRows = (file) => {
     }
     if (cells.every((c) => c === "")) continue; // the template's blank row
     if (cols === null) continue;
-    const { cycle: cycleCol, team: teamCol, items: itemsCol } = cols;
+    const { sprint: cycleCol, team: teamCol, items: itemsCol } = cols;
     if (cycleCol < 0) {
       unreadable.push(text);
       continue;
@@ -300,7 +300,7 @@ const pointerRows = (file) => {
     const raw = cells[cycleCol] ?? "";
     const path = unwrap(LINK_TARGET.exec(raw)?.[1] ?? raw);
     if (!path) {
-      // A half-written row - a team in flight with no cycle named. Skipping it would make
+      // A half-written row - a team in flight with no sprint named. Skipping it would make
       // blanking one cell the way to stop a pointer being checked.
       unreadable.push(text);
       continue;
@@ -317,19 +317,19 @@ const pointerRows = (file) => {
 const pool = POOLS.find(existsSync);
 const cycleFiles = existsSync(CYCLES) ? walk(CYCLES) : [];
 
-// No cycles means the one-place invariant has nothing to check - but the pool's blocks
+// No sprints means the one-place invariant has nothing to check - but the pool's blocks
 // still do, and a stale block costs a core-profile repo exactly what it costs a scale one:
 // a row that sits there looking legitimately stuck. Exiting here would have skipped it.
 if (!cycleFiles.length && !pool) {
-  console.log(`cycle-guard: no cycle files under ${CYCLES}/ and no backlog - nothing to check`);
+  console.log(`sprint-guard: no sprint files under ${CYCLES}/ and no backlog - nothing to check`);
   process.exit(0);
 }
 
-// Cycles exist and the pool does not: the half of the invariant this guard exists for
+// Sprints exist and the pool does not: the half of the invariant this guard exists for
 // cannot be checked, and printing OK would claim that it was.
 if (!pool) {
-  console.error(`  ${cycleFiles.length} cycle file(s) but no backlog at ${POOLS.join(" or ")}`);
-  console.error("\ncycle-guard: the pool half of the invariant cannot be checked without a backlog.");
+  console.error(`  ${cycleFiles.length} sprint file(s) but no backlog at ${POOLS.join(" or ")}`);
+  console.error("\nsprint-guard: the pool half of the invariant cannot be checked without a backlog.");
   process.exit(block ? 1 : 0);
 }
 
@@ -337,19 +337,19 @@ const files = [pool, ...cycleFiles];
 const where = new Map(); // id -> [file, ...]
 const status = new Map(); // id -> last status cell seen
 const work = new Map(); // normalized title -> [{ id, file, title }, ...]
-const rowCount = new Map(); // cycle file -> how many intent rows it holds
+const rowCount = new Map(); // sprint file -> how many intent rows it holds
 const blocks = []; // { id, ref, file }
 const splits = []; // { id, ref, file }
-const unreadable = []; // { file, why } - a cycle this guard cannot read at all
+const unreadable = []; // { file, why } - a sprint this guard cannot read at all
 for (const f of files) {
   const { rows, sawSection, bodyRows } = scan(f, f === pool ? null : INTENTS);
-  // A cycle whose intents this guard cannot find is not a clean cycle, and the two look
-  // identical from the outside. A real pool-plus-cycle duplicate was reported as
+  // A sprint whose intents this guard cannot find is not a clean sprint, and the two look
+  // identical from the outside. A real pool-plus-sprint duplicate was reported as
   // "OK - each in exactly one" for exactly this reason.
   if (f !== pool) {
     rowCount.set(f, rows.length);
     if (!sawSection) {
-      unreadable.push({ file: f, why: "no `## Intents` heading - a cycle's rows live under that exact H2 (a deeper level does not count), because a closed cycle's `## Outcome` table names the same ids" });
+      unreadable.push({ file: f, why: "no `## Intents` heading - a sprint's rows live under that exact H2 (a deeper level does not count), because a closed sprint's `## Outcome` table names the same ids" });
     } else if (bodyRows > 0 && rows.length === 0) {
       unreadable.push({ file: f, why: `${bodyRows} row(s) under \`## Intents\` but no intent id in the first cell - the id is its own cell (\`PAY-2\`), the title goes in the next one` });
     }
@@ -384,7 +384,7 @@ const same = (a, b) => a.toLowerCase() === b.toLowerCase();
 const clashes = [...where.entries()].filter(([, fs]) => fs.length > 1);
 
 // The same work in two places under two ids. The clash check above keys entirely on the id,
-// so copying an intent into a cycle and renumbering the pool copy satisfies it perfectly -
+// so copying an intent into a sprint and renumbering the pool copy satisfies it perfectly -
 // the invariant is about the intent, and the id is only how it is usually spelled.
 //
 // A split is the one legitimate way one title reaches two rows: `split:<new-id>` names the
@@ -409,7 +409,7 @@ const selfBlocked = blocks.filter(({ id, ref }) => same(id, ref));
 const splitNowhere = splits.filter(({ ref }) => resolve(ref) === null);
 const selfSplit = splits.filter(({ id, ref }) => same(id, ref));
 
-// The "at least one" direction: an id a closed cycle says it returned, but which is not
+// The "at least one" direction: an id a closed sprint says it returned, but which is not
 // actually sitting in the pool - the outcome block asserted a move that never happened.
 const poolIds = new Set(scan(pool).rows.map((r) => r.id));
 const cycleStatus = new Map(cycleFiles.map((f) => [f, readCycleStatus(f)]));
@@ -421,7 +421,7 @@ for (const f of cycleFiles) {
   }
 }
 
-// The pool's in-flight pointers against the cycles they name.
+// The pool's in-flight pointers against the sprints they name.
 const unreadableFiles = new Set(unreadable.map((u) => u.file));
 const { rows: pointers, unreadable: unreadablePointers } = pointerRows(pool);
 const poolDir = pool.includes("/") ? pool.slice(0, pool.lastIndexOf("/")) : "";
@@ -443,22 +443,22 @@ for (const { team, path, items } of pointers) {
   pointed.add(file);
   if (cycleStatus.get(file) === "closed") {
     stalePointer.push({ team, file });
-    continue; // a closed cycle's count is not the pool's business - the row should be gone
+    continue; // a closed sprint's count is not the pool's business - the row should be gone
   }
   if (items === "") continue;
-  // A cycle this guard already said it cannot read has no row count worth comparing against,
+  // A sprint this guard already said it cannot read has no row count worth comparing against,
   // and "says 6, holds 0" would bury the message that actually explains it.
   if (unreadableFiles.has(file)) continue;
   const held = rowCount.get(file) ?? 0;
   // A cell that is not a bare number is reported as unreadable rather than as a mismatch:
-  // `6 items` against a cycle holding 6 is not a wrong count, it is a cell nothing can
+  // `6 items` against a sprint holding 6 is not a wrong count, it is a cell nothing can
   // compare, and saying "holds 6 items item(s), but holds 6" would be worse than silence.
   if (!/^\d+$/.test(items)) unreadableCount.push({ team, file, items, held });
   else if (Number(items) !== held) wrongCount.push({ team, file, items, held });
 }
 // The other direction, and the reason removing every pointer row is not a way out: a pool
 // that keeps this table must keep it whole. A pool that deleted the section (the template
-// says a repo not running cycles should) has no table to be incomplete.
+// says a repo not running sprints should) has no table to be incomplete.
 const unpointed = pointers.length
   ? cycleFiles.filter((f) => cycleStatus.get(f) === "open" && !pointed.has(f))
   : [];
@@ -492,16 +492,16 @@ for (const { id, file } of unreturned) {
   console.error(`  ${file} says ${id} was returned to the pool, but ${id} is not in ${pool}`);
 }
 for (const text of unreadablePointers) {
-  console.error(`  ${pool}: an in-flight row with no \`cycle\` column to read: ${text}`);
+  console.error(`  ${pool}: an in-flight row with no \`sprint\` column to read: ${text}`);
 }
 for (const { team, path, tries } of danglingPointer) {
-  console.error(`  ${pool} says ${team} is running \`${path}\`, but no cycle file is there (tried ${tries.join(", ")})`);
+  console.error(`  ${pool} says ${team} is running \`${path}\`, but no sprint file is there (tried ${tries.join(", ")})`);
 }
 for (const { team, file } of stalePointer) {
-  console.error(`  ${pool} still points ${team} at ${file}, which is closed - closing a cycle removes its pointer row`);
+  console.error(`  ${pool} still points ${team} at ${file}, which is closed - closing a sprint removes its pointer row`);
 }
 for (const { team, file, items, held } of wrongCount) {
-  console.error(`  ${pool} says ${team}'s cycle holds ${items} item(s), but ${file} holds ${held}`);
+  console.error(`  ${pool} says ${team}'s sprint holds ${items} item(s), but ${file} holds ${held}`);
 }
 for (const { team, file, items, held } of unreadableCount) {
   console.error(`  ${pool}: ${team}'s \`Items\` cell reads \`${items}\` - it holds the count and nothing else (${file} holds ${held})`);
@@ -530,15 +530,15 @@ if (!problems) {
   const note = blocks.length ? `, ${blocks.length} live block(s)` : "";
   const scope = cycleFiles.length
     ? `${where.size} intent(s) across ${files.length} place(s), each in exactly one`
-    : `${where.size} intent(s) in the pool, no cycles in use`;
-  console.log(`cycle-guard: OK - ${scope}${note}`);
+    : `${where.size} intent(s) in the pool, no sprints in use`;
+  console.log(`sprint-guard: OK - ${scope}${note}`);
   process.exit(0);
 }
 
-const summary = [`\ncycle-guard: ${problems} problem(s).`];
+const summary = [`\nsprint-guard: ${problems} problem(s).`];
 if (clashes.length || duplicatedWork.length) {
   summary.push(
-    `An intent belongs to the pool or to one cycle. Pulling one into a cycle removes its row from ${pool}; closing a cycle unfinished returns it.`,
+    `An intent belongs to the pool or to one sprint. Pulling one into a sprint removes its row from ${pool}; closing a sprint unfinished returns it.`,
   );
 }
 if (duplicatedWork.length) {
@@ -552,15 +552,15 @@ if (splitNowhere.length || selfSplit.length) {
 }
 if (unreadable.length) {
   summary.push(
-    "A cycle whose intents cannot be read is not a cycle with no problems: the format is the interface. Rows under `## Intents`, the id in its own first cell, the status in the last cell whatever columns sit between - see docs/tree/docs-cycles.md, and `docs/cycles/_template.md` for the shape a cycle starts from.",
+    "A sprint whose intents cannot be read is not a sprint with no problems: the format is the interface. Rows under `## Intents`, the id in its own first cell, the status in the last cell whatever columns sit between - see docs/tree/docs-sprints.md, and `docs/sprints/_template.md` for the shape a sprint starts from.",
   );
 }
 if (unreturned.length) {
-  summary.push(`An id a closed cycle's outcome names as returned must actually be in ${pool} - write it back, or fix the outcome block.`);
+  summary.push(`An id a closed sprint's outcome names as returned must actually be in ${pool} - write it back, or fix the outcome block.`);
 }
 if (unreadablePointers.length || danglingPointer.length || stalePointer.length || wrongCount.length || unreadableCount.length || unpointed.length) {
   summary.push(
-    `The \`## In flight\` table in ${pool} is how the pool stays the single place to start reading: one row per open cycle, naming its file and how many intents it holds. \`/cycle-open\` writes the row and \`/cycle-close\` removes it. A table with no rows in it is a pool not running cycles and is not checked; a table missing one row is a pool that has lost track of a cycle, which is.`,
+    `The \`## In flight\` table in ${pool} is how the pool stays the single place to start reading: one row per open sprint, naming its file and how many intents it holds. \`/sprint-open\` writes the row and \`/sprint-close\` removes it. A table with no rows in it is a pool not running sprints and is not checked; a table missing one row is a pool that has lost track of a sprint, which is.`,
   );
 }
 console.error(summary.join("\n"));

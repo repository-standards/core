@@ -1,4 +1,4 @@
-# Tracking the work - backlog, cycles, timeline
+# Tracking the work - backlog, sprints, timeline
 
 Three files answer the three questions people actually ask: what do we still owe, what are we
 doing right now, and when does it land. They are files rather than a board, so they are in
@@ -13,16 +13,16 @@ Three files, all under `docs/`:
 
 - **`backlog.md`** - *what do we still owe ourselves*. Every repository has this one, however
   small.
-- **`cycles/<team>/<cycle>.md`** - *what did we commit to, and by when*. Teams only.
-- **`cycles/TIMELINE.md`** - *when does it land*. Teams only.
+- **`sprints/<team>/<sprint>.md`** - *what did we commit to, and by when*. Teams only.
+- **`sprints/TIMELINE.md`** - *when does it land*. Teams only.
 
 **Why "teams only".** The standard ships in two sizes, and a repository picks one when it
 adopts. **Core** is everything a repository needs whatever it is - one person, one weekend
 project, a company. **Scale** adds what only makes sense once several people work in the same
-repository, and cycles are the clearest example: a single maintainer already knows what they
+repository, and sprints are the clearest example: a single maintainer already knows what they
 are doing this week, so a file recording it would be ceremony with no reader.
 
-Nothing stops a solo repository turning cycles on. It just does not arrive by default, and
+Nothing stops a solo repository turning sprints on. It just does not arrive by default, and
 you are not out of compliance for not having them.
 
 ## The backlog is the pool
@@ -129,7 +129,7 @@ It is real and running against a real board, not a plan. Worth reading in full e
 use a different tracker, because the shape is the part that transfers.
 
 **It only ever writes forward.** The generator reads the repository and creates issues. It
-never reads Jira back into a spec, a backlog row or a cycle file. There is exactly one write
+never reads Jira back into a spec, a backlog row or a sprint file. There is exactly one write
 in the other direction - a newly created issue key, persisted into front matter - and that
 exists so the next run can tell "already there" from "not yet", which is what makes it safe
 to run repeatedly.
@@ -147,11 +147,11 @@ would be a generator nobody is allowed to run twice.
 |---|---|---|
 | a capability | an **epic**, named in front matter | referenced, never created - the bridge does not invent structure above itself |
 | a **backlog intent** - a row with a why and a done-when | a **Story** under that epic, one per intent | the key in front matter; created once when absent, written back, reused ever after |
-| a **task** the cycle broke that intent into | a **Sub-task** under that intent's Story | the task id in the summary, `[T003] ...`, plus a label - created only if no sub-task with that id exists |
+| a **task** the sprint broke that intent into | a **Sub-task** under that intent's Story | the task id in the summary, `[T003] ...`, plus a label - created only if no sub-task with that id exists |
 | a **decision the intent is waiting on** | its own Story, `Author ADR: <about>`, blocking the intent's | its own front-matter key |
 
 The unit choice is the whole design and it is the thing people get wrong. **A Story is one
-backlog intent** - something with a why, a done-when, and a size that fits inside a cycle.
+backlog intent** - something with a why, a done-when, and a size that fits inside a sprint.
 Not the capability (that is an epic, and one giant Story per module is a Story nobody can
 close), and not a task (a task is a one-line title, so a Story per task gives you a board of
 empty stories with no acceptance criteria between them).
@@ -165,7 +165,7 @@ that used to go missing between "the spec is blocked" and anyone outside the tea
 
 ```figure
 <div class="win">
-  <div class="win-bar"><span class="win-dots"><i></i><i></i><i></i></span><span class="win-ask">&gt; push the invoicing cycle to jira</span></div>
+  <div class="win-bar"><span class="win-dots"><i></i><i></i><i></i></span><span class="win-ask">&gt; push the invoicing sprint to jira</span></div>
   <div class="win-body">
 <svg viewBox="0 0 700 258" role="img" aria-label="Dry-run plan: epic referenced, one story reused, one story created, three sub-tasks, one decision story">
   <text class="bd-lane" x="6" y="13">dry run &#183; nothing written yet &#183; 4 to create, 2 already there</text>
@@ -232,24 +232,24 @@ for a mechanism whose entire purpose is to be removable. If you later want statu
 *out* of the repository, the cheap version is a read-only reflector (branch and pull-request
 state to the board), not a sync.
 
-## A cycle is what somebody actually picked up
+## A sprint is what somebody actually picked up
 
 A bounded stretch of work with an owner, a goal, and an end date everybody agreed to. One
-file per cycle, one directory per team.
+file per sprint, one directory per team.
 
 **Opening one** moves chosen intents out of the pool:
 
 ```
-> let's start a cycle for dispatch - reassignment and the courier notification, two weeks
+> let's start a sprint for dispatch - reassignment and the courier notification, two weeks
 ```
 
 **What you get back** - the commitment in a header, and the work as a board:
 
 ```figure
 <div class="win">
-  <div class="win-bar"><span class="win-dots"><i></i><i></i><i></i></span><span class="win-ask">&gt; how is the dispatch cycle going?</span></div>
+  <div class="win-bar"><span class="win-dots"><i></i><i></i><i></i></span><span class="win-ask">&gt; how is the dispatch sprint going?</span></div>
   <div class="win-body">
-<svg viewBox="0 0 700 300" role="img" aria-label="Cycle board: two items done, three in progress of which one is blocked on NOTIF-6, one not started">
+<svg viewBox="0 0 700 300" role="img" aria-label="Sprint board: two items done, three in progress of which one is blocked on NOTIF-6, one not started">
   <text class="bd-lane" x="5" y="14" fill="#34d399">done &#183; 2</text>
   <line class="bd-rule" x1="5" y1="22" x2="223" y2="22" stroke="#34d399"/>
   <rect class="bd-card" x="5" y="34" width="218" height="78" rx="9"/>
@@ -305,14 +305,14 @@ status the schema declares and it gets no lane of its own, because "blocked" is 
 work sits - it is a thing that is true about work somebody is holding. What matters is the
 reference, and OVR-5 above carries it: waiting on `NOTIF-6`, which is a decision still in the
 pool. A board that dropped the reference, or crammed the row into `todo` without it, would
-lose the one fact worth looking at. `cycle-guard` checks the same reference from the other
+lose the one fact worth looking at. `sprint-guard` checks the same reference from the other
 side - a block naming work that is finished, split or deleted is a row that looks
 legitimately stuck and is not.
 
 **Closing one** is the step people skip and the one that pays:
 
 ```
-> the cycle is over - close it
+> the sprint is over - close it
 ```
 
 Each intent is checked against its definition of done, whatever did not finish returns to the
@@ -320,7 +320,7 @@ pool, and the one measurement nobody can reconstruct afterwards - what actually 
 inside the window - is recorded. Skipping the close does not save time; it destroys the only
 data the next forecast has.
 
-**The rule underneath:** an intent is in the pool **or** in exactly one cycle. Never both,
+**The rule underneath:** an intent is in the pool **or** in exactly one sprint. Never both,
 never two. A guard fails the build when that stops being true, because "what are we doing
 right now" stops being answerable the moment there are two answers.
 
@@ -332,30 +332,30 @@ right now" stops being answerable the moment there are two answers.
 
 What comes back depends on what the repository can honestly support:
 
-**With three or more closed cycles** it projects from measured throughput - what your team
+**With three or more closed sprints** it projects from measured throughput - what your team
 actually finished, not what anyone estimated.
 
 **Below three** there is no measured throughput, and it will not invent one. If items carry a
 size it describes the **shape** of what is left instead - heavier or lighter than the last
-cycle's mix - and says plainly that this is a ranking, not a date: a size letter is never
+sprint's mix - and says plainly that this is a ranking, not a date: a size letter is never
 converted into a duration, cold start included. If items carry no size either, it reports
 what is in flight and gives no date. Either way, the cold start gets **no date** - the only
 question is whether it also gets a shape.
 
-Three is not a magic number. It is the point below which one unusual cycle dominates the
+Three is not a magic number. It is the point below which one unusual sprint dominates the
 average, and the file says so rather than hiding it.
 
 That refusal is the whole design. A projection presented without its confidence is what
 teaches people to distrust plans, and once they do they stop reading the timeline and start
 asking in meetings - which is the state this replaced.
 
-**A real one**, from a repository with three closed cycles behind it:
+**A real one**, from a repository with three closed sprints behind it:
 
 ```figure
 <div class="win">
   <div class="win-bar"><span class="win-dots"><i></i><i></i><i></i></span><span class="win-ask">&gt; when does overrun-detection land? are we on track?</span></div>
   <div class="win-body">
-<svg viewBox="0 0 700 210" role="img" aria-label="Cycle overrun-detection: opened 20 July, target 14 August, measured projection 13 to 17 August, current pace projects 28 August">
+<svg viewBox="0 0 700 210" role="img" aria-label="Sprint overrun-detection: opened 20 July, target 14 August, measured projection 13 to 17 August, current pace projects 28 August">
   <text class="tl-title" x="46" y="18">dispatch / overrun-detection</text>
   <text class="tl-meta" x="46" y="34">2 of 6 done &#183; 13 days elapsed</text>
 
@@ -372,7 +372,7 @@ asking in meetings - which is the state this replaced.
   <text class="tl-label" x="54" y="77">2 of 6 done</text>
 
   <rect class="tl-proj" x="389" y="96" width="57" height="14" rx="4"/>
-  <text class="tl-proj-label" x="456" y="107">13-17 Aug &#183; measured, from three closed cycles</text>
+  <text class="tl-proj-label" x="456" y="107">13-17 Aug &#183; measured, from three closed sprints</text>
 
   <g class="tl-now">
     <line x1="232" y1="50" x2="232" y2="150"/>
@@ -393,7 +393,7 @@ asking in meetings - which is the state this replaced.
 </div>
 ```
 
-> **This cycle is running at less than half its own history and nobody has said so.**
+> **This sprint is running at less than half its own history and nobody has said so.**
 >
 > Thirteen days in, two of six items are done - 0.15 items per day against a historical 0.28
 > to 0.38. The bar above uses the historical rate, which is the honest default for four
@@ -410,7 +410,7 @@ and a number somebody has to decide whether to believe.
 Markdown in a repository is the right home for this and the wrong reading surface for a
 sponsor, a client, or somebody who joined on Monday. `scripts/generate-dashboard/` renders the
 three files - plus the decision records, the specs and the changelog - into one static page:
-what is in flight now, the cycles against a calendar, the pool, a handful of reports, the
+what is in flight now, the sprints against a calendar, the pool, a handful of reports, the
 history, and every record with a search across it.
 
 It is a projection, never a second place the work is tracked. It writes nothing back, and two
@@ -494,7 +494,7 @@ project long after the interesting part of this decision is over.
 The shipped workflow encodes exactly that: it builds on every push to `main`, uploads the
 page as an artifact, and reaches the publish step **only when the repository is public**, so
 turning Pages on cannot leak a private board by accident. Add `--anonymise` when the page
-should carry no colleague's name: assignees and the owner a cycle names are dropped at build
+should carry no colleague's name: assignees and the owner a sprint names are dropped at build
 time rather than hidden in the page. It is not redaction - prose you wrote by hand is
 reproduced as you wrote it, so a build that must carry no names needs the sources read too.
 
@@ -520,10 +520,10 @@ dragging a card. Teams who take to it say it removed a standing meeting. Teams w
 miss the board - and that is a legitimate reason to keep one.
 
 **Not estimation ceremony.** Sizes are a cold-start fallback and a splitting trigger,
-nothing else. Once measured cycles exist, size stops being an input to any projection, and
-an item that does not finish inside its cycle is **split rather than re-sized**.
+nothing else. Once measured sprints exist, size stops being an input to any projection, and
+an item that does not finish inside its sprint is **split rather than re-sized**.
 
-**Not a history.** A cycle file is state. What happened and why it mattered goes in the
+**Not a history.** A sprint file is state. What happened and why it mattered goes in the
 closing note, or in a decision record if it changed how you work.
 
 ## Whose job this is
