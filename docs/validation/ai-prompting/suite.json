@@ -3414,6 +3414,182 @@
       "then": "the policy is named and its consequence put to the user, instead of falling between the two shipped branches (outright ban, and conditional allow requiring a human to rewrite) because there is nothing procedural to say back",
       "procedure": "read skills/align-to-standards/SKILL.md step 0's AI-policy branches against honojs/hono's docs/CONTRIBUTING.md, and check which paths the scan is told to read",
       "status": "run"
+    },
+    {
+      "id": "SEC-05",
+      "title": "the remote-database write guard covers the whole SQL family it now recognizes, but a migration CLI invocation with no literal SQL verb in it still passes",
+      "area": "security",
+      "tests": [
+        "R19"
+      ],
+      "promise": "agent access to remote databases SHOULD be write-blocked by the shipped settings baseline - SPEC.md R19",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": "a remote MySQL write reached two ways: a raw client call with a SQL verb (`mysql -h host -u root -e \"DROP TABLE users\"`), and a migration-CLI call reached through a DATABASE_URL with no SQL verb anywhere in the command text (`DATABASE_URL=mysql2://root@host/app bin/rails db:migrate`)",
+      "when": "no-remote-db-writes.sh runs against both",
+      "then": "both are denied, since the guard's own deny message promises 'no migration CLI' - instead of only the first, because the client/scheme recognition was fixed for the whole SQL family but the write-verb pattern was never given a migrate/upgrade vocabulary, so a remote migration command naming no literal DDL verb still returns EXIT=0 with no output",
+      "procedure": "echo a Bash tool-call JSON for each of the two commands above into standard/.claude/hooks/no-remote-db-writes.sh and check whether the response denies",
+      "status": "run"
+    },
+    {
+      "id": "SEC-06",
+      "title": "the shipped gitleaks scan flags the standard's own manifest, on the very commit that installs it",
+      "area": "security",
+      "tests": [
+        "R19"
+      ],
+      "promise": "The shipped secret scan SHOULD gate CI - SPEC.md R19",
+      "portable": false,
+      "severity_if_failed": "severe",
+      "given": "an adoption commit that lands standard.manifest.json - which records no-ci-secret-writes.sh's sha256 as a 64-hex-char value under a key containing \"secret\" - alongside the shipped .gitleaks.toml and gitleaks.yml",
+      "when": "gitleaks detect runs with the shipped config against that commit, exactly as gitleaks.yml runs it in CI",
+      "then": "the scan passes, instead of the generic-api-key rule firing on the manifest's own recorded hash - the shape is exactly what the rule looks for, and the shipped allowlist does not cover it",
+      "procedure": "gitleaks detect --no-banner --redact --config standard/.gitleaks.toml --source . --report-format json, then check the report for a hit on standard.manifest.json",
+      "status": "run"
+    },
+    {
+      "id": "SEC-07",
+      "title": "the agent deny/ask list names Node, npm and Postgres tooling and has no vocabulary for the ecosystem three separate adoptions actually needed",
+      "area": "security",
+      "tests": [
+        "R19"
+      ],
+      "promise": "agent access to remote databases SHOULD be write-blocked by the shipped settings baseline - SPEC.md R19",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "three adoptions on three ecosystems: ripgrep (Rust/Cargo - cargo publish is irreversible, a version can only be yanked, never replaced), rails (Ruby - gem push, rake release, rake db:migrate against MySQL/SQLite), okhttp (Gradle/JVM - ./gradlew publish to Maven Central, also irreversible)",
+      "when": "`.claude/settings.json`'s deny/ask list is read for each ecosystem's equivalent of the commands it already denies for npm (npm publish) and SQL (psql, pg_dump)",
+      "then": "each ecosystem's irreversible-publish and remote-write commands are named, instead of the list reading as written for a Node application with a Postgres database - all three adoptions added the missing entries by hand before the deny list protected anything on their stack",
+      "procedure": "grep .claude/settings.json's deny/ask patterns for cargo, gem/rake and gradle/mvn, each against the equivalent already-covered npm/psql pattern",
+      "status": "run"
+    },
+    {
+      "id": "GATE-41",
+      "title": "facts-check walks the fixed part of a glob whose wildcard is its first path segment, instead of reporting the count as zero",
+      "area": "gates",
+      "tests": [
+        "R4"
+      ],
+      "promise": "A fact has one home... so scripts/facts-check.mjs fails when the two disagree - SPEC.md R4",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "a monorepo whose declared count is a glob with the wildcard as its first path segment (`*/CHANGELOG.md`, once per top-level package)",
+      "when": "facts-check.mjs derives the directory to walk by cutting the glob at its first `*`",
+      "then": "the walk starts at the repository root and the count is the real number of matches, instead of the cut producing an empty base, `existsSync(\"\")` returning false, and the walk silently returning zero - reported as a number, not an error, blaming the prose that restated it",
+      "procedure": "declare a fact with `home.count` set to a glob whose wildcard is the first path segment, over a tree with several matches, and run facts-check.mjs against it",
+      "status": "run"
+    },
+    {
+      "id": "GATE-42",
+      "title": "self-verify warns when a shipped workflow's branch trigger cannot fire on this repo's default branch, instead of reaching drift 0 in silence",
+      "area": "gates",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "a repo whose default branch is not `main` (rails/ripgrep on `master`, nlohmann/json on `develop`/`master`), with the shipped spec-guard.yml/gitleaks.yml/dashboard.yml landed verbatim at `branches: [main]`",
+      "when": "self-verify.mjs runs against it",
+      "then": "it warns by name, naming the workflow, the branch it triggers on and the repo's actual default branch, instead of reaching drift 0 with a push trigger that can never fire and nothing anywhere saying so",
+      "procedure": "land a shipped workflow with `branches: [main]` in a git repo whose `origin/HEAD` points at a different branch, and run node standard/scripts/self-verify.mjs",
+      "status": "run"
+    },
+    {
+      "id": "GATE-43",
+      "title": "self-verify's required-section check recognizes a setext heading, not only an ATX one",
+      "area": "gates",
+      "tests": [
+        "R18"
+      ],
+      "promise": "A PR describes its change under the changelog's Unreleased heading - SPEC.md R18",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "a changelog whose headings are all setext (`Unreleased` on its own line, underlined with `===`), the style `RELEASE-CHECKLIST.md` itself instructs the maintainer to use",
+      "when": "self-verify.mjs checks for the required `Unreleased` section",
+      "then": "it is found, instead of the ATX-only regex (`^#{1,6}\\s+.*Unreleased`) reporting the section missing while the word sits in the file, the only remedy being to restyle somebody else's changelog",
+      "procedure": "run node standard/scripts/self-verify.mjs against a CHANGELOG.md whose Unreleased heading is setext (underlined with `===`), inside and outside a fenced code block",
+      "status": "run"
+    },
+    {
+      "id": "GATE-44",
+      "title": "landing a required copy-class file does not silently overwrite an existing file whose name differs only in case, on a case-insensitive filesystem",
+      "area": "gates",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repo whose real changelog is `ChangeLog.md` (case-differing from the manifest's required `CHANGELOG.md`, no altPaths declared) on APFS or NTFS",
+      "when": "the standard's required CHANGELOG.md is created beside it",
+      "then": "the existing file's history is detected and preserved, instead of the write silently overwriting it - reproduced directly in a scratch directory: writing CHANGELOG.md beside an existing ChangeLog.md replaced its content, and the write tool itself reported an update, not a creation",
+      "procedure": "in a scratch directory on a case-insensitive filesystem, create ChangeLog.md with real content, then write CHANGELOG.md beside it and check whether ChangeLog.md's content survives",
+      "status": "run"
+    },
+    {
+      "id": "GATE-45",
+      "title": "a required directory that git cannot track because it is empty does not pass self-verify on presence alone",
+      "area": "gates",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": true,
+      "severity_if_failed": "moderate",
+      "given": "a required directory entry (`docs/runbooks/`, `docs/ideas/`, `docs/discovery/`) landed as an empty directory rather than with the shipped `_template.md` files inside it",
+      "when": "self-verify.mjs's fill/ignored-and-untracked check runs, which only fires on paths git actually ignores",
+      "then": "the entry fails or warns, instead of passing - git cannot track an empty directory at all, so it would be present locally and absent from a fresh clone with nothing catching the difference",
+      "procedure": "`mkdir` a required directory entry with no file inside it, run self-verify.mjs, then `git clone` the resulting commit into a fresh directory and check whether the directory exists there",
+      "status": "run"
+    },
+    {
+      "id": "DOC-20",
+      "title": "the adoption skill's instruction for spec-guard.yml's Node version matches the workflow it is instructing the adopter to fix",
+      "area": "docs",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": false,
+      "severity_if_failed": "minor",
+      "given": "the shipped `standard/.github/workflows/spec-guard.yml`, which pins an exact Node version by design and says so in its own comment",
+      "when": "skills/align-to-standards/SKILL.md's instruction about spec-guard.yml's Node version is read against it",
+      "then": "the instruction matches the artifact - it does not send the adopter to land a `.nvmrc` the workflow does not read, or otherwise describe a lookup the workflow no longer performs",
+      "procedure": "read SKILL.md's spec-guard.yml/.nvmrc guidance against the workflow's own `node-version` line and comment",
+      "status": "run"
+    },
+    {
+      "id": "DOC-21",
+      "title": "the dashboard generator's changelog-entry count matches a real changelog whose headings use a format the two documented patterns do not cover",
+      "area": "docs",
+      "tests": [
+        "R16"
+      ],
+      "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
+      "portable": false,
+      "severity_if_failed": "moderate",
+      "given": "a 37KB CHANGELOG.md covering 100+ real releases, headed `## Version 5.4.0` followed by an italic `_2026-06-08_` line rather than the two patterns `generate-dashboard/index.mjs` matches (`^## \\[?(Unreleased|\\d+\\.\\d+\\.\\d+)\\]?` and `^### (.+?) \\((\\d{4}-\\d{2}-\\d{2})\\)`)",
+      "when": "the dashboard generator runs against it",
+      "then": "the History panel reflects the real entry count, instead of printing '0 changelog entries' with no crash and no warning - a wrong fact stated as confidently as a right one",
+      "procedure": "run node scripts/generate-dashboard/index.mjs against a CHANGELOG.md whose headings use a real but non-matching format, and check the printed changelog-entry count against the file's actual entries",
+      "status": "run"
+    },
+    {
+      "id": "ADOPT-20",
+      "title": "the manifest's docs/-rooted entries have an altPath or a docsRoot for a repo whose docs/ is already claimed by a published site",
+      "area": "adoption",
+      "tests": [
+        "R17"
+      ],
+      "promise": "Adoption and updates MUST adapt, never blind-copy - SPEC.md R17",
+      "portable": true,
+      "severity_if_failed": "severe",
+      "given": "a repo whose docs/ is already the source tree of a published mkdocs (or equivalent) site, with the manifest hardcoding docs/personas.md, docs/decision-records/, docs/PRODUCT.md, docs/ARCHITECTURE.md, docs/PRINCIPLES.md, docs/runbooks/, docs/ideas/, docs/discovery/ and docs/facts.json - none with an altPaths entry",
+      "when": "the standard is adopted literally",
+      "then": "the standard's own maintainer records land somewhere that is not the published site's source tree, instead of either failing to land at all or being built and published to the public internet the next time the site deploys",
+      "procedure": "adopt the standard into a repo whose docs/ is a real mkdocs.yml docs_dir, run the site's build, and check whether any standard-authored file under docs/ appears in the built output",
+      "status": "run"
     }
   ]
 }

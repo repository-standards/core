@@ -20,18 +20,18 @@ written rather than generated.
 ## What this does not prove - read this before the numbers
 
 - **A listed target is not an observed one.** `targets.json` has 118 rows, and
-  **42 of them have at least one observation in `runs/`**. The other
-  76 - all of them at L1 - are
+  **43 of them have at least one observation in `runs/`**. The other
+  75 - all of them at L1 - are
   listed and nothing more: a repository somebody put on the list, carrying a `shape` and a
   `quality_evidence` line written from its own metadata rather than from a method pass run
   against it. This page used to call all 118 of them "assessed", which was the
-  wider word doing work the data could not hold. **42** is the number any
+  wider word doing work the data could not hold. **43** is the number any
   claim about coverage has to be built on.
-- **Assessment is not adoption.** 103 of 118 rows sit at
+- **Assessment is not adoption.** 99 of 118 rows sit at
   depth **L1** - a read-only clone, method passes applied, nothing changed. "We assessed
   115 public repositories" and "we adopted 115 repositories" are different
   claims, and only the first one is even close to true - see the row above for how much closer.
-  **12 third-party repositories have been adopted for real** (depth L3 or better, listed by slug in `targets.json`): `hagopj13/node-express-boilerplate`, `matomo-org/matomo`, `git/git`, `vim/vim`, `vdukhovni/postfix`, `caddyserver/caddy`, `simonw/llm`, `pydantic/pydantic-ai`, `Textualize/textual`, `honojs/hono`, `drizzle-team/drizzle-orm`, `usebruno/bruno`. That is what moves this from a design claim to a demonstrated one - and 12 repositories are still a small sample. `FIELD-1` asks for three, of different sizes and stack situations, and stays open until it has them.
+  **16 third-party repositories have been adopted for real** (depth L3 or better, listed by slug in `targets.json`): `rails/rails`, `BurntSushi/ripgrep`, `square/okhttp`, `nlohmann/json`, `hagopj13/node-express-boilerplate`, `matomo-org/matomo`, `git/git`, `vim/vim`, `vdukhovni/postfix`, `caddyserver/caddy`, `simonw/llm`, `pydantic/pydantic-ai`, `Textualize/textual`, `honojs/hono`, `drizzle-team/drizzle-orm`, `usebruno/bruno`. That is what moves this from a design claim to a demonstrated one - and 16 repositories are still a small sample. `FIELD-1` asks for three, of different sizes and stack situations, and stays open until it has them.
 - **Both sides of the fixtures share an author.** `test-greenfield-core` and
   `test-greenfield-node` - the two **L4** targets, the only ones that lived a full lifecycle
   loop - were built by the same people who wrote the standard being tested against them. They
@@ -71,12 +71,12 @@ alongside the confirmed ones rather than quietly dropped. Two classes are on rec
 
 | | |
 |---|---|
-| Cases in the catalogue | **211** (`202` executed at least once, `9` specified but not yet run) |
-| Portable cases (the benchmark subset) | **146** (69% of the catalogue); local (tests a path only this tree has): 65 |
-| Observations recorded | **358** across 30 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-k-shape, 2026-08-06-l-dochonesty, 2026-08-06-m-drift, 2026-08-06-n-vocab, 2026-08-06-o-specmech, 2026-08-06-p-shape, 2026-08-06-q-track, 2026-08-06-r-field2, 2026-08-06-s-field3, 2026-08-06-t-decisions, 2026-08-06-u-gatedoc, 2026-08-06-v-ledger, 2026-08-06-w-tracked, 2026-08-06-x-tail, 2026-08-06-y-substance, 2026-08-07-a-adopt-js, 2026-08-07-b-adopt-py, 2026-08-07-c-adopt-old) |
+| Cases in the catalogue | **222** (`213` executed at least once, `9` specified but not yet run) |
+| Portable cases (the benchmark subset) | **150** (68% of the catalogue); local (tests a path only this tree has): 72 |
+| Observations recorded | **377** across 31 rounds (2026-08-03, 2026-08-04, 2026-08-06-a-wave6, 2026-08-06-b-field1, 2026-08-06-c-planning-loop, 2026-08-06-d-adr032, 2026-08-06-e-shape08, 2026-08-06-f-upd, 2026-08-06-g-specdec, 2026-08-06-h-gate22, 2026-08-06-i-doc12, 2026-08-06-j-intake, 2026-08-06-k-shape, 2026-08-06-l-dochonesty, 2026-08-06-m-drift, 2026-08-06-n-vocab, 2026-08-06-o-specmech, 2026-08-06-p-shape, 2026-08-06-q-track, 2026-08-06-r-field2, 2026-08-06-s-field3, 2026-08-06-t-decisions, 2026-08-06-u-gatedoc, 2026-08-06-v-ledger, 2026-08-06-w-tracked, 2026-08-06-x-tail, 2026-08-06-y-substance, 2026-08-07-a-adopt-js, 2026-08-07-b-adopt-py, 2026-08-07-c-adopt-old, 2026-08-07-d-adopt-ecosystems) |
 | Targets assessed | **118** (115 real repositories, 2 synthetic fixtures) |
-| Verdicts | 210 pass, 135 fail, 2 not-applicable, 11 partial |
-| Failures found | **202** - **154 fixed and re-verified** (across 31 merged pull requests, plus 17 re-verified against the tree without a pull request cited), **48 still open right now** (of which 6 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 87 earlier fails superseded by a later re-run and no longer counted open |
+| Verdicts | 215 pass, 147 fail, 3 not-applicable, 12 partial |
+| Failures found | **214** - **154 fixed and re-verified** (across 31 merged pull requests, plus 17 re-verified against the tree without a pull request cited), **60 still open right now** (of which 6 were attempted and a re-run found the fix did not fully hold), logged and named below, not hidden; 87 earlier fails superseded by a later re-run and no longer counted open |
 
 These are counts of what is actually written to `suite.json`/`targets.json`/`runs/`, recomputed
 by this script every time it runs - not estimates, and `--check` fails CI the moment a rendered
@@ -87,19 +87,19 @@ number stops matching the data behind it.
 | Area | Cases | Executed | Specified only | Portable |
 |---|---|---|---|---|
 | `intake` | 12 | 12 | 0 | 11 |
-| `adoption` | 18 | 18 | 0 | 15 |
+| `adoption` | 19 | 19 | 0 | 16 |
 | `greenfield` | 7 | 7 | 0 | 2 |
 | `spec` | 23 | 20 | 3 | 18 |
-| `gates` | 41 | 41 | 0 | 29 |
+| `gates` | 46 | 46 | 0 | 31 |
 | `track` | 22 | 20 | 2 | 20 |
 | `decisions` | 14 | 14 | 0 | 11 |
 | `discovery` | 7 | 7 | 0 | 6 |
 | `trigger` | 6 | 4 | 2 | 5 |
-| `docs` | 20 | 20 | 0 | 7 |
+| `docs` | 22 | 22 | 0 | 7 |
 | `loop` | 4 | 3 | 1 | 3 |
 | `update` | 7 | 6 | 1 | 0 |
 | `stack` | 8 | 8 | 0 | 2 |
-| `security` | 4 | 4 | 0 | 3 |
+| `security` | 7 | 7 | 0 | 4 |
 | `shape` | 18 | 18 | 0 | 14 |
 
 Every declared area carries at least one case.
@@ -110,9 +110,9 @@ Every declared area carries at least one case.
 
 | Depth | Meaning | Count |
 |---|---|---|
-| L1 | read-only assessment pass, nothing changed | 103 |
+| L1 | read-only assessment pass, nothing changed | 99 |
 | L2 | dry adoption - the align router's decisions worked out for real, still no changes | 0 |
-| L3 | the standard actually applied to a working copy, drift measured | 12 |
+| L3 | the standard actually applied to a working copy, drift measured | 16 |
 | L4 | the repo then lived the loop for at least one full sprint of real work | 3 |
 
 ## The punch list - what is actually still broken
@@ -172,6 +172,18 @@ that also names a PR was attempted and a later re-run found the attempt did not 
 | `DEC-14` | the retroactive-decision pass has a route for a repository that already keeps its decisions in another shape, or outside the repository entirely | `repo:vim/vim` | **open** (logged, not fixed) |
 | `SHAPE-17` | a repository whose history has a real home under another name can satisfy the changelog entry without waiving it | `repo:git/git` | **open** (logged, not fixed) |
 | `SHAPE-18` | a project's own runtime library gets a home in the capability map, instead of falling between a forbidden layer entry and a false unclaimed declaration | `repo:vdukhovni/postfix` | **open** (logged, not fixed) |
+| `SEC-06` | the shipped gitleaks scan flags the standard's own manifest, on the very commit that installs it | `repo:square/okhttp` | **open** (logged, not fixed) |
+| `SEC-06` | the shipped gitleaks scan flags the standard's own manifest, on the very commit that installs it | `repo:repository-standards/core` | **open** (logged, not fixed) |
+| `SEC-07` | the agent deny/ask list names Node, npm and Postgres tooling and has no vocabulary for the ecosystem three separate adoptions actually needed | `repo:rails/rails` | **open** (logged, not fixed) |
+| `SEC-07` | the agent deny/ask list names Node, npm and Postgres tooling and has no vocabulary for the ecosystem three separate adoptions actually needed | `repo:BurntSushi/ripgrep` | **open** (logged, not fixed) |
+| `SEC-07` | the agent deny/ask list names Node, npm and Postgres tooling and has no vocabulary for the ecosystem three separate adoptions actually needed | `repo:square/okhttp` | **open** (logged, not fixed) |
+| `GATE-44` | landing a required copy-class file does not silently overwrite an existing file whose name differs only in case, on a case-insensitive filesystem | `repo:nlohmann/json` | **open** (logged, not fixed) |
+| `GATE-45` | a required directory that git cannot track because it is empty does not pass self-verify on presence alone | `repo:rails/rails` | **open** (logged, not fixed) |
+| `DOC-21` | the dashboard generator's changelog-entry count matches a real changelog whose headings use a format the two documented patterns do not cover | `repo:square/okhttp` | **open** (logged, not fixed) |
+| `ADOPT-20` | the manifest's docs/-rooted entries have an altPath or a docsRoot for a repo whose docs/ is already claimed by a published site | `repo:square/okhttp` | **open** (logged, not fixed) |
+| `ADOPT-20` | the manifest's docs/-rooted entries have an altPath or a docsRoot for a repo whose docs/ is already claimed by a published site | `repo:nlohmann/json` | **open** (logged, not fixed) |
+| `GATE-36` | a content exception on a merge-class entry can never apply, and self-verify reports it as a deviation the repo no longer has | `repo:BurntSushi/ripgrep` | **open** (logged, not fixed) |
+| `GATE-36` | a content exception on a merge-class entry can never apply, and self-verify reports it as a deviation the repo no longer has | `repo:nlohmann/json` | **open** (logged, not fixed) |
 
 ## Fixed and re-verified this round
 

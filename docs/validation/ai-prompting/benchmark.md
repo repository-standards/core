@@ -5,8 +5,8 @@
      agent-operated repository standard would claim, phrased so a reader who has never used
      this standard can run the same idea against their own. -->
 
-Twenty-something checks - **146**, precisely - that any repository standard
-claiming to be agent-operable should survive. This project failed **66** of them at least once and has fixed-and-re-verified **87** so far; the rest are logged as open (which includes any case where an attempted fix
+Twenty-something checks - **150**, precisely - that any repository standard
+claiming to be agent-operable should survive. This project failed **70** of them at least once and has fixed-and-re-verified **87** so far; the rest are logged as open (which includes any case where an attempted fix
 was itself re-verified and found not to fully hold - see `README.md` for that distinction).
 The runs are in [`runs/`](runs/), and the full catalogue (including the cases specific to
 this project's own paths) is in [`README.md`](README.md).
@@ -391,6 +391,32 @@ node tools/self-verify-fill-test.mjs; and node scripts/self-verify.mjs against a
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 rewrite the workflow trigger to on: push, run node scripts/self-verify.mjs, and read the key result
+```
+
+
+**GATE-44 - landing a required copy-class file does not silently overwrite an existing file whose name differs only in case, on a case-insensitive filesystem**
+
+- **Given:** a repo whose real changelog is `ChangeLog.md` (case-differing from the manifest's required `CHANGELOG.md`, no altPaths declared) on APFS or NTFS
+- **When:** the standard's required CHANGELOG.md is created beside it
+- **Then:** the existing file's history is detected and preserved, instead of the write silently overwriting it - reproduced directly in a scratch directory: writing CHANGELOG.md beside an existing ChangeLog.md replaced its content, and the write tool itself reported an update, not a creation
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+in a scratch directory on a case-insensitive filesystem, create ChangeLog.md with real content, then write CHANGELOG.md beside it and check whether ChangeLog.md's content survives
+```
+
+
+**GATE-45 - a required directory that git cannot track because it is empty does not pass self-verify on presence alone**
+
+- **Given:** a required directory entry (`docs/runbooks/`, `docs/ideas/`, `docs/discovery/`) landed as an empty directory rather than with the shipped `_template.md` files inside it
+- **When:** self-verify.mjs's fill/ignored-and-untracked check runs, which only fires on paths git actually ignores
+- **Then:** the entry fails or warns, instead of passing - git cannot track an empty directory at all, so it would be present locally and absent from a fresh clone with nothing catching the difference
+- **Result:** **failed at least once** (1 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+`mkdir` a required directory entry with no file inside it, run self-verify.mjs, then `git clone` the resulting commit into a fresh directory and check whether the directory exists there
 ```
 
 
@@ -1404,6 +1430,19 @@ run assessment pass 8 against a documented repo and check each finding by greppi
 ```
 
 
+**ADOPT-20 - the manifest's docs/-rooted entries have an altPath or a docsRoot for a repo whose docs/ is already claimed by a published site**
+
+- **Given:** a repo whose docs/ is already the source tree of a published mkdocs (or equivalent) site, with the manifest hardcoding docs/personas.md, docs/decision-records/, docs/PRODUCT.md, docs/ARCHITECTURE.md, docs/PRINCIPLES.md, docs/runbooks/, docs/ideas/, docs/discovery/ and docs/facts.json - none with an altPaths entry
+- **When:** the standard is adopted literally
+- **Then:** the standard's own maintainer records land somewhere that is not the published site's source tree, instead of either failing to land at all or being built and published to the public internet the next time the site deploys
+- **Result:** **failed at least once** (2 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+adopt the standard into a repo whose docs/ is a real mkdocs.yml docs_dir, run the site's build, and check whether any standard-authored file under docs/ appears in the built output
+```
+
+
 ### shape
 
 **SHAPE-01 - a persona roster of one is a named, legitimate answer for a solo-consumer library**
@@ -1626,6 +1665,19 @@ read SPEC.md R3, R11 and R15 for an embargoed/confidential-work exception, and c
 _This suite's own reproduction (adapt the paths and commands to your own tooling):_
 ```
 read SPEC.md R9's behavioral-tier justification text against a manual/hardware/community-verification shape, and onboard.md's guidance for whether it forbids using that tier there
+```
+
+
+**SEC-07 - the agent deny/ask list names Node, npm and Postgres tooling and has no vocabulary for the ecosystem three separate adoptions actually needed**
+
+- **Given:** three adoptions on three ecosystems: ripgrep (Rust/Cargo - cargo publish is irreversible, a version can only be yanked, never replaced), rails (Ruby - gem push, rake release, rake db:migrate against MySQL/SQLite), okhttp (Gradle/JVM - ./gradlew publish to Maven Central, also irreversible)
+- **When:** `.claude/settings.json`'s deny/ask list is read for each ecosystem's equivalent of the commands it already denies for npm (npm publish) and SQL (psql, pg_dump)
+- **Then:** each ecosystem's irreversible-publish and remote-write commands are named, instead of the list reading as written for a Node application with a Postgres database - all three adoptions added the missing entries by hand before the deny list protected anything on their stack
+- **Result:** **failed at least once** (3 fail, 0 pass, across the targets it ran against)
+
+_This suite's own reproduction (adapt the paths and commands to your own tooling):_
+```
+grep .claude/settings.json's deny/ask patterns for cargo, gem/rake and gradle/mvn, each against the equivalent already-covered npm/psql pattern
 ```
 
 
