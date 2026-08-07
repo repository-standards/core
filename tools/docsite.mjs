@@ -180,7 +180,15 @@ function ownSpecPages() {
       out: `ownspec-${slugify(name)}.html`,
       nav: null,
       group: "Getting on the standard", sub: "Decisions and evidence",
-      parent: "how-this-repo-works.html",
+      // Only if this site actually has that page. The generator is this repository's and every
+      // registered stack builds with it, from the stack's own page map - so a parent named from
+      // ours is a link into a site that does not exist. It shipped: the node stack has specs and
+      // no `how-this-repo-works`, and four spec pages went out pointing at
+      // `/docs/node/how-this-repo-works.html`. A page with no parent gets no backlink, which is
+      // the correct amount of navigation to invent for a map that did not ask for it.
+      ...(PAGES.some((p) => p.out === "how-this-repo-works.html")
+        ? { parent: "how-this-repo-works.html" }
+        : {}),
     }));
 }
 
