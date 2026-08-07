@@ -857,7 +857,7 @@ a.nav-tree-link:hover { background: var(--active-bg); color: var(--fg); }
 .loop-label { fill: var(--fg); font-size: 13px; font-weight: 650; font-family: var(--font-sans); }
 .loop-sub { fill: var(--muted); font-size: 11px; font-family: var(--font-sans); }
 .loop-ring { fill: none; stroke: rgba(255,255,255,.10); stroke-width: 2; }
-/* One dot travels the ring so the diagram reads as a sprint rather than as five boxes. */
+/* One dot travels the ring so the diagram reads as a cycle rather than as five boxes. */
 .loop-dot { fill: var(--accent, #ff7a2f); }
 @media (prefers-reduced-motion: reduce) { .loop-dot { display: none; } }
 .backlink { margin: 0 0 1.4rem; font-size: 0.875rem; }
