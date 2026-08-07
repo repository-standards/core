@@ -46,7 +46,7 @@ clients get them by reference (ADR-004), never as copies.
   the recorded content hashes are the tree's own, the tree passes its own
   `self-verify --skeleton`), `node tools/link-check.mjs`,
   `node tools/prose-check.mjs` + `node tools/prose-check.mjs --self` (no line renders
-  as something it is not),
+  as something it is not, and none uses the em or en dash the shipped conventions forbid),
   `node standard/scripts/spec-structure.mjs` (the repo's own specs stay shaped, and a
   spec claiming `ready-to-develop` or `live` still passes the clarify gate),
   `node tools/provenance-check.mjs` + `node tools/provenance-check.mjs --self` (every
