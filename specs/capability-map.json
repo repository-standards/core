@@ -2,7 +2,7 @@
   "$about": [
     "capability -> the code globs that must move with its spec (R11).",
     "Keys starting with $ are metadata, not capabilities. $unclaimed declares the paths that belong to no capability, so `spec-guard --audit` can report code nobody claims instead of staying silent about it - prose, config and this repo's own zone-1 tooling are not capabilities.",
-    "The guards under standard/scripts/ are listed one by one rather than as one glob, on purpose: they are shipped code with no capability spec yet, and a blanket entry would hide that. The shipped skills outside the spec-* and cycle-* families are in the same position, inside the standard/.claude/** entry."
+    "The guards under standard/scripts/ are listed one by one rather than as one glob, on purpose: they are shipped code with no capability spec yet, and a blanket entry would hide that. The shipped skills outside the spec-* and sprint-* families are in the same position, inside the standard/.claude/** entry."
   ],
   "tree-guard": [
     "tools/tree-check.mjs",
@@ -21,10 +21,10 @@
     "standard/scripts/spec/**",
     "standard/.claude/skills/spec-*/**"
   ],
-  "work-cycles": [
-    "standard/scripts/cycle-guard.mjs",
-    "standard/docs/cycles/**",
-    "standard/.claude/skills/cycle-*/**",
+  "work-sprints": [
+    "standard/scripts/sprint-guard.mjs",
+    "standard/docs/sprints/**",
+    "standard/.claude/skills/sprint-*/**",
     "standard/.claude/skills/timeline-update/**"
   ],
   "$unclaimed": [

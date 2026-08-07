@@ -3,7 +3,7 @@
 **Spec tier:** buildable
 **Serves:** `Standard-bearer Staszek` - drift as a number, per repo; `Owner Olek` - a green run is the assurance he buys; `Coding agent` obeys it as a mechanical gate.
 **Status:** live
-**Success metric:** Retention - repos that update and return to drift 0 within a release cycle.
+**Success metric:** Retention - repos that update and return to drift 0 within a release sprint.
 
 ## Purpose
 

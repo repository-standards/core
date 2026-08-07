@@ -6,28 +6,28 @@
 > an agent can read, append and re-order it. Compatible with the [Backlog.md](https://github.com/MrLesk/Backlog.md)
 > tool if the team wants a CLI/board on top - do not build a custom backlog engine.
 
-## In flight *(scale - delete this section if you do not run cycles)*
+## In flight *(scale - delete this section if you do not run sprints)*
 
-What left this pool and into which cycle. One line each, no rows duplicated: an intent is
-here **or** in a cycle, never both, and `scripts/cycle-guard.mjs` fails when that stops
+What left this pool and into which sprint. One line each, no rows duplicated: an intent is
+here **or** in a sprint, never both, and `scripts/sprint-guard.mjs` fails when that stops
 being true. This table is why the pool remains the single place to start reading.
 
-| Team | Goal | Target | Cycle | Items |
+| Team | Goal | Target | Sprint | Items |
 |---|---|---|---|---|
 | | | | | |
 
 <!-- Filled, it reads like this - delete this block:
 
-| payments | checkout stops losing carts | 2026-08-29 | `cycles/payments/august.md` | 3 |
+| payments | checkout stops losing carts | 2026-08-29 | `sprints/payments/august.md` | 3 |
 -->
 
-`/cycle-open` writes a row here and `/cycle-close` removes it, and `cycle-guard` checks all
-of that rather than trusting it: the `Cycle` cell must name a cycle file that exists and is
-still **open**, and `Items` must be the number of intent rows that cycle actually holds.
+`/sprint-open` writes a row here and `/sprint-close` removes it, and `sprint-guard` checks all
+of that rather than trusting it: the `Sprint` cell must name a sprint file that exists and is
+still **open**, and `Items` must be the number of intent rows that sprint actually holds.
 
-Once the table carries any row, **every** open cycle must have one - so deleting the row for
-a cycle you would rather not explain is not a way past the other two checks. Emptying the
-table completely is: a pool with no pointer rows is a pool not running cycles from its own
+Once the table carries any row, **every** open sprint must have one - so deleting the row for
+a sprint you would rather not explain is not a way past the other two checks. Emptying the
+table completely is: a pool with no pointer rows is a pool not running sprints from its own
 side, and that is exactly the state this template ships in, so it cannot be a failure. The
 line is drawn where it can be drawn honestly - a table half kept is worse than no table, and
 a repo that deletes this section is making a choice rather than hiding one.
@@ -124,16 +124,16 @@ Read the `cap` cell and the prefix follows from it, with no judgement left over:
 Then a number or a short slug, stable and never reused.
 
 That is stated here and nowhere else on purpose. The id is the only field joining this pool
-to a cycle, and this file used to mix both forms in one sentence while the worked examples
+to a sprint, and this file used to mix both forms in one sentence while the worked examples
 elsewhere used only the other - which reads as two conventions and makes the join a guess.
 
 `assignee` is the **person**, and it is empty here by definition: an item in the pool is
-not yet anyone's. It fills when the item is pulled into a cycle.
+not yet anyone's. It fills when the item is pulled into a sprint.
 
 `size` is `S`, `M` or `L`, and optional. It is a **splitting trigger, not a forecast**: an
 `L` means split this before pulling it. Sizes are never summed, never converted to numbers,
-and never fed into a projection - once three cycles have closed, the measured time an item
-actually took supersedes them entirely (ADR-028). An item that does not finish in its cycle
+and never fed into a projection - once three sprints have closed, the measured time an item
+actually took supersedes them entirely (ADR-028). An item that does not finish in its sprint
 is **split, not re-sized**.
 
 ### Epic: <name>
@@ -153,18 +153,18 @@ is **split, not re-sized**.
 
 
 Statuses: `todo` / `doing` / `blocked` / `done` (drop `done` rows on release, or let the
-Backlog.md tool archive them). A cycle row can also carry `split:<id>` - see
-`docs/cycles/_template.md`; it is written by `/cycle-close` and never by hand here.
+Backlog.md tool archive them). A sprint row can also carry `split:<id>` - see
+`docs/sprints/_template.md`; it is written by `/sprint-close` and never by hand here.
 
 **`blocked` takes a reference**: write `blocked:PRICE-1` to name what blocks it. Blocking gets
 no column of its own - the status already carries `blocked` and what it lacked was *what*.
-`cycle-guard` checks that the named intent exists, is not the row itself, and is not already
+`sprint-guard` checks that the named intent exists, is not the row itself, and is not already
 finished - `done`, or `split:<id>`, which is finished work whose remainder moved to another
 row. A block pointing at something finished or deleted is the failure that costs time
 silently, because the row looks legitimately stuck.
 
-**The title is checked too.** `cycle-guard` treats one title appearing in two files under two
-ids as one intent in two places, because copying a row into a cycle and renumbering the copy
+**The title is checked too.** `sprint-guard` treats one title appearing in two files under two
+ids as one intent in two places, because copying a row into a sprint and renumbering the copy
 left behind passes every check keyed on the id. Give a genuinely different intent a different
 title; a `split:<id>` pair is the one place two rows may share one.
 

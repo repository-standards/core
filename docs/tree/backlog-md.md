@@ -31,17 +31,17 @@ because an item without that never leaves: there is no moment at which anyone ca
 finished.
 
 At the `scale` profile the file also carries an **In flight** section: which intents left
-the pool and into which cycle. An intent is in the pool **or** in exactly one cycle, never
-both, and `cycle-guard` fails the build when that stops being true. That table is why the
+the pool and into which sprint. An intent is in the pool **or** in exactly one sprint, never
+both, and `sprint-guard` fails the build when that stops being true. That table is why the
 pool stays the single place to start reading - so the guard checks the table too: each row
-must name a cycle that exists and is still open, and state how many intents it really holds.
+must name a sprint that exists and is still open, and state how many intents it really holds.
 
 ## What does not go in here
 
 **A mirror of your tracker.** If you run a board as well, these are not two copies of one
 list: the repository holds the intents, the tracker holds execution history, and a one-way
 bridge joins them. Running without a board is also a real option - see
-[backlog, cycles, timeline](../method/tracking-work.md) for where that line actually falls.
+[backlog, sprints, timeline](../method/tracking-work.md) for where that line actually falls.
 
 **Ideas.** "Should this exist at all" is `docs/ideas/`. A backlog intent is something
 already agreed to be worth doing.
@@ -72,5 +72,5 @@ means.
 - **Every intent names a persona and a done condition.** Both were optional once. Optional
   meant absent, and absent meant a list that only grows.
 - **[ADR-028](../decision-records/ADR-028-work-cycles-live-in-the-repo-and-bind-only-at-scale.md) -
-  the pool and the cycles are one system.** Letting an intent sit in both was the state
+  the pool and the sprints are one system.** Letting an intent sit in both was the state
   before the guard existed, and it makes "what are we doing" unanswerable from the file.

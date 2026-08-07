@@ -199,11 +199,11 @@ sentence will each lose that sentence half the time: sharpen both, or merge them
 - **The repo cannot say who it is for, or what it is building** -> `personas-write` and
   `product-write`. A spec written against "the user" settles nothing, because "the user"
   wants everything.
-- **A team is picking work up, or putting it down** *(scale)* -> `cycle-open` moves the
-  chosen intents out of the pool and into a cycle with a goal and an agreed date;
-  `cycle-close` checks each against its definition of done, returns what did not finish, and
+- **A team is picking work up, or putting it down** *(scale)* -> `sprint-open` moves the
+  chosen intents out of the pool and into a sprint with a goal and an agreed date;
+  `sprint-close` checks each against its definition of done, returns what did not finish, and
   records the one measurement that cannot be recovered later. An intent lives in the pool or
-  in exactly one cycle, and `cycle-guard` fails when that stops being true.
+  in exactly one sprint, and `sprint-guard` fails when that stops being true.
 - **The branch is ready for a pull request** -> run `pre-pr-review` yourself, before pushing.
   Local checks, then read the diff as if someone else wrote it, then fix what it finds. A
   review that happens after the push is a review of something already published.

@@ -62,13 +62,13 @@ The step most loops skip. What was learned goes back into the documents before t
 
 ## Running the cadence
 
-For a team that commits to work in periods and has to answer when things will land. Optional - a solo repo can run the whole loop above without ever opening a cycle.
+For a team that commits to work in periods and has to answer when things will land. Optional - a solo repo can run the whole loop above without ever opening a sprint.
 
 | Skill | When to reach for it |
 |---|---|
-| `cycle-open` | Use when a team is picking up work for the next stretch - "let's start a cycle", "what are we doing this month", "pull the top three payment items into a sprint". Creates the cycle with its goal and agreed end date, and moves the chosen intents out of the backlog pool so each one lives in exactly one place. Also owns reading an open cycle back as a status board ("how is the dispatch cycle going?") and mid-cycle edits - moving a status, reassigning a holder - that happen between opening and closing. |
-| `cycle-close` | Use when a stretch of work ends - "close the cycle", "the sprint is over", "we shipped what we were going to". Checks each intent against its definition of done, returns what did not finish to the backlog, and records the one measurement of the cycle that cannot be recovered afterwards. |
-| `timeline-update` | Use when someone asks when work will land - "when does billing ship?", "are we on track?", "what does the next quarter look like?", "update the timeline". Reads every cycle, derives throughput from the closed ones, and projects the open cycles and the backlog - labelling every number as measured or estimated, and giving no date at all when the evidence supports none. |
+| `sprint-open` | Use when a team is picking up work for the next stretch - "let's start a sprint", "what are we doing this month", "pull the top three payment items into a sprint". Creates the sprint with its goal and agreed end date, and moves the chosen intents out of the backlog pool so each one lives in exactly one place. Also owns reading an open sprint back as a status board ("how is the dispatch sprint going?") and mid-sprint edits - moving a status, reassigning a holder - that happen between opening and closing. |
+| `sprint-close` | Use when a stretch of work ends - "close the sprint", "the sprint is over", "we shipped what we were going to". Checks each intent against its definition of done, returns what did not finish to the backlog, and records the one measurement of the sprint that cannot be recovered afterwards. |
+| `timeline-update` | Use when someone asks when work will land - "when does billing ship?", "are we on track?", "what does the next quarter look like?", "update the timeline". Reads every sprint, derives throughput from the closed ones, and projects the open sprints and the backlog - labelling every number as measured or estimated, and giving no date at all when the evidence supports none. |
 
 ## Staying on the standard
 

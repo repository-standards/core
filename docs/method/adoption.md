@@ -215,7 +215,7 @@ difference is small enough that a summary of it misleads:
 |---|---|
 | `CONTRIBUTING.md`, `.github/pull_request_template.md` | contribution mechanics for people who cannot be told them in person |
 | `docs/journeys`, `docs/research`, `docs/analytics.md` | designing for, and measuring, users nobody in the repo is |
-| `docs/cycles`, `scripts/cycle-guard.mjs`, the `cycle-guard` guard | a team agreeing what it committed to and by when (ADR-028) |
+| `docs/sprints`, `scripts/sprint-guard.mjs`, the `sprint-guard` guard | a team agreeing what it committed to and by when (ADR-028) |
 | the `spec-guard` guard **blocking** | R11's coupling gate blocks at `scale`; at `core` the same guard runs and advises |
 
 **And what it does not change** - three things the picker used to offer as discounts and one
@@ -252,7 +252,7 @@ record:
   a scale artifact in a `core` repo, which is the cost of this route.
 
 **The three enforcement entries cannot be excepted, and that is what actually decides it.**
-`scripts/cycle-guard.mjs` and the two guards are outside the hatch by design - waiving a live
+`scripts/sprint-guard.mjs` and the two guards are outside the hatch by design - waiving a live
 check removes it rather than recording a deviation from it, so self-verify refuses the
 exception and says so. Declaring `scale` therefore means accepting that R11's coupling guard
 **blocks** every pull request where a capability's code moves without its spec. That is the

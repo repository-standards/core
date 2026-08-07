@@ -185,7 +185,7 @@ v0.13.2 (MIT) and heavily rewritten since - ancestry and a licence obligation, n
 integration. **Spec Kit builds specs; this runs a repository** - decisions, guards, adoption,
 drift as a number - and the spec loop is the one component it gave us a head start on.
 
-The decision-record form is MADR, the changelog shape is Keep a Changelog, the word *cycle*
+The decision-record form is MADR, the changelog shape is Keep a Changelog, the word *sprint*
 is Linear's. What was taken as code, what was borrowed as an idea, and what this project is
 only compared against are kept apart in [`ATTRIBUTIONS.md`](ATTRIBUTIONS.md).
 

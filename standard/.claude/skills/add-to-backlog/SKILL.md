@@ -35,7 +35,7 @@ de-duplicating against existing items first.
 
 2. **De-duplicate.** Scan the ledger; if the item (or a superset of it) is already
    there, stop - do not file a second one. Sharpen the existing row instead if needed.
-   De-duplicate on the **title**, not only on the id: `cycle-guard` reads one title in two
+   De-duplicate on the **title**, not only on the id: `sprint-guard` reads one title in two
    places under two ids as one intent duplicated, and it is right to.
 
 3. **Place and name it.** Pick the epic it belongs to (or note a genuinely new epic).

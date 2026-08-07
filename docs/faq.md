@@ -26,7 +26,7 @@ is new:
 - **A tracker, bridged.** GitHub Issues by default (free, unlimited); Jira and Linear plug in
   as adapters behind the same one-way bridge. The repo holds intents, the tracker holds
   execution history (ADR-010).
-- **In-repo, complete.** The pool, work cycles per team running in parallel, the person
+- **In-repo, complete.** The pool, work sprints per team running in parallel, the person
   currently holding each item, blocking references, and a timeline that projects from measured
   throughput rather than estimates - all in markdown, all guarded
   ([ADR-028](decision-records/ADR-028-work-cycles-live-in-the-repo-and-bind-only-at-scale.md),
@@ -44,7 +44,7 @@ the adapters are for.
 **I'm a solo developer. Isn't this enterprise ceremony?**
 Adopt the **core profile**: what keeps knowledge alive (specs, records, backlog,
 self-verify) without what carries it to people who are not in the room - contribution
-mechanics, UX research, work cycles. Be clear about the size of that discount:
+mechanics, UX research, work sprints. Be clear about the size of that discount:
 it is 9 manifest entries, not a different standard, and CI is **not** one of them - the
 spec-guard workflow is required at every profile (R16). The flip is not a headcount: it is a
 flag plus the measured delta, and it fires when work is handed off asynchronously, when

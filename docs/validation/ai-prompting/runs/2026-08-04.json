@@ -1,5 +1,5 @@
 {
-  "$about": "Observations for the 2026-08-04 round. Backfilled from this session's direct extraction of cycles-lifecycle.md, timeline.md, refinement-bridge.md, full-loop.md, greenfield-core.md, node-stack.md, skills-write.md, skills-maintain.md, po-rescue.md, auto-trigger.md, add-anytime.md, and the FINDINGS-LEDGER.md triage of the 12 brownfield waves (bf-governance, bf-language, bf-lifecycle, bf-notcode, bf-platform, bf-thin, bf-monorepo, bf-ml, bf-critical, bf-review, bf-shapes, bf-closing) plus the wave-6 backfill and showcase-gap/promise-inventory. Every 'fix' link was checked against the real merged PR body text (`gh pr view <n> -R repository-standards/core|node --json body`) on 2026-08-04 - a case is marked fixed only when the PR body names that specific defect, not merely the same area of code. Cases with no fix link are open: logged, not built this round, exactly as the source reports and the ledger state them. On 2026-08-05, every observation in this file that had verdict \"fail\" with a non-empty \"fix\" field was independently re-run against the current, fully-merged tree (not re-read from the PR) - the fixed-defect-keeps-its-fail convention this suite started with was itself a defect: a fixed bug should read as fixed. Verdicts that held were flipped to \"pass\" with the fix field kept as provenance; one (TRACK-10) did not fully hold - the cited PR added the status vocabulary but never touched the guard script that was supposed to read it - and stays \"fail\" with a corrected evidence field.",
+  "$about": "Observations for the 2026-08-04 round. Backfilled from this session's direct extraction of sprints-lifecycle.md, timeline.md, refinement-bridge.md, full-loop.md, greenfield-core.md, node-stack.md, skills-write.md, skills-maintain.md, po-rescue.md, auto-trigger.md, add-anytime.md, and the FINDINGS-LEDGER.md triage of the 12 brownfield waves (bf-governance, bf-language, bf-lifecycle, bf-notcode, bf-platform, bf-thin, bf-monorepo, bf-ml, bf-critical, bf-review, bf-shapes, bf-closing) plus the wave-6 backfill and showcase-gap/promise-inventory. Every 'fix' link was checked against the real merged PR body text (`gh pr view <n> -R repository-standards/core|node --json body`) on 2026-08-04 - a case is marked fixed only when the PR body names that specific defect, not merely the same area of code. Cases with no fix link are open: logged, not built this round, exactly as the source reports and the ledger state them. On 2026-08-05, every observation in this file that had verdict \"fail\" with a non-empty \"fix\" field was independently re-run against the current, fully-merged tree (not re-read from the PR) - the fixed-defect-keeps-its-fail convention this suite started with was itself a defect: a fixed bug should read as fixed. Verdicts that held were flipped to \"pass\" with the fix field kept as provenance; one (TRACK-10) did not fully hold - the cited PR added the status vocabulary but never touched the guard script that was supposed to read it - and stays \"fail\" with a corrected evidence field.",
   "observations": [
     {
       "case": "GATE-15",
@@ -29,7 +29,7 @@
       "case": "GATE-18",
       "target": "fixture:test-greenfield-core",
       "verdict": "pass",
-      "evidence": "Re-verified 2026-08-05: built a fixture using docs/tree/docs-cycles.md's own worked example shape verbatim (`## Intents` heading, id as its own first cell) across two teams' cycle files sharing intent id INV-2 - `cycle-guard.mjs` correctly reports \"INV-2 is in 2 places\", not a false OK. The doc's example now matches what the guard actually expects (confirmed both by this run and by reading the doc's own \"three things ... an earlier version of this page got all three wrong\" note).",
+      "evidence": "Re-verified 2026-08-05: built a fixture using docs/tree/docs-sprints.md's own worked example shape verbatim (`## Intents` heading, id as its own first cell) across two teams' sprint files sharing intent id INV-2 - `sprint-guard.mjs` correctly reports \"INV-2 is in 2 places\", not a false OK. The doc's example now matches what the guard actually expects (confirmed both by this run and by reading the doc's own \"three things ... an earlier version of this page got all three wrong\" note).",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/15"
     },
@@ -245,7 +245,7 @@
       "case": "TRACK-07",
       "target": "fixture:test-greenfield-core",
       "verdict": "pass",
-      "evidence": "Re-verified 2026-08-05: `cycle-open/SKILL.md` and `cycle-close/SKILL.md` step 0 in both files instructs resolving the backlog path the same way the guard does (`docs/backlog.md` first, then `backlog.md`), matching `cycle-guard.mjs`'s own `POOLS = [\"docs/backlog.md\", \"backlog.md\"]` order exactly.",
+      "evidence": "Re-verified 2026-08-05: `sprint-open/SKILL.md` and `sprint-close/SKILL.md` step 0 in both files instructs resolving the backlog path the same way the guard does (`docs/backlog.md` first, then `backlog.md`), matching `sprint-guard.mjs`'s own `POOLS = [\"docs/backlog.md\", \"backlog.md\"]` order exactly.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/15"
     },
@@ -253,7 +253,7 @@
       "case": "TRACK-08",
       "target": "fixture:test-greenfield-core",
       "verdict": "pass",
-      "evidence": "Re-verified 2026-08-05: live-tested `cycle-guard.mjs` against a closed cycle (`**Status** | closed |`) whose `## Outcome` block states \"Returned to the pool: INV-2\" while INV-2 is absent from `docs/backlog.md` - the guard correctly failed, naming the exact mismatch (\"says INV-2 was returned to the pool, but INV-2 is not in docs/backlog.md\"), confirming the \"at least one\" direction is checked, not only \"at most one\".",
+      "evidence": "Re-verified 2026-08-05: live-tested `sprint-guard.mjs` against a closed sprint (`**Status** | closed |`) whose `## Outcome` block states \"Returned to the pool: INV-2\" while INV-2 is absent from `docs/backlog.md` - the guard correctly failed, naming the exact mismatch (\"says INV-2 was returned to the pool, but INV-2 is not in docs/backlog.md\"), confirming the \"at least one\" direction is checked, not only \"at most one\".",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/15"
     },
@@ -261,7 +261,7 @@
       "case": "TRACK-09",
       "target": "fixture:test-greenfield-core",
       "verdict": "pass",
-      "evidence": "Re-verified 2026-08-05: live-tested `cycle-guard.mjs` against two teams' cycle files where one writes the shared id as `` `INV-2` `` (backticked) and the other as bare `INV-2` - correctly reported as the same intent in two places, not missed by an anchored regex.",
+      "evidence": "Re-verified 2026-08-05: live-tested `sprint-guard.mjs` against two teams' sprint files where one writes the shared id as `` `INV-2` `` (backticked) and the other as bare `INV-2` - correctly reported as the same intent in two places, not missed by an anchored regex.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/15"
     },
@@ -269,7 +269,7 @@
       "case": "TRACK-10",
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
-      "evidence": "Re-verified 2026-08-05, live - and the claimed fix does NOT hold. PR core#15 (commit ce86072) added the `split:<id>` status value to the template's vocabulary (standard/docs/cycles/_template.md, cycle-close/SKILL.md, docs/tree/docs-cycles.md) but never touched standard/scripts/cycle-guard.mjs. Built the exact fixture the case describes: an intent with status `split:INV-2b` in one cycle and a `blocked:INV-2` reference to it in another row, with the split's remainder (INV-2b) present in docs/backlog.md. cycle-guard.mjs's staleness check is still `status.get(ref) === \"done\"` (line 284, unchanged) - it does not recognize `split:...` as finished, so the guard printed \"OK - ... 1 live block(s)\", the exact false-negative the original observation named (\"the guard actively certified a block on finished work as 'live'\"). The vocabulary half of the fix genuinely landed; the mechanism half - the actual defect the timeline finding reproduced - did not. Left as fail; removing the fix link would lose the useful half of the provenance, so it is kept with this correction attached instead.",
+      "evidence": "Re-verified 2026-08-05, live - and the claimed fix does NOT hold. PR core#15 (commit ce86072) added the `split:<id>` status value to the template's vocabulary (standard/docs/sprints/_template.md, sprint-close/SKILL.md, docs/tree/docs-sprints.md) but never touched standard/scripts/sprint-guard.mjs. Built the exact fixture the case describes: an intent with status `split:INV-2b` in one sprint and a `blocked:INV-2` reference to it in another row, with the split's remainder (INV-2b) present in docs/backlog.md. sprint-guard.mjs's staleness check is still `status.get(ref) === \"done\"` (line 284, unchanged) - it does not recognize `split:...` as finished, so the guard printed \"OK - ... 1 live block(s)\", the exact false-negative the original observation named (\"the guard actively certified a block on finished work as 'live'\"). The vocabulary half of the fix genuinely landed; the mechanism half - the actual defect the timeline finding reproduced - did not. Left as fail; removing the fix link would lose the useful half of the provenance, so it is kept with this correction attached instead.",
       "at": "2026-08-04",
       "fix": "https://github.com/repository-standards/core/pull/15"
     },
@@ -285,7 +285,7 @@
       "case": "TRACK-12",
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
-      "evidence": "Confirmed independently by two agents: cycles-lifecycle F4 found the actual row schema (id/title/cap/persona/owner/assignee/size/why/DoD/status) has no source column at all, and the doc's own flagship example item doesn't fit any of the ledger's four declared source categories either; skills-write F17 independently found the same gap and the same undocumented workaround (folding provenance into `why`) reproduced by a different agent filing different rows. Not fixed this round.",
+      "evidence": "Confirmed independently by two agents: sprints-lifecycle F4 found the actual row schema (id/title/cap/persona/owner/assignee/size/why/DoD/status) has no source column at all, and the doc's own flagship example item doesn't fit any of the ledger's four declared source categories either; skills-write F17 independently found the same gap and the same undocumented workaround (folding provenance into `why`) reproduced by a different agent filing different rows. Not fixed this round.",
       "at": "2026-08-04",
       "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
@@ -293,7 +293,7 @@
       "case": "TRACK-13",
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
-      "evidence": "cycles-lifecycle F9: the rendered board shows exactly three lanes; backlog.md declares a fourth status, blocked, that takes a reference to what blocks it - but a blocked item has no lane: it is either dropped or crammed into todo, so the one fact worth seeing ('blocked, by X') has nowhere to render. Everything else about the board IS derivable from stored columns, a genuine positive noted alongside the gap. This is the concrete mechanical shape of what PR15's new cycle-read-back skill (fixing TRACK-08's sibling finding, cycles-lifecycle F1) inherited - not confirmed fixed as a rendering detail, so left open.",
+      "evidence": "sprints-lifecycle F9: the rendered board shows exactly three lanes; backlog.md declares a fourth status, blocked, that takes a reference to what blocks it - but a blocked item has no lane: it is either dropped or crammed into todo, so the one fact worth seeing ('blocked, by X') has nowhere to render. Everything else about the board IS derivable from stored columns, a genuine positive noted alongside the gap. This is the concrete mechanical shape of what PR15's new sprint-read-back skill (fixing TRACK-08's sibling finding, sprints-lifecycle F1) inherited - not confirmed fixed as a rendering detail, so left open.",
       "at": "2026-08-04",
       "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
@@ -301,7 +301,7 @@
       "case": "TRACK-14",
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
-      "evidence": "cycles-lifecycle F10: the prescribed command has no pathspec, author filter, or team scoping. Reproduced: the fixture recorded 'Commits in the window: 4' and '6' for two teams' overlapping windows by hand, while the command as written actually returns 0 for both (all 9 real commits fell outside both windows) - it also fails silently to 0 rather than flagging empty history. Not fixed this round.",
+      "evidence": "sprints-lifecycle F10: the prescribed command has no pathspec, author filter, or team scoping. Reproduced: the fixture recorded 'Commits in the window: 4' and '6' for two teams' overlapping windows by hand, while the command as written actually returns 0 for both (all 9 real commits fell outside both windows) - it also fails silently to 0 rather than flagging empty history. Not fixed this round.",
       "at": "2026-08-04",
       "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
@@ -309,7 +309,7 @@
       "case": "TRACK-15",
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
-      "evidence": "cycles-lifecycle F13: all three violated simultaneously and both guards still reported full compliance. Separately noted: an assignee missing on a cycle row IS a deliberately unenforced gap per ADR-030's own Confirmation section - that half is not a defect; the pool-row-with-assignee half is not stated anywhere as unenforced, so it reads as an oversight rather than a choice. Not fixed this round.",
+      "evidence": "sprints-lifecycle F13: all three violated simultaneously and both guards still reported full compliance. Separately noted: an assignee missing on a sprint row IS a deliberately unenforced gap per ADR-030's own Confirmation section - that half is not a defect; the pool-row-with-assignee half is not stated anywhere as unenforced, so it reads as an oversight rather than a choice. Not fixed this round.",
       "at": "2026-08-04",
       "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
@@ -317,7 +317,7 @@
       "case": "TRACK-16",
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
-      "evidence": "cycles-lifecycle F16: the only precedent for an internal item, \"(infra)\", exists solely inside a commented-out template row, never in prose, and nothing checks backlog personas at all - so the escape hatch a careful author might use is invisible to anyone who does not read the raw template file. Not fixed this round.",
+      "evidence": "sprints-lifecycle F16: the only precedent for an internal item, \"(infra)\", exists solely inside a commented-out template row, never in prose, and nothing checks backlog personas at all - so the escape hatch a careful author might use is invisible to anyone who does not read the raw template file. Not fixed this round.",
       "at": "2026-08-04",
       "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
@@ -325,7 +325,7 @@
       "case": "TRACK-17",
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
-      "evidence": "cycles-lifecycle F17: add-to-backlog documents type-scoped ids; the product's own worked examples throughout the method docs use capability-scoped ids; backlog.md itself mixes both in one sentence. The id is the only thing joining the pool to cycles, so the ambiguity is load-bearing, not cosmetic. Not fixed this round.",
+      "evidence": "sprints-lifecycle F17: add-to-backlog documents type-scoped ids; the product's own worked examples throughout the method docs use capability-scoped ids; backlog.md itself mixes both in one sentence. The id is the only thing joining the pool to sprints, so the ambiguity is load-bearing, not cosmetic. Not fixed this round.",
       "at": "2026-08-04",
       "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
@@ -333,7 +333,7 @@
       "case": "TRACK-18",
       "target": "fixture:test-greenfield-core",
       "verdict": "fail",
-      "evidence": "cycles-lifecycle F18, reproduced: 'OK - 10 intent(s) across 4 place(s), each in exactly one', exit 0, with both rows carrying an identical title cell. Not fixed this round.",
+      "evidence": "sprints-lifecycle F18, reproduced: 'OK - 10 intent(s) across 4 place(s), each in exactly one', exit 0, with both rows carrying an identical title cell. Not fixed this round.",
       "at": "2026-08-04",
       "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
     },
