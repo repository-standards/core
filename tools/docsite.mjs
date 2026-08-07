@@ -103,7 +103,7 @@ export const PAGES = CONFIG.pages || [
   { src: "docs/what-and-why.md", out: "what-and-why.html", nav: "What this is, and why", group: null },
 
   { src: "docs/method/ways-of-working.md", out: "ways-of-working.html", nav: "Start here", group: "Working with it" },
-  { src: "docs/method/tracking-work.md", out: "tracking-work.html", nav: "Backlog, cycles, timeline", group: "Working with it" },
+  { src: "docs/method/tracking-work.md", out: "tracking-work.html", nav: "Backlog, sprints, timeline", group: "Working with it" },
   { src: "docs/method/product-work.md", out: "product-work.html", nav: "Product Owner", role: "po", group: "Working with it" },
   { src: "docs/method/dev-work.md", out: "dev-work.html", nav: "Developer", role: "dev", group: "Working with it" },
   { src: "docs/method/lead-work.md", out: "lead-work.html", nav: "Consultant", role: "lead", group: "Working with it" },
@@ -857,7 +857,7 @@ a.nav-tree-link:hover { background: var(--active-bg); color: var(--fg); }
 .loop-label { fill: var(--fg); font-size: 13px; font-weight: 650; font-family: var(--font-sans); }
 .loop-sub { fill: var(--muted); font-size: 11px; font-family: var(--font-sans); }
 .loop-ring { fill: none; stroke: rgba(255,255,255,.10); stroke-width: 2; }
-/* One dot travels the ring so the diagram reads as a cycle rather than as five boxes. */
+/* One dot travels the ring so the diagram reads as a sprint rather than as five boxes. */
 .loop-dot { fill: var(--accent, #ff7a2f); }
 @media (prefers-reduced-motion: reduce) { .loop-dot { display: none; } }
 .backlink { margin: 0 0 1.4rem; font-size: 0.875rem; }

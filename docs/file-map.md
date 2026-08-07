@@ -60,7 +60,7 @@ copied into your repository as folder READMEs that then age in place.
 | `docs/journeys` | per-persona journey maps coupled to capabilities | optional, scale | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `docs/research` | anonymized research studies feeding personas, ideas and specs | optional, scale | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `docs/runbooks` | operational runbooks + postmortems - agent-followable at 3 a.m. | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
-| `docs/cycles` | work cycles - what a team committed to and by when; an intent is in the pool or in exactly one cycle (ADR-028) | optional, scale | `fill-from-repo` | [R15](../standard/SPEC.md) |
+| `docs/sprints` | work sprints - what a team committed to and by when; an intent is in the pool or in exactly one sprint (ADR-028) | optional, scale | `fill-from-repo` | [R15](../standard/SPEC.md) |
 
 ## `specs/` - behaviour, by capability
 
@@ -81,8 +81,8 @@ copied into your repository as folder READMEs that then age in place.
 | `scripts/lib` | what more than one guard needs - glob matching, so two guards cannot answer the same question differently | **required**, core | `copy` | [R16](../standard/SPEC.md) |
 | `scripts/verifyAgentGuards.sh` | drives every guard with real commands - they only emit output on a denial, so a broken guard is otherwise silent | optional, core | `copy` | [R19](../standard/SPEC.md) |
 | `scripts/spec-guard.mjs` | code<->spec coupling guard (+ --audit) - the tool ships at core, the blocking CI gate is scale (R11) | **required**, core | `copy` | [R11](../standard/SPEC.md) |
-| `scripts/cycle-guard.mjs` | proves the one-place invariant the pool and the cycles depend on | optional, scale | `copy` | [R15](../standard/SPEC.md) |
-| `scripts/generate-dashboard` | renders the work state - pool, cycles, timeline, records, changelog - as one static page for the people who never open the repository; index.mjs is the generator, src/ the page and password-gate material it inlines. A projection, never a second place work is tracked | optional, core | `copy` | [R15](../standard/SPEC.md) |
+| `scripts/sprint-guard.mjs` | proves the one-place invariant the pool and the sprints depend on | optional, scale | `copy` | [R15](../standard/SPEC.md) |
+| `scripts/generate-dashboard` | renders the work state - pool, sprints, timeline, records, changelog - as one static page for the people who never open the repository; index.mjs is the generator, src/ the page and password-gate material it inlines. A projection, never a second place work is tracked | optional, core | `copy` | [R15](../standard/SPEC.md) |
 
 ## `.claude/` - the procedures, in Claude Code's reference form
 

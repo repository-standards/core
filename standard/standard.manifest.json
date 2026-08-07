@@ -137,7 +137,7 @@
       "profile": "core",
       "since": "0.4.0",
       "rule": "R16",
-      "sha256": "1e2cdf9072db3aa0a9ec31bd292e2fb3c8e77f1f15ca7cd15e64087eb60356a2"
+      "sha256": "06f3a2191150560e14b34c945e7bb6e04a40504124957f0ec418b8d1a54ce3ed"
     },
     {
       "path": "scripts/spec-structure.mjs",
@@ -196,7 +196,7 @@
       "profile": "core",
       "since": "unreleased",
       "rule": "R5",
-      "sha256": "808520b8e753862552c9cc8d58692e65db8c9fd3ac653d83a3993ae61ff5daf1"
+      "sha256": "e009a0bad6786f39abc0f7e37badf0ee293cee08829f77ce4e8cd7329a87ccbc"
     },
     {
       "path": ".claude/skills",
@@ -210,16 +210,14 @@
       ],
       "rule": "R22",
       "sha256": {
-        "add-to-backlog/SKILL.md": "e5aacb7fc264fcc077a6b268e68575ba0410efc99f057ece3c9bad7bc36d4ef1",
+        "add-to-backlog/SKILL.md": "66701c0527a3b5bbc6019960f68e51e937f8e0d5e9e5fce0dd09a2f37f535f37",
         "adr-write/SKILL.md": "1543b4e60709e906ff26e88dc0fd88359ee78e833f6612c8f5ba81035dae41cf",
         "bdr-write/SKILL.md": "200f8f5ab1085009eb15f4cbac8c36ad58146a41a5aa870fdc2087429371ff69",
-        "cycle-close/SKILL.md": "2b3ec7e05dce507bfc6e5ee17fc1d9640e50c0146f8e76c7453f7b961940a0f4",
-        "cycle-open/SKILL.md": "d02e573e06d05ef05e38e5d7a1d11872b286e5c1b7c4dcc9de6dbdf12bc65186",
         "discovery-digest/SKILL.md": "208c0ee5265cd820d64267ccfc5cbf60746e3f9f697755ff76e823c4161907c4",
         "idea-write/SKILL.md": "0c6bf300123b8b7b2be4b9d5d757158bd3a8524be95b858876cfd35e532c68fd",
         "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",
         "pre-pr-review/SKILL.md": "aa43d020310c9c684720c58ec9e0efbeca4abf78fcce23b7dc2ec78544a0ce4f",
-        "product-write/SKILL.md": "21bdc82897281178f915cb0f51dd669d35228d17748977cbacdc1993f2843b98",
+        "product-write/SKILL.md": "f99093c02371ef8e5411702dbad3bd1dc6481855bcee1f2b1b328e3937062123",
         "spec-clarify/SKILL.md": "01e9399d048dd1c2a07a58095344c2da3b21a49d434d92a3aeb44b168830869f",
         "spec-impact/SKILL.md": "1751db1ac3e5cc0c085e107625b39370f0c9d451813e02544aa0b31fd461ea9a",
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",
@@ -228,7 +226,9 @@
         "spec-specify/SKILL.md": "10b3944a2eb46349d0b2713f1804a0b62b34dc1f82aed30804cb4250155093d6",
         "spec-tasks/SKILL.md": "59cdabc8e4e8f3656d245c1aa20213f0d89cd5e7fc9915e05d3e7fa1af98b9f1",
         "spec-update/SKILL.md": "e23fc97fac2ed3c61e6d88bb3d9ce7b7a36cc52d1540e9632381ce38f314ad8e",
-        "timeline-update/SKILL.md": "e0770d9e33139bbddaa01be6bd59748845ab6d18b34fd9de489910f110cd584c",
+        "sprint-close/SKILL.md": "824301f0205dfa2200135b9c91d77fbf500086c37d2b710f317c1e47246be698",
+        "sprint-open/SKILL.md": "f611d74e2ee6904718c07af2497e1accd9578efbff30b2dbf414f5e2f53750ea",
+        "timeline-update/SKILL.md": "6e11d5c5540aff03f01a98b9a74498067715bd75104a323dc8110a5bb2c12339",
         "update-to-version/SKILL.md": "db5ad5411d49c0ce1555af082afb5ad03ae2ce4197906bb91f84bb33b0b0dea4"
       }
     },
@@ -502,8 +502,8 @@
       "rule": "R3"
     },
     {
-      "path": "docs/cycles",
-      "purpose": "work cycles - what a team committed to and by when; an intent is in the pool or in exactly one cycle (ADR-028)",
+      "path": "docs/sprints",
+      "purpose": "work sprints - what a team committed to and by when; an intent is in the pool or in exactly one sprint (ADR-028)",
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "scale",
@@ -511,29 +511,29 @@
       "rule": "R15"
     },
     {
-      "path": "scripts/cycle-guard.mjs",
-      "purpose": "proves the one-place invariant the pool and the cycles depend on",
+      "path": "scripts/sprint-guard.mjs",
+      "purpose": "proves the one-place invariant the pool and the sprints depend on",
       "adapt": "copy",
       "required": false,
       "profile": "scale",
       "since": "1.0.0",
       "rule": "R15",
-      "sha256": "975110bbbe1a31c5d6cbcba9be84d491afc5491bcd6332108c5e1fa17f946736"
+      "sha256": "4ab3b16238a4bb8efb7eff6f7eebcc27d0b498456f7f45c38158ac8cc45965c8"
     },
     {
       "path": "scripts/generate-dashboard",
-      "purpose": "renders the work state - pool, cycles, timeline, records, changelog - as one static page for the people who never open the repository; index.mjs is the generator, src/ the page and password-gate material it inlines. A projection, never a second place work is tracked",
+      "purpose": "renders the work state - pool, sprints, timeline, records, changelog - as one static page for the people who never open the repository; index.mjs is the generator, src/ the page and password-gate material it inlines. A projection, never a second place work is tracked",
       "adapt": "copy",
       "required": false,
       "profile": "core",
       "since": "unreleased",
       "rule": "R15",
       "sha256": {
-        "index.mjs": "d75399a70b5321a800f9e83e6d29f3d8c4a50d676fc4c994eeb9dccb587b9d2d",
+        "index.mjs": "a1a46392f62769cb831bb5962ff7671d65c1003225f1923264fadb34e6bda024",
         "src/gate.css": "63a0b56a4491c5e3686835e15886d1440be4cc497a306a9caaa2a4678d15f07c",
         "src/gate.js": "741e6d0e9115aff4e44930021875f632044857b9bc3b5fb7522fa79f9b07105e",
-        "src/page.css": "49a655af270a823e69e616d71f230e3e9a72f5282f38699c3bd47288b91f61e7",
-        "src/page.js": "c4068a0d0551fadec2c296e4df02c72620acba3b05e8763a7bd0015c64b2a7de"
+        "src/page.css": "f90843314ce24b694651753c41ba3a8fca386c96fb36511f62679113f570bc6b",
+        "src/page.js": "35445d804cb11992c6e07a7b44f97035e3b612693c1073bc671cce6633e4c393"
       }
     },
     {
@@ -788,11 +788,11 @@
       "rule": "R11"
     },
     {
-      "id": "cycle-guard",
-      "run": "node scripts/cycle-guard.mjs --block",
+      "id": "sprint-guard",
+      "run": "node scripts/sprint-guard.mjs --block",
       "kind": "static",
       "blocks": true,
-      "purpose": "an intent is in the backlog pool or in exactly one cycle (skips itself where there are no cycles)",
+      "purpose": "an intent is in the backlog pool or in exactly one sprint (skips itself where there are no sprints)",
       "profile": "scale",
       "since": "1.0.0",
       "rule": "R15"

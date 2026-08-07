@@ -101,7 +101,7 @@ So these stay exactly as written, in a spec in any language:
 | `[NEEDS CLARIFICATION: ...]`, `[NEEDS DECISION: ...]`, `[NEEDS INPUT: ...]`, `[NEEDS ASSET: ...]` | the clarify gate - the marker family is the spec's gap list |
 | `## Clarifications`, `## Open questions` | the clarify gate, which refuses a spec that has neither |
 | `**Status:**`, `**Serves:**`, `**Spec tier:**` | the spec-structure guard, and the status check against the gate |
-| intent ids (`PAY-2`), `blocked:<id>` | the cycle guard, proving one intent lives in one place |
+| intent ids (`PAY-2`), `blocked:<id>` | the sprint guard, proving one intent lives in one place |
 
 **The text inside is prose, and it belongs in your language.**
 `[NEEDS DECISION: model cenowy dla kont zespolowych; owner: biznes]` is exactly right: the

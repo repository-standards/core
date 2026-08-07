@@ -1,4 +1,4 @@
-# Builds the work dashboard - one page showing the backlog, the cycles, the timeline, the
+# Builds the work dashboard - one page showing the backlog, the sprints, the timeline, the
 # decisions and the changelog - and decides where it may go by how visible this repository is.
 #
 # The page contains nothing the repository does not already contain, which is exactly why

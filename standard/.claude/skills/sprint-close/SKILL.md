@@ -1,11 +1,11 @@
 ---
-name: cycle-close
-description: Use when a stretch of work ends - "close the cycle", "the sprint is over", "we shipped what we were going to". Checks each intent against its definition of done, returns what did not finish to the backlog, and records the one measurement of the cycle that cannot be recovered afterwards.
+name: sprint-close
+description: Use when a stretch of work ends - "close the sprint", "the sprint is over", "we shipped what we were going to". Checks each intent against its definition of done, returns what did not finish to the backlog, and records the one measurement of the sprint that cannot be recovered afterwards.
 ---
 
-# cycle-close
+# sprint-close
 
-A cycle is ending. This is the step that keeps the backlog true and leaves behind the only
+A sprint is ending. This is the step that keeps the backlog true and leaves behind the only
 execution record the repo keeps. *(scale profile only.)*
 
 ## Why the record is written at all
@@ -30,7 +30,7 @@ who did what, stop - that is the tracker's.
    DoD is in the row. "The spec is buildable", "the ADR is Accepted", "the drift is
    resolved" - these are verifiable, so verify them rather than asking the user whether it
    feels finished. Report per item: met, not met, or **cannot tell from here** (then say
-   what would settle it). Refusing to close on a cycle whose items were never checked is the
+   what would settle it). Refusing to close on a sprint whose items were never checked is the
    point of this step; a close that rubber-stamps teaches everyone the DoD column is
    decoration.
 
@@ -42,36 +42,36 @@ who did what, stop - that is the tracker's.
    An item that did not fit is **split into what finished and what remains**, not given a
    bigger size (ADR-029). Propose the split; the user confirms it. Cut a **new** backlog row
    for what remains (its own id, its own DoD for the remainder), and set the original row's
-   status in this cycle to **`split:<new-id>`** - the template's status vocabulary, not a
+   status in this sprint to **`split:<new-id>`** - the template's status vocabulary, not a
    spelling invented per repo. This is what keeps item counts comparable without an
    estimation currency, and skipping it is how throughput quietly stops meaning anything.
 
-3. **Report rows whose status never moved.** An item that entered the cycle `todo` and left it
+3. **Report rows whose status never moved.** An item that entered the sprint `todo` and left it
    `todo` is the one worth naming - usually blocked without a `blocked:` reference, or
    assigned to someone who was never really on it. State the observation, not the cause.
 
 4. **Ask the one question the data cannot answer**: did anything get done that was never in
-   the cycle? If yes, it goes into the outcome block as a count and a line, because a cycle
-   that "missed" three items while absorbing two emergencies is not a cycle that
+   the sprint? If yes, it goes into the outcome block as a count and a line, because a sprint
+   that "missed" three items while absorbing two emergencies is not a sprint that
    underdelivered, and a timeline built without that reads the team as slower than it is.
 
-5. **Write the outcome block**, once, in the cycle file:
+5. **Write the outcome block**, once, in the sprint file:
    - planned, finished, returned to the pool
    - **returned to the pool: name the ids**, not only the count (`Returned to the pool: PAY-7,
-     PAY-9`, or `Returned to the pool: none`) - `cycle-guard` checks that every id named here
+     PAY-9`, or `Returned to the pool: none`) - `sprint-guard` checks that every id named here
      actually landed back in the backlog (step 0), and it can only do that if the row says
      which ones
    - unplanned work absorbed, if any
-   - **commits in the window, scoped to whoever was holding this cycle's work** (below)
+   - **commits in the window, scoped to whoever was holding this sprint's work** (below)
    - days elapsed, opened to closed
    Flip `Status` to `closed` and record the actual close date, which is often not the target.
 
 6. **Scope the commit count, and say what it is scoped to.** A window on its own is not a
-   scope: two teams whose cycles overlap in time both record every commit in the overlap, so
+   scope: two teams whose sprints overlap in time both record every commit in the overlap, so
    both write down a number about the repository and neither writes down one about itself.
    That contradicts `/timeline-update`'s own rule never to blend throughput across teams.
 
-   The cycle already holds the scope - its `assignee` column. Check the names resolve first:
+   The sprint already holds the scope - its `assignee` column. Check the names resolve first:
 
    ```
    git log --since="<opened> 00:00:00" --until="<closed> 23:59:59" --format='%an' | sort | uniq -c | sort -rn
@@ -86,13 +86,13 @@ who did what, stop - that is the tracker's.
    **Write the times out**, in both commands. Git resolves a bare `--since=<date>` to that
    date at *the current time of day*, so the same command returns a different count in the
    morning than in the evening, and the two commits that sit on the boundary days by
-   definition - the cycle-open and cycle-close commits - are both counted only when the open
-   commit happened later in the day than the close one, which is not how a cycle runs. A
+   definition - the sprint-open and sprint-close commits - are both counted only when the open
+   commit happened later in the day than the close one, which is not how a sprint runs. A
    count nobody can reproduce is worse than no count, scoped or not.
 
    Three results are worth stating rather than absorbing:
    - **An assignee missing from the roster.** Their name in the repo is not the name in the
-     cycle, or they landed nothing in the window. Say which - a silently smaller number is
+     sprint, or they landed nothing in the window. Say which - a silently smaller number is
      the same defect one step down.
    - **Zero commits over the whole window.** Report it as a finding. Empty history far more
      often means the dates or the mapping are wrong than that the team wrote nothing, and the
@@ -105,14 +105,14 @@ who did what, stop - that is the tracker's.
    single-team repo may use the repo-wide count and should still name it as such - the day a
    second team appears, an unlabelled number is already wrong and nobody can tell.
 
-7. **Remove the pointer row** from the backlog's active-cycles table.
+7. **Remove the pointer row** from the backlog's active-sprints table.
 
-8. **Prove it.** `node scripts/cycle-guard.mjs --block` - every returned row must now be in
+8. **Prove it.** `node scripts/sprint-guard.mjs --block` - every returned row must now be in
    exactly one place again.
 
 9. **Offer the retrospective the data supports, and no more.** Say what the numbers show -
    "planned seven, finished four, absorbed two unplanned" - and stop. Do not narrate why.
-   A single cycle is one data point; `/timeline-update` is what turns several into
+   A single sprint is one data point; `/timeline-update` is what turns several into
    throughput, and it refuses to project from too few.
 
 ## Show the close, do not just file it
@@ -134,14 +134,14 @@ it should not hide the rows that did not make it.
 - [ ] The outcome block is written and `Status` is `closed`
 - [ ] The commit count names the scope it was taken over, not just a window
 - [ ] The pointer row is gone from the backlog
-- [ ] `cycle-guard --block` passes
+- [ ] `sprint-guard --block` passes
 - [ ] A readable close table was shown, including what did not finish
 
 ## Not this
 
-- **Do not close a cycle to tidy up.** An open cycle past its date is honest and the
-  timeline reports it. A cycle closed with unmet items marked done is a lie the estimation
+- **Do not close a sprint to tidy up.** An open sprint past its date is honest and the
+  timeline reports it. A sprint closed with unmet items marked done is a lie the estimation
   arithmetic then inherits.
 - **Do not write per-item history.** One aggregate block. Who did what, when it moved, how
   long review took - the tracker's, unchanged.
-- **Do not compute velocity here.** One cycle is not a rate.
+- **Do not compute velocity here.** One sprint is not a rate.

@@ -25,7 +25,7 @@ useful thing you can know early.
 
 **Who it serves**, pointing at the persona roster rather than restating it.
 
-**Where it is going.** Direction, not a roadmap with dates. Dates belong to cycles, which
+**Where it is going.** Direction, not a roadmap with dates. Dates belong to sprints, which
 measure themselves.
 
 **What it is deliberately not.** The boundary that stops the product becoming everything

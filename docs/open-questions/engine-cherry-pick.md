@@ -18,6 +18,6 @@ toolchain at adoption, exposure to an upstream that ships ~10 releases per
 **Doubt:** without a mechanical diff, the five prompts could quietly fall behind
 upstream's state of the art.
 
-**A better answer would:** a few release cycles proving the cherry-pick check
+**A better answer would:** a few release sprints proving the cherry-pick check
 stays cheap - or evidence that it does not, which reopens vendoring with better
 tooling.

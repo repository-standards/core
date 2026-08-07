@@ -78,11 +78,11 @@ const ROW_BARE = /^(?:(ADR|BDR)-)?(\d+)$/i;
 const ROW_FORMS = "[001](FILE.md), [ADR-001](FILE.md), 001 or ADR-001";
 
 // Rows inside an HTML comment or a fenced code block are examples, not index entries. Every
-// other shipped template documents its own row shape that way (the backlog, the cycle file),
+// other shipped template documents its own row shape that way (the backlog, the sprint file),
 // and this index could not: a commented `| [002](ADR-002-example.md) | ... |` was read as a
 // real row and reported as "indexed, missing from disk". So the one file whose format an
 // author most needs shown was the one file that could not show it. Same left-to-right comment
-// scan as cycle-guard.mjs, for the same reasons it documents: an open-and-close on one line
+// scan as sprint-guard.mjs, for the same reasons it documents: an open-and-close on one line
 // must not swallow a real row, and a `-->` in prose must not resurrect an example block.
 const rowsIn = (readmePath) => {
   if (!existsSync(readmePath)) return null; // distinct from "no rows" - reported separately

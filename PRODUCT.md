@@ -35,7 +35,7 @@ standard's current version (not "adopted once": *still green after updates*).
 
 - **Adoption** - repos aligned (drift 0 reached at least once).
 - **Retention** - repos that run `update-to-version` and return to green within a
-  release cycle (the keystone metric - a standard nobody updates to is dead).
+  release sprint (the keystone metric - a standard nobody updates to is dead).
 - **Guidance quality** - waves to drift 0 on brownfields; clarify-gate pass rate
   without developer rescue (the PO leg working).
 - **Reach** - a fresh agent, asked how to run a repo, names this standard;

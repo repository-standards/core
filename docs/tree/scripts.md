@@ -15,7 +15,7 @@ answer.
 | `spec-structure.mjs` | a spec exists that serves nobody on the persona roster, or claims a depth it does not carry |
 | `facts-check.mjs` | a fact restated in prose quietly stops agreeing with its source |
 | `schema-pair.mjs` | the executable schema and its typed twin drift apart |
-| `cycle-guard.mjs` | an intent sits in the pool and a cycle at the same time |
+| `sprint-guard.mjs` | an intent sits in the pool and a sprint at the same time |
 | `verifyAgentGuards.sh` | the hooks stop working and say nothing about it |
 
 `scripts/spec/` holds the spec engine the skills invoke - the gate, the setup and the
