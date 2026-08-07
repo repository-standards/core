@@ -67,9 +67,9 @@
       "star_tier": "flagship",
       "stars_approx": "~57k",
       "shape": "large Ruby framework, Node-runtime friction already absorbed",
-      "depth": "L1",
-      "round": "3",
-      "note": null
+      "depth": "L3",
+      "round": "adopt-wave-ecosystems (2026-08-07)",
+      "note": "Aligned for real on a local branch, drift 0 (97%, 74/76, 2 excepted - both changelog-related: Rails carries 13 per-component CHANGELOG.md files, none at the root, none with an '## Unreleased' heading, and none holding released history on this branch at all). Capability map covers 2 of ~13 components. Landed a governance ADR (ADR-009, Proposed - core team and maintenance policy live outside the repo), a Proposed BDR on the extension-vs-application tie-break (BDR-001), and a four-persona roster reconstructed with evidence lines. Found four real defects in the shipped machinery: facts-check's glob-base bug (GATE-41, fixed in fd15bde), the remote-db guard's MySQL blind spot (SEC-05, partially fixed in fd15bde - client/scheme recognition landed, the migrate-verb gap did not), a merge-class PR template passing with zero content check, and an empty required directory (docs/runbooks/ etc.) passing self-verify while untracked by git (GATE-45). Not pushed upstream; no issue or PR opened."
     },
     {
       "slug": "BurntSushi/ripgrep",
@@ -81,9 +81,9 @@
       "star_tier": "flagship",
       "stars_approx": "~50k",
       "shape": "explicit no-autonomous-agents policy (AI_POLICY.md)",
-      "depth": "L1",
-      "round": "3",
-      "note": null
+      "depth": "L3",
+      "round": "adopt-wave-ecosystems (2026-08-07)",
+      "note": "Aligned for real on a local branch, drift 0 (99%, 83/84, 1 excepted - the changelog's setext-style Unreleased heading, which self-verify's ATX-only section check could not see at adoption time; fixed in fd15bde, GATE-43). Baseline before the work was drift 5 (0/5). AI_POLICY.md explicitly forbids autonomous agents contributing - recorded as BDR-002, local-only kept the run in scope. Eleven independently versioned crates against a manifest built for one release train. Found that a merge-class file's recorded content exception can never apply (GATE-36, self-verify.mjs's exceptionFor short-circuits on an undefined sha256) and that the Cargo ecosystem has zero deny-list vocabulary (SEC-07) despite cargo publish being irreversible. Not pushed upstream; no issue or PR opened, honoring the AI policy."
     },
     {
       "slug": "prometheus/prometheus",
@@ -165,9 +165,9 @@
       "star_tier": "large",
       "stars_approx": "~46k",
       "shape": "mid-rebrand ownership transition, no ADR-equivalent for 'who decides now'",
-      "depth": "L1",
-      "round": "3",
-      "note": null
+      "depth": "L3",
+      "round": "adopt-wave-ecosystems (2026-08-07)",
+      "note": "Aligned for real on a local branch, drift 0 (100%, 79/79, 0 excepted). R21 (exact pinning + committed lockfile) is plainly unmet and costs nothing - nothing in the manifest checks it. Found the manifest's own recorded sha256 hash trips the shipped gitleaks scanner on the adoption commit itself (SEC-06, verified live against this repository's own tree too, still open), docs/ hardcoded with no altPaths collides with the repo's existing published mkdocs site (ADOPT-20, resolved locally with an exclude_docs workaround), the dashboard generator silently reports '0 changelog entries' against a 37KB real changelog because its regex only matches two heading shapes (DOC-21), and JVM/Gradle vocabulary (binary compatibility, Maven coordinates, ./gradlew publish) has no home anywhere in the standard (SEC-07). Also confirmed the project is mid-rebrand (Square to a new maintainer) with no governance record saying so. Not pushed upstream; no issue or PR opened."
     },
     {
       "slug": "request/request",
@@ -431,9 +431,9 @@
       "star_tier": "mid",
       "stars_approx": "~9k",
       "shape": "single-capability micro-library archetype gap",
-      "depth": "L1",
-      "round": "wave 5",
-      "note": null
+      "depth": "L3",
+      "round": "adopt-wave-ecosystems (2026-08-07)",
+      "note": "Aligned for real on a local branch, drift 0 (97%, 72/74, 2 excepted, both from the same cause). Found a data-loss hazard reproduced directly: the required CHANGELOG.md collides case-insensitively with the repo's real ChangeLog.md on APFS/NTFS, and writing the standard's file silently overwrote 344KB of real release history in a scratch reproduction (GATE-44, still open - recorded as two exceptions here instead of applying the entry literally). Also hit the same merge-class exception-hatch defect as ripgrep (GATE-36, third independent confirmation), the branch-hardcode workflow mismatch now caught by a warning (GATE-42, confirms the fix generalizes to a develop/master branching model), and a docs/ collision with the repo's own published mkdocs manual (ADOPT-20, second confirmation). Not pushed upstream; no issue or PR opened."
     },
     {
       "slug": "ziglang/zig",
