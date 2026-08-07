@@ -19,10 +19,18 @@ written rather than generated.
 
 ## What this does not prove - read this before the numbers
 
-- **Assessment is not adoption.** 103 of 118 targets were assessed at
+- **A listed target is not an observed one.** `targets.json` has 118 rows, and
+  **42 of them have at least one observation in `runs/`**. The other
+  76 - all of them at L1 - are
+  listed and nothing more: a repository somebody put on the list, carrying a `shape` and a
+  `quality_evidence` line written from its own metadata rather than from a method pass run
+  against it. This page used to call all 118 of them "assessed", which was the
+  wider word doing work the data could not hold. **42** is the number any
+  claim about coverage has to be built on.
+- **Assessment is not adoption.** 103 of 118 rows sit at
   depth **L1** - a read-only clone, method passes applied, nothing changed. "We assessed
   115 public repositories" and "we adopted 115 repositories" are different
-  claims, and only the first one is true.
+  claims, and only the first one is even close to true - see the row above for how much closer.
   **12 third-party repositories have been adopted for real** (depth L3 or better, listed by slug in `targets.json`): `hagopj13/node-express-boilerplate`, `matomo-org/matomo`, `git/git`, `vim/vim`, `vdukhovni/postfix`, `caddyserver/caddy`, `simonw/llm`, `pydantic/pydantic-ai`, `Textualize/textual`, `honojs/hono`, `drizzle-team/drizzle-orm`, `usebruno/bruno`. That is what moves this from a design claim to a demonstrated one - and 12 repositories are still a small sample. `FIELD-1` asks for three, of different sizes and stack situations, and stays open until it has them.
 - **Both sides of the fixtures share an author.** `test-greenfield-core` and
   `test-greenfield-node` - the two **L4** targets, the only ones that lived a full lifecycle
