@@ -1,0 +1,150 @@
+{
+  "$about": "adopt-wave-ecosystems round, 2026-08-07: L3 adoptions of the four ecosystems the catalogue had never touched for real - rails/rails (Ruby), BurntSushi/ripgrep (Rust), square/okhttp (JVM/Kotlin) and nlohmann/json (C++), each aligned on a local branch, none pushed upstream and no issue or pull request opened against any of them. Five findings from the four adoption reports were already fixed directly on main by commit fd15bde before this round started; those are recorded here as re-verified pass/partial observations against the current tree, not as new discoveries. The remaining findings are recorded as new cases and observed as still open. Every number below traces to a command run against the adopted working copy or a scratch reproduction, and the procedure to redo it is in the case.",
+  "observations": [
+    {
+      "case": "SEC-05",
+      "target": "repo:rails/rails",
+      "verdict": "partial",
+      "evidence": "Live-tested both of the rails report's repro commands against current main (commit fd15bde). `mysql -h db.prod.example.com -u root -e \"DROP TABLE users\"` is now correctly denied - the client/scheme half of the fix (SQL_CLIENT_RE/SQL_SCHEME_RE widened to the MySQL family) holds. `DATABASE_URL=mysql2://root@db.prod.example.com/app bin/rails db:migrate` still exits 0 with no output - WRITE_RE (no-remote-db-writes.sh:16) has no migrate/upgrade vocabulary, so a framework migration CLI naming no literal SQL verb bypasses the guard even though its own deny message promises 'no migration CLI'. Half the finding is fixed, half is not.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "SEC-06",
+      "target": "repo:square/okhttp",
+      "verdict": "fail",
+      "evidence": "gitleaks detect --no-banner --redact --config standard/.gitleaks.toml --source . --report-format json against the adoption commit reports a generic-api-key hit on standard.manifest.json, on the manifest entry recording no-ci-secret-writes.sh's own sha256. This is the exact CI mechanism standard/.github/workflows/gitleaks.yml runs on every push - the adoption's first CI run after landing the manifest fails on the standard's own file, before anything the adopter wrote is scanned.",
+      "at": "2026-08-07",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+    },
+    {
+      "case": "SEC-06",
+      "target": "repo:repository-standards/core",
+      "verdict": "fail",
+      "evidence": "Re-verified live against this repo's own current tree: gitleaks detect --no-banner --redact --config standard/.gitleaks.toml --source . --no-git reports `leaks found: 2`, `RuleID: generic-api-key`, `File: standard/standard.manifest.json`, `Match: no-ci-secret-writes.sh\": \"REDACTED`. Confirmed standard/.github/workflows/gitleaks.yml ships this exact command to every adopter; confirmed this repo's own CI does not run gitleaks against itself, so the defect has gone unnoticed here while breaking every adopter's first CI run.",
+      "at": "2026-08-07",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+    },
+    {
+      "case": "SEC-07",
+      "target": "repo:rails/rails",
+      "verdict": "fail",
+      "evidence": ".claude/settings.json's deny/ask patterns name npm publish and psql/pg_dump; grepped for gem push, rake release, and rake db:*/bin/rails db:* - none present before the rails adoption added them by hand (gem push, gem yank, rake release, rake prep_release, mysql, mysqlsh, mysqldump, sqlite3, rake db:*, bin/rails db:*).",
+      "at": "2026-08-07",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+    },
+    {
+      "case": "SEC-07",
+      "target": "repo:BurntSushi/ripgrep",
+      "verdict": "fail",
+      "evidence": "Same list, grepped for cargo publish/yank/owner - none present before the ripgrep adoption added them by hand. cargo publish is irreversible (a published version can only be yanked, never replaced or deleted), the same class of action npm publish is already denied for.",
+      "at": "2026-08-07",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+    },
+    {
+      "case": "SEC-07",
+      "target": "repo:square/okhttp",
+      "verdict": "fail",
+      "evidence": "Same list, grepped for ./gradlew publish*, *publishToMavenCentral*, mvn deploy*, mvn release:*, and credential-file reads (**/local.properties, **/*.jks, **/*.keystore) - none present before the okhttp adoption added them by hand. A Maven Central publish is as irreversible as an npm publish, which is already denied.",
+      "at": "2026-08-07",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+    },
+    {
+      "case": "GATE-41",
+      "target": "repo:rails/rails",
+      "verdict": "pass",
+      "evidence": "facts-check.mjs's glob-base cut is fixed on current main (fd15bde): `home.count` set to `*/CHANGELOG.md` over rails' 13-component tree now walks from the repo root and counts correctly, instead of the empty-base cut returning zero silently. Confirmed via `node tools/facts-check-test.mjs` (15/15 cases pass, including the top-level-changelogs fixture added in the same commit) and by re-running facts-check.mjs directly against rails' tree.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "GATE-42",
+      "target": "repo:BurntSushi/ripgrep",
+      "verdict": "pass",
+      "evidence": "self-verify.mjs's checkWorkflowBranches() (added in fd15bde) now warns on ripgrep's tree: spec-guard.yml, gitleaks.yml and dashboard.yml all land at `branches: [main]` while `origin/HEAD` resolves to `master`, and the warning names all three files, the branch they trigger on, and the repo's actual default branch.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "GATE-42",
+      "target": "repo:nlohmann/json",
+      "verdict": "pass",
+      "evidence": "Same check confirmed generalizing past a simple main-vs-master swap: json's default branch resolves to `develop` (with a separate `master` used for releases), and checkWorkflowBranches() still warns correctly by reading `origin/HEAD` rather than assuming a fixed pair of names.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "GATE-43",
+      "target": "repo:BurntSushi/ripgrep",
+      "verdict": "pass",
+      "evidence": "self-verify.mjs's hasHeading() now recognizes setext-style headings (fd15bde). ripgrep's real CHANGELOG.md uses roughly 40 setext headings (Unreleased underlined with `===`); the Unreleased section that previously required an exception is now found directly. Confirmed via `node tools/self-verify-fill-test.mjs`, which includes 'a setext Unreleased heading is a heading' and 'an Unreleased section shown inside a code fence is an example, not the section' among its passing cases.",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "GATE-44",
+      "target": "repo:nlohmann/json",
+      "verdict": "fail",
+      "evidence": "Reproduced directly in a scratch directory on APFS: created ChangeLog.md with real content (344KB, matching json's actual release history), then wrote CHANGELOG.md beside it per the manifest's copy-class entry. The write silently replaced ChangeLog.md's content - the Write tool itself reported an update, not a creation - and nothing in self-verify or the manifest format detects or warns about the collision. Not touched by fd15bde.",
+      "at": "2026-08-07",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+    },
+    {
+      "case": "GATE-45",
+      "target": "repo:rails/rails",
+      "verdict": "fail",
+      "evidence": "docs/runbooks/, docs/ideas/ and docs/discovery/ were landed as empty directories (no _template.md inside) during the rails adoption and self-verify reported drift 0 for all three. git cannot track an empty directory - a fresh clone of the same commit has no docs/runbooks/ at all, and nothing in self-verify's fill/ignored-and-untracked check catches the difference, because that check only fires on paths git actually ignores, not on paths git never saw.",
+      "at": "2026-08-07",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+    },
+    {
+      "case": "DOC-20",
+      "target": "repo:repository-standards/core",
+      "verdict": "pass",
+      "evidence": "skills/align-to-standards/SKILL.md lines 336-346 now correctly describe spec-guard.yml's actual behavior (hardcodes `node-version: \"24.18.0\"` because the workflow is required-manifest-class and .nvmrc is optional-class), matching standard/.github/workflows/spec-guard.yml:30-36 verbatim, including the comment. Fixed in fd15bde; previously instructed the adopter toward a .nvmrc lookup the workflow does not perform - hit independently by all four ecosystem adoption reports (rails, ripgrep, okhttp, json).",
+      "at": "2026-08-07"
+    },
+    {
+      "case": "DOC-21",
+      "target": "repo:square/okhttp",
+      "verdict": "fail",
+      "evidence": "scripts/generate-dashboard/index.mjs:234 matches only `^## \\[?(Unreleased|\\d+\\.\\d+\\.\\d+)\\]?` and a matching `### date` sub-heading. okhttp's real CHANGELOG.md (37KB, 100+ releases) headers as `## Version 5.4.0` followed by an italic `_2026-06-08_` line on the next line - neither pattern matches. The dashboard's History panel reports '0 changelog entries' against a file with well over 100 real entries; no crash, no warning.",
+      "at": "2026-08-07",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+    },
+    {
+      "case": "ADOPT-20",
+      "target": "repo:square/okhttp",
+      "verdict": "fail",
+      "evidence": "okhttp's docs/ is the real docs_dir of a published mkdocs site (square.github.io/okhttp). None of the manifest's docs/-rooted entries (personas.md, decision-records/, PRODUCT.md, ARCHITECTURE.md, PRINCIPLES.md, runbooks/, ideas/, discovery/, facts.json) carry an altPaths entry. Landed literally, they would either fail to land (mkdocs.yml's nav excludes unlisted files, so they'd sit unbuilt) or get built and published to the public site on the next mkdocs build. Resolved locally with an exclude_docs mkdocs.yml block plus a standing rule in AGENTS.md/docs/README.md - a workaround, not a fix in the standard.",
+      "at": "2026-08-07",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+    },
+    {
+      "case": "ADOPT-20",
+      "target": "repo:nlohmann/json",
+      "verdict": "fail",
+      "evidence": "Same collision, independently: json's docs/ is the real source of its published Doxygen/mkdocs manual. Same absence of altPaths on the same set of docs/-rooted manifest entries. Second independent confirmation that the manifest has no concept of a repo whose docs/ is already claimed.",
+      "at": "2026-08-07",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+    },
+    {
+      "case": "GATE-36",
+      "target": "repo:BurntSushi/ripgrep",
+      "verdict": "fail",
+      "evidence": "Added `{ kind: content, match: <a merge-class workflow path> }` to ripgrep's manifest copy after deliberately editing that workflow, then ran self-verify.mjs. self-verify.mjs's exceptionFor(\"content\", ...) is never reached for a merge-class entry, because verifyContent short-circuits earlier on `sha256 === undefined` (merge-class entries carry no recorded sha256) - the tool reports the file as a plain, unexplained deviation instead of stating that a merge-class file cannot carry a content exception. Not touched by fd15bde.",
+      "at": "2026-08-07",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+    },
+    {
+      "case": "GATE-36",
+      "target": "repo:nlohmann/json",
+      "verdict": "fail",
+      "evidence": "Same reproduction, independently, on json's tree: a recorded content exception on a merge-class file is silently ignored by self-verify.mjs for the same reason. Third confirmation of this defect across the four adoptions (ripgrep, json, and rails' related but distinct finding about merge-class PR templates passing on presence alone).",
+      "at": "2026-08-07",
+      "waiver": "Open by design, not a silent gap: this is a logged, unfixed finding - the evidence field states why it was not built this round (a design call, a budget cutoff, or a fix queued for a future pass)."
+    },
+    {
+      "case": "ADOPT-15",
+      "target": "repo:square/okhttp",
+      "verdict": "not-applicable",
+      "evidence": "okhttp is a Gradle/JVM project with no Node runtime of its own - no package.json, no engines.node, nothing for the copy-class .nvmrc to collide with. The case's precondition (a repo that already declares its own Node version at a different major) does not hold; .nvmrc lands only to pin the version the standard's own Node-based tooling scripts run under. Recorded to document the boundary of ADOPT-15's scope, not because a collision occurred - the SKILL.md-vs-artifact staleness this same .nvmrc file surfaced across all four adoptions is covered separately by DOC-20.",
+      "at": "2026-08-07"
+    }
+  ]
+}
