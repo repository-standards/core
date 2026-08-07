@@ -44,6 +44,20 @@ check "${DB}" allow "psql postgresql://postgres:postgres@localhost:55432/console
 check "${DB}" allow "docker exec console-e2e-db psql -U postgres -c 'DROP TABLE t'"
 # curl's -H is not psql's -h: a local psql whose argument came from curl is still local.
 check "${DB}" allow "psql -h localhost -f <(curl -sS -H 'Host: files.example.com' https://files.example.com/schema.sql)"
+
+# MySQL and MariaDB. The guard shipped Postgres-only for its whole life, and every case above
+# passed the whole time - because not one of them was MySQL. That is what a case list proves when
+# it only covers the shape somebody already had in mind, and it is why an adopting repo running
+# MySQL had a guard that never once refused anything.
+check "${DB}" DENY  'mysql -h prod-db.example.com -u root -e "DROP TABLE users"'
+check "${DB}" DENY  "mysql mysql://admin:pw@prod-db.example.com:3306/db -e 'UPDATE users SET admin = 1'"
+check "${DB}" DENY  "mariadb -h prod-db.example.com -e 'ALTER TABLE t ADD COLUMN c INT'"
+check "${DB}" DENY  "mysql -h prod-db.example.com -D app < migration.sql"
+check "${DB}" allow "mysql -h 127.0.0.1 -u root -e 'DROP TABLE t'"
+check "${DB}" allow "mysql -h localhost -u root -e 'TRUNCATE t'"
+check "${DB}" allow "mysql -h prod-db.example.com -e 'SELECT count(*) FROM users'"
+# A dump is a read, and reads are allowed - the same reason pg_dump is not in the client list.
+check "${DB}" allow "mysqldump -h prod-db.example.com app > dump.sql"
 check "${DB}" allow "pnpm test:unit"
 
 PUSH=no-force-push.sh
