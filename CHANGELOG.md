@@ -16,6 +16,24 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Two of the four reports were invented here, and a repository with no cycles got them anyway (2026-08-07)
+
+The Reports tab promised "only the reports a team actually acts on" and then showed, on a
+repository that runs no cycles, the two that were not reports at all: changes per week from
+the changelog, and finished items by capability. Neither is a question anybody walks into a
+review with. They existed because the two real ones - did we finish what we said, and how
+fast do we actually go - are computed from closed cycles, so a repository without one had an
+empty tab, and an empty tab felt like a bug to fix with content.
+
+It was not. Reports now come from closed cycles and nothing else, and a repository without
+one has no Reports tab - the same rule Timeline and Cycles already follow. The weekly series
+behind the removed chart is gone from the data too, rather than left computed and unread.
+
+The Documents tab opened with four counters nobody can click - rules, decisions, specs,
+procedures - sitting above the search. The counts are already on the tab and on every group,
+so the row cost a screen of height and pushed the one control that matters below it. Removed;
+the search is the first thing on the tab now.
+
 ### Following the procedure exactly could destroy a repository's release history (2026-08-07)
 
 Found by the first C++ adoption, on `nlohmann/json`, and reproduced here before it was believed.
