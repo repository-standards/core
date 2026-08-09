@@ -206,7 +206,7 @@ anyone evaluating this, and deliberately **not** satisfied by the fixture we wro
 ourselves), **STACK-ALIGN-1** (the node satellite aligns; waits on the first tag),
 **STACKS-2** (waits for an evidence repo), and the deferred pair **OPS-1** /
 **UPSTREAM-1** (adopter-driven operate depth; the upstream scan rides with each
-release). The 23 open questions and 1 idea below stand independent of this list - none
+release). The open questions and the idea below stand independent of this list - none
 block a release; each waits on a challenger, not on being worked. Releases stay
 maintainer-only: versions are cut from the CHANGELOG's `## Unreleased` when the
 maintainer decides.
