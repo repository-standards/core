@@ -320,17 +320,18 @@
     },
     {
       "path": ".claude/hooks",
-      "purpose": "the pre-execution guards themselves: remote-DB writes, force-push, CI secrets",
+      "purpose": "the pre-execution guards themselves - remote-DB writes, force-push, CI secrets - behind one dispatcher that denies when any of them is missing or broken",
       "adapt": "copy",
       "required": false,
       "profile": "core",
       "since": "1.0.0",
       "rule": "R19",
       "sha256": {
+        "guards.sh": "e2cb07f370a7875f10f3f5eef5529fe6be1ab85b7ccf52027dffac564d9b188e",
         "lib.sh": "06f1822d3110e5de9eb68d253bbafae6121326a30815955a48bd78578d428e34",
         "no-ci-secret-writes.sh": "db8381dd7b3e58b7a349c8bb3312a03ac792cffa0a04a781d790f2b14ef61793",
-        "no-force-push.sh": "014a38425cf4716a9057183b6c09b68e86960e114645cabaa9e6cccdf9a3eb2a",
-        "no-remote-db-writes.sh": "08faa4574d14c73f49a8704705ec96788488800f337950eedb4270946c860e3c"
+        "no-force-push.sh": "f6b13e0fa4b2c61dcf5a895fb10784c1925a39a14f5304032a0f4f675f936399",
+        "no-remote-db-writes.sh": "004bdee6a04d1f17089133a0350ea90ee03e9b9805c21fc8ee5b8f4550a6fdd2"
       }
     },
     {

@@ -91,7 +91,7 @@ copied into your repository as folder READMEs that then age in place.
 |---|---|---|---|---|
 | `.claude/skills` <br><small>or `.agents/skills`</small> | the lifecycle skills - the standard as executable procedures (Claude reference form; a non-Claude repo ports them to its agent's own mechanism) | **required**, core | `copy` | [R22](../standard/SPEC.md) |
 | `.claude/settings.json` | agent settings baseline - permission lists, and which guards run | optional, core | `merge` | [R19](../standard/SPEC.md) |
-| `.claude/hooks` | the pre-execution guards themselves: remote-DB writes, force-push, CI secrets | optional, core | `copy` | [R19](../standard/SPEC.md) |
+| `.claude/hooks` | the pre-execution guards themselves - remote-DB writes, force-push, CI secrets - behind one dispatcher that denies when any of them is missing or broken | optional, core | `copy` | [R19](../standard/SPEC.md) |
 
 ## `.github/` - templates, never enabled in this repo
 

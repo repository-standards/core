@@ -120,18 +120,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/no-remote-db-writes.sh",
-            "statusMessage": "Checking remote-database guard"
-          },
-          {
-            "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/no-force-push.sh",
-            "statusMessage": "Checking force-push guard"
-          },
-          {
-            "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/no-ci-secret-writes.sh",
-            "statusMessage": "Checking CI secrets guard"
+            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/guards.sh || printf '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Blocked by repository policy: the agent guards could not be run (.claude/hooks/guards.sh was not found or is not executable), so this command was never checked.\"}}'",
+            "statusMessage": "Checking agent guards"
           }
         ]
       }
