@@ -194,11 +194,20 @@ const OWN_HOST = (() => {
   const url = cfg ? JSON.parse(readFileSync(cfg, "utf8")).site_url : "";
   return url ? new URL(url).host.toLowerCase() : "";
 })();
-for (const h of hosts) {
-  if (OWN_HOST && (h === OWN_HOST || h.endsWith(`.${OWN_HOST}`))) continue;
-  if (h !== "github.com" && !h.endsWith(".github.com")) fail(`${LANDING}: unexpected external host ${h}`);
+// The one deliberate exception: the anonymous adoption-count endpoint (ADR-047), fetched
+// client-side to power the "Live adoptions" badge. Named here, not wildcarded, so any other
+// third-party host still fails this check.
+const ADOPTION_STATS_HOST = "stats.repositorystandards.workers.dev";
+function isAllowedHost(h) {
+  if (OWN_HOST && (h === OWN_HOST || h.endsWith(`.${OWN_HOST}`))) return true;
+  if (h === "github.com" || h.endsWith(".github.com")) return true;
+  if (h === ADOPTION_STATS_HOST) return true;
+  return false;
 }
-if (![...hosts].some((h) => h !== "github.com" && !h.endsWith(".github.com"))) ok(`${LANDING}: external hosts limited to GitHub`);
+for (const h of hosts) {
+  if (!isAllowedHost(h)) fail(`${LANDING}: unexpected external host ${h}`);
+}
+if ([...hosts].every(isAllowedHost)) ok(`${LANDING}: external hosts limited to the allowlist`);
 
 // --- docsite ----------------------------------------------------------------------
 
