@@ -102,7 +102,12 @@ while IFS= read -r segment; do
     kv_hosts=$(printf '%s' "${segment}" \
       | grep -oE "(^|[[:space:]\"'])host=[^[:space:]\"']+" \
       | sed -E 's/^[^h]*host=//' || true)
-    hosts=$(printf '%s\n%s' "${flag_hosts}" "${kv_hosts}" | grep -v '^$' || true)
+    # Quoting a host is ordinary (`-h "localhost"`) and it used to read as non-loopback, because
+    # the loopback pattern is anchored and the quote sits where the anchor is. A guard that denies
+    # local work gets switched off, so the quotes come off before the comparison.
+    hosts=$(printf '%s\n%s' "${flag_hosts}" "${kv_hosts}" \
+      | sed -E 's/^["'"'"']+//; s/["'"'"']+$//' \
+      | grep -v '^$' || true)
 
     if [ -n "${hosts}" ]; then
       # A host beginning with `/` is a unix-socket directory, which cannot be anywhere but here.
