@@ -156,7 +156,16 @@ binds every repo, a solo one included.
   mechanism. A repo that maintains more than one release line (R23) carries one
   changelog per line, each with its own Unreleased heading, and a PR writes its
   entry under the heading on the branch it targets - the same one mechanism
-  applied per line, never a second one.
+  applied per line, never a second one. A repo that ships more than one
+  independently-versioned, independently-publishable unit from the same tree -
+  a monorepo of packages, gems or crates, each on its own release cadence -
+  carries one changelog per unit instead of one at the root, each with its own
+  Unreleased heading, and a PR writes its entry under the heading of every unit
+  it actually touches. This is a different axis from the release-line clause
+  above, not a variant of it: release lines split a changelog across branches
+  over time, units split it across the same tree at once, and a repo can face
+  either, both or neither - the one mechanism per line becomes one mechanism
+  per unit, never a second kind of mechanism (ADR-044).
 - **R19.** Secrets MUST NOT enter the repo - environment and a secret manager only.
   The shipped secret scan SHOULD gate CI, and agent access to remote databases
   SHOULD be write-blocked by the shipped settings baseline. The security baseline

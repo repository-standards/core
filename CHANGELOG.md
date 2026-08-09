@@ -16,6 +16,15 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### R18 covers a monorepo of independently-published units (2026-08-09)
+
+`rails/rails`'s thirteen gems, each independently versioned with its own changelog,
+all changing on one branch, is not the release-line shape R18 already covered - it's
+a different axis: which publishable unit a change belongs to, not which branch it
+ships on. R18 gets a second, independent clause: a repo that ships more than one
+independently-versioned unit from the same tree carries one changelog per unit,
+same one-mechanism-never-a-second-one rule, applied per unit instead of per line.
+
 ### An existing decision process gets an exception, not a second home (2026-08-09)
 
 Step 0 proposed `docs/decision-records/` for every target repo alike, including
