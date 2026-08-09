@@ -536,10 +536,12 @@ check(
 check(
   "a shipped skill the repo deliberately does not carry is named, reasoned and paid for",
   (dir) => {
-    // A real adoption's shape: the repo dropped pre-pr-review because its own review skill
-    // already matched the same sentence, and recorded why. That is the one legitimate way a
-    // shipped procedure is absent - and the reason this hatch cannot be narrowed to "changed
-    // members only" without turning a considered decision into drift.
+    // The shape our trial adoption of usebruno/bruno's codebase settled on: drop
+    // pre-pr-review, because that project ships a review skill of its own and two skills
+    // matching one sentence is a defect this standard names itself - and record why. We
+    // wrote that judgment, not the project, but it is the legitimate way a shipped procedure
+    // ends up absent, and the reason this hatch cannot be narrowed to "changed members only"
+    // without turning a considered decision into drift.
     //
     // What it must never become is the silent version. An item an align run left out of its
     // plan is absent for a reason nobody wrote down; it reaches this state only by someone
