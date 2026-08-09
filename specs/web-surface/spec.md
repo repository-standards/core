@@ -20,6 +20,13 @@ asking. Written down because the status is now checked against this section, and
 capability with no record of what settled it is the gap that check exists to expose. New
 work on this capability goes through the loop.
 
+### Session 2026-08-10
+
+Follow-up polish on the "Live adoptions" badge (added in the prior session): tightened
+the gap above it and dropped its status dot, both visual-only - no invariant, acceptance
+criterion or contract in this spec changes. Noted here rather than left silent because
+`spec-guard` couples every change under `site/**` to this file regardless of how small.
+
 ## Scope
 
 The docsite generator, the site-check gate, and the `site/` directory they operate on. Repo-own tooling - never shipped.
