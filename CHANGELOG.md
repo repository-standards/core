@@ -16,6 +16,44 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### A wrapped line turned the remote-database guard off (2026-08-10)
+
+An adopter probed the shipped `PreToolUse` guards instead of reading them, and the
+remote-database guard allowed `psql -h prod-db.example.com \` on one line with
+`-c "DROP TABLE users"` on the next. The guard required the host and the write verb in the
+same segment, and it split segments on `|` and newlines - so a pipe, a backslash line-wrap
+and a heredoc each separated them. Nothing about a wrapped line is adversarial, which is
+what made it worse than a bypass: an agent formatting a long command for readability
+disabled the control, and a guard that only prints on refusal cannot say so.
+
+Where a command reaches is still decided per segment, so a local call cannot vouch for a
+remote one; what the command *does* is now read across the whole string. The same pass
+closes the ordinary spellings that made the client or the host invisible - an absolute path
+(`/usr/local/bin/psql`), a `bash -c` wrapper, `-hHOST` with no space, `PGHOST` in the
+environment, and keyword-value conninfo - and refuses a remote client whose SQL comes from
+a command substitution, on the rule the guards already applied to a missing `jq`: a guard
+that cannot read the command has not checked it. Deleting a remote branch joins force-push
+as history destruction, and `COMMENT ON`, `REASSIGN OWNED` and `pg_terminate_backend` join
+the write verbs.
+
+### A hook that exits 127 is a command that ran unchecked (2026-08-10)
+
+The guards fail closed on a missing `jq` or an unreadable `lib.sh`, and then the outermost
+link failed open: `settings.json` invoked each one through `$CLAUDE_PROJECT_DIR`, and with
+that variable unset - or the directory absent - the shell exits 127 with empty stdout, which
+Claude Code treats as a non-blocking error. The three guards now run behind `guards.sh`,
+which resolves them from its own path and denies when any is missing, unreadable, or exits
+without a verdict; `settings.json` denies when `guards.sh` itself cannot be run.
+
+### The guard suite went green while a live bypass sat in the guard it checks (2026-08-10)
+
+That is the finding, not a footnote to the others. `verifyAgentGuards.sh` had no piped case
+and no wrapped case, it scored any non-empty stdout as a denial, and it discarded stderr and
+the exit code - so a guard emitting JSON Claude Code ignores read as `ok DENY`, and a guard
+with a syntax error read as `ok allow` against every allow assertion in the file. A denial
+now has to be well-formed deny JSON, a nonzero exit or unexpected stderr is its own failure,
+the harness is checked against deliberately broken guards, and the suite finally runs in
+this repo's CI - where it never had.
 ### An item cannot leave the delta by being classified out of it (2026-08-10)
 
 A run building its wave plan put `record-run` on a "consciously skipped" list, reading it
