@@ -16,6 +16,29 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The secret scan failed on the standard's own manifest (2026-08-10)
+
+Every repository that adopts the standard fails its first secret scan, on a file the
+standard shipped. A manifest entry is a path and the sha256 of the file at it, and one of
+those paths is `.claude/hooks/no-ci-secret-writes.sh`; gitleaks' entropy rule sees the word
+`secret` followed by 64 characters of high-entropy hex and calls it a credential. The
+worked adoption caught it: its update pull request went red on the manifest, at a hash of
+a hook.
+
+The allowlist that fixes it is scoped by shape, not by file. `paths` looked like the
+obvious tool and is the wrong one - gitleaks matches a path entry before it evaluates
+`condition`, so `condition = "AND"` alongside `paths` reads as a narrow rule and behaves as
+a blanket exemption of the whole file. Verified rather than assumed: with such an entry and
+a regex that can never match, a planted non-hex secret in the manifest went unreported. The
+shipped entry matches the line instead - a JSON key whose entire value is 64 lowercase hex
+characters - and applies only to `generic-api-key`, so every named-vendor rule still fires
+everywhere, including inside the manifests.
+
+The workflow also gains `-v`. `--redact` keeps the value out of a public CI log and stays,
+but without `-v` gitleaks reports nothing beyond `leaks found: 1` - no file, no line, no
+rule - and whoever opened the pull request has no way to tell a real leak from this one.
+`-v` prints the location and the rule; the secret itself is still redacted.
+
 ### Twenty minutes of silence is indistinguishable from a hung session (2026-08-10)
 
 Long agent work is silent by default: a run of tool calls, a subagent working in the

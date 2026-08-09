@@ -1,13 +1,15 @@
 # gitleaks config (repository-standards baseline)
 # Scans staged commits (pre-commit hook) + PR/push range (CI).
 # Principle: secrets never live in the repo - secret manager + env vars only.
+# `[[allowlists]]` and `targetRules` need a recent gitleaks 8.x; the shipped workflow pins
+# the version it is tested against.
 
 title = "gitleaks config"
 
 [extend]
 useDefault = true
 
-[allowlist]
+[[allowlists]]
 description = "Paths and patterns allowed to contain secret-like strings."
 # No blanket entry for docs/: `docs/discovery/` is where the standard tells the agent to
 # paste meeting notes, mails and transcripts, and runbooks carry real command lines - the
@@ -25,6 +27,21 @@ regexes = [
   '''your-.*-here''',
   '''<.*>''',
 ]
+
+# A manifest entry is a path and the sha256 of the file at it, so where the path carries a
+# word the entropy rule keys on - a hook called `no-ci-secret-writes.sh` - the hash beside
+# it reads as a credential and the adoption commit fails the scan on a shipped file.
+#
+# Scoped by shape, not by file. `paths` is the wrong tool: gitleaks matches it before it
+# evaluates `condition`, so a path entry switches the rule off for the whole file whatever
+# else the allowlist says. This matches the line - a JSON key whose entire value is 64
+# lowercase hex characters - and only for `generic-api-key`, so every named-vendor rule
+# still fires everywhere, manifests included.
+[[allowlists]]
+description = "sha256 values recorded by manifest-hashes."
+targetRules = ["generic-api-key"]
+regexTarget = "line"
+regexes = ['''^\s*"[^"]+":\s*"[a-f0-9]{64}",?\s*$''']
 
 # Add repo-specific vendor-key rules below (optional), e.g.:
 # [[rules]]

@@ -44,9 +44,13 @@ jobs:
           else
             RANGE="HEAD"
           fi
+          # -v prints the file, line and rule of every finding; --redact keeps the value
+          # itself out of the log. Without -v the run says only "leaks found: 1", which
+          # tells whoever opened the pull request nothing about where to look.
           gitleaks detect \
             --no-banner \
             --redact \
+            -v \
             --config .gitleaks.toml \
             --source . \
             --log-opts="$RANGE"
