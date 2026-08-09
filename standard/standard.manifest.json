@@ -384,6 +384,15 @@
       "rule": "R10"
     },
     {
+      "path": "docs/adoption-intake.md",
+      "purpose": "what Step 0 measured and asked before any align work proceeded - the record that makes intake checkable, not just performed (ADR-042)",
+      "adapt": "fill-from-repo",
+      "required": true,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R26"
+    },
+    {
       "path": "README.md",
       "purpose": "the repo's front door - authored from this repo's reality",
       "adapt": "fill-from-repo",
