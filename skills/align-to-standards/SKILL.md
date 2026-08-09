@@ -553,9 +553,23 @@ process the user **re-enters until the repo is compliant**, and every entry is g
   gates' material (PRODUCT/personas - nothing downstream lands before them), then
   missing foundational decisions (ADRs), then folder structure, then guards. Say
   *why this wave, why now*, sized to land in one PR.
+- **The delta is measured, not curated.** Ordering a wave is judgment; **what is in the
+  plan at all is not.** The open list comes from the measurement - `self-verify` against
+  the manifest once the repo is pinned, the assessment before that - and an entry does not
+  leave it because this run classified it as belonging to the standard's own repo rather
+  than to this one. The ship boundary is drawn already and is not the agent's to redraw:
+  transition skills do not ship and this skill is the one that is left (ADR-009);
+  everything under `standard/.claude/skills` does, `record-run` included - a lifecycle
+  skill by ADR-045, not this repo's own tooling.
 - **Hand-hold, do not dump.** For each wave item, guide the user through it (elicit,
-  propose, record) rather than emitting a pile of TODOs. Deferrals are recorded, not
-  dropped.
+  propose, record) rather than emitting a pile of TODOs.
+- **Deferrals are recorded, not dropped - and the record is the number.** A deferred item
+  stays open drift the next run re-reads from measurement, so every open entry is either in
+  a wave or named to the user as still open. A third state - "consciously skipped", living
+  only in this session's prose - is how a dropped item goes invisible the moment the session
+  ends. Taking something out of the count for good is a different act with a different cost:
+  a manifest exception the user approves, carrying its reason and lowering the adoption
+  percentage rather than hiding the gap (R17).
 - **Repeat until drift 0.** Close each wave with `self-verify`; the number falling is the
   progress bar. A multi-year brownfield may take many waves - that is the designed shape,
   not a failure. Every wave close includes the upstream review (step 8) and the
