@@ -154,6 +154,10 @@ for (const file of runFiles) {
       scoreInto(perObservation, o);
     }
 
+    if ("live_turns" in o && typeof o.live_turns !== "boolean") {
+      fail(`${where} has live_turns: ${JSON.stringify(o.live_turns)} - allowed: true, false`);
+    }
+
     if ("turns" in o) {
       if (!Array.isArray(o.turns) || !o.turns.length) {
         fail(`${where} has a turns field that is not a non-empty array`);
@@ -250,8 +254,10 @@ const scenarioPage = (run) => {
     // Who typed each user turn, derived rather than asserted. The opening line of an observation
     // is the corpus row it cites, verbatim - that is attributable by construction. Everything
     // after it was written by whoever was running the round, improvising a person who does not
-    // know the product. Nine of eighty-eight turns said so by hand; the rest read as though a
-    // stranger had typed them, which is the one thing this page must never let a reader assume.
+    // know the product - unless the observation itself declares `live_turns: true`, meaning every
+    // turn in it was typed by one real person for real, not simulated by whoever scored it. Nine
+    // of eighty-eight turns said so by hand; the rest read as though a stranger had typed them,
+    // which is the one thing this page must never let a reader assume.
     let seenUserTurn = false;
     const corpusText = promptText.get(o.prompt);
 
@@ -264,7 +270,9 @@ const scenarioPage = (run) => {
           ? `the corpus, row \`${o.prompt}\` verbatim`
           : first
             ? `the corpus row \`${o.prompt}\`, adapted for this run`
-            : `**the person scoring this run**, improvising a user who does not know the product`;
+            : o.live_turns
+              ? `the same live person as the opening turn - not simulated, not the scorer`
+              : `**the person scoring this run**, improvising a user who does not know the product`;
         return `> **Typed** *(${who})***:** ${t.said}`;
       }
       const flags = FLAGS.map((f) => `${f} ${FLAG_MARK(t[f])}`).join(", ");
