@@ -315,6 +315,7 @@ function poolList(items) {
           el('span', { class: 'pmeta cap', text: i.cap || i.epic || '' }),
           el('span', { class: 'pmeta owner', text: i.owner || '' }),
           el('span', { class: 'pmeta size', text: i.size || '' }),
+          i.type && i.type !== 'task' ? el('span', { class: 'pill plain', text: i.type }) : null,
           i.status !== 'todo' ? pill(i.status, i.blockedBy ? 'blocked' : null) : null,
         ],
       ),
