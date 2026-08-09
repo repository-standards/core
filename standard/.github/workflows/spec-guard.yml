@@ -89,3 +89,17 @@ jobs:
         # conduct - a spec with no map entry is broken at core too. It needs no diff,
         # which is what makes it the gate on a first push.
         run: node scripts/spec-guard.mjs --audit --block
+      - name: Agent guards self-test
+        # The PreToolUse hooks print only when they refuse, so a broken one is silent - it
+        # stops protecting a remote database and nothing says so. Their suite is the only
+        # signal, and a signal nobody runs is not one: a bypass shipped in the shipped guard
+        # while every check on this list was green, because the suite existed and no
+        # workflow called it. Optional entries, so a repo that did not take the hooks has
+        # nothing to check and says so rather than failing.
+        run: |
+          set -euo pipefail
+          if [ -f scripts/verifyAgentGuards.sh ] && [ -d .claude/hooks ]; then
+            bash scripts/verifyAgentGuards.sh
+          else
+            echo "no agent guards in this repo - nothing to self-test"
+          fi

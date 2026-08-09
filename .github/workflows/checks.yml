@@ -50,6 +50,11 @@ jobs:
         run: node tools/schema-pair-test.mjs
       - name: sprint-guard test (an intent cannot be in two places)
         run: node tools/sprint-guard-test.mjs
+      # The shipped agent guards only print when they refuse, so nothing here notices a
+      # regression in them unless their own suite runs. It did not, which is how a bypass
+      # in the remote-database guard shipped with every check on this list green.
+      - name: agent guards (the shipped PreToolUse hooks deny and allow what they should)
+        run: bash standard/scripts/verifyAgentGuards.sh
       - name: self-verify fill + drift test (placeholder warning clearable; removed skill/section is drift)
         run: node tools/self-verify-fill-test.mjs
       - name: self-verify drift test (content, declared keys and the bounds on exceptions)
