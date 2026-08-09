@@ -25,11 +25,12 @@ shipped file is drift, and the next `self-verify` says so by name) but the *reas
 not: it lived in the session's prose, where it would have vanished when the session did.
 
 `align-to-standards` now separates the two things that were being done at once. Ordering a
-wave is judgment; membership of the plan is not. The work list is what `self-verify`
-reports open, the ship boundary is ADR-009's four transition skills and nothing else, and
-a deferral is open drift the next run re-reads from measurement - not a sentence in this
-one. `record-run` states in its own file that it ships into the adopted repo, so the
-classification cannot be reached from reading the skill alone.
+wave is judgment; membership of the plan is not. The open list comes from the measurement -
+`self-verify` against the manifest once the repo is pinned, the assessment before that -
+the ship boundary is ADR-009's and not the running agent's to redraw, and a deferral is
+open drift the next run re-reads from measurement rather than a sentence in this one.
+`record-run` states in its own file that it ships into the adopted repo, so the
+classification cannot be reached from reading the skill alone either.
 
 No mechanism changed, and one considered change was dropped after a field test contradicted
 it: bounding the exception hatch to members the repo *changed* would have turned a real
