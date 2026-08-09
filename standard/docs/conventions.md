@@ -146,8 +146,11 @@ at its home. "It's in my memory" is not a location.
 The hooks under `.claude/hooks/` refuse an action before the tool runs. Two properties, and
 the second is the one that gets forgotten:
 
-- They **fail closed**. A hook that cannot load its library, or whose dependency is missing,
-  denies - it never lets the command through unchecked.
+- They **fail closed**, and so does the wiring that reaches them. A hook that cannot load its
+  library, or whose dependency is missing, denies. The three run behind `guards.sh`, which
+  denies when any of them is missing, unreadable or exits without a verdict, and
+  `settings.json` denies when `guards.sh` itself cannot be run - a hook that exits 127 with
+  empty stdout is a command that ran unchecked.
 - They are **tested**. A guard prints only when it refuses, so a broken one is silent: it
   stops protecting and nothing says so. `bash scripts/verifyAgentGuards.sh` exists for exactly
   that reason - run it after any change under `.claude/hooks/`.

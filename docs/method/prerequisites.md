@@ -50,8 +50,8 @@ bash scripts/verifyAgentGuards.sh
 ## On a machine with no POSIX shell (Windows)
 
 The `bash` and `jq` rows above are not a formality there. The three `PreToolUse` guards
-ship as `.sh` files and the settings baseline invokes them as commands, so a session with
-no POSIX shell runs none of them - and that is silent by construction, because a guard
+ship as `.sh` files behind a `.sh` dispatcher, and the settings baseline invokes that
+dispatcher as a command, so a session with no POSIX shell runs none of them - and that is silent by construction, because a guard
 only prints when it denies something. Git Bash or WSL supplies the shell; `jq` is a
 separate install on top of either. Whichever you use, run
 `bash scripts/verifyAgentGuards.sh` once and watch it print its denials, since that is the
