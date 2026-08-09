@@ -21,7 +21,10 @@ draining the backlog the assessment produced.
 ## Assess first (analysis, not change) -> Gate 2
 
 Before touching anything, run the assessment: read the repo, detect what is there and
-what is missing, and seed the backlog. Do **not** modify code during it. The full pass
+what is missing, and seed the backlog. Do **not** modify code during it. This is the
+longest silent stretch in the whole skill, so it is where the router's progress rule
+matters most - a line naming the pass you are on before each one, never eight passes of
+silence (`SKILL.md`, "Say where you are during the run"). The full pass
 detail lives in the standards checkout at
 [`docs/method/repo-assessment.md`](../../docs/method/repo-assessment.md); the eight passes:
 

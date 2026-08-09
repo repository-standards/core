@@ -7,6 +7,25 @@ description: The single entry point for moving any repo onto the standard. Opens
 
 One entry point for the whole transition. Intake first, then route.
 
+## Say where you are during the run
+
+The shipped `standard/AGENTS.md` section "Say where you are, every minute or two" binds
+this run in full, from the first intake read to the last wave close - including the routes
+that install nothing, assessment-only and the check-up. Nothing about being the adopter
+rather than the adopted repo exempts you from it.
+
+It bites hardest here because this skill's quietest stretches are its longest: the
+assessment reads a whole repo across eight passes, a wave classifies every manifest entry,
+and the first thing to reach the chat is the finished report. Twenty minutes of empty
+screen is indistinguishable from a hung run, and the user's only available move is to
+interrupt the one pass that was working. Adoption runs get abandoned there, before anything
+has actually gone wrong.
+
+So name the pass you are on as you go ("reading the CI config and workflows, pass 5 of 8"),
+on every route, greenfield through stack add. The report is not the substitute: the
+health report, the counted plan and the wave list still land in full at their own steps,
+and a progress line never carries a finding before the pass that found it is done.
+
 ## Step 0 - Intake (measure, then ask)
 
 Before any phase runs, one intake pass:
