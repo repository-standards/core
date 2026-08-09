@@ -80,8 +80,9 @@ better answer in Discussions, because there the disagreement is allowed to be th
 takes longer than writing it.
 
 **For a disagreement about a decision**, open an issue that references the
-[open-questions](docs/open-questions/README.md) entry - or add one if the decision is not
-listed there yet. Those entries exist precisely to be argued with.
+[open-questions](docs/open-questions/README.md) entry - or add one to
+[`backlog.md`](backlog.md) (`type: open-question`) if the decision is not listed there yet.
+Those entries exist precisely to be argued with.
 
 ### Opening a pull request
 
