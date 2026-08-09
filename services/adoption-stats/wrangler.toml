@@ -1,0 +1,10 @@
+name = "stats"
+main = "worker.js"
+compatibility_date = "2026-08-01"
+
+# v1: deployed at the account's free *.workers.dev address, no custom domain (ADR-047).
+
+[[d1_databases]]
+binding = "DB"
+database_name = "rs-adoption-stats"
+database_id = "4b13bd17-87d7-47af-ba29-ad8108f18fc3"
