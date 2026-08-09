@@ -12,6 +12,11 @@ in. So this skill does not ask for that: it assembles what already happened, in 
 person just used, and asks for one yes or no. A "no" costs the user nothing - the assembled
 file stays local and nothing is sent. That asymmetry is the entire design.
 
+It ships into the adopted repo and runs from there, like every other lifecycle skill: the
+trigger it serves - the close of an align session - fires wherever that session runs, which
+is the repo being aligned (ADR-045). It is not the standards repo's own tooling, and a
+repo's align plan does not get to leave it out on that reading.
+
 **A failed or aborted run is more valuable evidence than a clean one, and this must be said
 out loud before anything is asked** - a skill that only feels natural to offer after success
 will only ever collect successes, and the corpus already knows what those look like.
