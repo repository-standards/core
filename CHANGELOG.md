@@ -16,6 +16,15 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Intake leaves a record (2026-08-09)
+
+Step 0 of adoption measured the repo and asked its question round, but nothing it
+produced was checkable - an agent that ran the round in full and one that skipped it
+and guessed left the same diff behind. New rule R26 and a required manifest entry,
+`docs/adoption-intake.md`, give intake the same standing this standard already gives
+`PRODUCT.md` and `docs/personas.md`: filled before any work proceeds, never deferred
+to a later wave, and read by `self-verify` like everything else the manifest tracks.
+
 ### No npm package, for now (2026-08-09)
 
 `DISCO-1` said "publish the npm package with the positioning one-liner" while the open
