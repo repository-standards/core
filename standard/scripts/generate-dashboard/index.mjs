@@ -527,7 +527,15 @@ const data = {
   questions: parseQuestions().concat(
     items
       .filter((i) => i.type === 'open-question')
-      .map((i) => ({ topic: i.title, decided: i.status === 'decided' ? i.why : 'not decided', doubt: i.dod, open: i.status !== 'decided' })),
+      .map((i) => ({
+        topic: i.title,
+        // page.js prefixes its own "In force:"/"The doubt:" label - strip the backlog row's
+        // own "Decided:"/"the doubt:" lead-in (the ADR-046 migration convention) so it does
+        // not render doubled, e.g. "In force: Decided: ADR-014 - ...".
+        decided: i.status === 'decided' ? i.why.replace(/^decided:\s*/i, '') : 'not decided',
+        doubt: i.dod.replace(/^the doubt:\s*/i, ''),
+        open: i.status !== 'decided',
+      })),
   ),
   // Unlike questions, parseIdeas() already walks every file under docs/ideas/ regardless of
   // the README table, and an idea is file-first by convention (docs/ideas/README.md: "each

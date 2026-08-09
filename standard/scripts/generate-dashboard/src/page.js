@@ -715,7 +715,11 @@ if (views.sprints) {
 
   function draw() {
     const items = D.items.filter((i) => {
-      if (state.hideDone && (i.status === 'done' || i.status === 'split')) return false
+      // done/split close a task; graduated/dropped close an idea the same way (superseded by
+      // its own spec+records, or decided against). open-question's "decided" is deliberately
+      // NOT here - it stays visible, since a standing decision open to challenge is the point
+      // of the type, not a completed state to hide (ADR-046).
+      if (state.hideDone && (i.status === 'done' || i.status === 'split' || i.status === 'graduated' || i.status === 'dropped')) return false
       if (state.epic && i.epic !== state.epic) return false
       if (!state.q) return true
       return (i.id + ' ' + i.title + ' ' + i.why + ' ' + i.dod + ' ' + i.epic + ' ' + i.cap).toLowerCase().includes(state.q)

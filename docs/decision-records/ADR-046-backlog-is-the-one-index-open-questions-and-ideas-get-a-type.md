@@ -57,9 +57,11 @@ opposite of what the type means to say.
   `src/page.js`'s backlog-tab rendering gain optional support for `type` and a per-type status
   legend - backward compatible, since an adopter's `backlog.md` without a `type` column reads
   every row as `task` exactly as it does today.
-- `CONTRIBUTING.md`, `docs/README.md`, and `tools/docsite.mjs`'s nav lose the standalone
-  `open-questions.html` / `ideas.html` entries generated from the now-removed tables; the
-  folders' READMEs still render, just without a table.
+- `docs/open-questions/README.md` and `docs/ideas/README.md` lose their tables, replaced by a
+  pointer to `backlog.md`; `docs/README.md` and `tools/docsite.mjs`'s nav are untouched, since
+  neither depends on the table - the `open-questions.html` / `ideas.html` pages still generate
+  from the same folders, just without the table each used to embed. `CONTRIBUTING.md` gets one
+  wording fix: a new open question is now added to `backlog.md`, not listed in the README.
 - This is a **repo-own (zone 1)** decision. The shipped standard's R14 (ideas) and R15
   (backlog) contracts for adopters are untouched - an adopter is not required to run a
   `docs/open-questions/` folder at all, and one that does keeps whatever shape it already
