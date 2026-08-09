@@ -31,7 +31,7 @@
         "pattern": "the (\\d+) under `standard/\\.claude/skills/`"
       },
       {
-        "file": "docs/open-questions/README.md",
+        "file": "backlog.md",
         "pattern": "not the count - (\\d+) ship today"
       },
       {
@@ -248,7 +248,7 @@
         "pattern": "on the tree: (\\d+) entries are `scale`"
       },
       {
-        "file": "docs/open-questions/README.md",
+        "file": "backlog.md",
         "pattern": "too weak to carry the weight - (\\d+) entries"
       }
     ]
