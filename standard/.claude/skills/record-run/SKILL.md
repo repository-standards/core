@@ -36,23 +36,28 @@ will only ever collect successes, and the corpus already knows what those look l
 
 3. **Scrub before assembling further, not after.** Replace this session's own machine paths,
    the user's login, hostnames and IP addresses - the repo is named by its slug (`/git/<repo>`
-   in prose), never by where it sits on disk. This is a pass over known shapes, not a
-   guarantee: a client's name sitting inside a sentence the user typed needs the human read in
-   step 5, the same limit `docs/validation/human-prompting/reporting.md` already states for a
-   hand-written report.
+   in prose), never by where it sits on disk. **Drop raw tool input and output entirely** -
+   file contents, command output, anything a tool read or wrote - the same thing
+   `docs/validation/human-prompting/reporting.md` already refuses to forward from a raw Claude
+   Code transcript, and for the same reason: a tool result can carry secrets, customer data or
+   code that never should have left the session, and no pattern match here is a substitute for
+   not sending it. This is a pass over known shapes, not a guarantee: a client's name sitting
+   inside a sentence the user typed needs the human read in step 5, the same limit
+   `reporting.md` already states for a hand-written report.
 
 4. **Two levels, and the user picks, or neither:**
    - **Level 1 - prompts only.** The literal user turns and nothing else: no agent text, no
-     tool log, no repo name, no paths. Plus three yes/no answers for the whole run (did it ask
-     before acting, did it check existing state, did it name a next step) and one result line
-     (final `self-verify` number, files touched - no names). Grows the prompt corpus and shows
-     that something went right or wrong; cannot show *why*, and nobody can check the verdict
-     against it.
-   - **Level 2 - the full run.** Everything in Level 1, plus the agent's own responses
-     verbatim, the tool-call log, and the repo slug. Every finding this method has produced so
-     far required the agent's own text to explain - Level 1 alone would have found none of
-     them. Say this difference to the user plainly; it is the reason to offer Level 2 at all,
-     not a hidden upsell.
+     tool activity, no repo name, no paths. Plus three yes/no answers for the whole run (did it
+     ask before acting, did it check existing state, did it name a next step) and one result
+     line (final `self-verify` number, files touched - no names). Grows the prompt corpus and
+     shows that something went right or wrong; cannot show *why*, and nobody can check the
+     verdict against it.
+   - **Level 2 - the full run.** Everything in Level 1, plus the agent's own text responses
+     verbatim, **which tools ran and in what order** (names only, never their raw input or
+     output - step 3's drop applies at every level, Level 2 included), and the repo slug.
+     Every finding this method has produced so far required the agent's own text to explain -
+     Level 1 alone would have found none of them. Say this difference to the user plainly; it
+     is the reason to offer Level 2 at all, not a hidden upsell.
 
    Offering only "send everything or nothing" gets nothing, most of the time - most people
    will not send a transcript that carries their repo's structure and internal names. Level 1

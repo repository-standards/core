@@ -52,7 +52,7 @@ The scaffolding between a settled spec and merged code. Everything these produce
 
 ## Closing the work
 
-The step most loops skip. What was learned goes back into the documents before the pull request opens, rather than into a summary nobody reads again.
+The step most loops skip. What was learned goes back into the documents before it is lost, rather than into a summary nobody reads again.
 
 | Skill | When to reach for it |
 |---|---|
