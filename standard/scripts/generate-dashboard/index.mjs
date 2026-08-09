@@ -106,9 +106,13 @@ function readTable(lines, start) {
   return { rows, end: i }
 }
 
+// task/bug run todo|doing|blocked|done; open-question and idea rows carry their own
+// vocabulary (ADR-046) and are matched here too, so an unrecognised word never silently
+// becomes "todo" - it would corrupt counts that assume the task vocabulary.
+const STATUS_WORDS = 'done|doing|todo|blocked|split|open|decided|idea|exploring|approved|parked|dropped|graduated'
 function splitStatus(raw) {
   const s = String(raw ?? '').trim()
-  const status = (s.match(/^(done|doing|todo|blocked|split)/) || [, 'todo'])[1]
+  const status = (s.match(new RegExp('^(' + STATUS_WORDS + ')')) || [, 'todo'])[1]
   const blockedBy = (s.match(/^(?:blocked|split):([A-Za-z0-9-]+)/) || [])[1] || null
   const statusDate = (s.match(/\((?:moved )?(\d{4}-\d{2}-\d{2})/) || [])[1] || null
   const rest = s.replace(/^[a-z]+(:[A-Za-z0-9-]+)?(\s*\([^)]*\))?\s*-?\s*/, '')
@@ -122,6 +126,7 @@ const person = (name) => (anonymise ? '' : name || '')
 
 const asItem = (row, epic) => ({
   id: row.id,
+  type: row.type || 'task',
   title: inline(row.title),
   why: inline(row.why),
   dod: inline(row.dod ?? row.definitionofdone ?? ''),
@@ -287,6 +292,10 @@ function parseDecisions() {
     .sort((a, b) => (a.id < b.id ? 1 : -1))
 }
 
+// Reads the older shape: a table in docs/open-questions/README.md, topic per row. A repo
+// that migrated its open questions into backlog.md (ADR-046) has no such table any more -
+// those rows are picked up instead in collect(), from backlog items of type open-question.
+// Both sources are additive, so a repo could in principle carry either or both.
 function parseQuestions() {
   const file = 'docs/open-questions/README.md'
   if (!has(file)) return []
@@ -309,6 +318,9 @@ function parseQuestions() {
   return out
 }
 
+// Reads one file per idea under docs/ideas/ - unaffected by whether that folder's README
+// still carries a table, since it walks the directory rather than parsing the index page.
+// A repo that also tracks ideas as backlog rows (ADR-046) gets those merged in collect().
 function parseIdeas() {
   const dir = 'docs/ideas'
   if (!has(dir)) return []
@@ -508,17 +520,49 @@ const data = {
   entries,
   releases,
   decisions: parseDecisions(),
-  questions: parseQuestions(),
-  ideas: parseIdeas(),
+  // Two sources, additive: the older per-folder table (parseQuestions/parseIdeas) and,
+  // for a repo on ADR-046, backlog.md rows of type open-question/idea. asItem() already
+  // shaped every backlog item the same way regardless of type, so these are a filter and
+  // a re-map, not a second parser.
+  questions: parseQuestions().concat(
+    items
+      .filter((i) => i.type === 'open-question')
+      .map((i) => ({
+        topic: i.title,
+        // page.js prefixes its own "In force:"/"The doubt:" label - strip the backlog row's
+        // own "Decided:"/"the doubt:" lead-in (the ADR-046 migration convention) so it does
+        // not render doubled, e.g. "In force: Decided: ADR-014 - ...".
+        decided: i.status === 'decided' ? i.why.replace(/^decided:\s*/i, '') : 'not decided',
+        doubt: i.dod.replace(/^the doubt:\s*/i, ''),
+        open: i.status !== 'decided',
+      })),
+  ),
+  // Unlike questions, parseIdeas() already walks every file under docs/ideas/ regardless of
+  // the README table, and an idea is file-first by convention (docs/ideas/README.md: "each
+  // idea lives in one file"). So a backlog row normally names an idea parseIdeas() already
+  // found - only titles it did NOT find (a backlog-only idea with no file yet) get added,
+  // or the same idea would render twice on the Documents tab.
+  ideas: (() => {
+    const fromFiles = parseIdeas()
+    const fileTitles = new Set(fromFiles.map((i) => i.title.toLowerCase()))
+    const fromBacklog = items
+      .filter((i) => i.type === 'idea' && !fileTitles.has(i.title.toLowerCase()))
+      .map((i) => ({ title: i.title, status: i.status, date: i.statusDate, itch: i.why }))
+    return fromFiles.concat(fromBacklog)
+  })(),
   specs: parseSpecs(),
 }
 
+// Scoped to task/bug: open-question (open|decided) and idea (idea|exploring|...) rows use
+// their own vocabulary (ADR-046), and folding them into the task buckets would misrepresent
+// both - a "todo" count that is actually half standing doubts answers no question honestly.
+const workItems = items.filter((i) => i.type === 'task' || i.type === 'bug')
 const inCycles = sprints.filter((c) => c.state === 'open').flatMap((c) => c.items)
 data.counts = {
-  todo: items.filter((i) => i.status === 'todo').length,
-  doing: items.filter((i) => i.status === 'doing').length,
-  blocked: items.filter((i) => i.status === 'blocked').length,
-  done: items.filter((i) => i.status === 'done').length,
+  todo: workItems.filter((i) => i.status === 'todo').length,
+  doing: workItems.filter((i) => i.status === 'doing').length,
+  blocked: workItems.filter((i) => i.status === 'blocked').length,
+  done: workItems.filter((i) => i.status === 'done').length,
   sprintOpen: sprints.filter((c) => c.state === 'open').length,
   sprintItems: inCycles.length,
   sprintDone: inCycles.filter((i) => i.status === 'done').length,
