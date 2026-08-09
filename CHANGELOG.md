@@ -16,6 +16,16 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### No npm package, for now (2026-08-09)
+
+`DISCO-1` said "publish the npm package with the positioning one-liner" while the open
+question it was supposed to answer, [`npm-as-a-channel`](docs/open-questions/npm-as-a-channel.md),
+was still marked open - the backlog had decided by assuming, not by evidence. Neither of the
+two things that would settle it has happened (no sign the discovery channel runs through npm,
+no adopter who is not the author to feel the `degit` line as friction), and the standard still
+carries no tag to publish a version against. `DISCO-1` no longer names npm; the open question
+records the decision instead of the doubt.
+
 ### The bounded period of work is a sprint (2026-08-07)
 
 It was a `cycle`, chosen against `sprint` on a recorded argument: borrowing the word borrows

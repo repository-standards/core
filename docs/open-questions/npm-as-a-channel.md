@@ -1,9 +1,18 @@
 # Whether the standard ships an npm package at all
 
-**Open.** The backlog says "publish the npm package with the positioning one-liner"
-(`DISCO-1`), and there is no `package.json` to publish. That is not an oversight to correct
-mechanically - it is a question nobody has answered, and answering it by writing the manifest
-would be deciding it by accident.
+**Decided: no npm package, for now (2026-08-09).** The backlog used to say "publish the npm
+package with the positioning one-liner" (`DISCO-1`) - stating the answer before either of the
+two things below it had happened. Corrected: `DISCO-1` no longer names npm, and there is still
+no `package.json` to publish.
+
+This is not a permanent no. Neither criterion in "What would settle it" below has been met -
+no evidence the discovery channel runs through npm at all (the 2026-08-02 landscape check
+found the opposite: comparison articles, not registries), and no adopter who is not the author
+has hit the `degit` line as friction, because no adopter who is not the author exists yet.
+And "Timing" below still holds: the standard carries no tag, so a package published today
+would carry a version ahead of the thing it distributes. The reasoning that follows is
+unchanged; this entry records that, absent either signal, the default is not to build the
+thirty lines.
 
 ## What is actually being proposed
 
@@ -57,6 +66,6 @@ before the thing it distributes has one. Whatever the answer, it comes after the
 
 ## Related
 
-- `DISCO-1` in [`backlog.md`](../../backlog.md) - the row that assumes the answer is yes.
+- `DISCO-1` in [`backlog.md`](../../backlog.md) - the row this entry corrected.
 - The landscape check that produced the doubt lives in the owner's private research space, not
   here; the finding it carried into the repo is the FAQ's corrected comparison.
