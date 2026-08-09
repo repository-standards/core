@@ -10,7 +10,7 @@ SHOULD and MAY are to be read as in RFC 2119.
 
 This page is the whole normative core. Everything else in the standard explains,
 templates or enforces what is written here; where any other document appears to add
-a requirement, this page wins. Rules are numbered R1-R25 and the numbers are stable -
+a requirement, this page wins. Rules are numbered R1-R26 and the numbers are stable -
 tooling cites them. `standard.manifest.json` is this spec's machine-readable
 projection (each manifest entry names the rule it enforces), and
 `scripts/self-verify.mjs` reports unmet rules as a drift count. Rules the manifest
@@ -139,6 +139,14 @@ binds every repo, a solo one included.
   repo to the standard - always the latest; the record then names the state
   aligned to, and an update applies the delta between that and latest,
   preserving the repo's recorded deviations (the manifest's `exceptions`).
+- **R26.** Adoption's Step 0 (intake, ADR-020) MUST leave a record of what it
+  measured and asked: `docs/adoption-intake.md`, a required manifest entry
+  filled before any greenfield, brownfield or stack work proceeds and never
+  deferred to a later wave - the same standing this standard already gives
+  `PRODUCT.md` and `docs/personas.md` (ADR-042). An agent that skipped the
+  question round and one that ran it in full produce the same tree without
+  this file; the record is what makes intake checkable rather than merely
+  claimed.
 
 ## Releases and hygiene
 

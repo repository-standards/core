@@ -46,7 +46,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R2",
-      "sha256": "cb3108de5d8d85148b47080d1d43c34041c598ad317e8e4142ab4c3892c0ed1e"
+      "sha256": "87fc9697df9b0cc638f650a9887cf94fe6c4fdb18eb6494baaddb102efce3166"
     },
     {
       "path": "CLAUDE.md",
@@ -382,6 +382,15 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R10"
+    },
+    {
+      "path": "docs/adoption-intake.md",
+      "purpose": "what Step 0 measured and asked before any align work proceeded - the record that makes intake checkable, not just performed (ADR-042)",
+      "adapt": "fill-from-repo",
+      "required": true,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R26"
     },
     {
       "path": "README.md",

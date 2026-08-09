@@ -275,6 +275,15 @@ Before any phase runs, one intake pass:
 3. **Assessment-only is a legal, named outcome** - not a failure to proceed:
    deliver the health report and the counted plan (Gate 2 plus the Gate 5 count
    of the [adoption checkmap](../../docs/method/adoption.md)), then stop.
+4. **Write the intake record before routing** (R26, ADR-042): fill
+   `docs/adoption-intake.md` from what steps 1-3 just found - the state
+   measured and every question-round answer, including "assessment only" and
+   "stays as-is". This is Step 0's last action, not a step 5 afterthought - it
+   captures the pass that just happened rather than reconstructing it later.
+   A repo re-entering align updates the file in place (append to its
+   re-entry log) instead of recreating it; the file's presence is what lets a
+   later run, or a human reading the repo cold, tell that intake happened at
+   all rather than being skipped in favor of a guess.
 
 ## Route by target state
 
@@ -515,10 +524,12 @@ process the user **re-enters until the repo is compliant**, and every entry is g
   `.standards-version` + `standard.manifest.json` and running `self-verify`: what is
   already done stays done; the open delta is the work list. Never re-propose what exists.
 - **Propose the next wave, ordered by payoff - inside the gate order.** From the open
-  delta, pick the few items with the biggest win first - typically: the agent entry
-  point + taxonomy, then the intake gates' material (PRODUCT/personas - nothing
-  downstream lands before them), then missing foundational decisions (ADRs), then
-  folder structure, then guards. Say *why this wave, why now*, sized to land in one PR.
+  delta, pick the few items with the biggest win first - typically: `docs/adoption-intake.md`
+  itself (R26 - nothing else in this ordering is trustworthy if the intake it was read
+  from was never recorded), then the agent entry point + taxonomy, then the intake
+  gates' material (PRODUCT/personas - nothing downstream lands before them), then
+  missing foundational decisions (ADRs), then folder structure, then guards. Say
+  *why this wave, why now*, sized to land in one PR.
 - **Hand-hold, do not dump.** For each wave item, guide the user through it (elicit,
   propose, record) rather than emitting a pile of TODOs. Deferrals are recorded, not
   dropped.
