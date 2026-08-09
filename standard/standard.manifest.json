@@ -272,7 +272,7 @@
       "profile": "core",
       "since": "1.0.0",
       "rule": "R19",
-      "sha256": "5d9836f008980aba1d0c480268ad458d054c8c859c54bf3be6fa9bb1dcf205c6"
+      "sha256": "3c644361180d774962ddbb88aedef0176ae0264b7e5b8b7db75cb46e18571386"
     },
     {
       "path": ".github/workflows/gitleaks.yml",
