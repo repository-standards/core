@@ -130,3 +130,28 @@ here (ADR-021). Three structured channels, used by humans and by aligning agents
 A concrete PR beats an issue when the fix is a doc change. Challenging an entry
 in [`docs/open-questions/`](docs/open-questions/README.md) remains the most
 valuable contribution of all.
+
+## Contributing by validation
+
+The human-prompting corpus that scores whether this product actually hand-holds
+(`docs/validation/human-prompting/`) is built almost entirely from prompts written by
+people who already know it - its own README names that as the corpus's weakest point. A
+real adoption run, on a real repo, by someone who does not know the product from the
+inside, is worth more than anything the maintainer can write.
+
+**Two ways in, and neither requires reading a method page first:**
+
+- **Run an adoption.** Any `align-to-standards` session ends by offering `record-run`
+  (the 21st shipped skill) - it assembles the session that just happened, shows you
+  exactly what it would send, and asks a single yes or no at one of two consent levels
+  (prompts only, or the full run including the agent's own responses). A "no" leaves the
+  file on your machine and sends nothing. **A failed or abandoned run is more valuable
+  evidence than a clean one** - report it too.
+- **Report by hand.** Ran into something odd, or want to send a session `record-run`
+  never got to close? [`docs/validation/human-prompting/reporting.md`](docs/validation/human-prompting/reporting.md)
+  says exactly what to send: what you typed, what you expected, what happened instead.
+  An issue with the transcript is entirely enough - a pull request adding it directly to
+  [`prompts.md`](docs/validation/human-prompting/prompts.md) is the more direct route.
+
+Either way lands on `repository-standards/core` the same way any other contribution
+does - see "Where to put it" above.

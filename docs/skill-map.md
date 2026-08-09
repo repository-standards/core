@@ -5,7 +5,7 @@
 
 # What each skill is for
 
-20 procedures ship into an adopted repo, and their names are terse on purpose. This page
+21 procedures ship into an adopted repo, and their names are terse on purpose. This page
 says what each one is for, grouped by **the moment it fires** rather than by what it writes -
 because a reader arrives with a situation, not with an artifact name.
 
@@ -52,13 +52,14 @@ The scaffolding between a settled spec and merged code. Everything these produce
 
 ## Closing the work
 
-The step most loops skip. What was learned goes back into the documents before the pull request opens, rather than into a summary nobody reads again.
+The step most loops skip. What was learned goes back into the documents before it is lost, rather than into a summary nobody reads again.
 
 | Skill | When to reach for it |
 |---|---|
 | `spec-reconcile` | Use when a change is finished, before opening the pull request - "I think that's done". Makes the spec, the code and the tests agree, resolves any drift rather than merging around it, and deletes the plan and task scaffolding the work no longer needs. |
 | `pre-pr-review` | Use before pushing a branch or opening a pull request - "is this ready?", "can I push?". Runs the repo's local checks, then reads the diff as if someone else wrote it, and fixes what it finds first. A review after the push is a review of something already published. |
 | `add-to-backlog` | Use when work surfaces that does not belong to this change - a bug mentioned in passing ("btw the export is broken"), "we should fix that too", "park it", "not now but do not lose it". Files one well-formed row with its source, the role that must act and what done looks like, ordered against what is already there, without interrupting what you were doing. |
+| `record-run` | Use at the end of an align-to-standards run, success or failure - offers to record the session as validation evidence for the human-prompting corpus (prompts.md + a scored runs/*.json file), at one of two consent levels, never sent without a per-item yes. |
 
 ## Running the cadence
 

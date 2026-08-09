@@ -5,9 +5,15 @@ A skill earns its place when its description names a situation no other skill's 
 names; it costs something only when it overlaps one. Ten skills with blurred descriptions
 are worse than twenty with sharp ones, and the number on its own predicts nothing.
 
-Currently 20 ship into every adopted repo. That is a report, not a budget.
+Currently 21 ship into every adopted repo. That is a report, not a budget.
 
-`idea-write` (2026-08-03) is the most recent addition: `adr-write` and `bdr-write` both
+`record-run` (2026-08-09) is the most recent addition: the human-prompting corpus's own
+README names its worst weakness as every number in it coming from people who wrote the
+standard. Nothing closed that loop from inside a real adoption run - the gap was in
+reflexivity, not routing, unlike every prior addition here. Its description triggers at the
+close of an `align-to-standards` session, a moment no other skill's description claims.
+
+`idea-write` (2026-08-03) was, at the time, the most recent addition: `adr-write` and `bdr-write` both
 named `docs/ideas/` as where a not-yet-decided speculation belongs and neither wrote to
 it - a real gap in the loop's own routing, found by testing every skill's promised
 behavior against a real repo, not a count concern. Its description triggers on
