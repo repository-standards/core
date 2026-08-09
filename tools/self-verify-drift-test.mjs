@@ -534,6 +534,33 @@ check(
 );
 
 check(
+  "a shipped skill the repo deliberately does not carry is named, reasoned and paid for",
+  (dir) => {
+    // A real adoption's shape: the repo dropped pre-pr-review because its own review skill
+    // already matched the same sentence, and recorded why. That is the one legitimate way a
+    // shipped procedure is absent - and the reason this hatch cannot be narrowed to "changed
+    // members only" without turning a considered decision into drift.
+    //
+    // What it must never become is the silent version. An item an align run left out of its
+    // plan is absent for a reason nobody wrote down; it reaches this state only by someone
+    // adding a line to the manifest, under review, at a cost to the percentage. The
+    // assertions below are that cost - if a later change makes an excepted absence free or
+    // invisible, "consciously skipped" stops needing anyone's approval.
+    rmSync(join(dir, ".claude/skills/pre-pr-review"), { recursive: true, force: true });
+    patchManifest(dir, (m) => {
+      m.exceptions = [{ kind: "content", match: ".claude/skills/pre-pr-review/SKILL.md", reason: "this repo ships its own branch review skill, tuned to its reviewer lenses; two skills matching one sentence is the defect" }];
+    });
+  },
+  (r, expect) => {
+    expect(r.drift === base.drift, `a recorded absence must not be drift: expected ${base.drift}, got ${r.drift}`);
+    expect(r.excepted === 1, `expected the absence to be counted as excepted, got ${r.excepted}`);
+    expect(says(r, ".claude/skills/pre-pr-review/SKILL.md is missing against the standard's copy"), "the excepted line does not name the absent skill");
+    expect(says(r, "this repo ships its own branch review skill"), "the excepted line does not carry the recorded reason");
+    expect(r.pct < base.pct, `excepting an absence must cost coverage: ${r.pct}% against a baseline of ${base.pct}%`);
+  },
+);
+
+check(
   "the summary states the exception count even when it is zero",
   () => {},
   (r, expect) => {
