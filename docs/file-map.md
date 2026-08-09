@@ -143,3 +143,4 @@ A file can exist and still be a shell. These headings are checked by name.
 | `CHANGELOG.md` | `Unreleased` | R18/R25 - a PR describes its change here; nothing else holds history, and drift 0 must not be reachable with no changelog at all |
 | `AGENTS.md` | `The loop runs itself (unprompted)` | the unprompted-behaviour contract survives deletion or a thin rewrite - it is what makes the loop self-triggering rather than merely documented |
 | `AGENTS.md` | `Volunteer, don't wait to be asked` | an ambiguous mention of a bug, a decision, or scope creep gets named and asked about, not silently actioned or silently dropped |
+| `AGENTS.md` | `Say where you are` | long work reports itself every 60-120 seconds - what is happening and what it is waiting on - and never invents progress or a result that has not come back |

@@ -16,6 +16,26 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### Twenty minutes of silence is indistinguishable from a hung session (2026-08-10)
+
+Long agent work is silent by default: a run of tool calls, a subagent working in the
+background, and nothing in the chat until it is finished. From the outside that looks exactly
+like a crashed session, and the only move left to the human is to interrupt the work that was
+going fine. `align-to-standards` is the worst case - the assessment reads a whole repo across
+eight passes and the first thing to reach the chat is the finished report - but it is not the
+only one, so the rule is not the adopter's.
+
+`AGENTS.md` gains a required section: while work is running, one or two sentences every
+60-120 seconds saying what is happening and what it is waiting on. Because there is no clock
+to read and nothing gets written mid-tool-call, it is stated as something that can actually
+be obeyed - do not chain a long run of silent tool calls - and waiting counts as an update
+("still running, about 8 minutes"). One clause outranks the rest: **never invent progress,
+and never report a result that has not come back**. Silence is bad; a subagent's findings
+presented before the subagent returned them is worse. The section is manifest-tracked, so an
+`AGENTS.md` that drops it is drift rather than a variant, and `align-to-standards` now states
+that the shipped rule binds the align run itself - including the routes that install nothing -
+with the brownfield assessment named as where it bites hardest.
+
 ### A wrapped line turned the remote-database guard off (2026-08-10)
 
 An adopter probed the shipped `PreToolUse` guards instead of reading them, and the
