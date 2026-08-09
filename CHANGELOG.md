@@ -16,6 +16,15 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### The human-prompting corpus can now hear from a real adoption (2026-08-09)
+
+The 21st shipped skill, `record-run`, closes an `align-to-standards` session (success,
+partial or abandoned) by offering to assemble that session into the human-prompting
+corpus - a `prompts.md` row and a scored `runs/*.json` file - at one of two consent
+levels, and sends nothing without a per-item yes. `CONTRIBUTING.md` names it alongside
+the existing manual path (`reporting.md`) under a new "Contributing by validation"
+section.
+
 ### R18 covers a monorepo of independently-published units (2026-08-09)
 
 `rails/rails`'s thirteen gems, each independently versioned with its own changelog,

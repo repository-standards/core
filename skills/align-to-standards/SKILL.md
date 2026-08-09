@@ -477,6 +477,13 @@ npx degit repository-standards/core/standard
    a PR when the fix is a concrete doc change. No consent, no side effect: the
    learning still lands in the target repo's records either way.
 
+9. **Record the run (ADR-045).** Success, partial or abandoned - offer
+   `record-run`. This session is itself the evidence the human-prompting
+   corpus needs and cannot get any other way; an abandoned or failed run is
+   more valuable than a clean one and the offer must say so before asking
+   anything. Consent-gated, per level, exactly like step 8 - never automatic,
+   and "no" leaves the assembled record local and costs the user nothing.
+
 ## Technology best practices (Layer 2)
 
 This step **consumes the intake's technology answer** (step 0) - detection and
@@ -551,8 +558,9 @@ process the user **re-enters until the repo is compliant**, and every entry is g
   dropped.
 - **Repeat until drift 0.** Close each wave with `self-verify`; the number falling is the
   progress bar. A multi-year brownfield may take many waves - that is the designed shape,
-  not a failure. Every wave close includes the upstream review (step 8) - friction is
-  reported while it is fresh, not archaeologized at the end.
+  not a failure. Every wave close includes the upstream review (step 8) and the
+  `record-run` offer (step 9) - friction is reported and the wave is recorded while both
+  are fresh, not archaeologized at the end.
 
 ## Not this
 

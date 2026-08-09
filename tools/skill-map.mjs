@@ -59,7 +59,7 @@ const GROUPS = [
     title: "Closing the work",
     lead:
       "The step most loops skip. What was learned goes back into the documents before the pull request opens, rather than into a summary nobody reads again.",
-    skills: ["spec-reconcile", "pre-pr-review", "add-to-backlog"],
+    skills: ["spec-reconcile", "pre-pr-review", "add-to-backlog", "record-run"],
   },
   {
     title: "Running the cadence",

@@ -52,6 +52,7 @@ copied into your repository as folder READMEs that then age in place.
 | `docs/facts.example.json` | the shape of a declared fact, reference only - do not rename or copy its placeholder content into docs/facts.json; write docs/facts.json from scratch, in this shape, once this repo has its first fact worth declaring (R4) | optional, core | `copy` | [R4](../standard/SPEC.md) |
 | `docs/PRINCIPLES.md` | the altitude apex R1 names - optional but expected | optional, core | `fill-from-repo` | [R1](../standard/SPEC.md) |
 | `docs/personas.md` | the persona roster the R10 gate checks specs against - without it the gate has nothing to hold | **required**, core | `fill-from-repo` | [R10](../standard/SPEC.md) |
+| `docs/adoption-intake.md` | what Step 0 measured and asked before any align work proceeded - the record that makes intake checkable, not just performed (ADR-042) | **required**, core | `fill-from-repo` | [R26](../standard/SPEC.md) |
 | `docs/README.md` | the docs hub table | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `docs/ARCHITECTURE.md` | how it is built - the altitude names it (filled from this repo) | optional, core | `fill-from-repo` | [R1](../standard/SPEC.md) |
 | `docs/PRODUCT.md` | what it is and where it is going (filled from this repo) | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
