@@ -39,6 +39,22 @@ Before any phase runs, one intake pass:
      as the tracker inference below is played back - asking a repo what it has already
      written down in a config file is the fastest way to look like a tool that did not
      read it.
+   - **A repo can already have its own decision-making process - never silently give
+     it a second, redundant one.** R5 asks for a decision record on every contestable
+     choice, and the shipped mechanism is ADR/BDR - but some repos have run their own
+     process for decades already: git's design decisions happen on its mailing list,
+     vim's through its own maintainer-led process, neither written as an ADR and
+     neither needing to start now. Detect it the way the governance-config signals
+     above are detected - a CONTRIBUTING/README pointer to a mailing list or RFC
+     process, an existing `rfcs/`/`doc/design/`/enhancement-proposal directory, a
+     governance doc naming who decides and how - and **ask instead of bootstrapping
+     `docs/decision-records/` beside it**: adopt this standard's mechanism going
+     forward (the default, and what most repos with no reason to say otherwise will
+     want), or keep the repo's own process and record that choice as an **exception**
+     on R5's manifest entry (`{ "kind": "file", "match": "docs/decision-records",
+     "reason": "..." }`) - a conscious, named deviation `self-verify` reports as
+     excepted rather than a silent gap or a redundant second home. Either answer is
+     legitimate (ADR-043); never asking at all is not.
    - **A repo can be extremely active and still be the wrong place to work** - moved
      to another forge entirely. The archived flag alone misses this: a repo that
      migrated (e.g. "Moved to Codeberg" in the description, a README saying "this
