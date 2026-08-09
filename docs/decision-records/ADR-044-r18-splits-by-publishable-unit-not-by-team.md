@@ -30,8 +30,8 @@ per component too, one inconsistency closed by extending a mechanism that
 already exists rather than inventing one.
 
 Checked against `specs/work-sprints/spec.md` directly, this does not hold.
-Sprints split **work in time**, by **team**: who is doing what, and by when
-- the `docs/sprints/<team>/` layout is a scheduling artifact, scale-profile
+Sprints split **work in time**, by **team**: who is doing what, and by when -
+the `docs/sprints/<team>/` layout is a scheduling artifact, scale-profile
 only, explicitly out of scope for "per-item execution state" (the spec's own
 words). Rails' problem is **code structure**, at every profile, present the
 moment a repo ships more than one publishable unit regardless of team size -
