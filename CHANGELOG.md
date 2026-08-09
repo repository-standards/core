@@ -16,6 +16,28 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### An item cannot leave the delta by being classified out of it (2026-08-10)
+
+A run building its wave plan put `record-run` on a "consciously skipped" list, reading it
+as tooling that belongs to the standards repo rather than to the repo being aligned - a
+reading ADR-045 had already settled the other way. The omission was recoverable (an absent
+shipped file is drift, and the next `self-verify` says so by name) but the *reasoning* was
+not: it lived in the session's prose, where it would have vanished when the session did.
+
+`align-to-standards` now separates the two things that were being done at once. Ordering a
+wave is judgment; membership of the plan is not. The work list is what `self-verify`
+reports open, the ship boundary is ADR-009's four transition skills and nothing else, and
+a deferral is open drift the next run re-reads from measurement - not a sentence in this
+one. `record-run` states in its own file that it ships into the adopted repo, so the
+classification cannot be reached from reading the skill alone.
+
+No mechanism changed, and one considered change was dropped after a field test contradicted
+it: bounding the exception hatch to members the repo *changed* would have turned a real
+adoption's recorded decision - `usebruno/bruno` dropping `pre-pr-review` because its own
+review skill already matched the same sentence - into drift. Deliberate absence of a
+shipped procedure is legitimate; what makes it safe is that it costs a reviewed line in the
+manifest and lowers the adoption percentage, and that property now has a test.
+
 ### The human-prompting corpus can now hear from a real adoption (2026-08-09)
 
 The 21st shipped skill, `record-run`, closes an `align-to-standards` session (success,
