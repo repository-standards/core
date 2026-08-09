@@ -34,7 +34,9 @@ environment, and keyword-value conninfo - and refuses a remote client whose SQL 
 a command substitution, on the rule the guards already applied to a missing `jq`: a guard
 that cannot read the command has not checked it. Deleting a remote branch joins force-push
 as history destruction, and `COMMENT ON`, `REASSIGN OWNED` and `pg_terminate_backend` join
-the write verbs.
+the write verbs. In the other direction, a quoted local host (`-h "localhost"`) and a unix
+socket directory (`-h /var/run/postgresql`) are local: a guard that denies ordinary local
+work gets switched off, and a switched-off guard protects nothing.
 
 ### A hook that exits 127 is a command that ran unchecked (2026-08-10)
 

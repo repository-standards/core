@@ -108,9 +108,13 @@ check "${DB}" DENY  'PGHOST=prod-db.example.com psql -c "DROP TABLE users"'
 check "${DB}" DENY  'PGHOSTADDR=10.0.0.5 psql -c "DROP TABLE users"'
 check "${DB}" DENY  $'export PGHOST=prod-db.example.com\npsql -c "DROP TABLE users"'
 check "${DB}" DENY  'psql "host=prod-db.example.com dbname=app" -c "DROP TABLE users"'
+check "${DB}" DENY  'psql -h "prod-db.example.com" -c "DROP TABLE users"'
 # An explicit host beats the environment, because psql resolves it that way too.
 check "${DB}" allow 'PGHOST=prod-db.example.com psql -h localhost -c "DROP TABLE users"'
 check "${DB}" allow 'PGHOST=localhost psql -c "DROP TABLE users"'
+# Quoting a local host does not make it remote.
+check "${DB}" allow 'psql -h "localhost" -c "TRUNCATE t"'
+check "${DB}" allow "psql -h '127.0.0.1' -c \"DROP TABLE t\""
 
 # What the SQL is cannot be read out of a command substitution, and a guard that cannot read the
 # command has not checked it - the same reasoning that makes a missing jq a denial.
