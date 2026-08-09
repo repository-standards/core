@@ -33,11 +33,14 @@ open drift the next run re-reads from measurement rather than a sentence in this
 classification cannot be reached from reading the skill alone either.
 
 No mechanism changed, and one considered change was dropped after a field test contradicted
-it: bounding the exception hatch to members the repo *changed* would have turned a real
-adoption's recorded decision - `usebruno/bruno` dropping `pre-pr-review` because its own
-review skill already matched the same sentence - into drift. Deliberate absence of a
-shipped procedure is legitimate; what makes it safe is that it costs a reviewed line in the
-manifest and lowers the adoption percentage, and that property now has a test.
+it: bounding the exception hatch to members the repo *changed* would have turned a recorded
+decision into drift - our trial adoption of `usebruno/bruno`'s codebase drops
+`pre-pr-review`, because that project ships a review skill of its own and this standard's
+own guidance calls two skills matching one sentence a defect. The decision was ours, not
+that project's - nobody there has seen it - so it argues for the pattern rather than
+attesting to it. Deliberate absence of a shipped procedure is legitimate all the same; what
+makes it safe is that it costs a reviewed line in the manifest and lowers the adoption
+percentage, and that property now has a test.
 
 ### The human-prompting corpus can now hear from a real adoption (2026-08-09)
 
