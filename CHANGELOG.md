@@ -16,6 +16,17 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
+### An existing decision process gets an exception, not a second home (2026-08-09)
+
+Step 0 proposed `docs/decision-records/` for every target repo alike, including
+ones that already run a working decision process older than this standard - git's
+mailing list, vim's own maintainer-led process. Step 0 now detects that signal
+(a mailing-list or RFC pointer, an `rfcs/`/`doc/design/` directory, a governance
+doc) and asks before assuming: adopt this standard's ADR/BDR mechanism, or keep
+the repo's own process, recorded as a named exception against R5's manifest
+requirement rather than left as a silent gap or forced into a redundant second
+home.
+
 ### Intake leaves a record (2026-08-09)
 
 Step 0 of adoption measured the repo and asked its question round, but nothing it
