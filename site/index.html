@@ -149,8 +149,7 @@
   .eyebrow .pip{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 12px var(--orange);animation:blink 2.6s ease-in-out infinite}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
   @media (prefers-reduced-motion: reduce){.eyebrow .pip{animation:none}}
-  .live-adopt{margin-bottom:22px;box-shadow:0 0 30px -8px rgba(52,211,153,.45);backdrop-filter:blur(6px)}
-  .live-adopt .pip{background:var(--green);box-shadow:0 0 12px var(--green)}
+  .live-adopt{margin-top:-32px;margin-bottom:22px;box-shadow:0 0 30px -8px rgba(52,211,153,.45);backdrop-filter:blur(6px)}
   .live-adopt b{color:var(--ink);font-weight:700}
   h1.title{font-size:clamp(38px,6.1vw,74px);line-height:1.02;letter-spacing:-.035em;font-weight:850;margin:0 0 24px}
   /* The standard promises anyone may demand a plain explanation (EXPLAIN-1), so the page
@@ -501,7 +500,7 @@
     <div class="wrap">
       <div class="reveal">
         <div class="eyebrow live-adopt" id="liveAdopt" aria-live="polite" hidden>
-          <span class="pip"></span> Live adoptions: <b id="adoptionCount">0</b>
+          Live adoptions: <b id="adoptionCount">0</b>
         </div>
         <div class="stage">
           <h1 class="title">The missing layer between<br><span class="grad">business, engineering and AI.</span></h1>
