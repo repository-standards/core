@@ -539,11 +539,11 @@
       "since": "unreleased",
       "rule": "R15",
       "sha256": {
-        "index.mjs": "a1a46392f62769cb831bb5962ff7671d65c1003225f1923264fadb34e6bda024",
+        "index.mjs": "cfd231bd7553e4ad4aecb8f03e14e675b14f05e578eff9a3b3f5c4855253d9f6",
         "src/gate.css": "63a0b56a4491c5e3686835e15886d1440be4cc497a306a9caaa2a4678d15f07c",
         "src/gate.js": "741e6d0e9115aff4e44930021875f632044857b9bc3b5fb7522fa79f9b07105e",
-        "src/page.css": "f90843314ce24b694651753c41ba3a8fca386c96fb36511f62679113f570bc6b",
-        "src/page.js": "35445d804cb11992c6e07a7b44f97035e3b612693c1073bc671cce6633e4c393"
+        "src/page.css": "e5d92c7f37a5fcb0f2b015e7c96b77e69f8c9234d5114f5857207029d252858d",
+        "src/page.js": "de9a8ea4a66358107010de95a1437490bd63b7c825cfca923d8bbf19eb5b0cab"
       }
     },
     {
