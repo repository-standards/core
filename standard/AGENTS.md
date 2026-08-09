@@ -225,6 +225,29 @@ say so and name the candidate: "that sounds like a bug - want me to `add-to-back
 are you fixing it now?" Do not silently do the extra work, and do not silently file nothing.
 A wrong guess costs one line to correct; silence costs the record.
 
+## Say where you are, every minute or two
+
+Long work is silent by default: a run of tool calls, a subagent working in the background,
+and nothing in the chat until it is finished. From the outside that is indistinguishable
+from a hung session, and the only move left to the human is to interrupt the work that was
+going fine.
+
+So while work is running, post **one or two sentences every 60-120 seconds**: what you are
+doing now, and what you are waiting on. Not a recap, not the plan again, not a menu of
+options.
+
+State it mechanically or it cannot be followed - there is no clock to read, and nothing
+gets written in the middle of a tool call. The rule that can actually be obeyed is **do not
+chain a long run of silent tool calls**: a line before each batch, not one per file opened.
+
+- **Waiting is an update.** Say what you are waiting on and for how long. "Still running,
+  about 8 minutes" is a complete answer.
+- **Never invent progress, and never report a result that has not come back.** This outranks
+  the rule itself: do not present a subagent's findings before the subagent has returned
+  them, and do not guess what it will find. Silence is bad; fabricated progress is worse.
+- **It does not replace the answer, and it is not a ceremony.** Work that takes thirty
+  seconds has nothing to report - do not pad it.
+
 ## What you must not do
 
 The hard bans for this repo.
