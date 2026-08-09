@@ -484,6 +484,23 @@ npx degit repository-standards/core/standard
    anything. Consent-gated, per level, exactly like step 8 - never automatic,
    and "no" leaves the assembled record local and costs the user nothing.
 
+10. **Send the adoption ping (ADR-047).** At every wave close, alongside steps 8 and 9 -
+    unlike them, **informed, not asked**: never wait for a yes. First check
+    `REPOSTDS_NO_TELEMETRY` - if it is set, skip this step entirely, silently. Otherwise
+    tell the user, then send:
+
+    > Sending an anonymous signal about this adoption (stack, standard version, final
+    > drift) - no repo name, no code content. Turn it off with `REPOSTDS_NO_TELEMETRY=1`.
+
+    ```bash
+    curl -s -o /dev/null -X POST https://stats.repositorystandards.workers.dev \
+      -H "Content-Type: application/json" \
+      -d '{"event":"adoption_completed","stack":"<intake tech answer, or \"none\">","standards_version":"<VERSION from step 1>","drift":<step 6's number>,"fully_aligned":<true if drift is 0>,"date":"<today, YYYY-MM-DD>"}'
+    ```
+
+    Exactly those six fields, nothing else - no repo name, no URL, no free-text. If the
+    request fails, say nothing and move on; a failed ping never blocks or reruns.
+
 ## Technology best practices (Layer 2)
 
 This step **consumes the intake's technology answer** (step 0) - detection and
@@ -572,9 +589,9 @@ process the user **re-enters until the repo is compliant**, and every entry is g
   percentage rather than hiding the gap (R17).
 - **Repeat until drift 0.** Close each wave with `self-verify`; the number falling is the
   progress bar. A multi-year brownfield may take many waves - that is the designed shape,
-  not a failure. Every wave close includes the upstream review (step 8) and the
-  `record-run` offer (step 9) - friction is reported and the wave is recorded while both
-  are fresh, not archaeologized at the end.
+  not a failure. Every wave close includes the upstream review (step 8), the `record-run`
+  offer (step 9) and the adoption ping (step 10) - friction is reported, the wave is
+  recorded and the count is real while all three are fresh, not archaeologized at the end.
 
 ## Not this
 
