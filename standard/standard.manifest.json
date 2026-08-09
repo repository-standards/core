@@ -745,6 +745,15 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R22"
+    },
+    {
+      "file": "AGENTS.md",
+      "heading": "Say where you are",
+      "purpose": "long work reports itself every 60-120 seconds - what is happening and what it is waiting on - and never invents progress or a result that has not come back",
+      "required": true,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R22"
     }
   ],
   "guards": [
