@@ -26,9 +26,16 @@ nobody spotted, because nobody reads a nine-hundred-character line.
 
 A check that is cheap, deterministic, and safer to enforce than to remember.
 
-Each guard splits the command on `;`, `&&`, `||` and `|` and evaluates the segments
-**separately**. Otherwise a harmless local call glued in front of a destructive remote one
-vouches for the whole string.
+Each guard splits the command on `;`, `&&`, `||`, `|` and newlines, and asks **per segment**
+whether that segment reaches something dangerous. Otherwise a harmless local call glued in
+front of a destructive remote one vouches for the whole string.
+
+What the segment must not decide is whether the command is destructive. The remote-database
+guard once required the host and the write verb in the *same* segment, and a pipe, a
+backslash line-wrap and a heredoc each put them in different ones - so `psql -h prod \` on
+one line and `-c "DROP TABLE users"` on the next ran unchecked. Nothing about a wrapped line
+is adversarial, which is what made it the worst kind of hole. **Where** a command reaches is
+per segment; **what** it does is read across the whole string.
 
 ## What does not go in here
 
@@ -55,6 +62,18 @@ rather than a heredoc and it passes.
 - **Fail closed, always.** Failing open on a missing dependency is the friendlier default
   and it converts a guard into a decoration exactly when the environment is broken, which
   is when mistakes cluster.
+- **One dispatcher, `guards.sh`, and it finds its siblings by its own path.** The guards
+  were meticulous about failing closed on a missing `jq` or an unreadable `lib.sh`, and then
+  the outermost link failed open: `settings.json` named each guard through
+  `$CLAUDE_PROJECT_DIR`, and with that variable unset the shell exits 127 with empty stdout,
+  which Claude Code treats as a non-blocking error and runs the command anyway. The
+  dispatcher also turns a guard that is missing, unreadable, or exiting nonzero because it
+  is syntactically broken into a denial - the one failure mode a self-test cannot catch on a
+  machine where the file was never installed. Its own absence is covered by the `||` in
+  `settings.json`.
+- **Unknown SQL is refused, not guessed at.** `psql -h prod -c "$(cat migration.sql)"`
+  carries any statement at all and no text scan can see it. A guard that cannot read the
+  command has not checked it, so it denies - the same rule as a missing `jq`.
 - **Host matching is case-sensitive, deliberately.** `psql` uses lowercase `-h`; uppercase
   `-H` is `curl`'s header flag. Matching case-insensitively made every command combining
   the two look like a remote write and blocked local work.
