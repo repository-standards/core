@@ -34,6 +34,7 @@
     "docs/**",
     "skills/**",
     "tools/**",
+    "services/adoption-stats/**",
     "standard/*",
     "standard/.claude/**",
     "standard/.github/**",

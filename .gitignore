@@ -6,3 +6,4 @@ node_modules/
 .claude/worktrees/
 site/docs/
 site/dashboard/
+services/adoption-stats/.wrangler/
