@@ -36,6 +36,13 @@ presented before the subagent returned them is worse. The section is manifest-tr
 that the shipped rule binds the align run itself - including the routes that install nothing -
 with the brownfield assessment named as where it bites hardest.
 
+Same day, same section: a plain status sentence still leaves the human guessing how much is
+left. Where the work has a real count - a task list, a known step total - the heartbeat now
+reports `Progress: N/M (Z%)` from that count. Where it does not, the number does not disappear;
+it becomes a labelled estimate, `~Z% (estimate)`, the same measured-vs-estimated split
+`timeline-update` already uses elsewhere in this standard. The "never invent progress" clause
+bans presenting a guess as measured fact, not guessing out loud with the guess named as one.
+
 ### A wrapped line turned the remote-database guard off (2026-08-10)
 
 An adopter probed the shipped `PreToolUse` guards instead of reading them, and the

@@ -245,6 +245,16 @@ chain a long run of silent tool calls**: a line before each batch, not one per f
 - **Never invent progress, and never report a result that has not come back.** This outranks
   the rule itself: do not present a subagent's findings before the subagent has returned
   them, and do not guess what it will find. Silence is bad; fabricated progress is worse.
+- **A countable total earns a measured percentage.** A task list, a known step count, N of
+  M done: report `Progress: N/M (Z%)` computed from that real count, not a feel for how far
+  along it seems.
+- **No countable total still earns a percentage, labelled as an estimate.** Open-ended
+  search, or waiting on an external process of unknown length, is exactly where the human
+  most needs the reassurance a number gives - so give one, as `~Z% (estimate)` from your
+  own sense of how far through the work you are, never bare `Z%` dressed up as measured.
+  This is the same measured-vs-estimated labelling `timeline-update` uses elsewhere in this
+  standard: a labelled guess spoken plainly is honest, and the rule above bans presenting a
+  guess as fact, not guessing out loud.
 - **It does not replace the answer, and it is not a ceremony.** Work that takes thirty
   seconds has nothing to report - do not pad it.
 
