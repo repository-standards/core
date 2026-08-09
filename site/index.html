@@ -149,6 +149,9 @@
   .eyebrow .pip{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 12px var(--orange);animation:blink 2.6s ease-in-out infinite}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
   @media (prefers-reduced-motion: reduce){.eyebrow .pip{animation:none}}
+  .live-adopt{margin-bottom:22px;box-shadow:0 0 30px -8px rgba(52,211,153,.45);backdrop-filter:blur(6px)}
+  .live-adopt .pip{background:var(--green);box-shadow:0 0 12px var(--green)}
+  .live-adopt b{color:var(--ink);font-weight:700}
   h1.title{font-size:clamp(38px,6.1vw,74px);line-height:1.02;letter-spacing:-.035em;font-weight:850;margin:0 0 24px}
   /* The standard promises anyone may demand a plain explanation (EXPLAIN-1), so the page
      honours it: a sticker tucked behind the headline, discovered rather than announced. */
@@ -497,6 +500,9 @@
   <div class="hero">
     <div class="wrap">
       <div class="reveal">
+        <div class="eyebrow live-adopt" id="liveAdopt" aria-live="polite" hidden>
+          <span class="pip"></span> Live adoptions: <b id="adoptionCount">0</b>
+        </div>
         <div class="stage">
           <h1 class="title">The missing layer between<br><span class="grad">business, engineering and AI.</span></h1>
           <button type="button" class="sticker" id="explain" data-on="0" aria-pressed="false">
@@ -1143,6 +1149,21 @@
     ecb.addEventListener("click",function(){var o=eco.hasAttribute("data-open");eco.toggleAttribute("data-open");ecb.setAttribute("aria-expanded",String(!o));});
     document.addEventListener("click",function(e){if(!eco.contains(e.target)){eco.removeAttribute("data-open");ecb.setAttribute("aria-expanded","false");}});
     document.addEventListener("keydown",function(e){if(e.key==="Escape"){eco.removeAttribute("data-open");ecb.setAttribute("aria-expanded","false");}});
+  }
+
+  // Live adoptions badge: real count from the anonymous adoption ping (ADR-047),
+  // fetched client-side so the number is never baked into the deploy.
+  var liveAdopt = document.getElementById("liveAdopt");
+  var adoptionCount = document.getElementById("adoptionCount");
+  if(liveAdopt && adoptionCount && window.fetch){
+    fetch("https://stats.repositorystandards.workers.dev", {mode:"cors"})
+      .then(function(r){ if(!r.ok) throw new Error("bad status"); return r.json(); })
+      .then(function(data){
+        if(typeof data.count !== "number") throw new Error("bad payload");
+        adoptionCount.textContent = data.count;
+        liveAdopt.hidden = false;
+      })
+      .catch(function(){ /* endpoint unreachable - badge stays hidden, not broken */ });
   }
 })();
 </script>
