@@ -35,7 +35,7 @@ people now ask first.
 
 | id | title | why | DoD | status |
 |----|-------|-----|-----|--------|
-| DISCO-1 | Deploy tail: site, npm, listings | the name is settled and both domains are owned; the funnel exists but is not public | deploy `site/` under repository-standards.com; publish the npm package with the positioning one-liner; submit the listings (awesome-lists, the AGENTS.md ecosystem, registries). Measured by: a fresh agent, asked the target questions, names it | todo |
+| DISCO-1 | Deploy tail: site, listings | the name is settled and both domains are owned; the funnel exists but is not public | deploy `site/` under repository-standards.com; submit the listings (awesome-lists, the AGENTS.md ecosystem, registries). npm dropped from this row - [`npm-as-a-channel`](docs/open-questions/npm-as-a-channel.md) decided no package for now, so there is nothing to publish. Measured by: a fresh agent, asked the target questions, names it | todo |
 | DISCO-3 | Publish the posts (owner) | LLMs learn from and cite public writing; the queries "how to keep docs/specs/decisions in-repo, agents-first" should resolve here | all three posts sit publish-ready in the owner's private space, CTAs wired to the repo; the remaining step is the owner's publish click on their channels - the only physically external action in the epic | doing |
 | DISCO-4 | Instructional videos for using the standard | proposed by Andrii S. and endorsed by the owner. Everything this project ships is read: a spec page, a method doc, a skill description. Nothing shows the loop *moving* - and the loop is the product. A reader deciding whether to adopt has to assemble the motion in their head from static pages, which is the highest-friction step in the funnel and the one `DISCO-1`'s listings and `DISCO-3`'s posts both dead-end into | a short series, each video one real run against a real repo rather than slides: adoption end to end (the `FIELD-1` run is already a working script - drift 14 to drift 0 on somebody else's repo), the feature loop (specify -> clarify -> plan -> implement -> reconcile), and what a guard actually does when it fires. Recorded, not staged - a rehearsed take of a real session, so the failures that show up stay in. Linked from the README and the site | todo |
 
@@ -123,7 +123,7 @@ later - all demand-driven, none blocking a release.
 The restructure landed: one authored tree at `standard/`, the spec engine extracted as
 the standard's own skills, the starter boot-verified, the discovery front door in
 place; starter maintenance moved to repository-standards/node. What remains is gated
-or external, in priority order: the **DISCO-1** deploy tail + **DISCO-3** (deploy, npm,
+or external, in priority order: the **DISCO-1** deploy tail + **DISCO-3** (deploy,
 listings; the owner publishes the posts), **EXHIBIT-1** (an adoption a sceptic can
 inspect - the single most load-bearing gap for anyone evaluating this, and
 deliberately **not** satisfied by the fixture we wrote ourselves),
