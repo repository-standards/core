@@ -331,7 +331,7 @@
         "lib.sh": "06f1822d3110e5de9eb68d253bbafae6121326a30815955a48bd78578d428e34",
         "no-ci-secret-writes.sh": "db8381dd7b3e58b7a349c8bb3312a03ac792cffa0a04a781d790f2b14ef61793",
         "no-force-push.sh": "f6b13e0fa4b2c61dcf5a895fb10784c1925a39a14f5304032a0f4f675f936399",
-        "no-remote-db-writes.sh": "004bdee6a04d1f17089133a0350ea90ee03e9b9805c21fc8ee5b8f4550a6fdd2"
+        "no-remote-db-writes.sh": "2ef776afaa6a17cd8ffd8735f52ec54691fd7fe1a06f80bd4ef2bcec72439fb5"
       }
     },
     {
@@ -342,7 +342,7 @@
       "profile": "core",
       "since": "1.0.0",
       "rule": "R19",
-      "sha256": "bdc2aa11c5048d2ab50f112238d10d0e7defb305ae6387891a4cc680f806b6f3"
+      "sha256": "515a95926585e7291c4403a6ec2446ba8500e091e9ef1245abd7cdba9549d65a"
     },
     {
       "path": "docs/PRINCIPLES.md",
