@@ -23,7 +23,7 @@ outgrew itself - as its own meta entry predicted it would.)
 | [Stacks as satellite repos](stacks-satellite.md) | ADR-016: one repo per technology + registry | two repos to run; registry is a solo-merge gate |
 | [Genesis history for the org move](genesis-history.md) | clean-slate, curated commit sequence, honest dates | narrative order vs the record of what really happened |
 | [Engine cherry-pick](engine-cherry-pick.md) | ADR-015: prompts are ours; upstream read at release | five prompts could quietly fall behind upstream |
-| [Shipped skills](shipped-skills.md) | discriminability is the constraint, not the count - 20 ship today | four sibling authoring skills could drift apart |
+| [Shipped skills](shipped-skills.md) | discriminability is the constraint, not the count - 21 ship today | four sibling authoring skills could drift apart |
 | [npm as a channel](npm-as-a-channel.md) | no package, for now (2026-08-09) | neither of the two things that would settle it either way has happened, and there is still no tag |
 | [Stack lifecycle skills](stack-lifecycle-skills.md) | **open** - Layer 2 ships four data files and zero procedures | the mechanism to ship stack skills exists and is unnamed; nothing has run once |
 | [Staying current](staying-current.md) | **open** - the shipped watch compares against releases | the standard lives on `main` and there are no releases, so the channel is silent by construction |
