@@ -87,16 +87,23 @@ const assessment = ({ rows = 8, maturities = [], risks = true, owners = true } =
   ].join("\n");
 };
 
-const backlog = ({ parts = [5, 2, 4, 3], total = 14, block = true, ownerless = false } = {}) => {
+const backlog = ({
+  parts = [5, 2, 4, 3],
+  total = 14,
+  block = true,
+  ownerless = false,
+  title = "Alignment scope for demo -> standard@0.9.0",
+  totalLine = null,
+} = {}) => {
   const scope = [
     "```",
-    "Alignment scope for demo -> standard@0.9.0",
+    title,
     `  specs to write / raise to buildable ....  ${parts[0]}`,
     `  decisions to record (ADR/BDR) .........   ${parts[1]}`,
     `  drift to reconcile ....................   ${parts[2]}`,
     `  guards / structure to install .........   ${parts[3]}`,
     "  ---------------------------------------------",
-    `  ${total} tasks to full alignment`,
+    totalLine ?? `  ${total} tasks to full alignment`,
     "```",
   ].join("\n");
   return [
@@ -188,6 +195,26 @@ check("the backlog is also read at docs/backlog.md", {
 // Bound to the shipped file, not a copy of it: a repo that scaffolded the template and never
 // wrote the assessment is the exact failure ADR-048 exists for, and the case has to keep
 // failing if the template's placeholder syntax is ever changed.
+// The block's own title names the standard's version, so a title-reading parser adds that
+// version's last number to the sum. It passed only because the fixture's version ended in 0.
+check("the block's title is a title, not a category whose number joins the sum", {
+  files: { ...good, "backlog.md": backlog({ title: "Alignment scope for demo -> standard@1.2" }) },
+  code: 0,
+  expect: ["OK"],
+});
+
+check("a bolded total is still a total", {
+  files: { ...good, "backlog.md": backlog({ totalLine: "  **14** tasks to full alignment" }) },
+  code: 0,
+  expect: ["OK"],
+});
+
+check("a scope block that says tasks but names no number is caught as that, not as bad arithmetic", {
+  files: { ...good, "backlog.md": backlog({ totalLine: "  N tasks to full alignment" }) },
+  code: 1,
+  expect: ["names no number"],
+});
+
 check("a column headed 'Maturity today' is still the maturity column", {
   files: {
     ...good,
