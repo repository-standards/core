@@ -67,6 +67,44 @@ almost all of it the five spec bodies now inlined. That is the price of a page t
 with no server, no build step at the reader's end and no second request, and it is paid
 once per build. Discovery bodies, the unbounded half, stay off by default.
 
+### The corpus gets its first outside run (2026-08-10)
+
+`docs/validation/human-prompting/` has been built almost entirely by people who already know
+the product, and its own README names that as its weakest point. `2026-08-10-f-adopter-nextjs-mt`
+is the first run submitted from outside: a full brownfield adoption of 0.9.0 on a private
+multitenant Next.js monorepo, run end to end in one session, contributed through `record-run`
+by an owner who asked to be identified only by codename.
+
+Twenty-five prompt rows arrive with it, `A34` to `A58`. The corpus already carries `reported`
+rows - `A21` to `A25` - but those came out of the maintainer's own probes; these are the first
+typed by somebody adopting the standard for their own reasons, in their own words, without
+knowing which phrasings it handles well. 29 observations score against them: 12 `pass`, 12
+`partial`, 5 `fail`. Among the failures: the agent read `.standards-version` as a pin until
+corrected, it proposed a local fix for a defect in a shipped guard until the owner said to take
+it upstream, and it was asked `jak idzie?` three times in one run without ever volunteering
+where it was - `A40` is deliberately the one row in the corpus whose pass condition is its own
+absence.
+
+A first version of this run file covered 7 of the session's 43 user turns, with every agent
+turn written as a description rather than a quote - and it passed every check this suite had.
+The owner rejected it and asked for the literal transcript. The deeper problem it exposed:
+the renderer had no field to say a turn was quoted rather than summarised, so a well-formed
+summary rendered identically to a real transcript. That failure and its correction are scored
+in this same file as `A52` and `A56`/`A57`, and the fix ships in this same pull request -
+`tools/human-prompting.mjs` gained a `said_verbatim` field per agent turn and a `tools_in_order`
+list per observation, both validated and rendered distinctly. The rebuilt run covers all 43 of
+43 user turns typed in the session and 269 agent turns, 268 of them quoted verbatim from the
+transcript on disk rather than described afterward.
+
+`A58` is a different kind of finding, added from a separate conversation after the run file's
+own construction: not a complaint about the recording, but about the adoption it records. Checked
+against `skills/align-to-standards/onboard.md` rather than taken at face value, it holds up in
+part - the standard names a fallback for a user who is *unavailable*, but not for one who *grants
+an agent broad autonomy mid-run*, and this same repository's `docs/personas.md` and
+`specs/capability-map.json` shipped with none of the "unconfirmed" marking the unavailable-user
+fallback calls for. The proposed fix to `onboard.md` stays a linked follow-up rather than landing
+in this pull request.
+
 ## 0.9.0 - 2026-08-10
 
 125 entries across the week since 0.8.13, mostly the same method applied further: real-repo

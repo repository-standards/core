@@ -101,8 +101,9 @@ So every run records a **trace**, and the trace is the evidence:
       "note": "asked because the line told it to - not evidence of asking unprompted" },
     { "who": "user",  "said": "internal tool, node, small appetite, just plan it" },
     { "who": "agent", "said": "produced a wave plan, 14 items, did not touch the tree",
-      "asked": false, "checked": true, "suggested": true }
+      "asked": false, "checked": true, "suggested": true, "said_verbatim": true }
   ],
+  "tools_in_order": ["Read", "Grep", "Write"],
   "outcome": "plan-only, nothing written, ended by naming the first wave and asking whether to run it",
   "abandon_risk": "turn 2 asked for 'appetite' without saying what the word means here - a first-time user has to guess",
   "verdict": "pass"
@@ -111,6 +112,17 @@ So every run records a **trace**, and the trace is the evidence:
 
 Score the three flags **per agent turn**, not once for the run. An agent that asks well at turn
 two and then executes four steps in silence has a different problem from one that never asks.
+
+Two more fields are optional and change how a `turns` run reads, not what it scores:
+
+- **`said_verbatim`** (per agent turn, boolean) - `true` means that turn's `said` text was pulled
+  from a session transcript on disk, not written afterward by whoever scored the run. Leave it
+  off, or `false`, for a turn that is the scorer's own description of what the agent did - that
+  is the default this suite has always used, and it stays valid. The two render differently on
+  the generated page precisely so a reader can tell which kind of evidence they are looking at.
+- **`tools_in_order`** (per observation, array of strings) - the tool calls the agent made, in
+  order, run-length encoded (`"Bash×7"` rather than `"Bash"` seven times) if that is how you
+  recorded it. Optional, and only meaningful for a run pulled from a real transcript.
 
 Two fields carry the weight and neither is mechanical:
 
@@ -183,3 +195,8 @@ is the whole reason this file asks strangers to break it.
 - **Whether the answer was any good.** `checked` says it read the specs. It does not say it
   understood them. That stays a human's judgement, at review, like the mechanical suite's
   judgment tier.
+- **Whether a reported run is reproducible.** A run contributed from somebody else's private
+  repository is evidence that something happened, not a fixture anyone here can re-run - the
+  target is described by category and the evidence cites what the tooling printed. That is the
+  price of getting outside runs at all, and a run in that shape says so in its own
+  `$about` or a caveat key, which every rendered page prints in full.

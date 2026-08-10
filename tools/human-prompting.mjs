@@ -126,6 +126,7 @@ for (const file of runFiles) {
   const perTurn = emptyUnit();
   const perObservation = emptyUnit();
   let agentTurns = 0;
+  let verbatimAgentTurns = 0;
   let flaggedObservations = 0;
   const verdicts = {};
   const modes = new Set();
@@ -158,6 +159,12 @@ for (const file of runFiles) {
       fail(`${where} has live_turns: ${JSON.stringify(o.live_turns)} - allowed: true, false`);
     }
 
+    if ("tools_in_order" in o) {
+      if (!Array.isArray(o.tools_in_order) || o.tools_in_order.some((s) => typeof s !== "string" || !s.trim())) {
+        fail(`${where} has a tools_in_order field that is not an array of non-empty strings`);
+      }
+    }
+
     if ("turns" in o) {
       if (!Array.isArray(o.turns) || !o.turns.length) {
         fail(`${where} has a turns field that is not a non-empty array`);
@@ -170,6 +177,13 @@ for (const file of runFiles) {
         if (!t.said) fail(`${where} turn ${j + 1} has no said`);
         if (t.who !== "agent") continue;
         agentTurns++;
+        if ("said_verbatim" in t) {
+          if (typeof t.said_verbatim !== "boolean") {
+            fail(`${where} turn ${j + 1} has said_verbatim: ${JSON.stringify(t.said_verbatim)} - allowed: true, false`);
+          } else if (t.said_verbatim) {
+            verbatimAgentTurns++;
+          }
+        }
         for (const f of FLAGS) {
           if (f in t && ![true, false, "n/a", null].includes(t[f])) {
             fail(`${where} turn ${j + 1} has ${f}: ${JSON.stringify(t[f])} - allowed: true, false, "n/a", null`);
@@ -180,7 +194,7 @@ for (const file of runFiles) {
     }
   }
 
-  runs.push({ file, data, perTurn, perObservation, agentTurns, flaggedObservations, verdicts, modes: [...modes] });
+  runs.push({ file, data, perTurn, perObservation, agentTurns, verbatimAgentTurns, flaggedObservations, verdicts, modes: [...modes] });
 }
 
 // ------------------------------------------- a run's own prose must match its rows
@@ -237,6 +251,13 @@ const promptText = new Map(
   [...promptsBody.matchAll(/^\|\s*([A-Z]+\d+)\s*\|\s*`([^`]+)`/gm)].map((m) => [m[1], m[2]]),
 );
 
+// A turn's text can run to many paragraphs - a verbatim agent quote is the agent's whole reply,
+// not a one-line summary of it. A markdown blockquote needs every line prefixed with "> ", or
+// only the first line renders inside it and the rest spills out as an unquoted paragraph
+// directly under the page's next heading. Blank lines become a bare ">" so paragraph breaks
+// survive inside the quote instead of closing it.
+const quote = (text) => text.split("\n").map((line) => (line ? `> ${line}` : ">")).join("\n");
+
 const scenarioPage = (run) => {
   const meta = Object.entries(run.data)
     .filter(([k, v]) => k.startsWith("$") && typeof v === "string")
@@ -249,6 +270,9 @@ const scenarioPage = (run) => {
       o.fixture ? `**Fixture:** ${o.fixture}` : null,
       o.cohort ? `**Cohort:** ${o.cohort}` : null,
       `**Verdict:** ${o.verdict}`,
+      o.tools_in_order && o.tools_in_order.length
+        ? `**Tools run, in order:** \`${o.tools_in_order.join(", ")}\``
+        : null,
     ].filter(Boolean).join(" | ");
 
     // Who typed each user turn, derived rather than asserted. The opening line of an observation
@@ -258,6 +282,11 @@ const scenarioPage = (run) => {
     // turn in it was typed by one real person for real, not simulated by whoever scored it. Nine
     // of eighty-eight turns said so by hand; the rest read as though a stranger had typed them,
     // which is the one thing this page must never let a reader assume.
+    //
+    // An agent turn gets the same "quoted or not" treatment, on the same principle: `said_verbatim:
+    // true` means the text was pulled from a session transcript, not written afterwards by whoever
+    // scored the run. A run with no such field on any turn is read the old way - every agent turn a
+    // description - because that is what the absence of the field has always meant here.
     let seenUserTurn = false;
     const corpusText = promptText.get(o.prompt);
 
@@ -273,11 +302,14 @@ const scenarioPage = (run) => {
             : o.live_turns
               ? `the same live person as the opening turn - not simulated, not the scorer`
               : `**the person scoring this run**, improvising a user who does not know the product`;
-        return `> **Typed** *(${who})***:** ${t.said}`;
+        return quote(`**Typed** *(${who})*: ${t.said}`);
       }
       const flags = FLAGS.map((f) => `${f} ${FLAG_MARK(t[f])}`).join(", ");
-      const note = t.note ? `\n>\n> *Scorer's note: ${t.note}*` : "";
-      return `**What the agent did** *(described by the scorer, not quoted)*\n>\n> ${t.said}\n>\n> \`${flags}\`${note}`;
+      const note = t.note ? `\n\n*Scorer's note: ${t.note}*` : "";
+      const label = t.said_verbatim
+        ? "**Said** *(quoted from the session transcript, not a description)*"
+        : "**What the agent did** *(described by the scorer, not quoted)*";
+      return quote(`${label}\n\n${t.said}\n\n\`${flags}\`${note}`);
     }).join("\n\n");
 
     const tail = [
@@ -317,6 +349,8 @@ ${blocks}
 const live = runs.filter((r) => r.agentTurns > 0);
 const totalTurn = emptyUnit();
 const totalObs = emptyUnit();
+let totalAgentTurns = 0;
+let totalVerbatimTurns = 0;
 for (const r of live) {
   for (const f of FLAGS) {
     for (const k of ["true", "false", "n/a", "unscored"]) {
@@ -324,7 +358,21 @@ for (const r of live) {
       totalObs[f][k] += r.perObservation[f][k];
     }
   }
+  totalAgentTurns += r.agentTurns;
+  totalVerbatimTurns += r.verbatimAgentTurns;
 }
+
+// A `said_verbatim` turn is a quote pulled from a transcript; every other agent turn is a
+// description written afterwards by whoever scored the run, however careful. Neither is "the
+// real number" of anything - a hand-scored run with no verbatim turns is not lying, it never
+// claimed to be a transcript - but a reader comparing runs should see which kind they are
+// holding without opening the file, the same way `asked`/`checked`/`suggested` are computed
+// here instead of trusted from a run's own prose.
+const quotedFrac = (verbatim, total) => {
+  if (!total) return "-";
+  const pct = Math.round((verbatim / total) * 100);
+  return `${verbatim}/${total} (${pct}%)`;
+};
 
 const frac = (u) => {
   const den = u.true + u.false;
@@ -351,7 +399,8 @@ const runRows = runs
     const unit = r.agentTurns > 0 ? plural(r.agentTurns, "agent turn") : plural(r.flaggedObservations, "observation");
     const caveats = Object.keys(r.data).filter((k) => k.startsWith("$") && CAVEAT.test(k));
     const caveatCell = caveats.length ? caveats.map((c) => `\`${c}\``).join("<br>") : "-";
-    return `| [\`${r.file}\`](runs/${r.file}) | ${r.data.observations.length} | ${unit} | ${frac(u.asked)} | ${frac(u.checked)} | ${frac(u.suggested)} | ${verdictLine(r.verdicts)} | ${caveatCell} |`;
+    const quotedCell = r.agentTurns > 0 ? quotedFrac(r.verbatimAgentTurns, r.agentTurns) : "-";
+    return `| [\`${r.file}\`](runs/${r.file}) | ${r.data.observations.length} | ${unit} | ${frac(u.asked)} | ${frac(u.checked)} | ${frac(u.suggested)} | ${quotedCell} | ${verdictLine(r.verdicts)} | ${caveatCell} |`;
   })
   .join("\n");
 
@@ -393,10 +442,15 @@ out of the numerator and the denominator, and both are printed rather than absor
 
 Verdicts across every run: ${verdictLine(totalVerdicts)}.
 
+Agent turns quoted verbatim from a session transcript, across every run: **${quotedFrac(totalVerbatimTurns, totalAgentTurns)}**.
+The rest are descriptions of what the agent did, written afterwards by whoever scored the run -
+accurate or not, that is a different kind of evidence than a quote, and this is the fraction that
+says which kind a given run mostly is. See \`Agent turns quoted\` below for run by run.
+
 ## Run by run
 
-| Run | Observations | Scored over | \`asked\` | \`checked\` | \`suggested\` | Verdicts | Run's own caveats |
-|---|---|---|---|---|---|---|---|
+| Run | Observations | Scored over | \`asked\` | \`checked\` | \`suggested\` | Agent turns quoted | Verdicts | Run's own caveats |
+|---|---|---|---|---|---|---|---|---|
 ${runRows}
 
 **Every conversation behind these numbers is readable.** One page per run under
