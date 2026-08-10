@@ -53,6 +53,7 @@ copied into your repository as folder READMEs that then age in place.
 | `docs/PRINCIPLES.md` | the altitude apex R1 names - optional but expected | optional, core | `fill-from-repo` | [R1](../standard/SPEC.md) |
 | `docs/personas.md` | the persona roster the R10 gate checks specs against - without it the gate has nothing to hold | **required**, core | `fill-from-repo` | [R10](../standard/SPEC.md) |
 | `docs/adoption-intake.md` | what Step 0 measured and asked before any align work proceeded - the record that makes intake checkable, not just performed (ADR-042) | **required**, core | `fill-from-repo` | [R26](../standard/SPEC.md) |
+| `docs/adoption-assessment.md` | what Gate 2's eight-pass assessment found - maturity per pass, top risks, findings grouped by the owner role that must act; the evidence Gate 5's count is derived from (ADR-048) | **required**, core | `fill-from-repo` | [R27](../standard/SPEC.md) |
 | `docs/README.md` | the docs hub table | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `docs/ARCHITECTURE.md` | how it is built - the altitude names it (filled from this repo) | optional, core | `fill-from-repo` | [R1](../standard/SPEC.md) |
 | `docs/PRODUCT.md` | what it is and where it is going (filled from this repo) | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
@@ -78,6 +79,7 @@ copied into your repository as folder READMEs that then age in place.
 | `scripts/facts-check.mjs` | a fact restated in prose still agrees with its source - declared homes and claims (R4) | optional, core | `copy` | [R4](../standard/SPEC.md) |
 | `scripts/schema-pair.mjs` | the DDL under database/schema/ and its typed twin stay 1:1 - the declared edge resolves and every name is covered | optional, core | `copy` | [R24](../standard/SPEC.md) |
 | `scripts/decision-records-check.mjs` | the ADR/BDR README index and the files on disk agree - no duplicate id, nothing indexed that is not there, nothing there that is not indexed | **required**, core | `copy` | [R5](../standard/SPEC.md) |
+| `scripts/adoption-gates.mjs` | the Gate 2 and Gate 5 artifacts carry what the gate is for - eight passes rated, the scope block's total equal to the sum of its categories, an owner role on every alignment item | **required**, core | `copy` | [R27](../standard/SPEC.md) |
 | `scripts/spec` | the spec engine runtime the skills invoke (gate, setup, templates, MIT licence) | **required**, core | `copy` | [R22](../standard/SPEC.md) |
 | `scripts/lib` | what more than one guard needs - glob matching, so two guards cannot answer the same question differently | **required**, core | `copy` | [R16](../standard/SPEC.md) |
 | `scripts/verifyAgentGuards.sh` | drives every guard with real commands - they only emit output on a denial, so a broken guard is otherwise silent | optional, core | `copy` | [R19](../standard/SPEC.md) |

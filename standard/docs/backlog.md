@@ -93,6 +93,37 @@ A finished item leaves the backlog only when its **definition of done** is met -
 spec is buildable, the ADR is Accepted, the drift is resolved - not when someone looks
 at it.
 
+## Alignment scope *(a repo being brought onto the standard)*
+
+Gate 5's artifact, and the one number the person paying for the adoption actually decides on.
+Adoption is incremental and never a big-bang, so the honest deliverable before committing is
+the **size of the job** - which is why this is a count and not a paragraph saying it is large.
+
+```
+Alignment scope for <repo> -> standard@<version>
+  specs to write / raise to buildable ....  12
+  decisions to record (ADR/BDR) .........    5
+  drift to reconcile ....................    3
+  guards / structure to install .........    4
+  ---------------------------------------------
+  24 tasks to full alignment
+```
+
+The categories are the defaults, not a fixed vocabulary - rename them to what this repo
+actually owes. Two things are not negotiable, because they are what the block is for:
+**the total is the sum of its parts**, and **every alignment item names its owner role** in
+the table below the block (`product` / `architect` / `dev` / `agent`, as in the item format).
+`scripts/adoption-gates.mjs` reads both (R27). A block whose arithmetic has quietly drifted
+reads as authoritative while describing nothing, which is worse than having no block.
+
+`drift 0` and a nonzero count are not a contradiction, and an adopted repo usually shows
+both: drift measures what the standard can check mechanically, and this counts what it
+cannot. Say so next to the block rather than leaving the next reader to reconcile two
+numbers that look like they disagree.
+
+The count is also how a repo takes a **slice** - the money paths now, the rest queued -
+and keeps that trade explicit instead of implicit.
+
 ## Order
 
 Top of the list is next. Prioritize by **risk x leverage**: money, security, external

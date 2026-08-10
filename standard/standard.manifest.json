@@ -46,7 +46,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R2",
-      "sha256": "db8f54777319766a8e885108ebffcb5fef606f1e28fd8a36e3a20b5f76c5818f"
+      "sha256": "2325a5d69a66d5d4259395c88ecaefb01dea3d4dbbf59177245f7c7c5e956cf4"
     },
     {
       "path": "CLAUDE.md",
@@ -197,6 +197,16 @@
       "since": "0.9.0",
       "rule": "R5",
       "sha256": "e009a0bad6786f39abc0f7e37badf0ee293cee08829f77ce4e8cd7329a87ccbc"
+    },
+    {
+      "path": "scripts/adoption-gates.mjs",
+      "purpose": "the Gate 2 and Gate 5 artifacts carry what the gate is for - eight passes rated, the scope block's total equal to the sum of its categories, an owner role on every alignment item",
+      "adapt": "copy",
+      "required": true,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R27",
+      "sha256": "57fbdc8f6d428a44f810c21a0c780852cac2b8ea5ed007c08fba2b6e4c2ee92b"
     },
     {
       "path": ".claude/skills",
@@ -393,6 +403,15 @@
       "profile": "core",
       "since": "0.9.0",
       "rule": "R26"
+    },
+    {
+      "path": "docs/adoption-assessment.md",
+      "purpose": "what Gate 2's eight-pass assessment found - maturity per pass, top risks, findings grouped by the owner role that must act; the evidence Gate 5's count is derived from (ADR-048)",
+      "adapt": "fill-from-repo",
+      "required": true,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R27"
     },
     {
       "path": "README.md",
@@ -826,6 +845,16 @@
       "profile": "core",
       "since": "0.9.0",
       "rule": "R5"
+    },
+    {
+      "id": "adoption-gates",
+      "run": "node scripts/adoption-gates.mjs --block",
+      "kind": "static",
+      "blocks": true,
+      "purpose": "the two gate artifacts carry what the gate is for - eight passes rated, the scope block adds up, every alignment item owned (skips itself where no assessment exists, which self-verify already reports)",
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R27"
     }
   ],
   "decisions": [

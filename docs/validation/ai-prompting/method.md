@@ -45,7 +45,7 @@ required field, not an optional one:
 | Level | Means |
 |---|---|
 | **L1 read** | the method's assessment passes applied to a read-only clone; nothing changed |
-| **L2 dry adoption** | the align router's decisions worked out for real - what would land, which of R1-R26 are satisfiable, the honest drift number - still no changes to the target |
+| **L2 dry adoption** | the align router's decisions worked out for real - what would land, which of R1-R27 are satisfiable, the honest drift number - still no changes to the target |
 | **L3 aligned** | the standard actually applied to a working copy, guards run, drift measured to 0 or to a recorded stop |
 | **L4 operated** | the repo then lived the loop for at least one full sprint of real work |
 
