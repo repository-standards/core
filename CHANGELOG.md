@@ -3,18 +3,30 @@
 All notable changes to the standards. Semver: MAJOR = removals/breaking policy
 changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
-> **This file and the git history behind it will be rewritten before the move to the
-> official organization.** Both grew while the product was still deciding what it was, and
-> they carry the sediment: threads that were abandoned, mechanisms that were built and
-> removed, restructures described in terms that no longer exist. That record is honest but
-> it is not useful - a person or an agent arriving here has to sift it to find what the
-> standard actually is. On a fresh branch, the commit sequence will be re-authored to read
-> as the development of a product, with what was dropped simply gone rather than narrated,
-> and this changelog rewritten to match. The decision to do it, and the tension between a
-> curated sequence and the record of what really happened, is
-> [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
+> **This repository's history has been rewritten twice, both times narrowly.** The first
+> pass (2026-08-03) replaced the pre-org-move scaffolding with a curated, honestly-dated
+> genesis sequence, ending at 1.0.13. The second (this release, 1.1.0) folded six commits
+> in the window since - each one existing only to correct the commit immediately before
+> it - into the commit they corrected; nothing else moved, no content changed, and no
+> entry below was rewritten to make it read better. Both passes and the reasoning behind
+> them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
-## Unreleased
+## 1.1.0 - 2026-08-10
+
+125 entries across the week since 1.0.13, mostly the same method applied further: real-repo
+sampling (Python repositories, three human-prompting waves, a 13,591-file long-lived
+repository) and walking every loop - discovery, spec, work-cycles, clarify, update - end to
+end, catching where a mechanism and its own documentation disagreed. Two new pieces of
+machinery ship: `record-run`, closing the human-prompting corpus's own weakest point by
+capturing real adoption sessions with per-item consent; and the adoption-stats service
+(ADR-047), the first honest count of live adoptions on the landing page. The backlog and
+dashboard unify around one typed index (ADR-046); a guard-suite audit found and closed a
+live bypass in the guard meant to catch exactly that; and the CI secret scan stopped failing
+on the standard's own shipped manifest.
+
+(There is an earlier heading below, `No entries were written for 1.1.0, 1.1.1 and 1.0.2 -
+1.0.12`, from a stray `VERSION` bump a since-fixed bug produced on 2026-08-03. That was never
+a release - nothing shipped under it, and it predates this one by nothing more than name.)
 
 ### The secret scan failed on the standard's own manifest (2026-08-10)
 
@@ -65,6 +77,28 @@ reports `Progress: N/M (Z%)` from that count. Where it does not, the number does
 it becomes a labelled estimate, `~Z% (estimate)`, the same measured-vs-estimated split
 `timeline-update` already uses elsewhere in this standard. The "never invent progress" clause
 bans presenting a guess as measured fact, not guessing out loud with the guess named as one.
+
+### The landing page claimed field-run adoption, and nothing behind it could be checked (2026-08-10)
+
+Nothing in this repo answered "how many repos actually run this standard" - the honest
+answer was "unknown," and `PRODUCT.md`'s and the README's own field-run claims had no count
+to check them against, only the fixtures this repo wrote about itself (`EXHIBIT-1` in
+`backlog.md`). A consent-gated prompt ("send this? y/n") was rejected on the same grounds
+that already killed a related feedback-prompt idea in the same conversation: a voluntary
+gate costs nothing to skip, so it gets skipped. What shipped instead is disclosed, not
+asked - `align-to-standards` sends one ping per completed run (stack, standard version,
+final drift, day-granularity date; no repo name, no IP, no cross-ping identifier) to a
+Cloudflare Worker backed by D1, stating plainly what it is sending before it sends it, and
+skippable entirely with `REPOSTDS_NO_TELEMETRY=1` (ADR-047).
+
+The landing page now reads that count client-side on every load instead of baking a number
+in at build time: a small badge above the hero, hidden until the fetch succeeds so an
+unreachable endpoint degrades to nothing shown rather than a broken placeholder. It caught a
+real gap immediately - `site-check.mjs`'s external-host allowlist previously permitted only
+the site's own host and `github.com`, so the new fetch target tripped it on the first run.
+The fix was naming the Worker's host as a third explicit entry, not loosening the check, and
+a follow-up pass tightened the badge's spacing and dropped a blinking dot that borrowed the
+header's "session in progress" visual language for what is actually a static count.
 
 ### A wrapped line turned the remote-database guard off (2026-08-10)
 
@@ -140,6 +174,29 @@ corpus - a `prompts.md` row and a scored `runs/*.json` file - at one of two cons
 levels, and sends nothing without a per-item yes. `CONTRIBUTING.md` names it alongside
 the existing manual path (`reporting.md`) under a new "Contributing by validation"
 section.
+
+### The dashboard's Backlog tab showed build work and nothing else (2026-08-09)
+
+Three separate index files - `backlog.md`, `docs/open-questions/README.md`,
+`docs/ideas/README.md` - meant a standing doubt or an unapproved feature was invisible next
+to the tasks that reference it. `backlog.md` is now the one index (ADR-046): every row
+carries a `type` (`task`/`bug`, the default; `open-question`; `idea`), and each type keeps
+its own status vocabulary rather than forcing one shared set - `open-question` gets a new
+two-state `open`/`decided`, because a decision stands and stays open to a better one, which
+is the type's permanent condition, not a completion state to hide. Each open-question and
+idea keeps its full deliberation in its own file under `docs/open-questions/` or
+`docs/ideas/`; the backlog row is the index entry only, linking back for the argument, and
+both folder READMEs lose their now-duplicate tables.
+
+`generate-dashboard` carries the new column through without breaking an untyped repo:
+`type` defaults to `task` so existing rows are unaffected, the task-health counters
+(`todo`/`doing`/`blocked`/`done`) stay scoped to `task`/`bug` rows so an open-question's
+`open`/`decided` can never leak into them, and an unrecognised status word - previously
+falling through to `todo` silently - is now a recognised word for every shipped type. The
+Backlog tab's flat list gets a plain pill per non-task type, and a hardcoded "23 open
+questions and 1 idea" count is dropped from `backlog.md`'s own closing section - unlike
+every other numeric claim this repo makes, it carried no `docs/facts.json` entry and could
+drift silently.
 
 ### R18 covers a monorepo of independently-published units (2026-08-09)
 

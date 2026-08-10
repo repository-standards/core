@@ -3,6 +3,24 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.1.0 - 2026-08-10
+
+**Tested at real scale, not just real codebases.** 1.0.13 proved the standard works on
+live projects; this release ran it against a 13,591-file codebase with nineteen years of
+history, and against a monorepo of thirteen independently-published packages, each with
+its own changelog, changing on one branch. Both shapes are supported now, not worked
+around.
+
+**The standard can finally show its own adoption, not just claim one.** Every
+`align-to-standards` run can now send one anonymous, disclosed signal when it finishes -
+stack, standard version, how clean the result was, nothing that identifies which repo
+sent it - and the landing page shows the running count. Nothing is asked, only stated,
+and one environment variable turns it off for anyone who wants zero participation.
+
+**Under the hood**: 125 entries across the week since 1.0.13, including a fix so a new
+adopter's very first pull request no longer fails its own secret scan on a file the
+standard shipped. Full developer changelog in `CHANGELOG.md`.
+
 ## 1.0.13 - 2026-08-03
 
 **The standard now recognizes a repo that isn't going anywhere, before wasting your
