@@ -150,16 +150,16 @@ if (!backlogPath) {
     // absent because it was bolded would fail as arithmetic rather than as formatting.
     const scopeText = scope.replace(/[*`]/g, "");
     const total = Number(scopeText.match(/(\d+)\s+tasks? to full alignment/i)?.[1]);
-    // A category line is "label ....  12": dot leaders are conventional, so anything that
-    // ends in a number and is not the total counts, and a repo may name its own categories.
-    // The block's first line is its title, and the title carries the standard's version - so
-    // reading it as a category would add the version's last number to the sum and fail a
-    // block whose arithmetic is correct.
-    const body = scopeText.split("\n");
-    const titleIdx = body.findIndex((l) => l.trim());
-    const parts = body
-      .filter((l, i) => i !== titleIdx && !/tasks? to full alignment/i.test(l))
-      .map((l) => l.match(/^\s*\S.*?(\d+)\s*$/))
+    // A category line is "label ....  12": dot leaders are conventional, so anything ending in
+    // a number that is not the total counts, and a repo may name its own categories. The
+    // number must stand apart from its label, which is what separates a count from the version
+    // in the block's title - `standard@1.2` ends in a digit too, and reading it as a category
+    // fails a block whose arithmetic is correct. Position is deliberately not used: dropping
+    // "the first line" would eat a real category in a block that carries no title.
+    const parts = scopeText
+      .split("\n")
+      .filter((l) => !/tasks? to full alignment/i.test(l))
+      .map((l) => l.match(/^\s*\S.*?\s(\d+)\s*$/))
       .filter(Boolean)
       .map((m) => Number(m[1]));
 

@@ -203,6 +203,18 @@ check("the block's title is a title, not a category whose number joins the sum",
   expect: ["OK"],
 });
 
+// The fix for the case above is easy to write as "skip the first line", which silently drops
+// a real category from any block that carries no title - a wrong sum reported as the repo's.
+check("a block with no title line at all still sums its own categories", {
+  files: {
+    ...good,
+    // Five categories, no title: a guard that skipped line one would see 9 against a stated 14.
+    "backlog.md": backlog({ title: "  specs to write .....................    5", parts: [2, 4, 3, 0], total: 14 }),
+  },
+  code: 0,
+  expect: ["OK"],
+});
+
 check("a bolded total is still a total", {
   files: { ...good, "backlog.md": backlog({ totalLine: "  **14** tasks to full alignment" }) },
   code: 0,
