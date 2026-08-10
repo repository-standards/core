@@ -140,6 +140,36 @@ nobody had seen, the agent asking included. It stays, as an intent; the consent 
 wave is re-asked after Gate 2 with the drift number and the count in front of the user, and
 stopping there is explicitly not going back on the Step 0 answer.
 
+### An adoption record arrived under a different commit subject every time (2026-08-10)
+
+`record-run` assembles a real adoption session into the human-prompting corpus and opens a
+pull request with it, and said nothing about what to call either the commit or the pull
+request. So each agent invented one: the same class of contribution has landed as
+`docs(validation)`, `feat(human-prompting)` and `feat(validation)`. The corpus exists to
+answer "has anybody outside this project actually run this", and its own history cannot be
+counted without opening files.
+
+One shape is prescribed now, for the commit and the pull request alike, since a run is one
+of each: `feat(real-adoption): <repo slug or code>, <stack> - what the run showed`. The
+outcome half is not optional and an abandoned run says it was abandoned - a subject line
+that only ever reports success rebuilds, one commit at a time, exactly the bias the skill
+was written to correct.
+
+The identity half is bound to the consent level the user picked, which is the part worth
+getting right rather than the format. The subject line is the one place the skill's own
+scrub can be quietly undone: an assembled file can still be edited or dropped, a subject in
+a merged history cannot. A Level 2 run named the repository, so its slug goes in; a Level 1
+run did not, so it gets an opaque code that is **not derived from the repository's name**,
+because a short hash of the name is still the name to anybody who can guess at it. Stack and
+outcome carry at both levels, since neither identifies anyone. `reporting.md` names the same
+shape for a report written by hand, so the two paths cannot drift apart again.
+
+The scope is also a claim, not decoration: `real-adoption` says the session was somebody
+else's. A run this project drove itself keeps the scope those commits already use, because
+the corpus's stated weakness is that its numbers come from the people who wrote the
+standard, and a history that cannot tell the two apart reproduces that weakness in the one
+place everybody trusts.
+
 ## 1.1.0 - 2026-08-10
 
 125 entries across the week since 1.0.13, mostly the same method applied further: real-repo

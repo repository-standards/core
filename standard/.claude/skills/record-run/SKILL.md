@@ -84,6 +84,36 @@ will only ever collect successes, and the corpus already knows what those look l
    access, an issue carrying the same assembled content is an equivalent path (`reporting.md`
    already allows this); do not treat write access as a gate on contributing.
 
+8. **Name the commit and the pull request, and name them the same way every time.** One run
+   is one commit and one pull request, both carrying this subject:
+
+   ```
+   feat(real-adoption): <repo slug or code>, <stack> - what the run showed
+   ```
+
+   - `feat(real-adoption): hagopj13/node-express-boilerplate, Node/TS - drift 14 to 0, three capability specs written from the code`
+   - `feat(real-adoption): anon-4f2, Rust/Cargo - abandoned at intake, the registry missed and the honest-miss path never fired`
+
+   This is prescribed rather than left to taste because the log is read as evidence and every
+   agent that has contributed so far invented its own shape - the same class of contribution
+   has arrived as `docs(validation)`, `feat(human-prompting)` and `feat(validation)`, which
+   means nobody can count adoptions without opening files. The outcome half is not optional
+   and an abandoned run states that it was abandoned: a subject line that only ever reports
+   success rebuilds, one commit at a time, the bias this whole skill exists to correct.
+
+   **The identity half is bound to the consent level the user picked, and this is the part to
+   get right.** The subject line is the one place step 3's scrub can be quietly undone - an
+   assembled JSON file can still be edited or dropped, a subject in a merged history cannot.
+   Level 2 named the repository, so its slug goes in. Level 1 did not, so it gets an opaque
+   code that is **not derived from the repository's name**: a short hash of the name is still
+   the name to anybody who can guess at it. Stack and outcome carry at both levels, since
+   neither identifies anyone.
+
+   `real-adoption` is a claim about whose session it was. A run this project drove itself is
+   not one, and keeps the scope those commits already use (`validation`). The corpus's stated
+   weakness is that its numbers come from the people who wrote the standard; a log that cannot
+   tell the two apart reproduces that weakness in the one place everybody trusts.
+
 ## What this is not
 
 - Not a substitute for `reporting.md` - a user who wants to write the report by hand, or
