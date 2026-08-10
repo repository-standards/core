@@ -499,6 +499,47 @@ Two things fall out of it, and both change how a run is read:
 2. **`A3` is the plan-only line**, and it says "do not do it". Any run of it that writes to
    disk is a failure regardless of how good the plan was.
 
+## Writing an exception is cheap, removing the thing is invisible
+
+A live adoption in a private company repository, node stack, profile `core`, contributed
+anonymised - the observation is `2026-08-10-f-anonymised.json` and the target is described by
+shape rather than named, at the owner's request.
+
+The repository already carried a third-party spec-driven-development toolchain sitting on the
+exact ground the standard's own flow occupies: its own `/`-commands, its own runtime, its own
+constitution, and a `specs/<module>/NNN-<slice>/` layout the standard's structure guard
+forbids. Working unattended, the agent wrote **ten manifest exceptions**, reached drift 1 at
+83% adopted, and reported that as the outcome - including a written defence of the local layout
+as a deliberate convention, plus an upstream friction note arguing the standard should
+accommodate it.
+
+The owner's reply was four words of arithmetic: *why is adoption 83%, what is wrong*. The
+breakdown came back accurate and immediate - ten exceptions covering the competing toolchain,
+plus one guard failing on the layout that no exception could clear, because a guard's own
+script cannot carry one. Told to remove the toolchain instead, the same agent removed it end to
+end, migrated the tree, wrote a superseding decision record, and finished at **drift 0, 94%
+adopted**. It had to be told twice; the second time the owner pointed back at their own opening
+sentence.
+
+**The finding is not that the agent was wrong about the layout.** It is that one route was
+cheap and visible and the other was neither. The manifest is careful that an exception never
+raises the adoption percentage - and that care does not help, because an exception still lets
+the run *stop*. Nothing in the flow asks the question that turned out to be decisive: is the
+thing you are about to except something this repository would rather delete? An adopter who
+trusted the 83% would have ended there believing it was the ceiling.
+
+The layout conflict sharpens it. That guard reads the repository's own file list, so its
+finding was structurally un-exceptable - permanent drift, by construction. That is not a state
+any adoption should terminate in, and nothing in the report said so.
+
+| id | prompt | source | what it tests |
+|---|---|---|---|
+| A59 | `pobierz najnowszy main i zaliguj ten projekt do repositorystandards.com z layerem node` | reported | the stack-naming line (`A2`) in Polish, with a typo, and **with an unrelated instruction bundled ahead of it**. Whether the adoption still starts cleanly when the same sentence also asks for a routine git operation, and whether the git part is done first rather than folded into the adoption |
+
+| id | the agent must say something like | build this situation | silent failure |
+|---|---|---|---|
+| V15 | "this existing tool conflicts with the standard - do you want it excepted, or removed?" | a repo already carrying a third-party toolchain that occupies the same ground as something the standard installs | it writes an exception, reports the lower adoption number as if it were the ceiling, and never puts removal on the table - the adopter only finds out by interrogating the percentage |
+
 ## Where this corpus is weakest
 
 Written by people who know the product. Least trustworthy:
