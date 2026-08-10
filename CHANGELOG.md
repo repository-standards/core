@@ -11,6 +11,48 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### The dashboard summarised everything and let you read nothing (2026-08-10)
+
+The dashboard is the surface for people who never open the repository, and until now it
+showed them a state projection: counts, statuses, dates, and every document clipped to a
+one-line summary. The whole page carried a single hyperlink. Specifications - the part of
+this method that says what a thing must do, and the part a stakeholder most often needs to
+read - had no tab at all, and discovery dossiers were not read by the generator in any form.
+So the answer to "what does this product actually have to do" was: clone the repo. For the
+audience the dashboard exists for, that is the same as no answer.
+
+Documents are now rendered rather than described. The generator gained a small
+markdown-to-HTML pass that runs at build time - headings, lists, tables, code, blockquotes -
+so a document's own sections survive into the page instead of being flattened into a summary
+string. Specifications get their own tab: a list on the left, the full document on the right,
+with the capability's state, who it serves and its success metric pulled out at the top,
+its own section navigation, and a link to the source file on the forge for anyone who wants
+the raw markdown. Every unresolved open marker in a spec (`NEEDS CLARIFICATION`, `DECISION`,
+`INPUT`, `ASSET`) is listed as a gap on the document itself, so a spec that is still waiting
+on somebody says so where it is read rather than only in a guard's output.
+
+Discovery dossiers appear on the Documents tab with their contradictions, their revisit
+signals and their entry table, and an idea now names the discovery topic it came out of.
+The dossier **bodies** are the exception to "render everything": they are raw material,
+they routinely name people who spoke, and the publishing workflow puts this page on the
+open web. They ship only under an explicit `--with-discovery`, and that flag resolves to
+off when `--anonymise` is also passed - anonymising and shipping the meeting extracts are
+opposites, so the two together take the safer reading rather than the last one typed. When
+bodies are withheld the page says so; it does not pretend the dossier is thin.
+
+The tab strip changed shape as a consequence. `Now` is a sprint view, and a repository with
+no sprints was opening on a tab whose only content was four tiles. It is now skipped
+entirely for such repositories, and the tiles - plus a new short attention list, the things
+worth a look that are otherwise buried in counts - move to the top of `Backlog`, which
+becomes the first tab. A repository that does run sprints sees exactly what it saw before.
+
+The cost is stated rather than hidden: this repository's page went from 247 KB to 777 KB,
+almost all of it the five spec bodies now inlined. That is the price of a page that works
+with no server, no build step at the reader's end and no second request, and it is paid
+once per build. Discovery bodies, the unbounded half, stay off by default.
+
 ## 0.9.0 - 2026-08-10
 
 125 entries across the week since 0.8.13, mostly the same method applied further: real-repo

@@ -7,7 +7,7 @@
 // where work is tracked. Sources that a repo does not have are skipped, not faked.
 //
 //   node scripts/generate-dashboard/index.mjs [repo-root] [--out <file>] [--watch] [--serve [port]]
-//                                            [--anonymise]
+//                                            [--anonymise] [--with-discovery]
 //
 // --watch rebuilds when a source file changes; --serve adds a local server so an open page
 // notices and offers a refresh. Neither ever touches git: a page going stale is a display
@@ -19,6 +19,13 @@
 // names needs the sources checked too. The page never contains anything the repository does
 // not already contain, which is the whole security model: a private repository's page is
 // private data and belongs behind whatever gate the repository is behind.
+//
+// --with-discovery additionally carries the BODIES of the discovery dossiers into the page.
+// Off by default, and deliberately: a dossier is the one folder holding raw material about
+// named people - who said what at which meeting, quoted from a client's mail - and this page
+// is built by a workflow that publishes it. Titles, stamps and counts ship either way, since
+// those are the state; the material itself only ships when somebody asks for it in the
+// command that builds the page. --anonymise turns it back off whatever the flags say.
 
 import { readFileSync, readdirSync, writeFileSync, mkdirSync, existsSync, watch } from 'node:fs'
 import { join, dirname, basename, resolve } from 'node:path'
@@ -38,6 +45,9 @@ const DEFAULT_PORT = 9675
 const port = serveFlag >= 0 && /^\d+$/.test(argv[serveFlag + 1] || '') ? Number(argv[serveFlag + 1]) : DEFAULT_PORT
 const watching = argv.includes('--watch') || serveFlag >= 0
 const anonymise = argv.includes('--anonymise') || argv.includes('--anonymize')
+// Anonymising and shipping the meeting extracts are opposites, so the two flags together
+// resolve to the safer one rather than to the last one typed.
+const withDiscovery = argv.includes('--with-discovery') && !anonymise
 // The first bare argument is the repository root - unless it is a flag's value. Written as a
 // set of taken positions because the obvious `n !== outFlag + 1` reads as position 0 when
 // there is no --out at all, which silently swallowed the root of `index.mjs /path/to/repo`.
@@ -104,6 +114,169 @@ function readTable(lines, start) {
     rows.push(row)
   }
   return { rows, end: i }
+}
+
+/* ---------- markdown documents -> html ---------- */
+
+// A page that shows a spec's title and hides its requirements is a table of contents. The
+// documents themselves are rendered here, at build time, so the payload stays inert data and
+// no markdown parser ever ships to the browser - the page keeps its one job, which is to
+// display what this file already decided.
+//
+// Link targets are dropped exactly as inline() drops them: they are repo-relative paths that
+// resolve to nothing on a page served from somewhere else, so the label survives and the
+// target does not. Everything a spec actually uses is kept - headings, lists, tables, code,
+// quotes - and anything else degrades to a paragraph rather than to markup on the screen.
+function mdHtml(md) {
+  const lines = String(md ?? '')
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+  const out = []
+  let para = []
+  const flush = () => {
+    if (para.length) out.push('<p>' + inline(para.join(' ')) + '</p>')
+    para = []
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const t = lines[i].trim()
+
+    if (t.startsWith('```')) {
+      flush()
+      const code = []
+      for (i++; i < lines.length && !lines[i].trim().startsWith('```'); i++) code.push(lines[i])
+      out.push('<pre><code>' + esc(code.join('\n')) + '</code></pre>')
+      continue
+    }
+
+    // An HTML comment in a source document is a note to whoever edits the file - the
+    // template's own instructions, most often - and is not addressed to a reader.
+    if (t.startsWith('<!--')) {
+      flush()
+      while (i < lines.length && !lines[i].includes('-->')) i++
+      continue
+    }
+
+    if (!t) {
+      flush()
+      continue
+    }
+
+    const h = t.match(/^(#{1,6})\s+(.*)$/)
+    if (h) {
+      flush()
+      // The caller supplies the section heading; anything deeper renders two levels down so a
+      // document displayed inside a panel never competes with the page's own headings.
+      const level = Math.min(6, h[1].length + 2)
+      out.push('<h' + level + '>' + inline(h[2]) + '</h' + level + '>')
+      continue
+    }
+
+    if (/^(-{3,}|\*{3,}|_{3,})$/.test(t)) {
+      flush()
+      out.push('<hr>')
+      continue
+    }
+
+    if (t.startsWith('|')) {
+      flush()
+      const rows = []
+      let j = i
+      for (; j < lines.length && lines[j].trim().startsWith('|'); j++) {
+        if (!isSeparator(lines[j])) rows.push(cells(lines[j]))
+      }
+      const head = rows.shift() || []
+      // The spec template opens with a two-column table whose header cells are empty - a
+      // layout device, not a header row. Rendering an empty <thead> puts a bar of nothing
+      // above it, so a header with no text at all is dropped and the rows stand alone.
+      const headed = head.some((c) => c)
+      out.push(
+        '<table>' +
+          (headed ? '<thead><tr>' + head.map((c) => '<th>' + inline(c) + '</th>').join('') + '</tr></thead>' : '') +
+          '<tbody>' +
+          (headed ? '' : '<tr>' + head.map((c) => '<td>' + inline(c) + '</td>').join('') + '</tr>') +
+          rows.map((r) => '<tr>' + r.map((c) => '<td>' + inline(c) + '</td>').join('') + '</tr>').join('') +
+          '</tbody></table>',
+      )
+      i = j - 1
+      continue
+    }
+
+    if (t.startsWith('>')) {
+      flush()
+      const quote = []
+      let j = i
+      for (; j < lines.length && lines[j].trim().startsWith('>'); j++) quote.push(lines[j].trim().replace(/^>\s?/, ''))
+      out.push('<blockquote>' + inline(quote.join(' ')) + '</blockquote>')
+      i = j - 1
+      continue
+    }
+
+    const bullet = t.match(/^([-*+]|\d+\.)\s+(.*)$/)
+    if (bullet) {
+      flush()
+      const ordered = /\d/.test(bullet[1])
+      const items = []
+      let j = i
+      for (; j < lines.length; j++) {
+        const lt = lines[j].trim()
+        const m = lt.match(/^([-*+]|\d+\.)\s+(.*)$/)
+        if (m) {
+          items.push(m[2])
+          continue
+        }
+        // A wrapped line under an item belongs to that item; a blank line ends the list. Both
+        // shapes are everywhere in these documents, where a requirement runs three lines.
+        if (lt && /^\s/.test(lines[j]) && items.length) {
+          items[items.length - 1] += ' ' + lt
+          continue
+        }
+        break
+      }
+      const tag = ordered ? 'ol' : 'ul'
+      out.push('<' + tag + '>' + items.map((x) => '<li>' + inline(x) + '</li>').join('') + '</' + tag + '>')
+      i = j - 1
+      continue
+    }
+
+    para.push(t)
+  }
+  flush()
+  return out.join('\n')
+}
+
+// A document's own `##` headings are its sections. Everything above the first one is the
+// preamble - the title, the meta table, the status fields - which the card already carries,
+// so it is not repeated here.
+function splitSections(text) {
+  const out = []
+  let current = null
+  let fenced = false
+  for (const line of String(text ?? '').split('\n')) {
+    // A `##` inside a fenced block is a shell comment or a heading being quoted, not this
+    // document's own structure - splitting on it invents a section out of somebody's example.
+    if (line.trim().startsWith('```')) fenced = !fenced
+    const h = fenced ? null : line.match(/^##\s+(.+?)\s*$/)
+    if (h) {
+      current = { heading: plain(h[1]), lines: [] }
+      out.push(current)
+      continue
+    }
+    if (current) current.lines.push(line)
+  }
+  return out.map((s) => [s.heading, mdHtml(s.lines.join('\n'))]).filter((s) => s[1])
+}
+
+// The open-marker family (ADR-024) is a spec's own gap list, typed by what is missing:
+// a question, a decision, an input, an asset - each naming who owes it. The clarify gate
+// counts them to decide whether a spec is ready to develop. Counting them here is what lets
+// the page say which specs are blocked and on whom, which today needs the gate run by hand,
+// once per spec, by somebody who already suspected the answer.
+function markersIn(text) {
+  return [...String(text ?? '').matchAll(/\[NEEDS ([A-Z]+):?([^\]]*)\]/g)].map((m) => ({
+    type: m[1].toLowerCase(),
+    note: clip(m[2], 180),
+  }))
 }
 
 // task/bug run todo|doing|blocked|done; open-question and idea rows carry their own
@@ -287,6 +460,8 @@ function parseDecisions() {
         status: metaRow(text, 'Status') || 'Accepted',
         date: metaRow(text, 'Date'),
         context: clip(sectionBody(text, 'Context'), 340),
+        path: f,
+        sections: splitSections(text),
       }
     })
     .sort((a, b) => (a.id < b.id ? 1 : -1))
@@ -333,6 +508,16 @@ function parseIdeas() {
         status: metaRow(text, 'Status') || 'idea',
         date: metaRow(text, 'Date'),
         itch: clip(sectionBody(text, 'The itch') || sectionBody(text, 'Context'), 340),
+        path: join(dir, f),
+        sections: splitSections(text),
+        // An idea says which dossier it grew out of, when it grew out of one. Declared by the
+        // file rather than guessed, with the folder mention as a fallback for a repo whose
+        // ideas predate the field: a link that has to be inferred is a link that goes wrong
+        // quietly, so the inferred one is only ever used when nothing was declared.
+        discovery:
+          (metaRow(text, 'Discovery') || '').match(/docs\/discovery\/([a-z0-9-]+)/i)?.[1] ||
+          text.match(/docs\/discovery\/([a-z0-9-]+)/i)?.[1] ||
+          null,
       }
     })
 }
@@ -342,16 +527,117 @@ function parseSpecs() {
   return readdirSync(join(root, 'specs'), { withFileTypes: true })
     .filter((d) => d.isDirectory() && existsSync(join(root, 'specs', d.name, 'spec.md')))
     .map((d) => {
-      const text = read(join('specs', d.name, 'spec.md'))
+      const path = join('specs', d.name, 'spec.md')
+      const text = read(path)
       return {
         name: d.name,
         title: inline((text.match(/^# (.+)$/m) || [, d.name])[1]),
         status: (text.match(/^\*\*Status:\*\*\s*(.+)$/m) || [, 'unknown'])[1].trim(),
         tier: (text.match(/^\*\*Spec tier:\*\*\s*(.+)$/m) || [, ''])[1].trim(),
         serves: clip((text.match(/^\*\*Serves:\*\*\s*(.+)$/m) || [, ''])[1], 200),
+        metric: clip((text.match(/^\*\*Success metric:\*\*\s*(.+)$/m) || [, ''])[1], 200),
         purpose: clip(sectionBody(text, 'Purpose'), 300),
+        path,
+        markers: markersIn(text),
+        reconciled: (text.match(/Last reconciled:\*{0,2}\s*`?(\d{4}-\d{2}-\d{2})/) || [])[1] || null,
+        sections: splitSections(text),
       }
     })
+}
+
+/* ---------- discovery dossiers ---------- */
+
+// The inbox of a topic (ADR-024): the meetings and mails a spec will eventually be written
+// from, each entry stamped with where it came from. A dossier is never normative, so the page
+// shows it as material and never as something to act on.
+//
+// What it does put in front of a reader is the one thing nothing else here shows: a dossier
+// whose entries are newer than its `Last reconciled:` stamp, or which holds a contradiction
+// nobody has settled, is live work. Today that lives in a table inside a folder that no index
+// reads, which is the same failure the dossier exists to prevent, one level up.
+function parseDiscovery() {
+  const dir = 'docs/discovery'
+  if (!has(dir)) return []
+  return readdirSync(join(root, dir), { withFileTypes: true })
+    .filter((d) => d.isDirectory() && existsSync(join(root, dir, d.name, 'README.md')))
+    .map((d) => {
+      const base = join(dir, d.name)
+      const text = read(join(base, 'README.md'))
+      const stamp = plain((text.match(/\*\*Last reconciled:\*\*\s*(.+)$/m) || [, 'never'])[1]) || 'never'
+      const stampDate = (stamp.match(/\d{4}-\d{2}-\d{2}/) || [])[0] || null
+
+      const entries = []
+      const contradictions = []
+      const signals = []
+      const lines = text.split('\n')
+      let section = ''
+      for (let i = 0; i < lines.length; i++) {
+        const h = lines[i].match(/^##\s+(.+)$/)
+        if (h) {
+          section = key(h[1])
+          continue
+        }
+        if (!lines[i].trim().startsWith('|')) continue
+        const t = readTable(lines, i)
+        for (const r of t.rows) {
+          if (section.startsWith('entries')) {
+            // The shipped template ships a placeholder row with `<YYYY-MM-DD>` in it. A real
+            // date is what separates a filled dossier from an empty one, so it is the test.
+            const date = plain(r.date)
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue
+            entries.push({ date, source: inline(r.source), state: plain(r.state) || 'new' })
+          } else if (section.startsWith('contradictions')) {
+            const what = inline(r.whatdisagrees ?? '')
+            if (!plain(what)) continue
+            contradictions.push({ what, a: inline(r.sourcea ?? ''), b: inline(r.sourceb ?? '') })
+          } else if (section.startsWith('revisit')) {
+            const record = inline(r.record ?? r.decision ?? '')
+            if (!plain(record)) continue
+            signals.push({ record, match: inline(r.matchingtext ?? r.match ?? r.signal ?? '') })
+          }
+        }
+        i = t.end - 1
+      }
+
+      const files = readdirSync(join(root, base))
+        .filter((f) => f.endsWith('.md') && f !== 'README.md' && !f.startsWith('_'))
+        .sort()
+        .reverse()
+        .map((f) => {
+          const body = read(join(base, f))
+          return {
+            name: f,
+            date: (f.match(/^(\d{4}-\d{2}-\d{2})/) || [])[1] || '',
+            title: inline((body.match(/^#\s+(.+)$/m) || [, f.replace(/\.md$/, '')])[1]),
+            path: join(base, f),
+            summary: clip(body.replace(/^#.*$/m, ''), 220),
+            sections: withDiscovery ? splitSections(body) : null,
+          }
+        })
+
+      // Consumed entries are settled by definition - the stamp is what the spec skills move
+      // when they fold one in - so what is live is everything else dated past the stamp, plus
+      // anything explicitly left open at any date.
+      const live = entries.filter(
+        (e) => e.state === 'open' || (e.state !== 'folded-into-spec' && !e.state.startsWith('superseded') && (!stampDate || e.date > stampDate)),
+      )
+
+      return {
+        topic: d.name,
+        title: inline((text.match(/^#\s+(.+)$/m) || [, d.name])[1]),
+        summary: clip(sectionBody(text, 'Summary') || text.replace(/^#.*$/m, ''), 300),
+        stamp,
+        stampDate,
+        entries,
+        contradictions,
+        signals,
+        files,
+        live: live.length,
+        path: join(base, 'README.md'),
+        bodies: withDiscovery,
+      }
+    })
+    .sort((a, b) => (a.topic < b.topic ? -1 : 1))
 }
 
 /* ---------- sprints: the sprint view ---------- */
@@ -498,10 +784,22 @@ const home =
   (remote.startsWith('git@github.com:') ? `https://github.com/${remote.slice('git@github.com:'.length)}` : null) ||
   (remote.startsWith('https://') ? remote : null)
 
+// Every document the page renders also links to the file it was rendered from, pinned to the
+// commit this build read - so a reader can check the page against the source, and the check
+// lands on what the page actually showed rather than on whatever main says today. Absent for
+// a repo hosted anywhere else, which costs nothing: the document itself is on the page.
+const ghRepo = remote.startsWith('git@github.com:')
+  ? 'https://github.com/' + remote.slice('git@github.com:'.length)
+  : /^https:\/\/github\.com\//.test(remote)
+    ? remote
+    : null
+const src = ghRepo && commit ? ghRepo + '/blob/' + commit + '/' : null
+
 const data = {
   meta: {
     name: pkg.name || repoName || basename(root),
     home,
+    src,
     version,
     commit,
     branch,
@@ -551,6 +849,7 @@ const data = {
     return fromFiles.concat(fromBacklog)
   })(),
   specs: parseSpecs(),
+  discovery: parseDiscovery(),
 }
 
 // Scoped to task/bug: open-question (open|decided) and idea (idea|exploring|...) rows use
@@ -568,6 +867,11 @@ data.counts = {
   sprintDone: inCycles.filter((i) => i.status === 'done').length,
   unreleased: entries.filter((e) => e.release === 'Unreleased').length,
   openQuestions: data.questions.filter((q) => q.open).length,
+  // A spec with an open marker is not ready to develop, and a dossier with unreconciled
+  // material is a question somebody is about to be asked twice. Both are states the repo
+  // already records and no view has ever surfaced.
+  specsBlocked: data.specs.filter((s) => s.markers.length).length,
+  discoveryLive: data.discovery.filter((t) => t.live || t.contradictions.length).length,
 }
 
 return data
@@ -717,7 +1021,7 @@ try {
 if (watching) {
   const sources = ['backlog.md', 'docs/backlog.md', 'CHANGELOG.md', 'docs/CHANGELOG.md', 'PRODUCT.md', 'docs/PRODUCT.md']
     .filter(has)
-    .concat(['docs/sprints', 'docs/decision-records', 'docs/ideas', 'docs/open-questions', 'specs'].filter(has))
+    .concat(['docs/sprints', 'docs/decision-records', 'docs/ideas', 'docs/open-questions', 'docs/discovery', 'specs'].filter(has))
 
   let pending = null
   for (const src of sources) {

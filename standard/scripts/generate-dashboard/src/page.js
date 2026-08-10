@@ -23,6 +23,27 @@ const add = (host, ...kids) => host.append(...kids.filter(Boolean))
 const LABEL = { doing: 'doing', todo: 'todo', blocked: 'blocked', done: 'done', split: 'split' }
 const pill = (status, label) => el('span', { class: 'pill ' + status, text: label || LABEL[status] || status })
 
+// Every document on this page also links to the file it was rendered from, pinned to the
+// commit the page was built from. Absent when the repository is not somewhere a link can
+// reach, in which case the path is still worth showing: it says where to look.
+const srcLink = (path, label) =>
+  !path
+    ? null
+    : D.meta.src
+      ? el('a', { class: 'src', href: D.meta.src + path, rel: 'noopener', target: '_blank', text: label || path })
+      : el('span', { class: 'src off', text: label || path })
+
+// A spec's status is its own vocabulary, mapped onto the four colours the page already uses
+// for everything else - so "live" reads like done and "in-refinement" reads like not-yet.
+const SPEC_STATE = {
+  live: 'done',
+  'ready-to-develop': 'doing',
+  'in-refinement': 'todo',
+  proposed: 'todo',
+  draft: 'todo',
+  retired: 'plain',
+}
+
 const DAY = 86400000
 const today = D.timeline?.generated || D.meta.latest
 const stamp = (iso) => Date.parse(iso + 'T00:00:00Z')
@@ -104,17 +125,21 @@ document.body.append(
 // tab rather than a page of activity charts dressed as reports.
 const reportable = D.sprints.some((c) => c.stats)
 const TABS = [
-  { id: 'now', label: 'Now' },
+  { id: 'now', label: 'Now', skip: !D.sprints.length },
   { id: 'timeline', label: 'Timeline', skip: !D.sprints.length },
   { id: 'sprints', label: 'Sprints', n: D.counts.sprintOpen || null, skip: !D.sprints.length },
   { id: 'backlog', label: 'Backlog', n: D.counts.todo + D.counts.doing + D.counts.blocked },
+  { id: 'specs', label: 'Specifications', n: D.specs.length, skip: !D.specs.length },
   { id: 'reports', label: 'Reports', skip: !reportable },
   { id: 'changelog', label: 'Changelog', n: D.entries.length, skip: !D.entries.length },
+  // Named after what it holds, not after a category the reader has to open it to test. A repo
+  // that keeps only decision records gets a tab called Decisions; one that also keeps ideas,
+  // standing questions or discovery material gets the wider name, because then it is true.
   {
     id: 'docs',
-    label: 'Documents',
-    n: D.decisions.length + D.specs.length + D.ideas.length + D.questions.length,
-    skip: !D.decisions.length && !D.specs.length && !D.ideas.length && !D.questions.length,
+    label: D.ideas.length || D.questions.length || D.discovery.length ? 'Documents' : 'Decisions',
+    n: D.decisions.length + D.ideas.length + D.questions.length + D.discovery.length,
+    skip: !D.decisions.length && !D.ideas.length && !D.questions.length && !D.discovery.length,
   },
 ].filter((t) => !t.skip)
 
@@ -166,7 +191,10 @@ function openDetail({ id, title, status, statusLabel, meta, sections, nodes }) {
       ...(meta || []).filter(Boolean).map((m) => el('span', { class: 'pill plain', text: m })),
     ]),
     el('div', { class: 'body' }, [
-      ...(sections || []).filter((s) => s && s[1]).map((s) => el('section', {}, [el('h4', { text: s[0] }), el('p', { html: s[1] })])),
+      // A section's body is a rendered document, not a sentence: index.mjs turns the source
+      // markdown into blocks, and a paragraph cannot contain a list or a table without the
+      // browser silently closing it first. One prose container reads both shapes.
+      ...(sections || []).filter((s) => s && s[1]).map((s) => el('section', {}, [el('h4', { text: s[0] }), el('div', { class: 'prose', html: s[1] })])),
       ...(nodes || []).filter(Boolean),
     ]),
   )
@@ -335,8 +363,14 @@ function progress(items) {
 
 /* ---------- view: now ---------- */
 
+// Now answers "how is the sprint going" - progress, the delivery forecast, what is in flight.
+// A repository that runs no sprints has no such question: what is left is a digest of the
+// backlog and the changelog, two tabs away, and a landing screen that repeats them teaches a
+// reader that the tabs are decoration. So without sprints the tab is absent, the same way
+// every other sourceless tab here is, and the two things worth keeping - the counts and
+// anything worth a look - open the Backlog instead, which is then the first thing you see.
 {
-  const v = views.now
+  const v = views.now || views.backlog
   const openSprints = D.sprints.filter((c) => c.state === 'open')
   const sprintItems = openSprints.flatMap((c) => c.items)
   const pool = sprintItems.length ? sprintItems : D.items
@@ -359,47 +393,92 @@ function progress(items) {
     ]),
   )
 
-  if (D.timeline?.stands?.length) {
+  // Two states the repository has always recorded and no view has ever shown: a spec that
+  // cannot be developed because something is missing, and discovery material nobody has
+  // reconciled with the spec it belongs to. Both are somebody about to be asked a question
+  // they already answered, which is the failure this whole method is built against.
+  const attention = [
+    D.counts.specsBlocked
+      ? {
+          n: D.counts.specsBlocked,
+          text:
+            (D.counts.specsBlocked === 1 ? 'specification is' : 'specifications are') +
+            ' not ready to develop - something named in them is missing',
+          go: () => select('specs'),
+        }
+      : null,
+    D.counts.discoveryLive
+      ? {
+          n: D.counts.discoveryLive,
+          text:
+            (D.counts.discoveryLive === 1 ? 'discovery topic has' : 'discovery topics have') +
+            ' material newer than the specification that consumed it, or two sources that disagree',
+          go: () => select('docs'),
+        }
+      : null,
+  ].filter(Boolean)
+
+  if (attention.length) {
     add(
       v,
-      el('h2', { class: 'section', text: 'Will it land on time' }),
-      el('div', { class: 'grid two' }, D.timeline.stands.map(standCard)),
-      D.timeline.headline ? el('p', { class: 'note', html: D.timeline.headline }) : null,
-    )
-  }
-
-  add(
-    v,
-    el('h2', { class: 'section', text: 'Being worked on' }),
-    inFlight.length
-      ? el('div', { class: 'grid two' }, inFlight.map(card))
-      : el('p', { class: 'empty', text: 'Nothing is picked up right now.' }),
-  )
-
-  if (blocked.length) add(v, el('h2', { class: 'section', text: 'Blocked' }), el('div', { class: 'grid two' }, blocked.map(card)))
-
-  if (D.entries.length) {
-    add(
-      v,
-      el('h2', { class: 'section', text: 'Just shipped' }),
+      el('h2', { class: 'section', text: 'Worth a look' }),
       el(
         'div',
         { class: 'list' },
-        D.entries.slice(0, 6).map((e) =>
-          el('div', { class: 'entry' }, [
-            el('div', { class: 'top' }, [el('span', { class: 't', html: e.title }), el('span', { class: 'meta', text: nice(e.date) })]),
-            el('p', { text: e.summary }),
+        attention.map((a) =>
+          el('div', { class: 'entry clickable', tabindex: '0', role: 'button', on: { click: a.go, keydown: (e) => ((e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), a.go())) } }, [
+            el('div', { class: 'top' }, [el('span', { class: 'id', text: String(a.n) }), el('span', { class: 't', text: a.text })]),
           ]),
         ),
       ),
-      el('p', {
-        class: 'meta count',
-        text: thisWeek + ' changes in the last seven days · ' + D.counts.unreleased + ' done and not yet cut into a version',
-      }),
     )
   }
 
-  if (D.backlog.note) add(v, el('h2', { class: 'section', text: 'What the owner says is next' }), el('p', { class: 'note', html: D.backlog.note }))
+  // Everything below is the sprint's own screen and lives only where that tab does. Without
+  // it the backlog board follows directly, which is what the reader came for anyway.
+  if (views.now) {
+    if (D.timeline?.stands?.length) {
+      add(
+        v,
+        el('h2', { class: 'section', text: 'Will it land on time' }),
+        el('div', { class: 'grid two' }, D.timeline.stands.map(standCard)),
+        D.timeline.headline ? el('p', { class: 'note', html: D.timeline.headline }) : null,
+      )
+    }
+
+    add(
+      v,
+      el('h2', { class: 'section', text: 'Being worked on' }),
+      inFlight.length
+        ? el('div', { class: 'grid two' }, inFlight.map(card))
+        : el('p', { class: 'empty', text: 'Nothing is picked up right now.' }),
+    )
+
+    if (blocked.length) add(v, el('h2', { class: 'section', text: 'Blocked' }), el('div', { class: 'grid two' }, blocked.map(card)))
+
+    if (D.entries.length) {
+      add(
+        v,
+        el('h2', { class: 'section', text: 'Just shipped' }),
+        el(
+          'div',
+          { class: 'list' },
+          D.entries.slice(0, 6).map((e) =>
+            el('div', { class: 'entry' }, [
+              el('div', { class: 'top' }, [el('span', { class: 't', html: e.title }), el('span', { class: 'meta', text: nice(e.date) })]),
+              el('p', { text: e.summary }),
+            ]),
+          ),
+        ),
+        el('p', {
+          class: 'meta count',
+          text: thisWeek + ' changes in the last seven days · ' + D.counts.unreleased + ' done and not yet cut into a version',
+        }),
+      )
+    }
+
+    if (D.backlog.note) add(v, el('h2', { class: 'section', text: 'What the owner says is next' }), el('p', { class: 'note', html: D.backlog.note }))
+  }
 }
 
 function standCard(s) {
@@ -885,23 +964,151 @@ if (views.changelog) {
 
 /* ---------- view: documents ---------- */
 
+/* ---------- specifications: the one tab that is the documents themselves ---------- */
+
+// Every other view is a projection of state - what is in flight, what landed, what is
+// blocked. This one is the specification, rendered. It exists because the page it belongs to
+// showed a spec's title and three hundred characters of its purpose, which is a catalogue
+// entry for the one artifact the repository exists to keep true: the requirements, the
+// contracts and the acceptance criteria were all somewhere else.
+if (views.specs) {
+  const v = views.specs
+  const state = { q: '', name: D.specs[0]?.name || null }
+
+  const listHost = el('div', { class: 'reader-list' })
+  const docHost = el('article', { class: 'doc' })
+  const search = searchBox('Search the specifications…', (q) => {
+    state.q = q
+    // Searching to a single match and then reading it is one gesture, not two.
+    const hits = matches()
+    if (hits.length && !hits.some((s) => s.name === state.name)) state.name = hits[0].name
+    drawList()
+    drawDoc()
+  })
+
+  add(
+    v,
+    el('p', { class: 'eyebrow', text: 'What this product must do' }),
+    el('p', {
+      class: 'lede',
+      text:
+        'One page per capability - a thing this product does - as written in the repository. Not a summary of it: the specification itself, at the commit this page was built from.',
+    }),
+    el('div', { class: 'controls searchrow' }, [search]),
+    el('div', { class: 'reader' }, [listHost, docHost]),
+  )
+
+  const matches = () =>
+    D.specs.filter(
+      (s) => !state.q || [s.title, s.name, s.purpose, s.serves, s.status, s.tier].filter(Boolean).join(' ').toLowerCase().includes(state.q),
+    )
+
+  function drawList() {
+    const list = matches()
+    const nodes = list.map((s) =>
+      el(
+        'button',
+        {
+          class: 'reader-item' + (s.name === state.name ? ' on' : ''),
+          type: 'button',
+          on: {
+            click: () => {
+              state.name = s.name
+              drawList()
+              drawDoc()
+            },
+          },
+        },
+        [
+          el('span', { class: 'rt', html: s.title }),
+          el('span', { class: 'rm' }, [
+            pill(SPEC_STATE[s.status] || 'plain', s.status),
+            s.markers.length ? pill('blocked', s.markers.length + ' open') : null,
+          ]),
+        ],
+      ),
+    )
+    listHost.replaceChildren(...(nodes.length ? nodes : [el('p', { class: 'empty', text: 'Nothing matches "' + state.q + '".' })]))
+  }
+
+  function drawDoc() {
+    const s = D.specs.find((x) => x.name === state.name)
+    if (!s) {
+      docHost.replaceChildren()
+      return
+    }
+    docHost.replaceChildren(
+      ...[
+        el('h2', { html: s.title }),
+        el('div', { class: 'head' }, [
+          pill(SPEC_STATE[s.status] || 'plain', s.status),
+          s.tier ? el('span', { class: 'pill plain', text: s.tier + ' spec' }) : null,
+          el('span', { class: 'id', text: s.name }),
+        ]),
+        s.serves ? el('p', { class: 'field' }, [el('b', { text: 'Serves. ' }), el('span', { text: s.serves })]) : null,
+        s.metric ? el('p', { class: 'field' }, [el('b', { text: 'Success metric. ' }), el('span', { text: s.metric })]) : null,
+        // The gap list, in the spec's own words. It is the answer to "which spec is blocked,
+        // and on whom", which until now needed the clarify gate run by hand, once per spec.
+        s.markers.length
+          ? el('div', { class: 'gaps' }, [
+              el('h4', { text: 'Open markers - not ready to develop' }),
+              el(
+                'ul',
+                {},
+                s.markers.map((m) => el('li', {}, [pill('blocked', m.type), el('span', { text: m.note })])),
+              ),
+            ])
+          : null,
+        s.sections.length
+          ? el(
+              'nav',
+              { class: 'jump' },
+              s.sections.map(([heading], n) =>
+                el('button', {
+                  type: 'button',
+                  text: heading,
+                  on: {
+                    click: () => docHost.querySelectorAll('section')[n]?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+                  },
+                }),
+              ),
+            )
+          : null,
+        ...s.sections.map(([heading, html]) => el('section', {}, [el('h3', { text: heading }), el('div', { class: 'prose', html })])),
+        el('p', { class: 'srcrow' }, [srcLink(s.path, 'Read the source file')]),
+      ].filter(Boolean),
+    )
+    docHost.scrollTop = 0
+  }
+
+  drawList()
+  drawDoc()
+}
+
 if (views.docs) {
   const v = views.docs
   const state = { q: '', kind: null }
 
+  // Specifications used to be listed here as cards, described in a paragraph explaining what
+  // a specification is. They have their own tab now, which renders them whole - so this tab
+  // keeps the records and the material, and stops introducing a document it cannot open.
   const GROUPS = [
-    ['spec', 'What each part must do', 'One page per capability - a thing this product does, like invoicing or scheduling - rather than one per ticket. Each says what that part has to do, who it is for, and how you can tell it works.'],
     ['business', 'Business decisions', 'What the product will and will not do, and who it is for. Written by the people who decide that, not translated from an engineering note.'],
     ['technical', 'Technical decisions', 'Every fork the build took, dated, with the context that made it the right call at the time.'],
     ['idea', 'Ideas', 'A feature that may never ship. Written down so the itch behind it survives, and nobody re-argues it from scratch.'],
     ['question', 'Open questions', 'Each has an answer in force and stays open to a better one. "Unanswered" means no answer is in force yet.'],
+    [
+      'discovery',
+      'Discovery',
+      'The meetings and mails a specification gets written from, kept with the date and the person they came from. Material, never a decision: where a dossier and a specification disagree, the specification has already won.',
+    ],
   ].filter(([kind]) =>
-    kind === 'spec'
-      ? D.specs.length
-      : kind === 'idea'
-        ? D.ideas.length
-        : kind === 'question'
-          ? D.questions.length
+    kind === 'idea'
+      ? D.ideas.length
+      : kind === 'question'
+        ? D.questions.length
+        : kind === 'discovery'
+          ? D.discovery.length
           : D.decisions.some((a) => a.kind === kind),
   )
 
@@ -941,7 +1148,7 @@ if (views.docs) {
   )
 
   const hits = (...fields) => !state.q || fields.filter(Boolean).join(' ').toLowerCase().includes(state.q)
-  const total = D.decisions.length + D.specs.length + D.ideas.length + D.questions.length
+  const total = D.decisions.length + D.ideas.length + D.questions.length + D.discovery.length
 
   function draw() {
     const parts = []
@@ -949,11 +1156,7 @@ if (views.docs) {
     for (const [kind, heading, lede] of GROUPS) {
       if (state.kind && state.kind !== kind) continue
       let nodes = []
-      if (kind === 'spec') {
-        const list = D.specs.filter((s) => hits(s.title, s.name, s.purpose, s.serves, s.status))
-        shown += list.length
-        nodes = list.length ? [el('div', { class: 'grid two' }, list.map(specCard))] : []
-      } else if (kind === 'idea') {
+      if (kind === 'idea') {
         const list = D.ideas.filter((i) => hits(i.title, i.itch, i.status))
         shown += list.length
         nodes = list.length ? [el('div', { class: 'grid two' }, list.map(ideaCard))] : []
@@ -961,6 +1164,10 @@ if (views.docs) {
         const list = D.questions.filter((q) => hits(q.topic, q.decided, q.doubt))
         shown += list.length
         nodes = list.length ? [el('div', { class: 'list' }, list.map(questionRow))] : []
+      } else if (kind === 'discovery') {
+        const list = D.discovery.filter((t) => hits(t.title, t.topic, t.summary, ...t.files.map((f) => f.title)))
+        shown += list.length
+        nodes = list.length ? [el('div', { class: 'grid two' }, list.map(discoveryCard))] : []
       } else {
         const list = D.decisions.filter((a) => a.kind === kind && hits(a.id, a.title, a.context, a.status))
         shown += list.length
@@ -975,26 +1182,141 @@ if (views.docs) {
   }
   draw()
 
-  function specCard(s) {
-    return el('div', { class: 'card' }, [
-      el('div', { class: 'toprow' }, [
-        el('span', { class: 'pill plain', text: s.status }),
-        s.tier ? el('span', { class: 'meta', text: s.tier + ' spec' }) : null,
-      ]),
-      el('h3', { html: s.title }),
-      el('p', { text: s.purpose }),
-    ])
+  // A card that summarises a document and cannot open it is the problem this tab had. Every
+  // card here now leads somewhere: a spec to the tab that renders it whole, everything else
+  // to the same document in the detail panel.
+  function clickable(node, open) {
+    node.setAttribute('tabindex', '0')
+    node.setAttribute('role', 'button')
+    node.classList.add('clickable')
+    node.addEventListener('click', open)
+    node.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        open()
+      }
+    })
+    return node
   }
 
   function ideaCard(i) {
-    return el('div', { class: 'card' }, [
-      el('div', { class: 'toprow' }, [
-        el('span', { class: 'pill plain', text: i.status }),
-        el('span', { class: 'meta', text: i.date || '' }),
+    const dossier = i.discovery && D.discovery.find((t) => t.topic === i.discovery)
+    return clickable(
+      el('div', { class: 'card' }, [
+        el('div', { class: 'toprow' }, [
+          el('span', { class: 'pill ' + i.status, text: i.status }),
+          el('span', { class: 'meta', text: i.date || '' }),
+        ]),
+        el('h3', { html: i.title }),
+        el('p', { text: i.itch }),
+        // Where an idea came from, when it came from somewhere: an idea that grew out of a
+        // dossier is not the same object as one somebody had in the shower, and the reader
+        // deciding whether to take it seriously is exactly who needs to know which it is.
+        dossier ? el('p', { class: 'go', text: 'From discovery: ' + dossier.topic }) : null,
       ]),
-      el('h3', { html: i.title }),
-      el('p', { text: i.itch }),
-    ])
+      () =>
+        openDetail({
+          title: i.title,
+          meta: [i.status, i.date].filter(Boolean),
+          sections: i.sections,
+          nodes: [dossier ? el('p', { class: 'srcrow' }, [el('span', { class: 'src off', text: 'discovery: ' + dossier.path })]) : null, el('p', { class: 'srcrow' }, [srcLink(i.path)])],
+        }),
+    )
+  }
+
+  // A dossier's card carries its state, not its material: how much has been folded into a
+  // spec, how much is newer than the stamp, and whether two sources disagree. The material
+  // itself is on the page only when the build was asked for it (--with-discovery).
+  function discoveryCard(t) {
+    const live = t.live ? pill('doing', t.live + ' unreconciled') : t.entries.length ? pill('done', 'reconciled') : null
+    return clickable(
+      el('div', { class: 'card' }, [
+        el('div', { class: 'toprow' }, [
+          live,
+          t.contradictions.length ? pill('blocked', t.contradictions.length + ' contradicting') : null,
+          el('span', { class: 'meta', text: t.entries.length + (t.entries.length === 1 ? ' entry' : ' entries') }),
+        ]),
+        el('h3', { html: t.title }),
+        el('p', { text: t.summary }),
+        el('p', { class: 'go', text: 'Last reconciled: ' + t.stamp }),
+      ]),
+      () => openDossier(t),
+    )
+  }
+
+  function openDossier(t) {
+    const table = (head, rows) =>
+      el('table', { class: 'mini' }, [
+        el('thead', {}, [el('tr', {}, head.map((h) => el('th', { text: h })))]),
+        el('tbody', {}, rows),
+      ])
+
+    openDetail({
+      title: t.title,
+      meta: ['last reconciled: ' + t.stamp, t.entries.length + ' entries'],
+      sections: [['What this topic is', t.summary]],
+      nodes: [
+        t.contradictions.length
+          ? el('section', {}, [
+              el('h4', { text: 'Contradictions to resolve' }),
+              table(
+                ['What disagrees', 'Source', 'Against'],
+                t.contradictions.map((c) =>
+                  el('tr', {}, [el('td', { html: c.what }), el('td', { html: c.a }), el('td', { html: c.b })]),
+                ),
+              ),
+            ])
+          : null,
+        t.signals.length
+          ? el('section', {}, [
+              el('h4', { text: 'Revisit signals hit' }),
+              table(
+                ['Record', 'Matching text'],
+                t.signals.map((s) => el('tr', {}, [el('td', { html: s.record }), el('td', { html: s.match })])),
+              ),
+            ])
+          : null,
+        t.entries.length
+          ? el('section', {}, [
+              el('h4', { text: 'Entries' }),
+              table(
+                ['Date', 'Source', 'State'],
+                t.entries.map((e) =>
+                  el('tr', {}, [el('td', { text: e.date }), el('td', { html: e.source }), el('td', { text: e.state })]),
+                ),
+              ),
+            ])
+          : null,
+        t.files.length
+          ? el('section', {}, [
+              el('h4', { text: t.bodies ? 'The material' : 'The material - titles only' }),
+              el(
+                'div',
+                { class: 'files' },
+                t.files.map((f) =>
+                  el('details', {}, [
+                    el('summary', {}, [
+                      el('span', { class: 'meta', text: f.date }),
+                      el('span', { class: 'ft', html: f.title }),
+                    ]),
+                    ...(f.sections
+                      ? f.sections.map(([heading, html]) => el('div', { class: 'prose' }, [el('h5', { text: heading }), el('div', { class: 'prose', html })]))
+                      : [
+                          el('p', { class: 'note', text: f.summary }),
+                          // Said rather than silently omitted: a reader looking at a dossier
+                          // with no material needs to know the build withheld it, not guess
+                          // that nobody wrote anything down.
+                          el('p', { class: 'note off', text: 'The extract itself is not in this page. Rebuild with --with-discovery to carry it, or open the source file.' }),
+                        ]),
+                    el('p', { class: 'srcrow' }, [srcLink(f.path)]),
+                  ]),
+                ),
+              ),
+            ])
+          : null,
+        el('p', { class: 'srcrow' }, [srcLink(t.path)]),
+      ],
+    })
   }
 
   function questionRow(q) {
@@ -1009,7 +1331,16 @@ if (views.docs) {
   }
 
   function recordRow(a) {
-    const open = () => openDetail({ id: a.id, title: a.title, meta: [a.status, a.date], sections: [['Context', a.context]] })
+    const open = () =>
+      openDetail({
+        id: a.id,
+        title: a.title,
+        meta: [a.status, a.date],
+        // The whole record, not its opening paragraph: the options somebody weighed and the
+        // consequences they accepted are the reason a decision record is worth keeping.
+        sections: a.sections,
+        nodes: [el('p', { class: 'srcrow' }, [srcLink(a.path)])],
+      })
     return el(
       'div',
       {
@@ -1049,7 +1380,9 @@ document.body.append(
   ]),
 )
 
-select(TABS.some((t) => t.id === location.hash.slice(1)) ? location.hash.slice(1) : 'now')
+// Whatever the first tab turns out to be for this repository - Now where sprints are run,
+// the Backlog where they are not.
+select(TABS.some((t) => t.id === location.hash.slice(1)) ? location.hash.slice(1) : TABS[0].id)
 
 /* ---------- staleness: update itself, and only ask when asking is the polite thing ---------- */
 

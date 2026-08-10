@@ -540,11 +540,11 @@
       "since": "0.9.0",
       "rule": "R15",
       "sha256": {
-        "index.mjs": "eb6fa35966f0cdeecc0ab95c447d9b67e53f9ed09917abe8d96fe48d25faa3be",
+        "index.mjs": "2e5945875236f2270b2d3a8ec18a1156110ac59e612c1f2036fb1245bb0ef8a5",
         "src/gate.css": "63a0b56a4491c5e3686835e15886d1440be4cc497a306a9caaa2a4678d15f07c",
         "src/gate.js": "741e6d0e9115aff4e44930021875f632044857b9bc3b5fb7522fa79f9b07105e",
-        "src/page.css": "e5d92c7f37a5fcb0f2b015e7c96b77e69f8c9234d5114f5857207029d252858d",
-        "src/page.js": "f0d5d29428042fa04eef75a1b432c32356a9be4d88e750f6c5fa4aa9d8780e91"
+        "src/page.css": "4d3ef7ab4c4f833438be502c998801f375b9252abdf8a18d6e3bac7029849184",
+        "src/page.js": "2706b61de68e0434a2bb23992efcd975b84a8b4b60c3b557a119a81afcc60bd1"
       }
     },
     {
