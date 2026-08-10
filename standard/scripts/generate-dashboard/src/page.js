@@ -44,6 +44,13 @@ const SPEC_STATE = {
   retired: 'plain',
 }
 
+// What closes a row, per type: done/split close a task, graduated/dropped close an idea the
+// same way - superseded by its own spec and records, or decided against. open-question's
+// "decided" is deliberately absent: a standing decision open to challenge is the point of the
+// type, not a completed state to hide (ADR-046). The tab count and the list's own filter read
+// this one set, so the number above the list cannot drift from the list.
+const CLOSED = new Set(['done', 'split', 'graduated', 'dropped'])
+
 const DAY = 86400000
 const today = D.timeline?.generated || D.meta.latest
 const stamp = (iso) => Date.parse(iso + 'T00:00:00Z')
@@ -128,7 +135,10 @@ const TABS = [
   { id: 'now', label: 'Now', skip: !D.sprints.length },
   { id: 'timeline', label: 'Timeline', skip: !D.sprints.length },
   { id: 'sprints', label: 'Sprints', n: D.counts.sprintOpen || null, skip: !D.sprints.length },
-  { id: 'backlog', label: 'Backlog', n: D.counts.todo + D.counts.doing + D.counts.blocked },
+  // The number on a tab is how many things that tab holds - the same reading as Changelog and
+  // Specifications. It used to be todo+doing+blocked, which is the task vocabulary only, so a
+  // repo carrying ideas and standing questions had a tab saying 14 above a list saying 41.
+  { id: 'backlog', label: 'Backlog', n: D.items.filter((i) => !CLOSED.has(i.status)).length },
   { id: 'specs', label: 'Specifications', n: D.specs.length, skip: !D.specs.length },
   { id: 'reports', label: 'Reports', skip: !reportable },
   { id: 'changelog', label: 'Changelog', n: D.entries.length, skip: !D.entries.length },
@@ -367,8 +377,12 @@ function progress(items) {
 // A repository that runs no sprints has no such question: what is left is a digest of the
 // backlog and the changelog, two tabs away, and a landing screen that repeats them teaches a
 // reader that the tabs are decoration. So without sprints the tab is absent, the same way
-// every other sourceless tab here is, and the two things worth keeping - the counts and
-// anything worth a look - open the Backlog instead, which is then the first thing you see.
+// every other sourceless tab here is.
+//
+// The tiles go with it. Without a sprint to measure they count the backlog, and the backlog
+// tab already carries its own count in the tab strip and again under the list - a third copy
+// of a number is not a summary. What survives is the one thing no tab states: what is worth
+// a look, which opens the Backlog, and that is then the first thing you see.
 {
   const v = views.now || views.backlog
   const openSprints = D.sprints.filter((c) => c.state === 'open')
@@ -378,20 +392,22 @@ function progress(items) {
   const blocked = pool.filter((i) => i.status === 'blocked')
   const thisWeek = D.entries.filter((e) => daysAgo(e.date) <= 7).length
 
-  add(
-    v,
-    el('p', { class: 'eyebrow', text: 'Where the work stands' }),
-    tiles([
-      openSprints.length
-        ? tile('Sprint progress', D.counts.sprintDone + '/' + D.counts.sprintItems, 'is-done', 'items finished in the open sprint')
-        : D.entries.length
-          ? tile('Changes, 7 days', thisWeek, 'is-done', 'landed on the main line')
-          : null,
-      tile('In flight', inFlight.length, 'is-doing', 'picked up right now'),
-      tile('Waiting', D.counts.todo, '', 'agreed, not started'),
-      tile('Blocked', blocked.length, 'is-blocked', 'waiting on something else'),
-    ]),
-  )
+  if (views.now) {
+    add(
+      v,
+      el('p', { class: 'eyebrow', text: 'Where the work stands' }),
+      tiles([
+        openSprints.length
+          ? tile('Sprint progress', D.counts.sprintDone + '/' + D.counts.sprintItems, 'is-done', 'items finished in the open sprint')
+          : D.entries.length
+            ? tile('Changes, 7 days', thisWeek, 'is-done', 'landed on the main line')
+            : null,
+        tile('In flight', inFlight.length, 'is-doing', 'picked up right now'),
+        tile('Waiting', D.counts.todo, '', 'agreed, not started'),
+        tile('Blocked', blocked.length, 'is-blocked', 'waiting on something else'),
+      ]),
+    )
+  }
 
   // Two states the repository has always recorded and no view has ever shown: a spec that
   // cannot be developed because something is missing, and discovery material nobody has
@@ -738,8 +754,20 @@ if (views.sprints) {
 
 {
   const v = views.backlog
-  const epics = D.backlog.epics.map((e) => e.title)
-  const state = { q: '', epic: null, hideDone: true }
+  const state = { q: '', type: null, hideDone: true }
+
+  // Filtering was by epic, which is a heading in one repository's own backlog file: the chips
+  // read as a list of that repository's project names, truncated, and told a reader nothing
+  // about what kind of thing a row was. Type is the axis this index is actually built on
+  // (ADR-046) - a task, a bug, an idea and a standing question are read differently and by
+  // different people - and it is the same everywhere, so the control means the same thing in
+  // every repository. The epic is still on every row and still matched by the search box.
+  const TYPES = [
+    ['task', 'Tasks'],
+    ['bug', 'Bugs'],
+    ['idea', 'Ideas'],
+    ['open-question', 'Open questions'],
+  ].filter(([t]) => D.items.some((i) => i.type === t))
 
   const search = searchBox('Search the pool by title, id or reason…', (q) => {
     state.q = q
@@ -763,18 +791,18 @@ if (views.sprints) {
   const chipRow = el(
     'div',
     { class: 'controls' },
-    epics.map((name) =>
+    TYPES.map(([type, label]) =>
       el('button', {
         class: 'chip',
         type: 'button',
         'aria-pressed': 'false',
-        text: name.length > 30 ? name.slice(0, 28).trimEnd() + '…' : name,
-        title: name,
-        style: '--cat:' + catVar(name),
+        text: label,
+        title: type,
+        style: '--cat:' + catVar(type),
         on: {
           click: () => {
-            state.epic = state.epic === name ? null : name
-            for (const c of chipRow.children) c.setAttribute('aria-pressed', String(c.title === state.epic))
+            state.type = state.type === type ? null : type
+            for (const c of chipRow.children) c.setAttribute('aria-pressed', String(c.title === state.type))
             draw()
           },
         },
@@ -788,18 +816,14 @@ if (views.sprints) {
     el('p', { class: 'eyebrow', text: 'The pool · ordered by risk x leverage, top is next' }),
     el('p', { class: 'lede', text: 'Every item carries the reason it exists and what "done" means for it, both written before the work starts. An item leaves the pool only when that definition is met - or when it is pulled into a sprint.' }),
     el('div', { class: 'controls searchrow' }, [search, doneChip]),
-    epics.length > 1 ? chipRow : null,
+    TYPES.length > 1 ? chipRow : null,
     host,
   )
 
   function draw() {
     const items = D.items.filter((i) => {
-      // done/split close a task; graduated/dropped close an idea the same way (superseded by
-      // its own spec+records, or decided against). open-question's "decided" is deliberately
-      // NOT here - it stays visible, since a standing decision open to challenge is the point
-      // of the type, not a completed state to hide (ADR-046).
-      if (state.hideDone && (i.status === 'done' || i.status === 'split' || i.status === 'graduated' || i.status === 'dropped')) return false
-      if (state.epic && i.epic !== state.epic) return false
+      if (state.hideDone && CLOSED.has(i.status)) return false
+      if (state.type && i.type !== state.type) return false
       if (!state.q) return true
       return (i.id + ' ' + i.title + ' ' + i.why + ' ' + i.dod + ' ' + i.epic + ' ' + i.cap).toLowerCase().includes(state.q)
     })
