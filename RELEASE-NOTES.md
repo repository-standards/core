@@ -3,6 +3,36 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.1.1 - 2026-08-10
+
+**The dashboard is now something you can actually read, not just skim.** Specifications get
+their own tab with the full document, its state and success metric, and a link to the source;
+discovery dossiers show their contradictions and open threads. Previously every document was
+flattened to a one-line summary with a single link out - now the dashboard is a real substitute
+for opening the repository.
+
+**Two more outside adoptions ran, and both changed the standard.** A Next.js monorepo run
+found that the corpus was scoring descriptions of what an agent did as if they were its own
+words - fixed, and the corpus now says which is which per turn. A second, anonymised run
+found something sharper: an adopter can write ten manifest exceptions, stop at 83% adopted,
+and never learn that removing the conflicting toolchain instead would have reached 100% -
+an exception silences a finding but never asks whether the thing being excepted should just
+be deleted.
+
+**A green drift-0 run could previously skip the two reports a human actually reads.**
+Self-verify already caught a skipped intake round; the same hole existed for the mid-run
+health check and the final adoption count, so an adoption could finish clean without ever
+producing the numbers its owner needed to decide anything. Both are required now, checked
+for shape and arithmetic, not just presence.
+
+**Adoption records now carry one name.** `record-run` assembled real sessions into the
+corpus without saying what to call the commit or the pull request, so every contribution
+invented its own - now there is one prescribed shape, and it states the outcome and the
+consent level rather than only ever reporting success.
+
+**Under the hood**: five entries since 1.1.0, all from real usage rather than planned work.
+Full developer changelog in `CHANGELOG.md`.
+
 ## 1.1.0 - 2026-08-10
 
 **Tested at real scale, not just real codebases.** 1.0.13 proved the standard works on
