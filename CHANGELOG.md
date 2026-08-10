@@ -43,10 +43,24 @@ opposites, so the two together take the safer reading rather than the last one t
 bodies are withheld the page says so; it does not pretend the dossier is thin.
 
 The tab strip changed shape as a consequence. `Now` is a sprint view, and a repository with
-no sprints was opening on a tab whose only content was four tiles. It is now skipped
-entirely for such repositories, and the tiles - plus a new short attention list, the things
-worth a look that are otherwise buried in counts - move to the top of `Backlog`, which
+no sprints was opening on a tab whose only content was four tiles counting the backlog. It
+is skipped entirely for such repositories, and the tiles go with it rather than moving:
+`Backlog` already states its own count in the tab strip and again under the list, and a
+third copy of a number is not a summary. What does move is the one thing no tab stated -
+a short attention list of specifications blocked on a missing input and discovery topics
+holding material newer than the specification that consumed it - onto `Backlog`, which
 becomes the first tab. A repository that does run sprints sees exactly what it saw before.
+
+Two more numbers stopped lying while that tab was being read. The `Backlog` tab counted
+`todo + doing + blocked`, which is the task vocabulary only, so a repository carrying ideas
+and standing questions showed 14 on the tab above a list saying 41 - the tab now counts what
+the tab holds, the same reading `Changelog` and `Specifications` already had, from the same
+closed-status set the list itself filters on. And the filter chips listed the epic headings
+out of one repository's own backlog file, truncated to fit: a row of that repository's
+project names that told a reader nothing about what kind of thing a row was. They filter by
+`type` now - task, bug, idea, open question - which is the axis this index is built on and
+means the same thing in every repository. The epic is still on every row and still matched
+by the search box.
 
 The cost is stated rather than hidden: this repository's page went from 247 KB to 777 KB,
 almost all of it the five spec bodies now inlined. That is the price of a page that works
