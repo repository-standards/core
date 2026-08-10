@@ -96,6 +96,13 @@ Open an issue or a pull request on
 adding your prompt to [`prompts.md`](prompts.md) with `source: reported` is the most direct
 route, but an issue with the transcript is entirely enough - the row can be written from it.
 
+If you open a pull request, title it
+`feat(real-adoption): <your repo or a code for it>, <stack> - what the run showed`, the same
+shape the `record-run` skill uses when it assembles one for you. Put the repository's name in
+it only if you are willing for it to be public: a title in a merged history is the one part of
+a contribution that cannot be edited away afterwards. A code you pick yourself is fine, and it
+costs the report nothing.
+
 **Reports outrank anything we invented.** The rows in the corpus written by people who know
 this product are marked as the weaker half on purpose: they systematically produce prompts the
 product can already handle. Yours does not have that problem.
