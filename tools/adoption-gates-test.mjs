@@ -198,7 +198,10 @@ check("the backlog is also read at docs/backlog.md", {
 // The block's own title names the standard's version, so a title-reading parser adds that
 // version's last number to the sum. It passed only because the fixture's version ended in 0.
 check("the block's title is a title, not a category whose number joins the sum", {
-  files: { ...good, "backlog.md": backlog({ title: "Alignment scope for demo -> standard@1.2" }) },
+  // A version that has actually shipped, and whose last digit is not 0 - so the case still
+  // discriminates. An invented number in an example reads as a real one, and this repo has a
+  // guard for exactly that habit on its prose surfaces.
+  files: { ...good, "backlog.md": backlog({ title: "Alignment scope for demo -> standard@1.1" }) },
   code: 0,
   expect: ["OK"],
 });

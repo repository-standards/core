@@ -206,7 +206,7 @@
       "profile": "core",
       "since": "unreleased",
       "rule": "R27",
-      "sha256": "9cb62bdddf5662b345bb1a98447739458eb700d743f0b5e2ff4a88e320a68dca"
+      "sha256": "98df9b00742d68ea8f4a4a8100ecb79e2db223a01eecf97822ad765324f032a4"
     },
     {
       "path": ".claude/skills",
