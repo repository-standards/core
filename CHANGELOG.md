@@ -11,7 +11,7 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
-## Unreleased
+## 0.9.1 - 2026-08-10
 
 ### The dashboard summarised everything and let you read nothing (2026-08-10)
 
@@ -104,6 +104,31 @@ an agent broad autonomy mid-run*, and this same repository's `docs/personas.md` 
 `specs/capability-map.json` shipped with none of the "unconfirmed" marking the unavailable-user
 fallback calls for. The proposed fix to `onboard.md` stays a linked follow-up rather than landing
 in this pull request.
+
+### An anonymised run found drift that no exception could close (2026-08-10)
+
+A live adoption in a private company repository, Node stack, profile core, contributed
+anonymised at the owner's request: the target is described by shape rather than named, no
+paths, no ticket ids, every user turn verbatim including the typos.
+
+The repository already carried a third-party spec-driven-development toolchain occupying the
+same ground as this standard's own flow, including a specs layout the structure guard
+forbids. Working unattended, the agent wrote ten manifest exceptions, stopped at drift 1 and
+83% adopted, and reported that as the outcome - with a written defence of the local layout.
+Told to remove the toolchain instead, the same agent removed it end to end and finished at
+drift 0 and 94%. The manifest is careful that an exception never raises the adoption
+percentage; that care does not reach far enough, because an exception still lets a run stop,
+and nothing in the flow asks whether the thing being excepted is something the adopter would
+rather delete. An adopter who trusted the 83% would have ended there believing it was the
+ceiling. The layout conflict sharpens the point: that guard reads the repository's own file
+list, so its finding was un-exceptable by construction, and the run recorded it as permanent
+drift with nothing saying that is not a state an adoption should terminate in.
+
+`A34` records the entry line this run adds to the corpus - the stack-naming prompt in Polish,
+with a typo, and with an unrelated git instruction bundled ahead of it. Numbers move honestly
+with it: per-turn `asked` across the corpus falls from 76% to 72%, because this run asked
+once and then executed.
+
 ### An adoption reached drift 0 without producing the two artifacts a human decides on (2026-08-10)
 
 A real alignment run on a Node application finished green - `self-verify` drift 0 - having
