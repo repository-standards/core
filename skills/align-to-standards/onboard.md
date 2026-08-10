@@ -48,7 +48,20 @@ detail lives in the standards checkout at
 Output: a short health report (maturity per pass: absent / partial / solid, top risks,
 findings grouped by the **owner role** that must act - see `docs/method/repo-assessment.md`)
 and a **seeded backlog** - every gap becomes an item with a definition of done, ordered
-by risk x leverage. **Red-flag stops** halt and ask the human now, not later: a secret
+by risk x leverage.
+
+**The report is a file, not a message** (R27, ADR-048): write it to
+`docs/adoption-assessment.md` as this pass's closing action, the same way Step 0 writes its
+intake record. A health report delivered only in conversation cannot be read by the next run,
+by a human opening the repo cold, or by `adoption-gates` - and the run that skipped writing it
+looks identical afterwards to the run that never assessed anything.
+
+**Then stop and ask.** The report and the count are what make "plan-only or execute" a real
+question, and Step 0 asked it before either existed. Put the two numbers in front of the user -
+the drift and the `N tasks to full alignment` - and get the go/no-go **here**, before the first
+wave changes a file. Assessment-only is already a legal stop, so this costs one turn and is
+the difference between a person consenting to the work and a person being told about it
+afterwards. **Red-flag stops** halt and ask the human now, not later: a secret
 committed to the repo; anything that would write to a remote database (deliver a
 migration instead); a change that would contradict an existing Accepted ADR.
 

@@ -10,7 +10,7 @@ SHOULD and MAY are to be read as in RFC 2119.
 
 This page is the whole normative core. Everything else in the standard explains,
 templates or enforces what is written here; where any other document appears to add
-a requirement, this page wins. Rules are numbered R1-R26 and the numbers are stable -
+a requirement, this page wins. Rules are numbered R1-R27 and the numbers are stable -
 tooling cites them. `standard.manifest.json` is this spec's machine-readable
 projection (each manifest entry names the rule it enforces), and
 `scripts/self-verify.mjs` reports unmet rules as a drift count. Rules the manifest
@@ -147,6 +147,16 @@ binds every repo, a solo one included.
   question round and one that ran it in full produce the same tree without
   this file; the record is what makes intake checkable rather than merely
   claimed.
+- **R27.** Adoption's assessment and count gates MUST leave artifacts that carry
+  what the gate is for, not merely files: `docs/adoption-assessment.md`, a
+  required manifest entry rating all eight assessment passes `absent` /
+  `partial` / `solid`, naming the top risks, and grouping every finding by the
+  owner role that must act; and a backlog whose alignment scope block states a
+  total that its own categories sum to, every item naming its owner role
+  (ADR-048). `adoption-gates` reads both for shape. R26 made a gate's artifact
+  checkable by requiring it to exist; these two are the case where existing is
+  not enough, because the count a human says go or no-go on is the part a file
+  can omit while still being present.
 
 ## Releases and hygiene
 

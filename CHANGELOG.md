@@ -104,6 +104,41 @@ an agent broad autonomy mid-run*, and this same repository's `docs/personas.md` 
 `specs/capability-map.json` shipped with none of the "unconfirmed" marking the unavailable-user
 fallback calls for. The proposed fix to `onboard.md` stays a linked follow-up rather than landing
 in this pull request.
+### An adoption reached drift 0 without producing the two artifacts a human decides on (2026-08-10)
+
+A real alignment run on a Node application finished green - `self-verify` drift 0 - having
+produced neither the Gate 2 health report nor the Gate 5 count. The repository's owner got
+the numbers only after asking for them twice, and prose in place of both artifacts. Their
+reading was that the adoption had happened *to* them rather than guided them, and on the
+evidence that is correct: the run measured the repo, skipped the person, and the green number
+then certified a process that had not happened.
+
+Nothing noticed because nothing read either artifact. ADR-042 had already made this argument
+for Gate 0 - a run that skipped the intake round and one that ran it left an indistinguishable
+diff, so the intake became a required manifest entry - and stopped there. Gates 2 and 5 have
+the same hole, and presence alone does not close it for them: a file can exist, be
+non-placeholder, satisfy `fill-from-repo`, and still omit the count the gate exists to produce.
+
+So both halves land together (ADR-048, R27). `docs/adoption-assessment.md` becomes a required
+manifest entry with a template, shaped after the intake entry it is the sibling of. A new
+`adoption-gates` guard reads both artifacts for shape and arithmetic: all eight assessment
+passes rated `absent` / `partial` / `solid`, top risks named, findings grouped by the owner
+role that must act, and a scope block whose categories sum to the total it claims with an owner
+role on every alignment item. It checks shape, never judgment - it cannot tell a considered
+`partial` from a guessed one, and does not pretend to - and it skips itself when no assessment
+exists, because self-verify already reports that as drift and counting it twice would make one
+gap look like two. A guard cannot carry a manifest exception, so neither half is waivable by an
+adopting repo that would rather not.
+
+Two findings from the same run are fixed alongside, because they are why the gates were
+skippable in practice and not only in principle. The scope block's format lived exclusively in
+a Zone 1 method page: `standard/docs/backlog.md`, the template an adopted repo actually
+receives, carried the `owner` column and never mentioned the block, so an agent filling the
+template correctly produced a backlog with no count in it. And "plan-only or execute" was asked
+in the Step 0 intake round - on a brownfield repo, before a single assessment pass, about a wave
+nobody had seen, the agent asking included. It stays, as an intent; the consent that licenses a
+wave is re-asked after Gate 2 with the drift number and the count in front of the user, and
+stopping there is explicitly not going back on the Step 0 answer.
 
 ## 1.1.0 - 2026-08-10
 
