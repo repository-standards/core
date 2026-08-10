@@ -491,6 +491,85 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; color: va
 .stale b { font-family: var(--mono); font-size: 12.5px; }
 @media (max-width: 620px) { .stale { left: 16px; right: 16px; } }
 
+/* ---------- reading: the documents themselves ---------- */
+
+/* A list you pick from and a document you read, side by side, because choosing a spec and
+   reading it is one activity. Under 900px the document goes first: on a phone the list is
+   the interruption, not the content. */
+.reader { display: grid; grid-template-columns: minmax(220px, 300px) minmax(0, 1fr); gap: 26px; align-items: start; }
+.reader-list { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; position: sticky; top: 56px; }
+.reader-item {
+  background: var(--surface); border: 0; text-align: left; font: inherit; color: inherit; cursor: pointer;
+  padding: 12px 14px; display: grid; gap: 6px; border-left: 2px solid transparent;
+}
+.reader-item:hover { background: var(--raised); }
+.reader-item.on { background: var(--raised); border-left-color: var(--accent); }
+.reader-item .rt { font-size: 14px; font-weight: 550; line-height: 1.35; }
+.reader-item .rm { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.doc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 26px 30px 30px; box-shadow: var(--shadow); min-width: 0; }
+.doc > h2 { font-family: var(--display); font-weight: 500; font-size: 26px; letter-spacing: -.015em; margin: 0 0 10px; }
+.doc .head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+.doc .field { margin: 0 0 6px; font-size: 13.5px; color: var(--ink-2); max-width: 74ch; }
+.doc .field b { color: var(--ink); font-weight: 600; }
+.doc > section { border-top: 1px solid var(--line-soft); padding-top: 18px; margin-top: 18px; scroll-margin-top: 60px; }
+.doc > section > h3 { font-family: var(--display); font-weight: 500; font-size: 18px; margin: 0 0 10px; }
+
+/* The gap list a spec keeps about itself - what is missing and who owes it. */
+.gaps { border: 1px solid var(--blocked); background: var(--blocked-soft); border-radius: 8px; padding: 12px 14px; margin: 14px 0; }
+.gaps h4 { margin: 0 0 8px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--blocked); font-weight: 500; }
+.gaps ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.gaps li { display: flex; gap: 8px; align-items: baseline; font-size: 13.5px; color: var(--ink-2); }
+
+.jump { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 4px; }
+.jump button {
+  background: var(--raised); border: 1px solid var(--line); border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: 11.5px; color: var(--ink-2); padding: 4px 11px;
+}
+.jump button:hover { color: var(--ink); border-color: var(--ink-3); }
+
+/* One prose style, used by the spec pages and by the detail panel, so a document reads the
+   same wherever it is opened from. */
+.prose { font-size: 14px; color: var(--ink-2); line-height: 1.62; max-width: 78ch; }
+.prose > :first-child { margin-top: 0; }
+.prose p, .prose ul, .prose ol, .prose blockquote, .prose pre, .prose table { margin: 0 0 11px; }
+.prose ul, .prose ol { padding-left: 20px; }
+.prose li { margin-bottom: 5px; }
+.prose h4, .prose h5, .prose h6 { font-family: var(--body); font-size: 13px; font-weight: 650; color: var(--ink); margin: 16px 0 7px; letter-spacing: 0; text-transform: none; }
+.prose strong { color: var(--ink); }
+.prose code { font-family: var(--mono); font-size: 12px; background: var(--raised); padding: 1px 5px; border-radius: 4px; }
+.prose pre { background: var(--raised); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; overflow-x: auto; }
+.prose pre code { background: none; padding: 0; font-size: 11.5px; line-height: 1.55; }
+.prose blockquote { border-left: 2px solid var(--line); padding-left: 14px; color: var(--ink-3); }
+.prose hr { border: 0; border-top: 1px solid var(--line-soft); margin: 16px 0; }
+.prose table, table.mini { border-collapse: collapse; width: 100%; font-size: 12.5px; display: block; overflow-x: auto; }
+.prose th, .prose td, table.mini th, table.mini td { border: 1px solid var(--line); padding: 6px 9px; text-align: left; vertical-align: top; }
+.prose th, table.mini th { background: var(--raised); color: var(--ink); font-weight: 600; font-size: 11.5px; }
+table.mini { margin-top: 2px; }
+
+/* The material inside a dossier: closed by default, because an inbox is long and the state
+   above it is what a reader came for. */
+.files { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.files details { background: var(--surface); }
+.files summary { cursor: pointer; padding: 9px 12px; display: flex; gap: 10px; align-items: baseline; font-size: 13.5px; }
+.files summary:hover { background: var(--raised); }
+.files .ft { font-weight: 550; }
+.files details[open] { padding-bottom: 8px; }
+.files details > :not(summary) { padding: 0 12px; }
+
+.card .go { margin-top: 10px; font-size: 12.5px; color: var(--accent-ink); font-family: var(--mono); }
+.srcrow { margin: 18px 0 0; }
+.src { font-family: var(--mono); font-size: 11.5px; color: var(--accent-ink); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+.src:hover { border-color: var(--accent); }
+.src.off { color: var(--ink-3); border: 0; }
+.note.off { color: var(--ink-3); font-style: italic; border-left-color: var(--line); }
+
+@media (max-width: 900px) {
+  .reader { grid-template-columns: 1fr; }
+  .reader-list { position: static; order: 2; }
+  .doc { order: 1; padding: 20px 18px 24px; }
+}
+
 footer { border-top: 1px solid var(--line); margin-top: 40px; padding: 22px 0 60px; color: var(--ink-3); font-size: 12.5px; }
 footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
 footer code { background: none; padding: 0; }
