@@ -69,9 +69,10 @@ const RUN = {
       mode: "stop-and-ask",
       verdict: "pass",
       evidence: "asked two questions before writing anything",
+      tools_in_order: ["Read", "Bash"],
       turns: [
         { who: "user", said: "one" },
-        { who: "agent", said: "asked, read the tree, named a next step", asked: true, checked: true, suggested: true },
+        { who: "agent", said: "asked, read the tree, named a next step", asked: true, checked: true, suggested: true, said_verbatim: true },
       ],
     },
     {
@@ -174,6 +175,22 @@ const CASES = [
     },
     expect: 1,
     match: /turn 2 has who: "system"/,
+  },
+  {
+    name: "a non-boolean said_verbatim is refused",
+    mutate: (s) => {
+      s.run.observations[0].turns[1].said_verbatim = "yes";
+    },
+    expect: 1,
+    match: /turn 2 has said_verbatim: "yes"/,
+  },
+  {
+    name: "a tools_in_order that is not an array of non-empty strings is refused",
+    mutate: (s) => {
+      s.run.observations[0].tools_in_order = ["Read", ""];
+    },
+    expect: 1,
+    match: /has a tools_in_order field that is not an array of non-empty strings/,
   },
 ];
 

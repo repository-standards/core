@@ -16,9 +16,9 @@ These are those three fractions, counted from the runs rather than asserted.
 
 | | Per agent turn | Per observation |
 |---|---|---|
-| `asked` | **64/84** (76%) <br><sub>4 n/a, 7 unscored</sub> | **30/43** (70%) <br><sub>3 n/a</sub> |
-| `checked` | **87/90** (97%) <br><sub>5 unscored</sub> | **45/46** (98%) |
-| `suggested` | **77/90** (86%) <br><sub>5 unscored</sub> | **38/46** (83%) |
+| `asked` | **72/110** (65%) <br><sub>8 n/a, 246 unscored</sub> | **30/45** (67%) <br><sub>3 n/a</sub> |
+| `checked` | **113/120** (94%) <br><sub>244 unscored</sub> | **46/48** (96%) |
+| `suggested` | **102/120** (85%) <br><sub>244 unscored</sub> | **39/48** (81%) |
 
 Two units, because a run may score at either and both are honest. **Per agent turn** is the
 finer one and the one every live run shares: an agent that asks well at turn two and then
@@ -31,17 +31,23 @@ read at all - most often because the run was recorded from the repository state 
 rather than from the agent's own words, which shows what it did and not what it asked. Both stay
 out of the numerator and the denominator, and both are printed rather than absorbed.
 
-Verdicts across every run: 42 pass, 26 partial, 11 fail.
+Verdicts across every run: 54 pass, 38 partial, 16 fail.
+
+Agent turns quoted verbatim from a session transcript, across every run: **268/364 (74%)**.
+The rest are descriptions of what the agent did, written afterwards by whoever scored the run -
+accurate or not, that is a different kind of evidence than a quote, and this is the fraction that
+says which kind a given run mostly is. See `Agent turns quoted` below for run by run.
 
 ## Run by run
 
-| Run | Observations | Scored over | `asked` | `checked` | `suggested` | Verdicts | Run's own caveats |
-|---|---|---|---|---|---|---|---|
-| [`2026-08-06-a-static-read.json`](runs/2026-08-06-a-static-read.json) | 1 | 1 observation | **1/1** (100%) | **1/1** (100%) | **0/1** (0%) | 1 partial | - |
-| [`2026-08-07-b-field.json`](runs/2026-08-07-b-field.json) | 31 | 39 agent turns | **27/31** (87%) <br><sub>1 n/a, 7 unscored</sub> | **34/34** (100%) <br><sub>5 unscored</sub> | **33/34** (97%) <br><sub>5 unscored</sub> | 21 pass, 6 partial, 4 fail | `$known_weakness_of_this_run`<br>`$not_run`<br>`$what_the_numbers_hide` |
-| [`2026-08-07-c-python.json`](runs/2026-08-07-c-python.json) | 34 | 39 agent turns | **22/36** (61%) <br><sub>3 n/a</sub> | **36/39** (92%) | **28/39** (72%) | 13 pass, 14 partial, 7 fail | `$mode_limitation` |
-| [`2026-08-07-d-mixed.json`](runs/2026-08-07-d-mixed.json) | 11 | 13 agent turns | **13/13** (100%) | **13/13** (100%) | **13/13** (100%) | 7 pass, 4 partial | `$method_caveat`<br>`$not_reached` |
-| [`2026-08-09-e-live.json`](runs/2026-08-09-e-live.json) | 2 | 4 agent turns | **2/4** (50%) | **4/4** (100%) | **3/4** (75%) | 1 pass, 1 partial | `$relay_caveat`<br>`$environment_caveat` |
+| Run | Observations | Scored over | `asked` | `checked` | `suggested` | Agent turns quoted | Verdicts | Run's own caveats |
+|---|---|---|---|---|---|---|---|---|
+| [`2026-08-06-a-static-read.json`](runs/2026-08-06-a-static-read.json) | 1 | 1 observation | **1/1** (100%) | **1/1** (100%) | **0/1** (0%) | - | 1 partial | - |
+| [`2026-08-07-b-field.json`](runs/2026-08-07-b-field.json) | 31 | 39 agent turns | **27/31** (87%) <br><sub>1 n/a, 7 unscored</sub> | **34/34** (100%) <br><sub>5 unscored</sub> | **33/34** (97%) <br><sub>5 unscored</sub> | 0/39 (0%) | 21 pass, 6 partial, 4 fail | `$known_weakness_of_this_run`<br>`$not_run`<br>`$what_the_numbers_hide` |
+| [`2026-08-07-c-python.json`](runs/2026-08-07-c-python.json) | 34 | 39 agent turns | **22/36** (61%) <br><sub>3 n/a</sub> | **36/39** (92%) | **28/39** (72%) | 0/39 (0%) | 13 pass, 14 partial, 7 fail | `$mode_limitation` |
+| [`2026-08-07-d-mixed.json`](runs/2026-08-07-d-mixed.json) | 11 | 13 agent turns | **13/13** (100%) | **13/13** (100%) | **13/13** (100%) | 0/13 (0%) | 7 pass, 4 partial | `$method_caveat`<br>`$not_reached` |
+| [`2026-08-09-e-live.json`](runs/2026-08-09-e-live.json) | 2 | 4 agent turns | **2/4** (50%) | **4/4** (100%) | **3/4** (75%) | 0/4 (0%) | 1 pass, 1 partial | `$relay_caveat`<br>`$environment_caveat` |
+| [`2026-08-10-f-adopter-nextjs-mt.json`](runs/2026-08-10-f-adopter-nextjs-mt.json) | 29 | 269 agent turns | **8/26** (31%) <br><sub>4 n/a, 239 unscored</sub> | **26/30** (87%) <br><sub>239 unscored</sub> | **25/30** (83%) <br><sub>239 unscored</sub> | 268/269 (100%) | 12 pass, 12 partial, 5 fail | `$anonymity_caveat`<br>`$recovery_caveat` |
 
 **Every conversation behind these numbers is readable.** One page per run under
 [`scenarios/`](scenarios/), rendered from the same rows: what was typed, what the agent did,
