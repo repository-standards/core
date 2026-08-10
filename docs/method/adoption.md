@@ -56,7 +56,7 @@ deviations.
 |---|------|------------------------|------------------------|--------|----------------|
 | 0 | **Intake & description** | Ask: what is this, in one sentence? Problem, why now? Plus the intake round: **intent** (new / align / assessment-only / check-up on an already-aligned repo / update the pin - a sixth, "stay as it is", applies to a repo with no plan to develop further), **technology + Layer 2 consent** (asked outright), **appetite** (one PR vs waves), **plan-only vs execute** | Scan the repo - including its own README/CONTRIBUTING for a lifecycle signal (deprecated, archived, frozen) and any machine-readable governance config (`.jcheck/conf`, `.gitreview`, `CODEOWNERS`) for the role, reviewer-count, tracker and review-host answers it already declares, before asking anything the repo already answered; write what it *appears* to be and do. Same intake round - technology **detected** from the repo's evidence, then confirmed, with the Layer 2 consent gathered here | `PRODUCT.md` draft (a description the agent can reason from) + the intake answers | The agent can state what the product is and what the user wants done |
 | 1 | **Personas - who** | Name 3-6 user types with the user | Infer users from the code, auth roles, UI; confirm | `personas.md` (primary marked) + target-personas BDR | Every later gate has a persona to point at |
-| 2 | **Vision / Assessment** | Goals, non-goals, success in 3 months | Run the 8-pass `repo-assessment`: what exists, what's missing, where code and intent drift | `PRODUCT.md` goals **or** an assessment report | The gap between now and aligned is written down |
+| 2 | **Vision / Assessment** | Goals, non-goals, success in 3 months | Run the 8-pass `repo-assessment`: what exists, what's missing, where code and intent drift | `PRODUCT.md` goals **or** `docs/adoption-assessment.md` (R27) | The gap between now and aligned is written down - and the user has said go or no-go on it |
 | 3 | **Decisions** | Pick topology/stack/boundaries from the catalog | Detect what the code **already chose**; record it retroactively | Foundational **ADRs/BDRs**; the rest queued | No load-bearing fork is silently undecided |
 | 4 | **Capabilities & specs** | Slice into capabilities (by domain, not page); write the first specs | Map existing capabilities; extract verbatim contracts (`file:line`), then synthesize specs | `specs/<capability>/` - persona-anchored, buildable where it counts | Money/security/data paths are buildable + specced |
 | 5 | **Backlog - count the work** | Turn unspecced capabilities + known work into items | Turn every missing spec, unrecorded decision, and known drift into items | `backlog.md` with a **task count** ("N to full alignment"), every item naming its **owner role** | The scope is a number, honestly stated - and each task says whose it is |
@@ -96,6 +96,15 @@ in the align skill's intake ([step 0](../../skills/align-to-standards/SKILL.md))
   personas** (Gate 4 waits on Gate 1 - in both directions), **no recorded decisions
   before intake + assessment** (Gate 3 waits on Gates 0 and 2), and **every gate
   produces its artifact**.
+
+  **What "the framework enforces" actually means, per gate**, because for a long time it
+  meant nothing for two of them and a run could reach `drift 0` having skipped both
+  (ADR-048). Gate 0 (`docs/adoption-intake.md`, R26) and Gate 2
+  (`docs/adoption-assessment.md`, R27) are required manifest entries, so a missing one is
+  drift. Gates 2 and 5 are additionally read for **shape** by `adoption-gates`: eight passes
+  rated, the scope block's arithmetic, an owner role on every alignment item. The rest of the
+  gate order is still enforced by reading, not by a script - which is worth knowing when
+  deciding how much to trust a green number.
 - **The agent's call (during adaptation):** *which* ADRs a repo needs, *which* capabilities
   to spec now vs. queue, what to **skip** (with a one-line recorded reason) and what to
   **add** beyond the defaults. Skipping is allowed; skipping *silently* is not.

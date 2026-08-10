@@ -306,7 +306,14 @@ Before any phase runs, one intake pass:
      with nothing repeated. Say this out loud - a user who thinks they must assemble
      their documentation first will postpone the whole adoption, which is the one
      outcome worse than adopting without it.
-   - **Plan-only or execute?**
+   - **Plan-only or execute?** Ask it, record the answer - and treat "execute" as
+     an intent, not the consent that licenses the wave. On a brownfield repo this
+     question arrives before a single assessment pass has run, so whatever the
+     user says here is said about a wave nobody has seen yet, the agent asking
+     included. **The consent that counts is re-asked after Gate 2**, when the
+     health report and the count exist to answer it with (ADR-048). A user who
+     said "execute" at Step 0 and then reads the report is entitled to stop, and
+     nothing in this skill may treat that as going back on their word.
 3. **Assessment-only is a legal, named outcome** - not a failure to proceed:
    deliver the health report and the counted plan (Gate 2 plus the Gate 5 count
    of the [adoption checkmap](../../docs/method/adoption.md)), then stop.

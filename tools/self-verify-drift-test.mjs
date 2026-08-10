@@ -22,6 +22,39 @@ import { join } from "node:path";
 const TREE = join(process.cwd(), "standard");
 const VERSION = readFileSync(join(process.cwd(), "VERSION"), "utf8").trim();
 
+// Gate 2's artifact as an adopter leaves it, not as it ships. The shipped file is a template
+// of `{{...}}` cells, and `adoption-gates` blocks on those by design (R27) - a placeholder
+// where a maturity word belongs is a pass nobody ran. Every case here measures something
+// else, so the fixture writes the filled shape once rather than each case carrying the
+// failure. The unfilled state has its own case, in the guard's own suite.
+const FILLED_ASSESSMENT = `# Adoption assessment - fixture
+
+## Maturity per pass
+
+| # | Pass | Maturity | What that rests on |
+| --- | --- | --- | --- |
+| 1 | Skeleton & docs | solid | the tree is the standard's own |
+| 2 | Decisions in code | solid | recorded |
+| 3 | Capabilities & specs | partial | no capability map yet |
+| 4 | Quality gates | solid | the suite runs |
+| 5 | CI/CD | solid | the workflow fires |
+| 6 | Security & supply chain | partial | scanning only |
+| 7 | Dependencies & stack | solid | pinned |
+| 8 | Drift & health | solid | drift is measured |
+
+## Top risks
+
+1. nothing is specified yet, so the coupling guard binds nothing
+
+## Findings by owner role
+
+### dev
+
+| Finding | Where it goes |
+| --- | --- |
+| write a capability map | item 1 |
+`;
+
 // An adopted repo: the shipped tree plus the record an adopter writes at align time. The
 // manifest that travels with it is the one the hashes were generated into, which is the
 // whole mechanism - the adopter compares against the version they aligned to.
@@ -29,6 +62,7 @@ const fixture = () => {
   const dir = mkdtempSync(join(tmpdir(), "drift-check-"));
   cpSync(TREE, dir, { recursive: true });
   writeFileSync(join(dir, ".standards-version"), `${VERSION}\n`);
+  writeFileSync(join(dir, "docs/adoption-assessment.md"), FILLED_ASSESSMENT);
   return dir;
 };
 
