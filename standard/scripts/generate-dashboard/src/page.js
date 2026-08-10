@@ -340,21 +340,32 @@ function kanban(items) {
 
 /* the pool - a ranked list, because the order is the decision */
 function poolList(items) {
+  // The id column was 92px, which is a guess about how long an id is. `STACK-LIFE-1` did not
+  // fit and wrapped, and a wrapped id makes its row twice as tall as its neighbours for no
+  // reason a reader can see. Measured from the ids instead - in a mono font one character is
+  // one ch, so the widest fits exactly and every row still lines up. Measured over the whole
+  // pool rather than the list being drawn, so filtering does not shunt every title sideways.
+  const idw = Math.min(Math.max(6, ...(D.items.length ? D.items : items).map((i) => i.id.length)), 24)
   return el(
     'div',
-    { class: 'pool' },
+    { class: 'pool', style: '--idw:' + idw + 'ch' },
     items.map((i) =>
       el(
         'button',
         { class: 'prow', type: 'button', style: '--cat:' + catVar(i.cap || i.epic), on: { click: () => openItem(i) } },
         [
-          el('span', { class: 'pid', text: i.id }),
+          el('span', { class: 'pid', text: i.id, title: i.id }),
           el('span', { class: 'pt', html: i.title }),
           el('span', { class: 'pmeta cap', text: i.cap || i.epic || '' }),
           el('span', { class: 'pmeta owner', text: i.owner || '' }),
           el('span', { class: 'pmeta size', text: i.size || '' }),
-          i.type && i.type !== 'task' ? el('span', { class: 'pill plain', text: i.type }) : null,
-          i.status !== 'todo' ? pill(i.status, i.blockedBy ? 'blocked' : null) : null,
+          // Both pills in one cell. The row is a fixed six-column grid, and a row that carries
+          // a type and a status - every open question does - was handing it a seventh child,
+          // which the grid put on a line of its own.
+          el('span', { class: 'ptags' }, [
+            i.type && i.type !== 'task' ? el('span', { class: 'pill plain', text: i.type }) : null,
+            i.status !== 'todo' ? pill(i.status, i.blockedBy ? 'blocked' : null) : null,
+          ]),
         ],
       ),
     ),

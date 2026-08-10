@@ -243,19 +243,26 @@ h2.section:first-of-type { margin-top: 0; }
 
 .pool { display: grid; gap: 8px; }
 .prow {
-  display: grid; grid-template-columns: 92px minmax(0, 1fr) auto auto 24px auto; align-items: center; gap: 16px;
+  display: grid; grid-template-columns: calc(var(--idw, 92px) + 4px) minmax(0, 1fr) auto auto 24px auto; align-items: center; gap: 16px;
   width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer;
   background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--cat, var(--line));
   border-radius: 8px; padding: 12px 16px; transition: border-color .15s ease, transform .15s ease;
 }
 .prow:hover { transform: translateX(2px); border-color: var(--ink-3); border-left-color: var(--cat, var(--line)); }
-.prow .pid { font-family: var(--mono); font-size: 12.5px; color: var(--cat, var(--ink-2)); letter-spacing: .03em; }
+.prow .pid {
+  font-family: var(--mono); font-size: 12.5px; color: var(--cat, var(--ink-2)); letter-spacing: .03em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .prow .pt { font-size: 14.5px; line-height: 1.4; }
 .prow .pmeta { font-size: 13px; color: var(--ink-3); white-space: nowrap; }
 .prow .size { font-family: var(--mono); text-align: right; }
+/* One cell for however many pills a row carries, so a type and a status sit beside each other
+   instead of spilling the grid onto a second line. */
+.prow .ptags { display: flex; gap: 6px; align-items: center; justify-content: flex-end; }
 @media (max-width: 760px) {
-  .prow { grid-template-columns: 80px minmax(0, 1fr); row-gap: 6px; }
-  .prow .pmeta { grid-column: 2; }
+  .prow { grid-template-columns: calc(var(--idw, 80px) + 4px) minmax(0, 1fr); row-gap: 6px; }
+  .prow .pmeta, .prow .ptags { grid-column: 2; }
+  .prow .ptags { justify-content: flex-start; }
 }
 
 /* schedule (gantt) -------------------------------------------------------- */
