@@ -1,0 +1,103 @@
+{
+  "$about": "A live adoption run in a private company repository, typed by a working developer in a real Claude Code session (Claude Opus 5), not simulated and not relayed. The repository owner asked for this observation to be contributed anonymised: no repository name, no owner, no paths, no ticket ids. What is kept is the behaviour, because that is the part the corpus scores.",
+  "$anonymisation": "The target is described by shape rather than named. Everything the user typed is reproduced verbatim, including typos - none of their sentences name the project. Agent behaviour is described rather than quoted where a quote would carry an internal name. Third-party tools that are public products (a spec-driven-development toolchain, a tracker, a second editor) are named, because the collisions with them are the finding and naming them identifies nobody.",
+  "observations": [
+    {
+      "prompt": "A59",
+      "target": "repo: private, internal admin web application; mid-sized TypeScript monorepo, single deployable, already carrying decision records, specs, a backlog and agent guard hooks of its own",
+      "mode": "full-loop",
+      "language": "every user turn in Polish, several with typos; agent replied in Polish at the user's instruction from turn 5 on",
+      "live_turns": true,
+      "verdict": "partial",
+      "turns": [
+        {
+          "who": "user",
+          "said": "pobierz najnowszy main i zaliguj ten projekt do repositorystandards.com z layerem node"
+        },
+        {
+          "who": "agent",
+          "said": "Fetched the default branch first as a separate act, then read the standard from the web, measured the repository against it, and asked four questions before writing anything: appetite, profile, whether to assess or also execute, and where the domain knowledge lives. Created an isolated worktree rather than working in the user's checkout.",
+          "asked": true,
+          "checked": true,
+          "suggested": true,
+          "note": "One of the four questions was 'core or scale?'. This user could answer it - they had read the standard - but it is the standard's vocabulary, and the corpus already flags asking it cold. The other three were answerable by anyone."
+        },
+        {
+          "who": "user",
+          "said": "one pull request, a commit per task, merged once; profile core; assess and execute wave 1; the domain knowledge is in the tracker discussion"
+        },
+        {
+          "who": "user",
+          "said": "ej ej nic nie dodawaj do jiry"
+        },
+        {
+          "who": "user",
+          "said": "po porstu jira brodge ma zostac tez w adaptacji ale nic nie ruszasz nie dodajesz i nie edytujesz w jirze w tej adaptacji"
+        },
+        {
+          "who": "agent",
+          "said": "Accepted the constraint and separated it correctly: the tracker bridge is a repository concern that stays, while the tracker itself is not touched. Did not create, edit or transition anything in the tracker for the rest of the run.",
+          "asked": false,
+          "checked": true,
+          "suggested": false,
+          "note": "The agent had opened one tracker issue seconds before this instruction arrived. It left it alone rather than deleting it, said so, and put it to the user - the right call, but the issue exists because the agent acted on a repo convention before being asked to."
+        },
+        {
+          "who": "user",
+          "said": "pracuj sam, rob zalozenia i sam decyduj - nie przerywaj pracy na koniec ma byc duzy PR przyrostowy do mergowania (sam go zweryfikuj na koniec). Ja nie bede dostepny ide spac wiec musisz pracoawc sam."
+        },
+        {
+          "who": "agent",
+          "said": "Worked unattended through fifteen commits. Reached drift 1 and 83% adopted, wrote ten manifest exceptions, and reported that as the result - including a written defence of the repository's existing spec layout as a deliberate local convention, plus an upstream friction note arguing the standard should accommodate it.",
+          "asked": false,
+          "checked": true,
+          "suggested": true,
+          "note": "This is the run's central failure and it happened during the unattended stretch. The exception mechanism is cheap and visible; removing the conflicting tool is neither. The agent took the cheap route and stopped there, and nothing in the flow asked it whether the thing it was excepting was something the repo would rather delete."
+        },
+        {
+          "who": "user",
+          "said": "jak idize"
+        },
+        {
+          "who": "user",
+          "said": "czmeu adoption jest 83%? co jest nie tak"
+        },
+        {
+          "who": "agent",
+          "said": "Broke the missing 17% down honestly rather than defending it: ten exceptions covering a third-party spec-driven-development toolchain that occupied the same ground as the standard's own flow, and one genuinely failing guard - a layout conflict no exception could clear, because a guard's own script cannot carry one.",
+          "asked": false,
+          "checked": true,
+          "suggested": false,
+          "note": "The breakdown was accurate and immediate. The problem is that it took the user asking. A user who trusted the number would have ended the run at 83% believing that was the ceiling."
+        },
+        {
+          "who": "user",
+          "said": "no to usuwamy speckita wtedy! standard jest wzorcem do niego rownamy nie zostaiwamy smieci ani jakis cudów, spece przepisujemy na nasze i juz"
+        },
+        {
+          "who": "user",
+          "said": "po to rownamy do standardu.. na poczatku Ci napisalem zeby wyrownac.."
+        },
+        {
+          "who": "agent",
+          "said": "Withdrew the defence, removed the competing toolchain end to end - its skills, its runtime, its constitution and its per-slice directory layout - migrated the spec tree to the standard's layout, wrote a decision record superseding the one that had introduced the old flow, and rewrote the friction note to say it had been overruled and why. Drift went to 0 and adoption to 94% with four exceptions left.",
+          "asked": false,
+          "checked": true,
+          "suggested": true,
+          "note": "The correction was thorough once authorised, and the agent recorded that it had been wrong rather than quietly reversing. But the user had to say it twice, the second time pointing back at their own opening sentence."
+        },
+        {
+          "who": "agent",
+          "said": "Reviewed the full diff before pushing rather than after, and the review caught 111 dead documentation links that its own spec-tree flattening had created. Repaired them, and left two dead links alone after establishing they predated the change - naming both in the commit message rather than fixing them silently.",
+          "asked": false,
+          "checked": true,
+          "suggested": true,
+          "note": "No guard in the standard would have caught this. The link check was the agent's own, written for the occasion."
+        }
+      ],
+      "outcome": "One pull request, 22 commits, open and self-reviewed. Drift 0, 94% adopted, four exceptions, one check reported as not run. The repository ends with the standard's spec flow as its only spec flow, its principles in one file, and its own agent guards fixed - adopting the standard is what surfaced that those guards were failing open, because an unset environment variable made every hook exit 127 with empty output, which the host treats as non-blocking. The user ends knowing exactly what is left: four capabilities with no spec, a persona roster nobody has confirmed, and one advisory CI job that stays advisory until those exist.",
+      "abandon_risk": "Not the interview - four questions, all answered in one line. The risk is the 83% report. The agent finished a long unattended stretch, presented a number built on ten exceptions and a written defence of the conflicting tool, and framed it as the outcome. That is a plausible place to stop, accept it, and never learn that 94% and drift 0 were one authorisation away. The second risk is silence: the user asked 'jak idize' mid-run, which is what a person types when they cannot tell a working session from a dead one.",
+      "evidence": "The verdict rests on the run reversing itself under pressure rather than on its final number. The exceptions written in the unattended stretch are checkable against the manifest as it stood then - ten of them, six covering the competing toolchain's own skill files - and against the friction note that argued the standard should accommodate the local layout. The same note in the merged state says the opposite and records who overruled it. The layout guard is the sharpest evidence that the exception route was a dead end rather than a judgment call: it reads the repository's own file list, so its finding could not be excepted away, and the agent had recorded it as permanent drift anyway. On the positive side, the fail-open guard defect is independently checkable - the hooks invoked a path built from an environment variable that is unset in some contexts, and the self-test that now covers it fails against the old wiring."
+    }
+  ]
+}
