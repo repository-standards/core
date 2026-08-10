@@ -334,6 +334,21 @@ function sectionBody(text, heading) {
 const metaRow = (text, label) =>
   (text.match(new RegExp('\\|\\s*\\*\\*' + label + '\\*\\*\\s*\\|\\s*([^|]+)\\|')) || [])[1]?.trim() || null
 
+// The discovery template writes its summary as an inline bold label - `**Summary.** text` -
+// not a heading, so sectionBody() never matches it. This reads that paragraph the same way
+// sectionBody reads a heading's: from the label to the next blank line.
+function boldParagraph(text, label) {
+  const re = new RegExp('^\\*\\*' + label + '\\.?\\*\\*\\s*(.*)$', 'm')
+  const m = text.match(re)
+  if (!m) return ''
+  const out = m[1] ? [m[1].trim()] : []
+  for (const line of text.slice(m.index).split('\n').slice(1)) {
+    if (!line.trim()) break
+    out.push(line.trim())
+  }
+  return out.join(' ').trim()
+}
+
 /* ---------- the work pool ---------- */
 
 function parseBacklog() {
@@ -625,7 +640,7 @@ function parseDiscovery() {
       return {
         topic: d.name,
         title: inline((text.match(/^#\s+(.+)$/m) || [, d.name])[1]),
-        summary: clip(sectionBody(text, 'Summary') || text.replace(/^#.*$/m, ''), 300),
+        summary: clip(sectionBody(text, 'Summary') || boldParagraph(text, 'Summary') || text.replace(/^#.*$/m, ''), 300),
         stamp,
         stampDate,
         entries,

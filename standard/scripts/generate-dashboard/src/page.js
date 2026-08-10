@@ -16,6 +16,12 @@ const el = (tag, props = {}, kids = []) => {
   return n
 }
 
+// Plain-text fields (clip()/plain() output from index.mjs) sometimes need to sit inside a
+// 'prose' block that otherwise only ever carries pre-escaped markdown HTML - this is the one
+// escape hatch for that, not a general-purpose sanitizer.
+const escapeHtml = (s) =>
+  String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
 const wrap = (kids) => el('div', { class: 'wrap' }, kids)
 // A section this repository has no source for contributes nothing, not an empty node.
 const add = (host, ...kids) => host.append(...kids.filter(Boolean))
@@ -1289,7 +1295,7 @@ if (views.docs) {
     openDetail({
       title: t.title,
       meta: ['last reconciled: ' + t.stamp, t.entries.length + ' entries'],
-      sections: [['What this topic is', t.summary]],
+      sections: [['What this topic is', escapeHtml(t.summary)]],
       nodes: [
         t.contradictions.length
           ? el('section', {}, [
