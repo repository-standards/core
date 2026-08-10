@@ -146,18 +146,29 @@ if (!backlogPath) {
       `${backlogPath}: no alignment scope block - expected a fenced block ending in "N tasks to full alignment", which is the number the human says go or no-go on`,
     );
   } else {
-    const total = Number(scope.match(/(\d+)\s+tasks? to full alignment/i)?.[1]);
+    // Emphasis around the total is a real thing people write, and a total that reads as
+    // absent because it was bolded would fail as arithmetic rather than as formatting.
+    const scopeText = scope.replace(/[*`]/g, "");
+    const total = Number(scopeText.match(/(\d+)\s+tasks? to full alignment/i)?.[1]);
     // A category line is "label ....  12": dot leaders are conventional, so anything that
     // ends in a number and is not the total counts, and a repo may name its own categories.
-    const parts = scope
-      .split("\n")
-      .filter((l) => !/tasks? to full alignment/i.test(l))
+    // The block's first line is its title, and the title carries the standard's version - so
+    // reading it as a category would add the version's last number to the sum and fail a
+    // block whose arithmetic is correct.
+    const body = scopeText.split("\n");
+    const titleIdx = body.findIndex((l) => l.trim());
+    const parts = body
+      .filter((l, i) => i !== titleIdx && !/tasks? to full alignment/i.test(l))
       .map((l) => l.match(/^\s*\S.*?(\d+)\s*$/))
       .filter(Boolean)
       .map((m) => Number(m[1]));
 
     const sum = parts.reduce((a, b) => a + b, 0);
-    if (!parts.length) {
+    if (Number.isNaN(total)) {
+      problems.push(
+        `${backlogPath}: the scope block names no number - "tasks to full alignment" with nothing in front of it is the sentence the count was supposed to replace`,
+      );
+    } else if (!parts.length) {
       problems.push(`${backlogPath}: the scope block states a total but breaks it into nothing - no category lines found`);
     } else if (sum !== total) {
       problems.push(
