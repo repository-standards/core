@@ -153,7 +153,7 @@ if (!backlogPath) {
     // A category line is "label ....  12": dot leaders are conventional, so anything ending in
     // a number that is not the total counts, and a repo may name its own categories. The
     // number must stand apart from its label, which is what separates a count from the version
-    // in the block's title - `standard@1.2` ends in a digit too, and reading it as a category
+    // in the block's title - `standard@1.1` ends in a digit too, and reading it as a category
     // fails a block whose arithmetic is correct. Position is deliberately not used: dropping
     // "the first line" would eat a real category in a block that carries no title.
     const parts = scopeText
