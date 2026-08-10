@@ -27,6 +27,12 @@ the gap above it and dropped its status dot, both visual-only - no invariant, ac
 criterion or contract in this spec changes. Noted here rather than left silent because
 `spec-guard` couples every change under `site/**` to this file regardless of how small.
 
+A second change the same day: the landing's topbar nav (`site/index.html`) gained a
+"Dashboard" link next to "Docs", pointing at `dashboard/` - built by `pages.yml` on every
+deploy since the backlog/dashboard unification, but until now nothing on the landing
+pointed a reader at it. Visual/navigation-only, no invariant, acceptance criterion or
+contract in this spec changes; noted for the same reason as above.
+
 ## Scope
 
 The docsite generator, the site-check gate, and the `site/` directory they operate on. Repo-own tooling - never shipped.
