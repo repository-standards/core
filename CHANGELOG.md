@@ -11,6 +11,79 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### A decision record must now name what would reopen it (2026-08-13)
+
+`discovery-digest` step 4 greps every decision record's `## Revisit when` and checks new
+discovery material against it. It is the only mechanism here that reads decisions back, and
+its own text said "Every ADR/BDR carries a `## Revisit when` field". Measured against this
+repo's log: 25 of 48 did. The 23 that did not included every record from 040 to 048, so the
+tripwire covered about half the corpus - the newer half missing - while reporting on all of
+it.
+
+The field is now required and `scripts/decision-records-check.mjs` fails without it, reading
+the section for shape rather than presence: a missing heading, an empty one, and one still
+carrying the template's own prompt all count as no signal. Superseded and rejected records
+are exempt, matched at the start of the status so a record that *supersedes* another still
+owes its own. An honest "nothing reopens this short of X" is a legal answer and required
+where it is the true one; an invented threshold is worse than an empty section, because it
+fires on a number nobody meant.
+
+All 23 records are backfilled from what each already stated - a rejected option's condition,
+an accepted cost, a self-declared limit. Five had answered the question under the heading
+`## How we would know we were wrong`; those were renamed rather than given a second section.
+Both templates and both writing skills now say the section is required, and step 4 states its
+own limit for logs that predate the guard. [ADR-050](docs/decision-records/ADR-050-a-decision-record-must-name-what-would-reopen-it.md).
+
+### Closing a backlog row is a relocation, not a deletion (2026-08-13)
+
+The standard told an adopter when a row may close and left where it goes to an aside inside
+the sentence that declares the status vocabulary: "drop `done` rows on release, or let the
+Backlog.md tool archive them". No rule number, no destination, no guard - and of the two
+options, one is a third-party CLI this project has never installed, wrapped, required or
+tested against, and has never verified can read a one-table backlog at all. What an adopter
+could actually follow was: delete.
+
+That aside is already load-bearing. When `sprint-guard` was built, a lingering `done` row was
+considered as a third violation and deliberately left unchecked, because the shipped page
+licenses it in the same breath as the vocabulary and a guard would have made the licence
+impossible to follow. The dashboard's backlog view opens with `hideDone: true`, which is a
+measurement of what the file is expected to contain. And this repository followed the aside
+itself: the 1.1.0 cut removed seventeen closed rows in one commit, leaving two epics as a
+heading, a paragraph and an empty table with nothing saying where their work went.
+
+The reason nobody follows it is that following it destroys things. A closed row is often the
+only place a finding was written down - a security control that runs clean and protects
+nothing, a design killed by a probe rather than an opinion, a verification whose answer was
+"correct as built, no change needed" and which therefore produced no commit and so can never
+reach a changelog. So a row no longer closes until its content has somewhere else to be: the
+finding to a record, a spec or a dossier, what shipped to the changelog, and the row itself to
+`docs/backlog-archive.md` carrying a pointer to where its content went. The diagnostic that
+buys - a row whose content cannot be relocated was not actually done - is the point rather
+than a side effect.
+
+Recorded as **ADR-051**, with the mechanics settled rather than left open: one archive file
+with release headings inside it, moved at the release cut by whoever cuts the release
+(`/sprint-close` at scale), never by a tool guessing a destination; `decided` and `split:<id>`
+deliberately excluded.
+
+The rule ships with its guard, because an accepted rule with no guard is the defect this
+record is about. `scripts/backlog-archive-check.mjs` fails a pull request that removes a row
+from `backlog.md` without that id reaching the archive - the check that would have fired
+seventeen times on the 1.1.0 cut - and, on the archive itself, an empty `where`, a `where`
+naming a path that does not exist, and an id living in both files at once. Rows that moved
+into a sprint file and `split:<id>` pairs are exempt, because neither is a closure. The
+archive ships empty, and a repo that has closed nothing deletes it until the first row moves.
+The checks that read it skip while it is absent, exactly as `sprint-guard` and `schema-pair`
+skip themselves; the removal check does not, because the first closure is precisely when the
+archive is supposed to appear, and a guard that stood down there would be unenforced for every
+repository this rule is written for.
+
+The cost is stated in the record, including the case against: an archive is another file that
+can rot, the guard proves a pointer resolves and never that the finding is still behind it,
+and it sits uncomfortably against ADR-018's decision that history has exactly one home.
+
 ## 1.1.7 - 2026-08-13
 
 ### A discovery entry recorded that a meeting happened, and not much else (2026-08-13)
@@ -48,29 +121,6 @@ description of what the entries already say, needing a shipped script, a manifes
 a CI step to answer what one typed field answers with `grep`. Decision: ADR-049, narrowing
 rule 4 of ADR-024. Existing dossiers stay valid - the fields are absent, not wrong, and
 entries are append-only.
-
-### A decision record must now name what would reopen it (2026-08-13)
-
-`discovery-digest` step 4 greps every decision record's `## Revisit when` and checks new
-discovery material against it. It is the only mechanism here that reads decisions back, and
-its own text said "Every ADR/BDR carries a `## Revisit when` field". Measured against this
-repo's log: 25 of 48 did. The 23 that did not included every record from 040 to 048, so the
-tripwire covered about half the corpus - the newer half missing - while reporting on all of
-it.
-
-The field is now required and `scripts/decision-records-check.mjs` fails without it, reading
-the section for shape rather than presence: a missing heading, an empty one, and one still
-carrying the template's own prompt all count as no signal. Superseded and rejected records
-are exempt, matched at the start of the status so a record that *supersedes* another still
-owes its own. An honest "nothing reopens this short of X" is a legal answer and required
-where it is the true one; an invented threshold is worse than an empty section, because it
-fires on a number nobody meant.
-
-All 23 records are backfilled from what each already stated - a rejected option's condition,
-an accepted cost, a self-declared limit. Five had answered the question under the heading
-`## How we would know we were wrong`; those were renamed rather than given a second section.
-Both templates and both writing skills now say the section is required, and step 4 states its
-own limit for logs that predate the guard. [ADR-050](docs/decision-records/ADR-050-a-decision-record-must-name-what-would-reopen-it.md).
 
 ## 1.1.6 - 2026-08-13
 

@@ -52,8 +52,10 @@ in a spec, and only work belongs here:
 > where does this go: we keep arguing about whether refunds are partial or full
 ```
 
-**An item is finished.** Say so and it leaves; a row that lingers after its
-definition of done is met teaches everyone the list is stale:
+**An item is finished.** Say so and it leaves the live list; a row that lingers after
+its definition of done is met teaches everyone the list is stale. Leaving is a move,
+not a delete - see [Closing a row](#closing-a-row) for where the row and its findings
+go:
 
 ```
 > the retry work is merged - close its backlog item
@@ -91,7 +93,8 @@ provenance into `why` made the claim true only for whoever happened to remember.
 
 A finished item leaves the backlog only when its **definition of done** is met - the
 spec is buildable, the ADR is Accepted, the drift is resolved - not when someone looks
-at it.
+at it. That says *when* a row may close. Where it goes afterwards is a separate
+question with its own answer: [Closing a row](#closing-a-row).
 
 ## Alignment scope *(a repo being brought onto the standard)*
 
@@ -183,8 +186,8 @@ is **split, not re-sized**.
 -->
 
 
-Statuses: `todo` / `doing` / `blocked` / `done` (drop `done` rows on release, or let the
-Backlog.md tool archive them). A sprint row can also carry `split:<id>` - see
+Statuses: `todo` / `doing` / `blocked` / `done`. A `done` row leaves this file - see
+[Closing a row](#closing-a-row). A sprint row can also carry `split:<id>` - see
 `docs/sprints/_template.md`; it is written by `/sprint-close` and never by hand here.
 
 **`blocked` takes a reference**: write `blocked:PRICE-1` to name what blocks it. Blocking gets
@@ -198,6 +201,50 @@ silently, because the row looks legitimately stuck.
 ids as one intent in two places, because copying a row into a sprint and renumbering the copy
 left behind passes every check keyed on the id. Give a genuinely different intent a different
 title; a `split:<id>` pair is the one place two rows may share one.
+
+## Closing a row
+
+**Closing a row is a relocation, not a deletion.** A closed row is often the only place a
+finding was ever written down - a control that turned out to run clean and protect nothing, a
+design killed by a probe, an answer of "correct as built, no change needed" that produced no
+commit and so never reached the changelog. Deleting the row deletes the answer and the next
+person pays for it again; leaving it in place turns the live list into something nobody reads.
+So the row moves, and its content moves first:
+
+- **The finding goes where findings live.** A decision to a decision record, behaviour to the
+  capability spec, raw material to a discovery dossier. Nothing new to learn here - the
+  [taxonomy](https://github.com/repository-standards/core/blob/main/docs/method/taxonomy.md)
+  already says which is which.
+- **What shipped goes to the CHANGELOG**, under `## Unreleased` - which R18 already requires
+  of the PR that shipped it, so for a row that shipped code this costs nothing.
+- **The row moves to `docs/backlog-archive.md`**, as written, plus a `where` cell naming what
+  its content became.
+
+**A row whose content cannot be relocated was not done.** That is what this rule buys, and it
+is the point rather than a side effect. If nothing will take the content, one of three things
+is true and each has an action: the work is not finished (the row stays), the finding needs a
+record nobody has written (write it - that is a row of its own), or the row is being abandoned
+rather than completed (then its status is not `done`).
+
+**When, and who.** At the release cut, by whoever cuts the release. *(scale)* `/sprint-close`
+archives the rows its sprint finished, since it is already writing that sprint's outcome.
+Never automatically: choosing the destination is a judgment, and a pointer a tool guessed is a
+pointer nobody trusts.
+
+Ideas close the same way, on `graduated` or `dropped` - a graduating idea already points at
+what it became (R14), so its `where` is written before the archive asks for it. Two statuses
+deliberately do **not** archive: `split:<id>`, because the remainder row is live work, and an
+open question's `decided`, because a standing decision stays open to a better one - that is
+what the type is for, not a completed state to file away.
+
+**Prove it.** `node scripts/backlog-archive-check.mjs --base origin/main --block` fails a row
+that left the pool without reaching the archive, an archived row with an empty `where`, a
+`where` naming a path that is not here, and an id sitting in both files at once. What it cannot
+check is whether the destination still holds the finding - that stays your judgment.
+
+The archive ships as a template with nothing in it: delete the file until the first row moves,
+and the checks that read it stay quiet meanwhile. The removal check does not stay quiet, because
+the first closure is exactly when the archive is supposed to appear.
 
 ## Who an internal item serves
 
