@@ -11,7 +11,7 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
-## Unreleased
+## 1.1.3 - 2026-08-13
 
 ### The pre-PR check list promised it was the set CI runs, and four checks were missing (2026-08-13)
 
