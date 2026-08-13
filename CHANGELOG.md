@@ -11,6 +11,33 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### The pair check could not see a schema kept in one file (2026-08-13)
+
+`schema-pair` walks a directory. That was an assumption about the shape of a schema, never
+a requirement of the pair it checks, and it left one ordinary shape unreachable: a repo with
+a single production database and no migration chain keeps the whole DDL in one
+`database/schema.sql`, which is the same artifact R24 exists to protect - one thing a
+reviewer reads and a restore applies.
+
+Such a repo had no way to run the check at all. `--dir` needs a directory, and pointing it
+at the parent demands a `pair:` comment from every `.sql` in the tree - seeds and one-off
+`ALTER`s included, none of which have a typed twin or should have one. Installing the guard
+regardless printed `no database/schema/ - skipping (R24 binds repos that own a database)`,
+which for a repo that does own a database is false, and a false skip is worse than no check:
+it reads as a pass.
+
+`--file <path>` names a schema kept whole in one file. It is the same escape hatch `--dir`
+already was - R24 still says where the DDL belongs, and this changes only whether the guard
+can look where a repo's own recorded decision put it. A target named explicitly and not
+found is now an error rather than a silent skip, so a typo in the path stops reading as a
+clean run, and `--dir` and `--file` each say so when handed the other kind of thing.
+
+Separately, the walk now skips `node_modules` and `.git`, as `facts-check` already did. A
+dependency tree carries other people's `.sql` - fixtures, a vendored dump - and every one of
+them was being demanded to declare a typed twin.
+
 ## 0.9.1 - 2026-08-10
 
 ### The dashboard summarised everything and let you read nothing (2026-08-10)

@@ -6,12 +6,16 @@ node scripts/schema-pair.mjs --block
 
 ## What it refuses to let happen
 
-The executable DDL under `database/schema/` and the typed definition every read and write
-path goes through - Zod, Pydantic, whatever your stack uses - are meant to be 1:1. They stop
-being 1:1 the moment somebody adds a column on one side only, and nothing about that is
-visible until data arrives in a shape nothing expected.
+The executable DDL and the typed definition every read and write path goes through - Zod,
+Pydantic, whatever your stack uses - are meant to be 1:1. They stop being 1:1 the moment
+somebody adds a column on one side only, and nothing about that is visible until data
+arrives in a shape nothing expected.
 
 Each file names its counterpart in a `pair: <path>` comment, and this checks both directions.
+
+With no flag it reads `database/schema/`. A repo whose recorded decision keeps the DDL
+somewhere else points it there: `--dir <path>` for a directory of `.sql`, `--file <path>` for
+a schema kept whole in one file.
 
 ## What it does not do
 

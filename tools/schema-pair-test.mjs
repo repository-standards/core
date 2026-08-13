@@ -40,9 +40,14 @@ export const bookings = z.object({
 });
 `;
 
-const run = (repo) => {
+// A single-file schema is the other shape R24 covers: one production database, no
+// migration chain, the whole DDL in one reviewable file.
+const SINGLE_TWIN = TWIN.replace("database/schema/bookings.sql", "database/schema.sql");
+const SINGLE = { "database/schema.sql": DDL, "src/db/schema.ts": SINGLE_TWIN };
+
+const run = (repo, args = []) => {
   try {
-    return { code: 0, out: execFileSync("node", [GUARD, "--block"], { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }) };
+    return { code: 0, out: execFileSync("node", [GUARD, "--block", ...args], { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }) };
   } catch (e) {
     return { code: e.status ?? 1, out: `${e.stdout ?? ""}${e.stderr ?? ""}` };
   }
@@ -67,6 +72,26 @@ const CASES = [
   { name: "a counterpart that does not exist fails", fails: true, says: "does not exist", files: { "database/schema/bookings.sql": DDL.replace("src/db/schema.ts", "src/db/gone.ts") } },
   { name: "a pair declared on one side only fails", fails: true, says: "does not name", files: { "src/db/schema.ts": TWIN.split("\n").slice(1).join("\n") } },
   { name: "no database means nothing to check", fails: false, says: "skipping", files: {}, drop: ["database/schema/bookings.sql"] },
+
+  // The single-file shape: same pair, one file instead of a directory.
+  { name: "--file checks a whole schema kept in one file", fails: false, says: "names covered by their twin", args: ["--file", "database/schema.sql"], files: SINGLE, drop: ["database/schema/bookings.sql"] },
+  { name: "drift in a single-file schema still fails", fails: true, says: "missing cancelled_at", args: ["--file", "database/schema.sql"], files: { ...SINGLE, "database/schema.sql": DDL.replace("  state ", "  cancelled_at timestamptz,\n  state ") }, drop: ["database/schema/bookings.sql"] },
+  {
+    name: "--file names a schema the default would never find",
+    fails: false,
+    says: "names covered by their twin",
+    args: ["--file", "db/schema.sql"],
+    files: { "db/schema.sql": DDL, "src/db/schema.ts": TWIN.replace("database/schema/bookings.sql", "db/schema.sql") },
+    drop: ["database/schema/bookings.sql"],
+  },
+  { name: "an explicit target that is not there is a mistake, not a skip", fails: true, says: "does not exist - the target was named explicitly", args: ["--file", "db/gone.sql"], files: {} },
+  { name: "--dir handed a file says which flag to use", fails: true, says: "pass it as --file", args: ["--dir", "database/schema.sql"], files: SINGLE, drop: ["database/schema/bookings.sql"] },
+  { name: "--file handed a directory says which flag to use", fails: true, says: "pass it as --dir", args: ["--file", "database/schema"], files: {} },
+  { name: "two targets at once is refused rather than guessed", fails: true, says: "pass one", args: ["--dir", "database/schema", "--file", "database/schema.sql"], files: {} },
+  { name: "a flag whose path went missing does not fall back to the default", fails: true, says: "--file needs a path", args: ["--file"], files: {} },
+
+  // A dependency tree carries other people's .sql, and none of it is this schema.
+  { name: "a vendored .sql under the target is not read as this repo's schema", fails: false, says: "OK", files: { "database/schema/node_modules/dep/dump.sql": "CREATE TABLE vendored (id uuid);\n" } },
 ];
 
 let failures = 0;
@@ -79,7 +104,7 @@ for (const c of CASES) {
     writeFileSync(join(repo, rel), body);
   }
 
-  const { code, out } = run(repo);
+  const { code, out } = run(repo, c.args);
   const want = c.fails ? 1 : 0;
   if (code !== want) {
     failures++;
