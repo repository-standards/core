@@ -88,6 +88,15 @@ right after the assessment and reconstructs personas before any spec; `greenfiel
 scaffolds without re-asking; `adoption.md` states both walk orders and the
 assessment-only stop; the backlog format carries `owner`.
 
+## Revisit when
+
+- A new routing path emerges beyond the four named here (start new / bring existing /
+  assessment only / add a stack to a pinned repo) that needs its own timing for the
+  technology question - the single step-0 round assumes four, not more.
+- The phase files drift out of sync with the gate cross-references intake depends on -
+  the coupling this record names as an accepted, ongoing maintenance cost - to the point
+  the single question round no longer reflects what each phase actually does.
+
 ## Related
 
 - [ADR-006](ADR-006-personas-are-a-validation-gate.md) (personas are a validation

@@ -98,7 +98,7 @@ drift number as before it existed.
 Putting tracker identity, external keys or sync state into the spec, the task list or the
 backlog row itself. Those are the repo's, and a tracker's needs do not get to shape them.
 
-## How we would know we were wrong
+## Revisit when
 
 An adopter with no tracker still has to think about the sidecar - which would mean the
 "ignorable" claim is false - or a second adapter cannot be built against the extension

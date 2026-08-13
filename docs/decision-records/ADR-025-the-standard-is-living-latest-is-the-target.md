@@ -71,3 +71,11 @@ checked or warned about). The canonical phrase is greppable: a live surface
 saying "by reference at the/your pinned version" is a defect. The update
 channel lands as shipped templates (watch workflow, Renovate rule) - recorded
 in the backlog until then.
+
+## Revisit when
+
+The update channel (the Renovate custom manager, the shipped watch workflow, a
+possible npm package) fails to keep repos actually moving forward - staying current
+is meant to be a notification, not a lock, and that only holds if the notification
+mechanism works. Without it, a repo can be behind indefinitely with nothing telling
+it so, which reopens the case for some form of anchoring this record rejects.
