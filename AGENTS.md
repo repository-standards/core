@@ -42,9 +42,10 @@ clients get them by reference (ADR-004), never as copies.
 ## Working here
 
 - **Checks before any PR** (the same set CI runs - `.github/workflows/checks.yml`):
-  `node tools/tree-check.mjs` (no leaks into the tree, manifest promises present,
-  the recorded content hashes are the tree's own, the tree passes its own
-  `self-verify --skeleton`), `node tools/link-check.mjs`,
+  `node tools/tree-check.mjs` + `node tools/tree-check.mjs --self` (no leaks into the
+  tree, manifest promises present, the recorded content hashes are the tree's own, the
+  tree passes its own `self-verify --skeleton`, and an entry's `since` names a shipped
+  release or the literal `unreleased`), `node tools/link-check.mjs`,
   `node tools/prose-check.mjs` + `node tools/prose-check.mjs --self` (no line renders
   as something it is not, and none uses the em or en dash the shipped conventions forbid),
   `node standard/scripts/spec-structure.mjs` (the repo's own specs stay shaped, and a
@@ -59,6 +60,9 @@ clients get them by reference (ADR-004), never as copies.
   `node tools/spec-guard-test.mjs`, `node tools/clarify-gate-test.mjs`,
   `node tools/schema-pair-test.mjs` and `node tools/sprint-guard-test.mjs` (those
   guards still fire where they must),
+  `bash standard/scripts/verifyAgentGuards.sh` (the shipped `PreToolUse` hooks deny and
+  allow what they should - they only print when they refuse, so nothing else here
+  notices a bypass in them),
   `node tools/self-verify-fill-test.mjs` and `node tools/self-verify-drift-test.mjs`
   (the placeholder warning is clearable, and the drift number moves when a copy-class
   file's content, a declared key or an exception does),
@@ -75,8 +79,9 @@ clients get them by reference (ADR-004), never as copies.
   `node tools/file-map.mjs --check` (the file map is generated from the manifest,
   never hand-written), `node tools/skill-map.mjs --check` (the skill catalogue is
   generated from each skill's own frontmatter, and every shipped skill is grouped),
-  `node tools/validation.mjs --check` (the validation suite's
-  rendered pages match `docs/validation/ai-prompting/suite.json`/`targets.json`/`runs/*.json`, every
+  `node tools/validation.mjs --check` + `node tools/validation-test.mjs` (the validation
+  suite's rendered pages match
+  `docs/validation/ai-prompting/suite.json`/`targets.json`/`runs/*.json`, every
   case has a verdict, and every open failure carries an explicit waiver rather than a
   silent gap), `node tools/human-prompting.mjs --check` +
   `node tools/human-prompting-test.mjs` (the other suite: prompt ids unique and contiguous,
