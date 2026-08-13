@@ -774,7 +774,36 @@ function collect() {
 const backlog = parseBacklog()
 const { entries, releases } = parseChangelog()
 const sprints = parseSprints()
-const items = backlog.epics.flatMap((e) => e.items)
+const backlogRows = backlog.epics.flatMap((e) => e.items)
+
+// R14 puts an idea in `docs/ideas/` under a status, and that folder's README is explicit that
+// each idea lives in one file - so a repo following the convention writes its ideas nowhere
+// else. The pool only ever read backlog.md, which left the Backlog tab's Ideas chip filtering
+// over rows that repo never wrote, while the same ideas rendered fine on Documents. Merged in
+// both directions now, deduped on the lowercased title either way, so an idea that is a file
+// AND an ADR-046 row renders once per tab: the file on Documents (it carries the whole shape),
+// the row in the pool (it carries an id, an epic and a DoD).
+const ideaDocs = parseIdeas()
+const ideaRowTitles = new Set(backlogRows.filter((i) => i.type === 'idea').map((i) => i.title.toLowerCase()))
+const items = backlogRows.concat(
+  ideaDocs.filter((d) => !ideaRowTitles.has(d.title.toLowerCase())).map((d) => {
+    // Shaped by asItem() like every other row, so the pool, its search box and the detail
+    // dialog read one kind of object. The status goes through splitStatus() with the rest,
+    // which knows the idea vocabulary (ADR-046) - so `parked` stays parked instead of
+    // defaulting to `todo`; plain() first, because a file is free to write it as `**parked**`.
+    const item = asItem(
+      { id: basename(d.path, '.md'), type: 'idea', status: plain(d.status), why: d.itch },
+      '',
+    )
+    // Both fields are already shaped: parseIdeas() ran inline() over the heading, and inline()
+    // escapes what it is handed, so a second pass would render the <code> of the first as
+    // text. The file's Date is the date of the status it declares, which is what the row-side
+    // `idea (2026-08-03)` spelling puts in the same field.
+    item.title = d.title
+    item.statusDate = item.statusDate || d.date
+    return item
+  }),
+)
 
 const pkg = has('package.json') ? JSON.parse(read('package.json')) : {}
 const version = (readIf('VERSION') || pkg.version || '').trim() || null
@@ -838,7 +867,7 @@ const data = {
   // shaped every backlog item the same way regardless of type, so these are a filter and
   // a re-map, not a second parser.
   questions: parseQuestions().concat(
-    items
+    backlogRows
       .filter((i) => i.type === 'open-question')
       .map((i) => ({
         topic: i.title,
@@ -854,22 +883,24 @@ const data = {
   // the README table, and an idea is file-first by convention (docs/ideas/README.md: "each
   // idea lives in one file"). So a backlog row normally names an idea parseIdeas() already
   // found - only titles it did NOT find (a backlog-only idea with no file yet) get added,
-  // or the same idea would render twice on the Documents tab.
+  // or the same idea would render twice on the Documents tab. Read from backlogRows rather
+  // than items: items now carries the file-based ideas too, and an idea deduped against
+  // itself is a merge that only looks right.
   ideas: (() => {
-    const fromFiles = parseIdeas()
-    const fileTitles = new Set(fromFiles.map((i) => i.title.toLowerCase()))
-    const fromBacklog = items
+    const fileTitles = new Set(ideaDocs.map((i) => i.title.toLowerCase()))
+    const fromBacklog = backlogRows
       .filter((i) => i.type === 'idea' && !fileTitles.has(i.title.toLowerCase()))
       .map((i) => ({ title: i.title, status: i.status, date: i.statusDate, itch: i.why }))
-    return fromFiles.concat(fromBacklog)
+    return ideaDocs.concat(fromBacklog)
   })(),
   specs: parseSpecs(),
   discovery: parseDiscovery(),
 }
 
-// Scoped to task/bug: open-question (open|decided) and idea (idea|exploring|...) rows use
-// their own vocabulary (ADR-046), and folding them into the task buckets would misrepresent
-// both - a "todo" count that is actually half standing doubts answers no question honestly.
+// Scoped to task/bug: open-question (open|decided) and idea (idea|exploring|...) items carry
+// their own vocabulary (ADR-046), whether they reached the pool as a backlog row or as a file
+// under docs/ideas/, and folding them into the task buckets would misrepresent both - a "todo"
+// count that is actually half standing doubts answers no question honestly.
 const workItems = items.filter((i) => i.type === 'task' || i.type === 'bug')
 const inCycles = sprints.filter((c) => c.state === 'open').flatMap((c) => c.items)
 data.counts = {

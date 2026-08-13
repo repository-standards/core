@@ -11,6 +11,37 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### The dashboard hid every idea a repo wrote the way the standard tells it to (2026-08-13)
+
+R14 puts a speculative idea in `docs/ideas/` under a status, and that folder's README is
+explicit that each idea lives in one file. The dashboard's Backlog tab never showed one. It
+reads a single pool, that pool came from `backlog.md` alone, and the only ideas that ever
+reached it were the `type: idea` rows of ADR-046 - which is this repository's own indexing
+choice, not something an adopter is required to copy. So a repo following the documented
+convention got an Ideas chip that was absent or filtered to nothing, while the same ideas
+rendered fine two tabs away on Documents. Measured on a real adopting repo: three files under
+`docs/ideas/`, three cards on Documents, zero ideas in the pool.
+
+The merge existed already and ran one way - files into the Documents tab, with backlog rows
+deduped against them by lowercased title so nothing rendered twice there. It now runs both
+ways on the same key. A file-based idea enters the pool shaped by the same `asItem()` as
+every other row, so the list, the search box and the detail dialog still read one kind of
+object; it is identified by its own filename rather than by an id this generator invented,
+because the page is a projection of the repository and an identifier that exists nowhere in
+it cannot be looked up. Its status goes through the same reader as a row's, so `parked` stays
+parked and `graduated` closes the row - a status defaulted to `todo` would have put a dropped
+idea in the same bucket as agreed, unstarted work.
+
+What deliberately did not move: the todo/doing/blocked/done tiles still count `task` and
+`bug` rows alone. Idea vocabulary in a work count would misrepresent both, and a wider pool
+that quietly folded it in would be a worse defect than the invisible ideas. Every other
+consumer of the pool was checked against the same assumption - the category colours, the
+Backlog tab's own count, the id column's width, the "in flight" and "blocked" lists on Now -
+and `tools/dashboard-ideas-test.mjs` pins both halves. A repository that already carries its
+ideas as rows, this one included, builds a byte-identical page.
+
 ## 1.1.3 - 2026-08-13
 
 ### The pre-PR check list promised it was the set CI runs, and four checks were missing (2026-08-13)
