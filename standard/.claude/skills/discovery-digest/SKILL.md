@@ -48,8 +48,9 @@ puts it in front of them.
    `docs/discovery/_template.md` to `docs/discovery/<topic>/README.md`** and filling
    its title and summary - that template's own first line says to copy it, and it carries the
    exact shapes the rest of the loop reads back: the `Last reconciled:` stamp the
-   spec skills compare entry dates against, the `| Date | Source | State |` entry
-   table, and the `## Contradictions to resolve` table. A hand-built README with the
+   spec skills compare entry dates against, the entry table with its six columns
+   (date, kind, source, touches, state, outcome), and the
+   `## Contradictions to resolve` table. A hand-built README with the
    same sections in a different shape looks right and reads wrong - the stamp line is
    the one every `spec-*` skill greps for. Set the stamp to `never` and leave both
    tables empty.
@@ -58,20 +59,45 @@ puts it in front of them.
    by hand in the template's shape - summary, `Last reconciled: never`, the entry
    table, the contradictions table - and say that the template is missing.
 
-2. **Write the entry - essence, not transcript.** Create
+2. **Write the entry - essence, not transcript.** Copy the shipped
+   `docs/discovery/_entry-template.md` to
    `docs/discovery/<topic>/YYYY-MM-DD-<source>.md` (source names where it came
-   from: `kickoff-meeting`, `mail-from-<who>`, `support-ticket-123`). Content:
-   - a provenance line: date, source, participants/author, and a link to the
-     raw material (recording, thread, mail) - the raw itself stays OUT of the
-     repo (volume, noise, personal data);
-   - the essence as attributable points: *who* said *what mattered* -
-     decisions argued (and whether they were settled), constraints stated,
-     numbers given, promises made. Keep the "it was said at THAT meeting"
-     value; drop the small talk.
+   from: `kickoff-meeting`, `mail-from-<who>`, `support-ticket-123`). Fill its
+   header table - every field, because each one is a question somebody asks later
+   and none of them can be recovered from the notes afterwards:
+   - **Kind** from the fixed vocabulary (`meeting`, `call`, `mail`, `thread`,
+     `ticket`, `document`, `note`) - not free text, so "was that agreed in a
+     meeting or in a mail" stays answerable across the dossier;
+   - **Date**, **Present** (roles, first names at most), and **Raw** as a link -
+     the raw itself stays OUT of the repo (volume, noise, personal data);
+   - **Purpose** - why the session happened, the question it was called to
+     answer. Ask if the handover does not say and the answer is not obvious;
+     it is the field nobody can reconstruct six months on, and one line is enough;
+   - **Touches** - every subject the material bears on beyond this dossier's own
+     topic. One session is rarely one topic, and this is the axis somebody
+     searches when they remember a conversation happened but not where it was
+     filed. Prefer existing dossier slugs and capability names over new words;
+   - **Outcome** - `none yet` when nothing has come of it yet, which is the
+     normal state on arrival. Fill it in when it produces something (step 5,
+     or later, whenever a record or spec comes out of this entry).
+
+   Then the body: the essence as attributable points - *who* said *what
+   mattered* - decisions argued (and whether they were settled), constraints
+   stated, numbers given, promises made. Keep the "it was said at THAT meeting"
+   value; drop the small talk. Where the session's lasting value was an
+   **explanation** (how something works, why a constraint exists) rather than a
+   decision or a behaviour, put it under `## Explained here` - no record or spec
+   will ever hold it, so it is here or it is lost.
+
+   Where `_entry-template.md` is not in the repo (an adoption older than it),
+   write the same header table by hand and say that it is missing - the fields
+   are the shape other people read back, not this template's private business.
 
 3. **Update the dossier README.**
    - Refresh the summary if the material moved the topic.
-   - Add the entry to the entries list with state `new`.
+   - Add the entry to the entries table with state `new`, mirroring the header:
+     date, kind, source, touches, outcome. The row is what makes the dossier
+     scannable without opening every file in it.
    - **Diff against every earlier entry**: where the new material contradicts
      an earlier entry or an assumption ("kickoff assumes same-day refunds;
      this mail says T+3"), add a row under `## Contradictions to resolve`
@@ -97,10 +123,16 @@ puts it in front of them.
    that is true in the world but never gets written down here, or one worded so
    differently from the record that no grep finds it - a tripwire, not a monitor.
 
-5. **Route what is already ripe.** If the material contains a *settled*
-   decision (a fork was taken, on the record), offer to draft the ADR/BDR now -
-   consent-gated, the user says yes or no. If it contains a clear work item,
-   offer the backlog. Everything else stays in the dossier as material.
+5. **Route what is already ripe, and record where it went.** If the material
+   contains a *settled* decision (a fork was taken, on the record), offer to
+   draft the ADR/BDR now - consent-gated, the user says yes or no. If it
+   contains a clear work item, offer the backlog. Everything else stays in the
+   dossier as material. Whenever something does come out of an entry - here, or
+   on any later pass - write it into that entry's **Outcome** field and the
+   README row (`ADR-012`, `specs/invoicing`, `backlog#41`). The state column
+   already says an entry was consumed; the outcome is the only place that says
+   by what, and "which meeting did this decision come out of" is asked far more
+   often than it is answerable.
 
 6. **Report readiness.** End with a one-paragraph status: how many entries are
    `new`/`open` vs consumed, the open contradictions, any `Revisit when` signal
@@ -126,8 +158,8 @@ puts it in front of them.
 
 ## Done When
 
-- [ ] The entry file exists, provenance-stamped, essence-only, raw linked
-- [ ] The dossier README lists it (`new`), summary current, contradictions diffed
+- [ ] The entry file exists, essence-only, raw linked, and every header field filled - `Kind` from the vocabulary, `Purpose` answered, `Touches` listing the subjects beyond this dossier, `Outcome` at least `none yet`
+- [ ] The dossier README lists it (`new`) with kind, touches and outcome mirrored, summary current, contradictions diffed
 - [ ] The new material was checked against every decision record's `Revisit when`; any hit is on the record and in the readiness report
-- [ ] Ripe decisions/work items offered onward (consent-gated), not silently taken
+- [ ] Ripe decisions/work items offered onward (consent-gated), not silently taken, and whatever came of an entry written into its `Outcome`
 - [ ] Readiness verdict reported ("ripe for spec-specify" / "still discovering" / "route via clarify")
