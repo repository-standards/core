@@ -186,7 +186,7 @@
       "profile": "core",
       "since": "1.0.0",
       "rule": "R24",
-      "sha256": "bc3cf5b6959a549ca823aac6b260ee62908be7500ba40cdc01692d4747594c44"
+      "sha256": "4b0b30b774f507804e49b76c55b76430b1f08d464ec1520d665d98782f1c3c66"
     },
     {
       "path": "scripts/decision-records-check.mjs",
