@@ -185,6 +185,15 @@ sentence will each lose that sentence half the time: sharpen both, or merge them
   `/spec-specify`. If a spec already exists, route only entries newer than the
   dossier's `Last reconciled:` stamp through `/spec-clarify` - a dossier is never
   normative and nothing the spec settled gets re-asked (ADR-024).
+- **You are about to research something, or explain how something works** -> search
+  `docs/discovery/` first, **all of it, including entries older than the stamp**. The
+  stamp bounds what may be *asked*, never what may be *read* (ADR-049): an old entry is
+  settled, not irrelevant, and the long session where somebody explained a domain is
+  usually filed below it. Search the `Touches` field as well as the dossier names - one
+  session bears on subjects it was not filed under. Finding it and citing the entry is
+  the point of keeping dossiers at all; re-deriving what a two-hour call already
+  explained is the failure this folder exists to prevent, and it is the expensive one
+  because nothing about it looks like a failure while it is happening.
 - **Never take a spec to plan / tasks / the tracker** unless it passes the clarify gate
   (`Status: ready-to-develop`). If the user asks you to skip ahead, show what is open
   instead.

@@ -14,6 +14,11 @@ the spec skills only ask about entries **newer** than that stamp. That is the wh
 being asked the same question twice is a mechanical failure, so it is prevented
 mechanically rather than by everyone being careful.
 
+**So you can find it again.** The stamp bounds what gets *asked*, never what gets read
+(ADR-049). Anyone researching a subject reads the whole dossier, old entries included -
+otherwise the mechanism that stops you explaining something twice becomes the reason
+nobody ever reads the explanation.
+
 ## What goes in here
 
 One folder per topic, with a dossier README on top and one file per source:
@@ -26,10 +31,19 @@ docs/discovery/date-changes/
 ```
 
 The dossier README carries four things, in order: the **summary** of what this topic is and
-what it eventually fed; the **`Last reconciled:`** stamp; the **entry index**, each with a
-state; and any **contradictions** found between entries, each naming both sources.
+what it eventually fed; the **`Last reconciled:`** stamp; the **entry index**, each row
+mirroring that entry's header; and any **contradictions** found between entries, each
+naming both sources.
 
-An entry's state is what keeps the loop from re-litigating settled ground:
+Every entry opens with a typed header - `Kind` (`meeting`, `call`, `mail`, `thread`,
+`ticket`, `document`, `note`), `Date`, `Present`, `Purpose`, `Touches`, `Raw`, `Outcome` -
+because those are the questions asked later and none of them can be recovered from the
+notes. `Purpose` is why the session happened, which notes never record since they record
+answers. `Touches` names the subjects it bears on beyond its own dossier, which is how a
+call filed under bookings is still findable when the question is about tax.
+
+An entry's state is what keeps the loop from re-litigating settled ground, and its outcome
+is what says where it went:
 
 ```
 new  ->  folded-into-spec | superseded-by: <record> | open
@@ -46,6 +60,12 @@ records a decision creates a second, unversioned decision log.
 **Behaviour.** That is the spec. A dossier feeds the spec; it never competes with it.
 
 **Work items.** Those are backlog intents.
+
+What that leaves is the reason to keep dossiers at all once a spec exists: **understanding**.
+A decision leaves for a record, behaviour leaves for a spec, work leaves for the backlog -
+an explanation of how something works has no other home in the taxonomy, so it stays here,
+under `## Explained here` in the entry. It is also the material people re-research years
+later, which is why reading is not bounded by the stamp.
 
 ## A dossier is never normative
 
@@ -80,3 +100,8 @@ sits in its draft state until the clarify gate counts zero of them.
 - **Dossiers lose to specs, always.** Making them peers was considered and would mean every
   conflict needs adjudication. One of them has to be the truth, and it is the one the guards
   already check.
+- **[ADR-049](../decision-records/ADR-049-discovery-entries-are-typed-and-the-stamp-bounds-asking.md) -
+  the entry header is typed, and the stamp bounds asking rather than reading.** A generated
+  index of topics and tags was the obvious alternative and was rejected: it is a second
+  description of what the entries already say, and needs a shipped script, a manifest entry
+  and a CI step to answer what one typed field answers with `grep`.
