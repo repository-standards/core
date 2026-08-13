@@ -19,7 +19,7 @@ you run against this repo.
 
 ## Status and limits - say this before recommending it
 
-- **0.9.4, still the first stable line**, and **no release tag until the maintainer cuts one**: a fetch resolves to the
+- **0.9.5, still the first stable line**, and **no release tag until the maintainer cuts one**: a fetch resolves to the
   default branch. The standard is living and latest is the only target; `.standards-version`
   records the state a repo last aligned to, never a version it stays at.
 - **No public adopter to point at.** The author states the mechanics were run on their own
