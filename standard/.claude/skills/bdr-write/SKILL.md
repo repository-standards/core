@@ -45,6 +45,12 @@ that reads like an ADR with the wrong nouns.
   privacy, money and safety decisions this is the whole risk, and "nothing yet" is a real
   answer that has to be written down as one.
 - **Revisit when.** Usually the same signal, with a date or a threshold attached.
+  **Required**, and `scripts/decision-records-check.mjs` fails the build without it -
+  `discovery-digest` greps these across the log to catch a decision sitting past its own
+  trigger, so a record with no signal is silently untrippable. A business decision more
+  often has a real threshold than a technical one; where it genuinely has none, say so in
+  the section rather than inventing a number that would fire on nothing anyone meant.
+  Superseded and rejected records are exempt.
 - **Decided by - what made it binding.** "The author" is a real answer where the author could
   make the call. Where a body did - a steering group, a board, a client sign-off - name it
   the way that body defines a decision (name, date, tally, quorum met). A business decision

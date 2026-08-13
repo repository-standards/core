@@ -48,7 +48,14 @@ instead of re-typing a right one.
   "review only". This is what stops the record being decoration.
 - **Revisit when.** The concrete signal that reopens it - a scale threshold, a version, a
   cost. Not "if it becomes a problem". Ask: *what would have to be true for us to change our
-  minds?*
+  minds?* **Required on every record you write** - `Proposed` included, since naming the
+  signal is part of writing the record rather than of accepting it - and
+  `scripts/decision-records-check.mjs` fails the build without it, because `discovery-digest`
+  greps these across the whole log to catch a decision sitting past its own trigger, so a
+  record with no signal is silently untrippable. Where a decision is structural and genuinely has none, write *that*: "nothing
+  reopens this short of dropping X" is a real answer. An invented threshold is not, and it
+  is worse than the empty section, because it fires or fails to fire on a number nobody
+  meant. Superseded and rejected records are exempt - nothing is left to reopen.
 - **Decided by - what made it binding.** Usually "the author" or "the maintainers", and one
   word is the whole answer. Ask for more only where the repo's own governance says a body
   decides: a chartered technical committee, a steering group, a client sign-off. Then record

@@ -106,11 +106,17 @@ puts it in front of them.
    - Never touch the `Last reconciled:` stamp - only the `spec-*` skills move
      it, when they fold the dossier into a spec.
 
-4. **Check it against every `Revisit when` (grep, not judgment).** Every ADR/BDR
-   carries a `## Revisit when` field naming the concrete signal that should reopen
-   it - nobody read it back before this step existed, so a decision could sit past
-   its own trigger with only an agent's own unbroken context noticing (a fresh
-   agent, or the same agent on a later date, would not). Pull each record's
+4. **Check it against every `Revisit when` (grep, not judgment).** Every ADR/BDR that
+   still stands carries a `## Revisit when` field naming the concrete signal that should
+   reopen it - `scripts/decision-records-check.mjs` fails the build on one that does
+   not, so this step reads a complete set rather than whichever records happened to
+   fill it in. Nobody read them back before this step existed, so a decision could
+   sit past its own trigger with only an agent's own unbroken context noticing (a
+   fresh agent, or the same agent on a later date, would not). Superseded and
+   rejected records carry no signal and are not checked - there is nothing left to
+   reopen. In a repo whose log predates that guard, some records will still have no
+   field: those cannot be tripped by this step at all, and are worth a line in the
+   report rather than silence. Pull each record's
    `Revisit when` line across `docs/decision-records/` (or wherever this repo's
    records live) and check the new entry's text against it - a textual match ("10k
    customers", "self-hosting", a named competitor) is a hit; this is a grep, not a
