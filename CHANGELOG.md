@@ -13,14 +13,26 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
 ## Unreleased
 
-### The pre-PR check list left out a gate CI runs (2026-08-13)
+### The pre-PR check list promised it was the set CI runs, and four checks were missing (2026-08-13)
 
-`AGENTS.md` ends its list of pre-PR checks with a promise: the list is the set CI runs, and a
-check present in `checks.yml` but absent here is the bug. `node tools/adoption-gates-test.mjs`
-was that bug. It has run in CI since ADR-048 added the `adoption-gates` guard, and an agent
-following `AGENTS.md` to the letter had no reason to run it locally - so the guard that keeps
-a Gate 2 or Gate 5 artifact from existing while saying nothing was itself only ever exercised
-after the push. Added to the enumeration, in CI's own order, next to the other guard tests.
+`AGENTS.md` ends its list of pre-PR checks with a promise that doubles as a test: the list is
+the set CI runs, and a check present in `checks.yml` but absent here is the bug. Read against
+the workflow, four were.
+
+`node tools/adoption-gates-test.mjs` has run in CI since the commit that added the
+`adoption-gates` guard for ADR-048 - the same commit added the test, the workflow step and no
+line here. `bash standard/scripts/verifyAgentGuards.sh`, `node tools/validation-test.mjs` and
+the `--self` pass of `tree-check` were the other three.
+
+The consequence is not that the checks went unrun; CI runs all four. It is that an agent
+following this file literally ran every *other* guard test locally and left these to the push,
+which is the arrangement the bullet exists to prevent. `verifyAgentGuards.sh` is the sharp
+case: the workflow's own comment records that the shipped guards print only when they refuse,
+so nothing notices a bypass in them unless their suite runs - and a bypass did once ship with
+every check on this list green. The one check whose absence is self-concealing was itself
+absent from the list.
+
+All four added, in CI's own order, each naming what it protects.
 
 ## 0.9.2 - 2026-08-13
 
