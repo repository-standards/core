@@ -11,7 +11,7 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
-## Unreleased
+## 0.9.8 - 2026-08-14
 
 ### A decision record must now name what would reopen it (2026-08-13)
 
