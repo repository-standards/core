@@ -5,9 +5,18 @@ A skill earns its place when its description names a situation no other skill's 
 names; it costs something only when it overlaps one. Ten skills with blurred descriptions
 are worse than twenty with sharp ones, and the number on its own predicts nothing.
 
-Currently 21 ship into every adopted repo. That is a report, not a budget.
+Currently 22 ship into every adopted repo. That is a report, not a budget.
 
-`record-run` (2026-08-09) is the most recent addition: the human-prompting corpus's own
+`show-backlog` (2026-08-13) is the most recent addition, and it is the first one this entry
+asked for by name: the closing paragraph wanted field evidence of a real user's sentence
+matching none of the descriptions, and it arrived. On an adopted repo that had taken the
+dashboard entry, "show me the backlog" matched no skill - so the backlog file got read and
+summarised into chat instead, while the page that renders it went unmentioned. No description
+claimed the situation and no rule named it. `add-to-backlog` is the near neighbour and the
+boundary is the direction of travel: it files work, this one only reads. Both descriptions now
+say so explicitly.
+
+`record-run` (2026-08-09) was, until then, the most recent addition: the human-prompting corpus's own
 README names its worst weakness as every number in it coming from people who wrote the
 standard. Nothing closed that loop from inside a real adoption run - the gap was in
 reflexivity, not routing, unlike every prior addition here. Its description triggers at the

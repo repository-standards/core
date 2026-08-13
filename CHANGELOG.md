@@ -55,6 +55,23 @@ repository, whose cells are bare, the generated payload is **byte-identical** be
 `tools/dashboard-status-test.mjs` drives the shipped generator over the shapes involved and
 fails 20 of its 30 checks against the previous parser.
 
+### Nothing routed "show me the backlog" to the page that already renders it (2026-08-13)
+
+The dashboard can be installed, built and serving, and an agent asked "show me the backlog"
+will still open `backlog.md` and retype it into chat - slower, lossy, and a second rendering of
+a thing that renders itself. Nothing in the shipped tree said the page existed: no skill
+description claimed the situation and no rule in `AGENTS.md` named it.
+
+`show-backlog` is the 22nd lifecycle skill and the first addition
+[`shipped-skills`](docs/open-questions/shipped-skills.md) asked for by name - that entry closes
+by saying the only evidence that should move it is a real user's sentence matching no skill,
+and this is one. It finds the generator, runs it the way the repository actually runs it rather
+than assuming a package manager or a script name, hands back the URL and the numbers the
+question asked for, and degrades to reading the ledger where the optional entry was declined.
+`AGENTS.md` gains the matching rule, because a description is the trigger and a rule is what
+catches what descriptions miss. `add-to-backlog` gains one sentence marking the boundary: it
+files work and never reads it back.
+
 ## 1.1.4 - 2026-08-13
 
 ### The dashboard hid every idea a repo wrote the way the standard tells it to (2026-08-13)
