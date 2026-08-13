@@ -1029,12 +1029,6 @@ if (views.specs) {
 
   add(
     v,
-    el('p', { class: 'eyebrow', text: 'What this product must do' }),
-    el('p', {
-      class: 'lede',
-      text:
-        'One page per capability - a thing this product does - as written in the repository. Not a summary of it: the specification itself, at the commit this page was built from.',
-    }),
     el('div', { class: 'controls searchrow' }, [search]),
     el('div', { class: 'reader' }, [listHost, docHost]),
   )
