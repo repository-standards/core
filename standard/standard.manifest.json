@@ -118,6 +118,18 @@
       "rule": "R15"
     },
     {
+      "path": "backlog-archive.md",
+      "purpose": "where a closed row goes, with a `where` cell naming what its content became; ships empty, and a repo that has closed nothing deletes it until the first row moves (ADR-051)",
+      "adapt": "fill-from-repo",
+      "required": false,
+      "profile": "core",
+      "since": "unreleased",
+      "altPaths": [
+        "docs/backlog-archive.md"
+      ],
+      "rule": "R15"
+    },
+    {
       "path": "CHANGELOG.md",
       "purpose": "the only home of history (ADR-018); a PR describes its change under `## Unreleased` and never touches the version - R18/R25's one path, at every profile",
       "adapt": "fill-from-repo",
@@ -552,6 +564,16 @@
       "sha256": "4ab3b16238a4bb8efb7eff6f7eebcc27d0b498456f7f45c38158ac8cc45965c8"
     },
     {
+      "path": "scripts/backlog-archive-check.mjs",
+      "purpose": "a closed row reached the archive with a pointer to what its content became, instead of being deleted (ADR-051)",
+      "adapt": "copy",
+      "required": true,
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R15",
+      "sha256": "9f03689bb80cb520dbf1ac7535f86fc575788e3340043e5f7d26181aa7d1f3aa"
+    },
+    {
       "path": "scripts/generate-dashboard",
       "purpose": "renders the work state - pool, sprints, timeline, records, changelog - as one static page for the people who never open the repository; index.mjs is the generator, src/ the page and password-gate material it inlines. A projection, never a second place work is tracked",
       "adapt": "copy",
@@ -856,6 +878,16 @@
       "profile": "core",
       "since": "0.9.6",
       "rule": "R27"
+    },
+    {
+      "id": "backlog-archive-check",
+      "run": "node scripts/backlog-archive-check.mjs --block",
+      "kind": "diff",
+      "blocks": true,
+      "purpose": "a row removed from the pool reached the archive, and every archived row names where its content went (skips its archive checks where nothing has been archived yet)",
+      "profile": "core",
+      "since": "unreleased",
+      "rule": "R15"
     }
   ],
   "decisions": [

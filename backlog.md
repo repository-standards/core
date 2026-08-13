@@ -16,7 +16,12 @@
 
 **Status, per type:**
 
-- `task` / `bug`: `todo` / `doing` / `blocked` / `done`. Drop `done` rows when a release is cut.
+- `task` / `bug`: `todo` / `doing` / `blocked` / `done`. A `done` row leaves this file at the
+  release cut - relocated, not deleted: its finding goes to a record, a spec or a dossier,
+  what shipped goes to the changelog, and the row itself moves to `docs/backlog-archive.md`
+  carrying a pointer to where its content went
+  ([ADR-051](docs/decision-records/ADR-051-closing-a-backlog-row-is-a-relocation-not-a-deletion.md),
+  enforced by `standard/scripts/backlog-archive-check.mjs`).
 - `open-question`: `open` (nothing decided yet) or `decided` (a decision stands - and stays
   open to a better one; that is the type's permanent condition, not a completion state). How
   strong the standing answer is lives in the row's `why`, not in a third status value.

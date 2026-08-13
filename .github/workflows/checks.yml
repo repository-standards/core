@@ -71,6 +71,18 @@ jobs:
           node tools/decision-records-check-test.mjs
       - name: adoption-gates test (a gate artifact that exists but says nothing still fails)
         run: node tools/adoption-gates-test.mjs
+      - name: backlog-archive-check (a closed row reached the archive) + its test
+        # The removal check needs a base to diff against; the archive's own checks do not.
+        # Passing an empty base_ref on a push to main would degrade the run to "nothing to
+        # compare" and read as a pass.
+        run: |
+          if [ -n "${{ github.base_ref }}" ]; then
+            git fetch --no-tags --quiet origin "${{ github.base_ref }}"
+            node standard/scripts/backlog-archive-check.mjs --base "origin/${{ github.base_ref }}" --block
+          else
+            node standard/scripts/backlog-archive-check.mjs --block
+          fi
+          node tools/backlog-archive-check-test.mjs
       - name: dashboard ideas test (an idea reaches the pool as a file or as a row, once either way)
         run: node tools/dashboard-ideas-test.mjs
       - name: dashboard discovery test (an entry is summarised by what it says, not by its template)

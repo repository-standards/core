@@ -33,6 +33,7 @@ copied into your repository as folder READMEs that then age in place.
 | `CLAUDE.md` <br><small>or `AGENTS.md`</small> | the file Claude Code loads first - points at AGENTS.md and carries the rule to check the skills before acting (R1); a non-Claude repo carries the same content in whatever its agent loads first | optional, core | `merge` | [R1](../standard/SPEC.md) |
 | `specs` | living capability specs | **required**, core | `fill-from-repo` | [R8](../standard/SPEC.md) |
 | `backlog.md` <br><small>or `docs/backlog.md`</small> | the work ledger; items leave only when their DoD is met | **required**, core | `fill-from-repo` | [R15](../standard/SPEC.md) |
+| `backlog-archive.md` <br><small>or `docs/backlog-archive.md`</small> | where a closed row goes, with a `where` cell naming what its content became; ships empty, and a repo that has closed nothing deletes it until the first row moves (ADR-051) | optional, core | `fill-from-repo` | [R15](../standard/SPEC.md) |
 | `CHANGELOG.md` <br><small>or `docs/CHANGELOG.md`</small> | the only home of history (ADR-018); a PR describes its change under `## Unreleased` and never touches the version - R18/R25's one path, at every profile | **required**, core | `fill-from-repo` | [R18](../standard/SPEC.md) |
 | `.gitleaks.toml` | secret-scan config (the shipped scan SHOULD gate CI) | optional, core | `copy` | [R19](../standard/SPEC.md) |
 | `.gitattributes` | forces LF on the shipped bash guards and Node scripts - a repo whose own setting is eol=crlf makes every hook exit 127 with empty stdout, which for a deny-guard is silence, not a refusal | **required**, core | `merge` | [R19](../standard/SPEC.md) |
@@ -85,6 +86,7 @@ copied into your repository as folder READMEs that then age in place.
 | `scripts/verifyAgentGuards.sh` | drives every guard with real commands - they only emit output on a denial, so a broken guard is otherwise silent | optional, core | `copy` | [R19](../standard/SPEC.md) |
 | `scripts/spec-guard.mjs` | code<->spec coupling guard (+ --audit) - the tool ships at core, the blocking CI gate is scale (R11) | **required**, core | `copy` | [R11](../standard/SPEC.md) |
 | `scripts/sprint-guard.mjs` | proves the one-place invariant the pool and the sprints depend on | optional, scale | `copy` | [R15](../standard/SPEC.md) |
+| `scripts/backlog-archive-check.mjs` | a closed row reached the archive with a pointer to what its content became, instead of being deleted (ADR-051) | **required**, core | `copy` | [R15](../standard/SPEC.md) |
 | `scripts/generate-dashboard` | renders the work state - pool, sprints, timeline, records, changelog - as one static page for the people who never open the repository; index.mjs is the generator, src/ the page and password-gate material it inlines. A projection, never a second place work is tracked | optional, core | `copy` | [R15](../standard/SPEC.md) |
 
 ## `.claude/` - the procedures, in Claude Code's reference form
