@@ -65,6 +65,12 @@ const check = (name, { files, block = true, root, code, expect }) => {
 const adrReadme = (...rows) => `# ADR index\n\n| # | Title | Status |\n|---|---|---|\n${rows.join("\n")}\n`;
 const bdrReadme = (...rows) => `# BDR index\n\n| # | Title | Status |\n|---|---|---|\n${rows.join("\n")}\n`;
 const row = (n, file, status = "Accepted") => `| [${n}](${file}) | something | ${status} |`;
+// A minimally well-formed record body. The index cases are about ids and rows, so they say
+// nothing about content - but the guard also reads every record still standing for its reopening
+// signal, and a fixture that is only a title would fail every one of those cases for a
+// reason none of them is testing.
+const rec = (title, { status = "Accepted", revisit = "The constraint this fixture stands for is lifted." } = {}) =>
+  `${title}\n\n| | |\n| --- | --- |\n| **Status** | ${status} |\n\n## Revisit when\n\n${revisit}\n`;
 
 check("no docs/decision-records/ at all is nothing to check", {
   files: { "README.md": "# empty repo\n" },
@@ -84,7 +90,7 @@ check("the shipped empty adr/ + bdr/ skeleton is clean", {
 check("a flat directory (this repo's own layout) with matching files and index is clean", {
   files: {
     "docs/decision-records/README.md": adrReadme(row("001", "ADR-001-first.md")),
-    "docs/decision-records/ADR-001-first.md": "# ADR-001\n",
+    "docs/decision-records/ADR-001-first.md": rec("# ADR-001"),
   },
   code: 0,
   expect: ["OK", "1 record"],
@@ -93,8 +99,8 @@ check("a flat directory (this repo's own layout) with matching files and index i
 check("ADR-004 and BDR-004 coexisting in one flat directory is not a collision", {
   files: {
     "docs/decision-records/README.md": adrReadme(row("004", "ADR-004-x.md")) + bdrReadme(row("004", "BDR-004-y.md")),
-    "docs/decision-records/ADR-004-x.md": "# ADR-004\n",
-    "docs/decision-records/BDR-004-y.md": "# BDR-004\n",
+    "docs/decision-records/ADR-004-x.md": rec("# ADR-004"),
+    "docs/decision-records/BDR-004-y.md": rec("# BDR-004"),
   },
   code: 0,
   expect: ["OK", "2 record"],
@@ -103,8 +109,8 @@ check("ADR-004 and BDR-004 coexisting in one flat directory is not a collision",
 check("two files claiming the same number is a duplicate id (the reproduced bug)", {
   files: {
     "docs/decision-records/bdr/README.md": bdrReadme(row("004", "BDR-004-pricing-model.md")),
-    "docs/decision-records/bdr/BDR-004-pricing-model.md": "# BDR-004: pricing\n",
-    "docs/decision-records/bdr/BDR-004-seat-based.md": "# BDR-004: seats (the duplicate)\n",
+    "docs/decision-records/bdr/BDR-004-pricing-model.md": rec("# BDR-004: pricing"),
+    "docs/decision-records/bdr/BDR-004-seat-based.md": rec("# BDR-004: seats (the duplicate)"),
   },
   code: 1,
   expect: ["duplicate id", "BDR-4", "BDR-004-pricing-model.md", "BDR-004-seat-based.md"],
@@ -113,8 +119,8 @@ check("two files claiming the same number is a duplicate id (the reproduced bug)
 check("an Accepted record on disk missing from the index (the other reproduced bug)", {
   files: {
     "docs/decision-records/bdr/README.md": bdrReadme(row("003", "BDR-003-earlier.md")),
-    "docs/decision-records/bdr/BDR-003-earlier.md": "# BDR-003\n",
-    "docs/decision-records/bdr/BDR-004-pricing-model.md": "# BDR-004: pricing, never indexed\n",
+    "docs/decision-records/bdr/BDR-003-earlier.md": rec("# BDR-003"),
+    "docs/decision-records/bdr/BDR-004-pricing-model.md": rec("# BDR-004: pricing, never indexed"),
   },
   code: 1,
   expect: ["missing from the index", "BDR-004-pricing-model.md"],
@@ -126,8 +132,8 @@ check("a row labelled with the record's own id is an index row, not an invisible
       "| [ADR-001](ADR-001-first.md) | something | Accepted |",
       "| [ADR-002](ADR-002-second.md) | something | Accepted |",
     ),
-    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
-    "docs/decision-records/adr/ADR-002-second.md": "# ADR-002\n",
+    "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001"),
+    "docs/decision-records/adr/ADR-002-second.md": rec("# ADR-002"),
   },
   code: 0,
   expect: ["OK", "2 record"],
@@ -136,8 +142,8 @@ check("a row labelled with the record's own id is an index row, not an invisible
 check("a bare cell carrying the prefix resolves to that stream", {
   files: {
     "docs/decision-records/README.md": adrReadme("| ADR-004 | something | Accepted |") + bdrReadme("| BDR-004 | something | Accepted |"),
-    "docs/decision-records/ADR-004-x.md": "# ADR-004\n",
-    "docs/decision-records/BDR-004-y.md": "# BDR-004\n",
+    "docs/decision-records/ADR-004-x.md": rec("# ADR-004"),
+    "docs/decision-records/BDR-004-y.md": rec("# BDR-004"),
   },
   code: 0,
   expect: ["OK", "2 record"],
@@ -146,8 +152,8 @@ check("a bare cell carrying the prefix resolves to that stream", {
 check("a record still missing from an index that uses the prefixed form is reported, with the accepted forms named", {
   files: {
     "docs/decision-records/adr/README.md": adrReadme("| [ADR-001](ADR-001-first.md) | something | Accepted |"),
-    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
-    "docs/decision-records/adr/ADR-002-never-indexed.md": "# ADR-002\n",
+    "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001"),
+    "docs/decision-records/adr/ADR-002-never-indexed.md": rec("# ADR-002"),
   },
   code: 1,
   expect: ["missing from the index", "ADR-002-never-indexed.md", "[ADR-001](FILE.md)"],
@@ -156,7 +162,7 @@ check("a record still missing from an index that uses the prefixed form is repor
 check("an index row citing a file that is not there", {
   files: {
     "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md"), row("002", "ADR-002-removed.md", "Superseded")),
-    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+    "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001"),
   },
   code: 1,
   expect: ["missing from disk", "ADR-002-removed.md"],
@@ -165,7 +171,7 @@ check("an index row citing a file that is not there", {
 check("two index rows claiming the same file/number is a duplicate id from the index side", {
   files: {
     "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md"), row("001", "ADR-001-first.md")),
-    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+    "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001"),
   },
   code: 1,
   expect: ["duplicate id", "README row claims"],
@@ -174,7 +180,7 @@ check("two index rows claiming the same file/number is a duplicate id from the i
 check("advisory without --block: reports and exits 0", {
   files: {
     "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md"), row("002", "ADR-002-gone.md")),
-    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+    "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001"),
   },
   block: false,
   code: 0,
@@ -189,7 +195,7 @@ check("advisory without --block: reports and exits 0", {
 check("a link label carrying the stream prefix is still an index row", {
   files: {
     "docs/decision-records/adr/README.md": adrReadme("| [ADR-001](ADR-001-first.md) | something | Accepted |"),
-    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+    "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001"),
   },
   code: 0,
 });
@@ -198,8 +204,8 @@ check("a link label carrying the stream prefix is still an index row", {
 check("a prefixed label for one record does not cover a second, unindexed one", {
   files: {
     "docs/decision-records/adr/README.md": adrReadme("| [ADR-001](ADR-001-first.md) | something | Accepted |"),
-    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
-    "docs/decision-records/adr/ADR-002-second.md": "# ADR-002\n",
+    "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001"),
+    "docs/decision-records/adr/ADR-002-second.md": rec("# ADR-002"),
   },
   code: 1,
   expect: ["missing from the index", "ADR-002-second.md"],
@@ -210,8 +216,8 @@ check("a prefixed label for one record does not cover a second, unindexed one", 
 check("a bare prefixed row indexes its own stream, not the other one", {
   files: {
     "docs/decision-records/README.md": adrReadme("| ADR-004 | something | Accepted |", "| BDR-004 | something | Accepted |"),
-    "docs/decision-records/ADR-004-tech.md": "# ADR-004\n",
-    "docs/decision-records/BDR-004-business.md": "# BDR-004\n",
+    "docs/decision-records/ADR-004-tech.md": rec("# ADR-004"),
+    "docs/decision-records/BDR-004-business.md": rec("# BDR-004"),
   },
   code: 0,
 });
@@ -224,7 +230,7 @@ check("an example row inside an HTML comment is not an index entry", {
   files: {
     "docs/decision-records/adr/README.md":
       `${adrReadme(row("001", "ADR-001-first.md"))}\n<!-- Filled, a row reads like this:\n\n| [002](ADR-002-example.md) | an example | Accepted |\n-->\n`,
-    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+    "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001"),
   },
   code: 0,
 });
@@ -233,7 +239,7 @@ check("a fenced example row is not an index entry either", {
   files: {
     "docs/decision-records/adr/README.md":
       `${adrReadme(row("001", "ADR-001-first.md"))}\n\`\`\`\n| [002](ADR-002-example.md) | an example | Accepted |\n\`\`\`\n`,
-    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+    "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001"),
   },
   code: 0,
 });
@@ -241,10 +247,95 @@ check("a fenced example row is not an index entry either", {
 check("an uncommented row for a missing file still fails after comment stripping", {
   files: {
     "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md"), row("002", "ADR-002-example.md")),
-    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n",
+    "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001"),
   },
   code: 1,
   expect: ["missing from disk", "ADR-002-example.md"],
+});
+
+check("a binding record with no `## Revisit when` section is reported", {
+  files: {
+    "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md")),
+    "docs/decision-records/adr/ADR-001-first.md": "# ADR-001\n\n| | |\n| --- | --- |\n| **Status** | Accepted |\n",
+  },
+  code: 1,
+  expect: ["no reopening signal", "ADR-001-first.md", "has no `## Revisit when` section"],
+});
+
+check("a heading with nothing under it counts as no signal", {
+  files: {
+    "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md")),
+    "docs/decision-records/adr/ADR-001-first.md": `${rec("# ADR-001", { revisit: "" })}\n## Related\n\nnothing\n`,
+  },
+  code: 1,
+  expect: ["empty `## Revisit when` section"],
+});
+
+// The failure mode the backfill exists to prevent: the template's own prompt left where the
+// answer belongs. It has the heading and a non-empty body, so heading-counting calls it filled.
+check("the template's prompt left in place is not an answer", {
+  files: {
+    "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md")),
+    "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001", {
+      revisit: "The concrete signal that would invalidate this decision and trigger a new ADR - a\nthreshold crossed, a constraint lifted, a vendor or tech change.",
+    }),
+  },
+  code: 1,
+  expect: ["still carries the template's prompt text"],
+});
+
+// The two templates word their prompt differently, so recognising only the ADR one would let
+// every unfilled BDR through.
+check("the bdr template's prompt is recognised too", {
+  files: {
+    "docs/decision-records/bdr/README.md": bdrReadme(row("001", "BDR-001-first.md")),
+    "docs/decision-records/bdr/BDR-001-first.md": rec("# BDR-001", {
+      revisit: "The business signal that would reopen this - a metric threshold, a market shift, a\npolicy change.",
+    }),
+  },
+  code: 1,
+  expect: ["still carries the template's prompt text"],
+});
+
+// Guidance comments are not the answer either, so stripping them must not leave a body behind.
+check("only an HTML comment under the heading counts as empty", {
+  files: {
+    "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md")),
+    "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001", { revisit: "<!-- fill this in -->" }),
+  },
+  code: 1,
+  expect: ["empty `## Revisit when` section"],
+});
+
+check("a superseded record needs no signal - there is nothing left to reopen", {
+  files: {
+    "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md", "Superseded by ADR-002")),
+    "docs/decision-records/adr/ADR-001-first.md":
+      "# ADR-001\n\n| | |\n| --- | --- |\n| **Status** | Superseded by ADR-002 |\n",
+  },
+  code: 0,
+});
+
+// "Accepted (2026-07-22) - supersedes ADR-013" still binds. Matching the word anywhere in the
+// status would have exempted the record that does the superseding along with the one superseded.
+check("an accepted record that supersedes another one still needs its own signal", {
+  files: {
+    "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md", "Accepted")),
+    "docs/decision-records/adr/ADR-001-first.md":
+      "# ADR-001\n\n| | |\n| --- | --- |\n| **Status** | Accepted - supersedes ADR-013 |\n",
+  },
+  code: 1,
+  expect: ["no reopening signal"],
+});
+
+check("an honest 'nothing reopens this' is a filled section", {
+  files: {
+    "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md")),
+    "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001", {
+      revisit: "Nothing short of dropping the two-layer split, which this record only names.",
+    }),
+  },
+  code: 0,
 });
 
 // The shipped skeleton itself, verbatim - a fresh degit must not trip its own guard.
