@@ -192,6 +192,11 @@ sentence will each lose that sentence half the time: sharpen both, or merge them
   propose it? Either way you propose and guide - hand-holding is the product.
 - **Work surfaces that is not this change** -> run `add-to-backlog` rather than doing it now
   or losing it: one row with its source, the role that must act, and what done looks like.
+- **The user asks what the work state is** ("show me the backlog", "what are we working on",
+  "where do things stand") -> run `show-backlog`. The work state has one home - the committed
+  files - and, where the dashboard entry is installed, one rendering of it. Retyping
+  `backlog.md` into chat is a second rendering of a thing that renders itself, and what the
+  user reads is then whatever the summariser happened to notice.
 - **A decision gets made in conversation** -> run `adr-write` (technical) or `bdr-write`
   (product) *while it is still fresh*. Who would overrule it decides which: an architect
   means ADR, a product owner means BDR. A decision that stays in the thread is the failure
