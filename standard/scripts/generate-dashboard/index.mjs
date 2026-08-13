@@ -82,6 +82,26 @@ const plain = (s) =>
     .replace(/\s+/g, ' ')
     .trim()
 
+// A field whose whole value is a state - a row's status cell, a record's Status row, a spec's
+// Status line - is written by hand and by hand it carries emphasis: `**done**`, `*live*`,
+// `` `todo` ``. Emphasis is presentation, so it comes off before the value is read; the span's
+// content and whatever follows it are handed back separately, because where the emphasis ended
+// is the only honest boundary between the state somebody declared and the prose about it.
+const EMPHASIS = /^(\*\*|__|\*|_|`)([\s\S]*?)\1\s*/
+function unwrap(raw) {
+  const s = String(raw ?? '').trim()
+  const m = s.match(EMPHASIS)
+  return m ? { lead: m[2].trim(), tail: s.slice(m[0].length) } : { lead: s, tail: '' }
+}
+// Rejoining is not concatenation with a space: the closing marker is routinely followed by the
+// punctuation that carries the sentence on - `**done**: 22/22` - and a space in front of it
+// reads as a typo the source file does not contain.
+const rejoin = (a, b) => (!b ? a : !a ? b : /^[\s:.,;)!?-]/.test(b) ? a + b : a + ' ' + b)
+const unemphasise = (s) => {
+  const { lead, tail } = unwrap(s)
+  return rejoin(lead, tail)
+}
+
 const clip = (s, max = 260) => {
   const t = plain(s)
   if (t.length <= max) return t
@@ -283,13 +303,56 @@ function markersIn(text) {
 // vocabulary (ADR-046) and are matched here too, so an unrecognised word never silently
 // becomes "todo" - it would corrupt counts that assume the task vocabulary.
 const STATUS_WORDS = 'done|doing|todo|blocked|split|open|decided|idea|exploring|approved|parked|dropped|graduated'
+const STATUS_RE = new RegExp('\\b(' + STATUS_WORDS + ')\\b', 'gi')
+// `partly done` is not done. Counting it finished is the same lie as counting it not started,
+// only pointed the other way, and the row itself says work remains - so it lands in `doing`,
+// the one bucket that is true of work opened and not closed. The qualifier has to sit against
+// the word: a row reading "done, and the crop premise was half wrong" is finished, and a rule
+// that went looking for "half" anywhere in the lead would demote it on a sentence about
+// something else entirely.
+const PARTLY = /\b(partly|partially|mostly|half|nearly|almost)[\s-]+done\b/i
+// Where the state stops and the prose about it starts, for a cell that carries no emphasis to
+// mark the boundary itself. `blocked:ID (date)` stays inside the lead, because both are part
+// of the state rather than commentary on it.
+const LEAD_END = /:\s|\s-\s|\.\s|\.$/
+
+// The state is the cell's first clause: the emphasis span when the writer marked one, else the
+// text before the first colon, dash or full stop. Bounded on purpose - the rest of a status
+// cell is prose, and prose says "Decided:", "TEST-1 is done", "blocked on nothing". A search
+// over the whole cell would let a sentence about the work overrule the word stating its state.
+function statusLead(raw) {
+  const { lead, tail } = unwrap(raw)
+  if (tail) return [lead, tail]
+  const cut = lead.search(LEAD_END)
+  return cut < 0 ? [lead, ''] : [lead.slice(0, cut), lead.slice(cut)]
+}
+
+// The match reads that lead rather than anchoring on the cell's first character. Anchoring is
+// what made this the worst kind of wrong: every hand-written `**done**: ...` failed to match,
+// fell through to the `todo` default, and rendered a finished pool as a pool nobody had
+// started - a page that is confidently incorrect and looks entirely fine. On the repo this was
+// found on, 16 of 17 rows were reported as not started while the file said otherwise.
 function splitStatus(raw) {
-  const s = String(raw ?? '').trim()
-  const status = (s.match(new RegExp('^(' + STATUS_WORDS + ')')) || [, 'todo'])[1]
-  const blockedBy = (s.match(/^(?:blocked|split):([A-Za-z0-9-]+)/) || [])[1] || null
-  const statusDate = (s.match(/\((?:moved )?(\d{4}-\d{2}-\d{2})/) || [])[1] || null
-  const rest = s.replace(/^[a-z]+(:[A-Za-z0-9-]+)?(\s*\([^)]*\))?\s*-?\s*/, '')
-  return { status, blockedBy, statusDate, statusNote: rest === s ? '' : inline(rest) }
+  const [lead, tail] = statusLead(raw)
+  // A cell that names two states is written state first, commentary after - so the FIRST word
+  // wins. This repo's own backlog is what settles it, in both directions at once: `doing (site
+  // confirmed live 2026-08-09; listings submission still todo)` is doing, and `todo (downgraded
+  // from doing 2026-08-09, pending owner confirmation)` is todo. A last-word rule reads both
+  // backwards, and they are the only two-state rows there are. `unblocked, todo` needs no
+  // special case either way - `\b` is what stops `unblocked` being read as `blocked`, which
+  // leaves `todo` the only state the lead names.
+  const named = lead.match(STATUS_RE)
+  let status = named ? named[0].toLowerCase() : 'todo'
+  if (status === 'done' && PARTLY.test(lead)) status = 'doing'
+  const blockedBy = (lead.match(/\b(?:blocked|split):([A-Za-z0-9-]+)/) || [])[1] || null
+  const date = (s) => (String(s).match(/\((?:moved )?(\d{4}-\d{2}-\d{2})/) || [])[1] || null
+  // A lead that carries only the state has nothing left to say, so it is dropped from the note
+  // the way it always was. One that carries more - `partly done, one real gap found` - keeps
+  // every word, because removing the state word from the middle of a phrase leaves a seam and
+  // loses the qualifier that explains the badge.
+  const bare = new RegExp('^(' + STATUS_WORDS + ')(:[A-Za-z0-9-]+)?(\\s*\\([^)]*\\))?$', 'i').test(lead)
+  const note = (bare ? tail.replace(/^[\s:.,;-]+/, '') : rejoin(lead, tail)).trim()
+  return { status, blockedBy, statusDate: date(lead) || date(tail), statusNote: note ? inline(note) : '' }
 }
 
 // A persona is a role the product serves and stays; an assignee is a named colleague, and a
@@ -472,7 +535,7 @@ function parseDecisions() {
         id,
         kind: id.startsWith('BDR') ? 'business' : 'technical',
         title: inline(h[2] || basename(f, '.md')),
-        status: metaRow(text, 'Status') || 'Accepted',
+        status: unemphasise(metaRow(text, 'Status') || 'Accepted'),
         date: metaRow(text, 'Date'),
         context: clip(sectionBody(text, 'Context'), 340),
         path: f,
@@ -520,7 +583,9 @@ function parseIdeas() {
       const text = read(join(dir, f))
       return {
         title: inline((text.match(/^# (.+)$/m) || [, f])[1]),
-        status: metaRow(text, 'Status') || 'idea',
+        // page.js renders this one straight into a class attribute, so `**exploring**` costs
+        // more than looks: an invalid class token, and the asterisks on screen.
+        status: unemphasise(metaRow(text, 'Status') || 'idea'),
         date: metaRow(text, 'Date'),
         itch: clip(sectionBody(text, 'The itch') || sectionBody(text, 'Context'), 340),
         path: join(dir, f),
@@ -547,8 +612,11 @@ function parseSpecs() {
       return {
         name: d.name,
         title: inline((text.match(/^# (.+)$/m) || [, d.name])[1]),
-        status: (text.match(/^\*\*Status:\*\*\s*(.+)$/m) || [, 'unknown'])[1].trim(),
-        tier: (text.match(/^\*\*Spec tier:\*\*\s*(.+)$/m) || [, ''])[1].trim(),
+        // page.js maps the status onto a colour through a table keyed by the bare word, and
+        // prints the tier as written - so `**live**` would both miss the table and render its
+        // asterisks. Same reason as the pool's status cells: emphasis is not part of the value.
+        status: unemphasise((text.match(/^\*\*Status:\*\*\s*(.+)$/m) || [, 'unknown'])[1]),
+        tier: unemphasise((text.match(/^\*\*Spec tier:\*\*\s*(.+)$/m) || [, ''])[1]),
         serves: clip((text.match(/^\*\*Serves:\*\*\s*(.+)$/m) || [, ''])[1], 200),
         metric: clip((text.match(/^\*\*Success metric:\*\*\s*(.+)$/m) || [, ''])[1], 200),
         purpose: clip(sectionBody(text, 'Purpose'), 300),
@@ -684,7 +752,10 @@ function parseSprints() {
         owner: person(metaRow(text, 'Owner')),
         opened: metaRow(text, 'Opened'),
         target: metaRow(text, 'Target'),
-        state: (metaRow(text, 'Status') || 'open').toLowerCase().trim(),
+        // Compared against the literal 'open' downstream, and an open sprint written
+        // `**open**` would compare unequal and count as closed - taking its items out of the
+        // sprint counters with it.
+        state: unemphasise(metaRow(text, 'Status') || 'open').toLowerCase(),
         outcome: inline(outcome),
         stats: outcomeStats(outcome),
         items,

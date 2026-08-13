@@ -50,6 +50,8 @@ jobs:
         run: node tools/schema-pair-test.mjs
       - name: sprint-guard test (an intent cannot be in two places)
         run: node tools/sprint-guard-test.mjs
+      - name: dashboard status test (a hand-written status cell is read as the state it names)
+        run: node tools/dashboard-status-test.mjs
       # The shipped agent guards only print when they refuse, so nothing here notices a
       # regression in them unless their own suite runs. It did not, which is how a bypass
       # in the remote-database guard shipped with every check on this list green.

@@ -11,6 +11,50 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### A finished backlog rendered as a backlog nobody had started (2026-08-13)
+
+The dashboard's status parser anchored its match on the first character of the raw table cell.
+Statuses are written by hand, and by hand they carry emphasis - `**done**: 22/22 pass locally`,
+`**done, scoped**`, `` `todo` ``. None of those started with a status word, so none matched,
+and every one of them fell through to the `todo` default.
+
+The result is the worst shape a defect can take on a status page: not a crash, not a blank, but
+a confident and entirely plausible wrong answer. Measured on the adopted repository that
+surfaced it, `my-brand`: 17 pool items, of which **16 rendered as "agreed, not started" and one
+as done**, while the file itself marked twelve of them finished. The only row that parsed was
+the one whose cell is the bare word `done`. "Being worked on" was empty because nothing could
+ever reach `doing`. The same cells also lost their status notes, since the text after an
+unmatched status word was never split off - so the rows the page did show explained nothing.
+
+The parser now reads the cell's leading clause - the emphasis span where the writer marked one,
+otherwise the text before the first colon, dash or full stop - and takes the state from the
+words in it. Three calls inside that are deliberate, and each is written down where it is made:
+
+- **The first status word wins, not the last.** This repository's own backlog settles it in
+  both directions at once: `doing (site confirmed live; listings submission still todo)` is
+  doing, and `todo (downgraded from doing, pending owner confirmation)` is todo. A last-word
+  rule reads both backwards. A cell is written state first, commentary after.
+- **`partly done` is `doing`, not `done`.** The row says work remains. Counting it finished is
+  the same lie as counting it not started, pointed the other way. The qualifier has to sit
+  against the word, or `done, and the crop premise was half wrong` would be demoted by a
+  sentence about something else.
+- **A lead that carries more than the state keeps every word in the note.** Removing the state
+  word from the middle of a phrase leaves a seam and loses the qualifier that explains the
+  badge.
+
+The same tolerance goes to every other field whose whole value is a state and which was read
+the same way: a decision record's `Status` row, an idea's, a sprint's - `**open**` compared
+unequal to `open` and quietly counted the sprint as closed - and a spec's `Status` and
+`Spec tier` lines, which page.js maps to a colour by exact word and prints as written.
+
+Two measurements bound the change. On `my-brand` the pool goes from 16 todo / 1 done to
+**12 done, 4 todo, 1 doing**, which is what its `backlog.md` says row by row. On this
+repository, whose cells are bare, the generated payload is **byte-identical** before and after.
+`tools/dashboard-status-test.mjs` drives the shipped generator over the shapes involved and
+fails 20 of its 30 checks against the previous parser.
+
 ## 1.1.4 - 2026-08-13
 
 ### The dashboard hid every idea a repo wrote the way the standard tells it to (2026-08-13)
