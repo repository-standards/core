@@ -75,6 +75,10 @@ clients get them by reference (ADR-004), never as copies.
   `node tools/decision-records-check-test.mjs` (the ADR/BDR README index and the
   files on disk agree - no duplicate id, nothing indexed that is not there,
   nothing there that is not indexed),
+  `node standard/scripts/backlog-archive-check.mjs --base origin/main --block` +
+  `node tools/backlog-archive-check-test.mjs` (a row removed from the pool reached
+  `backlog-archive.md` with a `where` naming what its content became - deleting a closed
+  row deletes findings that exist nowhere else, ADR-051),
   `node tools/adoption-gates-test.mjs` (the Gate 2 and Gate 5 guard still fails an
   artifact that exists but says nothing - an unrated assessment pass, a scope block
   whose total is not the sum of its categories, an alignment item with no owner),

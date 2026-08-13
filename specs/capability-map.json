@@ -46,6 +46,7 @@
     "standard/scripts/schema-pair.mjs",
     "standard/scripts/verifyAgentGuards.sh",
     "standard/scripts/decision-records-check.mjs",
+    "standard/scripts/backlog-archive-check.mjs",
     "standard/scripts/adoption-gates.mjs",
     "standard/scripts/generate-dashboard/**",
     "standard/scripts/lib/**"
