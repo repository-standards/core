@@ -220,7 +220,7 @@
       ],
       "rule": "R22",
       "sha256": {
-        "add-to-backlog/SKILL.md": "66701c0527a3b5bbc6019960f68e51e937f8e0d5e9e5fce0dd09a2f37f535f37",
+        "add-to-backlog/SKILL.md": "68092f72af6e7e4f0c1e3f8a7d2b075729802a81c932990d57c680095302594c",
         "adr-write/SKILL.md": "1543b4e60709e906ff26e88dc0fd88359ee78e833f6612c8f5ba81035dae41cf",
         "bdr-write/SKILL.md": "200f8f5ab1085009eb15f4cbac8c36ad58146a41a5aa870fdc2087429371ff69",
         "discovery-digest/SKILL.md": "208c0ee5265cd820d64267ccfc5cbf60746e3f9f697755ff76e823c4161907c4",
@@ -229,6 +229,7 @@
         "pre-pr-review/SKILL.md": "aa43d020310c9c684720c58ec9e0efbeca4abf78fcce23b7dc2ec78544a0ce4f",
         "product-write/SKILL.md": "f99093c02371ef8e5411702dbad3bd1dc6481855bcee1f2b1b328e3937062123",
         "record-run/SKILL.md": "c0d3485b0dac39ea93221daa942675d9aa8d56eb5eec0b293c065c2d72dffe7a",
+        "show-backlog/SKILL.md": "743274bc7b60c34dfbfae716370125e9b1fa1452d39af361e914130e72a68f24",
         "spec-clarify/SKILL.md": "01e9399d048dd1c2a07a58095344c2da3b21a49d434d92a3aeb44b168830869f",
         "spec-impact/SKILL.md": "1751db1ac3e5cc0c085e107625b39370f0c9d451813e02544aa0b31fd461ea9a",
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",

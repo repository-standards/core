@@ -5,7 +5,7 @@
 
 # What each skill is for
 
-21 procedures ship into an adopted repo, and their names are terse on purpose. This page
+22 procedures ship into an adopted repo, and their names are terse on purpose. This page
 says what each one is for, grouped by **the moment it fires** rather than by what it writes -
 because a reader arrives with a situation, not with an artifact name.
 
@@ -58,7 +58,7 @@ The step most loops skip. What was learned goes back into the documents before i
 |---|---|
 | `spec-reconcile` | Use when a change is finished, before opening the pull request - "I think that's done". Makes the spec, the code and the tests agree, resolves any drift rather than merging around it, and deletes the plan and task scaffolding the work no longer needs. |
 | `pre-pr-review` | Use before pushing a branch or opening a pull request - "is this ready?", "can I push?". Runs the repo's local checks, then reads the diff as if someone else wrote it, and fixes what it finds first. A review after the push is a review of something already published. |
-| `add-to-backlog` | Use when work surfaces that does not belong to this change - a bug mentioned in passing ("btw the export is broken"), "we should fix that too", "park it", "not now but do not lose it". Files one well-formed row with its source, the role that must act and what done looks like, ordered against what is already there, without interrupting what you were doing. |
+| `add-to-backlog` | Use when work surfaces that does not belong to this change - a bug mentioned in passing ("btw the export is broken"), "we should fix that too", "park it", "not now but do not lose it". Files one well-formed row with its source, the role that must act and what done looks like, ordered against what is already there, without interrupting what you were doing. This adds to the backlog and never reads it back: "show me the backlog" is `show-backlog`. |
 | `record-run` | Use at the end of an align-to-standards run, success or failure - offers to record the session as validation evidence for the human-prompting corpus (prompts.md + a scored runs/*.json file), at one of two consent levels, never sent without a per-item yes. |
 
 ## Running the cadence
@@ -70,6 +70,14 @@ For a team that commits to work in periods and has to answer when things will la
 | `sprint-open` | Use when a team is picking up work for the next stretch - "let's start a sprint", "what are we doing this month", "pull the top three payment items into a sprint". Creates the sprint with its goal and agreed end date, and moves the chosen intents out of the backlog pool so each one lives in exactly one place. Also owns reading an open sprint back as a status board ("how is the dispatch sprint going?") and mid-sprint edits - moving a status, reassigning a holder - that happen between opening and closing. |
 | `sprint-close` | Use when a stretch of work ends - "close the sprint", "the sprint is over", "we shipped what we were going to". Checks each intent against its definition of done, returns what did not finish to the backlog, and records the one measurement of the sprint that cannot be recovered afterwards. |
 | `timeline-update` | Use when someone asks when work will land - "when does billing ship?", "are we on track?", "what does the next quarter look like?", "update the timeline". Reads every sprint, derives throughput from the closed ones, and projects the open sprints and the backlog - labelling every number as measured or estimated, and giving no date at all when the evidence supports none. |
+
+## Seeing where things stand
+
+Reading the state the repository already records, rather than summarising it again by hand. Nothing here writes anything.
+
+| Skill | When to reach for it |
+|---|---|
+| `show-backlog` | Use when someone asks what the work state IS rather than asking to change it - "show me the backlog", "what is in the pool", "what are we working on", "where do things stand", "what is left" - in whatever language they ask it. Builds the repository's dashboard and hands back the page and the headline numbers, instead of retyping the backlog file into chat. Filing new work is not this - `add-to-backlog` owns that. |
 
 ## Staying on the standard
 

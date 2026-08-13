@@ -1,6 +1,6 @@
 ---
 name: add-to-backlog
-description: Use when work surfaces that does not belong to this change - a bug mentioned in passing ("btw the export is broken"), "we should fix that too", "park it", "not now but do not lose it". Files one well-formed row with its source, the role that must act and what done looks like, ordered against what is already there, without interrupting what you were doing.
+description: Use when work surfaces that does not belong to this change - a bug mentioned in passing ("btw the export is broken"), "we should fix that too", "park it", "not now but do not lose it". Files one well-formed row with its source, the role that must act and what done looks like, ordered against what is already there, without interrupting what you were doing. This adds to the backlog and never reads it back: "show me the backlog" is `show-backlog`.
 ---
 
 # add-to-backlog

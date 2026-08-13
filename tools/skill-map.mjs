@@ -68,6 +68,12 @@ const GROUPS = [
     skills: ["sprint-open", "sprint-close", "timeline-update"],
   },
   {
+    title: "Seeing where things stand",
+    lead:
+      "Reading the state the repository already records, rather than summarising it again by hand. Nothing here writes anything.",
+    skills: ["show-backlog"],
+  },
+  {
     title: "Staying on the standard",
     lead: "The standard is living, so a repo that adopted it once has to be able to move with it.",
     skills: ["update-to-version"],
