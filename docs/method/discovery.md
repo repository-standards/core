@@ -39,13 +39,43 @@ Either way the dossier is created with its first provenance-stamped entry:
 ```
 docs/discovery/booking-changes/
   README.md                          <- summary on top, entry index, stamp
-  2026-07-30-kickoff-meeting.md      <- essence + link to the recording
+  2026-07-30-kickoff-meeting.md      <- typed header + essence + link to the recording
 ```
 
-The entry is the **essence, not the transcript** (raw recordings stay in the
+The entry opens with a header table, filled from the shipped
+`docs/discovery/_entry-template.md`, because these are the things nobody
+reconstructs later:
+
+```
+| **Kind**    | meeting                                                    |
+| **Date**    | 2026-07-30                                                 |
+| **Present** | the owner, the PO, two engineers                           |
+| **Purpose** | can guests move their own dates, and what does it cost us  |
+| **Touches** | pricing, refunds, availability                             |
+| **Raw**     | <link to the recording>                                    |
+| **Outcome** | none yet                                                   |
+```
+
+**Kind** comes from a closed vocabulary (`meeting`, `call`, `mail`, `thread`,
+`ticket`, `document`, `note`) so "was that agreed in a meeting or in a mail"
+survives as something you can filter rather than read for. **Purpose** is the
+question the session was called to answer - notes record answers, so the
+question is exactly what is missing from them six months on. **Touches** names
+the subjects the material bears on beyond this dossier: filing stays per topic,
+but one session is rarely one topic, and this is the axis somebody searches when
+they remember a conversation happened but not where it went. **Outcome** starts
+at `none yet` and later names what came out of *this* entry.
+
+Then the body: the **essence, not the transcript** (raw recordings stay in the
 meeting tool, linked). It records who said what mattered: "guests change dates
 up to 24h before check-in - said by the owner", "repricing open: keep the old
 price vs reprice at change time - argued both ways, NOT decided".
+
+Where the session's lasting value was an **explanation** rather than a decision -
+how the provider's settlement actually works, why a constraint exists - it goes
+under `## Explained here`. That is the one kind of content with nowhere else to
+go: a decision leaves for a record, behaviour leaves for a spec, work leaves for
+the backlog, and understanding stays here or is lost.
 
 A mail arrives two days later; same move:
 
@@ -132,17 +162,43 @@ history. It asks about exactly one thing: the **new** entry (newer than
 a clarify round, and if the decision genuinely changes, a superseding BDR.
 The user explains the new input once; nothing old is re-litigated.
 
+### Month 9 - the failure that does not look like one
+
+Somebody asks how settlement timing actually works, and the agent starts
+researching it: reading the provider's docs, the payment code, the schema. Half
+an hour in, a person in the thread remembers there was a two-hour call about
+exactly this, months ago.
+
+There was, and it is in the repo - `## Explained here`, in an entry filed under
+`booking-changes` and marked `folded-into-spec` long ago. Nothing was lost. It
+was simply never opened, because everything the loop says about dossiers is
+about entries *above* the stamp, and this one sits below it.
+
+So the stamp's two jobs are split (ADR-049). Before researching a subject or
+explaining how something works, an agent searches `docs/discovery/` in full -
+old entries included, `Touches` as well as folder names, since that call was
+filed under bookings and the question was about payments - and cites the entry
+instead of re-deriving it. Asking is still bounded by the stamp; reading never
+was, and this is the failure that costs the most while looking like ordinary
+diligence the whole time it is happening.
+
 ## The rules (all shown above)
 
 1. **Home**: `docs/discovery/<topic>/` - per topic, not per spec; linked to
    specs by reference in both directions, never by name.
-2. **Provenance first**: entries are `YYYY-MM-DD-source.md`, essence + link to
-   the raw source. Transcripts stay out of the repo.
+2. **Provenance first, and typed**: entries are `YYYY-MM-DD-source.md`, opening
+   with the header table from `_entry-template.md` - `Kind` (closed vocabulary),
+   `Date`, `Present`, `Purpose`, `Touches`, `Raw`, `Outcome` - then the essence,
+   then `## Explained here` where the value was an explanation. Transcripts stay
+   out of the repo (ADR-049).
 3. **Never normative**: spec and records always win; a difference is not a
    conflict. Consciously rejected inputs become records (rejected
    alternatives), documented once.
-4. **The stamp closes the re-ask loop**: `Last reconciled:` in the dossier
-   README; agents ask only about newer entries. Entry lifecycle:
+4. **The stamp closes the re-ask loop - and bounds asking only** (ADR-049):
+   `Last reconciled:` in the dossier README; agents *ask* only about newer
+   entries, and *read* the whole dossier whenever they are researching or
+   explaining rather than questioning. An entry below the stamp is settled, not
+   irrelevant. Entry lifecycle:
    `new -> folded-into-spec | superseded-by-record | open`. **Whichever skill folds
    the material in is the one that moves the stamp** - `spec-specify` when a spec is
    minted, `spec-clarify` when a clarify round answers from the dossier, and

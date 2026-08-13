@@ -11,6 +11,38 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### A discovery entry recorded that a meeting happened, and not much else (2026-08-13)
+
+ADR-024 gave meeting extracts a home and a stamp that stops anyone being asked the same
+question twice. What an entry could not say was what kind of material it was (a meeting or
+a mail survived only as free text inside the filename), why the session happened at all,
+what eventually came out of *that* entry rather than the topic as a whole, or which other
+subjects it bore on - so a call about invoicing that settled something about tax was
+findable only by whoever remembered where it was filed.
+
+Entries now open with a typed header: `Kind` from a closed vocabulary, `Date`, `Present`,
+`Purpose`, `Touches`, `Raw` and a per-entry `Outcome`, shipped as
+`docs/discovery/_entry-template.md` and mirrored in the dossier's own table so a dossier can
+be scanned without opening every file in it.
+
+The larger fix is to the stamp. `Last reconciled:` exists to bound what may be *asked*, and
+every consumer had implemented it as a bound on reading too - `spec-clarify`, `spec-impact`
+and `spec-plan` all read above it and nothing told any agent to read below. That quietly
+buried the one thing a dossier holds which no record or spec ever will: the explanation. A
+decision leaves for an ADR, behaviour leaves for a spec, work leaves for the backlog, and
+understanding stays in the dossier - underneath the line marking it as already handled. The
+stamp now bounds asking only; an agent about to research a subject searches the whole
+dossier first and cites what it finds. Entries get a named `## Explained here` section for
+exactly that material.
+
+A generated index of topics and tags was considered and rejected: it would be a second
+description of what the entries already say, needing a shipped script, a manifest entry and
+a CI step to answer what one typed field answers with `grep`. Decision: ADR-049, narrowing
+rule 4 of ADR-024. Existing dossiers stay valid - the fields are absent, not wrong, and
+entries are append-only.
+
 ## 1.1.6 - 2026-08-13
 
 ### The specifications tab opened by explaining what a specification is (2026-08-13)
