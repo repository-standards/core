@@ -11,6 +11,17 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### The pre-PR check list left out a gate CI runs (2026-08-13)
+
+`AGENTS.md` ends its list of pre-PR checks with a promise: the list is the set CI runs, and a
+check present in `checks.yml` but absent here is the bug. `node tools/adoption-gates-test.mjs`
+was that bug. It has run in CI since ADR-048 added the `adoption-gates` guard, and an agent
+following `AGENTS.md` to the letter had no reason to run it locally - so the guard that keeps
+a Gate 2 or Gate 5 artifact from existing while saying nothing was itself only ever exercised
+after the push. Added to the enumeration, in CI's own order, next to the other guard tests.
+
 ## 1.1.2 - 2026-08-13
 
 ### The pair check could not see a schema kept in one file (2026-08-13)
