@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 // Schema pair check (R24).
 //
-// The DDL under database/schema/ and its typed twin are declared 1:1, and until
-// now nothing proved it. A pair held by review drifts one column at a time -
-// which is the failure R24 exists to prevent, so the rule cannot be the only
-// thing holding it.
+// A repo's DDL and its typed twin are declared 1:1, and until now nothing proved
+// it. A pair held by review drifts one column at a time - which is the failure
+// R24 exists to prevent, so the rule cannot be the only thing holding it.
 //
 // What this proves:
 //   1. the declared edge resolves both ways - each .sql names a counterpart that
@@ -21,8 +20,16 @@
 // Names are compared case-insensitively with separators removed, so a camelCase
 // twin of a snake_case column matches: created_at == createdAt.
 //
+// A schema is not always a directory. A repo with one production database and no
+// migration chain keeps the whole thing in a single file, and that is the same
+// artifact this check exists for - one thing a reviewer reads and a restore
+// applies. Walking a directory was an assumption about the shape, never a
+// requirement of the pair, so --file names the other one. R24 still says where
+// the DDL belongs; --file is the same escape hatch --dir already was, for repos
+// whose recorded decision put it elsewhere.
+//
 // Usage:
-//   node scripts/schema-pair.mjs [--dir <path>]   # default: database/schema
+//   node scripts/schema-pair.mjs [--dir <path> | --file <path>]   # default: database/schema
 //   add --block to exit non-zero on a failure (default: warn, exit 0)
 //
 // No dependencies (Node built-ins only). Place at scripts/schema-pair.mjs.
@@ -32,12 +39,51 @@ import { normalize } from "node:path";
 
 const args = process.argv.slice(2);
 const block = args.includes("--block");
-const dirIdx = args.indexOf("--dir");
-const DIR = dirIdx >= 0 ? args[dirIdx + 1] : "database/schema";
+// A flag whose value went missing must not fall back to the default target: that
+// checks something the caller did not ask for and reports it as their answer.
+const flag = (name) => {
+  const i = args.indexOf(name);
+  if (i < 0) return null;
+  const value = args[i + 1];
+  if (!value || value.startsWith("--")) {
+    console.log(`schema-pair: ${name} needs a path`);
+    process.exit(block ? 1 : 0);
+  }
+  return value;
+};
 
-if (!existsSync(DIR)) {
-  console.log(`schema-pair: no ${DIR}/ - skipping (R24 binds repos that own a database)`);
+const DEFAULT_DIR = "database/schema";
+
+const askedDir = flag("--dir");
+const askedFile = flag("--file");
+
+if (askedDir && askedFile) {
+  console.log("schema-pair: --dir and --file name two different targets - pass one");
+  process.exit(block ? 1 : 0);
+}
+
+// An explicit target that is not there is a mistake, not a repo without a
+// database: say so instead of skipping, or a typo reads as a clean run.
+const asked = askedDir ?? askedFile;
+if (asked && !existsSync(asked)) {
+  console.log(`schema-pair: ${asked} does not exist - the target was named explicitly`);
+  process.exit(block ? 1 : 0);
+}
+
+const TARGET = asked ?? DEFAULT_DIR;
+if (!existsSync(TARGET)) {
+  console.log(`schema-pair: no ${TARGET}/ - skipping (R24 binds repos that own a database)`);
   process.exit(0);
+}
+
+const targetIsDir = statSync(TARGET).isDirectory();
+if (askedDir && !targetIsDir) {
+  console.log(`schema-pair: ${askedDir} is a file - pass it as --file`);
+  process.exit(block ? 1 : 0);
+}
+if (askedFile && targetIsDir) {
+  console.log(`schema-pair: ${askedFile} is a directory - pass it as --dir`);
+  process.exit(block ? 1 : 0);
 }
 
 let failures = 0;
@@ -47,8 +93,11 @@ const fail = (msg) => {
 };
 const ok = (msg) => console.log(`  ok    ${msg}`);
 
+// A dependency tree carries other people's .sql - fixtures, a vendored dump - and
+// none of it is this repo's schema. Skipped for the same reason facts-check skips it.
 const walk = (dir, acc = []) => {
   for (const e of readdirSync(dir)) {
+    if (e === "node_modules" || e === ".git") continue;
     const p = `${dir}/${e}`;
     if (statSync(p).isDirectory()) walk(p, acc);
     else if (/\.sql$/i.test(e)) acc.push(p);
@@ -134,9 +183,9 @@ const readSchema = (sql) => {
 const tokensOf = (text) =>
   new Set([...text.replace(/pair:\s*\S+/gi, " ").matchAll(/[A-Za-z_][A-Za-z0-9_]*/g)].map((m) => key(m[0])));
 
-const sqlFiles = walk(DIR).sort();
+const sqlFiles = targetIsDir ? walk(TARGET).sort() : [TARGET];
 if (sqlFiles.length === 0) {
-  console.log(`schema-pair: ${DIR}/ holds no .sql - nothing to pair`);
+  console.log(`schema-pair: ${TARGET}/ holds no .sql - nothing to pair`);
   process.exit(0);
 }
 
