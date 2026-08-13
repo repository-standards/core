@@ -81,3 +81,12 @@ having none.
 - The risk taken knowingly: somebody arrives expecting Scrum and finds no points and no
   velocity. That is a conversation of one sentence, and it happens once per reader rather
   than on every page.
+
+## Revisit when
+
+This record already overturned `cycle` once on field evidence, not on a design argument -
+readers stopped at an unfamiliar word. The matching failure mode for `sprint` is readers
+who assume the borrowed word also imports points and a velocity commitment despite the
+one-clause denial here, and treat their absence as the standard being incomplete rather
+than deliberate. If that reading shows up in the field the way the `cycle` confusion did,
+this naming should be reopened the same way.

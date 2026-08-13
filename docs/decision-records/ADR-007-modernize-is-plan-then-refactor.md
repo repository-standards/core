@@ -71,6 +71,15 @@ without the touched specs green) is incomplete at review - same tier as a spec m
 error table. The `modernize` skill refuses to plan a refactor before its preconditions
 (personas + specs + foundational ADRs) are met.
 
+## Revisit when
+
+- Option C's big-bang rewrite escape hatch gets used more than rarely - that would signal
+  the plan-then-refactor default is failing a real class of repos, not just the narrow,
+  trivial-or-unsalvageable exception this record intended.
+- The record-before-code-changes requirement stops finding real disagreements - if the
+  specs and tests a migration leans on (ADR-003's safety net) already catch what would
+  have been lost, requiring an ADR/BDR before every non-trivial move should be reconsidered.
+
 ## Related
 
 Builds on the adoption checkmap (`docs/adoption.md`) and buildable specs (ADR-003 - the

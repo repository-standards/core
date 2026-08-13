@@ -110,6 +110,15 @@ throws away.
 no additional keys; the Worker persists only those fields, no request metadata (IP, headers)
 alongside them.
 
+## Revisit when
+
+- The free `workers.dev` address has proven the mechanism works - the custom-domain
+  question (a `stats.` subdomain, or moving the whole zone to Cloudflare) is explicitly
+  left open for that point, not abandoned.
+- The payload ever needs a field beyond the fixed schema (stack, standard version, drift,
+  fully_aligned, date) - any addition, especially a free-text one, reopens the
+  identifiability question this record was written to close.
+
 ## Related
 
 - [ADR-045](ADR-045-record-run-feeds-the-existing-corpus-consent-gated.md) - a different

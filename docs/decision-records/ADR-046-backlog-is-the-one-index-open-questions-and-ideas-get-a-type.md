@@ -74,3 +74,11 @@ opposite of what the type means to say.
 `backlog.md` parses with a `type` column on every row; `docs/open-questions/README.md` and
 `docs/ideas/README.md` carry no table; every topic that had a table row now has an equivalent
 `backlog.md` row linking to its still-existing detail file.
+
+## Revisit when
+
+The row's `why` text proves insufficient to signal how strong a decided open question's
+standing answer is. This record considered and dropped both a third re-litigation status
+and reusing `done` for a decided open question, on the assumption that free text in the
+row already carries that signal - if that assumption fails in practice, the status
+vocabulary for `open-question` needs a structured field, not just prose.

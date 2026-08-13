@@ -86,6 +86,14 @@ drift rather than a skip.
 A repo declaring the same stack twice under two names, and any attempt to reconcile two
 stacks' claims automatically. The engine reports; the stacks' owners decide.
 
+## Revisit when
+
+- The filename-vs-`technology`-field mismatch, accepted here as cosmetic (both are printed,
+  nothing checks they agree), starts causing real confusion rather than staying cosmetic.
+- The duplicate-path warning (two stacks declaring the same file path, reported but not
+  resolved) proves too noisy in practice, or the standard wants to reconcile two stacks'
+  claims automatically rather than leaving the disagreement to their owners.
+
 ## Related
 
 - [ADR-016](ADR-016-stacks-are-satellite-repos.md) - one repo per technology, which is why

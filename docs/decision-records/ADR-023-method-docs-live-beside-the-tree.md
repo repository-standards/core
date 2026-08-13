@@ -66,6 +66,12 @@ Option **B**. Concretely:
   the old tree paths had to be re-pointed once (this change); `update-to-version`
   deltas for references are metadata-only.
 
+## Revisit when
+
+- Offline clients - who lose access to the method manual without the standards
+  checkout or a pinned link, the negative cost this record accepts - become a use
+  case the project actually needs to support.
+
 ## Related
 
 - ADR-004 (decisions by reference - the mechanism this extends; status notes

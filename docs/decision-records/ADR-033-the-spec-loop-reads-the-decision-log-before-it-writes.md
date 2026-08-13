@@ -148,7 +148,7 @@ A guard that claims to detect a spec contradicting a record it never cites. Sema
 contradiction is not greppable, and shipping something that looks like that check would buy
 false confidence at the exact point this standard is selling trust.
 
-## How we would know we were wrong
+## Revisit when
 
 A spec lands contradicting an Accepted record with both skills' procedure followed - meaning
 the bounded index read is too coarse to surface the overlapping record - or the stop fires so

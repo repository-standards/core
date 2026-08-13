@@ -69,6 +69,14 @@ Option **B**. Concretely:
 end to end through the renamed skills (specify -> clarify gate -> plan -> tasks
 -> implement -> reconcile); `scripts/spec/LICENSE` ships.
 
+## Revisit when
+
+- Upstream spec-kit has another breaking change or an abandonment scare - the two events
+  already observed and named as the reason to keep an owned copy - severe enough to change
+  the calculus for hand-cherry-picking improvements instead of tracking upstream directly.
+- Adopters repeatedly want back what was deleted (upstream's checklist or tasks-to-issues
+  bridges) rather than re-adding them per repo, the accepted trade-off this record makes.
+
 ## Related
 
 - Supersedes ADR-013. ADR-002 (capability paths - now simply how our skills are

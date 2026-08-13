@@ -107,7 +107,7 @@ would report green on the case it was written for.
 A retired spec being treated as immutable text, and a retired capability being extended under
 the name of a correction. Both were available before this record; neither is now.
 
-## How we would know we were wrong
+## Revisit when
 
 If corrections to retired specs start carrying new `MUST`s - the retired file growing rather
 than being pinned to history - the split named here is not holding and the freeze needs teeth

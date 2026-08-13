@@ -54,6 +54,15 @@ Option **C**. Concretely:
   manifest-contract change - the ecosystem relies on the stack's own CI (the
   boot pulse) and the delisting policy in `stacks.json` to surface that.
 
+## Revisit when
+
+- The core ever breaks its manifest contract (schema, adapt classes) - the record
+  already names this as the case requiring an explicit, recorded migration rather
+  than a version-range fix.
+- Stale stacks drifting behind a manifest-contract change go undetected by the boot
+  pulse and the delisting policy, the two mechanisms this record relies on instead
+  of a version check.
+
 ## Related
 
 - ADR-016 (stacks are satellite repos - range clause revised here), ADR-017

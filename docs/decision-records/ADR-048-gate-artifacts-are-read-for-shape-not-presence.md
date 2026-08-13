@@ -119,6 +119,13 @@ for the go/no-go before the first wave; `standard/docs/backlog.md` carries the
 scope block; a repo whose scope block claims a total its categories do not sum to
 fails `adoption-gates` while `self-verify` still reads drift 0.
 
+## Revisit when
+
+Agents start producing shape-correct but guessed or hollow ratings that pass the
+arithmetic guard - the guard explicitly checks shape and arithmetic, never judgment, and
+"cannot tell a considered `partial` from a guessed one." That would reproduce this
+record's own failure mode one level deeper, the same way ADR-042's gap reappeared here.
+
 ## Related
 
 - [ADR-042](ADR-042-intake-is-a-required-artifact-not-a-performed-step.md) - the
