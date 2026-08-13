@@ -69,6 +69,9 @@ clients get them by reference (ADR-004), never as copies.
   `node tools/decision-records-check-test.mjs` (the ADR/BDR README index and the
   files on disk agree - no duplicate id, nothing indexed that is not there,
   nothing there that is not indexed),
+  `node tools/adoption-gates-test.mjs` (the Gate 2 and Gate 5 guard still fails an
+  artifact that exists but says nothing - an unrated assessment pass, a scope block
+  whose total is not the sum of its categories, an alignment item with no owner),
   `node tools/file-map.mjs --check` (the file map is generated from the manifest,
   never hand-written), `node tools/skill-map.mjs --check` (the skill catalogue is
   generated from each skill's own frontmatter, and every shipped skill is grouped),
