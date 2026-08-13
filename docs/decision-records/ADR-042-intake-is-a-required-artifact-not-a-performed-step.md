@@ -111,6 +111,13 @@ writes the artifact as its closing action and the re-entrant section orders
 it first; a repo with no intake record and an otherwise-complete tree reports
 one drift, not zero.
 
+## Revisit when
+
+An agent can fill `docs/adoption-intake.md` with fabricated or hollow content that still
+satisfies `fill-from-repo`/`required: true` - that would reproduce, one level down, the
+exact indistinguishable-diff problem (a run that performed Step 0 versus one that guessed)
+this record was written to close.
+
 ## Related
 
 - [ADR-020](ADR-020-intake-first-adoption.md) (adoption is intake-first - the

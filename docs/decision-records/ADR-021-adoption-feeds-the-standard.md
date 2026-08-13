@@ -64,6 +64,14 @@ Option **C**. Concretely:
   on the agent's summary discipline - the templates carry required fields to
   keep the floor.
 
+## Revisit when
+
+- Agent-filed issue quality proves poor despite the required fields the templates
+  carry - that mitigation is the only thing standing between this and option B
+  (leave it to humans, which the record already found dead in practice).
+- The standard's no-silent-side-effects stance changes elsewhere, which is the only
+  thing that would make option A (automatic telemetry, no consent) reconsiderable.
+
 ## Related
 
 - ADR-016 (the registry this feeds), ADR-020 (the intake that gathers the

@@ -89,7 +89,7 @@ Reading another repository from inside the coupling guard. If cross-repo couplin
 built, it is a different mechanism with different costs (network, credentials, a resolvable
 checkout) and it gets its own record; this entry form is a declaration, not a link.
 
-## How we would know we were wrong
+## Revisit when
 
 External entries start appearing for code that is in this repo - the reason fields would
 read as excuses rather than as facts about where code lives - or a repo's audit line shows

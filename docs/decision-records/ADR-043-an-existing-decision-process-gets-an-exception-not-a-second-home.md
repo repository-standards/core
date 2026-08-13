@@ -83,6 +83,14 @@ applies existing judgment rather than adding new normative text.
 question; a repo that answers "keep mine" carries a `docs/decision-records`
 exception with a stated reason instead of an empty required directory.
 
+## Revisit when
+
+The detection signals named here (a CONTRIBUTING/README pointer to a mailing list or RFC
+process, an `rfcs/`/`doc/design/`-shaped directory, or a governance doc naming who decides)
+repeatedly miss a real existing decision process that doesn't surface through any of them -
+that would mean the detection needs another signal or a different approach, not just a
+wider list.
+
 ## Related
 
 - [ADR-020](ADR-020-intake-first-adoption.md) (measure before asking - the

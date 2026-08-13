@@ -98,3 +98,10 @@ the repo opts in; the method doc resolves as a manifest reference (tree-check
 gate). Dossier hygiene - stamps updated, entries marked, contradictions
 surfaced - is review-verified via the `discovery-digest` skill's checklist,
 honestly in the judgment tier.
+
+## Revisit when
+
+Practice hardens the dossier into a MUST - the record explicitly declines to mint a
+new SPEC rule for it now (`docs/discovery` ships as an optional manifest entry, not a
+required one), on the stated basis that a rule can be written once that need is real
+rather than assumed.

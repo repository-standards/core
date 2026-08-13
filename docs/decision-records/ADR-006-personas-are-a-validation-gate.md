@@ -73,6 +73,15 @@ The decision checklist lists "target personas" as a product decision to record. 
 mechanical check - "every capability spec references a persona in the roster" - is a
 natural extension of the spec-structure guard; noted as a follow-up, not yet built.)
 
+## Revisit when
+
+- Most adopting repos outgrow the light gate and need the heavier discovery machinery
+  (journey maps, JTBD tooling) that Option C offered and this record judged too heavy for
+  now - that judgment should be revisited.
+- The mechanical check floated as a follow-up (every capability spec references a persona
+  in the roster) ships and shows that review-time confirmation was not actually catching
+  persona-less specs - the confirmation mechanism, not just the tooling, needs to change.
+
 ## Related
 
 Mirrors buildable specs (ADR-003) on the product side: specs verify behavior against code,

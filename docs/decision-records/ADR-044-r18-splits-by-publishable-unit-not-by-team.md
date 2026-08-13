@@ -78,6 +78,13 @@ gets the same treatment rather than new tooling built for this axis alone.
 names both as distinct axes; `docs/tree/changelog-md.md` documents the
 monorepo-of-products shape with a worked example.
 
+## Revisit when
+
+A real repo needs both axes at once - multiple release lines and multiple
+independently-publishable units in the same tree - since this record explicitly leaves
+that composition without a worked example, naming it as something that may need writing
+"the first time a real repo needs it."
+
 ## Related
 
 - [ADR-028](ADR-028-work-cycles-live-in-the-repo-and-bind-only-at-scale.md)

@@ -172,7 +172,7 @@ A headcount anywhere in the profile picker, in any document. A third profile for
 ADR-011's regulated `audit` tier stays open on its own terms, which are about a different
 audience and not about how many people are in this one.
 
-## How we would know we were wrong
+## Revisit when
 
 An adopter in the 2-5 range reads the conditions and cannot answer them without already
 knowing the artifact list - which would mean the conditions describe the answer rather than

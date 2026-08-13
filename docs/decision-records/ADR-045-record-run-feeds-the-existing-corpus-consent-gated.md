@@ -90,6 +90,15 @@ at a new step 9, mirroring step 8's consent pattern; `CONTRIBUTING.md` names bot
 automated and the manual path under "Contributing by validation"; `reporting.md` points
 back at it for anyone who already ran an align session.
 
+## Revisit when
+
+- The automatic scrub step lets identifying content (a client's name, internal paths)
+  through despite the show-before-send human read - the record already names pattern
+  matching as a limit, not a guarantee, of that step.
+- Level 1 alone (no agent text) proves to still collect too little to explain a finding,
+  or Level 2 proves too heavy an ask for most sessions - the two-level split exists
+  specifically to avoid both failure modes of an all-or-nothing consent design.
+
 ## Related
 
 - [ADR-021](ADR-021-adoption-feeds-the-standard.md) (the consent-gated, ready-title-and-body
