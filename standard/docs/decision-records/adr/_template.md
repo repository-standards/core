@@ -56,6 +56,11 @@ The concrete signal that would invalidate this decision and trigger a new ADR - 
 threshold crossed, a constraint lifted, a vendor or tech change. Keep it specific
 so a future reader knows exactly when to reopen this.
 
+Required: `scripts/decision-records-check.mjs` fails on any record still standing that leaves
+this section out, empty, or still carrying this prompt. Where the decision is structural and has
+no such signal, write that - "nothing reopens this short of dropping X" is a real answer,
+an invented threshold is not. Superseded and rejected records are exempt.
+
 ## Related
 
 Records this supersedes or relates to, standards it drives, issue/ticket key.

@@ -73,6 +73,11 @@ months without re-running this discussion.
 The business signal that would reopen this - a metric threshold, a market shift, a
 policy change.
 
+Required: `scripts/decision-records-check.mjs` fails on any record still standing that leaves
+this section out, empty, or still carrying this prompt. Where the decision genuinely has no such
+signal, write that rather than inventing a threshold. Superseded and rejected records are
+exempt.
+
 ## Related
 
 Linked ADRs (how it is implemented technically), issue / epic key.
