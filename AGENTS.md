@@ -60,6 +60,8 @@ clients get them by reference (ADR-004), never as copies.
   `node tools/spec-guard-test.mjs`, `node tools/clarify-gate-test.mjs`,
   `node tools/schema-pair-test.mjs` and `node tools/sprint-guard-test.mjs` (those
   guards still fire where they must),
+  `node tools/dashboard-status-test.mjs` (a status cell written with the emphasis a
+  human actually writes is still read as the state it names, not as `todo`),
   `bash standard/scripts/verifyAgentGuards.sh` (the shipped `PreToolUse` hooks deny and
   allow what they should - they only print when they refuse, so nothing else here
   notices a bypass in them),
