@@ -69,6 +69,8 @@ jobs:
           node tools/decision-records-check-test.mjs
       - name: adoption-gates test (a gate artifact that exists but says nothing still fails)
         run: node tools/adoption-gates-test.mjs
+      - name: dashboard ideas test (an idea reaches the pool as a file or as a row, once either way)
+        run: node tools/dashboard-ideas-test.mjs
       - name: file-map is regenerated from the manifest, not hand-written
         run: node tools/file-map.mjs --check
       - name: skill-map is regenerated from the skills, and every skill is grouped

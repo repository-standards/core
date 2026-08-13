@@ -76,6 +76,9 @@ clients get them by reference (ADR-004), never as copies.
   `node tools/adoption-gates-test.mjs` (the Gate 2 and Gate 5 guard still fails an
   artifact that exists but says nothing - an unrated assessment pass, a scope block
   whose total is not the sum of its categories, an alignment item with no owner),
+  `node tools/dashboard-ideas-test.mjs` (the dashboard's pool carries an idea whether the
+  repo writes it as a file under `docs/ideas/` or as a backlog row, once either way, and
+  the work counts still see `task` and `bug` alone),
   `node tools/file-map.mjs --check` (the file map is generated from the manifest,
   never hand-written), `node tools/skill-map.mjs --check` (the skill catalogue is
   generated from each skill's own frontmatter, and every shipped skill is grouped),
