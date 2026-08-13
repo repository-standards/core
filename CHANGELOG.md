@@ -49,6 +49,29 @@ a CI step to answer what one typed field answers with `grep`. Decision: ADR-049,
 rule 4 of ADR-024. Existing dossiers stay valid - the fields are absent, not wrong, and
 entries are append-only.
 
+### A decision record must now name what would reopen it (2026-08-13)
+
+`discovery-digest` step 4 greps every decision record's `## Revisit when` and checks new
+discovery material against it. It is the only mechanism here that reads decisions back, and
+its own text said "Every ADR/BDR carries a `## Revisit when` field". Measured against this
+repo's log: 25 of 48 did. The 23 that did not included every record from 040 to 048, so the
+tripwire covered about half the corpus - the newer half missing - while reporting on all of
+it.
+
+The field is now required and `scripts/decision-records-check.mjs` fails without it, reading
+the section for shape rather than presence: a missing heading, an empty one, and one still
+carrying the template's own prompt all count as no signal. Superseded and rejected records
+are exempt, matched at the start of the status so a record that *supersedes* another still
+owes its own. An honest "nothing reopens this short of X" is a legal answer and required
+where it is the true one; an invented threshold is worse than an empty section, because it
+fires on a number nobody meant.
+
+All 23 records are backfilled from what each already stated - a rejected option's condition,
+an accepted cost, a self-declared limit. Five had answered the question under the heading
+`## How we would know we were wrong`; those were renamed rather than given a second section.
+Both templates and both writing skills now say the section is required, and step 4 states its
+own limit for logs that predate the guard. [ADR-050](docs/decision-records/ADR-050-a-decision-record-must-name-what-would-reopen-it.md).
+
 ## 1.1.6 - 2026-08-13
 
 ### The specifications tab opened by explaining what a specification is (2026-08-13)
