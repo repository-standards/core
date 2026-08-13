@@ -11,6 +11,21 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### The specifications tab opened by explaining what a specification is (2026-08-13)
+
+Above the search box and the reader, the tab printed a heading and a paragraph telling the
+reader that there is one page per capability, that a capability is a thing the product does,
+and that what follows is the specification rather than a summary of it. Everything under it
+already says that: the list is the capabilities, each entry opens the spec itself.
+
+The paragraph is method documentation, and the dashboard is not where method documentation
+belongs - a person opens this tab to read a specification, not to be taught the word. Worse,
+it is the one line on the page that no generator input can change, so an adopting repo carries
+a sentence about its own specs that it never wrote and cannot edit. Both the heading and the
+paragraph are gone; the tab now opens at the search box.
+
 ## 0.9.5 - 2026-08-13
 
 ### A finished backlog rendered as a backlog nobody had started (2026-08-13)
