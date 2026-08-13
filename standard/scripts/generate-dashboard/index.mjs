@@ -638,6 +638,17 @@ function parseSpecs() {
 // whose entries are newer than its `Last reconciled:` stamp, or which holds a contradiction
 // nobody has settled, is live work. Today that lives in a table inside a folder that no index
 // reads, which is the same failure the dossier exists to prevent, one level up.
+// An entry opens with the shipped template's instruction comment and a typed header table
+// (ADR-049), and neither is addressed to a reader: taking the first 220 characters of the file
+// verbatim summarises an entry as "Copy to docs/discovery/<topic>/...". What a reader would
+// actually read is the prose under the headings, so that is what gets clipped.
+const entryProse = (body) =>
+  body
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .split('\n')
+    .filter((line) => !/^\s*[#|]/.test(line))
+    .join('\n')
+
 function parseDiscovery() {
   const dir = 'docs/discovery'
   if (!has(dir)) return []
@@ -693,7 +704,7 @@ function parseDiscovery() {
             date: (f.match(/^(\d{4}-\d{2}-\d{2})/) || [])[1] || '',
             title: inline((body.match(/^#\s+(.+)$/m) || [, f.replace(/\.md$/, '')])[1]),
             path: join(base, f),
-            summary: clip(body.replace(/^#.*$/m, ''), 220),
+            summary: clip(entryProse(body), 220),
             sections: withDiscovery ? splitSections(body) : null,
           }
         })
