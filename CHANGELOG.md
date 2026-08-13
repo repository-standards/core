@@ -37,6 +37,12 @@ stamp now bounds asking only; an agent about to research a subject searches the 
 dossier first and cites what it finds. Entries get a named `## Explained here` section for
 exactly that material.
 
+The dashboard summarised an entry with the first 220 characters of its file, which for an
+entry written from the new template is the template's own instructions - every discovery card
+would have opened with "Copy to `docs/discovery/<topic>/`…". It now summarises the prose,
+skipping the instruction comment and the header table, with `tools/dashboard-discovery-test.mjs`
+building the fixture entry from the shipped template so a template that reintroduces this fails.
+
 A generated index of topics and tags was considered and rejected: it would be a second
 description of what the entries already say, needing a shipped script, a manifest entry and
 a CI step to answer what one typed field answers with `grep`. Decision: ADR-049, narrowing

@@ -81,6 +81,9 @@ clients get them by reference (ADR-004), never as copies.
   `node tools/dashboard-ideas-test.mjs` (the dashboard's pool carries an idea whether the
   repo writes it as a file under `docs/ideas/` or as a backlog row, once either way, and
   the work counts still see `task` and `bug` alone),
+  `node tools/dashboard-discovery-test.mjs` (a discovery entry written from the shipped
+  entry template is summarised by what it says, never by the template's own instructions
+  to whoever fills it, and its table is still read by column name),
   `node tools/file-map.mjs --check` (the file map is generated from the manifest,
   never hand-written), `node tools/skill-map.mjs --check` (the skill catalogue is
   generated from each skill's own frontmatter, and every shipped skill is grouped),
