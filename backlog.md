@@ -74,6 +74,20 @@ then it is decoration. Items here keep the guards deserving of the trust they de
 | id | type | title | why | DoD | status |
 |----|------|-------|-----|-----|--------|
 
+## Epic: The decision log says less and still says it
+
+The log is load-bearing, not archive: [ADR-033](docs/decision-records/ADR-033-the-spec-loop-reads-the-decision-log-before-it-writes.md)
+has the spec loop read it before it writes, and `discovery-digest` greps every record's
+`## Revisit when`. Both assume records get read. Measured 2026-08-14: 51 records, 5,414
+lines, median 97 and 25 of them over 100, against a shipped template of 66. Two distinct
+problems - some of the content is not a decision at all, and the content that is a decision
+is buried in prose no human would have written.
+
+| id | type | title | why | DoD | status |
+|----|------|-------|-----|-----|--------|
+| ADR-SCOPE-1 | task | Audit which records hold a decision and which hold a rule | a record exists to fix a fork that was taken; a rule belongs in the spec and a practice belongs in method guidance. 25 of the 51 records name a numbered rule, and where the rule text lives in `standard/` too, the record restates it - two homes for one statement, which is exactly the drift `spec-guard` exists to stop everywhere else. The reader pays for it twice: the log is longer than the decisions in it, and a rule found in a record may be the stale copy | a verdict per record - stands as a decision / its normative content moves to the spec or to method guidance and the record keeps only the fork / it was never a decision. Numbers are gapless and never reused ([ADR-001](docs/decision-records/ADR-001-decision-record-policy.md)), so the third verdict needs a named state and a line in the README table, not a deleted file; `Superseded` already covers a decision replaced by another and does not fit content that was never one. The moves land as spec or guidance edits in the same PR as the record edit, so neither half is homeless in between | todo |
+| ADR-VOICE-1 | task | Cut each surviving record to what it decided, in a human voice | they were drafted with an agent and read like it: context restated that the linked spec already carries, options argued past the point of decision, consequences enumerated for completeness rather than because anyone will act on them. The longest is 310 lines. Length is not a style complaint here - a record nobody finishes is a record the loop reads and the human does not, and `discovery-digest` is then checking new material against text that has stopped being reviewed | every surviving record reads in about a minute: the fork, the call, what it costs, what would reopen it - each stated once, no reconstruction of the discussion. Concrete over general throughout; a number where there is a number. **The template and `adr-write` get the same cut in the same PR** - both ship to adopters, so trimming 51 files while the generator that wrote them stays unchanged exports the problem and regrows it here by the next record | todo (follows ADR-SCOPE-1 - no point rewriting a record whose content is about to move) |
+
 ## Epic: The profile split earns the weight the docs put on it
 
 The pitch that a small project carries much less rests on one flag. What the flag actually
