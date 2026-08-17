@@ -241,7 +241,7 @@
         "pre-pr-review/SKILL.md": "aa43d020310c9c684720c58ec9e0efbeca4abf78fcce23b7dc2ec78544a0ce4f",
         "product-write/SKILL.md": "f99093c02371ef8e5411702dbad3bd1dc6481855bcee1f2b1b328e3937062123",
         "record-run/SKILL.md": "c0d3485b0dac39ea93221daa942675d9aa8d56eb5eec0b293c065c2d72dffe7a",
-        "show-backlog/SKILL.md": "743274bc7b60c34dfbfae716370125e9b1fa1452d39af361e914130e72a68f24",
+        "show-backlog/SKILL.md": "b5e52131bd9609e318be5ffd3fc49565e728d4207f8b5cfae99aa42f555f32bb",
         "spec-clarify/SKILL.md": "01e9399d048dd1c2a07a58095344c2da3b21a49d434d92a3aeb44b168830869f",
         "spec-impact/SKILL.md": "1751db1ac3e5cc0c085e107625b39370f0c9d451813e02544aa0b31fd461ea9a",
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",
@@ -582,7 +582,7 @@
       "since": "1.1.0",
       "rule": "R15",
       "sha256": {
-        "index.mjs": "3a4d64df4b76591224edc88d488c6dfd4f03e4670e318ec9946ecd85605eb0d1",
+        "index.mjs": "092c19fafeed9bdf444d881d13a02ae3f246918b57f74d9ca3a347795ab6ecbb",
         "src/gate.css": "63a0b56a4491c5e3686835e15886d1440be4cc497a306a9caaa2a4678d15f07c",
         "src/gate.js": "741e6d0e9115aff4e44930021875f632044857b9bc3b5fb7522fa79f9b07105e",
         "src/page.css": "ed989b40d2041c2fb642acd544c220f67d9c83b1172d685aff007d0a494ec1fa",

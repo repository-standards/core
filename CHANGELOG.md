@@ -11,6 +11,20 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.1.11 - 2026-08-18
+
+### The dashboard's default output stops landing inside the published site (2026-08-17)
+
+`generate-dashboard/index.mjs` defaulted an unaddressed run to `site/dashboard/index.html` -
+the same tree this repository's own `pages.yml` uploads whole as the Pages artifact, so a
+local, ad-hoc build (`show-backlog`, or anyone running the generator by hand) landed inside
+the one directory that is supposed to hold only what actually gets published. The shipped
+`dashboard.yml` template handed to adopters never had this problem - it already builds into
+its own directory, passed explicitly - so the fix aligns the generator's default with that
+existing convention instead of inventing a second one: both now write to `.dashboard/`,
+gitignored. `site/dashboard/index.html` in this repository's `pages.yml` is unchanged - that
+one is deliberately part of the published tree, not the default this fixes.
+
 ## 1.1.10 - 2026-08-18
 
 ### Two patterns from Hermes Agent's real source, filed as an idea to weigh (2026-08-18)

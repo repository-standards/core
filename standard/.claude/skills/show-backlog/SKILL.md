@@ -30,7 +30,7 @@ question actually asked. Do not paste the backlog.
    ```
 
    `--serve` builds the page and serves it on `http://localhost:9675`, rebuilding when a source
-   file changes. Without `--serve` it writes `site/dashboard/index.html` and exits, which is the
+   file changes. Without `--serve` it writes `.dashboard/index.html` and exits, which is the
    right call when the user wants a file rather than a session.
 
 3. **Say what you started.** A long-running server the user did not ask for is a surprise:
