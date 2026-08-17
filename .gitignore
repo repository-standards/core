@@ -5,5 +5,8 @@ node_modules/
 .claude/tmp/
 .claude/worktrees/
 site/docs/
+# generate-dashboard's local default; pages.yml separately builds straight into site/dashboard/
+# on purpose, because that copy is meant to publish as part of the site artifact.
+.dashboard/
 site/dashboard/
 services/adoption-stats/.wrangler/
