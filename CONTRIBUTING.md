@@ -19,8 +19,9 @@ contribution this repo takes.
 - **Before a PR:** run the gate set from [`AGENTS.md`](./AGENTS.md) - all of it, it is
   longer than it looks - and self-review your diff (the `pre-pr-review` skill).
 - **Changelog:** describe your change under `CHANGELOG.md`'s `## Unreleased`
-  heading. A contribution never adds a version heading and never edits `VERSION`;
-  the maintainer alone bumps it when cutting a release (see
+  heading and bump `VERSION` yourself as part of the PR - PATCH by default,
+  unless the maintainer directs a different bump or an explicit no-bump for
+  that PR (see
   [`docs/method/changelog-process.md`](./docs/method/changelog-process.md) for
   how the two outputs are cut).
 - **One tree:** the standard is authored directly in `standard/` at client-repo

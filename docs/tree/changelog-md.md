@@ -12,8 +12,9 @@ What was wrong, what it is now, who it affects.
 ## What it is for
 
 **So that a release is a deliberate act rather than a side effect of merging.** A PR
-describes its change; the maintainer promotes `Unreleased` into `## x.y.z - <date>` and moves
-the version, once. That split is why the file is checked at two levels: the file has to exist,
+describes its change and promotes `Unreleased` into `## x.y.z - <date>` itself, moving the
+version once - PATCH by default, unless directed otherwise or told explicitly to leave it
+unpromoted. That split is why the file is checked at two levels: the file has to exist,
 and the `Unreleased` heading has to be in it - without the heading there is nowhere to write
 an entry that is not a version heading the PR just invented.
 
@@ -33,8 +34,9 @@ not the changelog with the boring lines removed.
 
 ## What does not go in here
 
-**A version heading, or a version bump.** Both are the maintainer's, at release. A PR that
-writes `## 1.4.0` has decided a release happened.
+**A version heading, or a version bump, written ahead of what the PR actually ships.** A PR
+promotes `Unreleased` to the version it is actually cutting, once - it does not pre-write a
+future heading, and it does not bump past what the owner directed for that PR.
 
 **Internal codes.** Ticket ids, rule numbers and backlog identifiers mean nothing to the
 reader six months later. Say what changed.
@@ -65,10 +67,11 @@ with.
 
 ## Decisions behind it
 
-- **R18 - a PR describes its change under `Unreleased` and never moves the version.** The
-  release is one act by one person; the same rule extends to more than one release line
-  and to more than one publishable unit, never a second kind of mechanism.
-- **R25 - the release that promotes `Unreleased` moves the version**, and the version is one
+- **R18 - a PR describes its change under `Unreleased` and bumps the version itself,
+  PATCH by default.** The owner directs a different bump or an explicit no-bump per PR; the
+  same rule extends to more than one release line and to more than one publishable unit,
+  never a second kind of mechanism.
+- **R25 - the PR that promotes `Unreleased` moves the version**, and the version is one
   fact restated nowhere unchecked.
 - **[R4](../../standard/SPEC.md) - history does not accumulate inside living documents.** This
   file is where it goes instead.

@@ -109,9 +109,9 @@ clients get them by reference (ADR-004), never as copies.
   is what lets an adopted repo notice a file whose content stopped being the
   standard's. `tree-check` fails on a stale one, so this is a step, not a habit.
 - **Changelog:** a PR describes its change under `CHANGELOG.md`'s `## Unreleased`
-  heading - never a version heading, never `VERSION`; the maintainer cuts every
-  release. One mechanism at every profile - the per-PR fragments folder was
-  removed on 2026-08-02.
+  heading and bumps the version itself - PATCH by default, unless the maintainer
+  directs a different bump or an explicit no-bump for that PR. One mechanism at
+  every profile - the per-PR fragments folder was removed on 2026-08-02.
 - **The spec wins:** where any document appears to add a requirement,
   [`standard/SPEC.md`](standard/SPEC.md) is the normative text; the
   manifest cites the rule each entry enforces.
