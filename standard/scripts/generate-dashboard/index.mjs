@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Renders a repository's work state as one static page: site/dashboard/index.html.
+// Renders a repository's work state as one static page: .dashboard/index.html.
 //
 // Everything it shows is read from committed files - the backlog pool, the sprints, the
 // changelog, the decision records, the specs. Two people who run it on the same commit get
@@ -1074,7 +1074,7 @@ ${gate}</script>
 
 /* ---------- emit ---------- */
 
-const out = outFlag >= 0 ? resolve(argv[outFlag + 1]) : join(root, 'site/dashboard/index.html')
+const out = outFlag >= 0 ? resolve(argv[outFlag + 1]) : join(root, '.dashboard/index.html')
 const stateFile = join(dirname(out), 'state.json')
 
 function build() {
