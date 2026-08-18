@@ -3,7 +3,7 @@
 A repo that follows repository-standards records the state it last aligned to in **`.standards-version`**.
 Self-verify is how it proves it actually meets that version - the **"verify"** step that
 runs after adopting the standard (`align-to-standards`), after updating it
-(`update-to-version`), and in CI on every PR. Same pass/fail each time.
+(`update-to-latest`), and in CI on every PR. Same pass/fail each time.
 
 Verification has two tiers: a **mechanical** tier that a machine asserts, and a
 **judgment** tier a human confirms at review. Do not pretend the judgment tier is
@@ -38,7 +38,7 @@ node scripts/self-verify.mjs
 node scripts/self-verify.mjs --warn
 
 # also assert the recorded state equals a given target
-node scripts/self-verify.mjs --version 1.1.11
+node scripts/self-verify.mjs --version 1.1.12
 ```
 
 It is **manifest-driven** (ADR-005). It reads `standard.manifest.json`, the standard
@@ -285,14 +285,14 @@ other dependency, so the proposal arrives in the same place as every other bump:
 Know what that PR is: **a proposal, and only half the work.** Merging a version bump on its
 own leaves the repo red on purpose - self-verify requires the manifest copy to match
 the record, and the manifest arrives with the update. Take the PR as the reminder, run
-`update-to-version`, and let the same PR carry the delta.
+`update-to-latest`, and let the same PR carry the delta.
 
 ## When it fails
 
 A red self-verify is a compliance failure, not a warning to defer:
 
 - Missing `.standards-version` -> the repo was never aligned; run `align-to-standards`.
-- Version mismatch after an update -> the bump did not land; finish `update-to-version`.
+- Version mismatch after an update -> the bump did not land; finish `update-to-latest`.
 - A guard failure -> fix the structure/coupling before merging.
 - A guard reported `SKIP` -> nothing is wrong with the repo and nothing was learned about it
   either. Install what the line names ([`prerequisites.md`](prerequisites.md)) and re-run;

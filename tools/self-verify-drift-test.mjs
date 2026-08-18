@@ -805,7 +805,7 @@ check(
 
 // The sham update in full: bump `.standards-version`, copy the target version's manifest,
 // apply none of the release's file changes, and run the exact check step 6 of
-// `update-to-version` nominates as proof of completion. The case above builds that shape by
+// `update-to-latest` nominates as proof of completion. The case above builds that shape by
 // hand-writing one hash; here the target manifest is GENERATED from a real newer tree by
 // `tools/manifest-hashes.mjs`, so the two halves of the mechanism have to agree - the tool
 // that records content and the verifier that reads it. A recorder that hashed bytes where

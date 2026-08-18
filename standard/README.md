@@ -16,9 +16,9 @@ One-line description of the product. Entry point for agents + humans:
 | [`SPEC.md`](SPEC.md) | The standard's normative core (the numbered rules), as of the state this repo last aligned to | as-is |
 | [`SECURITY.md`](SECURITY.md) | How to report a vulnerability; no-secrets posture | fill placeholders |
 | [`standard.manifest.json`](standard.manifest.json) | Machine-readable projection of SPEC.md - what `self-verify` checks | as-is |
-| `.standards-version` | The version pin - written at adoption, advanced by `update-to-version` | write at adoption |
+| `.standards-version` | The version pin - written at adoption, advanced by `update-to-latest` | write at adoption |
 | [`.claude/settings.json`](.claude/settings.json) | Agent permission baseline + PreToolUse guards | extend |
-| [`.claude/skills/`](.claude/skills/) | the lifecycle skills: the spec family (`spec-specify`, `spec-clarify`, `spec-impact`, `spec-update`, `spec-plan`, `spec-tasks`, `spec-implement`, `spec-reconcile`) + `discovery-digest`, `pre-pr-review`, `add-to-backlog`, `update-to-version`, and the scale-only sprint family (`sprint-open`, `sprint-close`, `timeline-update`) | as-is |
+| [`.claude/skills/`](.claude/skills/) | the lifecycle skills: the spec family (`spec-specify`, `spec-clarify`, `spec-impact`, `spec-update`, `spec-plan`, `spec-tasks`, `spec-implement`, `spec-reconcile`) + `discovery-digest`, `pre-pr-review`, `add-to-backlog`, `update-to-latest`, and the scale-only sprint family (`sprint-open`, `sprint-close`, `timeline-update`) | as-is |
 | [`.github/workflows/`](.github/workflows/) | CI, live as soon as they land - not dormant templates: `spec-guard` (spec policy, on every PR), `gitleaks` (secret scan, on push + PR), `standards-update-watch` (weekly, opens an issue when a newer standard version exists). Until the first-30-minutes list in `AGENTS.md` is done they will fail; delete them until you are ready if that is not wanted | keep or delete |
 | [`.github/pull_request_template.md`](.github/pull_request_template.md) | PR template with decision-record impact, ADR and BDR | as-is |
 | [`.gitleaks.toml`](.gitleaks.toml) | Secret-scan config | as-is |

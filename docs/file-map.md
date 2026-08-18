@@ -27,7 +27,7 @@ copied into your repository as folder READMEs that then age in place.
 | Path | What it is, and why | Needed | Adapt | Rule |
 |---|---|---|---|---|
 | `AGENTS.md` | the single agent entry point | **required**, core | `fill-from-repo` | [R1](../standard/SPEC.md) |
-| `.standards-version` | the state this repo last aligned to - a bookmark the delta is measured from, never a version to stay at (ADR-025); written by align-to-standards / update-to-version | **required**, core | `fill-from-repo` | [R2](../standard/SPEC.md) |
+| `.standards-version` | the state this repo last aligned to - a bookmark the delta is measured from, never a version to stay at (ADR-025); written by align-to-standards / update-to-latest | **required**, core | `fill-from-repo` | [R2](../standard/SPEC.md) |
 | `standard.manifest.json` | this manifest, matching the recorded state - what self-verify checks against | **required**, core | `copy` | [R2](../standard/SPEC.md) |
 | `SPEC.md` | the normative core this manifest projects - readable in place | optional, core | `copy` | [R2](../standard/SPEC.md) |
 | `CLAUDE.md` <br><small>or `AGENTS.md`</small> | the file Claude Code loads first - points at AGENTS.md and carries the rule to check the skills before acting (R1); a non-Claude repo carries the same content in whatever its agent loads first | optional, core | `merge` | [R1](../standard/SPEC.md) |

@@ -30,7 +30,7 @@
 - **Decisions they influence.** ADR-005 (manifest), ADR-008/009 (zones, skill classes),
   ADR-010 (lifecycle + tracker), the project's naming.
 - **Success signals.** A repo he has not touched in months passes `self-verify` after one
-  `update-to-version` run; a new client repo reaches drift 0 in planned waves.
+  `update-to-latest` run; a new client repo reaches drift 0 in planned waves.
 - **Anti-goals.** An IDE lock-in, a SaaS dependency, or a ceremony layer (Scrum-for-AI).
 
 ## `Spec-first PO Paula`

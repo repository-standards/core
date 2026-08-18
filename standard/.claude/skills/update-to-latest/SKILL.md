@@ -1,17 +1,18 @@
 ---
-name: update-to-version
-description: Use when someone wants to move to a newer version of the standard - "update me to the latest", "bump the standard", "what changed since we adopted?". Applies only the delta between the state this repo last aligned to and latest, adapted to this repo and preserving its recorded deviations - never a re-scaffold.
+name: update-to-latest
+description: Use when someone wants to move to a newer version of the standard - "update me to the latest", "bump the standard", "what changed since we adopted?". Applies only the delta between the tree this repo last aligned to and latest, adapted to this repo and preserving its recorded deviations - never a re-scaffold.
 ---
 
-# update-to-version
+# update-to-latest
 
 The recurring half of the versioned-standard mechanism. `align-to-standards` adopts the
-standard the first time; **this** brings an already-aligned repo up to a newer version -
-the way you'd bump a dependency, not re-scaffold from scratch.
+standard the first time; **this** brings an already-aligned repo up to the standard's
+latest - the way you'd bump a dependency, not re-scaffold from scratch.
 
-The repo records the version it is aligned to in **`.standards-version`**. Updating reads
-the **delta** between that version and the target, applies only what changed, and proves
-the result with `self-verify`.
+The target is always latest, never a pin: `.standards-version` is a bookmark of where the
+repo got to, not a version it is held at (ADR-025). Updating reads the **delta** between the
+tree the repo last aligned to and latest, applies only what changed, and proves the result
+with `self-verify`.
 
 ## Preconditions
 
@@ -20,17 +21,26 @@ the result with `self-verify`.
 
 ## Steps
 
-1. **Read current and target versions.** Current = `.standards-version`; target = the
-   requested version (or the standard's latest). Equal? There is nothing to apply - skip
-   to step 6 and self-verify.
+1. **Find the tree this repo aligned to.** Read `provenanceCommit` from
+   `standard.manifest.json` - the standards repo commit this repo last aligned to. That
+   commit, not a version string, is what the delta is measured from.
+
+   **If the field is absent or null** (a repo aligned before it shipped), back-fill it once:
+   resolve `.standards-version` to the commit that cut it - `git log --format='%h %s' --
+   VERSION` in a checkout of the standards repo, then `git show <commit>:VERSION` to confirm
+   which version a commit carries - and use that. It is a one-time approximation, and it is
+   approximate on purpose: since a PR bumps PATCH by default, `main` carries unreleased change
+   under a version number that has not shipped, so a version string names a range of trees
+   rather than one (ADR-052). Say in the PR that the base was back-filled. From this run on,
+   the field is exact.
+
+   Target = the standard's latest (`origin/main`), unless the user named something else.
+   Already at latest? There is nothing to apply - skip to step 6 and self-verify.
 
 2. **Read the delta, not the whole standard.** The delta is the **file diff between the two
-   versions' shipped trees**: in a checkout of the standards repo, `git diff <current-ref>
-   <target-ref> -- standard/`. A ref is a release tag where tags exist; where they do not,
-   it is the commit each version was cut at, and `VERSION`'s own history names those -
-   `git log --format='%h %s' -- VERSION`, then `git show <commit>:VERSION` to see which
-   version a commit carries. Nothing else sees all of the delta. The manifest and the
-   changelog index that diff; neither stands in for it.
+   trees**: in a checkout of the standards repo, `git diff <provenanceCommit> <target-ref> --
+   standard/`. Nothing else sees all of the delta. The manifest and the changelog index that
+   diff; neither stands in for it.
 
    - The **manifest diff** (`standard.manifest.json`, ADR-005, keyed by kind + id/path)
      says which *entries* arrived, changed shape, or went away: a new required file, an
@@ -46,8 +56,8 @@ the result with `self-verify`.
    read against the other two.
 
    **Where the two trees come from:** one checkout of the standards repo, read at two refs -
-   the target version's and the one in `.standards-version`. That needs its history, not a
-   snapshot of latest, so it is a clone and never a `degit`:
+   the target's and this repo's `provenanceCommit`. That needs its history, not a snapshot of
+   latest, so it is a clone and never a `degit`:
 
    ```
    git clone https://github.com/repository-standards/core.git /tmp/repository-standards-core
@@ -60,7 +70,7 @@ the result with `self-verify`.
    written here rather than left to the standard's own README, a file this repo does not
    carry.
 
-   **If the current version's tree cannot be had,** the delta is partial and must be
+   **If the aligned-to tree cannot be had,** the delta is partial and must be
    reported as partial rather than as the whole. The manifest copy this repo carries records
    a `sha256` for every `copy` entry, so those files can still be compared exactly against
    the target's; every `merge` and `fill-from-repo` file is then unenumerated, with only the
@@ -80,7 +90,7 @@ the result with `self-verify`.
      ordinary case, not the exception: `merge` and `fill-from-repo` entries are adapted
      at adoption by definition, so almost every one of them is diverged the moment the
      release touches it. **Merge the two, three-way**, against the entry's own reference
-     copy at the current version - the version's file is the base, the target's file is
+     copy at the aligned-to commit - that file is the base, the target's file is
      theirs, the repo's file is ours. Take the upstream addition, keep the local
      adaptation, and where the two genuinely collide, say what collided and let the human
      choose; a `copy` entry resolves as step 4 describes, by hash. **Never skip the file
@@ -88,7 +98,11 @@ the result with `self-verify`.
      additions go unapplied while `self-verify` still says drift 0: these entries carry
      no `sha256`, so nothing downstream will ever notice the miss. Report every file
      merged this way and every collision the human decided;
-   - the item was **removed** in the target -> remove or migrate the repo's use of it;
+   - the item was **removed** in the target -> remove or migrate the repo's use of it, and
+     check the target manifest's `removedPaths` for an entry naming it. That list is what
+     self-verify checks in step 6, so a removal skipped here fails there rather than passing
+     quietly the way it used to (ADR-052). Where the repo deliberately keeps a removed path,
+     record it as an exception in step 4 - not as a silent miss;
    - re-applying the whole standard is wrong - it erases the repo's local adaptation.
 
 4. **Preserve local deviations.** Where the repo deliberately deviates from a standard
@@ -105,16 +119,19 @@ the result with `self-verify`.
    alone. Never resolve it by excepting a guard's script file - that is refused, because it
    would disable a live check rather than record a difference.
 
-5. **Bump the pin and the manifest.** Write the target version to `.standards-version`,
-   and replace `standard.manifest.json` with the target version's manifest (carrying the
-   repo's `exceptions` **and its top-level `profile`** forward - both are this repo's
-   answers, not the standard's, and the shipped manifest carries a default `profile` that
-   would silently move a core repo onto the scale gate). The pin and the manifest move
-   together.
+5. **Bump the bookmark and the manifest.** Write the target's version to
+   `.standards-version`, and replace `standard.manifest.json` with the target's manifest
+   (carrying the repo's `exceptions` **and its top-level `profile`** forward - both are this
+   repo's answers, not the standard's, and the shipped manifest carries a default `profile`
+   that would silently move a core repo onto the scale gate). Set `provenanceCommit` to the
+   **full SHA of the target ref you actually diffed against** - not latest-as-of-now, which
+   may have moved while the update was being applied. Bookmark, manifest and provenance move
+   together; the next update measures from the SHA.
 
 6. **Self-verify.** Run the compliance check - `node scripts/self-verify.mjs --version <target>`
-   (see `self-verify.md` (by reference)). It must pass: the pin matches the manifest, every required
-   entry is met, the guards are green - **drift 0**. Do not open the PR on a red self-verify.
+   (see `self-verify.md` (by reference)). It must pass: the bookmark matches the manifest, every
+   required entry is met, every `removedPaths` entry is actually gone, the guards are green -
+   **drift 0**. Do not open the PR on a red self-verify.
 
 7. **One focused PR.** Title it with the version move (`update to repository-standards
    @<target>`); summarize what the delta changed and any preserved deviation. Never push
@@ -133,9 +150,15 @@ the result with `self-verify`.
   `copy` ones. A release that only moved templates, workflows or prose changes nothing in it
   and still has to be applied. Diff the trees.
 - **Not "done" on an unread changelog** - if you cannot determine the delta between the
-  versions, stop and say so rather than re-applying blindly.
+  two trees, stop and say so rather than re-applying blindly.
+- **Not a removal left half-applied** - a path the target removed and this repo still carries
+  is drift, and since ADR-052 self-verify says so. Delete it, migrate it, or except it
+  deliberately; do not leave it and call the update done.
+- **Not a delta measured from the version string** - two trees can carry the same version
+  number, since a PR bumps PATCH by default and `main` runs ahead of what shipped.
+  `provenanceCommit` names one tree; `.standards-version` names a bookmark for humans.
 - **Not merged on a red self-verify** - the update is complete only when the repo proves
-  it complies with the target version.
+  it complies with the target.
 
 ## Close the loop upstream
 

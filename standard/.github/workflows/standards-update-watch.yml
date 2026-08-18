@@ -5,7 +5,7 @@ name: standards-update-watch
 #
 # ADR-025: staying current is a *notification*, never a lock. Nothing here edits the
 # pin or opens a PR against your code - it tells you a newer standard exists and lets
-# a human decide when to run `update-to-version`. A watch that bumps by itself would
+# a human decide when to run `update-to-latest`. A watch that bumps by itself would
 # make "aligned" a thing that happens while nobody is looking.
 
 on:
@@ -82,6 +82,6 @@ jobs:
             "" \
             "    > update this repo to standards ${LATEST}" \
             "" \
-            "The \`update-to-version\` skill applies the delta between that state and latest, preserves the deviations recorded in this repo's manifest, and finishes when \`node scripts/self-verify.mjs\` reports drift 0." \
+            "The \`update-to-latest\` skill applies the delta between that state and latest, preserves the deviations recorded in this repo's manifest, and finishes when \`node scripts/self-verify.mjs\` reports drift 0." \
             "" \
             "Closing this issue without updating is a valid answer - say why in a comment, so the next person does not re-open the same question.")"
