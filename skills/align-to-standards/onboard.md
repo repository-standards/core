@@ -29,7 +29,10 @@ detail lives in the standards checkout at
 [`docs/method/repo-assessment.md`](../../docs/method/repo-assessment.md); the eight passes:
 
 1. **Skeleton & docs** - `AGENTS.md`, `PRODUCT`, `ARCHITECTURE`, `specs/`, decision
-   records, a backlog: present or missing?
+   records, a backlog: present or missing? Also check for a **foreign spec-workflow
+   installation** - `.specify/`, `openspec/`, or another tool's own `plan.md`/`tasks.md`
+   scaffolding not produced by this standard's `spec-*` skills. Flag it; see "Replace a
+   foreign spec tool" below.
 2. **Decisions in code** - walk the
    [decision checklist](../../docs/method/checklist.md): which forks are decided /
    undecided / decided **inconsistently**?
@@ -77,6 +80,23 @@ technology step (`SKILL.md`) against the stack's `stack.manifest.json`: registry
 compatibility check -> classify -> payoff-ordered waves. Best practices land as picks
 to adopt, **never a re-scaffold**, and the stack waves queue into the same backlog as
 the Layer 1 work. This is Layer 2 running beside the gates, not a gate itself.
+
+## Replace a foreign spec tool, do not bridge it
+
+A repo can adopt this standard partially - but the spec workflow is not a good place to
+do that. This standard's own spec engine (`spec-specify` -> `spec-clarify` -> `spec-plan`
+-> `spec-tasks` -> `spec-implement`) is itself an extracted, standard-owned answer to the
+same job Spec Kit, OpenSpec or BMAD do (`docs/faq.md`, "How is this different from Spec
+Kit, OpenSpec, BMAD, or Backstage?"). Running one of those *and* this standard's spec
+engine side by side is not a smaller adoption - it is two systems both trying to own
+`specs/`, both producing `plan.md`/`tasks.md`, agreeing with each other by accident.
+
+Where pass 1 flagged an existing installation: queue its removal in the seeded backlog
+like any other gap, then replace it in the same wave the spec engine capability lands -
+absorb any specs it already produced into `spec-specify`'s output rather than discarding
+the content, then remove the foreign tool's own directories and skills. Never leave both
+installed at once, and never wire this standard's guards to read the other tool's files
+as a bridge - the FAQ answer only holds while there is one spec workflow in the repo.
 
 ## The one rule: no big-bang
 
