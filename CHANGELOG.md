@@ -11,7 +11,30 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
-## 0.9.17 - 2026-08-19
+## 0.9.18 - 2026-08-19
+
+### A finding that closes off a design is a decision, not behaviour (2026-08-19)
+
+The shipped rule for closing a backlog row routes the finding three ways: "A decision to a
+decision record, behaviour to the capability spec, raw material to a discovery dossier."
+Stated as an exclusive choice, it is narrower than the taxonomy it points at, which says a
+significant decision produces both a record and a rule, and carries a corner case for a
+finding that is two things at once.
+
+That gap has a cost, and the section's own examples walk into it. "A design killed by a
+probe" is one of the three examples it opens with, and the natural place to write
+*server-side resizing returns `403 FeatureNotEnabled`, and the quality parameter is silently
+ignored* is the capability spec, as behaviour. Filed there it is a permanent fact of the
+system. The day the platform enables the feature, nothing says so - the note goes on
+suppressing work that has become possible, and it does so silently, which is the failure this
+project cares about most.
+
+Filed as a decision it inherits a trigger: a record has to name what would reopen it, and the
+shipped `scripts/decision-records-check.mjs` fails one that does not. So the fix is a routing
+sentence, not a mechanism - the mechanism already exists on both sides.
+
+No decision record for this. It clarifies a restatement to match the taxonomy it already
+cites, and ADR-051's own clause delegates there rather than deciding the routing itself.
 
 ### The archive gets no surface, and the first row moves (2026-08-19)
 

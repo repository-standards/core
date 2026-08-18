@@ -7,6 +7,8 @@
 
      The row moves here at the release cut, by whoever cuts the release, and its content
      moves first: the finding to a record, a spec or a dossier; what shipped to the CHANGELOG.
+     A finding that closes off a design ("we cannot, the platform answers 403") is a decision,
+     not behaviour - a record has to name what would reopen it, and a spec line does not.
      `where` names what the content became - that is the whole point of the file, and
      `scripts/backlog-archive-check.mjs` fails a row that arrives without one.
 

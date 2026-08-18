@@ -212,9 +212,17 @@ person pays for it again; leaving it in place turns the live list into something
 So the row moves, and its content moves first:
 
 - **The finding goes where findings live.** A decision to a decision record, behaviour to the
-  capability spec, raw material to a discovery dossier. Nothing new to learn here - the
-  [taxonomy](https://github.com/repository-standards/core/blob/main/docs/method/taxonomy.md)
-  already says which is which.
+  capability spec, raw material to a discovery dossier - often more than one of those at once.
+  The [taxonomy](https://github.com/repository-standards/core/blob/main/docs/method/taxonomy.md)
+  says which is which.
+
+  One routing is worth naming here, because the design killed by a probe walks straight into
+  it: **a finding that closes off a design is a decision, not behaviour.** *We do not resize
+  server-side, the platform answers `403 FeatureNotEnabled`* reads like behaviour and files
+  neatly into a capability spec - where it becomes a permanent fact of the system. The day the
+  platform enables the feature, nothing says so, and the note goes on suppressing work that has
+  become possible. It is a fork someone can reopen, so it belongs in a record, which has to
+  name what would reopen it - `scripts/decision-records-check.mjs` fails one that does not.
 - **What shipped goes to the CHANGELOG**, under `## Unreleased` - which R18 already requires
   of the PR that shipped it, so for a row that shipped code this costs nothing.
 - **The row moves to `docs/backlog-archive.md`**, as written, plus a `where` cell naming what
