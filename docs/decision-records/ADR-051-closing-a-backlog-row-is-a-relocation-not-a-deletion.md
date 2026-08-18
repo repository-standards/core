@@ -43,11 +43,12 @@ the shipped page "licenses it in the same sentence that declares the vocabulary"
 failing every such row "would make that licence impossible to follow". An aside written as a
 convenience has already cost this project one guard.
 
-**The dashboard's own default measures what the file really contains.** In
-`standard/scripts/generate-dashboard/src/page.js` the backlog view opens with
-`state = { q: '', type: null, hideDone: true }`, and the "show finished" chip starts
-unpressed. A view that hides part of its input by default is a statement about the input: the
-file is expected to be full of rows nobody wants to read.
+**The dashboard's own default measured what the file really contains.** At the time of this
+record the backlog view opened with `state = { q: '', type: null, hideDone: true }` and a
+"show finished" chip that started unpressed. A view that hides part of its input by default is
+a statement about the input: the file is expected to be full of rows nobody wants to read.
+(The chip is gone as of 1.1.13 and the pool is open-only by construction, which says the same
+thing more plainly - see **What the dashboard does with it** below.)
 
 **Deletion is what this repository actually did, and it is visible in the tree right now.**
 The 1.1.0 release cut (`8d3fa71`) removed seventeen closed rows from
@@ -107,7 +108,7 @@ is. That is very likely why nobody follows it.
   against R15's whole posture; and it answers where the *row* goes while saying nothing about
   where its *content* goes, which is the half that matters.
 - **C. Leave closed rows in place forever and let `hideDone` handle it.** Tempting, because
-  the dashboard already does it. Rejected: the dashboard is a projection for people who never
+  the dashboard did exactly that. Rejected: the dashboard is a projection for people who never
   open the repository, and the file is what everyone else reads - the agent working in the
   code reads `backlog.md`, not the view. mybrand's 314 lines is what this option costs after
   a few months, and the cost compounds.
@@ -180,15 +181,18 @@ with no destination; it may not decide the destination.
 
 ### What the dashboard does with it
 
-Closed rows stay **reachable in the view**: the archive becomes a second input to the Backlog
-tab, behind the "show finished" chip that already exists, rather than a tab of its own. Work
-that has been relocated has not been hidden.
+Closed rows stay **reachable in the view**, and that requirement is the part of this section
+that binds. Work that has been relocated has not been hidden.
 
-`hideDone` does **not** become dead weight, and the reason is worth stating because the
-opposite is the intuitive guess. Archiving happens at the release cut, so between two releases
-the pool still accumulates closed rows and the toggle still has something to toggle. What
-changes is its meaning: it stops being a permanent mask over a file that only grows, and
-becomes a filter over the current release's finished work.
+**Which control carries it is open again (1.1.13).** This section named the "show finished"
+chip, on the reasoning that between two releases the pool accumulates closed rows anyway, so
+the toggle would stop being a permanent mask over a file that only grows and become a filter
+over the current release's finished work. The chip was removed before the archive was built:
+it made the count under the list mean two different things depending on a button nobody
+remembers pressing, and the reader it served is served better by Timeline and Reports. That
+leaves a requirement with no named surface - tracked as `ARCHIVE-VIEW-1` in
+[`backlog.md`](../../backlog.md), and it must be answered before the first archive is cut, or
+the relocation this record insists on lands somewhere the view cannot reach.
 
 **This record does not touch the generator.** Two changes are in flight in
 `standard/scripts/generate-dashboard/` and this is not a third. The dashboard change is a
