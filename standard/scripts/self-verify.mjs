@@ -38,6 +38,10 @@
 //      thing rather than as drift. Running `pnpm check:all` on a machine with no pnpm used
 //      to score exactly what a genuine lint failure scores, so the number said "this
 //      laptop" in the words of one that says "this repo".
+//   2c. removedPaths (ADR-052): every path the standard has removed must be absent from this
+//      repo - hand-maintained at release time, not diffed from a tree, so the check needs no
+//      provenance data; a repo that never carried the path passes trivially. Waivable through
+//      `exceptions` like any other required entry.
 //   3. Stray transition skills (ADR-009): align-to-standards, onboard-repo, modernize,
 //      greenfield-start never ship in a consuming repo. One found under .claude/skills/
 //      is a hand-copy mistake, flagged as a warning - it does not add to drift.
@@ -754,6 +758,18 @@ if (manifest) {
     const body = readFileSync(at, "utf8");
     if (hasHeading(body, s.heading)) pass("section", `${at} > "${s.heading}"`);
     else if (s.required) failOrExcept("section", `${s.file}#${s.heading}`, "section", `${at} is missing the "${s.heading}" section - ${s.purpose}`);
+  }
+  // removed paths (ADR-052) - a path the standard has taken away must not still be here.
+  // Unconditional existence check: needs no provenance commit, no history, nothing but the
+  // manifest this repo already carries, so a repo that never had the path passes for free.
+  for (const r of manifest.removedPaths || []) {
+    if (!exists(r.path)) { pass("removed", `${r.path} is gone (removed since ${r.since})`); continue; }
+    failOrExcept(
+      "file",
+      r.path,
+      "removed",
+      `${r.path} still exists but the standard removed it in ${r.since}${r.note ? ` - ${r.note}` : ""} - delete it (migrate its content first if the note says to), or record an exception if it is deliberately kept`,
+    );
   }
   // static guards (skip self to avoid recursion; diff guards run in CI on the PR diff)
   if (skeleton) note("guard", "guards run in an adopted repo, not on the skeleton - skipped (--skeleton)");
