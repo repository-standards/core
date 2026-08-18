@@ -21,6 +21,11 @@
      it was written. There is deliberately no empty row waiting for that - a field printed
      as "-" on every record is noise on all of them to serve the few that are superseded. -->
 
+<!-- Keep it short. Length is a cost, not a sign of rigour: write the shortest record that
+     still answers *why* for someone who was not in the room, and let a section with nothing
+     to say be one line. Comprehensive means every section is answered, not that each answer
+     is long. A record nobody finishes reading fails at the only job it has. -->
+
 
 ## Context
 
