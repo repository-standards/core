@@ -46,7 +46,7 @@
       "profile": "core",
       "since": "1.0.0",
       "rule": "R2",
-      "sha256": "4126dc280be741ea3667f6a5d1e4ece6bf5283f3c77be964bf427a2569b37eff"
+      "sha256": "4a79dbb1d0c33e7dd108c34730ed08ae0e78977e4b6a046c766464dd83b2dc42"
     },
     {
       "path": "CLAUDE.md",
@@ -233,8 +233,8 @@
       "rule": "R22",
       "sha256": {
         "add-to-backlog/SKILL.md": "68092f72af6e7e4f0c1e3f8a7d2b075729802a81c932990d57c680095302594c",
-        "adr-write/SKILL.md": "976516d4dddc8d6378d4321b23e38383eff89e1d443cd6c62f13bfb8041044b7",
-        "bdr-write/SKILL.md": "fde094403ff726180a77ee17b673424e9440b0089c2cf840e65269880d291951",
+        "adr-write/SKILL.md": "4a789cdf74fef1f327f59fd44e464b6ed48b1d69563993866f6c365786fb5678",
+        "bdr-write/SKILL.md": "1a61ecebe9bd059257c874feaeed2500aa5297a4b34a5d18668b9a7ab8c2074a",
         "discovery-digest/SKILL.md": "10b4f7fbfd17358964541a22234e4d01f8b72eca22dcee88a0292f2629d19a65",
         "idea-write/SKILL.md": "0c6bf300123b8b7b2be4b9d5d757158bd3a8524be95b858876cfd35e532c68fd",
         "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",

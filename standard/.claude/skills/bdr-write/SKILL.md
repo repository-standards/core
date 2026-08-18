@@ -10,7 +10,13 @@ what was decided and roughly why, the agent drafts, they correct.
 
 ## Is it a BDR?
 
-Ask who would overrule it. **A product owner means BDR; an architect means ADR** and
+First: is it expensive to reverse? A pricing or process tweak - which segment gets a
+discount code, what a launch email says - is a one-line revert even when contestable; it
+belongs in `CONTRIBUTING.md` or a product doc, not a BDR. Reserve the record for calls
+costly enough that reconstructing *why* matters later - the pricing model, the market,
+what the product will not do.
+
+Then ask who would overrule it. **A product owner means BDR; an architect means ADR** and
 `adr-write` is the skill. If both would, the BDR is the parent and the ADR references it -
 "we charge per seat" is the decision, "we model seats in the licences table" is its
 technical consequence, and conflating them is how a pricing change later reads as a schema
