@@ -365,12 +365,20 @@ function poolList(items) {
           el('span', { class: 'pmeta cap', text: i.cap || i.epic || '' }),
           el('span', { class: 'pmeta owner', text: i.owner || '' }),
           el('span', { class: 'pmeta size', text: i.size || '' }),
-          // Both pills in one cell. The row is a fixed six-column grid, and a row that carries
-          // a type and a status - every open question does - was handing it a seventh child,
-          // which the grid put on a line of its own.
+          // Both pills in one cell. The row is a fixed six-column grid, so a row carrying a
+          // type and a status hands it a seventh child, which the grid puts on a line of its
+          // own.
+          //
+          // Only `blocked` earns the status pill: it is the one status that changes what the
+          // reader should do with the row. Progress states do not survive contact with a list
+          // - a `decided` open question stands answered and stays open to a better answer, but
+          // beside a title the chip reads as finished and unimportant, and an idea row renders
+          // `idea idea`, its type and its status saying the same word twice. The status is in
+          // the detail dialog, which is where the row's own vocabulary is spelled out and
+          // qualified.
           el('span', { class: 'ptags' }, [
             i.type && i.type !== 'task' ? el('span', { class: 'pill plain', text: i.type }) : null,
-            i.status !== 'todo' ? pill(i.status, i.blockedBy ? 'blocked' : null) : null,
+            i.status === 'blocked' ? pill('blocked') : null,
           ]),
         ],
       ),
@@ -771,7 +779,15 @@ if (views.sprints) {
 
 {
   const v = views.backlog
-  const state = { q: '', type: null, hideDone: true }
+  const state = { q: '', type: null }
+
+  // The pool is what is still owed, so a closed item leaves it and the tab offers no control
+  // to bring it back: finished work is read on Timeline and Reports, and a toggle that turns
+  // the pool into a mixed list makes the count under it mean two different things depending
+  // on a button nobody remembers pressing. Everything on this tab reads from this list rather
+  // than from every row ever written - the type chips included, or a type whose rows are all
+  // finished would offer a filter that resolves to nothing.
+  const openItems = D.items.filter((i) => !CLOSED.has(i.status))
 
   // Filtering was by epic, which is a heading in one repository's own backlog file: the chips
   // read as a list of that repository's project names, truncated, and told a reader nothing
@@ -784,25 +800,11 @@ if (views.sprints) {
     ['bug', 'Bugs'],
     ['idea', 'Ideas'],
     ['open-question', 'Open questions'],
-  ].filter(([t]) => D.items.some((i) => i.type === t))
+  ].filter(([t]) => openItems.some((i) => i.type === t))
 
   const search = searchBox('Search the pool by title, id or reason…', (q) => {
     state.q = q
     draw()
-  })
-
-  const doneChip = el('button', {
-    class: 'chip',
-    type: 'button',
-    'aria-pressed': 'false',
-    text: 'show finished',
-    on: {
-      click: (e) => {
-        state.hideDone = !state.hideDone
-        e.currentTarget.setAttribute('aria-pressed', String(!state.hideDone))
-        draw()
-      },
-    },
   })
 
   const chipRow = el(
@@ -832,21 +834,20 @@ if (views.sprints) {
     v,
     el('p', { class: 'eyebrow', text: 'The pool · ordered by risk x leverage, top is next' }),
     el('p', { class: 'lede', text: 'Every item carries the reason it exists and what "done" means for it, both written before the work starts. An item leaves the pool only when that definition is met - or when it is pulled into a sprint.' }),
-    el('div', { class: 'controls searchrow' }, [search, doneChip]),
+    el('div', { class: 'controls searchrow' }, [search]),
     TYPES.length > 1 ? chipRow : null,
     host,
   )
 
   function draw() {
-    const items = D.items.filter((i) => {
-      if (state.hideDone && CLOSED.has(i.status)) return false
+    const items = openItems.filter((i) => {
       if (state.type && i.type !== state.type) return false
       if (!state.q) return true
       return (i.id + ' ' + i.title + ' ' + i.why + ' ' + i.dod + ' ' + i.epic + ' ' + i.cap).toLowerCase().includes(state.q)
     })
     host.replaceChildren(
       items.length ? poolList(items) : el('p', { class: 'empty', text: 'Nothing matches.' }),
-      el('p', { class: 'meta count', text: items.length + ' of ' + D.items.length + ' items shown' }),
+      el('p', { class: 'meta count', text: items.length + ' of ' + openItems.length + ' items shown' }),
     )
   }
   draw()
