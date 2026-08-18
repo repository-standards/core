@@ -11,6 +11,41 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 0.9.15 - 2026-08-19
+
+### The backlog stops asking one question twice and stops looking abandoned (2026-08-19)
+
+Four defects a reader hits before any of the content, found by reading the file as a list
+rather than as rows.
+
+`SKILL-COUNT-1` and `AUTHORING-SKILLS-1` both closed on "four sibling files could drift
+apart", so the pool showed two standing doubts where there is one. The doubt belongs to the
+entry that chose four files, and `authoring-skills.md` keeps it with the distinction that
+makes it weak - four copies of one fact diverge by defect, four question sets may diverge
+legitimately. `shipped-skills.md` gets its own doubt back, and it is a sharper one than the
+field-evidence request it used to close with: that request was answered on 2026-08-13, when
+"show me the backlog" matched nothing on an adopted repo, and the fix was two sharpened
+descriptions with the count unchanged. Every miss so far has had that shape, so nothing has
+yet failed in a way the count could explain - the rule has confirmations and no test.
+
+`EXHIBIT-1` retold the `FIELD-1` adoptions - the same repos, drift numbers and caveat, a
+dozen lines each. `FIELD-1` runs them and states them; `EXHIBIT-1` only asks whether an
+outsider can reach any of it, and now says just that: local branches, nothing upstream, so
+what remains is publication plus the caveat that publishes with it.
+
+Two epics had stood since the 0.9.0 cut as a heading, a paragraph and an empty table -
+"Gate health" and "The wizard co-authors" - which reads as forgotten work when in fact every
+row in them shipped. Removed. Their framing was never only there: the gate-decoration
+argument is in `standard/specs/enforcement.md` and the co-authoring one opens
+`authoring-skills.md`. ADR-051 cited both epics as evidence and keeps the evidence, dated to
+the nine days it was visible. Three references to `AUTHOR-1..4` outlived those rows by nine
+days and now point somewhere real.
+
+`MAP-1` sat in the Layer 2 - Node/TS epic while asking a Layer 1 question. It moves to the
+epic that holds threads the one-tree restructure left, which is where it came from:
+`tools/file-map.mjs` was written in the commit that split our documentation from the
+adopter's, and it landed on the side the author was standing on rather than by decision.
+
 ## 0.9.14 - 2026-08-19
 
 ### ADR-051 stops naming a control that no longer exists (2026-08-19)
