@@ -7,6 +7,8 @@ Maintainer machinery for the standard repo itself; a consuming repo gets `script
 
 | Tool | What it does |
 |---|---|
+| [gates.mjs](gates.mjs) | runs the whole gate set locally before a push, reading the steps out of `.github/workflows/checks.yml` rather than keeping a list of its own. The failure it exists to stop is a local run that is a shorter version of the remote one, so it never stops at the first failure and never reports a pass it did not earn |
+| [gates-test.mjs](gates-test.mjs) | that the runner reads every step in the real workflow, counted against the file itself, and refuses rather than skips when it meets something it cannot execute - a parser that silently reads fewer steps recreates exactly the subset the runner exists to prevent, and it does so while printing OK |
 | [tree-check.mjs](tree-check.mjs) | guards the single shipped tree (`standard/`): no repo-own leaks, every manifest promise present, and the tree passes its own `self-verify --skeleton` |
 | [link-check.mjs](link-check.mjs) | every relative markdown link in the repo resolves; template placeholder lines are skipped |
 | [prose-check.mjs](prose-check.mjs) | markdown that renders as something other than what it says, or breaks a writing rule this project publishes. Two rules: a hyphen wrapping to the start of a line and becoming an orphan bullet, which had already shipped on two pages before the check existed; and the em/en dash the shipped conventions forbid, which was enforced only on the generated site HTML while six of them sat in two shipped skills, going out with every adoption. A dash inside a code span passes, because that is how the rule names the character it bans |
@@ -36,12 +38,13 @@ Maintainer machinery for the standard repo itself; a consuming repo gets `script
 Dependency-free (Node built-ins only), zone 1 only. These run in this repo's own CI
 (`.github/workflows/checks.yml`).
 
-**The pre-PR command list lives in [`AGENTS.md`](../AGENTS.md) and only there.** It is
-longer than this folder - it also runs the shipped guards (`spec-structure`, both
-`spec-guard` invocations, `facts-check`) against this repo. A second copy here would be a
-second thing to keep in step with `checks.yml`, and this file has already been out of step
-with it once: it listed four tools while seven existed, and gave a three-command block that
-skipped every shipped guard, so anyone trusting it got a red pull request.
+**The pre-PR command list lives in `checks.yml` and only there**, and `gates.mjs` is how
+you run it. It is longer than this folder - it also runs the shipped guards
+(`spec-structure`, both `spec-guard` invocations, `facts-check`) against this repo. Written
+out a second time it goes stale, in the direction of a shorter run that passes: this file
+did it once, listing four tools while seven existed and giving a three-command block that
+skipped every shipped guard, so anyone trusting it got a red pull request; `AGENTS.md`'s
+copy did it twice, and carried the note admitting so until the runner replaced it.
 
 The table above then drifted a second time, to ten rows against eighteen files - the eight
 newest tools, several of them written to close defects that had shipped, were the ones a
