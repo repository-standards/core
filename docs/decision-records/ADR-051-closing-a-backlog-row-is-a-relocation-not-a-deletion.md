@@ -50,11 +50,13 @@ a statement about the input: the file is expected to be full of rows nobody want
 (The chip is gone as of 0.9.13 and the pool is open-only by construction, which says the same
 thing more plainly - see **What the dashboard does with it** below.)
 
-**Deletion is what this repository actually did, and it is visible in the tree right now.**
-The 0.9.0 release cut (`bb1a3f3`) removed seventeen closed rows from
-[`backlog.md`](../../backlog.md) in one commit. Two epics survive it as a heading, a paragraph
-of prose, a table header and no rows at all - "Gate health - the guards stay honest" and "The
-wizard co-authors, it does not hand out templates". Neither says where its work went. Some of
+**Deletion is what this repository actually did.** The 0.9.0 release cut (`bb1a3f3`) removed
+seventeen closed rows from [`backlog.md`](../../backlog.md) in one commit. Two epics outlived
+it as a heading, a paragraph of prose, a table header and no rows at all - "Gate health - the
+guards stay honest" and "The wizard co-authors, it does not hand out templates" - and neither
+said where its work went, so for the nine days they stood that way they read as abandoned
+rather than finished. The headings were removed in 0.9.15; what they demonstrated is not, and
+it is the whole of this record: a cut leaves no trace of what it cut. Some of
 the deleted content did survive, by an author's diligence rather than by any rule: GUARD-3's
 two measured drifts - `llms.txt` claiming twenty rules while `SPEC.md` had 21, `AGENTS.md`
 claiming 11 lifecycle skills against a tree holding 12 - live on in the header comment of
@@ -63,9 +65,10 @@ happen and nothing would have noticed if it had not.
 
 **The workaround costs more than the rule saves.** A row that can only be closed by being
 deleted does not get closed. This repository's own pool carries the proof: `FIELD-1` and
-`EXHIBIT-1` hold paragraphs of finished, measured, dated work under status `todo` and
-`doing`, because the finished part is the part worth keeping and closing the row would throw
-it away. The list stops meaning what it says, which is the exact failure the shipped page
+`EXHIBIT-1` sit at status `todo` while carrying work that is finished, measured and dated -
+`FIELD-1` holds the paragraphs, `EXHIBIT-1` the half of its own question that is answered -
+because the finished part is the part worth keeping and closing the row would throw it away.
+The list stops meaning what it says, which is the exact failure the shipped page
 warns about one section earlier: "a row that lingers after its definition of done is met
 teaches everyone the list is stale".
 
