@@ -41,69 +41,17 @@ clients get them by reference (ADR-004), never as copies.
 
 ## Working here
 
-- **Checks before any PR** (the same set CI runs - `.github/workflows/checks.yml`):
-  `node tools/tree-check.mjs` + `node tools/tree-check.mjs --self` (no leaks into the
-  tree, manifest promises present, the recorded content hashes are the tree's own, the
-  tree passes its own `self-verify --skeleton`, and an entry's `since` names a shipped
-  release or the literal `unreleased`), `node tools/link-check.mjs`,
-  `node tools/prose-check.mjs` + `node tools/prose-check.mjs --self` (no line renders
-  as something it is not, and none uses the em or en dash the shipped conventions forbid),
-  `node standard/scripts/spec-structure.mjs` (the repo's own specs stay shaped, and a
-  spec claiming `ready-to-develop` or `live` still passes the clarify gate),
-  `node tools/provenance-check.mjs` + `node tools/provenance-check.mjs --self` (every
-  file under `standard/scripts/spec/` or a `spec-*` skill names github/spec-kit v0.13.2
-  or carries a `PATCHED(repository-standards)` marker),
-  `node standard/scripts/spec-guard.mjs --base origin/main --block` **and**
-  `node standard/scripts/spec-guard.mjs --audit --block` (code and its capability
-  spec move together; every capability spec is mapped, every glob matches something,
-  every file is claimed or declared unclaimed),
-  `node tools/spec-guard-test.mjs`, `node tools/clarify-gate-test.mjs`,
-  `node tools/schema-pair-test.mjs` and `node tools/sprint-guard-test.mjs` (those
-  guards still fire where they must),
-  `node tools/dashboard-status-test.mjs` (a status cell written with the emphasis a
-  human actually writes is still read as the state it names, not as `todo`),
-  `bash standard/scripts/verifyAgentGuards.sh` (the shipped `PreToolUse` hooks deny and
-  allow what they should - they only print when they refuse, so nothing else here
-  notices a bypass in them),
-  `node tools/self-verify-fill-test.mjs` and `node tools/self-verify-drift-test.mjs`
-  (the placeholder warning is clearable, and the drift number moves when a copy-class
-  file's content, a declared key or an exception does),
-  `node standard/scripts/facts-check.mjs` +
-  `node tools/facts-check-test.mjs` (a fact restated in prose still agrees with
-  its source - the declarations live in [`docs/facts.json`](docs/facts.json)),
-  `node standard/scripts/decision-records-check.mjs --block` +
-  `node tools/decision-records-check-test.mjs` (the ADR/BDR README index and the
-  files on disk agree - no duplicate id, nothing indexed that is not there,
-  nothing there that is not indexed),
-  `node standard/scripts/backlog-archive-check.mjs --base origin/main --block` +
-  `node tools/backlog-archive-check-test.mjs` (a row removed from the pool reached
-  `backlog-archive.md` with a `where` naming what its content became - deleting a closed
-  row deletes findings that exist nowhere else, ADR-051),
-  `node tools/adoption-gates-test.mjs` (the Gate 2 and Gate 5 guard still fails an
-  artifact that exists but says nothing - an unrated assessment pass, a scope block
-  whose total is not the sum of its categories, an alignment item with no owner),
-  `node tools/dashboard-ideas-test.mjs` (the dashboard's pool carries an idea whether the
-  repo writes it as a file under `docs/ideas/` or as a backlog row, once either way, and
-  the work counts still see `task` and `bug` alone),
-  `node tools/dashboard-discovery-test.mjs` (a discovery entry written from the shipped
-  entry template is summarised by what it says, never by the template's own instructions
-  to whoever fills it, and its table is still read by column name),
-  `node tools/file-map.mjs --check` (the file map is generated from the manifest,
-  never hand-written), `node tools/skill-map.mjs --check` (the skill catalogue is
-  generated from each skill's own frontmatter, and every shipped skill is grouped),
-  `node tools/validation.mjs --check` + `node tools/validation-test.mjs` (the validation
-  suite's rendered pages match
-  `docs/validation/ai-prompting/suite.json`/`targets.json`/`runs/*.json`, every
-  case has a verdict, and every open failure carries an explicit waiver rather than a
-  silent gap), `node tools/human-prompting.mjs --check` +
-  `node tools/human-prompting-test.mjs` (the other suite: prompt ids unique and contiguous,
-  every observation citing a row that exists, and the three published fractions counted from
-  the runs rather than asserted in their prose),
-  `node tools/docsite.mjs && node tools/site-check.mjs &&
-  node tools/site-behaviour.mjs && node tools/site-check-test.mjs` (the landing and the
-  generated docs are shippable, the navigation behaves as it claims, and the landing gate
-  still fails a page carrying a second version). The list is the set CI
-  runs - if a check is in `checks.yml` and not here, this line is the bug.
+- **Checks before any PR:** `node tools/gates.mjs` - one command, and it is the whole set.
+  It reads the steps out of [`.github/workflows/checks.yml`](.github/workflows/checks.yml)
+  and hands each script to bash the way CI does, so the set that runs here cannot be a
+  shorter version of the remote one. It runs every step even after one fails and prints the failures at the
+  end; `--list` shows the commands without running them, and `--base <branch>` sets what
+  the diff-gated guards compare against (default `main`, so the coupling and archive checks
+  see the same diff the PR will). Run it **after committing** - those two guards diff
+  commits, so against an uncommitted change they compare the base against itself and pass
+  on nothing. No second copy of the list is kept here or anywhere else:
+  two lists means one stale list, and it goes stale in the direction of reporting a pass.
+  What each gate proves is written beside it in the workflow.
 - **Changed anything under `standard/`?** Run `node tools/manifest-hashes.mjs` and
   commit the manifest: every `copy` entry records the hash of what it ships, and that
   is what lets an adopted repo notice a file whose content stopped being the

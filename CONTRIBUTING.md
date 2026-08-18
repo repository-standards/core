@@ -16,8 +16,9 @@ contribution this repo takes.
   when the base is rebase-merged - if you must stack, merge the parent PR first.
 - **Commits:** Conventional Commits. No AI/tool attribution trailers. ASCII
   hyphen only (no em/en dash).
-- **Before a PR:** run the gate set from [`AGENTS.md`](./AGENTS.md) - all of it, it is
-  longer than it looks - and self-review your diff (the `pre-pr-review` skill).
+- **Before a PR:** run `node tools/gates.mjs` - it is the whole gate set, read out of the
+  CI workflow so it cannot be a shorter version of it - and self-review your diff (the
+  `pre-pr-review` skill).
 - **Changelog:** describe your change under `CHANGELOG.md`'s `## Unreleased`
   heading and bump `VERSION` yourself as part of the PR - PATCH by default,
   unless the maintainer directs a different bump or an explicit no-bump for
@@ -90,7 +91,7 @@ Those entries exist precisely to be argued with.
 1. Branch off an up-to-date `main`, and base the PR on `main`.
 2. Make the change, and update whatever it makes untrue: the spec if it changes a rule, the
    affected capability spec if it changes behaviour, `CHANGELOG.md` under `## Unreleased`.
-3. Run the gate set from [`AGENTS.md`](./AGENTS.md) locally. All of it.
+3. Run `node tools/gates.mjs` locally - the same steps CI will run, in the same order.
 4. Read your own diff as if someone else wrote it, then open the PR.
 
 There is no CLA, no template to fill beyond the checklist, and no expectation that you are
