@@ -51,14 +51,16 @@ realistic outcome was a repo whose history was half fragments and half direct ed
 
 A repo that maintains more than one release line (a maintained `1.x` branch beside
 `main`'s `2.x`) carries one changelog per line, each with its own `Unreleased` heading;
-a PR writes its entry under the heading on the branch it targets.
+a PR writes its entry under the heading on the branch it targets and bumps that line's
+version, PATCH by default.
 
 A repo that ships more than one independently-versioned, independently-publishable unit
 from the same tree - `rails/rails`'s thirteen gems (`activerecord`, `actionpack`,
 `activesupport`, ...), each with its own `CHANGELOG.md` in its own directory, all
 changing together on one branch - carries one changelog per unit instead of one at the
-root. A PR writes its entry under the heading of every unit it actually touches; a
-change spanning two gems gets two entries, one per file, not one entry naming both.
+root. A PR writes its entry under the heading of every unit it actually touches and
+bumps each one, PATCH by default; a change spanning two gems gets two entries and two
+version bumps, one per file, not one entry naming both.
 
 These are independent axes (ADR-044): release lines split a changelog across branches
 over time, units split it across the same tree at once. A repo can face either, both,

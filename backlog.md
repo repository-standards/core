@@ -211,6 +211,5 @@ ourselves), **STACK-ALIGN-1** (the node satellite aligns; waits on the first tag
 **STACKS-2** (waits for an evidence repo), and the deferred pair **OPS-1** /
 **UPSTREAM-1** (adopter-driven operate depth; the upstream scan rides with each
 release). The open questions and the idea below stand independent of this list - none
-block a release; each waits on a challenger, not on being worked. Releases stay
-maintainer-only: versions are cut from the CHANGELOG's `## Unreleased` when the
-maintainer decides.
+block a release; each waits on a challenger, not on being worked. A PR cuts its
+own release, PATCH by default (R18, R25).

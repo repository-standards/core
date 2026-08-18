@@ -165,7 +165,7 @@ binds every repo, a solo one included.
   request required. The requester directs anything else, per PR and explicitly:
   a stated MINOR or MAJOR bump, or an instruction to withhold the bump entirely
   and leave the entry under Unreleased for a later PR to promote (see
-  CONTRIBUTING.md). At every profile, with no second mechanism. A repo that
+  CONTRIBUTING.md) - at every profile, with no second mechanism. A repo that
   maintains more than one release line (R23) carries one changelog per line, each
   with its own Unreleased heading, and a PR bumps the line it targets - the same one
   mechanism applied per line, never a second one. A repo that ships more than
