@@ -105,3 +105,8 @@ jobs:
           node tools/site-check.mjs
           node tools/site-behaviour.mjs
           node tools/site-check-test.mjs
+      # `tools/gates.mjs` runs this file locally before a push. It reads the list from here
+      # rather than keeping its own, so the way it fails is by reading fewer steps than are
+      # written - a green subset, reported as a full pass. This is what counts them.
+      - name: gates runner test (the pre-push command reads this file whole, or refuses)
+        run: node tools/gates-test.mjs
