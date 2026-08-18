@@ -11,6 +11,19 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 0.9.14 - 2026-08-19
+
+### ADR-051 stops naming a control that no longer exists (2026-08-19)
+
+Removing the "show finished" chip in 0.9.13 took away the surface ADR-051 had named for the
+backlog archive: closed rows must stay reachable in the view, and the record said they would
+reach it behind that chip. The requirement is untouched and the section now says the surface
+is open again, tracked as `ARCHIVE-VIEW-1` and due before the first archive is cut - which is
+the next release that closes a row. Two passages that cited `hideDone` as current code are
+dated to when they were written. Nothing is broken today only because
+`docs/backlog-archive.md` does not exist yet, which is exactly the window in which this is
+cheap to answer.
+
 ## 0.9.13 - 2026-08-18
 
 ### The pool stops arguing with itself (2026-08-18)
