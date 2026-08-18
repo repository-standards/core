@@ -417,7 +417,7 @@ It is a projection, never a second place the work is tracked. It writes nothing 
 people running it on the same commit get the same bytes.
 
 ```
-node scripts/generate-dashboard/index.mjs            # once, into .dashboard/index.html
+node scripts/generate-dashboard/index.mjs            # once, into _dashboard/index.html
 node scripts/generate-dashboard/index.mjs --serve     # rebuilds on change; the open page refreshes itself
 ```
 
