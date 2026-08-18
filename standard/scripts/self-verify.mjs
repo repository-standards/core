@@ -51,7 +51,7 @@
 //
 // Usage:
 //   node scripts/self-verify.mjs                  # gate: exit 1 on any failure
-//   node scripts/self-verify.mjs --version 1.1.12 # also assert the record equals a target
+//   node scripts/self-verify.mjs --version 1.1.13 # also assert the record equals a target
 //   node scripts/self-verify.mjs --warn           # report only, always exit 0
 //   node scripts/self-verify.mjs --profile core   # core-profile entries only (ADR-011);
 //                                                 # without the flag, the repo's manifest
