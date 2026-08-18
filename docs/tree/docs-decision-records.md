@@ -47,6 +47,14 @@ tree-check gains a leak test. A repo-own file in standard/ fails the build.
 An adopter needs a file we keep repo-own.
 ```
 
+**That example is the target length, not a simplified version of one.** Write the shortest
+record that still answers *why* for someone who was not in the room. Length is a cost, not a
+sign of rigour: a decision that fits in one sentence gets one sentence, and a section with
+nothing to say gets one line rather than a paragraph of throat-clearing. Comprehensive means
+every section is answered, not that each answer is long - and a record nobody finishes
+reading fails at the only job it has. A draft that runs long is usually arguing for the
+decision rather than recording it.
+
 `Revisit when` is not decoration. It names the concrete signal that would reopen the
 decision, which is the difference between a record and an opinion.
 

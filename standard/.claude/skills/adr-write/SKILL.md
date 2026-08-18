@@ -28,6 +28,18 @@ Three questions, in this order:
 Say which way you routed and why, in one line. A user who disagrees will say so, and that is
 cheaper than discovering it in review.
 
+## As short as the decision actually is
+
+Length is a cost, not a sign of rigour. Write the shortest record that still answers *why*
+for someone who was not in the room: a decision that fits in one sentence gets one sentence,
+and a section with nothing to say gets one line rather than a paragraph of throat-clearing.
+Comprehensive means every question below is answered - not that each answer is long.
+
+A record nobody finishes reading fails at the only job it has. Prefer plain statements over
+hedging, cut the restatement of what the previous section just said, and drop any option
+nobody genuinely weighed. If the draft runs long, the usual cause is that it is arguing for
+the decision instead of recording it.
+
 ## Draft first, ask second
 
 **Read before asking.** The code already shows what was chosen - the dependency, the

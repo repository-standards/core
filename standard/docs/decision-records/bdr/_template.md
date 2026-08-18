@@ -11,6 +11,11 @@
      true, flip Status to `Superseded` and name the record that replaced it in the row
      above; the text below stays as it was written. -->
 
+<!-- Keep it short. Length is a cost, not a sign of rigour: write the shortest record that
+     still answers *why* for someone who was not in the room, and let a section with nothing
+     to say be one line. Comprehensive means every section is answered, not that each answer
+     is long. A record nobody finishes reading fails at the only job it has. -->
+
 <!-- "Decided by" is what made this binding, not who typed it - and on the business side it
      is the row most often needed: a steering group, a client sign-off, a board or committee
      vote. "The author" is a real answer where the author could genuinely make the call.

@@ -37,6 +37,16 @@ never a pin (ADR-025), and the old name invited the opposite reading. The rename
 first entry in `removedPaths`, so an adopting repo is told to drop the old skill folder
 rather than quietly keeping both.
 
+### A decision record is as short as the decision actually is (2026-08-18)
+
+Nothing said how long a record should be, and the drift ran one way: records arguing for a
+decision rather than recording it. `adr-write` and `bdr-write` gain the rule, as do both
+shipped templates and the by-reference method doc every adopter's index links to - length is
+a cost, not a sign of rigour, and comprehensive means every section is answered rather than
+that each answer is long. This sits after the existing "is it an ADR at all?" test, which
+already routes cheap-to-reverse choices to `CONTRIBUTING.md` or `SPEC.md`; the new rule is
+about the records that do earn the shape.
+
 ### A foreign spec tool is replaced, not bridged (2026-08-18)
 
 `align-to-standards`' brownfield pass now flags an existing Spec Kit, OpenSpec or BMAD

@@ -8,6 +8,14 @@ receive copies - they adopt these decisions by reference from the living standar
 Read the table instead of opening every record - the gist column says what each
 one settled.
 
+**Keep a record as short as the decision actually is.** Length is a cost, not a sign of
+rigour: write the shortest thing that still answers *why* for someone who was not in the
+room, and let a section with nothing to say be one line. Comprehensive means every question
+is answered, not that each answer is long - a record nobody finishes reading fails at the
+only job it has. Before writing one at all, check it earns the shape: a choice that is cheap
+to reverse is a convention for `CONTRIBUTING.md` or a rule for `SPEC.md`, not a full
+Context/Options/Consequences record.
+
 | # | Title | Decides | Status |
 |---|-------|---------|--------|
 | [001](ADR-001-decision-record-policy.md) | Decision record policy | two streams (ADR technical / BDR business), MADR format, sub-scope via Tags never new acronyms, gapless numbering | Accepted |
