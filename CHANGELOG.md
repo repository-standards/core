@@ -16,14 +16,10 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 ### The dashboard's default output stops landing inside the published site (2026-08-17)
 
 `generate-dashboard/index.mjs` defaulted an unaddressed run to `site/dashboard/index.html` -
-the same tree this repository's own `pages.yml` uploads whole as the Pages artifact, so a
-local, ad-hoc build (`show-backlog`, or anyone running the generator by hand) landed inside
-the one directory that is supposed to hold only what actually gets published. The shipped
-`dashboard.yml` template handed to adopters never had this problem - it already builds into
-its own directory, passed explicitly - so the fix aligns the generator's default with that
-existing convention instead of inventing a second one: both now write to `.dashboard/`,
-gitignored. `site/dashboard/index.html` in this repository's `pages.yml` is unchanged - that
-one is deliberately part of the published tree, not the default this fixes.
+the same tree `pages.yml` publishes whole, so a local build (`show-backlog`, or anyone
+running the generator by hand) could land inside the published output. The default now
+matches the shipped `dashboard.yml` template's existing `_dashboard/`, gitignored;
+`pages.yml`'s own `site/dashboard/index.html` is unchanged.
 
 ## 0.9.10 - 2026-08-18
 
