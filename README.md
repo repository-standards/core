@@ -64,7 +64,7 @@ The daily lifecycle skills ship inside the tree (`standard/.claude/skills/`); th
 
 ## Status
 
-**0.9.11** - the first stable line, mechanics field-run on the author's production repositories.
+**0.9.12** - the first stable line, mechanics field-run on the author's production repositories.
 
 **There is no version to pin to: the standard is living, and latest is the only target**
 ([ADR-025](docs/decision-records/ADR-025-the-standard-is-living-latest-is-the-target.md)).
@@ -92,7 +92,7 @@ anything is touched ([ADR-020](docs/decision-records/ADR-020-intake-first-adopti
 | "**Explain** this repo's decisions and specs in plain language." | The PO view: any ADR/BDR/spec retold against the personas - no jargon, with examples. |
 
 Entry point for all of them: [`skills/align-to-standards`](skills/align-to-standards/SKILL.md)
-(updates: [`update-to-version`](standard/.claude/skills/update-to-version/SKILL.md)). If your
+(updates: [`update-to-latest`](standard/.claude/skills/update-to-latest/SKILL.md)). If your
 agent is not Claude Code, port the skills first - the standard requires a strict port, not
 an approximation (rule R22 in [the spec](standard/SPEC.md)).
 
@@ -120,7 +120,7 @@ align mechanism runs at three moments:
 | Moment | |
 |--------|--|
 | **Adopt** | point a repo at the standard; it is read, compared, and brought into line - adapted to its stack, never blind-copied ([`align-to-standards`](skills/align-to-standards/SKILL.md)). |
-| **Update** | the standard moved? Apply just the **delta** since the state you last aligned to - not a re-scaffold ([`update-to-version`](standard/.claude/skills/update-to-version/SKILL.md)). |
+| **Update** | the standard moved? Apply just the **delta** since the state you last aligned to - not a re-scaffold ([`update-to-latest`](standard/.claude/skills/update-to-latest/SKILL.md)). |
 | **Verify** | prove it: `node scripts/self-verify.mjs`, from inside the aligned repo - files, sections, guards - a pass/fail your CI asserts ([`self-verify`](docs/method/self-verify.md)). |
 
 ## Who it's for

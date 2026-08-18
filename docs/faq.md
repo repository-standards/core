@@ -103,7 +103,7 @@ reader deserves to find it from us rather than discover we omitted it.
 **How do I know it worked?**
 `node scripts/self-verify.mjs` - compliance is a number, asserted in CI, against the
 manifest for the state recorded in `.standards-version`. When the standard moves,
-`update-to-version` applies the delta and self-verify proves it again.
+`update-to-latest` applies the delta and self-verify proves it again.
 
 **What does drift 0 actually certify?**
 Structure, not judgment. It checks that the recorded alignment state is well-formed and
@@ -119,7 +119,7 @@ missing the things the standard is built on.
 No public adopter yet - and that is the honest answer rather than a modest one. The mechanics
 were run on the author's own private repos; there is no named repo you can inspect, no
 measured before/after, and the project's own [backlog](../backlog.md) carries "an adoption you
-can point at" as open work. The standard is at 0.9.11, still its first stable line, but no release
+can point at" as open work. The standard is at 0.9.12, still its first stable line, but no release
 tag exists until the maintainer cuts one, so a fetch resolves to the default branch. What you can check today is the machinery: every guard in this repo is
 dependency-free, runs in CI on every pull request, and you can run all of it yourself in a
 clone before deciding anything. Adopt the mechanism because it holds when you test it, not

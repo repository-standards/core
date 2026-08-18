@@ -41,7 +41,7 @@ mechanism that works by accident gets used inconsistently by the second stack.
 2. **How do two skill families avoid colliding?** Nineteen core skills plus a stack's own share
    one namespace and one description-matching surface. The constraint recorded in
    [`shipped-skills`](shipped-skills.md) is **discriminability**, and a stack skill named
-   `add-dependency` competing with nothing is fine, while one named `update-to-version` is not.
+   `add-dependency` competing with nothing is fine, while one named `update-to-latest` is not.
    Naming rules belong in whatever answers this.
 3. **Who owns the port to non-Claude agents?** R22 makes the core procedures normative and
    requires a strict port. If a stack ships procedures, the same obligation follows them, and

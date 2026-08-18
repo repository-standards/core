@@ -83,7 +83,7 @@ if ((manifest.references || []).length && !refMissing) ok(`every manifest refere
 
 // --- 2b. every shipped file is a manifest entry (or an explicit exemption) -------------
 // The manifest is the tree's machine projection; a shipped-but-unlisted file is
-// invisible to self-verify and to update-to-version's delta - it would never reach
+// invisible to self-verify and to update-to-latest's delta - it would never reach
 // an already-adopted repo. Directory entries cover their contents.
 const EXEMPT = new Set([
   // add a path here only with a recorded reason - nothing is exempt today

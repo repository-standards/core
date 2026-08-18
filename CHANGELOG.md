@@ -11,6 +11,41 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 0.9.12 - 2026-08-18
+
+### A removal the standard ships is now verified, not just instructed (2026-08-18)
+
+`update-to-version` told a repo to remove a path the release took away, and nothing
+afterwards checked it happened - a skipped or half-applied update kept the stale file
+forever at drift 0. The manifest gains `removedPaths` (`{ path, since, note }`,
+append-only, hand-maintained at release time the way `CHANGELOG.md` is), and `self-verify`
+fails a repo that still carries a listed path, waivable only through the existing
+`exceptions` mechanism. The check reads nothing but the manifest the repo already has, so a
+repo that never carried the path passes trivially ([ADR-052](docs/decision-records/ADR-052-alignment-tracks-a-provenance-commit-not-a-version-string.md)).
+
+### The update skill measures from a commit, and is renamed for what it always did (2026-08-18)
+
+Since a PR bumps PATCH by default, `main` carries unreleased change under a version number
+that has not shipped - so a version string names a range of trees rather than one, and the
+old `git log -- VERSION` lookup was ambiguous by design. The manifest gains
+`provenanceCommit` (the standards repo SHA a copy last aligned to), written on every
+successful run and read back to compute the next delta directly. `.standards-version` keeps
+its existing job as the human-facing bookmark.
+
+`update-to-version` is renamed **`update-to-latest`**: the target was always latest and
+never a pin (ADR-025), and the old name invited the opposite reading. The rename is the
+first entry in `removedPaths`, so an adopting repo is told to drop the old skill folder
+rather than quietly keeping both.
+
+### A foreign spec tool is replaced, not bridged (2026-08-18)
+
+`align-to-standards`' brownfield pass now flags an existing Spec Kit, OpenSpec or BMAD
+installation during assessment and queues its removal, replacing it in the same wave the
+spec engine lands. Running one of those alongside this standard's spec engine is not a
+smaller adoption - it is two systems both owning `specs/` and both producing
+`plan.md`/`tasks.md`. The constitution template also stops crediting Spec Kit for a check
+this standard's own engine runs.
+
 ## 0.9.11 - 2026-08-18
 
 ### The dashboard's default output stops landing inside the published site (2026-08-17)

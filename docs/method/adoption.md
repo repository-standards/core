@@ -156,9 +156,9 @@ them first.
 4. **Sequence** small, reversible, green steps (specs + tests are the net) and emit a
    **counted migration backlog** ("N steps to current").
 5. State a **maintenance strategy** - the supply-chain cooldown, an update rhythm, and
-   `update-to-version` for the standard - so the repo stays current instead of rotting back.
+   `update-to-latest` for the standard - so the repo stays current instead of rotting back.
 
-This is distinct from `update-to-version` (which bumps the *standard's* version); modernize
+This is distinct from `update-to-latest` (which bumps the *standard's* version); modernize
 bumps the *repo's own* technology. The refactor is the execution of a recorded plan.
 
 ## Which model, and how to drive it

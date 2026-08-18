@@ -221,7 +221,7 @@ You can still call one directly when you know exactly what you want. Both work.
 | "we do not have personas" | `personas-write` | product |
 | "let's start a sprint" / "the sprint is over" | `sprint-open` / `sprint-close` | whoever runs the team |
 | "when does billing ship?" | `timeline-update` | anyone |
-| "update me to the latest" | `update-to-version` | whoever maintains it |
+| "update me to the latest" | `update-to-latest` | whoever maintains it |
 
 If you ever have to remind the agent to use one of these, that skill's description is wrong
 and fixing it is the bug - not you remembering to carry a password.
