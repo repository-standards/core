@@ -2,7 +2,7 @@
 // self-verify - prove this repo still complies with the standard it is pinned to.
 //
 // The "verify" step of the versioned-standard mechanism. Runs after adopting the
-// standard (align-to-standards), after updating it (update-to-version), and in CI on
+// standard (align-to-standards), after updating it (update-to-latest), and in CI on
 // every PR - the same pass/fail each time. This is the mechanical tier; the judgment
 // tier (are the catalogued decisions actually recorded? are the money/security specs
 // buildable?) is reviewed at PR - see self-verify.md, adopted by reference:
@@ -51,7 +51,7 @@
 //
 // Usage:
 //   node scripts/self-verify.mjs                  # gate: exit 1 on any failure
-//   node scripts/self-verify.mjs --version 1.1.11 # also assert the record equals a target
+//   node scripts/self-verify.mjs --version 1.1.12 # also assert the record equals a target
 //   node scripts/self-verify.mjs --warn           # report only, always exit 0
 //   node scripts/self-verify.mjs --profile core   # core-profile entries only (ADR-011);
 //                                                 # without the flag, the repo's manifest
@@ -392,7 +392,7 @@ const contentHash = (p) => {
     return null;
   }
 };
-const CONTENT_HINT = "run update-to-version to take the standard's copy, or record the change as an exception: { \"kind\": \"content\", \"match\": \"<path>\", \"reason\": \"...\" }";
+const CONTENT_HINT = "run update-to-latest to take the standard's copy, or record the change as an exception: { \"kind\": \"content\", \"match\": \"<path>\", \"reason\": \"...\" }";
 
 // A ported directory (`.agents/skills` standing in for `.claude/skills`, R22) is a
 // different FORMAT by design, so bytes cannot be the test - but a directory that merely
@@ -838,7 +838,7 @@ if (manifest) {
   // unaligned repos reported drift 4-5 here against drift 13-15 from the shipped manifest, in
   // the same output format, in the same minute. Anything that reads "the drift number is the
   // open delta" is false while this branch runs, so it has to say so where the number is.
-  warning("manifest", "no standard.manifest.json in this repo - measured against the built-in skeleton below, which is a fraction of the standard's entries. The number here is NOT the delta from the standard; run align-to-standards (or update-to-version) to get the manifest and a real one");
+  warning("manifest", "no standard.manifest.json in this repo - measured against the built-in skeleton below, which is a fraction of the standard's entries. The number here is NOT the delta from the standard; run align-to-standards (or update-to-latest) to get the manifest and a real one");
   for (const [p, why] of [
     ["AGENTS.md", "the single agent entry point"],
     ["specs", "living capability specs"],

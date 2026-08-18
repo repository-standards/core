@@ -1109,7 +1109,7 @@
     },
     {
       "id": "UPD-01",
-      "title": "update-to-version applies only the delta and preserves recorded deviations, ending at drift 0",
+      "title": "update-to-latest applies only the delta and preserves recorded deviations, ending at drift 0",
       "area": "update",
       "tests": [
         "R17"
@@ -1118,7 +1118,7 @@
       "portable": false,
       "severity_if_failed": "moderate",
       "given": "a repo aligned to an older standard version, with at least one recorded manifest exception",
-      "when": "update-to-version runs against the latest standard",
+      "when": "update-to-latest runs against the latest standard",
       "then": "only the delta is applied (no re-scaffold), the recorded exception survives, and self-verify ends at drift 0",
       "procedure": null,
       "status": "planned"
@@ -2022,7 +2022,7 @@
       "promise": "an update applies the delta between that and latest - SPEC.md R17",
       "portable": false,
       "severity_if_failed": "severe",
-      "given": "the manifest-keyed diff update-to-version's step 2 designates as 'the precise delta', run across a real release (1.0.12 to 1.0.13) that changed 18 payload files including a whole new skill and three guard bug fixes",
+      "given": "the manifest-keyed diff update-to-latest's step 2 designates as 'the precise delta', run across a real release (1.0.12 to 1.0.13) that changed 18 payload files including a whole new skill and three guard bug fixes",
       "when": "the diff is compared against the real payload delta (git diff --stat)",
       "then": "the two agree in substance, instead of the designated delta source reporting 0 added, 0 removed, 52 entries changed (every one only the `since` field) for a release that shipped a new skill",
       "procedure": "diff standard.manifest.json between two real tagged/released commits, keyed by entry path, and separately run git diff --stat between the same two commits' standard/ tree",
@@ -2039,7 +2039,7 @@
       "portable": false,
       "severity_if_failed": "severe",
       "given": "a \"sham update\": bump .standards-version and copy the new manifest, apply zero of the release's real file deltas",
-      "when": "self-verify --version <target> runs, the way update-to-version's own step 6 nominates as proof of completion",
+      "when": "self-verify --version <target> runs, the way update-to-latest's own step 6 nominates as proof of completion",
       "then": "the sham is distinguished from a real update - reported drift greater than 0, instead of 'drift 0 - 100% adopted' on a repo still one skill short and still carrying the old SPEC.md's text",
       "procedure": "perform a sham update (pin bump + manifest copy only, zero real file changes applied) and run self-verify --version against it",
       "status": "run"
@@ -2062,7 +2062,7 @@
     },
     {
       "id": "UPD-05",
-      "title": "update-to-version has a documented branch for a manifest `files` entry that changed upstream and also diverged locally - the actual shape of most merge- and fill-class entries, not only 'unchanged' or 'removed'",
+      "title": "update-to-latest has a documented branch for a manifest `files` entry that changed upstream and also diverged locally - the actual shape of most merge- and fill-class entries, not only 'unchanged' or 'removed'",
       "area": "update",
       "tests": [
         "R17"
@@ -2071,9 +2071,9 @@
       "portable": false,
       "severity_if_failed": "moderate",
       "given": "a merge-class file (docs/conventions.md) with a planted local paragraph, changed upstream by the release being applied",
-      "when": "update-to-version's step 3 is followed literally",
+      "when": "update-to-latest's step 3 is followed literally",
       "then": "the skill has an instruction for this exact case, instead of covering only 'not diverged' and 'removed' - silently skipping the file while self-verify still reports drift 0",
-      "procedure": "read update-to-version/SKILL.md's step 3 for a changed-upstream-and-diverged-locally branch, and reproduce against a merge-class file matching that shape",
+      "procedure": "read update-to-latest/SKILL.md's step 3 for a changed-upstream-and-diverged-locally branch, and reproduce against a merge-class file matching that shape",
       "status": "run"
     },
     {
@@ -2086,15 +2086,15 @@
       "promise": "an update applies the delta - SPEC.md R17",
       "portable": false,
       "severity_if_failed": "moderate",
-      "given": "AGENTS.md, update-to-version/SKILL.md, and the adopter-facing update-watch issue text",
+      "given": "AGENTS.md, update-to-latest/SKILL.md, and the adopter-facing update-watch issue text",
       "when": "an adopter looks for the fetch command needed before the skill's steps can run at all",
       "then": "at least one of the three names the command, instead of the only documented fetch step living inside core/README.md:203 - a file the adopter does not carry and is told to .gitignore",
-      "procedure": "grep -rn 'npx degit repository-standards/core' across update-to-version/SKILL.md, AGENTS.md and the standards-update-watch workflow's issue template",
+      "procedure": "grep -rn 'npx degit repository-standards/core' across update-to-latest/SKILL.md, AGENTS.md and the standards-update-watch workflow's issue template",
       "status": "run"
     },
     {
       "id": "UPD-07",
-      "title": "a Layer-2 stack's own release history carries the version-keyed delta source (tags, a changelog, or `since` fields) that update-to-version's step 2 requires - not only the core layer's",
+      "title": "a Layer-2 stack's own release history carries the version-keyed delta source (tags, a changelog, or `since` fields) that update-to-latest's step 2 requires - not only the core layer's",
       "area": "update",
       "tests": [
         "R17",
@@ -2104,7 +2104,7 @@
       "portable": false,
       "severity_if_failed": "moderate",
       "given": "the node stack's own git history: no tags, no CHANGELOG.md/RELEASE-NOTES.md, and 0 of 12 stack.manifest.json files entries carrying a `since` field",
-      "when": "update-to-version's stop condition ('if you cannot determine the delta, stop and say so') is checked against the stack layer specifically",
+      "when": "update-to-latest's stop condition ('if you cannot determine the delta, stop and say so') is checked against the stack layer specifically",
       "then": "at least one version-keyed delta source exists for the stack, instead of the stop condition firing permanently for every Layer-2 update",
       "procedure": "git tag | wc -l against the node repo, and grep -c since node/stack.manifest.json's files entries",
       "status": "run"

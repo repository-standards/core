@@ -76,7 +76,7 @@ const GROUPS = [
   {
     title: "Staying on the standard",
     lead: "The standard is living, so a repo that adopted it once has to be able to move with it.",
-    skills: ["update-to-version"],
+    skills: ["update-to-latest"],
   },
 ];
 

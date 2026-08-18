@@ -36,7 +36,7 @@ clients get them by reference (ADR-004), never as copies.
 
 | Class | Skills | In the consuming repo |
 |---|---|---|
-| **Lifecycle** - ships and stays (the standard in daily use) | the 22 under `standard/.claude/skills/`: `spec-specify`, `spec-clarify`, `spec-plan`, `spec-tasks`, `spec-implement` (the engine, extracted from Spec Kit - ADR-015), `discovery-digest`, `spec-impact`, `spec-update`, `spec-reconcile`, `add-to-backlog`, `pre-pr-review`, `update-to-version`, `sprint-open`, `sprint-close`, `timeline-update`, `adr-write`, `bdr-write`, `product-write`, `personas-write`, `idea-write`, `record-run`, `show-backlog` | ship with the tree and stay - they ARE the ways of working |
+| **Lifecycle** - ships and stays (the standard in daily use) | the 22 under `standard/.claude/skills/`: `spec-specify`, `spec-clarify`, `spec-plan`, `spec-tasks`, `spec-implement` (the engine, extracted from Spec Kit - ADR-015), `discovery-digest`, `spec-impact`, `spec-update`, `spec-reconcile`, `add-to-backlog`, `pre-pr-review`, `update-to-latest`, `sprint-open`, `sprint-close`, `timeline-update`, `adr-write`, `bdr-write`, `product-write`, `personas-write`, `idea-write`, `record-run`, `show-backlog` | ship with the tree and stay - they ARE the ways of working |
 | **Transition** - getting TO the standard | `skills/align-to-standards/` (one router: greenfield / brownfield / update phases) | NEVER shipped - run from a checkout of this repo |
 
 ## Working here

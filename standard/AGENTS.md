@@ -142,7 +142,7 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
   rest in the backlog (run from a checkout of repository-standards:
   `skills/align-to-standards`). Incremental, never a big-bang dump.
 - **Stay current with the standard** - this repo is pinned to a version in
-  `.standards-version`. `update-to-version` applies the delta to a newer version (not a
+  `.standards-version`. `update-to-latest` applies the delta to a newer version (not a
   re-scaffold), then `self-verify` proves it complies: `node scripts/self-verify.mjs`
   (see [`self-verify.md` (by reference)](https://github.com/repository-standards/core/blob/main/docs/method/self-verify.md)). The self-verify gate runs in CI.
 
@@ -221,7 +221,7 @@ sentence will each lose that sentence half the time: sharpen both, or merge them
 - **The branch is ready for a pull request** -> run `pre-pr-review` yourself, before pushing.
   Local checks, then read the diff as if someone else wrote it, then fix what it finds. A
   review that happens after the push is a review of something already published.
-- **The user asks to move to a newer standard version** -> run `update-to-version`. It reads
+- **The user asks to move to a newer standard version** -> run `update-to-latest`. It reads
   the delta between the pin and the target and applies only that; it is a dependency bump, not
   a re-scaffold, and it ends at drift 0 or it is not finished.
 - **On request, explain simply**: any ADR/BDR/spec, in plain language with examples

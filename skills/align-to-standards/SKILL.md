@@ -1,6 +1,6 @@
 ---
 name: align-to-standards
-description: The single entry point for moving any repo onto the standard. Opens with an intake (step 0) - measure the repo's state, then one short question round (intent, technology + Layer 2 consent, appetite, plan-only vs execute) - then routes by target state - an empty repo to the greenfield phase, an existing unpinned repo to assessment-first onboarding, a pinned repo to update-to-version or a stack add - and reconciles the repo against the shipped tree in payoff-ordered waves until drift 0. Never blind-copy; reconcile - copy-class artifacts land verbatim, merge/fill-class are adapted (the manifest's adapt classes).
+description: The single entry point for moving any repo onto the standard. Opens with an intake (step 0) - measure the repo's state, then one short question round (intent, technology + Layer 2 consent, appetite, plan-only vs execute) - then routes by target state - an empty repo to the greenfield phase, an existing unpinned repo to assessment-first onboarding, a pinned repo to update-to-latest or a stack add - and reconciles the repo against the shipped tree in payoff-ordered waves until drift 0. Never blind-copy; reconcile - copy-class artifacts land verbatim, merge/fill-class are adapted (the manifest's adapt classes).
 ---
 
 # align-to-standards
@@ -333,8 +333,8 @@ Before any phase runs, one intake pass:
 |---|---|
 | **EMPTY or brand new** | Follow the [greenfield phase](greenfield.md), then the align waves below. |
 | **EXISTS, no `.standards-version`** | Assessment-first onboarding per the [brownfield phase](onboard.md), then the align waves below. |
-| **HAS `.standards-version`, wants a check-up** | Run the [brownfield phase](onboard.md)'s assessment against the aligned repo: `self-verify` for the mechanical number, then the passes that machines cannot score - do the specs still describe what the code does, were the decisions since the last visit recorded, is the backlog still true. Deliver the health report and the counted list, same as a newcomer gets. **Do not route this to `/update-to-version`** - drift happens without the standard moving, and a version bump answers a different question. |
-| **HAS `.standards-version`, wants the pin moved** | Hand off to `/update-to-version` - the repo is already on the standard; this skill gets a repo *to* the pin, not past it. |
+| **HAS `.standards-version`, wants a check-up** | Run the [brownfield phase](onboard.md)'s assessment against the aligned repo: `self-verify` for the mechanical number, then the passes that machines cannot score - do the specs still describe what the code does, were the decisions since the last visit recorded, is the backlog still true. Deliver the health report and the counted list, same as a newcomer gets. **Do not route this to `/update-to-latest`** - drift happens without the standard moving, and a version bump answers a different question. |
+| **HAS `.standards-version`, wants the pin moved** | Hand off to `/update-to-latest` - the repo is already on the standard; this skill gets a repo *to* the pin, not past it. |
 | **HAS `.standards-version`, wants a technology stack added** | Run the **Technology best practices** step below against the stack's `stack.manifest.json`; skip the Layer 1 waves - the pin already covers them. |
 
 `greenfield.md`, `onboard.md` and `stack.md` are phase files of this skill - they
