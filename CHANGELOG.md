@@ -11,6 +11,25 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 0.9.10 - 2026-08-18
+
+### Two patterns from Hermes Agent's real source, filed as an idea to weigh (2026-08-18)
+
+A source-level comparison against NousResearch/hermes-agent - the actual `tools/` and
+`agent/` code, not its marketing copy - found that most of what it does for memory, skills
+and self-improvement already exists here, and more rigorously: curated memory, a three-tier
+skill catalog, and a consent-gated corpus that scores real adoption sessions all have a
+built equivalent already. Two mechanisms did not: a usage-triggered, dedup-latched cron that
+proposes a new skill from repeated tool use rather than someone noticing the pattern by hand,
+and a background curator scoped to agent-created content only, which archives rather than
+deletes.
+
+Filed as `HERMES-PATTERNS-1` in the Ideas epic rather than a task or an open question, so it
+surfaces on the dashboard the way every idea does. Neither pattern is approved: the first
+likely folds into `STACK-LIFE-1`'s evidence gate instead of shipping standalone, and the
+second is a rule to record - an ADR-051 clause or its own ADR - not a system to build.
+[`docs/ideas/hermes-inspired-patterns.md`](docs/ideas/hermes-inspired-patterns.md).
+
 ## 0.9.9 - 2026-08-17
 
 ### A PR bumps PATCH by default now, not the maintainer (2026-08-17)
