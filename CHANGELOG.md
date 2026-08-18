@@ -11,6 +11,17 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 0.9.9 - 2026-08-17
+
+### A PR bumps PATCH by default now, not the maintainer (2026-08-17)
+
+R18 and R25 said a PR describes its change under `## Unreleased` and never touches the
+version; only the maintainer cut a release, later, as a separate act. That is reversed: a PR
+now bumps the version itself, as part of landing - PATCH by default, with no request
+required. The requester still directs anything else, per PR: a stated MINOR or MAJOR bump, or
+an explicit instruction to leave the entry under `Unreleased` for a later PR to promote. Not
+retroactive - PRs already open under the old rule are unaffected. See `CONTRIBUTING.md`.
+
 ## 0.9.8 - 2026-08-14
 
 ### A decision record must now name what would reopen it (2026-08-13)

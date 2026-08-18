@@ -10,12 +10,17 @@ them a template - they say what they remember, the agent drafts, they correct.
 
 ## Is it an ADR at all?
 
-Two questions, in this order:
+Three questions, in this order:
 
 1. **Would someone reasonably have chosen otherwise?** If not, it is a convention, and it
    belongs in `AGENTS.md` where the next person will look. One obviously-right answer does
    not need a record; it needs a line in the rules.
-2. **Who would overrule it - an architect or a product owner?** An architect means ADR. A
+2. **Is it expensive to reverse?** A process tweak - who bumps a version, what a commit
+   message says - is a one-line revert even when contestable: it belongs in
+   `CONTRIBUTING.md`, or `SPEC.md` if normative, not in a full ADR. Reserve the
+   Context/Options/Consequences shape for decisions costly enough that reconstructing *why*
+   matters later - architecture, data model, external contracts, a dependency.
+3. **Who would overrule it - an architect or a product owner?** An architect means ADR. A
    product owner means **BDR** and `bdr-write` is the skill. The test itself is R5, and the
    standard works it through in [decision records (by reference)](https://github.com/repository-standards/core/blob/main/docs/tree/docs-decision-records.md).
    If both would overrule it, write the BDR and let the ADR reference it.

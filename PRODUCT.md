@@ -84,8 +84,9 @@ feeds none of these gets removed.
   question, not a settled omission.
 - **Right-size:** rule vs ADR vs doc - weight matches substance; an ADR only for a
   contestable, re-litigable decision.
-- **The maintainer cuts every release;** PRs append to the CHANGELOG's
-  `## Unreleased`, never a version heading.
+- **A PR cuts its own release, PATCH by default;** it appends to the CHANGELOG's
+  `## Unreleased` and promotes that heading itself, unless the maintainer
+  directs a different bump or an explicit no-bump for that PR.
 - Enforce with tooling, not prose.
 
 ## Roadmap

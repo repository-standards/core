@@ -125,8 +125,8 @@ try {
 }
 
 // --- 4. the spec header agrees with VERSION ----------------------------------------------
-// The maintainer alone bumps VERSION; this only ensures the bump cannot leave the spec
-// header advertising a different number.
+// Whoever bumps VERSION - a PR, by default (R18) - this only ensures the bump
+// cannot leave the spec header advertising a different number.
 //
 // The README quick start is NOT checked for `@<version>` any more, and the removal is the
 // point: that assertion required the quick start to tell an adopter to pin a version, which
@@ -146,9 +146,9 @@ if (!vFails) ok(`SPEC.md agrees with VERSION (${version})`);
 //
 // It is not a typo class. A `since` ahead of VERSION cannot match any real commit, so the
 // field stops being reconstructible from history - which is the whole reason it exists - and
-// the manifest quietly asserts a release the maintainer has not cut (R18 reserves that to
-// them). It shipped inside an unrelated fix and nothing said a word, which is what this
-// check is for.
+// the manifest quietly asserts a release nobody has actually cut yet: a PR bumps the version
+// itself by default now (R18), but only the PR that actually lands the bump gets to name it.
+// It shipped inside an unrelated fix and nothing said a word, which is what this check is for.
 function versionParts(v) {
   return /^\d+\.\d+\.\d+$/.test(v) ? v.split(".").map(Number) : null;
 }
@@ -164,7 +164,7 @@ function sinceProblem(since, version) {
   // Numeric, part by part: as strings "0.8.9" sorts after "0.8.13" and the ahead-of-VERSION
   // case this exists for would read as fine.
   for (let i = 0; i < 3; i++) {
-    if (parts[i] > now[i]) return `declares since "${since}", a version that has never shipped (VERSION is ${version}) - an entry riding the next release says "unreleased"; naming the number guesses what the maintainer will cut`;
+    if (parts[i] > now[i]) return `declares since "${since}", a version that has never shipped (VERSION is ${version}) - an entry riding the next release says "unreleased"; naming the number guesses what the next PR will actually cut`;
     if (parts[i] < now[i]) return null;
   }
   return null;
@@ -235,11 +235,13 @@ if (!factFails) ok("no hand-written derived facts on the checked surfaces (rule 
 
 // --- 4c. the released version has a changelog entry ---------------------------------------
 // R18 makes a release one act: promote `## Unreleased` into a version heading, then bump
-// VERSION. Nothing checked the first half, and for thirteen bumps it did not happen - 32
-// commits between the 0.8.0 and 0.8.13 releases carry no entry anywhere, found by reading
-// rather than by any gate. The manifest already requires the file and the `## Unreleased`
-// heading to exist; only this ties the number in VERSION to a section describing it.
-// The trailing non-digit matters: without it, VERSION 0.8.1 is satisfied by `## 0.8.13`.
+// VERSION - a PR does both itself now, PATCH by default unless told otherwise, rather than
+// waiting on a separate maintainer step. Nothing checked the first half, and for
+// thirteen bumps it did not happen - 32 commits between the 0.8.0 and 0.8.13 releases carry
+// no entry anywhere, found by reading rather than by any gate. The manifest already requires
+// the file and the `## Unreleased` heading to exist; only this ties the number in VERSION to
+// a section describing it. The trailing non-digit matters: without it, VERSION 0.8.1 is
+// satisfied by `## 0.8.13`.
 const changelog = readFileSync("CHANGELOG.md", "utf8");
 const literal = version.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 const released = new RegExp(String.raw`^##\s+\[?${literal}\]?(\D|$)`, "m");
