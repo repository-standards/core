@@ -17,7 +17,8 @@
 **Status, per type:**
 
 - `task` / `bug`: `todo` / `doing` / `blocked` / `done`. A `done` row leaves this file at the
-  release cut - relocated, not deleted: its finding goes to a record, a spec or a dossier,
+  release cut - relocated, not deleted: its finding goes to a record, a spec or a dossier
+  (a finding that closes off a design is a decision, so it carries a reopen trigger),
   what shipped goes to the changelog, and the row itself moves to `docs/backlog-archive.md`
   carrying a pointer to where its content went
   ([ADR-051](docs/decision-records/ADR-051-closing-a-backlog-row-is-a-relocation-not-a-deletion.md),
