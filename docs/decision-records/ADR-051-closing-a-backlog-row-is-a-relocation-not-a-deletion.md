@@ -197,6 +197,14 @@ leaves a requirement with no named surface - tracked as `ARCHIVE-VIEW-1` in
 [`backlog.md`](../../backlog.md), and it must be answered before the first archive is cut, or
 the relocation this record insists on lands somewhere the view cannot reach.
 
+**Answered, and the answer is no surface (1.1.17,
+[ADR-053](ADR-053-the-backlog-view-does-not-carry-the-archive.md)).** The clause above is
+narrowed to nothing: the generator reads no archive, Timeline reads the sprint projection and
+never carried closed rows, and "not hidden" was written against masking them inside the pool
+view rather than against a file having its own name. Everything else in this record stands.
+`ARCHIVE-VIEW-1` is no longer in the pool the paragraph above points at - it closed into
+[`backlog-archive.md`](../../backlog-archive.md), which is this rule's first execution.
+
 **This record does not touch the generator.** Two changes are in flight in
 `standard/scripts/generate-dashboard/` and this is not a third. The dashboard change is a
 follow-up, stated here so that accepting the rule is not read as accepting a silent
