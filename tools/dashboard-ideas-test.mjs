@@ -184,6 +184,47 @@ check(
   (D) => eq("ideas in the pool", ideas(D).length, 1) || eq("ideas on Documents", D.ideas.length, 1),
 );
 
+// A row is free to phrase its title differently from the heading of the file it points at, and
+// one in this repo did - which rendered the same idea twice, the second copy reading as a
+// promise to weigh the first. So the link a row cites outranks the title: whatever the row
+// calls itself, it is the file's row. The link is read off the raw cell, because the shaping
+// that builds an item renders a markdown link down to its label and throws the path away.
+check(
+  "a row that links to an idea file is that file's row, however it titles itself",
+  {
+    "backlog.md": pool([
+      TASK,
+      {
+        id: "IDEA-1",
+        title: "Two patterns worth adopting from another agent's real source",
+        type: "idea",
+        why: "filed as an idea to weigh, see [`stacks`](docs/ideas/stacks.md)",
+        status: "idea",
+      },
+    ]),
+    "docs/ideas/stacks.md": ideaDoc("Capability stacks", "idea", "The long version."),
+  },
+  (D) =>
+    eq("ideas in the pool", ideas(D).length, 1) ||
+    eq("the pool keeps the row, which has the id", ideas(D)[0].id, "IDEA-1") ||
+    eq("ideas on Documents", D.ideas.length, 1) ||
+    eq("Documents keeps the file", D.ideas[0].title, "Capability stacks"),
+);
+
+// The link only claims a file that exists. A row citing a path nobody has written yet is still
+// its own idea, or a dangling reference would silently delete a row from both tabs.
+check(
+  "a row linking to an idea file that does not exist keeps its own row",
+  {
+    "backlog.md": pool([
+      TASK,
+      { id: "IDEA-3", title: "Not written up yet", type: "idea", why: "see [notes](docs/ideas/missing.md)", status: "idea" },
+    ]),
+    "docs/ideas/stacks.md": ideaDoc("Capability stacks", "idea"),
+  },
+  (D) => eq("ideas in the pool", ideas(D).length, 2) || eq("ideas on Documents", D.ideas.length, 2),
+);
+
 // The pre-existing direction, pinned so this change cannot quietly reverse it: a row with no
 // file yet is still a document on the Documents tab.
 check(
