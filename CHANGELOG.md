@@ -11,6 +11,21 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 0.9.13 - 2026-08-18
+
+### The pool stops arguing with itself (2026-08-18)
+
+Three things the Backlog tab did to the reader, all of them the page's fault rather than the
+repository's. A backlog row that links to a file under `docs/ideas/` is now that file's row
+whatever it calls itself, where before the merge compared titles alone and one idea rendered
+twice - the second copy reading as a promise to weigh the first. Status pills leave the list:
+a `decided` open question that is still open to a better answer looked finished and
+unimportant beside its title, and an idea row printed `idea idea`. `blocked` stays, because
+it is the one status that changes what the reader should do; the rest is in the detail
+dialog, where the row's own vocabulary is spelled out. And the "show finished" toggle is
+gone - the pool is what is still owed, finished work is read on Timeline and Reports, and a
+control nobody remembers pressing made the count under it mean two different things.
+
 ## 0.9.12 - 2026-08-18
 
 ### A removal the standard ships is now verified, not just instructed (2026-08-18)
