@@ -360,8 +360,22 @@ function splitStatus(raw) {
 // page, so the build genuinely does not contain them.
 const person = (name) => (anonymise ? '' : name || '')
 
+// `inline()` renders a markdown link down to its label, so the path a row cites is gone by the
+// time that row is shaped into an item. An idea row citing `docs/ideas/<slug>.md` IS that
+// file's row, and the merge further down needs the slug to know it - so it is read here, off
+// the raw cell, before the shaping that discards it. Spread rather than assigned, so a row
+// citing nothing carries no key: an empty array on every row is payload the page never reads.
+const IDEA_LINK = /docs\/ideas\/([\w.-]+)\.md/g
+const ideaRefsOf = (row) => {
+  const refs = [
+    ...`${row.title ?? ''} ${row.why ?? ''} ${row.dod ?? row.definitionofdone ?? ''}`.matchAll(IDEA_LINK),
+  ].map((m) => m[1])
+  return refs.length ? { ideaRefs: refs } : {}
+}
+
 const asItem = (row, epic) => ({
   id: row.id,
+  ...ideaRefsOf(row),
   type: row.type || 'task',
   title: inline(row.title),
   why: inline(row.why),
@@ -867,8 +881,19 @@ const backlogRows = backlog.epics.flatMap((e) => e.items)
 // the row in the pool (it carries an id, an epic and a DoD).
 const ideaDocs = parseIdeas()
 const ideaRowTitles = new Set(backlogRows.filter((i) => i.type === 'idea').map((i) => i.title.toLowerCase()))
+
+// Matching on the title alone was not enough, because a row is free to phrase its title
+// differently from the heading of the file it points at - and one did: a row titled "Two
+// patterns worth adopting from Hermes Agent's real source" against a file headed "Patterns
+// worth adopting from Hermes Agent" rendered as two ideas, one of them a promise to weigh
+// the other. So a row that LINKS to an idea file claims that file however either is titled;
+// the title match stays for a row that cites no file.
+const claimedSlugs = new Set(backlogRows.filter((i) => i.type === 'idea').flatMap((i) => i.ideaRefs || []))
+const claimedByRow = (d) =>
+  ideaRowTitles.has(d.title.toLowerCase()) || claimedSlugs.has(basename(d.path, '.md'))
+
 const items = backlogRows.concat(
-  ideaDocs.filter((d) => !ideaRowTitles.has(d.title.toLowerCase())).map((d) => {
+  ideaDocs.filter((d) => !claimedByRow(d)).map((d) => {
     // Shaped by asItem() like every other row, so the pool, its search box and the detail
     // dialog read one kind of object. The status goes through splitStatus() with the rest,
     // which knows the idea vocabulary (ADR-046) - so `parked` stays parked instead of
@@ -968,10 +993,14 @@ const data = {
   // or the same idea would render twice on the Documents tab. Read from backlogRows rather
   // than items: items now carries the file-based ideas too, and an idea deduped against
   // itself is a merge that only looks right.
+  // A row that links to one of those files is that file's row, whatever it calls itself, so
+  // it is dropped here on the same key the pool uses rather than on the title alone.
   ideas: (() => {
     const fileTitles = new Set(ideaDocs.map((i) => i.title.toLowerCase()))
+    const fileSlugs = new Set(ideaDocs.map((i) => basename(i.path, '.md')))
+    const namesAFile = (i) => (i.ideaRefs || []).some((s) => fileSlugs.has(s))
     const fromBacklog = backlogRows
-      .filter((i) => i.type === 'idea' && !fileTitles.has(i.title.toLowerCase()))
+      .filter((i) => i.type === 'idea' && !fileTitles.has(i.title.toLowerCase()) && !namesAFile(i))
       .map((i) => ({ title: i.title, status: i.status, date: i.statusDate, itch: i.why }))
     return ideaDocs.concat(fromBacklog)
   })(),
