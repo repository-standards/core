@@ -11,6 +11,31 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 0.9.17 - 2026-08-19
+
+### The archive gets no surface, and the first row moves (2026-08-19)
+
+ADR-051 made one clause binding - closed rows stay reachable in the view - and named the
+"show finished" chip as the surface. 0.9.13 removed that chip for an unrelated defect, which
+left a requirement with nothing carrying it and, by the record's own terms, blocked the first
+archive cut until someone designed a replacement.
+
+Two facts settle it, and neither was checked when the clause was written. The dashboard
+generator contains no reference to the archive in any form. Timeline, the candidate named
+first, reads `docs/sprints/TIMELINE.md` - sprint throughput and forecast - so it never carried
+closed rows and would have needed a second, unrelated input to start.
+
+[ADR-053](docs/decision-records/ADR-053-the-backlog-view-does-not-carry-the-archive.md)
+narrows the clause to nothing: no tab, no control, at either profile. "Not hidden" was written
+against masking closed rows inside the pool view, which is what `hideDone` did; a file with its
+own name is not a mask. Period questions stay with Timeline and Reports, which are built from
+the changelog and sprint records. ADR-051's clauses, its guard and the `where` pointer are
+untouched.
+
+With the block gone, `ARCHIVE-VIEW-1` closes the way the rule says a row closes, and this
+repository cuts its first archive: `backlog-archive.md`, one row, pointing at the record that
+answered it. The rule had been accepted for six days without ever being executed.
+
 ## 0.9.16 - 2026-08-19
 
 ### One command runs the gates, and it reads the list instead of keeping one (2026-08-19)
