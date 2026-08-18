@@ -1,9 +1,9 @@
-# <Repo> constitution (Spec Kit governance bridge)
+# <Repo> constitution (spec engine governance bridge)
 
 **Version:** 1.0.0 | **Ratified:** YYYY-MM-DD | **Last amended:** YYYY-MM-DD
 
 > A BRIDGE, not a second rulebook. It does not restate conventions - it points the
-> Spec Kit Constitution Check at the real sources and hard-stops on conflict.
+> spec engine's Constitution Check at the real sources and hard-stops on conflict.
 
 ## The check (runs at /spec-plan, and at /spec-update)
 
