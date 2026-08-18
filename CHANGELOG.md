@@ -11,6 +11,39 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.1.16 - 2026-08-19
+
+### One command runs the gates, and it reads the list instead of keeping one (2026-08-19)
+
+There was no way to run this repo's checks. There was a prose enumeration of them in
+`AGENTS.md`, sixty-three lines of it, mirroring `.github/workflows/checks.yml` - and
+running the gates meant reading that passage and typing what it said. What actually
+happens under that arrangement is a curated subset: the checks whose failure you expect,
+not the ones you do not. The gap then shows up as a red pull request, which is the one
+place it costs minutes rather than seconds.
+
+`tools/gates.mjs` is the command. It reads the steps out of `checks.yml` and hands each
+script to bash the way CI does, so what runs locally is the remote set by construction
+rather than by diligence. It runs every step even after one fails - a stop-at-first-failure
+run tells you about one gate and hides the rest - and prints the failing output at the end.
+`--list` shows the commands without running them; `--base <branch>` supplies
+`github.base_ref`, so the diff-gated coupling and archive guards compare against the same
+diff the pull request will.
+
+The prose list is gone from `AGENTS.md`, and nothing replaced it; `CONTRIBUTING.md`, the
+pull request template and `tools/README.md` name the command instead of pointing at the
+passage. A second copy of the list is a second thing to keep in step, and every copy this
+repo has kept eventually drifted - the template once listed nine commands while missing the
+diff-gated coupling guard, `tools/README.md` once gave a three-command block that skipped
+every shipped guard, and `AGENTS.md`'s list closed by admitting it was the likely bug.
+Drift in a check list is not symmetrical: a list missing a gate still reports a pass.
+
+`tools/gates-test.mjs` counts the runner's steps against the workflow file itself, because
+the runner's own failure mode is the one it was built to prevent. A parser that reads
+twenty steps out of twenty-five is green, silent, and wrong in the direction of shipping.
+Anything it cannot execute - a workflow expression it has no value for, a `steps:` block
+with nothing runnable in it - exits non-zero rather than getting skipped.
+
 ## 1.1.15 - 2026-08-19
 
 ### The backlog stops asking one question twice and stops looking abandoned (2026-08-19)
