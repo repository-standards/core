@@ -68,6 +68,14 @@ whole reason the two records are not the same form with different nouns. `Confir
 the one section both forms share, for the same reason in both: it is what stops the record
 being decoration.
 
+## As short as the decision actually is
+
+Length is a cost, not a sign of rigour. Write the shortest record that still answers *why*
+for someone who was not in the room: a decision that fits in one sentence gets one sentence,
+and a section with nothing to say gets one line rather than a paragraph of throat-clearing.
+Comprehensive means every section above is answered - not that each answer is long. A record
+nobody finishes reading fails at the only job it has.
+
 ## Draft first, ask second
 
 Read `docs/PRODUCT.md` for the frame this sits in, `docs/personas.md` for who is affected,
