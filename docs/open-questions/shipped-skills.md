@@ -75,15 +75,19 @@ constraint had been pushing toward the vaguer design.
 
 ## The doubt that survives
 
-Not context, not count - **four sibling files drifting apart**, which this repo demonstrated
-four times in one day with four copies of one command list.
+Not context, not count. This entry used to close by asking for field evidence - a real user's
+sentence matching the wrong skill or none of them, on a repo that did not write the standard -
+and that evidence arrived on 2026-08-13, when "show me the backlog" matched nothing on an
+adopted repo. It confirmed the reframe rather than moving it: the fix was two sharpened
+descriptions and the count did not change. The in-house failure that opened the reframe,
+`spec-specify` not firing on "we need refunds", had the same shape.
 
-Worth separating, though: those four copies restated a single fact, so any divergence was a
-defect by definition. Four skills carry four different question sets and restate nothing, so
-they can differ without either being wrong. A weaker risk, but not zero, and the mitigation
-is that they share one structure and get read together whenever one changes.
+So the doubt is sharper than the one it replaced: **nothing has yet failed in a way the count
+could explain.** Every miss so far was a description that named no situation, and every fix
+was rewording one. What would test the rule rather than confirm it is a miss no sharpening
+separates - two situations a user genuinely distinguishes, where every wording of one
+description keeps taking sentences meant for the other. If that arrives, discriminability is
+not sufficient on its own and something has to bound the family after all.
 
-**A better answer would** bring field evidence from a real adopted repo: a case where a real
-user's sentence matched the wrong skill, or matched none, with the descriptions that did it.
-That is the only thing that should move this again - and unlike the old ceiling, it names an
-observation rather than a number.
+The four authoring skills carry a different risk - four sibling files drifting apart - and it
+is stated where those four are decided, in [`authoring-skills`](authoring-skills.md).

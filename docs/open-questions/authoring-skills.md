@@ -24,7 +24,10 @@ The ceiling was pushing toward the design that fires less reliably.
 **The doubt that remains:** four sibling files can drift apart. This repo proved that four
 times in one day with four copies of a command list - though those restated a single fact, so
 divergence was a defect by definition, while four question sets restate nothing and can
-differ legitimately. Weaker, not absent.
+differ legitimately. Weaker, not absent. Nothing checks it; the mitigation is that the four
+share one shape and get read together whenever one of them changes. It is settled by an
+actual divergence between two of them that turns out to be an oversight rather than a
+deliberate difference.
 
 ## Why anything is needed here at all
 
@@ -90,4 +93,6 @@ using them.
 ## Related
 
 - [`shipped-skills`](shipped-skills.md) - revised: the constraint is discriminability, not count.
-- `AUTHOR-1..4` in [`backlog.md`](../../backlog.md) - the work this decision gates.
+- `AUTHORING-SKILLS-1` in [`backlog.md`](../../backlog.md) - the standing doubt above, and the
+  only id in that file this decision still has. The build rows it gated (`AUTHOR-1..4`) left at
+  the 1.1.0 cut once all four skills shipped.
