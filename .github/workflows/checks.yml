@@ -51,15 +51,6 @@ jobs:
           node tools/elicitation-replay-test.mjs
           node tools/validation-claims-check.mjs
           node standard/scripts/elicitation-provenance.mjs
-      - name: spec coupling (diff-gated on PRs, audited in full on every run)
-        # The full audit is the PR gate, not a release ritual - a change that
-        # breaks spec<->code coupling fails here, never in a later sweep.
-        run: |
-          if [ -n "${{ github.base_ref }}" ]; then
-            git fetch --no-tags --quiet origin "${{ github.base_ref }}"
-            node standard/scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}" --block
-          fi
-          node standard/scripts/spec-guard.mjs --audit --block
       - name: spec-guard test (the coupling guard still fires where it must)
         run: node tools/spec-guard-test.mjs
       - name: clarify-gate test (a spec that is not settled cannot reach plan or tasks)
@@ -128,3 +119,18 @@ jobs:
       # written - a green subset, reported as a full pass. This is what counts them.
       - name: gates runner test (the pre-push command reads this file whole, or refuses)
         run: node tools/gates-test.mjs
+      # Last on the list, and that position is load-bearing. A step's failure aborts every
+      # step after it, and this one trips on every release cut by construction: bumping
+      # VERSION moves the literal facts-check requires in self-verify.mjs (verify-engine)
+      # and regenerates site/** (web-surface). In the middle of the list that turned a
+      # release pull request into eighteen checks that never ran, reported as one failure.
+      # Whatever fails here, everything else has already said its piece.
+      - name: spec coupling (diff-gated on PRs, audited in full on every run)
+        # The full audit is the PR gate, not a release ritual - a change that
+        # breaks spec<->code coupling fails here, never in a later sweep.
+        run: |
+          if [ -n "${{ github.base_ref }}" ]; then
+            git fetch --no-tags --quiet origin "${{ github.base_ref }}"
+            node standard/scripts/spec-guard.mjs --base "origin/${{ github.base_ref }}" --block
+          fi
+          node standard/scripts/spec-guard.mjs --audit --block
