@@ -37,13 +37,16 @@ jobs:
         run: |
           node tools/provenance-check.mjs
           node tools/provenance-check.mjs --self
-      - name: elicitation (every declared point has a call site) + the checker's own cases
-        # The baseline is the gate. Wiring every point is weeks of work, and waiting for
-        # zero before switching the check on would leave precisely the gap that produced
-        # it: a rule everyone agreed with and nothing enforced.
+      - name: elicitation (every declared point has a call site, and the guard still refuses)
+        # Three layers, three checks, because each catches what the one before it lets past:
+        # the points check proves every declared point has a call site, the transcript
+        # checker proves an answer was actually given, and the guard test proves the hook
+        # that refuses the write is still alive. The guard is the one that cannot be
+        # skipped by an agent, so it is also the one whose silence would go unnoticed.
         run: |
           node tools/elicitation-points-check.mjs
           node tools/elicitation-check-test.mjs
+          node tools/elicitation-guard-test.mjs
       - name: spec coupling (diff-gated on PRs, audited in full on every run)
         # The full audit is the PR gate, not a release ritual - a change that
         # breaks spec<->code coupling fails here, never in a later sweep.

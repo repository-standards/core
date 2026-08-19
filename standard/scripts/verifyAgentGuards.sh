@@ -287,6 +287,32 @@ else
   rm -rf "${STUBS}"
 fi
 
+# == elicitation guard ==
+# Node, not bash, and it reads a written path rather than a command - so it needs its own
+# payload and cannot go through check(). What it shares with the rest is the failure mode:
+# it says nothing when it allows, so a dead one is indistinguishable from a quiet one. These
+# three cases are the minimum that tells them apart - one refusal, one pass-through, and one
+# path it must leave alone entirely.
+echo "== elicitation guard"
+ELICIT="${HOOKS}/elicitation-guard.mjs"
+if [ ! -f "${ELICIT}" ]; then
+  printf '  FAIL %s is missing, so nothing checks that artifacts were asked about\n' "${ELICIT}"
+  FAILURES=$((FAILURES + 1))
+elif ! command -v node >/dev/null 2>&1; then
+  printf '  FAIL node is not on PATH, so the elicitation guard cannot run at all\n'
+  FAILURES=$((FAILURES + 1))
+else
+  elicit() { # elicit <json payload>
+    verdict "$(printf '%s' "$1" | node "${ELICIT}" 2>/dev/null)"
+  }
+  assert "a gated artifact with nothing asked is refused" DENY \
+    "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/personas.md"}}')"
+  assert "a declared stub is allowed through" allow \
+    "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/personas.md","content":"adopt.personas: absent"}}')"
+  assert "a path no point gates is left alone" allow \
+    "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"src/index.ts"}}')"
+fi
+
 echo
 if [ "${FAILURES}" -eq 0 ]; then
   echo "all guards behave as specified"

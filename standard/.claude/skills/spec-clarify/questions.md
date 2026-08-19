@@ -4,8 +4,8 @@ Sibling file of `spec-clarify`. Load it at the point where you would otherwise s
 
 ## Questions this phase must ask
 
-Declared in `standard/elicitation/points.json`; the shape and the provenance states are in
-`standard/elicitation/README.md`. Each block below is a real `AskUserQuestion` call, not a
+Declared in `standard/.claude/elicitation/points.json`; the shape and the provenance states are in
+`standard/.claude/elicitation/README.md`. Each block below is a real `AskUserQuestion` call, not a
 reminder to consider asking - the rule existed as prose first and a full adoption ignored it.
 
 ### `[spec.scope]` What is in and what is out
