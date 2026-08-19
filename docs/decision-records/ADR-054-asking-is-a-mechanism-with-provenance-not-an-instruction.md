@@ -128,11 +128,12 @@ exist on disk).
 
 ## Related
 
-- [ADR-010](ADR-010-the-loop-is-ai-led.md) - the loop is AI-led. This is the boundary of that:
+- [ADR-010](ADR-010-artifact-lifecycle-and-tracker.md) - the lifecycle and the clarify gate the
+  loop runs on, which `AGENTS.md` cites for the loop being AI-led. This is the boundary of that:
   AI-led means the agent starts the loop without being asked, never that it answers for the
   owner.
-- [ADR-024](ADR-024-discovery-is-raw-material-specs-are-normative.md) - nothing a spec has
-  settled gets re-asked. The point list respects it; these questions are the ones nothing has
-  settled.
+- [ADR-024](ADR-024-discovery-dossiers-beside-the-specs.md) - discovery is raw material and
+  nothing a spec has settled gets re-asked. The point list respects it; these questions are
+  the ones nothing has settled.
 - [`.claude/elicitation/README.md`](../../standard/.claude/elicitation/README.md) - the
   contract, the three answers, and the provenance table.
