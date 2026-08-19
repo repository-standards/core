@@ -21,7 +21,7 @@ Every gate produces a **document and/or tasks**. The path ends with a **counted 
 rather than scaffolding blind:
 
 ```
-> take this new repo onto the standard - interview me for what you need
+> adopt this new repo to repositorystandards.com
 ```
 
 **An existing repo with years of history.** Same path, opposite direction: the agent
