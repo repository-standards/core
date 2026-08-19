@@ -1,5 +1,12 @@
 {
   "$about": "DOC-12 round, 2026-08-06: the landing page defect (four places stating 1.0.12 beside one stating 1.0.13) fixed at the page and, more importantly, at the two guards that reported green while it shipped. Run against this project's own repository, which is the target kind 'self' - self-assessment, never counted among the third-party repositories tested. Every quotation below is literal output from a command run in the working tree at the commit this observation lands with. The second observation retires this case's 2026-08-04 row, which was filed against the greenfield fixture because that whole round was: the fixture has no landing page, so the finding was never really about it. The 2026-08-04 file is left exactly as written, the way SHAPE-08 was retired earlier today.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "DOC-12",

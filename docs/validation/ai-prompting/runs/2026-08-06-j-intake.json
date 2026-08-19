@@ -1,5 +1,12 @@
 {
   "$about": "2026-08-06, intake round: the two severe intake findings logged on 2026-08-04 (INTAKE-07, INTAKE-08) re-run against the current tree before anything was changed, on the rule that a finding is open only while it still reproduces. Both still held. The four repositories named in the original evidence were re-read live from their own AGENTS.md rather than carried over from the earlier round's notes, and one of them changed what the fix had to be. The observations keep the 2026-08-04 round's target label so they supersede those findings on the punch list; neither carries a fix URL, because the pull request carrying the change is open and unmerged - GitHub Actions was in a major outage on the day and no run could go green, and a fix field on this suite means a merged pull request.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "INTAKE-07",

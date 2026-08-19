@@ -1,5 +1,12 @@
 {
   "$about": "One case, raised by the large-multi-year adoption round and re-verified here from a clean fixture before it was fixed. This is the defect that most directly contradicts the standard's premise, so it was reproduced independently rather than taken from the round's report: the verifier's answer to 'is the repository compliant' was being decided by one laptop's disk.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "GATE-38",

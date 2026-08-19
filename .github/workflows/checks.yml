@@ -49,6 +49,7 @@ jobs:
           node tools/elicitation-guard-test.mjs
           node tools/elicitation-provenance-test.mjs
           node tools/elicitation-replay-test.mjs
+          node tools/validation-claims-check.mjs
           node standard/scripts/elicitation-provenance.mjs
       - name: spec coupling (diff-gated on PRs, audited in full on every run)
         # The full audit is the PR gate, not a release ritual - a change that

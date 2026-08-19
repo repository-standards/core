@@ -1,5 +1,12 @@
 {
   "$about": "field-2 round, 2026-08-06: the second L3 adoption, and the first against a technology the registry has no stack for. Target: caddyserver/caddy - Go, Apache-2.0, 639 tracked files, 2,638 commits, 423 authors, nothing to do with this project. Run as a user would ask: the align router's intake, the brownfield assessment, the honest-miss path, then waves until self-verify stopped finding anything. Command shapes exercised: align (the full brownfield path), registry miss (the honest-miss fallback and its consent-gated upstream offer), and verify (self-verify plain and with --version). Every number below was printed by a shipped script during the run; nothing is estimated. Two things this round could not test: nobody answered the intake's questions (the operator was this project's own agent, again, so the questions were answered from repo evidence and that is recorded as inference wherever it reached an artifact), and the 'ask before the workflows land' step had no human to ask - the workflow was landed adapted, and only after drift reached 0. Two observations worth having outside the case table. First, the shipped facts-check earns its keep on a repo it has never seen: a temporary docs/facts.json declaring go.mod as the home of the Go version immediately reported '.github/workflows/ci.yml says \"1.26\", the source says \"1.25\"' and the same for lint.yml - real, live drift in four statements of one fact, found on the first run and left as a backlog item rather than shipped, because fixing a repo's CI is not an adopter's call. Second, onboard.md's 'the existing package boundary is often already the capability map' shortcut held here in the positive direction - caddy's module ID namespace (http.handlers.reverse_proxy, caddy.storage.file_system) is behavior-shaped by construction, so the map was read off the registry rather than invented, which is the opposite of what ADOPT-09 found on a layered repo.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "ADOPT-08",

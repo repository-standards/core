@@ -1,5 +1,12 @@
 {
   "$about": "2026-08-06 round: two findings from the wave-6 brownfield agents that completed after the 2026-08-04 round had already been codified, so they had no case and no observation in the suite. Both targets were already present in targets.json from the wave-6 backfill; only the cases and these observations are new. Both are logged-not-fixed.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "DEC-12",

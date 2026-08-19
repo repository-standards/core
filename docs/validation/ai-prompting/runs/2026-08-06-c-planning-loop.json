@@ -1,5 +1,12 @@
 {
   "$about": "2026-08-06, owner question: 'I change an already-developed spec - does re-planning give an incremental plan and stories to push to Jira? And on the NEXT change, will the stories needing an update be updated and new ones added, or will it bug?' Answered by reading the shipped tree rather than the promise. All three fail; TRACK-20 is severe and was not previously known.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "SPEC-22",

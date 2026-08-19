@@ -1,5 +1,12 @@
 {
   "$about": "Sequence d, run by an assistant (Claude Opus 5) against four of six repositories that had already been adopted mechanically: two on the registered JS/TS stack (honojs/hono, drizzle-team/drizzle-orm) and two very old and not pull-request shaped (git/git, vdukhovni/postfix). Every run was executed by a fresh subagent handed two things only - a repository path and the prompt verbatim. Read $method_caveat and $fixture before any verdict: this round cannot discriminate on the three flags, and it says why.",
+  "$elicitation": {
+    "provenance": "unverified",
+    "transcript": null,
+    "questions_asked": null,
+    "asked_claims": 11,
+    "$why": "Recorded as human-prompting, but no session transcript was ever kept, so not one of the asked/checked/suggested claims in here can be checked against what was actually said. Worse for the ones that can be read: they were scored by reading whether a skill's text instructs asking - the exact layer that turned out to have no force. `unverified` is the honest state and it is counted apart from validated on purpose; see .claude/elicitation/README.md."
+  },
   "$method_caveat": "Every agent turn in this file scores asked, checked and suggested true - 13 of 13 on all three. That is not a triumph, it is a measurement failure, and the run is published saying so. Two causes. First, stop-and-ask mode instructs the agent to surface questions and stop, which is close to scoring the mode rather than the product. Second, the line that opened five of the eleven conversations names a stack, and the stack does not fit three of the four repositories, so on those a question was guaranteed before anything else happened. The one thing the number does establish is worth keeping: no line used here asks to be interviewed, so the asking was unprompted in all 13 turns. What discriminates in this file is not the flags. It is outcome and abandon_risk.",
   "$fixture": {
     "contaminated:worktree-pair": "Ten entry runs used git worktrees cut from the adopt-* repositories. A linked worktree shares one object store with the branch carrying the adoption, so `git worktree list` named the adopted sibling and `git show adopt-standard:<path>` handed the agent SPEC.md, standard.manifest.json, AGENTS.md and backlog.md without ever leaving the directory it was scoped to. All ten found it. It also manufactured an ambiguity that no real user has - 'which of these two trees do you mean, and am I about to ruin an experiment' - which inflates asked further. Harness defect, not agent misbehaviour.",

@@ -1,5 +1,12 @@
 {
   "$about": "2026-08-06, decisions round: the eight open failures in the `decisions` area - the ADR/BDR machinery, the idea path, and the routing that decides whether a change is a record or a spec update - re-run against the current tree before anything was changed, on the rule that a finding is open only while it still reproduces. Seven reproduced whole. One (DEC-07) reproduced in half: its routing defect is live, and the capability-map half of its 2026-08-04 evidence was already closed by a commit that landed after that round, which is recorded here rather than left implied. Three cases (DEC-03, DEC-12, DEC-13) are anchored to a real repository whose shape was assessed in an earlier round; this round re-ran the standard's half of each - the greps and reads the case's own procedure names - and did not re-assess the target repository, which each evidence field says explicitly.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "DEC-03",
