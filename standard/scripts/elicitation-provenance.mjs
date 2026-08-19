@@ -174,7 +174,14 @@ const git = (...args) => {
   return r.status === 0 ? r.stdout : null;
 };
 
-const BASELINE_MARKERS = [".standards-version", ".claude/elicitation/points.json", "standard.manifest.json"];
+// Ordered deliberately. The point list comes first because the questions can only answer for
+// writes made after the questions existed: a repo that adopted the standard a year ago and is
+// only now taking this layer has a `.standards-version` from back then, and measuring from it
+// would count every file the repo has written since as something the adoption wrote without
+// asking. That is red on arrival for every existing adopter, and a guard red on arrival is a
+// guard someone deletes.
+const LAYER_MARKER = ".claude/elicitation/points.json";
+const BASELINE_MARKERS = [LAYER_MARKER, ".standards-version", "standard.manifest.json"];
 
 function adoptionWrote() {
   if (git("rev-parse", "--is-inside-work-tree") === null) return null;
@@ -202,6 +209,10 @@ function adoptionWrote() {
   for (const marker of BASELINE_MARKERS) {
     const adds = (git("log", "--diff-filter=A", "--format=%H", "--", marker) ?? "").trim().split("\n").filter(Boolean);
     if (adds.length) { baseline = adds[adds.length - 1]; break; } // oldest add, if it was ever re-added
+    // The point list is present but has never been committed: this layer is arriving in this
+    // very run, so nothing already in history can have been written under it. Only the
+    // uncommitted set counts, and looking at the older markers would say otherwise.
+    if (marker === LAYER_MARKER && existsSync(at(marker))) break;
   }
   if (baseline) {
     for (const p of (git("show", "--format=", "--name-only", baseline) ?? "").split("\n")) add(p);
@@ -250,10 +261,21 @@ if (!existsSync(LEDGER)) {
 // One markdown table, parsed by position: | point | state | who | when | landed in | backlog |
 // Deliberately strict. A row that does not parse is reported, never skipped - a silently
 // dropped row is a missing record that reads as a present one.
+// The declared points are a floor. What a repository actually needed asked, and no list
+// anticipated, is recorded in its own section - and that section is where the next version of
+// the point list comes from: adopt.tracker entered it from one live run. A ledger that quietly
+// loses the section makes an adoption that invented five questions read like one that needed
+// none, which is the same class of silence as a guard nothing routes to.
+const HARVEST = "## Questions this run asked that no point declares";
+
 const rows = [];
 const malformed = [];
-for (const line of readFileSync(LEDGER, "utf8").split("\n")) {
+const ledgerText = readFileSync(LEDGER, "utf8");
+for (const line of ledgerText.split("\n")) {
   const t = line.trim();
+  // The record is the table above that heading. Below it is the harvest table, which invites
+  // exactly the thing that would confuse this parser: a candidate point id in a four-cell row.
+  if (t.startsWith(HARVEST)) break;
   if (!t.startsWith("|") || /^\|[\s|:-]+\|$/.test(t)) continue;
   const cells = t.slice(1, -1).split("|").map((c) => c.trim().replace(/^`|`$/g, ""));
   if (!/^[a-z]+\.[a-z-]+$/.test(cells[0])) continue; // header row, or prose in a table
@@ -263,6 +285,10 @@ for (const line of readFileSync(LEDGER, "utf8").split("\n")) {
 
 const backlogText = BACKLOGS.map(at).filter(existsSync).map((f) => readFileSync(f, "utf8")).join("\n");
 const problems = [...malformed];
+
+if (!ledgerText.includes(HARVEST)) {
+  problems.push(`${LEDGER}: the "${HARVEST.replace(/^## /, "")}" section is missing - questions the point list did not have are how it grows, and an unrecorded one is indistinguishable from one nobody needed`);
+}
 const byPoint = new Map(rows.map((r) => [r.point, r]));
 
 for (const p of declared.points || []) {

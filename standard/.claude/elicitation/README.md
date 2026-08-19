@@ -55,6 +55,50 @@ by the adoption - and an unattended run simply stops there rather than inventing
 Which is the point. Not asking is allowed; **not asking and shipping an answer anyway** is
 not.
 
+## Which answer leads
+
+The first option is the recommended one, **and it is the one the question labels as
+recommended** - order and label are the same claim, and where the tool renders a label, no
+other option may carry it. That is not pedantry about presentation: the run that produced this
+rule asked every question correctly and put the label on the answer that kept the repository as
+it was, which is what the person then chose.
+
+It is **always the answer that converges on the standard** - its layout, its shape, the whole of it rather than the parts that cost least -
+and, where that is not the axis, the answer a person gives now rather than defers.
+
+This is declared per point as `recommended` in `points.json`, and
+`elicitation-points-check` fails when the skill offers something else first. It is written
+down because leaving it to judgement produced the opposite: measured on a live adoption,
+four of five recommendations pointed at the least convergent answer available, including
+*keep your own layout and map the standard onto it* - an adoption recommending against
+adopting. Every one of those runs had asked properly. Asking the right question and then
+nudging toward the cautious answer is a slower version of the same failure, because most
+people take the recommendation.
+
+**It binds every question, not only the twenty declared here.** In the same run the agent
+invented a question the point list does not contain - where tracked work lives - and
+recommended keeping the repository's parallel tracker beside `backlog.md`. A question this
+file has not anticipated is exactly where the rule has to hold on its own.
+
+Keeping the repository's own way must stay on the list. A standard imposed without consent
+gets reverted, and the point of asking is that the answer is real. It is never the default,
+and `null` is reserved for a question with no such axis: consent is asked, never
+recommended.
+
+## The language it is asked in
+
+The question is put in the language the person is writing in, from their first message. This
+is not one of the points and never becomes one: a question asking which language to ask in has
+already answered itself wrongly. What is a point is `[adopt.language]` - the language the
+*artifacts* are written in, which is the owner's decision and has sat as an unasked slot in
+`AGENTS.md` since the beginning, filled by whatever the agent happened to be writing in.
+
+It also bounds what the static check can prove. `elicitation-points-check` compares the skill's
+written option order against the declared `recommended`; it cannot compare what was *spoken*,
+because by then the options are in Polish, or Spanish, and match no string held here. The
+written order is the only place the rule is mechanically checkable, which is why it is a
+declaration rather than a matter of judgement in the moment.
+
 ## Carrying the id
 
 The question's header carries its point id in brackets - `[adopt.layout] directory naming`.
@@ -86,7 +130,7 @@ the ledger before it writes anything else, and then stops so the session can res
 those four is gated by any point, so the ordering costs nothing - and skipping it costs the
 whole layer on the one run it was built for.
 
-Thirteen of the eighteen points are enforced here - twelve by the path they gate,
+Fifteen of the twenty points are enforced here - fourteen by the path they gate,
 `adopt.layout` by the rename. `adopt.continue` is a phase boundary, which is not a tool call
 at all, so the static check and human review carry that one; the guard says so rather than
 implying coverage it does not have.

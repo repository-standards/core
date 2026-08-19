@@ -309,6 +309,13 @@ Declared in `standard/.claude/elicitation/points.json`; the shape and the proven
 `standard/.claude/elicitation/README.md`. Each block below is a real `AskUserQuestion` call, not a
 reminder to consider asking - the rule existed as prose first and a full adoption ignored it.
 
+**Ask them in the language the user is writing to you in.** Not as a preference - as the first
+thing you get right. A person who opened with a sentence in Polish and is answering a wall of
+English options is being handed a translation task on top of the decision, and the answers get
+worse. This needs no question of its own: the opening message already said it. What does need
+asking is the language the *artifacts* are written in, which is a different decision and belongs
+to the owner - `[adopt.language]`, below.
+
 ### `[adopt.intent]` How far this adoption goes
 
 Fires **in the intake round, before any phase is routed**.
@@ -323,6 +330,20 @@ Everything downstream is scoped by this answer, so inferring it means inferring 
 
 Records to `docs/adoption-provenance.md`: the `adopt.intent` row takes the state, who answered, the date, and `docs/adoption-intake.md` as where the answer landed.
 
+### `[adopt.language]` The language the artifacts are written in
+
+Fires **in the intake round, before writing `AGENTS.md`** - which is where the answer lands, and which is written early enough that guessing here decides the language of everything after it.
+
+Call `AskUserQuestion` with the header `[adopt.language]` and the question:
+
+> Which language do the written artifacts use: code and commits in English with docs and specs in yours, all of it in English, or all of it in yours?
+
+Options, in order: **code and commits in English, docs and specs in mine** (recommended - the split `AGENTS.md` already names, and the one most teams want: the toolchain speaks English, the people do not have to) / **all of it in English** / **all of it in mine** / **suggest it from what the repository already reads like** (`inferred`, and say so in the file)
+
+`inferred` is allowed here and almost nowhere else, because the repository's existing prose is evidence rather than a guess - a README and thirty commits in Polish say what language this team writes in. It is still the fourth option, not the first: what the repo has written before is not the same as what its owner wants it to write next.
+
+Records to `docs/adoption-provenance.md`: the `adopt.language` row takes the state, who answered, the date, and `AGENTS.md` as where the answer landed.
+
 ### `[adopt.layout]` Directory naming and structure
 
 Fires **before moving or renaming any path the target repository already tracks**. The hook enforces this one on `Bash`, not on `Write`: a rename reaches the agent as `git mv`, and until it did, this point was the only required one nothing could enforce.
@@ -331,9 +352,9 @@ Call `AskUserQuestion` with the header `[adopt.layout]` and the question:
 
 > This repository already names and arranges things its own way, and the standard names them differently. Move what you have into the standard's layout, keep yours and map the standard onto it, or decide case by case?
 
-Options, in order: **keep ours** / **move ours into the standard's layout** / **case by case, ask me per directory** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
+Options, in order: **move ours into the standard's layout** (recommended) / **keep ours and map the standard onto it** / **case by case, ask me per directory** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
 
-Moving is a real answer, not the wrong one. Material that is already there in the wrong shape is usually worth reshaping rather than leaving beside a parallel structure - two homes for decision records is worse than either home. What must not happen is the reshaping happening by default, unmentioned, as a side effect of tidying.
+Moving leads because it is what adoption means. Material already there in the wrong shape is worth reshaping, not leaving beside a parallel structure - two homes for decision records is worse than either home. Keeping the repository's own layout is a legitimate answer and stays on the list, because a standard imposed without consent gets reverted; it is not the default one. What must not happen is the reshaping happening by default, unmentioned, as a side effect of tidying - the recommendation is a recommendation, and the move waits for the answer either way.
 
 Never `inferred`: a naming convention is a preference, not a fact you can read off the repo. A repository's own naming is a decision somebody already made, and overwriting it silently is the most destructive thing an adoption can do, because it looks like tidying.
 
@@ -361,7 +382,7 @@ Call `AskUserQuestion` with the header `[adopt.guards]` and the question:
 
 > This repository already has guards that overlap the standard's. Replace them, merge them, or keep both?
 
-Options, in order: **replace** / **merge** / **keep both** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
+Options, in order: **merge** (recommended - every guard the standard ships lands, and this repository's own survive) / **replace** / **keep both** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
 
 Overwriting a working guard can silently remove protection, and a guard that prints only on refusal is indistinguishable from a healthy one once broken.
 

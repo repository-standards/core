@@ -27,12 +27,14 @@ specs it wrote years earlier, and its own history says nothing about who was ask
 
 | Point | State | Answered by | When | Landed in | Backlog row |
 |---|---|---|---|---|---|
+| `adopt.language` | pending | - | - | - | - |
 | `adopt.layout` | pending | - | - | - | - |
 | `adopt.intent` | pending | - | - | - | - |
 | `adopt.continue` | pending | - | - | - | - |
 | `adopt.existing-material` | pending | - | - | - | - |
 | `adopt.records` | pending | - | - | - | - |
 | `adopt.personas` | pending | - | - | - | - |
+| `adopt.tracker` | pending | - | - | - | - |
 | `adopt.backlog` | pending | - | - | - | - |
 | `adopt.guards` | pending | - | - | - | - |
 | `adopt.commit-plan` | pending | - | - | - | - |
@@ -48,3 +50,22 @@ specs it wrote years earlier, and its own history says nothing about who was ask
 
 <!-- The table is parsed by position, six cells per row. Add columns to the right if you
      need them; do not reorder these. `-` means not applicable, never "I did not fill it in". -->
+
+## Questions this run asked that no point declares
+
+The declared points are a floor, not a ceiling. They are the questions that can be
+*enforced* - the hook refuses a write for a point that exists, and it can only refuse what
+somebody wrote down. Every repository is different, and the questions worth asking here are
+mostly ones no list anticipated: ask them, lead with the answer that converges on the
+standard, and record them below.
+
+This table is how the standard learns. A question invented in a real adoption, answered by a
+real owner, is better evidence for what belongs in the point list than anything written at a
+desk - `adopt.tracker` got into the list exactly that way, from a live run on 2026-08-19 that
+asked where tracked work lives and recommended keeping the repository's parallel tracker.
+When rows accumulate here, send them to the standard.
+
+| Question asked | Which answer led | What was chosen | Worth declaring? |
+|---|---|---|---|
+| - | - | - | - |
+
