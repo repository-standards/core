@@ -27,7 +27,7 @@ typed.
 Three layers now hold it, and the third is the only one that is not the agent's decision:
 
 - [`.claude/elicitation/points.json`](standard/.claude/elicitation/points.json) declares the
-  twenty places this standard must ask instead of decide - the question, the answer that leads, the three kinds of answer
+  twenty-one places this standard must ask instead of decide - the question, the answer that leads, the three kinds of answer
   it always offers, the provenance each answer records, and the paths it gates.
   `elicitation-points-check` fails when a declared point has no call site, against a baseline
   that may only shrink.
@@ -144,9 +144,12 @@ declares, and `elicitation-provenance.mjs` fails when it is missing: an unrecord
 question is indistinguishable from one nobody needed. What accumulates there is better
 evidence for what the point list should contain than anything written at a desk.
 
-It has already produced one: `adopt.tracker` - where tracked work lives, when a repository
+It has already produced two. `adopt.tracker` - where tracked work lives, when a repository
 already tracks it somewhere else - came from that live run, which invented the question and
-then recommended keeping the parallel tracker. Two more points changed from the same session:
+then recommended keeping the parallel tracker. `adopt.profile` came from the same run asking
+which profile the repository runs at: the greenfield path asks that bundled with the stack,
+and the brownfield path never asked it at all, because the manifest is copied in early and
+carries a default profile - so a run that does not ask has answered it by accident. Two more points changed from the same session:
 `adopt.records` leads with rewriting records into the standard's shape rather than adopting
 them as they are, since every later record will be written that way; and `adopt.backlog` leads
 with a seeded backlog whose rows name **the role** the work needs, not a person. In a repo with
