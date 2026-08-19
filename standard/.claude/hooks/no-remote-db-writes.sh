@@ -13,7 +13,15 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CMD=$(read_command)
 [ -n "${CMD}" ] || exit 0
 
-WRITE_RE='\b(insert|update|delete|drop|alter|create|truncate|grant|revoke|merge|vacuum|reindex|cluster|refresh)\b|\bcopy\b.*\bfrom\b|\bcomment[[:space:]]+on\b|\breassign[[:space:]]+owned\b|\bpg_(terminate|cancel)_backend\b|(^|[[:space:]])-f[[:space:]]|--file|(^|[^<])<($|[^<])'
+# `-f` is matched attached as well as spaced, and a named .sql file counts on its own.
+#
+# Both gaps were the same shape: the statement never appears in the command line, so none of the
+# verbs above are there to find. `psql -h prod -fmigration.sql` carried the file attached to the
+# flag, and `cat migration.sql | psql -h prod` carried it through a pipe - each ran a whole
+# migration against a production database with the guard silent, which is the one thing it exists
+# to stop. Naming a .sql file next to a remote client is enough; what is inside it cannot be read
+# from here, and a guard that cannot read what it would run has not checked it.
+WRITE_RE='\b(insert|update|delete|drop|alter|create|truncate|grant|revoke|merge|vacuum|reindex|cluster|refresh)\b|\bcopy\b.*\bfrom\b|\bcomment[[:space:]]+on\b|\breassign[[:space:]]+owned\b|\bpg_(terminate|cancel)_backend\b|(^|[[:space:]])-f|--file|\.sql([[:space:]]|["'"'"')]|$)|(^|[^<])<($|[^<])'
 
 # Every SQL client, not only the Postgres ones.
 #
@@ -71,6 +79,10 @@ fi
 
 while IFS= read -r segment; do
   [ -n "${segment}" ] || continue
+  # A segment that searches for text is not a segment that runs it, so documenting a remote psql
+  # call does not read as making one. The write signals above are still taken from the whole
+  # command, so a search piped into a client is judged on the client's segment.
+  segment_is_search "${segment}" && continue
 
   remote=0
 
@@ -128,7 +140,7 @@ while IFS= read -r segment; do
     fi
   fi
 done <<EOF
-$(split_segments "${CMD}")
+$(split_segments_quoted "${CMD}")
 EOF
 
 exit 0
