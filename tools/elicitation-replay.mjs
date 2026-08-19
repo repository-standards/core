@@ -7,7 +7,7 @@
 // answers the only question that matters - if the mechanism had existed when the run
 // happened, would it have stopped it?
 //
-// So this replays a real transcript. Every Write/Edit in it is fed to the guard exactly as
+// So this replays a real transcript. Every write in it is fed to the guard exactly as
 // the hook would receive it, with the transcript truncated to what had actually been said
 // by that moment - because a guard handed the whole session would see questions asked
 // after the write it is judging, and pass writes that were unasked-for at the time.
@@ -21,7 +21,7 @@
 //
 // Zone 1 tooling - never shipped.
 
-import { readFileSync, writeFileSync, mkdtempSync, rmSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdtempSync, mkdirSync, copyFileSync, rmSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -36,6 +36,13 @@ export function replay(transcriptPath) {
   const prefix = join(dir, "prefix.jsonl");
   const writes = [];
 
+  // The guard runs in a tree holding the points and nothing else, on purpose. Run from this
+  // repository it would read our own docs/adoption-provenance.md, and a row someone set to
+  // `absent` here would start waving writes through in a replay of somebody else's session.
+  // What is being measured is the transcript; this repo's state must not be able to move it.
+  mkdirSync(join(dir, ".claude/elicitation"), { recursive: true });
+  copyFileSync(resolve("standard/.claude/elicitation/points.json"), join(dir, ".claude/elicitation/points.json"));
+
   for (let i = 0; i < lines.length; i++) {
     let entry;
     try { entry = JSON.parse(lines[i]); } catch { continue; }
@@ -43,7 +50,7 @@ export function replay(transcriptPath) {
     if (entry.message?.role !== "assistant" || !Array.isArray(content)) continue;
 
     for (const b of content) {
-      if (b.type !== "tool_use" || (b.name !== "Write" && b.name !== "Edit")) continue;
+      if (b.type !== "tool_use" || !["Write", "Edit", "NotebookEdit"].includes(b.name)) continue;
 
       // Everything said strictly before this turn. Including the turn itself would let a
       // question asked in the same breath as the write vouch for it.
@@ -54,7 +61,7 @@ export function replay(transcriptPath) {
         tool_input: b.input,
         transcript_path: prefix,
       };
-      const run = spawnSync("node", [GUARD], { input: JSON.stringify(call), encoding: "utf8" });
+      const run = spawnSync("node", [GUARD], { input: JSON.stringify(call), encoding: "utf8", cwd: dir });
       let verdict = "through", reason = null;
       if (run.status !== 0) verdict = `BROKEN:exit ${run.status}`;
       else if (run.stdout.trim()) {
@@ -79,20 +86,20 @@ export function replay(transcriptPath) {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();
 
 function main() {
-const TRANSCRIPT = process.argv[2];
-if (!TRANSCRIPT) {
-  console.error("usage: node tools/elicitation-replay.mjs <transcript.jsonl> [--json]");
-  process.exit(2);
-}
-const result = replay(TRANSCRIPT);
-if (AS_JSON) {
-  console.log(JSON.stringify(result, null, 2));
-} else {
-  console.log(`replay of ${TRANSCRIPT}`);
-  for (const w of result.writes) {
-    console.log(`  ${w.verdict === "STOPPED" ? "STOPPED" : "through"}  ${w.tool} ${w.path}`);
-    if (w.reason) console.log(`           ${w.reason}`);
+  const TRANSCRIPT = process.argv[2];
+  if (!TRANSCRIPT) {
+    console.error("usage: node tools/elicitation-replay.mjs <transcript.jsonl> [--json]");
+    process.exit(2);
   }
-  console.log(`\n  ${result.stopped} of ${result.writes.length} write(s) would have been refused`);
-}
+  const result = replay(TRANSCRIPT);
+  if (AS_JSON) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log(`replay of ${TRANSCRIPT}`);
+    for (const w of result.writes) {
+      console.log(`  ${w.verdict === "STOPPED" ? "STOPPED" : "through"}  ${w.tool} ${w.path}`);
+      if (w.reason) console.log(`           ${w.reason}`);
+    }
+    console.log(`\n  ${result.stopped} of ${result.writes.length} write(s) would have been refused`);
+  }
 }

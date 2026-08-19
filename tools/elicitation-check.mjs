@@ -90,6 +90,7 @@ function pushHuman(text) {
 const questions = [];
 const records = new Map();
 const askIds = new Set();
+const answeredIds = new Set();
 
 for (const line of raw.split("\n")) {
   if (!line.trim()) continue;
@@ -113,7 +114,9 @@ for (const line of raw.split("\n")) {
         else if (b.type === "tool_result" && askIds.has(b.tool_use_id)) {
           const text = typeof b.content === "string" ? b.content : JSON.stringify(b.content);
           // Shape: The user answered: "<question>"="<answer>". Only the answer is human.
-          for (const m of text.matchAll(/"[^"]*"="([^"]*)"/g)) pushHuman(m[1]);
+          let any = false;
+          for (const m of text.matchAll(/"[^"]*"="([^"]*)"/g)) { pushHuman(m[1]); any = true; }
+          if (any) answeredIds.add(b.tool_use_id);
         }
       }
     }
@@ -139,7 +142,10 @@ for (const line of raw.split("\n")) {
 }
 
 const corpus = norm(humanCorpus.join("\n"));
-const answered = questions.filter((q) => askIds.has(q.id)).length > 0 && humanCorpus.length > 0;
+// An asked question is not an answered one. Keying this on askIds made every question its
+// own evidence, which is the shape of the defect: the agent authors the asking, the human
+// authors only the reply, so the reply is the only part worth counting.
+const answered = questions.some((q) => answeredIds.has(q.id));
 
 const failures = [];
 
@@ -166,7 +172,7 @@ if (uncovered.length) {
 if (!answered) {
   failures.push({
     check: "human-presence",
-    detail: `no question with a recorded answer: ${questions.length} asked, ${humanCorpus.length} human turn(s) in the whole run`,
+    detail: `no question with a recorded answer: ${questions.length} asked, ${answeredIds.size} answered, ${humanCorpus.length} human turn(s) in the whole run`,
   });
 }
 

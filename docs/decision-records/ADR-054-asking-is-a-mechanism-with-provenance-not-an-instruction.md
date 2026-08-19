@@ -14,7 +14,7 @@ repository cannot answer for itself, and the owner decides. Every layer of the p
 repeated that promise. Nothing implemented it.
 
 Measured on 2026-08-19, across the shipped tree and the transition skills: **zero of
-twenty-two skills contained a single call to `AskUserQuestion`.** Not a weak one, not a
+twenty-three skills contained a single call to `AskUserQuestion`.** Not a weak one, not a
 conditional one - none. The instruction existed as prose, in the right file, in plain
 words: `onboard.md` said to mark inferred work unconfirmed and put the interview in the
 backlog.
@@ -118,8 +118,9 @@ exist on disk).
 - **Two layers must stay separate.** A run that asked and then invented the answer is
   deliberately not the guard's catch; it is the transcript checker's. A test pins that
   division so merging them breaks a case instead of passing quietly.
-- **Node becomes load-bearing for the hook.** Consistent with the ten `.mjs` scripts the
-  standard already ships, and the wiring denies rather than passes when it cannot run.
+- **Node becomes load-bearing for the hook.** Consistent with the `.mjs` scripts the
+  standard already shipped before this, and the wiring denies rather than passes when it
+  cannot run.
 
 ## Revisit when
 
