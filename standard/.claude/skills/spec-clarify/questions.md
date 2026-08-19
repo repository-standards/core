@@ -20,7 +20,7 @@ Options, in order: **tell me now** / **suggest it, I will check later** (`provis
 
 This skill's own description promises it asks one question at a time. Until this call existed, it had no way to ask anything.
 
-Records to `the spec's Requirements section` as `point_id: spec.scope` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `spec.scope` row takes the state, who answered, the date, and `the spec's Requirements section` as where the answer landed.
 
 ### `[spec.acceptance]` What done means
 
@@ -34,7 +34,7 @@ Options, in order: **tell me now** / **suggest it, I will check later** (`provis
 
 Acceptance criteria written by the party that will satisfy them are not criteria.
 
-Records to `the spec's Acceptance criteria` as `point_id: spec.acceptance` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `spec.acceptance` row takes the state, who answered, the date, and `the spec's Acceptance criteria` as where the answer landed.
 
 ### `[spec.unknowns]` Points still undetermined
 
@@ -48,4 +48,4 @@ Options, in order: **decide now** / **suggest it, I will check later** (`provisi
 
 Silently resolving an unknown is the failure mode. Naming it as unresolved is the job.
 
-Records to `the spec's open questions` as `point_id: spec.unknowns` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `spec.unknowns` row takes the state, who answered, the date, and `the spec's open questions` as where the answer landed.

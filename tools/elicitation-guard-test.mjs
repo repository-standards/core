@@ -16,8 +16,8 @@
 // Zone 1 tooling - never shipped.
 
 import { spawnSync } from "node:child_process";
-import { writeFileSync, mkdtempSync } from "node:fs";
-import { join } from "node:path";
+import { writeFileSync, mkdtempSync, mkdirSync, copyFileSync, rmSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 
 const GUARD = "standard/.claude/hooks/elicitation-guard.mjs";
@@ -84,6 +84,29 @@ const CASES = [
   ["prose merely mentioning the word does not count as a declaration", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "The owner was absent, so adopt.personas was hard to pin down.\n" } }, DENY],
 ];
 
+// The ledger path needs its own working tree: the guard reads docs/adoption-provenance.md
+// relative to where it runs. Asserted from this repo it would read the shipped template,
+// where every row is `pending`, and prove nothing either way.
+function inRepoWithLedger(ledgerBody, call) {
+  const dir = mkdtempSync(join(tmpdir(), "elicit-repo-"));
+  mkdirSync(join(dir, ".claude/elicitation"), { recursive: true });
+  mkdirSync(join(dir, "docs"), { recursive: true });
+  copyFileSync(resolve("standard/.claude/elicitation/points.json"), join(dir, ".claude/elicitation/points.json"));
+  writeFileSync(join(dir, "docs/adoption-provenance.md"), ledgerBody);
+  const run = spawnSync("node", [resolve(GUARD)], { input: JSON.stringify(call), encoding: "utf8", cwd: dir });
+  rmSync(dir, { recursive: true, force: true });
+  if (run.status !== 0 || run.stderr.trim()) return `BROKEN:exit ${run.status} ${run.stderr.trim().slice(0, 60)}`;
+  if (!run.stdout.trim()) return ALLOW;
+  try { return JSON.parse(run.stdout).hookSpecificOutput?.permissionDecision === "deny" ? DENY : "BROKEN:not a deny verdict"; }
+  catch { return "BROKEN:stdout is not JSON"; }
+}
+
+const LEDGER_CASES = [
+  ["a ledger row recording the stub is read as one", "| `adopt.personas` | absent | - | - | - | - |\n", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "# Personas\n" } }, ALLOW],
+  ["a pending ledger row is not a stub, and does not let the write through", "| `adopt.personas` | pending | - | - | - | - |\n", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "# Personas\n" } }, DENY],
+  ["a ledger claiming a person answered still needs the transcript to say so", "| `adopt.personas` | human | owner | 2026-08-19 | docs/personas.md | - |\n", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "# Personas\n" } }, DENY],
+];
+
 let bad = 0;
 for (const [name, call, expected] of CASES) {
   const got = score(call);
@@ -92,5 +115,13 @@ for (const [name, call, expected] of CASES) {
   console.log(`  ${ok ? "ok  " : "FAIL"}  ${name}${ok ? "" : ` (got ${got}, expected ${expected})`}`);
 }
 
-console.log(bad ? `\nelicitation-guard-test: FAIL - ${bad}/${CASES.length}` : `\nelicitation-guard-test: OK - ${CASES.length} cases, refusals and pass-throughs both`);
+for (const [name, ledgerBody, call, expected] of LEDGER_CASES) {
+  const got = inRepoWithLedger(ledgerBody, call);
+  const ok = got === expected;
+  if (!ok) bad++;
+  console.log(`  ${ok ? "ok  " : "FAIL"}  ${name}${ok ? "" : ` (got ${got}, expected ${expected})`}`);
+}
+
+const total = CASES.length + LEDGER_CASES.length;
+console.log(bad ? `\nelicitation-guard-test: FAIL - ${bad}/${total}` : `\nelicitation-guard-test: OK - ${total} cases, refusals and pass-throughs both`);
 process.exit(bad ? 1 : 0);
