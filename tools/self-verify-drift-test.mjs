@@ -63,8 +63,22 @@ const fixture = () => {
   cpSync(TREE, dir, { recursive: true });
   writeFileSync(join(dir, ".standards-version"), `${VERSION}\n`);
   writeFileSync(join(dir, "docs/adoption-assessment.md"), FILLED_ASSESSMENT);
+  answeredProvenance(dir);
   return dir;
 };
+
+// An adopted repo that went through its questions. Without this the ledger ships all
+// `pending`, and any case writing an artifact one of those points gates - `stack.manifest.json`
+// is the one that bites here - adds a drift this suite is not measuring. The elicitation
+// ledger has its own suite; these cases are about self-verify's arithmetic.
+function answeredProvenance(dir) {
+  const points = JSON.parse(readFileSync(join(dir, ".claude/elicitation/points.json"), "utf8")).points || [];
+  const rows = points.map((p) => `| \`${p.id}\` | human | fixture | 2026-08-19 | docs/x.md | - |`).join("\n");
+  writeFileSync(
+    join(dir, "docs/adoption-provenance.md"),
+    `# Adoption provenance\n\n| Point | State | Answered by | When | Landed in | Backlog row |\n|---|---|---|---|---|---|\n${rows}\n`,
+  );
+}
 
 const run = (dir, args = []) => {
   const r = spawnSync("node", [join(dir, "scripts/self-verify.mjs"), ...args], { cwd: dir, encoding: "utf8" });

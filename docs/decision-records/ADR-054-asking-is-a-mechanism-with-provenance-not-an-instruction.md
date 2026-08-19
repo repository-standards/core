@@ -85,10 +85,16 @@ unfinished, which is what it is. **Guessing is the only move with no legal path.
 points - who the repository is for, what the owner meant by adopting - refuse even the stub,
 and an unattended run stops there.
 
-`pending` is the state of a freshly scaffolded repo, and it is legal exactly until
-`.standards-version` exists. That file is the repo's own claim to be adopted; after it, a
-required point still pending is an adoption that stopped halfway and closed the door behind
-it.
+`pending` is the state of a freshly scaffolded repo, and it stays legal until the point is
+**reached**: until a path it gates holds an artifact that did not ship as a template. Then it
+is an adoption that stopped halfway and closed the door behind it.
+
+`.standards-version` was the first trigger tried and it is wrong. That file is written at
+align time, before a single question has been put to anyone, so keying on it fails every
+freshly adopted repo on its first run - and fails the shipped tree's own template, where
+every row is pending because nothing has happened yet. A guard that is red on arrival is one
+people delete rather than satisfy, and it would have taught exactly the wrong lesson about
+what these states mean.
 
 Claims about human participation are separated from claims about machinery. Every validation
 run record carries `provenance`: `none` (measures tooling, nobody prompted), `unverified`

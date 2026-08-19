@@ -15,7 +15,7 @@
     "defer": "Not now, ask again at the next checkpoint. -> nothing is written."
   },
   "provenance_states": {
-    "pending": "The run has not reached this point yet. A freshly scaffolded repo starts here, and it is not a resting place: once .standards-version exists the repo claims to be adopted, and a required point still pending is an adoption that stopped halfway.",
+    "pending": "The run has not reached this point yet. A freshly scaffolded repo starts here, and it is not a resting place: once a path this point gates holds an artifact that did not ship as a template, something was written where the question belonged, and a row still pending is an adoption that stopped halfway.",
     "human": "Answered by a person; verifiable against the session transcript.",
     "provisional": "Agent-authored under an explicit 'suggest' choice; awaiting verification.",
     "inferred": "Agent concluded it from the repository and said so. Never valid where the answer is a preference rather than a fact.",

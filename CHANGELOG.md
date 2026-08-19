@@ -39,7 +39,8 @@ Three layers now hold it, and the third is the only one that is not the agent's 
 - [`docs/adoption-provenance.md`](standard/docs/adoption-provenance.md) is one table with one
   row per point, and `scripts/elicitation-provenance.mjs` checks it: a `provisional` answer
   must name a backlog row that exists, a `human` answer must name who and when, and `pending`
-  stops being acceptable the moment `.standards-version` exists.
+  stops being acceptable the moment a path that point gates holds an artifact that did not
+  ship as a template.
 
 The guard deliberately permits one thing: writing a **stub**. A run with nobody to ask cannot
 ask, and a guard leaving such a run no legal move gets removed rather than obeyed. So a write
