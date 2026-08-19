@@ -50,7 +50,18 @@ unfinished - which is what it is. Guessing is what has no legal path.
 Measured rather than asserted: replayed past the real guard, the run that caused all of this
 is stopped at **5 of 5** of its artifact writes; a run that only *claims* to have asked is
 stopped too; a run that genuinely asked first is never refused. Those three cases and two
-more are `tools/elicitation-replay-test.mjs`, alongside 21 guard cases and 13 ledger cases.
+more are `tools/elicitation-replay-test.mjs`, alongside 21 guard cases and 16 ledger cases.
+
+The ledger check was then run over that repository's real artifacts on a tree carrying this
+release, and named the same five - intake, decision records, personas, backlog, product -
+without seeing the transcript at all. Two layers reaching the same set from different
+evidence is the closest thing to a second opinion this repo can produce. It also cost the
+first version of the rule: an earlier draft treated everything under a shipped directory as
+scaffolding, so thirty-seven real decision records read as untouched template and the check
+reported nothing wrong. What ships is now separated three ways - a file meant to stay
+verbatim is compared to its hash, a directory's scaffolding is recognised by the standard's
+own naming, and a fill-from-repo slot counts as untouched only while it still holds the
+placeholders it shipped with.
 
 What this does **not** prove is that an answer, once given, was honoured - no layer here sees
 that, and [ADR-054](docs/decision-records/ADR-054-asking-is-a-mechanism-with-provenance-not-an-instruction.md)
