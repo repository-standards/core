@@ -31,7 +31,7 @@ read at all - most often because the run was recorded from the repository state 
 rather than from the agent's own words, which shows what it did and not what it asked. Both stay
 out of the numerator and the denominator, and both are printed rather than absorbed.
 
-Verdicts across every run: 54 pass, 39 partial, 16 fail.
+Verdicts across every run: 55 pass, 39 partial, 16 fail.
 
 Agent turns quoted verbatim from a session transcript, across every run: **268/370 (72%)**.
 The rest are descriptions of what the agent did, written afterwards by whoever scored the run -
@@ -49,6 +49,7 @@ says which kind a given run mostly is. See `Agent turns quoted` below for run by
 | [`2026-08-09-e-live.json`](runs/2026-08-09-e-live.json) | 2 | 4 agent turns | **2/4** (50%) | **4/4** (100%) | **3/4** (75%) | 0/4 (0%) | 1 pass, 1 partial | `$relay_caveat`<br>`$environment_caveat` |
 | [`2026-08-10-f-adopter-nextjs-mt.json`](runs/2026-08-10-f-adopter-nextjs-mt.json) | 29 | 269 agent turns | **8/26** (31%) <br><sub>4 n/a, 239 unscored</sub> | **26/30** (87%) <br><sub>239 unscored</sub> | **25/30** (83%) <br><sub>239 unscored</sub> | 268/269 (100%) | 12 pass, 12 partial, 5 fail | `$anonymity_caveat`<br>`$recovery_caveat` |
 | [`2026-08-10-f-anonymised.json`](runs/2026-08-10-f-anonymised.json) | 1 | 6 agent turns | **1/6** (17%) | **6/6** (100%) | **4/6** (67%) | 0/6 (0%) | 1 partial | - |
+| [`2026-08-19-g-adoption.json`](runs/2026-08-19-g-adoption.json) | 1 | 1 observation | **1/1** (100%) | **1/1** (100%) | **1/1** (100%) | - | 1 pass | - |
 
 **Every conversation behind these numbers is readable.** One page per run under
 [`scenarios/`](scenarios/), rendered from the same rows: what was typed, what the agent did,
