@@ -90,8 +90,21 @@ process.stdin.on("end", () => {
   // you wrote two steps ago does not. Outside a git work tree there is no repository naming to
   // overwrite, so nothing to refuse - this is the one place passing is the correct answer to
   // an unanswerable question rather than a hole in a fail-closed guard.
-  const tracked = (path) =>
-    spawnSync("git", ["ls-files", "--error-unmatch", "--", path], { encoding: "utf8" }).status === 0;
+  //
+  // Asked in the right repository, which is not always this one. An adoption is driven from a
+  // checkout of the standard and writes into a different tree, so it spells the move either
+  // `git -C <target> mv` or with absolute paths. Asking git here about a path over there gets
+  // "untracked" for everything - the answer that waves the whole thing through.
+  const trackedIn = (dir, path) =>
+    spawnSync("git", ["-C", dir, "ls-files", "--error-unmatch", "--", path], { encoding: "utf8" }).status === 0;
+  const tracked = (path, cd) => {
+    if (cd) return trackedIn(cd, path);
+    if (path.startsWith("/")) {
+      const cut = path.lastIndexOf("/");
+      return trackedIn(path.slice(0, cut) || "/", path.slice(cut + 1));
+    }
+    return trackedIn(".", path);
+  };
 
   // Segment-by-segment, like the other guards here, so a harmless command chained before a
   // move cannot vouch for it. `git -C <dir> mv` is spelled out because it is the form an agent
@@ -99,9 +112,10 @@ process.stdin.on("end", () => {
   const movedFromUnder = (cmd) => {
     const out = [];
     for (const segment of cmd.split(/\n|;|&&|\|\||\|/)) {
-      const m = /^\s*(?:git\s+(?:-C\s+\S+\s+)?)?mv\s+(.+)$/.exec(segment);
+      const m = /^\s*(?:git\s+(?:-C\s+(\S+)\s+)?)?mv\s+(.+)$/.exec(segment);
       if (!m) continue;
-      const tokens = (m[1].match(/"[^"]*"|'[^']*'|\S+/g) || []).map((a) => a.replace(/^["']|["']$/g, ""));
+      const cd = m[1] ? m[1].replace(/^["']|["']$/g, "") : null;
+      const tokens = (m[2].match(/"[^"]*"|'[^']*'|\S+/g) || []).map((a) => a.replace(/^["']|["']$/g, ""));
       // `mv -t DIR src...` names its destination first, so the usual last-argument rule reads
       // the only source as a destination and finds nothing to check.
       const sources = [];
@@ -114,7 +128,7 @@ process.stdin.on("end", () => {
         sources.push(t);
       }
       if (target) sources.pop();
-      for (const src of sources) if (tracked(src) && !out.includes(src)) out.push(src);
+      for (const src of sources) if (tracked(src, cd) && !out.includes(src)) out.push(src);
     }
     return out;
   };

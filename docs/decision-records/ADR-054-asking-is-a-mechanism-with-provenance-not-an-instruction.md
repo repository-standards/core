@@ -121,6 +121,13 @@ exist on disk).
 - **Node becomes load-bearing for the hook.** Consistent with the `.mjs` scripts the
   standard already shipped before this, and the wiring denies rather than passes when it
   cannot run.
+- **The layer cannot bootstrap itself.** A `PreToolUse` hook is wired when the session
+  starts, and an unaligned repository has no wiring - so the adoption run, which is the run
+  this exists to stop, is the one run the hook does not cover unless it is landed first. The
+  adoption therefore lands the guard, the points and the ledger before it writes anything
+  else, and says plainly that the session must restart for the wiring to bind. Nothing it
+  writes at that stage is gated, so the ordering costs nothing; leaving it implicit costs the
+  whole layer on the only run that matters.
 
 ## Revisit when
 
