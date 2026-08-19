@@ -64,9 +64,11 @@ it. Anything that reads the transcript textually believes it.
 Asking is a mechanism with three layers, none of which is sufficient alone, and a declared
 vocabulary for what happened to each answer.
 
-1. **`.claude/elicitation/points.json` is the declaration.** Eighteen points, each with the
-   question, the answers in order, which provenance states it permits, and the paths it gates.
-   `tools/elicitation-points-check.mjs` fails when a declared point has no call site.
+1. **`.claude/elicitation/points.json` is the declaration.** Twenty points, each with the
+   question, the answers in order, which one is recommended, which provenance states it
+   permits, and the paths it gates. `tools/elicitation-points-check.mjs` fails when a declared
+   point has no call site, or when the skill offers something other than the declared
+   recommendation first.
 2. **`.claude/hooks/elicitation-guard.mjs` refuses the write.** A `Write`/`Edit` to a gated
    path is denied unless that point's question fired in this session. It reads the transcript
    **structurally** - an assistant turn that really called the tool - never textually, which
@@ -79,6 +81,32 @@ vocabulary for what happened to each answer.
 Every question offers the same three answers: **answer now** (`human`), **suggest, I will
 verify later** (`provisional`, plus a backlog row), **stub, do not guess** (`absent`).
 
+**The first option is the recommended one, and it always points at convergence with the
+standard** - its layout, its shape, the whole of it rather than the parts that cost least;
+where that is not the axis, the answer a person gives now rather than defers. This is
+declared per point and checked, because leaving it to judgement produced the opposite: on the
+first live run of the finished mechanism, four of five recommendations named the least
+convergent answer available, including *keep your own layout and map the standard onto it* -
+an adoption recommending against adopting. Every one of those questions was asked correctly.
+Asking properly and then nudging toward the cautious answer is a slower version of the same
+failure, because most people take the recommendation. Keeping the repository's own way stays
+on the list - a standard imposed without consent gets reverted - but never first, and `null`
+is reserved for a question with no such axis, which is consent itself.
+
+**The declared points are a floor, not a ceiling.** They are what a hook can refuse a write
+for, and it can only refuse what somebody wrote down; the questions worth asking in any real
+repository are mostly ones no list anticipated. Inventing them is the product working. So the
+ledger carries a second table for questions no point declares, `elicitation-provenance.mjs`
+fails without it, and what accumulates there is the evidence for what the point list should
+grow. `adopt.tracker` entered the list exactly that way, from the same live run.
+
+**The question is asked in the language the person is writing in**, which is not a point and
+must not become one - a question asking which language to use has answered itself wrongly by
+existing. The language the *artifacts* use is a point (`adopt.language`): `AGENTS.md` has
+carried a `Working language` slot since the beginning with nothing ever asking for it, so it
+got filled with whatever the agent was already writing, which is English because the standard
+is. That is a decision about someone's repository made by accident.
+
 The escape from the guard is the stub, never a bypass. A run with nobody to ask declares the
 point `absent` and leaves the gap visible; that write is allowed and the run reads as
 unfinished, which is what it is. **Guessing is the only move with no legal path.** A few
@@ -88,6 +116,13 @@ and an unattended run stops there.
 `pending` is the state of a freshly scaffolded repo, and it stays legal until the point is
 **reached**: until a path it gates holds an artifact that did not ship as a template. Then it
 is an adoption that stopped halfway and closed the door behind it.
+
+Reaching is measured from **the commit that introduced the point list**, not from the one
+that introduced the standard. The two are the same tree on a fresh adoption and years apart
+on an existing one, and the difference decides whether a repository that adopted long ago
+receives this layer red: measured from `.standards-version`, every file it has written since
+adoption counts as something the adoption wrote without asking. Questions can only answer for
+writes made after the questions existed.
 
 `.standards-version` was the first trigger tried and it is wrong. That file is written at
 align time, before a single question has been put to anyone, so keying on it fails every
@@ -121,6 +156,14 @@ exist on disk).
 - **Node becomes load-bearing for the hook.** Consistent with the `.mjs` scripts the
   standard already shipped before this, and the wiring denies rather than passes when it
   cannot run.
+- **Existing adopters get it through `update-to-latest`, in a specific order.** The four
+  files that make up the layer land first and the session restarts, exactly as in a first
+  adoption - and the `PreToolUse` entry in `.claude/settings.json` is the half that gets
+  dropped, because merging a matcher into a file the repo has always edited is not a file
+  copy. An update that lands the hook without wiring it produces a repo that believes it is
+  guarded. The ledger arrives all `pending` and is not back-filled; making the check quiet by
+  writing `human` across it is the fabrication this layer exists to catch, committed by the
+  run that installed it.
 - **The layer cannot bootstrap itself.** A `PreToolUse` hook is wired when the session
   starts, and an unaligned repository has no wiring - so the adoption run, which is the run
   this exists to stop, is the one run the hook does not cover unless it is landed first. The
@@ -134,6 +177,10 @@ exist on disk).
 - A point's question fires and is answered but the answer is then ignored, and the ledger
   still reads `human`. The guard sees that a question happened, never that it was honoured;
   if that gap produces a real failure, the fix is a third assertion, not a louder second one.
+- The harvest table stays empty across several real adoptions. Either the point list already
+  covers what repositories need - unlikely, and checkable - or nobody is filling it in, which
+  makes the growth loop decorative and the honest move is to say so rather than keep the
+  section.
 - The stub escape becomes the normal path. If most rows land `absent`, the questions are
   either wrong or arriving at the wrong moment, and the point list is what needs work.
 - A repository's own layout conventions collide with a gated glob so often that the guard

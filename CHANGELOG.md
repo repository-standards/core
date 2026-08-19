@@ -27,7 +27,7 @@ typed.
 Three layers now hold it, and the third is the only one that is not the agent's decision:
 
 - [`.claude/elicitation/points.json`](standard/.claude/elicitation/points.json) declares the
-  eighteen places this standard must ask instead of decide - the question, the three answers
+  twenty places this standard must ask instead of decide - the question, the answer that leads, the three kinds of answer
   it always offers, the provenance each answer records, and the paths it gates.
   `elicitation-points-check` fails when a declared point has no call site, against a baseline
   that may only shrink.
@@ -81,7 +81,11 @@ on whether a gated path holds a non-template artifact, it fired on the decision 
 `PRODUCT.md` and specs a brownfield repository wrote years before it had heard of this
 standard - four failures on the first run, none of them evidence that anybody skipped a
 question. Reaching is now scoped to what the adoption itself wrote: the commit that
-introduced `.standards-version`, everything after it, and everything not yet committed. Where
+introduced **the point list**, everything after it, and everything not yet committed. The
+point list rather than `.standards-version`, because the two are the same tree on a fresh
+adoption and years apart on a repository taking this layer through an update - and measured
+from the older marker, every file such a repository has written since it adopted counts as
+something written without asking. Questions cannot answer for writes that predate them. Where
 that boundary cannot be drawn - no git work tree - the check says so in its output and stands
 down, because a silent skip reads exactly like a pass. Verified both directions against a
 real pre-adoption clone: clean on arrival, and failing again the moment a section is appended
@@ -102,6 +106,101 @@ that every tool the guard judges is a tool the wiring reaches.
 What this does **not** prove is that an answer, once given, was honoured - no layer here sees
 that, and [ADR-054](docs/decision-records/ADR-054-asking-is-a-mechanism-with-provenance-not-an-instruction.md)
 records it as the known gap rather than letting the coverage read wider than it is.
+
+### The recommended answer now always points at the standard (2026-08-19)
+
+The mechanism above shipped and was run against a real repository the same day. It asked -
+three `AskUserQuestion` calls, nine questions, every declared one carrying its point id. And
+**four of five recommendations named the least convergent answer available**, including *keep
+your own layout and map the standard onto it*: an adoption recommending against adopting.
+Nothing was broken. The questions were asked properly and the prose offering the options had
+simply been written cautiously, which is a slower version of the original failure, because
+most people take the recommendation.
+
+So which answer leads is no longer a matter of judgement in the moment. Every point declares
+`recommended`, the first option a skill offers must be that one, and
+`elicitation-points-check` fails when the two disagree - with
+`tools/elicitation-points-check-test.mjs` behind it, because a rule is worth what its check
+is worth and a check only ever run against a passing tree cannot tell agreement from
+blindness. The recommendation is always the answer that converges on the standard, or where
+that is not the axis, the answer a person gives now rather than defers. `null` is legal for
+exactly one kind of question: consent, which is asked and never nudged.
+
+Keeping the repository's own way stays on every list - a standard imposed without consent
+gets reverted - but it is never first. What can be checked is the order as *written*; the
+question reaches the user in their own language and matches no string held here, which is
+precisely why the rule is declared rather than left to the run.
+
+### The point list is a floor, and the questions a run invents grow it (2026-08-19)
+
+Twenty declared points read as a ceiling, and they are the opposite: they are what a hook can
+refuse a write for, and it can only refuse what somebody wrote down. Every repository differs,
+and most of the questions worth asking in one are questions no list anticipated - inventing
+them is the product working, and the recommendation rule binds them exactly as it binds the
+declared ones.
+
+The ledger therefore carries a second table, for questions this run asked that no point
+declares, and `elicitation-provenance.mjs` fails when it is missing: an unrecorded invented
+question is indistinguishable from one nobody needed. What accumulates there is better
+evidence for what the point list should contain than anything written at a desk.
+
+It has already produced one: `adopt.tracker` - where tracked work lives, when a repository
+already tracks it somewhere else - came from that live run, which invented the question and
+then recommended keeping the parallel tracker. Two more points changed from the same session:
+`adopt.records` leads with rewriting records into the standard's shape rather than adopting
+them as they are, since every later record will be written that way; and `adopt.backlog` leads
+with a seeded backlog whose rows name **the role** the work needs, not a person. In a repo with
+one or two people, assigning a name to every row is theatre, and saying nothing at all leaves
+work nobody can categorise.
+
+### The questions are asked in the user's language; the artifacts' language is a decision (2026-08-19)
+
+A Polish owner answering a wall of English options is being handed a translation task on top
+of a decision. Questions are now put in the language the person is writing in, from their
+first message - and that is deliberately not a point, because a question asking which language
+to ask in has already answered itself wrongly.
+
+The language the **artifacts** use is a real decision and now has a point, `adopt.language`.
+`AGENTS.md` has carried a `Working language` slot since the beginning with nothing ever asking
+for it, so it got filled with whatever the agent was writing in, which is English because the
+standard is. The recommended answer is the split the template itself names - code and commits
+in English, docs and specs in the team's language - and this is the one point where `inferred`
+is a legitimate state, because a repository's existing prose is evidence rather than a guess.
+
+### An already-adopted repo gets this layer through the update, wired (2026-08-19)
+
+`update-to-latest` copies files; this layer is not only files. It now lands the guard, the
+points, the `PreToolUse` matcher and the ledger first, then stops for a session restart -
+the same order a first adoption uses, and for the same reason: a hook binds at session start,
+so the rest of the update would otherwise write gated artifacts with the guard inert.
+
+The matcher is the half that goes missing, because `.claude/settings.json` is a file every
+repo has edited and merging an entry into a list is not a copy. An update that lands the hook
+script without wiring it leaves a repository that believes it is guarded, which is worse than
+one that knows it is not. The ledger arrives all `pending` and must not be back-filled:
+writing `human` across it to quiet the check is the fabrication this layer exists to catch,
+committed by the run that installed it.
+
+The same skill also now says plainly that self-verify reads the **whole tree** against the
+target, not the delta this update happened to apply. A directory the standard reorganised
+three versions ago and this repo never followed is not in any current diff and is drift all
+the same - and it surfaces here, in the update, rather than staying invisible.
+
+### The line we ship stopped asking the user to ask (2026-08-19)
+
+The published entry line was `follow repositorystandards.com - take this repo onto the
+standard, interview me for what you need`. The clause at the end is the product's own job,
+handed to whoever types the prompt: an agent that interviewed on that line had been told to,
+and this file's own corpus notes said so in plain words twelve days ago -
+`prompts.md` scored three runs as `asked` and then annotated each with "asked because the
+line told it to". It was recorded as a caveat for reading scores, when it was a defect in
+what we ship.
+
+Nobody types that line. The shipped one is now **`adopt this repo to repositorystandards.com`**
+in the README, the quick start and the method - four words and a domain, matching what an
+adopter actually writes. The interview survives the shortening because the hook above refuses
+to write an artifact nobody was asked about; before this release, shortening the line would
+have silently removed the asking with it.
 
 ### The validation corpus now says what it can and cannot evidence (2026-08-19)
 
