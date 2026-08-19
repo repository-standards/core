@@ -303,7 +303,20 @@ elif ! command -v node >/dev/null 2>&1; then
   FAILURES=$((FAILURES + 1))
 else
   elicit() { # elicit <json payload>
-    verdict "$(printf '%s' "$1" | node "${ELICIT}" 2>/dev/null)"
+    # Node can fail in a way the bash guards cannot: a crash writes to stderr, exits nonzero
+    # and leaves stdout empty, which verdict() on its own reads as `allow`. Two of the three
+    # cases below expect exactly that, so a dead guard would score two passes.
+    local err out st
+    err="$(mktemp)"
+    out="$(printf '%s' "$1" | node "${ELICIT}" 2>"${err}")"
+    st=$?
+    if [ "${st}" -ne 0 ] || [ -s "${err}" ]; then
+      rm -f "${err}"
+      printf 'BROKEN'
+      return
+    fi
+    rm -f "${err}"
+    verdict "${out}"
   }
   assert "a gated artifact with nothing asked is refused" DENY \
     "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/personas.md"}}')"
@@ -311,6 +324,20 @@ else
     "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/personas.md","content":"adopt.personas: absent"}}')"
   assert "a path no point gates is left alone" allow \
     "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"src/index.ts"}}')"
+  # Two of the three above expect `allow`, and a guard that never ran also produces no output.
+  # So the scorer is shown catching a dead one, on the same payload that legitimately passes.
+  CRASH="$(mktemp -d 2>/dev/null || printf '')"
+  if [ -z "${CRASH}" ]; then
+    printf '  FAIL could not create a temp dir, so the dead-guard case never ran\n'
+    FAILURES=$((FAILURES + 1))
+  else
+    printf 'throw new Error("dead");\n' > "${CRASH}/crash.mjs"
+    saved_elicit="${ELICIT}"; ELICIT="${CRASH}/crash.mjs"
+    assert "a guard that throws is not read as a pass-through" BROKEN \
+      "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"src/index.ts"}}')"
+    ELICIT="${saved_elicit}"
+    rm -rf "${CRASH}"
+  fi
 fi
 
 echo

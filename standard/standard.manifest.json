@@ -369,7 +369,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R19",
-      "sha256": "201b2194271314b06c5533d85b283081ceef5439a4c7091bb824d65fa5b9cacf"
+      "sha256": "fe5eceecefe01725c7067c0b3423e33c0f898282d2f618c0ba79b0eb9d713e3b"
     },
     {
       "path": "docs/PRINCIPLES.md",
@@ -639,7 +639,7 @@
     },
     {
       "path": "scripts/elicitation-provenance.mjs",
-      "purpose": "the provenance ledger stays honest - every required point has a row, a deferred answer names a backlog row that exists, and pending stops being legal once the repo claims to be adopted",
+      "purpose": "the provenance ledger stays honest - every required point has a row, a deferred answer names a backlog row that exists, and a point stops being legally pending once something it gates has been written",
       "adapt": "copy",
       "required": true,
       "profile": "core",
