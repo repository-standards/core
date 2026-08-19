@@ -366,11 +366,13 @@ Fires **before the manifest copy is written**, which is early: the shipped manif
 
 Count the distinct authors in the repository's recent history and say what you found, then call `AskUserQuestion` with the header `[adopt.profile]` and the question:
 
-> Does this repository run at the `core` profile or the `scale` one - one or two people working directly, or a team with sprints and hand-offs?
+> Does this repository run at the `core` profile or the `scale` one - is the work handed off between people, or does one person carry each piece end to end?
 
 Options, in order: **confirm the detection** (recommended - you have the evidence in front of you, and a person confirming it is an answer, not a guess) / **the other one** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
 
-There is no answer here that converges more than the other. `scale` is not a fuller adoption than `core` - it is a different shape (ADR-011), with sprint artifacts and gates a two-person repo has no use for. Recommending it because it is *more standard* is how a repository ends up measured against a process nobody runs.
+There is no answer here that converges more than the other. `scale` is not a fuller adoption than `core` - it is a different shape (ADR-011), with gates a repo where one person carries each piece end to end has no use for. Recommending it because it is *more standard* is how a repository ends up measured against a process nobody runs.
+
+**Ask it by hand-off, not by headcount and not by sprints.** The first repository this was put to answered neither option - it typed its own: several people, no sprints, tasks taken off a backlog. That is `scale` on the only axis that decides anything (work changes hands, so the gate has to block rather than advise) and reads as `core` on both of the axes that do not. Sprints are not what `scale` means: `docs/sprints/` and `sprint-guard` are `required: false` even there, so a team that does not run sprints is not excused from the profile and does not owe the artifacts.
 
 ### `[adopt.existing-material]` Informal material already in the repo
 

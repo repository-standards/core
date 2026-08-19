@@ -61,9 +61,9 @@
       "id": "adopt.profile",
       "skill": "align-to-standards",
       "file": "intake.md",
-      "asks": "Does this repository run at the `core` profile or the `scale` one - one or two people working directly, or a team with sprints and hand-offs?",
+      "asks": "Does this repository run at the `core` profile or the `scale` one - is the work handed off between people, or does one person carry each piece end to end?",
       "recommended": "confirm the detection",
-      "why": "green.stack asks this on the greenfield path, bundled with the stack, and nothing asks it on the brownfield one - where the manifest is copied in early and carries a default profile. A repository that adopts under the wrong profile is scored against gates its team does not run, or silently excused from ones it does. There is no convergent answer here: `scale` is not a fuller adoption than `core` (ADR-011), it is a different shape, and pushing a solo repo onto the team gate is how a standard gets reverted.",
+      "why": "green.stack asks this on the greenfield path, bundled with the stack, and nothing asks it on the brownfield one - where the manifest is copied in early and carries a default profile. A repository that adopts under the wrong profile is scored against gates its team does not run, or silently excused from ones it does. There is no convergent answer here: `scale` is not a fuller adoption than `core` (ADR-011), it is a different shape, and pushing a solo repo onto the team gate is how a standard gets reverted. Ask it by hand-off, never by headcount or sprints: the first repository asked chose neither option and typed its own - several people, no sprints, tasks taken off a backlog - which is `scale` by the only axis that matters and reads as `core` by both of the ones that do not.",
       "required": true,
       "allowed_provenance": [
         "human",
