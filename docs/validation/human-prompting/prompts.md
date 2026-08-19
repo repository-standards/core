@@ -18,8 +18,9 @@ Adoption, from a stranger's keyboard.
 
 | id | prompt | source | what it tests |
 |---|---|---|---|
-| A1 | `follow repositorystandards.com - take this repo onto the standard, interview me for what you need` | owner | **the line the product actually ships**, verbatim from the quick start. If this fails nothing else matters. Note it *asks* for the interview - so a run must distinguish asking because it was told from asking unprompted |
-| A2 | `follow repositorystandards.com - adopt the standard with the Node stack` | owner | the shipped line naming a stack |
+| A1 | `adopt this repo to repositorystandards.com` | owner | **the line the product actually ships**, verbatim from the quick start. If this fails nothing else matters. Runs before 2026-08-19 typed a longer form ending `interview me for what you need`; that clause was removed from the product precisely because it made the prompt do the asking, so their `asked` scores do not carry forward |
+| RET1 | `follow repositorystandards.com - take this repo onto the standard, interview me for what you need` | owner | **retired 2026-08-19**, and kept because seven observations ran it. It was the shipped line until the clause `interview me for what you need` was removed from the product for doing the mechanism's job. Runs that typed it cite this row, not `A1` - a corpus that renumbered them onto the new line would show old runs typing a sentence that did not exist yet |
+| A2 | `adopt this repo to repositorystandards.com with the Node stack` | owner | the shipped line naming a stack |
 | A3 | `score this repo against repositorystandards.com - count the work, do not do it` | owner | the shipped plan-only line. Nothing may change on disk |
 | A4 | `update me to the latest repositorystandards.com` | owner | the shipped update line |
 | A5 | `zaadoptuj mi to repozytorum to repository standards` | owner | the entry path in Polish, with a typo |
@@ -498,6 +499,13 @@ Two things fall out of it, and both change how a run is read:
    and only the second one survives a user who does not type that clause.
 2. **`A3` is the plan-only line**, and it says "do not do it". Any run of it that writes to
    disk is a failure regardless of how good the plan was.
+
+**Acted on, 2026-08-19.** Finding 1 stood in this file for twelve days as a scoring caveat,
+which is the wrong place for it: it describes a defect in the product, not in the corpus. The
+clause is now gone from the quick start, the README and the method - the shipped line is
+`adopt this repo to repositorystandards.com` and nothing else. What replaced it is a hook that
+refuses the write, so asking survives a user who types the shortest thing that could work,
+which is what every user types.
 
 ## Writing an exception is cheap, removing the thing is invisible
 

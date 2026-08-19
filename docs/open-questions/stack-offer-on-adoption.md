@@ -17,7 +17,8 @@ tests the gate:
   (`take this repo onto repositorystandards.com with the node stack`), which supplies
   consent in its opening words - detection is never exercised, only obedience. `A2`,
   the shipped stack-named line, has not been run at all.
-- **Nobody names it.** `A1` ("interview me for what you need") has run twice against
+- **Nobody names it.** `RET1` (the entry line retired on 2026-08-19, ending "interview me
+  for what you need") has run twice against
   `hagopj13/node-express-boilerplate` - the only entry line ever run where the repo
   matches the one registered technology and the prompt says nothing about a stack. Both
   times Layer 2 ended up unapplied, and both times something other than the user's

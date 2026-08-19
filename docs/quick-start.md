@@ -3,11 +3,13 @@
 One line to your agent. There is nothing to install and nothing to build.
 
 ```
-> follow repositorystandards.com - take this repo onto the standard, interview me for what you need
+> adopt this repo to repositorystandards.com
 ```
 
-That is the whole thing. The agent reads the standard, works out whether your repo is new
-or has ten years of history, and asks you what it cannot work out for itself.
+That is the whole thing, and it is the whole line - there is no clause you have to remember.
+The agent reads the standard, works out whether your repo is new or has ten years of history,
+and asks you what it cannot work out for itself, because a hook refuses to write an artifact
+nobody was asked about.
 
 ## The other three lines you will ever need
 
@@ -27,7 +29,7 @@ deviations survive it:
 **You are on a registered stack.** Both layers, one number:
 
 ```
-> follow repositorystandards.com - adopt the standard with the Node stack
+> adopt this repo to repositorystandards.com with the Node stack
 ```
 
 ## What you get back
@@ -53,7 +55,7 @@ npx degit repository-standards/core .repository-standards
 ```
 
 ```
-> follow .repository-standards/skills/align-to-standards/SKILL.md - take this repo onto the standard
+> adopt this repo to the standard in .repository-standards/
 ```
 
 You need Node and `jq` on the machine for the shipped guards to work. Without `jq` the

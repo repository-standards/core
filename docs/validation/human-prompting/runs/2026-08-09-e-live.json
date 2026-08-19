@@ -11,7 +11,7 @@
   "$environment_caveat": "Both subagents ran as Task-tool agents launched from a session whose global CLAUDE.md and project memory index belong to this same product. Unlike run b's later checkouts, no separate `claude -p` process was used to rule out inherited context, and neither subagent was asked to declare whether it relied on outside knowledge. Take `checked` on these two observations as good evidence the agent read the repository in front of it, not as proof it was a total stranger to the product.",
   "observations": [
     {
-      "prompt": "A1",
+      "prompt": "RET1",
       "target": "repo:hagopj13/node-express-boilerplate (pre-adoption base)",
       "mode": "full-loop",
       "verdict": "partial",
