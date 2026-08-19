@@ -16,7 +16,7 @@
 // Zone 1 tooling - never shipped.
 
 import { spawnSync } from "node:child_process";
-import { writeFileSync, mkdtempSync, mkdirSync, copyFileSync, rmSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdtempSync, mkdirSync, copyFileSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 
@@ -135,7 +135,21 @@ const LEDGER_CASES = [
   ["a ledger claiming a person answered still needs the transcript to say so", "| `adopt.personas` | human | owner | 2026-08-19 | docs/personas.md | - |\n", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "# Personas\n" } }, DENY],
 ];
 
+// The cases above call the guard directly, which is exactly how a guard nothing routes to
+// keeps passing its own tests. The matcher is the only thing that decides whether it is ever
+// invoked, and it was `Write|Edit|NotebookEdit` while the guard had already learned to judge
+// renames - a whole layer that would have shipped dead and silent.
 let bad = 0;
+{
+  const settings = JSON.parse(readFileSync("standard/.claude/settings.json", "utf8"));
+  const entry = (settings.hooks?.PreToolUse || []).find((m) => JSON.stringify(m).includes("elicitation-guard"));
+  const matcher = entry?.matcher || "";
+  const missing = ["Write", "Edit", "NotebookEdit", "Bash"].filter((t) => !matcher.split("|").includes(t));
+  const ok = !missing.length;
+  if (!ok) bad++;
+  console.log(`  ${ok ? "ok  " : "FAIL"}  every tool the guard judges is routed to it${ok ? "" : `\n          matcher "${matcher}" never sees: ${missing.join(", ")}`}`);
+}
+
 for (const [name, call, expected] of CASES) {
   const got = score(call);
   const ok = got === expected;
@@ -150,6 +164,6 @@ for (const [name, ledgerBody, call, expected] of LEDGER_CASES) {
   console.log(`  ${ok ? "ok  " : "FAIL"}  ${name}${ok ? "" : ` (got ${got}, expected ${expected})`}`);
 }
 
-const total = CASES.length + LEDGER_CASES.length;
+const total = CASES.length + LEDGER_CASES.length + 1; // + the wiring assertion above
 console.log(bad ? `\nelicitation-guard-test: FAIL - ${bad}/${total}` : `\nelicitation-guard-test: OK - ${total} cases, refusals and pass-throughs both`);
 process.exit(bad ? 1 : 0);

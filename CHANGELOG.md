@@ -51,7 +51,7 @@ unfinished - which is what it is. Guessing is what has no legal path.
 Measured rather than asserted: replayed past the real guard, the run that caused all of this
 is stopped at **5 of 5** of its artifact writes; a run that only *claims* to have asked is
 stopped too; a run that genuinely asked first is never refused. Those three cases and two
-more are `tools/elicitation-replay-test.mjs`, alongside 30 guard cases and 20 ledger cases.
+more are `tools/elicitation-replay-test.mjs`, alongside 31 guard cases and 20 ledger cases.
 
 The ledger check was then run over that repository's real artifacts on a tree carrying this
 release, and named the same five - intake, decision records, personas, backlog, product -
@@ -93,7 +93,11 @@ adoption run, the one run this exists to stop, the single run nothing enforced. 
 lands the guard, the points, the matcher and the ledger before anything else and stops for a
 restart; none of the four is gated, so the ordering is all it costs. The guard also asks git
 about renames in the repository the move targets rather than the one it is running in, since
-an adoption is driven from a checkout of the standard and writes into a different tree.
+an adoption is driven from a checkout of the standard and writes into a different tree. And
+the `PreToolUse` matcher that routes tool calls to it now names `Bash` - it said
+`Write|Edit|NotebookEdit` while the guard had already learned to judge renames, which would
+have shipped an entire layer that was never invoked and never said so. A test now asserts
+that every tool the guard judges is a tool the wiring reaches.
 
 What this does **not** prove is that an answer, once given, was honoured - no layer here sees
 that, and [ADR-054](docs/decision-records/ADR-054-asking-is-a-mechanism-with-provenance-not-an-instruction.md)
