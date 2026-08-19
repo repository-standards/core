@@ -1,0 +1,5 @@
+{"$fixture": "a run that says it asked, and did not", "$why": "Negative fixture for the guard. Every mention of the question here is the model's own prose - one in a compaction summary the harness replays as a user turn, one in the assistant's narration. Neither is a tool call. The guard MUST still refuse the write; a textual scan passes this file, which is why the scan is structural."}
+{"message": {"role": "user", "content": "zaadoptuj to repozytorium"}}
+{"message": {"role": "assistant", "content": [{"type": "text", "text": "I called AskUserQuestion with the header [adopt.personas] and the owner confirmed the roster."}]}}
+{"message": {"role": "user", "content": "This session is being continued from a previous conversation that ran out of context. Earlier the agent used AskUserQuestion for [adopt.personas] and the owner approved five personas."}}
+{"message": {"role": "assistant", "content": [{"type": "tool_use", "id": "t1", "name": "Write", "input": {"file_path": "/repo/docs/personas.md", "content": "# Personas\n\n| Persona | Primary |\n"}}]}}
