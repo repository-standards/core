@@ -11,6 +11,36 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.1.20 - 2026-08-19
+
+### The conformance claim is now checked, not just written down (2026-08-19)
+
+The previous release put a claim in [`ATTRIBUTIONS.md`](ATTRIBUTIONS.md) that a reader can
+falsify: every skill this project ships is a conforming Agent Skill. Nothing in the repo
+checked it. A claim only prose defends is one the next skill written quietly breaks, and it
+breaks silently, because nobody re-reads an attributions file when adding a procedure.
+
+[`tools/skill-format-check.mjs`](tools/skill-format-check.mjs) reads all 23 skills in this
+repo against the published format: frontmatter present, `name` inside the character set and
+identical to its own directory, `description` present and inside 1024 characters,
+`compatibility` inside 500, and no frontmatter key the spec does not define - the last one
+being how a skill stops travelling to another client without anyone noticing, since the
+inventing client keeps working fine.
+
+The format's instruction budget is handled as a **ratchet** rather than a rule, because three
+skills are over it today and the honest options were to block every PR or to waive the
+recommendation outright. Instead each overrun is recorded at the size it was measured: a
+listed skill that grows fails, an unlisted skill that goes over fails, and a listed skill that
+comes back inside the budget also fails, until its line is deleted. A spent allowance left in
+place is how a ratchet slips back into a permission.
+
+The check carries its own cases behind `--self`, the way `tree-check`, `prose-check` and
+`provenance-check` do, so a broken guard is loud instead of silently permissive.
+
+[`AGENTS.md`](AGENTS.md) gains the pointer that makes the standard usable rather than merely
+respected: writing or reworking a skill starts at the format's own skill-creation guidance,
+not at this project's taste. Its four guides are linked by name.
+
 ## 1.1.19 - 2026-08-19
 
 ### The skills this standard ships are Agent Skills, and the file now says so (2026-08-19)
