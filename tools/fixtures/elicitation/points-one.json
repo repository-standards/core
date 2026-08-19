@@ -1,0 +1,4 @@
+{
+  "$fixture": "self-test: the single point the honest fixture actually asks",
+  "points": [{ "id": "adopt.layout", "required": true }]
+}

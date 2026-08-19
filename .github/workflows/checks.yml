@@ -37,6 +37,13 @@ jobs:
         run: |
           node tools/provenance-check.mjs
           node tools/provenance-check.mjs --self
+      - name: elicitation (every declared point has a call site) + the checker's own cases
+        # The baseline is the gate. Wiring every point is weeks of work, and waiting for
+        # zero before switching the check on would leave precisely the gap that produced
+        # it: a rule everyone agreed with and nothing enforced.
+        run: |
+          node tools/elicitation-points-check.mjs
+          node tools/elicitation-check-test.mjs
       - name: spec coupling (diff-gated on PRs, audited in full on every run)
         # The full audit is the PR gate, not a release ritual - a change that
         # breaks spec<->code coupling fails here, never in a later sweep.
