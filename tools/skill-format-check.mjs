@@ -47,9 +47,8 @@ const CHARS_PER_TOKEN = 4;
 // Measured 2026-08-19. Each entry is a ceiling, not a permission: the value is what the
 // file was when it was granted, and the check fails the moment it is exceeded.
 const KNOWN_OVER = {
-  'skills/align-to-standards': { lines: 626, tokens: 11499 },
   'standard/.claude/skills/spec-specify': { lines: 364, tokens: 6881 },
-  'standard/.claude/skills/spec-clarify': { lines: 288, tokens: 5567 },
+  'standard/.claude/skills/spec-clarify': { lines: 285, tokens: 5397 },
 };
 
 function findSkills(repo, roots) {

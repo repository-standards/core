@@ -169,3 +169,38 @@ puts it in front of them.
 - [ ] The new material was checked against every decision record's `Revisit when`; any hit is on the record and in the readiness report
 - [ ] Ripe decisions/work items offered onward (consent-gated), not silently taken, and whatever came of an entry written into its `Outcome`
 - [ ] Readiness verdict reported ("ripe for spec-specify" / "still discovering" / "route via clarify")
+
+
+## Questions this phase must ask
+
+Declared in `standard/elicitation/points.json`; the shape and the provenance states are in
+`standard/elicitation/README.md`. Each block below is a real `AskUserQuestion` call, not a
+reminder to consider asking - the rule existed as prose first and a full adoption ignored it.
+
+### `[discover.materials]` What the material is and whose it is
+
+Fires **before digesting handed-over material into a record**.
+
+Call `AskUserQuestion` with the header `[discover.materials]` and the question:
+
+> What existing material should this draw on, and where does it live?
+
+Options, in order: **here it is** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **leave a stub, do not guess** (`absent`)
+
+Discovery already gives materials a home with their provenance; it just never asked whose they were.
+
+Records to `the discovery record` as `point_id: discover.materials` with the provenance state the answer implies.
+
+### `[discover.decisions]` Settled versus still open
+
+Fires **before writing any decision the digest surfaced into a record**.
+
+Call `AskUserQuestion` with the header `[discover.decisions]` and the question:
+
+> Which of the decisions surfaced here are already settled, and which are still open?
+
+Options, in order: **I will mark them** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **all open for now** (`absent`)
+
+A settled decision and an assumed one are indistinguishable once written down.
+
+Records to `the discovery record and any decision record it produces` as `point_id: discover.decisions` with the provenance state the answer implies.

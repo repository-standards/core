@@ -198,3 +198,38 @@ after personas and product.
 Pairs with the [brownfield phase](onboard.md) (reconstruct personas + specs from existing
 code). Uses `personas.md` (ADR-006), the decision checklist, the spec model, and the
 Layer 2 stack from the registry (`stacks.json`).
+
+
+## Questions this phase must ask
+
+Declared in `standard/elicitation/points.json`; the shape and the provenance states are in
+`standard/elicitation/README.md`. Each block below is a real `AskUserQuestion` call, not a
+reminder to consider asking - the rule existed as prose first and a full adoption ignored it.
+
+### `[green.product]` What this is and who it is for
+
+Fires **before writing PRODUCT.md, which on an empty repo means before writing anything**.
+
+Call `AskUserQuestion` with the header `[green.product]` and the question:
+
+> What is this going to be, and who is it for?
+
+Options, in order: **tell me now** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **leave a stub, do not guess** (`absent`)
+
+An empty repository contains no evidence, so anything written here without asking is invention by construction.
+
+Records to `PRODUCT.md` as `point_id: green.product` with the provenance state the answer implies.
+
+### `[green.conventions]` Naming and structure to carry in
+
+Fires **before creating the initial directory layout**.
+
+Call `AskUserQuestion` with the header `[green.conventions]` and the question:
+
+> Do you have naming and structure conventions you want carried in, or should the standard's defaults apply?
+
+Options, in order: **mine, here they are** / **standard defaults** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
+
+The same decision as `adopt.layout`, one step earlier and far cheaper: the moment to honour somebody's convention is before any file exists.
+
+Records to `the initial layout and docs/adoption-intake.md` as `point_id: green.conventions` with the provenance state the answer implies.
