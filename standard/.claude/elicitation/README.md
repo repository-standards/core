@@ -92,7 +92,7 @@ that reconciles them. A point wired in one of the four is a refusal with no inst
 other three - and the field run found exactly this shape, recommending *your conventions win* on
 a path whose question no file had declared.
 
-**It binds every question, not only the twenty-one declared here.** In the same run the agent
+**It binds every question, not only the twenty-two declared here.** In the same run the agent
 invented a question the point list does not contain - where tracked work lives - and
 recommended keeping the repository's parallel tracker beside `backlog.md`. A question this
 file has not anticipated is exactly where the rule has to hold on its own.
@@ -148,7 +148,7 @@ the ledger before it writes anything else, and then stops so the session can res
 those four is gated by any point, so the ordering costs nothing - and skipping it costs the
 whole layer on the one run it was built for.
 
-Sixteen of the twenty-one points are enforced here - fifteen by the path they gate,
+Seventeen of the twenty-two points are enforced here - sixteen by the path they gate,
 `adopt.layout` by the rename. The other five are not writes to a path this file can name in
 advance: `adopt.continue` is a phase boundary and `adopt.commit-plan` a commit, neither of
 which is a file at all; `adopt.guards` gates whatever guard configuration the target

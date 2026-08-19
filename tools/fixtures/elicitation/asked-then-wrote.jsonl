@@ -2,6 +2,8 @@
 {"message": {"role": "user", "content": "zaadoptuj to repozytorium, ale zostaw nasz uklad katalogow"}}
 {"message": {"role": "assistant", "content": [{"type": "tool_use", "id": "q1", "name": "AskUserQuestion", "input": {"questions": [{"header": "[adopt.intent] pytanie", "question": "How far does this adoption go - full migration, or the standard mapped onto what is here?"}]}}]}}
 {"message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "q1", "content": "The user answered: \"pytanie\"=\"Map it onto what is here\""}]}}
+{"message": {"role": "assistant", "content": [{"type": "tool_use", "id": "qE", "name": "AskUserQuestion", "input": {"questions": [{"header": "[adopt.evidence] pytanie", "question": "May this session be kept as evidence, and may an excerpt be sent upstream after you have read it?"}]}}]}}
+{"message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "qE", "content": "The user answered: \"pytanie\"=\"Keep it, I will read the excerpt first\""}]}}
 {"message": {"role": "assistant", "content": [{"type": "tool_use", "id": "w", "name": "Write", "input": {"file_path": "/repo/docs/adoption-intake.md", "content": "# Intake\n\n| Punkt | Odpowiedz |\n|---|---|\n| adopt.intent | Map it onto what is here |\n"}}]}}
 {"message": {"role": "assistant", "content": [{"type": "tool_use", "id": "q2", "name": "AskUserQuestion", "input": {"questions": [{"header": "[adopt.personas] pytanie", "question": "Who are the users of this product?"}]}}]}}
 {"message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "q2", "content": "The user answered: \"pytanie\"=\"Leave a stub, do not guess\""}]}}

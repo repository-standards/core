@@ -27,7 +27,7 @@ typed.
 Three layers now hold it, and the third is the only one that is not the agent's decision:
 
 - [`.claude/elicitation/points.json`](standard/.claude/elicitation/points.json) declares the
-  twenty-one places this standard must ask instead of decide - the question, the answer that leads, the three kinds of answer
+  twenty-two places this standard must ask instead of decide - the question, the answer that leads, the three kinds of answer
   it always offers, the provenance each answer records, and the paths it gates.
   `elicitation-points-check` fails when a declared point has no call site, against a baseline
   that may only shrink.
@@ -275,6 +275,25 @@ interaction at all, and none was checked against a transcript. Each record now c
 counts disagree with its own observations, and a record claiming a person was present must
 name a transcript file that exists. The records were kept - they are real conformance
 evidence - and only the claim attached to them changed.
+
+### The close of an adoption happens before the pull request (2026-08-19)
+
+The three steps that produce everything this project learns from an adoption - the upstream
+friction review, the offer to keep the session as evidence, and the anonymous ping behind the
+count the site publishes - were the last items of the phase file, after "open one focused
+PR". The largest field adoption yet ran none of them: 25 commits, 253 files, 20 questions
+asked, and afterwards no friction issue, no transcript offered, and the published counter
+still reading 12. No adopter has ever been asked for a transcript, which is the one thing the
+human-prompting corpus says it lacks.
+
+Reading order is now execution order - friction, record, ping, and the pull request last, as
+the final action of the wave - and the consent that close needs is asked in the intake round
+instead, as the declared point `adopt.evidence`. It gates `docs/adoption-intake.md`, the
+artifact an adoption writes early and cannot skip, recommends nothing and accepts only a
+human answer: consent an agent supplied is not consent. Permission to assemble is not
+permission to send, so `record-run` still shows the file and takes a per-item yes. The ping
+now reads the counter back and reports both numbers, because a POST nobody looked at is a
+claim. [ADR-055](docs/decision-records/ADR-055-the-adoption-close-runs-before-the-pull-request.md).
 
 ## 1.1.22 - 2026-08-19
 
