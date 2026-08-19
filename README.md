@@ -64,7 +64,7 @@ The daily lifecycle skills ship inside the tree (`standard/.claude/skills/`); th
 
 ## Status
 
-**0.9.20** - the first stable line, mechanics field-run on the author's production repositories.
+**0.9.21** - the first stable line, mechanics field-run on the author's production repositories.
 
 **There is no version to pin to: the standard is living, and latest is the only target**
 ([ADR-025](docs/decision-records/ADR-025-the-standard-is-living-latest-is-the-target.md)).

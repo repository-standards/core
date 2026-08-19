@@ -11,6 +11,31 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 0.9.21 - 2026-08-19
+
+### The landing page's plain-language toggle no longer moves the furniture (2026-08-19)
+
+Pressing "Explain it easily" swapped the hero headline for a shorter one, and two pieces of
+the hero moved that had nothing to do with the copy.
+
+The live-adoptions badge dropped out from above the headline and reappeared beside it,
+halfway down. The badge is an `.eyebrow`, which is `inline-flex`, and it sat as a bare
+sibling of the `inline-block` headline stage - so the two shared one line box, and the badge
+only cleared the headline while the headline was too wide to leave room next to it. The
+plain-language headline is 869px against the technical one's 946px, which was enough room.
+The badge is now block-level with `width:fit-content`, so it occupies its own line whatever
+the headline says.
+
+The sticker itself ran off the page. It is anchored to the headline's right edge, and beside
+a centred headline that costs its own width on both sides - roughly 1580px of viewport before
+it clears, more than the 900px breakpoint that dropped it under the headline assumed. At
+1440px the document was 129px wider than the window in plain language and 20px wider in
+technical, so the page scrolled sideways and the sticker was cut. The breakpoint now sits at
+1600px, and the hero clips horizontally as a backstop rather than growing a scrollbar.
+
+Measured in a browser at 375, 900, 1280, 1440, 1600, 1601 and 1680px, in both languages: the
+document never exceeds the window and the badge stays centred on its own line.
+
 ## 0.9.20 - 2026-08-19
 
 ### The conformance claim is now checked, not just written down (2026-08-19)
