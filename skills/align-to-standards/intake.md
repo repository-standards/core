@@ -360,6 +360,18 @@ Never `inferred`: a naming convention is a preference, not a fact you can read o
 
 Records to `docs/adoption-provenance.md`: the `adopt.layout` row takes the state, who answered, the date, and `docs/adoption-intake.md` as where the answer landed.
 
+### `[adopt.profile]` Which profile this repository runs at
+
+Fires **before the manifest copy is written**, which is early: the shipped manifest carries a default `profile`, so a run that copies it without asking has answered this by accident.
+
+Count the distinct authors in the repository's recent history and say what you found, then call `AskUserQuestion` with the header `[adopt.profile]` and the question:
+
+> Does this repository run at the `core` profile or the `scale` one - one or two people working directly, or a team with sprints and hand-offs?
+
+Options, in order: **confirm the detection** (recommended - you have the evidence in front of you, and a person confirming it is an answer, not a guess) / **the other one** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
+
+There is no answer here that converges more than the other. `scale` is not a fuller adoption than `core` - it is a different shape (ADR-011), with sprint artifacts and gates a two-person repo has no use for. Recommending it because it is *more standard* is how a repository ends up measured against a process nobody runs.
+
 ### `[adopt.existing-material]` Informal material already in the repo
 
 Fires **when the measurement pass finds scratch notes, PRDs, plans, TODO files or any other informal working material**.

@@ -29,6 +29,7 @@ specs it wrote years earlier, and its own history says nothing about who was ask
 |---|---|---|---|---|---|
 | `adopt.language` | pending | - | - | - | - |
 | `adopt.layout` | pending | - | - | - | - |
+| `adopt.profile` | pending | - | - | - | - |
 | `adopt.intent` | pending | - | - | - | - |
 | `adopt.continue` | pending | - | - | - | - |
 | `adopt.existing-material` | pending | - | - | - | - |

@@ -83,6 +83,10 @@ const baseline = (override = {}) =>
 const TEMPLATE = "# Personas\n\n<who this repo is for>\n";
 // backlog.md is gated twice - by who owns the rows, and by whether tracked work lives here
 // at all - so a fixture that writes one has to have answered both.
+// A fixture that writes a manifest has reached adopt.profile, which the manifest's top-level
+// `profile` is the artifact of. Cases about something else have to answer it or they fail for
+// a reason they are not testing.
+const WROTE_MANIFEST = { "adopt.profile": ["human", "owner", "2026-08-19", "standard.manifest.json"] };
 const ANSWERED = {
   "adopt.backlog": ["human", "owner", "2026-08-19", "backlog.md"],
   "adopt.tracker": ["human", "owner", "2026-08-19", "backlog.md"],
@@ -97,9 +101,9 @@ const CASES = [
   ["a point is not pending once an artifact it gates exists",
     { ledger: baseline(), files: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n" } }, FAIL],
   ["a shipped template sitting where it shipped is not somebody's answer",
-    { ledger: baseline(), files: { "docs/personas.md": TEMPLATE }, manifest: { files: [{ path: "docs/personas.md", sha256: sha(TEMPLATE) }] } }, PASS],
+    { ledger: baseline(WROTE_MANIFEST), files: { "docs/personas.md": TEMPLATE }, manifest: { files: [{ path: "docs/personas.md", sha256: sha(TEMPLATE) }] } }, PASS],
   ["the same template, written into, is",
-    { ledger: baseline(), files: { "docs/personas.md": "# Personas\n\nBusy owner Bogdan.\n" }, manifest: { files: [{ path: "docs/personas.md", sha256: sha(TEMPLATE) }] } }, FAIL],
+    { ledger: baseline(WROTE_MANIFEST), files: { "docs/personas.md": "# Personas\n\nBusy owner Bogdan.\n" }, manifest: { files: [{ path: "docs/personas.md", sha256: sha(TEMPLATE) }] } }, FAIL],
   // adopt.layout gates a rename, not a file. Nothing here can reach it, and the check must
   // say so by passing rather than by inventing a trigger it cannot observe.
   ["a point that gates no path stays pending even in a repo that has built things",
