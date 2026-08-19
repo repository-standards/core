@@ -55,6 +55,20 @@ worth continuing and the one that should worry it, in that order: no policy engi
 field can assert that a required file exists, and two of this category's predecessors are
 already archived.
 
+### The coupling guard now fires on every pull request, and that is a defect (2026-08-19)
+
+Found by this release's own CI run rather than by inspection. `spec coupling` failed here, as
+expected, on nothing but the version string. What was not expected is that it is no longer an
+occasional release artifact: since every pull request bumps PATCH, and the string lives inside
+`standard/scripts/self-verify.mjs` and `site/index.html` - both claimed by the coupling map -
+the guard fires every time and is merged past with `--admin` every time. The pull request
+merged immediately before this one had the identical shape.
+
+A guard whose failure carries no information is not a guard, and the habit it builds is the
+dangerous part: `--admin` is also the response to a real coupling violation. Tracked as
+`COUPLING-VERSION-1` with the two available fixes stated, and with the condition any fix has
+to meet - a genuine change to either file must still fire.
+
 ## 1.1.23 - 2026-08-19
 
 ### Asking is now a mechanism, not an instruction (2026-08-19)
