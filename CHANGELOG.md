@@ -11,6 +11,50 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 0.9.24 - 2026-08-19
+
+### What this stands on, said where a reader will see it (2026-08-19)
+
+The conventions here are almost entirely other people's, and until now the README said so in
+one sentence, near the bottom, with no link to anything. A reader deciding whether to adopt
+had no way to tell that the commit format, the decision-record shape and the changelog are
+established standards rather than house style - which is the single most reassuring thing
+about this project and the hardest to find in it.
+
+`README.md` now names them where the reader is already looking: the two formats this project
+**conforms to** and can be falsified against, and the practices it **follows**, each at the
+version it follows and each linked to its own site. The framing is deliberate - a standard
+that invents its own commit format costs a team a re-learning it gains nothing from, and what
+this project adds is the layer above rather than a replacement for any of them.
+
+`ATTRIBUTIONS.md` gains a version column on the borrowed-ideas table for the reason
+[R21](standard/SPEC.md) pins a dependency: "we follow Conventional Commits" cannot be checked
+and cannot drift, while "Conventional Commits 1.0.0, and here it is" can do both. It also
+settles a question the conventions had left open - whether an adopter follows the upstream
+spec or this project's paraphrase of it. Four rows carry a pinned version, the rest say
+plainly that there is nothing to pin rather than inventing one.
+
+### The ecosystem survey lands as work, not as a document (2026-08-19)
+
+A survey of the repo-policy, linting and supply-chain ecosystems produced findings with
+nowhere to live, which is how findings die. They land in `backlog.md` instead.
+
+`DISCO-5` replaces "submit the listings" with the six channels that need nothing this project
+does not already have, and one that is worth more than the rest: `github/spec-kit` is
+GitHub-owned at 130,239 stars and its community catalogues take pull requests, with an
+inclusion bar that let a two-star project in. `DISCO-6` records the doubt that blocks the
+strongest of them - the no-tags-until-1.0 policy was decided about version numbers and turns
+out to also close every channel that requires a published Release, of which this repo has none.
+
+A new epic carries three rows about standing on tools that already exist: whether shipped
+guards should delegate to `gitleaks`, `commitlint`, `editorconfig-checker`, Renovate and
+`markdownlint` rather than re-implement them; whether to claim succession from `repolinter`,
+the closest predecessor, archived 2026-02-06; and whether the drift number should leave this
+repo in a format another tool can read. The epic states the finding that makes this project
+worth continuing and the one that should worry it, in that order: no policy engine in the
+field can assert that a required file exists, and two of this category's predecessors are
+already archived.
+
 ## 0.9.23 - 2026-08-19
 
 ### Asking is now a mechanism, not an instruction (2026-08-19)

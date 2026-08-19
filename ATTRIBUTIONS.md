@@ -127,21 +127,28 @@ behaves here.
 
 Credited because the idea is theirs, even though nothing was copied.
 
-| Source | What was taken |
-|---|---|
-| **MADR** (Markdown Any Decision Records) | the decision-record form this standard uses for ADRs and BDRs - context, options considered, decision, consequences |
-| **Conventional Commits** | the commit message shape the conventions require |
-| **Semantic Versioning** | how the standard's own versions move |
-| **Keep a Changelog** | the changelog's shape, including `## Unreleased` as the place a pull request writes |
-| **Linear** | the word **sprint** for a bounded period of work, in almost exactly this meaning - chosen over "sprint" because it arrives without the ceremony argument attached ([ADR-028](docs/decision-records/ADR-028-work-cycles-live-in-the-repo-and-bind-only-at-scale.md), [`work-periods`](docs/open-questions/work-periods.md)) |
-| **[Backlog.md](https://github.com/MrLesk/Backlog.md)** | not taken from, but deliberately stayed compatible with - the shipped backlog is markdown a team can put that tool on top of, rather than a custom engine |
-| **RFC 2119** | the meaning of MUST, SHOULD and MAY in the spec |
-| **Impact Mapping** (Gojko Adzic) | the goal -> persona -> impact -> deliverable technique the greenfield phase runs when breaking a product into capabilities |
-| **Story Mapping** (Jeff Patton) | the journey-then-thinnest-slice technique in the same step |
-| **INVEST** (Bill Wake) | the Definition of Ready the shipped backlog requires of an item before it is pulled |
-| **Jobs to be done** | the shape of a persona's motivation - "when \_\_\_, I want to \_\_\_, so I can \_\_\_" - in the persona template and the decision checklist |
-| **Nielsen Norman Group's usability heuristics** | named as the paved-road default for the UX axis of the decision checklist |
-| **OWASP ASVS, SLSA** | referenced as the depth a security baseline can point at; nothing from them is reproduced here |
+Each row names the **version this project actually follows**, for the same reason R21 pins a
+dependency: "we follow Conventional Commits" is unfalsifiable, "we follow Conventional Commits
+1.0.0, and here it is" is a claim a reader can check and a later reader can find drifting. It
+also settles a question the conventions leave open today - whether an adopter follows the
+upstream spec or this project's paraphrase of it. It is the upstream spec, which is where
+every link in the first column goes.
+
+| Source | Version followed | What was taken |
+|---|---|---|
+| **[MADR](https://adr.github.io/madr/)** (Markdown Any Decision Records) | 4.0.0 (2024-09-17) | the decision-record form this standard uses for ADRs and BDRs - context, options considered, decision, consequences |
+| **[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)** | 1.0.0 | the commit message shape the conventions require |
+| **[Semantic Versioning](https://semver.org/spec/v2.0.0.html)** | 2.0.0 | how the standard's own versions move |
+| **[Keep a Changelog](https://keepachangelog.com/)** | 1.1.2 (2024-09-27) | the changelog's shape, including `## Unreleased` as the place a pull request writes |
+| **[Linear](https://linear.app/)** | - (product, unversioned) | the word **sprint** for a bounded period of work, in almost exactly this meaning - chosen over "sprint" because it arrives without the ceremony argument attached ([ADR-028](docs/decision-records/ADR-028-work-cycles-live-in-the-repo-and-bind-only-at-scale.md), [`work-periods`](docs/open-questions/work-periods.md)) |
+| **[Backlog.md](https://github.com/MrLesk/Backlog.md)** | - | not taken from, but deliberately stayed compatible with - the shipped backlog is markdown a team can put that tool on top of, rather than a custom engine |
+| **[RFC 2119](https://www.rfc-editor.org/rfc/rfc2119)** | BCP 14, as updated by [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174) | the meaning of MUST, SHOULD and MAY in the spec |
+| **[Impact Mapping](https://www.impactmapping.org/)** (Gojko Adzic) | - (book) | the goal -> persona -> impact -> deliverable technique the greenfield phase runs when breaking a product into capabilities |
+| **[Story Mapping](https://jpattonassociates.com/story-mapping/)** (Jeff Patton) | - (book) | the journey-then-thinnest-slice technique in the same step |
+| **[INVEST](https://xp123.com/invest-in-good-stories-and-smart-tasks/)** (Bill Wake) | - (article) | the Definition of Ready the shipped backlog requires of an item before it is pulled |
+| **Jobs to be done** | - (no canonical spec) | the shape of a persona's motivation - "when \_\_\_, I want to \_\_\_, so I can \_\_\_" - in the persona template and the decision checklist |
+| **[Nielsen Norman Group's usability heuristics](https://www.nngroup.com/articles/ten-usability-heuristics/)** | - | named as the paved-road default for the UX axis of the decision checklist |
+| **[OWASP ASVS](https://owasp.org/www-project-application-security-verification-standard/), [SLSA](https://slsa.dev/)** | - (pinned where cited, not here) | referenced as the depth a security baseline can point at; nothing from them is reproduced here |
 
 ## Compared against, not borrowed from
 
