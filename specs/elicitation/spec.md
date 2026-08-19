@@ -24,8 +24,10 @@ saying something he never said (ADR-054).
   rather than obeyed, and guessing is the behaviour worth forbidding, not proceeding.
 - Q: Where does provenance live - on each artifact, or in one ledger? A: One ledger.
   Fifty-four decision records each carrying a provenance key is metadata nobody compares.
-- Q: What makes `pending` stop being acceptable? A: `.standards-version` existing. That file
-  is the repo's own claim to be adopted, so it needs no separate flag and cannot be forgotten.
+- Q: What makes `pending` stop being acceptable? A: the point being reached - a path it gates
+  holding an artifact that did not ship as a template. `.standards-version` was tried first
+  and is wrong: it is written before anybody has been asked anything, so it fails every fresh
+  adoption and the shipped tree itself.
 - Q: Delete the validation corpus that measured nothing? A: No. The observations are real
   records of real work; what they lacked was a statement of which question they answer.
 
@@ -67,7 +69,7 @@ it as the known gap rather than claiming coverage.
 | the `PreToolUse` payload | JSON on stdin | Claude Code's: `tool_name`, `tool_input.file_path`, `tool_input.content`, `tool_input.new_string`, `transcript_path`. No other field is read. |
 | the session transcript | JSONL | Claude Code's. Read structurally: an entry whose `message.role` is `assistant` and whose `content[]` holds a `tool_use` named `AskUserQuestion`. Textual matching is explicitly not used - see Invariants. |
 | `docs/adoption-provenance.md` | markdown table | this capability's: six cells, `point / state / who / when / landed in / backlog row`. Parsed by position. |
-| `.standards-version` | presence only | [verify-engine](../verify-engine/spec.md)'s; read here as the repo's claim to be adopted, never written. |
+| `standard.manifest.json` | JSON | [verify-engine](../verify-engine/spec.md)'s; read here for `files[].path` and `files[].sha256` only, to tell a shipped template from an adopter's artifact. Never written. |
 | `docs/validation/*/runs/*.json` | JSON | the validation corpus's; this capability reads and writes only the `$elicitation` block. |
 
 ## Interface contracts
@@ -77,7 +79,7 @@ it as the known gap rather than claiming coverage.
 | elicitation-guard | 0, silent | the tool is not a write, the path is gated by nothing, the point's question fired, or the content declares a stub the point permits |
 | elicitation-guard | 0, deny JSON | a gated path with no fired question and no permitted stub; or no transcript to check against |
 | elicitation-provenance | 0 | every required point has a row with a permitted state, every `provisional` names a backlog row that exists, every `human` names who and when |
-| elicitation-provenance | 1 | a missing ledger, a missing or malformed row, a forbidden state, a named backlog row that is not there, an orphan row, or a required point still `pending` once `.standards-version` exists |
+| elicitation-provenance | 1 | a missing ledger, a missing or malformed row, a forbidden state, a named backlog row that is not there, an orphan row, or a required point still `pending` once a path it gates holds a non-template artifact |
 | elicitation-points-check | 0 / 1 | every declared point has a call site, against a baseline that may only shrink / the count grew or the baseline went stale |
 | elicitation-check | 0 / 1 / 2 | quotes covered and a question answered / a fabricated quote or no human presence / no transcript to read |
 | validation-claims-check | 0 / 1 | every run record states what it can evidence and its counts agree / any does not |
@@ -120,8 +122,10 @@ it as the known gap rather than claiming coverage.
   of its artifact writes are refused.
 - GIVEN a ledger whose `provisional` row names a backlog row that is not in the backlog THEN
   `elicitation-provenance` exits 1 naming that row.
-- GIVEN a repo with `.standards-version` and a required point still `pending` THEN
-  `elicitation-provenance` exits 1.
+- GIVEN a repo where a path `adopt.records` gates holds a record that did not ship, and that
+  row still reads `pending`, THEN `elicitation-provenance` exits 1.
+- GIVEN the same row and a gated file still byte-identical to the template that shipped there
+  THEN it exits 0 - a fresh adoption is not a finding.
 - GIVEN a validation run record claiming `"provenance": "human"` with no transcript on disk
   THEN `validation-claims-check` exits 1.
 

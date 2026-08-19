@@ -4,10 +4,10 @@ Who answered each of the questions this standard must not decide by itself, and 
 happened to the answer. One table, because the point of it is that a reviewer can read
 every state in one pass - scattered across the artifacts they would never be compared.
 
-Every row starts `pending`: this repo has not been through the questions yet. That is
-legal exactly until `.standards-version` exists. Writing that file is this repo claiming
-to be adopted, and `scripts/elicitation-provenance.mjs` fails from then on for any
-required point still sitting here.
+Every row starts `pending`: this repo has not been through the questions yet. A row stays
+legal there until the point is **reached** - until an artifact it gates exists that did not
+ship as a template. `scripts/elicitation-provenance.mjs` fails from that moment on, because
+something was written where the question belonged, so it was either asked or skipped.
 
 **States** - the full set and what each one costs is in
 [`.claude/elicitation/README.md`](../.claude/elicitation/README.md):

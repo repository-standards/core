@@ -615,7 +615,7 @@
       "rule": "R28",
       "sha256": {
         "README.md": "757dd21fc95f36a13fd273c9eea1535547dc8ac408401e5c13c4fdb2e2df563c",
-        "points.json": "5fe2ad26c8e59ddd7ea2f1728eb8b2600ef9ee75c39c7240ef55c525deaef683"
+        "points.json": "18eed7a2e17e56da482700ddcd02c431ef80a2d35fa8a8c46fc032484766ab59"
       }
     },
     {
@@ -645,7 +645,7 @@
       "profile": "core",
       "since": "0.9.23",
       "rule": "R28",
-      "sha256": "bfba34719c5e3debdaf6cf97a3884cadc29d29cdb7f20e5322ab46d4a3849d6e"
+      "sha256": "1abd166bf60c8f74703b770d1224c037cf6e7e51399f108b9e100e091f82367f"
     }
   ],
   "references": [
