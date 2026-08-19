@@ -15,6 +15,10 @@ CMD=$(read_command)
 
 while IFS= read -r segment; do
   [ -n "${segment}" ] || continue
+  # Looking for the phrase is not running it. Without this, `grep -rn "gh secret set" docs/` is
+  # refused as an attempt to set a secret, so the phrase cannot be searched for, documented, or
+  # written into this repository's own guidance without routing around the guard.
+  segment_is_search "${segment}" && continue
 
   if printf '%s' "${segment}" | grep -qiE 'gh[[:space:]]+(secret|variable)[[:space:]]+(set|delete|remove)'; then
     deny "Blocked by repository policy: CI secrets and variables are not edited from here. Rotating or changing one is a deliberate human action in the repository settings."

@@ -36,5 +36,55 @@ split_segments() {
   printf '%s' "$1" | sed -E 's/(\|\||&&|[;|])/\n/g'
 }
 
+# The same split, except a metacharacter inside quotes is text rather than a separator.
+#
+# The naive split cuts inside a quoted statement, and the cut separates a write from the host it
+# runs against: `psql -c "UPDATE t SET x = 1; SELECT 1" -h prod` becomes one segment holding the
+# client and another holding the host, so neither segment is a remote client and the guard says
+# nothing. Semicolons inside SQL are ordinary, which makes this a shape anybody writes by accident.
+#
+# The force-push guard keeps the naive split on purpose: there, quotes carry a commit message
+# rather than a statement, and treating an apostrophe in "it's fine" as an opening quote would
+# swallow the `git push --force` that follows it.
+split_segments_quoted() {
+  printf '%s' "$1" | LC_ALL=C awk '
+    BEGIN { ORS = ""; sq = 0; dq = 0; esc = 0 }
+    {
+      n = length($0)
+      for (i = 1; i <= n; i++) {
+        c = substr($0, i, 1)
+        if (esc) { printf "%s", c; esc = 0; continue }
+        if (c == "\\" && sq == 0) { esc = 1; printf "%s", c; continue }
+        if (c == "'"'"'" && dq == 0) { sq = 1 - sq; printf "%s", c; continue }
+        if (c == "\"" && sq == 0) { dq = 1 - dq; printf "%s", c; continue }
+        if (sq == 0 && dq == 0) {
+          if (c == ";") { printf "\n"; continue }
+          if (c == "|") { printf "\n"; if (substr($0, i + 1, 1) == "|") i++; continue }
+          if (c == "&" && substr($0, i + 1, 1) == "&") { printf "\n"; i++; continue }
+        }
+        printf "%s", c
+      }
+      # A backslash at end of line continues the command; it does not escape the next line first
+      # character, and carrying esc across records would swallow a separator there.
+      esc = 0
+      printf "\n"
+    }'
+}
+
+# Tools whose arguments are text to look at, not a command to run. Searching for the phrase
+# `gh secret set` is not setting a secret, and a guard that cannot tell the difference denies
+# `grep -rn "gh secret set" docs/` - which is how a repository ends up with its own guards
+# switched off, or its documentation written through a file tool to dodge them.
+SEARCH_CMD_RE='(grep|egrep|fgrep|rg|ag|ack|sed|awk|echo|printf|cat|head|tail|less|more|find|fd|diff|comm|sort|uniq|wc|jq|tr|cut|column|tee)'
+
+# True when the segment's own command is one of those. Leading environment assignments and the
+# usual prefixes are stepped over; a command substitution anywhere in the segment disqualifies it,
+# because `echo $(gh secret set X --body Y)` really does set the secret.
+segment_is_search() { # segment_is_search <segment>
+  printf '%s' "$1" | grep -qE '\$\(|`' && return 1
+  printf '%s' "$1" \
+    | grep -qE "^[[:space:]]*(([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*|sudo|env|command|nohup|time)[[:space:]]+)*([^[:space:]]*/)?(${SEARCH_CMD_RE}|git[[:space:]]+grep)([[:space:]]|$)"
+}
+
 # Matches only when the host ends at the match, so localhost.evil.example.com is not loopback.
 LOCAL_HOST_RE='(localhost|127\.0\.0\.1|\[::1\]|::1)([:/[:space:]"'"'"']|$)'
