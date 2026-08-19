@@ -20,25 +20,17 @@ dependency bump) never appear in them. Never per-commit.
 
 ## You have this case - say this
 
-**You are opening a PR.** One line, and the entry writes itself in the right voice - the PR
-bumps the version itself when it lands, PATCH by default, with no request required:
+**You are opening a PR.** One line, and the entry writes itself in the right voice:
 
 ```
 > describe this change for the changelog
 ```
 
-**This PR should not ship as a release yet** (stacked on another open PR, work still in
-flight). Say so explicitly - the default is a bump, not silence:
+**It is release day and you are the maintainer.** The cut is a deliberate act, never a
+side effect of merging:
 
 ```
-> describe this change for the changelog, but do not bump the version - leave it under Unreleased
-```
-
-**This PR earns more than the default PATCH.** State the size; it is never derived
-mechanically from what changed:
-
-```
-> describe this change for the changelog and cut it as a MINOR, not the default PATCH
+> cut 0.8.0 from what is under Unreleased, and draft the stakeholder release notes from the same source
 ```
 
 **A stakeholder asks what changed.** They are not asking for the changelog - they are
@@ -48,12 +40,9 @@ asking for the other output:
 > what did the last release actually change for a host? plain language, no internals
 ```
 
-**Corner case - several PRs were told not to bump, and it is time to cut what is queued
-under `Unreleased`.** This is the exception path now, run explicitly rather than waited on:
-
-```
-> cut 0.8.0 from what is under Unreleased, and draft the stakeholder release notes from the same source
-```
+**Corner case - a contributor bumped the version.** Revert that part. Versions are cut
+by the maintainer, from `Unreleased`, once; a PR that adds a version heading has
+decided a release happened.
 
 ## The only home of history
 
@@ -105,24 +94,24 @@ does not.
 
 Most repos have one line and can read this section as not applying to them.
 
-## At release - the default shape of every PR now
+## At release (the maintainer cuts it)
 
 1. **Changelog - mechanical.** Promote the `## Unreleased` section into a new
    `## x.y.z - <date>`, grouped by `type`, verbatim. Nothing is dropped.
-2. Bump `VERSION` - **PATCH by default**, no request required; leave a fresh, empty
-   `## Unreleased` heading behind.
-3. **Release notes - written, separately.** From the entries that name a non-technical
-   audience, *write* a short narrative in `RELEASE-NOTES.md`: group by theme, lead with the
-   benefit, cut anything a non-technical reader would not care about. Curate hard - three
-   good paragraphs beat thirty bullets. This is not gated on the version bump above; it runs
-   on whatever cadence the maintainer actually writes it.
+2. **Release notes - written.** From the entries that name a non-technical audience, *write*
+   a short narrative in `RELEASE-NOTES.md`: group by theme, lead with the benefit, cut
+   anything a non-technical reader would not care about. Curate hard - three good
+   paragraphs beat thirty bullets.
+3. Bump `VERSION`; leave a fresh, empty `## Unreleased` heading behind.
 
-A PR that carries no different-bump or no-bump instruction does steps 1-2 itself, as part of
-landing (R18) - the release is a deliberate act, just no longer a separate one. The
-exception - several PRs queued under `Unreleased` with an explicit no-bump, cut together
-later - runs the same two steps, later and by whoever is doing the cutting; that is the
-corner case now, not the default, and release notes remain the one place **editorial
-judgement** is expected, not mechanical assembly.
+Nothing before this writes a version heading or touches `VERSION`. The release is one
+deliberate act - and the release notes are the one place **editorial judgement** is
+expected, not mechanical assembly.
+
+One repository diverges by design: the standards repository itself. Its PRs bump PATCH
+by default and promote `Unreleased` as part of landing (R25, `CONTRIBUTING.md`) - the
+maintainer is the reviewer on every PR there, so the separate cut added nothing. That is
+its own workflow, never the rule this page describes for an adopting repo.
 
 ## Mechanization
 

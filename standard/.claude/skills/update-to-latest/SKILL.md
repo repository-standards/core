@@ -29,7 +29,7 @@ with `self-verify`.
    resolve `.standards-version` to the commit that cut it - `git log --format='%h %s' --
    VERSION` in a checkout of the standards repo, then `git show <commit>:VERSION` to confirm
    which version a commit carries - and use that. It is a one-time approximation, and it is
-   approximate on purpose: since a PR bumps PATCH by default, `main` carries unreleased change
+   approximate on purpose: since the standard's own PRs bump PATCH by default (R25), `main` carries unreleased change
    under a version number that has not shipped, so a version string names a range of trees
    rather than one (ADR-052). Say in the PR that the base was back-filled. From this run on,
    the field is exact.
@@ -202,7 +202,7 @@ with `self-verify`.
   is drift, and since ADR-052 self-verify says so. Delete it, migrate it, or except it
   deliberately; do not leave it and call the update done.
 - **Not a delta measured from the version string** - two trees can carry the same version
-  number, since a PR bumps PATCH by default and `main` runs ahead of what shipped.
+  number, since the standard's own PRs bump PATCH by default (R25) and `main` runs ahead of what shipped.
   `provenanceCommit` names one tree; `.standards-version` names a bookmark for humans.
 - **Not a hook landed without its wiring** - copying `elicitation-guard.mjs` while leaving
   `.claude/settings.json` unmerged ships a guard that never fires, and a repo that thinks it is
