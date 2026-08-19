@@ -97,7 +97,7 @@
       },
       {
         "file": "README.md",
-        "pattern": "^\\*\\*(\\d+\\.\\d+\\.\\d+)\\*\\* - the first stable line"
+        "pattern": "^\\*\\*(\\d+\\.\\d+\\.\\d+)\\*\\* - the first stable release"
       },
       {
         "file": "docs/faq.md",
@@ -105,11 +105,11 @@
       },
       {
         "file": "llms.txt",
-        "pattern": "^- \\*\\*(\\d+\\.\\d+\\.\\d+), still the first stable line"
+        "pattern": "^- \\*\\*(\\d+\\.\\d+\\.\\d+), the first stable release"
       },
       {
         "file": "site/llms.txt",
-        "pattern": "^- \\*\\*(\\d+\\.\\d+\\.\\d+), still the first stable line"
+        "pattern": "^- \\*\\*(\\d+\\.\\d+\\.\\d+), the first stable release"
       }
     ]
   },

@@ -37,3 +37,18 @@ untouched. No commit was reordered or re-narrated, and the resulting tree is
 byte-identical to the branch before the fold - only which commit a diff belongs
 to changed, never what the diff contains. The same doctrine as above, applied
 at release-cut granularity rather than as a one-time clean start.
+
+**Applied a third time (2026-08-19, cutting 1.0.0):** this pass, unlike the second,
+changed bytes - deliberately and in one dimension. The releases that had shipped as
+1.0.0-1.0.13 and 1.1.0-1.1.25 were renumbered to 0.8.0-0.8.13 and 0.9.0-0.9.25 in every
+commit since the tree first shipped: version strings in blobs and commit messages,
+release-cut subjects, changelog headings, and the manifest's own hashes recomputed where
+a hashed file's bytes moved. The reason is the number itself: the line was called 1.x
+before it had earned stability, and cutting a real 1.0.0 on top would have given one name
+to two different trees. External versions the standard merely cites (Conventional Commits
+1.0.0, Keep a Changelog 1.1.2) and illustrative examples were left untouched. Alongside
+the renumbering: three more fixups folded under exactly the second pass's rule, eight
+subjects given the Conventional Commits prefix they lacked (their words kept), and five
+commit references in documents re-pointed at the hashes the replay produced - two of
+which the second pass had already orphaned. Order, authorship and dates are untouched
+everywhere: order may be narrative, timestamps may not lie.

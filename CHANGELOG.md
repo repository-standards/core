@@ -3,13 +3,48 @@
 All notable changes to the standards. Semver: MAJOR = removals/breaking policy
 changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 
-> **This repository's history has been rewritten twice, both times narrowly.** The first
-> pass (2026-08-03) replaced the pre-org-move scaffolding with a curated, honestly-dated
-> genesis sequence, ending at 0.8.13. The second (this release, 0.9.0) folded six commits
-> in the window since - each one existing only to correct the commit immediately before
-> it - into the commit they corrected; nothing else moved, no content changed, and no
-> entry below was rewritten to make it read better. Both passes and the reasoning behind
-> them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
+> **This repository's history has been rewritten three times, each time narrowly.** The
+> first pass (2026-08-03) replaced the pre-org-move scaffolding with a curated,
+> honestly-dated genesis sequence, ending at 0.8.13. The second (2026-08-10, cutting
+> 0.9.0) folded six commits in the window since - each one existing only to correct the
+> commit immediately before it - into the commit they corrected; nothing else moved and
+> no content changed. The third (2026-08-19, cutting 1.0.0) renumbered the pre-1.0
+> version line: what had shipped as 1.0.x and 1.1.x is recorded below as 0.8.x and
+> 0.9.x, so that 1.0.0 names the first stable release and nothing else ever has. That
+> pass rewrote version numbers and commit references everywhere they appear - including
+> the headings below - and folded three more same-rule corrections; the words of every
+> entry are otherwise untouched, and dates were never moved. All three passes and the
+> reasoning behind them are
+> [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
+
+## 1.0.0 - 2026-08-19
+
+The first stable release, and the first tagged one. No behaviour changes ride this cut -
+0.9.25, cut earlier the same day, is the tree this version stabilises.
+
+### The version line is renumbered so this number can mean what it says (2026-08-19)
+
+The releases recorded below as 0.8.0 through 0.9.25 originally shipped under the numbers
+1.0.0-1.0.13 and 1.1.0-1.1.25: the line was called stable before it had earned the claim.
+Cutting a real 1.0.0 on top of that would have made the number ambiguous - two different
+trees, one name. The third history pass (see the note above) renumbered the old line back
+into 0.x, where its maturity actually was, and this release cuts 1.0.0 once, with the
+semver meaning intact: from here, MAJOR is removals and breaking policy changes, MINOR is
+new standards and modules, PATCH is fixes and clarifications.
+
+What stability binds here is the contract surface: the numbered rules in `SPEC.md`, the
+manifest schema an adopted tree carries, `.standards-version` plus `self-verify` as the
+update loop, and the shipped guard set. The standard stays living - latest is still the
+only target (ADR-025) - but from 1.0.0 a breaking change to that surface owes a MAJOR
+bump instead of riding a routine release.
+
+### The release is tagged (2026-08-19)
+
+Every release before this one existed only as a heading here and a `VERSION` bump - a
+fetch resolved to the default branch, and the status pages said so. From 1.0.0 a release
+is also an annotated tag, so a reader can resolve exactly the tree a version names. Tags
+mark this project's own development; an adopting repository still tracks latest, never a
+tag.
 
 ## 0.9.25 - 2026-08-19
 

@@ -3,6 +3,35 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.0 - 2026-08-19
+
+**The standard is stable.** The contract an adopting repository relies on - the numbered
+rules, the manifest, the `.standards-version` bookmark with `self-verify` as its proof, and
+the shipped guards - is now something a breaking change to costs a MAJOR version, not a
+routine release. The standard stays living and latest stays the only target; what changes
+is the promise attached to the number.
+
+**The version history now says what the maturity actually was.** Earlier releases had
+shipped under 1.0.x and 1.1.x numbers before the line had earned them. Rather than cut a
+second, different 1.0.0 on top of that, the history was renumbered so the whole pre-stable
+line reads as 0.8.x and 0.9.x - and this release is the only 1.0.0 there has ever been.
+The rewrite is documented in the changelog header and in the genesis-history record, not
+hidden.
+
+**Releases are tagged from here.** Until today a version was a heading in the changelog;
+now it is also a tag you can fetch, so "which tree does 1.0.0 name" has an exact answer.
+Adopting repositories still track latest, never a tag.
+
+**The week before the cut was adopters finding real holes.** A repository moving to the
+newest version from inside its own adoption caught the guard suite assuming no repository
+had ever adopted, a database-restore command that the write guard could not see, and a
+consent question with no honest answer for "keep it, but anonymised" - all fixed in 0.9.25,
+the tree this release stabilises. Asking the owner questions became a mechanism too:
+adoption and specification interviews now go through a real question tool, with consent
+asked where answers get kept.
+
+Full developer changelog in `CHANGELOG.md`.
+
 ## 0.9.1 - 2026-08-10
 
 **The dashboard is now something you can actually read, not just skim.** Specifications get
