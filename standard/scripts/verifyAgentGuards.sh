@@ -339,56 +339,61 @@ elif ! command -v node >/dev/null 2>&1; then
   printf '  FAIL node is not on PATH, so the elicitation guard cannot run at all\n'
   FAILURES=$((FAILURES + 1))
 else
-  elicit() { # elicit <json payload>
-    # Node can fail in a way the bash guards cannot: a crash writes to stderr, exits nonzero
-    # and leaves stdout empty, which verdict() on its own reads as `allow`. Two of the three
-    # cases below expect exactly that, so a dead guard would score two passes.
-    local err out st
-    err="$(mktemp)"
-    out="$(printf '%s' "$1" | node "${ELICIT}" 2>"${err}")"
-    st=$?
-    if [ "${st}" -ne 0 ] || [ -s "${err}" ]; then
-      rm -f "${err}"
-      printf 'BROKEN'
-      return
-    fi
-    rm -f "${err}"
-    verdict "${out}"
-  }
-  assert "a gated artifact with nothing asked is refused" DENY \
-    "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/personas.md"}}')"
-  assert "a declared stub is allowed through" allow \
-    "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/personas.md","content":"adopt.personas: absent"}}')"
-  assert "a path no point gates is left alone" allow \
-    "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"src/index.ts"}}')"
-  # A rename reaches the agent as a shell command, not a write, and it is the move that did
-  # the damage this guard exists for. The tracked path is taken from whatever repository this
-  # runs in rather than named: the script ships, and no two repositories track the same files.
-  TRACKED="$(git ls-files 2>/dev/null | head -1)"
-  if [ -z "${TRACKED}" ]; then
-    printf '  FAIL nothing tracked here, so the rename cases never ran\n'
+  # The guard reads the point list and the committed ledger from the repository it runs in, so
+  # in a repo whose adoption already answered these points the DENY cases would score the
+  # mechanism working as a failure. The cases run in a scratch repository instead: no ledger,
+  # no fired question, one tracked file - the state their expectations were written for.
+  FIX="$(mktemp -d 2>/dev/null || printf '')"
+  if [ -z "${FIX}" ]; then
+    printf '  FAIL could not create a scratch repo, so the elicitation cases never ran\n'
     FAILURES=$((FAILURES + 1))
   else
+    git -C "${FIX}" init -q
+    mkdir -p "${FIX}/.claude/elicitation"
+    cp "${HOOKS}/../elicitation/points.json" "${FIX}/.claude/elicitation/points.json"
+    printf 'tracked\n' > "${FIX}/tracked-file.txt"
+    git -C "${FIX}" add -A
+    git -C "${FIX}" -c user.name=suite -c user.email=suite@local commit -qm fixture
+    elicit() { # elicit <json payload>
+      # Node can fail in a way the bash guards cannot: a crash writes to stderr, exits nonzero
+      # and leaves stdout empty, which verdict() on its own reads as `allow`. Two of the three
+      # cases below expect exactly that, so a dead guard would score two passes.
+      local err out st
+      err="$(mktemp)"
+      out="$(printf '%s' "$1" | (cd "${FIX}" && node "${ELICIT}") 2>"${err}")"
+      st=$?
+      if [ "${st}" -ne 0 ] || [ -s "${err}" ]; then
+        rm -f "${err}"
+        printf 'BROKEN'
+        return
+      fi
+      rm -f "${err}"
+      verdict "${out}"
+    }
+    assert "a gated artifact with nothing asked is refused" DENY \
+      "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/personas.md"}}')"
+    assert "a declared stub is allowed through" allow \
+      "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/personas.md","content":"adopt.personas: absent"}}')"
+    assert "a path no point gates is left alone" allow \
+      "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"src/index.ts"}}')"
+    # A rename reaches the agent as a shell command, not a write, and it is the move that did
+    # the damage this guard exists for. The tracked path comes from the scratch repo, so the
+    # case is the same in every repository this suite ships to.
+    TRACKED="$(git -C "${FIX}" ls-files | head -1)"
     assert "moving a path the repository already tracks is refused" DENY \
       "$(elicit "$(printf '{"tool_name":"Bash","tool_input":{"command":"git mv %s moved-aside"}}' "${TRACKED}")")"
     assert "moving a file the repository never tracked is not this guard's business" allow \
       "$(elicit '{"tool_name":"Bash","tool_input":{"command":"mv untracked-scratch.tmp elsewhere.tmp"}}')"
     assert "an ordinary shell command is not read as a rename" allow \
       "$(elicit "$(printf '{"tool_name":"Bash","tool_input":{"command":"ls %s"}}' "${TRACKED}")")"
-  fi
-  # Two of the three above expect `allow`, and a guard that never ran also produces no output.
-  # So the scorer is shown catching a dead one, on the same payload that legitimately passes.
-  CRASH="$(mktemp -d 2>/dev/null || printf '')"
-  if [ -z "${CRASH}" ]; then
-    printf '  FAIL could not create a temp dir, so the dead-guard case never ran\n'
-    FAILURES=$((FAILURES + 1))
-  else
-    printf 'throw new Error("dead");\n' > "${CRASH}/crash.mjs"
-    saved_elicit="${ELICIT}"; ELICIT="${CRASH}/crash.mjs"
+    # Two of the three above expect `allow`, and a guard that never ran also produces no output.
+    # So the scorer is shown catching a dead one, on the same payload that legitimately passes.
+    printf 'throw new Error("dead");\n' > "${FIX}/crash.mjs"
+    saved_elicit="${ELICIT}"; ELICIT="${FIX}/crash.mjs"
     assert "a guard that throws is not read as a pass-through" BROKEN \
       "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"src/index.ts"}}')"
     ELICIT="${saved_elicit}"
-    rm -rf "${CRASH}"
+    rm -rf "${FIX}"
   fi
 fi
 

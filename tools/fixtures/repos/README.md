@@ -21,7 +21,10 @@ bite on.
 throwaway git repository built from each fixture and asserts what must be true of any
 adopted repository - the shipped guard suite passes there, the elicitation guard refuses
 an intake nobody was asked about and allows one they were, and `self-verify` reports the
-drift that is genuinely still there rather than a green tick on an unfilled tree.
+drift that is genuinely still there rather than a green tick on an unfilled tree. It then
+commits a ledger answering every repository-scoped point and asserts the guard suite
+still passes - the state after an adoption, which neither fixture reaches on its own and
+which the suite's elicitation cases once assumed away.
 
 **By hand**, to repeat a field run:
 
