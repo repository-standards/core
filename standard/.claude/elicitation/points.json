@@ -27,15 +27,16 @@
       "id": "adopt.layout",
       "skill": "align-to-standards",
       "file": "intake.md",
-      "asks": "This repository already names and arranges things its own way, and the standard names them differently. Adopt the standard's layout, or keep yours and map the standard onto it?",
+      "asks": "This repository already names and arranges things its own way, and the standard names them differently. Move what you have into the standard's layout, keep yours and map the standard onto it, or decide case by case?",
       "required": true,
       "allowed_provenance": [
         "human",
         "provisional"
       ],
-      "gates": "any rename or move of a directory that already exists in the target repository",
+      "gates": "any rename or move of a path the repository already tracks",
       "why": "A repository's own naming is a decision someone already made. Overwriting it silently is the most destructive thing an adoption can do, because it looks like tidying.",
-      "evidence": "stayget 2026-08-19: commit 24d36b8c moved docs/ADR and docs/BDR under docs/decision-records - 78 files, 53 links broken - with no question asked. The repository's convention lost to the standard's by default."
+      "evidence": "stayget 2026-08-19: commit 24d36b8c moved docs/ADR and docs/BDR under docs/decision-records - 78 files, 53 links broken - with no question asked. The repository's convention lost to the standard's by default.",
+      "gate_renames": true
     },
     {
       "id": "adopt.intent",
@@ -89,14 +90,14 @@
       "id": "adopt.records",
       "skill": "align-to-standards",
       "file": "onboard.md",
-      "asks": "The standard expects decision records. Write them now one at a time, leave stubs, or let the agent draft them for you to check later?",
+      "asks": "This repository already has decision records, and the standard expects more. Take what is there as it stands, rewrite it into the standard's shape, or leave it and only add new ones? And for the new ones - write them now, leave stubs, or have them drafted for you to check later?",
       "required": true,
       "allowed_provenance": [
         "human",
         "provisional",
         "absent"
       ],
-      "gates": "docs/decision-records/**",
+      "gates": "docs/decision-records/** - a new record, and an edit to one that was already there",
       "why": "A decision record is the one artifact whose whole value is that a person decided it.",
       "evidence": "stayget 2026-08-19: 33 owner-authored records each gained a '## Revisit when' section nobody asked for.",
       "gate_globs": [

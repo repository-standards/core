@@ -5,9 +5,12 @@ happened to the answer. One table, because the point of it is that a reviewer ca
 every state in one pass - scattered across the artifacts they would never be compared.
 
 Every row starts `pending`: this repo has not been through the questions yet. A row stays
-legal there until the point is **reached** - until an artifact it gates exists that did not
-ship as a template. `scripts/elicitation-provenance.mjs` fails from that moment on, because
-something was written where the question belonged, so it was either asked or skipped.
+legal there until the point is **reached** - until the adoption itself writes something, at a
+path that point gates, that did not ship as a template.
+`scripts/elicitation-provenance.mjs` fails from that moment on, because something was written
+where the question belonged, so it was either asked or skipped. What this repository already
+had before the adoption never counts: a brownfield repo arrives holding decision records and
+specs it wrote years earlier, and its own history says nothing about who was asked what.
 
 **States** - the full set and what each one costs is in
 [`.claude/elicitation/README.md`](../.claude/elicitation/README.md):

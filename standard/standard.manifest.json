@@ -353,7 +353,7 @@
       "since": "1.0.0",
       "rule": "R19",
       "sha256": {
-        "elicitation-guard.mjs": "6b52e6fba2545841e781efbcfd1c470b75e31624d8320df884128adbd7215107",
+        "elicitation-guard.mjs": "b0d3daf9bfdc71c4c9433099e4b3d180083178a29942e4e3a63301af80cdadea",
         "guards.sh": "e2cb07f370a7875f10f3f5eef5529fe6be1ab85b7ccf52027dffac564d9b188e",
         "lib.sh": "06f1822d3110e5de9eb68d253bbafae6121326a30815955a48bd78578d428e34",
         "no-ci-secret-writes.sh": "db8381dd7b3e58b7a349c8bb3312a03ac792cffa0a04a781d790f2b14ef61793",
@@ -369,7 +369,7 @@
       "profile": "core",
       "since": "1.0.0",
       "rule": "R19",
-      "sha256": "fe5eceecefe01725c7067c0b3423e33c0f898282d2f618c0ba79b0eb9d713e3b"
+      "sha256": "5912b223308672b770da3476316b6bf1cf108fce42fefa1c27a65de959ea4567"
     },
     {
       "path": "docs/PRINCIPLES.md",
@@ -614,8 +614,8 @@
       "since": "1.1.23",
       "rule": "R28",
       "sha256": {
-        "README.md": "757dd21fc95f36a13fd273c9eea1535547dc8ac408401e5c13c4fdb2e2df563c",
-        "points.json": "18eed7a2e17e56da482700ddcd02c431ef80a2d35fa8a8c46fc032484766ab59"
+        "README.md": "29d303cd1b479cd2271fe29c91aa255e9cd29c8061d0805f6daef34ba412dab2",
+        "points.json": "7f9e080fa0f9f5646334eb614dc7c2348ca51a3910251aec045604f578e12b04"
       }
     },
     {
@@ -626,7 +626,7 @@
       "profile": "core",
       "since": "1.1.23",
       "rule": "R28",
-      "sha256": "6b52e6fba2545841e781efbcfd1c470b75e31624d8320df884128adbd7215107"
+      "sha256": "b0d3daf9bfdc71c4c9433099e4b3d180083178a29942e4e3a63301af80cdadea"
     },
     {
       "path": "docs/adoption-provenance.md",
@@ -645,7 +645,7 @@
       "profile": "core",
       "since": "1.1.23",
       "rule": "R28",
-      "sha256": "feda05d15ad4fa89ddebe5ec52efc4fe005c9ebdd284c543907b835739abc0fc"
+      "sha256": "59afb33b32865ff0c1bbbc0b9498d48ff6ee458a34deff7651e09d5cd797b6bf"
     }
   ],
   "references": [
