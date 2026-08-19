@@ -29,15 +29,21 @@ const block = (options) => [
   "",
 ];
 
-const skill = (options, preamble = [], second = null) => {
+const skill = (options, preamble = [], second = null, sibling = null) => {
   writeFileSync(`${skills}/t/q.md`, [...preamble, ...block(options)].join("\n"));
   rmSync(`${skills}/t/other.md`, { force: true });
   if (second !== null) writeFileSync(`${skills}/t/other.md`, block(second).join("\n"));
+  // A second skill, for the points asked down more than one skill rather than more than one
+  // file: one specification question is put by the skill that writes Requirements and again by
+  // the one that clarifies them, and a call site in only one of them is the live defect.
+  mkdirSync(`${skills}/u`, { recursive: true });
+  writeFileSync(`${skills}/u/q.md`, sibling === null ? "# Nothing here asks anything.\n" : block(sibling).join("\n"));
 };
 
 const points = (point, file = "q.md") => {
   const path = `${root}/points.json`;
-  writeFileSync(path, JSON.stringify({ points: [{ id: "t.one", skill: "t", file, required: true, ...point }] }));
+  const { skill: which = "t", ...rest } = point;
+  writeFileSync(path, JSON.stringify({ points: [{ id: "t.one", skill: which, file, required: true, ...rest }] }));
   return path;
 };
 
@@ -99,6 +105,31 @@ const CASES = [
     why: "or the case above would pass for the mere fact of a second file",
   },
   {
+    name: "a point wired in one of its two skills is not wired",
+    options: CONVERGENT,
+    point: { recommended: "move ours into the standard's layout", skill: ["t", "u"] },
+    exit: 1,
+    expect: "no AskUserQuestion and no point id",
+    why: "spec.scope is asked by four skills and every one of them writes the file it gates; a call site in one is a refusal with no instructions in the other three",
+  },
+  {
+    name: "both skills asking, and agreeing, passes",
+    options: CONVERGENT,
+    sibling: CONVERGENT,
+    point: { recommended: "move ours into the standard's layout", skill: ["t", "u"] },
+    exit: 0,
+    why: "or the case above would pass for the mere fact of a second skill being named",
+  },
+  {
+    name: "a declared file that is not there is a broken declaration, not a call site to skip",
+    options: CONVERGENT,
+    file: ["q.md", "gone.md"],
+    point: { recommended: "move ours into the standard's layout" },
+    exit: 1,
+    expect: "does not exist",
+    why: "it used to be filtered out silently, so a point passed on the strength of the sibling file it also names",
+  },
+  {
     name: "null is a legal declaration, for a question with no such axis",
     options: "**mine** / **somebody else's** / **do not record it**",
     point: { recommended: null },
@@ -109,7 +140,7 @@ const CASES = [
 
 let bad = 0;
 for (const c of CASES) {
-  skill(c.options, c.preamble, c.second ?? null);
+  skill(c.options, c.preamble, c.second ?? null, c.sibling ?? null);
   const r = run(points(c.point, c.file));
   const out = `${r.stdout}${r.stderr}`;
   const wrongExit = r.status !== c.exit;

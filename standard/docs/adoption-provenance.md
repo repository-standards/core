@@ -23,6 +23,17 @@ specs it wrote years earlier, and its own history says nothing about who was ask
 | `inferred` | you concluded it from the code and said so - most points refuse this |
 | `absent` | you wrote a stub rather than guess, and the gap is visible in the artifact |
 
+**Two kinds of row, and the difference decides what a row is worth later.** Most points here
+belong to the repository - who it is for, how its records are kept, which profile it runs at -
+and are asked once. Once such a row says a person answered and the row is **committed**, the
+elicitation guard stops demanding the question again: a later session writing
+`docs/decision-records/` or `docs/personas.md` is working under an answer this repository
+already gave. The rest belong to a piece of work rather than to the repository - the scope of a
+specification, the materials behind one discovery digest, the participants in one run - and no
+committed row settles those. They are asked every time, and their row records the most recent
+answer rather than a standing permission. `.claude/elicitation/points.json` declares which is
+which as `scope`.
+
 ## The record
 
 | Point | State | Answered by | When | Landed in | Backlog row |

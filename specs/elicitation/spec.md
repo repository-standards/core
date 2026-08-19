@@ -98,6 +98,23 @@ it as the known gap rather than claiming coverage.
   the standard, or where convergence is not the axis, the answer given now rather than
   deferred. `null` is legal only where no such axis exists, which is consent. The skill MUST
   offer that answer first, and the static check MUST fail when the two disagree.
+- A point asked down more than one path MUST declare every one of them - every skill in `skill`
+  and every file in `file` - and the static check MUST require a call site in each and read the
+  option order of each. A question reaching a greenfield repo and a brownfield one is two option
+  lists, and one specification question is put by four skills; only the declared paths are held
+  to the rule, and an undeclared one is where the recommendation drifts.
+- A file a point declares but which does not exist MUST fail the static check. Skipping it
+  silently lets a point pass on the strength of a sibling file it also names.
+- Each point MUST declare a `scope`. A `repository`-scoped answer belongs to the repository and
+  is asked once: the guard MUST accept a committed ledger row answering it, so that ordinary
+  work after the adoption is not refused until it re-asks an adoption question. A `work`-scoped
+  answer belongs to the piece of work in front of the run - this specification, this digest,
+  this run - and no ledger row MAY satisfy it; it is asked every time.
+- The row MUST be committed to count. Reading the working file would let one run write the row
+  and the artifact together, which is the laundering the transcript check exists to close.
+- Every skill that writes a path a point gates MUST carry that point's call site. A gated path
+  with no call site in the skill that writes it is a refusal with no instructions, and a guard
+  that cannot be satisfied is a guard that gets removed.
 - The rule binds every question a run asks, not only the declared ones - a check can only
   reach what is written down, and that is a limit of the check rather than of the rule.
 - The declared points are the enforceable floor. A run MUST ask what the repository in front
@@ -161,6 +178,16 @@ it as the known gap rather than claiming coverage.
 - GIVEN a skill whose first option is not the point's declared `recommended` THEN
   `elicitation-points-check` exits 1 naming both; GIVEN a point that declares no `recommended`
   key at all THEN it exits 1; GIVEN `recommended: null` THEN it passes.
+- GIVEN a point declaring two skills, one of which asks it and one of which does not, THEN
+  `elicitation-points-check` exits 1 naming the skill that does not; GIVEN a point declaring a
+  file that does not exist THEN it exits 1 saying so.
+- GIVEN a repository-scoped point whose answered row is committed THEN a write to the path it
+  gates is allowed with no question in this session; GIVEN the same row uncommitted THEN the
+  write is refused; GIVEN a work-scoped point whose answered row is committed THEN the write is
+  refused anyway.
+- GIVEN a point declaring two files, one leading with the recommended answer and one leading
+  with another THEN `elicitation-points-check` exits 1 and says which of the call sites
+  disagrees; GIVEN both leading with it THEN it passes.
 - GIVEN a skill file that mentions a point id in prose before the heading that calls it THEN
   the check reads the option list under the heading, not the one nearest the mention.
 - GIVEN a ledger with no section for questions no point declares THEN `elicitation-provenance`

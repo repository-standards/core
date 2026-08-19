@@ -157,6 +157,9 @@ Given that feature description, do this:
     2. Extract key concepts from description
        Identify: actors, actions, data, constraints
     3. For unclear aspects:
+       - **Ask before guessing** <!-- PATCHED(repository-standards) -->: put what the description
+         leaves undetermined to the user as `[spec.unknowns]`. The guess below is for what they
+         hand back, not a way around asking
        - Make informed guesses based on context and industry standards
        - Only mark with [NEEDS CLARIFICATION: specific question] if:
          - The choice significantly impacts feature scope or user experience
@@ -168,8 +171,9 @@ Given that feature description, do this:
          engine's. Upstream fills User Scenarios / Functional Requirements / Success
          Criteria / Key Entities; none of those exist in capability-spec.template.md, and
          a spec written to them cannot be reconciled against the shape the guards check. -->
-    4. Fill Purpose, Scope and Out of scope
-       If the boundary cannot be determined: ERROR "Cannot determine the capability's boundary"
+    4. Ask `[spec.scope]`, then fill Purpose, Scope and Out of scope from the answer - the
+       boundary is asked, never derived. Undeterminable with nobody to ask: ERROR "Cannot
+       determine the capability's boundary"
     5. Fill Core concepts, then the contracts the declared tier requires
        buildable (the default, R9): Data contracts and Interface contracts quoted VERBATIM -
          real table and field names, real enums, real endpoints and methods, and the
@@ -183,9 +187,9 @@ Given that feature description, do this:
        silently. It does not belong under Open questions: a default you took is a
        decision, not an outstanding question, and that section says whether anything
        is still outstanding
-    7. Write Acceptance criteria as Given/When/Then covering the happy path, every error
-       path, every edge case and every state transition. Every Invariant must be covered
-       by at least one of them
+    7. Ask `[spec.acceptance]`, then write Acceptance criteria as Given/When/Then covering
+       the happy path, every error path, every edge case and every state transition. Every
+       Invariant must be covered by at least one of them
     8. Set the front-matter fields the template declares: Spec tier, Serves (a persona
        from `docs/personas.md` - a spec that serves nobody fails the structure guard),
        Status, Success metric
@@ -268,6 +272,12 @@ Given that feature description, do this:
 
    d. **Update Checklist**: After each validation iteration, update the checklist file with current pass/fail status
 
+## Questions this skill must ask
+
+Three real `AskUserQuestion` calls - the boundary, what done means, and whatever the description
+leaves undetermined. [`questions.md`](questions.md) says where each fires and what it offers; read
+it at steps 5.3, 5.4 and 5.7, not afterwards. The guard refuses the write until they have fired.
+
 ## Completion Report
 
 Report completion to the user with:
@@ -292,35 +302,25 @@ Report completion to the user with:
 - Avoid naming the *implementation* - which framework, which library, which file - but never
   avoid the *contract*. The contract is the point.
 - DO NOT create any checklists that are embedded in the spec.
-
-### Section Requirements
-
-- **Mandatory sections**: Must be completed for every feature
-- **Optional sections**: Include only when relevant to the feature
-- When a section doesn't apply, remove it entirely (don't leave as "N/A")
+- Mandatory sections are completed for every capability; optional ones only where they apply,
+  and a section that does not apply is removed rather than left as "N/A".
 
 ### For AI Generation
 
 When creating this spec from a user prompt:
 
-1. **Make informed guesses**: Use context, industry standards, and common patterns to fill gaps
+1. **Ask first, then guess** <!-- PATCHED(repository-standards) -->: `[spec.unknowns]` is what
+   you do with a gap; context, industry standards and common patterns are what you do with the
+   ones handed back to you
 2. **Document assumptions**: record each reasonable default under `## Clarifications`, as
-   `- Q: <what was unspecified> -> A: <the default taken> (assumed)` - the template has no
-   Assumptions section, and an undocumented default is the drift a later reader mistakes for
-   a decision. Not under `## Open questions`: the clarify gate reads that section and it
-   passes only as "None known.", because it answers one question - is anything still
-   outstanding. A default worth confirming is a `[NEEDS CLARIFICATION: ...]` marker instead,
-   which is the honest way to make it block <!-- PATCHED(repository-standards) -->
-3. **Limit clarifications**: Maximum 3 [NEEDS CLARIFICATION] markers - use only for critical decisions that:
-   - Significantly impact feature scope or user experience
-   - Have multiple reasonable interpretations with different implications
-   - Lack any reasonable default
-4. **Prioritize clarifications**: scope > security/privacy > user experience > technical details
-5. **Think like a tester**: Every vague requirement should fail the "testable and unambiguous" checklist item
-6. **Common areas needing clarification** (only if no reasonable default exists):
-   - Feature scope and boundaries (include/exclude specific use cases)
-   - User types and permissions (if multiple conflicting interpretations possible)
-   - Security/compliance requirements (when legally/financially significant)
+   `- Q: <what was unspecified> -> A: <the default taken> (assumed)` - an undocumented default
+   is the drift a later reader mistakes for a decision. Never under `## Open questions`: the
+   clarify gate reads that section and passes only on "None known.", because it answers one
+   question - is anything still outstanding. A default worth confirming is a
+   `[NEEDS CLARIFICATION: ...]` marker instead <!-- PATCHED(repository-standards) -->
+3. **Think like a tester**: Every vague requirement should fail the "testable and unambiguous" checklist item
+<!-- PATCHED(repository-standards): the marker cap and priority order stood here word for word
+     from step 5.3, and the areas worth a marker restated its tests. One copy, in the flow. -->
 
 **Examples of reasonable defaults** (don't ask about these):
 
@@ -328,10 +328,9 @@ When creating this spec from a user prompt:
 - Performance targets: Standard web/mobile app expectations unless specified
 - Error handling: User-friendly messages with appropriate fallbacks
 <!-- PATCHED(repository-standards): the authentication method was on this list upstream. It is
-     one of the eight foundation forks that must be consciously decided and recorded (R7), and
-     the decision checklist's reason for it is "retro-fitting authz is a security minefield".
-     A default nobody chose, recorded nowhere, is the exact failure the standard exists to
-     stop - and it is the one item here with security consequences. It is now a question. -->
+     a foundation fork that must be decided and recorded (R7) - "retro-fitting authz is a
+     security minefield" - so a default nobody chose is exactly the failure this stops. Now a
+     question. -->
 - Integration patterns: Use project-appropriate patterns (REST/GraphQL for web services, function calls for libraries, CLI args for tools, etc.)
 
 ### Success metric, and where measurable targets go

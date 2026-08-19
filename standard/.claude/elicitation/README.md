@@ -83,6 +83,15 @@ adopting. Every one of those runs had asked properly. Asking the right question 
 nudging toward the cautious answer is a slower version of the same failure, because most
 people take the recommendation.
 
+**A point asked down more than one path declares all of them.** `skill` and `file` both take a
+list, and `elicitation-points-check` requires a call site in each and the same recommended
+answer in each. This is not tidiness: the same question reaches a greenfield repository and a
+brownfield one down different pages, and one specification question is put by the skill that
+writes Requirements, by the one that clarifies them, by the one that changes them and by the one
+that reconciles them. A point wired in one of the four is a refusal with no instructions in the
+other three - and the field run found exactly this shape, recommending *your conventions win* on
+a path whose question no file had declared.
+
 **It binds every question, not only the twenty-one declared here.** In the same run the agent
 invented a question the point list does not contain - where tracked work lives - and
 recommended keeping the repository's parallel tracker beside `backlog.md`. A question this
@@ -115,10 +124,11 @@ let eighteen missing questions look like a working product.
 
 ## What the guard actually refuses
 
-A `Write` or `Edit` to a path some point gates is refused unless one of two things is true:
-that point's question already fired in this session, or the content being written declares
-the point `absent` (`adopt.personas: absent`, in frontmatter or as a JSON key - either
-spelling is read).
+A `Write` or `Edit` to a path some point gates is refused unless one of three things is true:
+that point's question already fired in this session; the content being written declares the
+point `absent` (`adopt.personas: absent`, in frontmatter or as a JSON key - either spelling is
+read); or the point is repository-scoped and the committed ledger already records an answer to
+it, as above.
 
 A `Bash` command that moves a path **git already tracks** is refused the same way, under
 `adopt.layout`. Renaming is not forbidden - reshaping what a repository already has into the
@@ -146,6 +156,29 @@ repository already keeps; `green.conventions` gates the layout before there is o
 `spec.unknowns` gates a decision inside a spec the run is writing anyway. The static check
 and human review carry those five, and the guard says so rather than implying coverage it
 does not have.
+
+## Asked once, or asked every time
+
+Every point declares a `scope`, and it decides what satisfies the hook after the adoption is
+over.
+
+A **repository**-scoped question is asked once, because the answer belongs to the repository:
+who the product is for, how its decision records are kept, which profile it runs at, where
+tracked work lives. Once the ledger carries an answered row for it **and that row is
+committed**, later sessions write the artifact without asking again. Committed rather than
+merely written, because reading the file on disk would let a run add the row and the artifact
+in one breath - the same laundering the transcript check exists to close.
+
+A **work**-scoped question is asked every time, because the answer belongs to the piece of work
+in front of you: the scope of this specification, the materials behind this digest, the
+participants in this run. No committed row stands in for it. What somebody said about last
+month's specification is not the boundary of this one.
+
+Getting this wrong breaks the layer in either direction, and only one of the two failures is
+loud. Treat everything as work-scoped and an ordinary `adr-write` months after adoption is
+refused until it re-asks an adoption question - which ends with the guard removed, not with the
+question asked. Treat everything as repository-scoped and one answer at adoption time licenses
+every write for the life of the repository, which is the guard passing while proving nothing.
 
 ## Provenance
 

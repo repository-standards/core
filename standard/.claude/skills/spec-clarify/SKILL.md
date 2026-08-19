@@ -131,48 +131,38 @@ Execution steps:
       decision record, or in the discovery dossier.
 
 5. Ask, in rounds, and **stop on coverage rather than on a number**:
-    - **Batch by contract, not one question per message forever.** Questions that belong to the
-      same contract are one conversation - a field's name, type and nullability get asked
-      together, in one message, numbered. Unrelated questions stay separate. Asking six things
-      about one table across six messages is not thoroughness, it is a worse interface.
-    - Keep a round to roughly **five messages**, then **check in**: say how many open items
-      remain and what they block, and offer three ways forward - keep going, park the rest as
-      markers, or park a named subset. Parking is safe *because* it writes markers, and the gate
-      then refuses to plan. Say that when offering it.
+    <!-- PATCHED(repository-standards): upstream renders its questions into the chat as markdown -
+         a bolded question, a lettered option table, "reply with the option letter". That is a
+         question-shaped paragraph: it does not block, the answer arrives as free text, and
+         nothing downstream can tell it happened - the guard looks for a tool call and so does
+         the replay layer. Measured on the shipped tree this skill made zero AskUserQuestion
+         calls while the standard advertised guided spec writing as its flagship flow. -->
+    - **Ask with `AskUserQuestion`. Every question, without exception.** Never render a question
+      as chat markdown, never ask for a reply by letter. [`questions.md`](questions.md) carries
+      the call sites this skill owns, their point ids and the shape every call takes - read it
+      here, in the loop, not as an appendix.
+    - **Batch by contract - up to four questions in one call.** A field's name, type and
+      nullability get asked together; unrelated questions go in separate calls. Six calls about
+      one table is not thoroughness, it is a worse interface.
+    - Keep a round to roughly **five calls**, then **check in**: say how many open items remain
+      and what they block, and ask - as a call, like everything else - whether to keep going,
+      park the rest as markers, or park a named subset. Parking is safe *because* it writes
+      markers, and the gate then refuses to plan. Say that in the option's description.
     - **Stop when** every section the declared tier requires either carries a real contract or
       carries a typed marker; or the user says stop. Never stop merely because a number was hit.
     <!-- CHERRY-PICKED(github/spec-kit 39f2ac3, after v0.13.2): ask a real question, not a label -->
-    - Lead each with `**Question:** <full interrogative>?` - answerable as written. NEVER use a
-      topic label, a section heading or a requirement id as the question itself: "Retention
-      policy" and "FR-023" are subjects, not questions. An id may trail it:
-      `**Question:** How long are booking records kept after cancellation? (FR-023)`.
-    - Under it, one plain-language sentence on why it matters - what changes depending on the
-      answer. Everyday wording; introduce a term only if the same sentence defines it.
-    - For multiple-choice questions:
-       - **Analyze the options** and pick the most suitable, on best practice for this project
-         type, common patterns, risk (security, performance, maintainability), and the spec's own
-         stated goals and constraints.
-       - Present the recommendation first: `**Recommended:** Option [X] - <1-2 sentence reason>`.
-       - Then the options as a table:
-
-       | Option | Description |
-       |--------|-------------|
-       | A | <Option A description> |
-       | B | <Option B description> |
-       | C | <Option C description> (add D/E as needed, up to 5) |
-       | Short | Provide a different short answer (Include only if a free-form alternative fits) |
-
-       - After the table: `Reply with the option letter (e.g. "A"), accept the recommendation with
-         "yes", or give your own answer.`
-    - For short-answer questions:
-       - Give your **suggested answer** first: `**Suggested:** <proposal> - <brief reason>`, then
-         `Accept with "yes", or give your own.`
-       - **Do not impose a word limit on a contract.** Upstream constrains every short answer to
-         five words; that is fine for "which auth model?" and useless for "what does the payload
-         look like?". Ask for exactly the shape the spec section needs - a field list, an enum, a
-         rule - and say so.
+    - The `question` field holds a **full interrogative, answerable as written** - never a topic
+      label, a heading or a requirement id. "Retention policy" and "FR-023" are subjects; an id
+      may trail the question, not replace it.
+    - **The recommended option goes first and is the only one labelled**, and where the axis is
+      consent rather than correctness, nothing is recommended.
+    - **An answer off the list is the answer.** Somebody typing their own has told you the
+      question was framed on the wrong axis: record what they said, not the option it is nearest
+      to, say how you resolved it, and fix the question.
+    - **Do not impose a word limit on a contract.** Upstream caps every short answer at five
+      words; that is fine for "which auth model?" and useless for "what does the payload look
+      like?". Ask for the shape the section needs - a field list, an enum, a rule.
     - After each answer:
-       - "yes" / "recommended" / "suggested" accepts what you proposed.
        - **A deferral is an answer.** "Decide later", "ask the architect", "the designer owes us
          that" - record it, and write the matching typed marker so the gate holds it.
        - If the answer is ambiguous, ask once for disambiguation - it is the same question, not a
@@ -275,7 +265,8 @@ Read [`completion.md`](completion.md) when the loop is finished and you are repo
 
 ## Questions
 
-Read [`questions.md`](questions.md) at the point where you would otherwise settle an open question yourself - it carries the three calls this skill must make.
+[`questions.md`](questions.md) carries the shape every call takes and the three declared calls this
+skill must make. Step 5 reads it as the loop runs, not here at the end.
 
 ## Done When
 
