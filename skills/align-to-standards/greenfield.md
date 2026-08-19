@@ -218,7 +218,7 @@ Options, in order: **tell me now** / **suggest it, I will check later** (`provis
 
 An empty repository contains no evidence, so anything written here without asking is invention by construction.
 
-Records to `PRODUCT.md` as `point_id: green.product` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `green.product` row takes the state, who answered, the date, and `PRODUCT.md` as where the answer landed.
 
 ### `[green.conventions]` Naming and structure to carry in
 
@@ -232,4 +232,4 @@ Options, in order: **mine, here they are** / **standard defaults** / **suggest i
 
 The same decision as `adopt.layout`, one step earlier and far cheaper: the moment to honour somebody's convention is before any file exists.
 
-Records to `the initial layout and docs/adoption-intake.md` as `point_id: green.conventions` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `green.conventions` row takes the state, who answered, the date, and `the initial layout and docs/adoption-intake.md` as where the answer landed.

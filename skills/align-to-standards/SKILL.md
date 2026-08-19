@@ -132,4 +132,4 @@ Options, in order: **continue** / **stop here** / **hand it back**
 
 A guided adoption that runs to the end unprompted and stops at a summary is not guided. This is also where the person can redirect before the next phase writes anything, which is the only cheap moment to do it.
 
-Records to `the run record` as `point_id: adopt.continue` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `adopt.continue` row takes the state, who answered, the date, and `the run record` as where the answer landed.

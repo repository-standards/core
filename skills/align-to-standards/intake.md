@@ -321,7 +321,7 @@ Options, in order: **migrate** / **selected parts** / **assess only** / **sugges
 
 Everything downstream is scoped by this answer, so inferring it means inferring the whole run.
 
-Records to `docs/adoption-intake.md` as `point_id: adopt.intent` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `adopt.intent` row takes the state, who answered, the date, and `docs/adoption-intake.md` as where the answer landed.
 
 ### `[adopt.layout]` Directory naming and structure
 
@@ -335,7 +335,7 @@ Options, in order: **keep ours** / **adopt the standard's** / **suggest it, I wi
 
 Never `inferred`: a naming convention is a preference, not a fact you can read off the repo. A repository's own naming is a decision somebody already made, and overwriting it silently is the most destructive thing an adoption can do, because it looks like tidying.
 
-Records to `docs/adoption-intake.md` as `point_id: adopt.layout` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `adopt.layout` row takes the state, who answered, the date, and `docs/adoption-intake.md` as where the answer landed.
 
 ### `[adopt.existing-material]` Informal material already in the repo
 
@@ -349,7 +349,7 @@ Options, in order: **route it now** / **list it for triage** / **suggest it, I w
 
 Unfinished work written down informally is the highest-value thing an adoption can find: the repository already paid for that knowledge and nothing indexes it. Editing those files for link hygiene without reading them for content is the worst of both outcomes.
 
-Records to `the discovery record and docs/adoption-intake.md` as `point_id: adopt.existing-material` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `adopt.existing-material` row takes the state, who answered, the date, and `the discovery record and docs/adoption-intake.md` as where the answer landed.
 
 ### `[adopt.guards]` Guards that overlap the standard's
 
@@ -363,7 +363,7 @@ Options, in order: **replace** / **merge** / **keep both** / **suggest it, I wil
 
 Overwriting a working guard can silently remove protection, and a guard that prints only on refusal is indistinguishable from a healthy one once broken.
 
-Records to `docs/adoption-intake.md` as `point_id: adopt.guards` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `adopt.guards` row takes the state, who answered, the date, and `docs/adoption-intake.md` as where the answer landed.
 
 ### `[adopt.commit-plan]` How the work is split into commits
 
@@ -377,4 +377,4 @@ Options, in order: **per concern** / **per phase** / **one commit** / **suggest 
 
 The one optional point. Under rebase merge every commit lands in the default branch on its own, so granularity is the reviewer's contract rather than a formatting preference - the agent may propose, but never silently.
 
-Records to `docs/adoption-intake.md` as `point_id: adopt.commit-plan` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `adopt.commit-plan` row takes the state, who answered, the date, and `docs/adoption-intake.md` as where the answer landed.
