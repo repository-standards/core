@@ -129,6 +129,25 @@
     .switch[data-open] .menu{transform:none}
     .tag{display:none}
   }
+  /* One row costs 704px: brand 128, links 263, switcher 207, three 18px gaps and the wrap's
+     52px of padding. Every child is nowrap by design, so under that the flex line has nothing
+     to give and squeezes the switcher until its own label breaks across two lines. It wraps
+     instead - brand and switcher on top, links on a full-width row beneath. A burger menu
+     would cost script and a focus trap on a page that ships neither. */
+  @media(max-width:720px){
+    .nav{flex-wrap:wrap;height:auto;padding-top:11px;padding-bottom:11px;row-gap:9px}
+    .nav .spacer{display:none}
+    .nav .links{order:2;width:100%;justify-content:center}
+  }
+  /* Sharing the top row at full size takes 405px of viewport. Below it the two shrink rather
+     than take a third row, which the sticky header would then carry down the whole page. */
+  @media(max-width:420px){
+    .nav{gap:10px}
+    .brand .mark{height:28px}
+    .brand .wordmark b{font-size:15px}
+    .brand .wordmark i{font-size:8.5px;letter-spacing:.3em}
+    .switch>button{font-size:12.5px;gap:7px;padding:8px 11px}
+  }
 
   /* ---- buttons ---- */
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:var(--sans);
@@ -400,6 +419,13 @@
     stroke-linecap:round;stroke-linejoin:round}
   .fm p{margin:0;color:var(--muted);font-size:14px;line-height:1.5;padding-left:3px;text-wrap:pretty}
   @media(max-width:560px){.fm{width:auto;max-width:100%;flex-basis:100%}}
+  /* The longest name, standard.manifest.json, is 304px of nowrap tag, so it clears a 375
+     viewport and nothing narrower. Each caption is sized off its own tag, so letting the tag
+     wrap would collapse the column it defines - the type comes down instead. */
+  @media(max-width:380px){
+    .fmtag{font-size:14px;gap:8px;padding:12px 15px;border-radius:10px}
+    .fmtag svg{width:16px;height:16px}
+  }
 
   /* ---- final ---- */
   /* The workflow rail already ends on a lot of air; 96px on top of it read as a hole. */
@@ -481,7 +507,7 @@
 <header>
   <div class="wrap nav">
     <span class="brand"><img class="mark" src="logo-mark.png" alt="" width="428" height="512"><span class="wordmark"><b>repository</b><i>Standards</i></span></span>
-    <span class="tag mono">v0.9.21</span>
+    <span class="tag mono">v0.9.22</span>
     <span class="spacer"></span>
     <nav class="links">
       <a href="docs/">Docs</a>
@@ -991,7 +1017,7 @@
   <div class="closing">
     <div class="wrap reveal">
       <p class="oneliner">The missing layer between business, engineering and AI: one repository every role contributes to, and a standard that proves it still holds.</p>
-      <p class="disclose">Open source, MIT, no build step. Version 0.9.21, the first stable line - no release
+      <p class="disclose">Open source, MIT, no build step. Version 0.9.22, the first stable line - no release
         tag until the maintainer cuts one, and no public adopter to point at, because the mechanics
         have been run on the author's own repositories. Every guard here is dependency-free and runs
         in a clone, so test the mechanism before you trust it.</p>
@@ -1001,7 +1027,7 @@
 
 <footer>
   <div class="wrap foot">
-    <span>repository-standards &middot; v0.9.21 &middot; MIT</span>
+    <span>repository-standards &middot; v0.9.22 &middot; MIT</span>
     <span>no build &middot; one standard &middot; self-verifying</span>
     <a href="https://github.com/repository-standards/core">github.com/repository-standards/core</a>
   </div>
@@ -1028,7 +1054,7 @@
   var CMD = "align my project to repository-standards";
   var SCRIPT = [
     {sp:1, d:340},
-    {h:'<span class="cb">&#9210;</span> Reading the standard&hellip; <span class="cv">repository-standards@0.9.21</span> <span class="cmuted">- the rules, one file</span>', d:640},
+    {h:'<span class="cb">&#9210;</span> Reading the standard&hellip; <span class="cv">repository-standards@0.9.22</span> <span class="cmuted">- the rules, one file</span>', d:640},
     {h:'<span class="cb">&#9210;</span> Scanning <span class="cw">booking-api</span> <span class="cmuted">- 214 files</span>', d:520},
     {h:'  <span class="cmuted">&#9151;</span>  12 capabilities detected &middot; 0 specs &middot; the decisions live in chat history', d:720},
     {h:'<span class="cb">&#9210;</span> Comparing the tree against the manifest&hellip;', d:700},
@@ -1036,7 +1062,7 @@
     {sp:1, d:280},
     {h:'<span class="cb">&#9210;</span> Building the fit report + adoption plan&hellip;', d:840},
     {sp:1, d:260},
-    {h:'  <span class="cw">Adoption plan</span> <span class="cmuted">booking-api -&gt; repository-standards@0.9.21</span>', d:360},
+    {h:'  <span class="cw">Adoption plan</span> <span class="cmuted">booking-api -&gt; repository-standards@0.9.22</span>', d:360},
     {h:'  &#9500; 7 ADRs to record           <span class="cmuted">the why that today lives only in chat</span>', d:300},
     {h:'  &#9500; 1 BDR                      <span class="cmuted">the pricing rule that exists only in code</span>', d:300},
     {h:'  &#9500; PRODUCT.md                 <span class="cmuted">what this app is, and for whom</span>', d:300},

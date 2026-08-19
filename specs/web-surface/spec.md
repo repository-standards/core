@@ -50,6 +50,17 @@ Worker answers and the fetch's failure path leaves it there, but `.eyebrow`'s au
 declaration outranked the UA sheet's `[hidden]{display:none}`, so the placeholder `0` rendered
 on every load. Also layout-only against this spec, and also outside what `site-check` can see.
 
+A second pass the same day, on the other end of the width range: the landing's top bar had no
+mobile form at all, so at 375px its right edge landed at 604 and the whole page scrolled
+sideways. `.nav` now wraps below 720px (the width one row costs) and steps its type down below
+420px (what brand and switcher alone need), and the file map's tags - which cannot wrap, because
+each caption is sized off its own tag - step down below 380px so the longest name stops forcing
+the document to 330 at a 320px viewport. Two candidates named in the report turned out not to be
+causes: the animated terminal scrolls inside `.cc-body`, and the `.glow` divs are clipped by
+`.atmos`. Layout-only again, and again outside what `site-check` can see, since it reads the
+file rather than rendering it at a width.
+
+
 ## Scope
 
 The docsite generator, the site-check gate, and the `site/` directory they operate on. Repo-own tooling - never shipped.
