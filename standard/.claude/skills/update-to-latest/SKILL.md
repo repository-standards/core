@@ -206,7 +206,10 @@ with `self-verify`.
   `provenanceCommit` names one tree; `.standards-version` names a bookmark for humans.
 - **Not a hook landed without its wiring** - copying `elicitation-guard.mjs` while leaving
   `.claude/settings.json` unmerged ships a guard that never fires, and a repo that thinks it is
-  guarded is worse off than one that knows it is not.
+  guarded is worse off than one that knows it is not. The guard and `points.json` move as a pair
+  for the same reason: the guard reads each point's `scope` to know which questions a committed
+  answer already settles, so a new guard over an old point list refuses ordinary work until
+  somebody re-asks an adoption question.
 - **Not a ledger back-filled to make the check quiet** - `pending` is the honest state for a
   repo nobody has asked yet, and it is not a failure to be cleared.
 - **Not a compliance claim scoped to the delta** - drift 0 is a statement about the whole tree
