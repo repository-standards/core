@@ -1,0 +1,7 @@
+{
+  "$fixture": "self-test: one point asked, one never asked - point coverage must catch the gap",
+  "points": [
+    { "id": "adopt.layout", "required": true },
+    { "id": "adopt.personas", "required": true }
+  ]
+}

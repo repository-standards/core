@@ -1,0 +1,267 @@
+{
+  "$schema_version": 1,
+  "$what": "Every place the standard must ask a human instead of deciding for them.",
+  "$why": [
+    "The rule already existed in prose and did not hold. onboard.md said to mark inferred work",
+    "unconfirmed and put the interview in the backlog; a full adoption ran without doing it.",
+    "A point listed here is not advice - it is a declared call site, checked statically in CI",
+    "and asserted by replay against the fixture repos."
+  ],
+  "$point_id_contract": "Every question carries its id in the AskUserQuestion header as [id]. Without it the replay layer cannot assert which points were reached, only how many questions were asked - and count is exactly the metric that let this defect hide.",
+  "answer_kinds": {
+    "answer": "The human decides now. -> provenance human.",
+    "suggest": "The agent proposes, the human verifies later. -> provenance provisional, plus a backlog row naming this point. Counts as human presence: it is attributable, timestamped, and produces a marked artifact.",
+    "stub": "Placeholder only, the agent must not guess. -> provenance absent, with a visible gap marker.",
+    "defer": "Not now, ask again at the next checkpoint. -> nothing is written."
+  },
+  "provenance_states": {
+    "human": "Answered by a person; verifiable against the session transcript.",
+    "provisional": "Agent-authored under an explicit 'suggest' choice; awaiting verification.",
+    "inferred": "Agent concluded it from the repository and said so. Never valid where the answer is a preference rather than a fact.",
+    "absent": "Deliberately left empty under a 'stub' choice.",
+    "unverified": "Claimed human, no transcript to check it against. Counted separately, never folded into 'validated'."
+  },
+  "points": [
+    {
+      "id": "adopt.layout",
+      "skill": "align-to-standards",
+      "file": "onboard.md",
+      "asks": "This repository already names and arranges things its own way, and the standard names them differently. Adopt the standard's layout, or keep yours and map the standard onto it?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional"
+      ],
+      "gates": "any rename or move of a directory that already exists in the target repository",
+      "why": "A repository's own naming is a decision someone already made. Overwriting it silently is the most destructive thing an adoption can do, because it looks like tidying.",
+      "evidence": "stayget 2026-08-19: commit 24d36b8c moved docs/ADR and docs/BDR under docs/decision-records - 78 files, 53 links broken - with no question asked. The repository's convention lost to the standard's by default."
+    },
+    {
+      "id": "adopt.intent",
+      "skill": "align-to-standards",
+      "file": "onboard.md",
+      "asks": "How far does this adoption go: migrate everything to the standard, adopt selected parts, or assess only and change nothing yet?",
+      "required": true,
+      "allowed_provenance": [
+        "human"
+      ],
+      "gates": "docs/adoption-intake.md",
+      "why": "Everything downstream is scoped by this answer, so inferring it means inferring the whole run.",
+      "evidence": "stayget 2026-08-19: docs/adoption-intake.md quotes the owner declaring full migration in a sentence he never typed. The transcript holds one user turn and it does not say that."
+    },
+    {
+      "id": "adopt.continue",
+      "skill": "align-to-standards",
+      "file": "onboard.md",
+      "asks": "Phase finished. Continue to the next one, stop here, or hand the rest back to you?",
+      "required": true,
+      "allowed_provenance": [
+        "human"
+      ],
+      "gates": "starting any phase after the first",
+      "why": "A guided adoption that runs to the end unprompted and stops at a summary is not guided. The checkpoint is also where the human can redirect before the next phase writes anything.",
+      "evidence": "stayget 2026-08-19: the run ended on a summary; the owner had to prompt it himself to carry on."
+    },
+    {
+      "id": "adopt.existing-material",
+      "skill": "align-to-standards",
+      "file": "onboard.md",
+      "asks": "This repository holds informal working material - scratch notes, PRDs, plans, TODO files - that the standard has a home for. Route it into discovery and the backlog now, list it for you to triage, or leave it untouched?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional",
+        "absent"
+      ],
+      "gates": "any edit to informal material, and the discovery record",
+      "why": "Unfinished work written down informally is the highest-value thing an adoption can find, because it is knowledge the repository already paid for and nothing indexes. Editing those files without reading them for content is the worst of both: the notes are disturbed and their contents are still lost.",
+      "evidence": "stayget 2026-08-19: .scratch holds 21 directories and 56 markdown files - 5 PRDs, 5 plans, 5 specs, 2 task lists, a test-gaps note. The adoption opened them only to rewrite links, and separately deferred docs/TODO triage on its own authority."
+    },
+    {
+      "id": "adopt.records",
+      "skill": "align-to-standards",
+      "file": "onboard.md",
+      "asks": "The standard expects decision records. Write them now one at a time, leave stubs, or let the agent draft them for you to check later?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional",
+        "absent"
+      ],
+      "gates": "docs/decision-records/**",
+      "why": "A decision record is the one artifact whose whole value is that a person decided it.",
+      "evidence": "stayget 2026-08-19: 33 owner-authored records each gained a '## Revisit when' section nobody asked for."
+    },
+    {
+      "id": "adopt.personas",
+      "skill": "align-to-standards",
+      "file": "onboard.md",
+      "asks": "Who are the users of this product? Define them yourself, have them suggested from the code for you to correct, or skip personas for now?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional",
+        "absent"
+      ],
+      "gates": "docs/personas.md",
+      "why": "Personas are a claim about people outside the repository. Nothing in the code can settle them.",
+      "evidence": "stayget 2026-08-19: five personas invented, roster declared closed, no inferred marker despite onboard.md requiring one."
+    },
+    {
+      "id": "adopt.backlog",
+      "skill": "align-to-standards",
+      "file": "onboard.md",
+      "asks": "Should the adoption seed a backlog, and if so who owns the items - you, or left unassigned?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional",
+        "absent"
+      ],
+      "gates": "backlog.md",
+      "why": "Assigning work to a named person is an act with consequences outside the repository.",
+      "evidence": "stayget 2026-08-19: 20 items written with owners and definitions of done, unasked."
+    },
+    {
+      "id": "adopt.guards",
+      "skill": "align-to-standards",
+      "file": "onboard.md",
+      "asks": "The repository already has agent guards that overlap the standard's. Replace, merge, or keep both?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional"
+      ],
+      "gates": "hooks and guard configuration in the target repository",
+      "why": "Overwriting a working guard can silently remove protection, and a silent guard is indistinguishable from a healthy one.",
+      "evidence": "stayget 2026-08-19: the single question the whole run did ask. It was asked because the duplication was mechanically visible - which is precisely why the other points, being invisible, were never raised."
+    },
+    {
+      "id": "adopt.commit-plan",
+      "skill": "align-to-standards",
+      "file": "onboard.md",
+      "asks": "This adoption touches many files. Split the work into commits how - one per concern, one per phase, or a single change?",
+      "required": false,
+      "allowed_provenance": [
+        "human",
+        "provisional",
+        "inferred"
+      ],
+      "gates": "the first commit of the adoption branch",
+      "why": "Under rebase merge every commit lands in main on its own, so granularity is the reviewer's contract, not a formatting preference.",
+      "evidence": "stayget 2026-08-19: three commits for roughly 200 changed files, chosen by the agent."
+    },
+    {
+      "id": "green.product",
+      "skill": "align-to-standards",
+      "file": "greenfield.md",
+      "asks": "What is this going to be, and who is it for?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional"
+      ],
+      "gates": "PRODUCT.md",
+      "why": "An empty repository contains no evidence, so anything the agent writes here is invention by construction."
+    },
+    {
+      "id": "green.conventions",
+      "skill": "align-to-standards",
+      "file": "greenfield.md",
+      "asks": "Do you have naming and structure conventions you want carried in, or should the standard's defaults apply?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional"
+      ],
+      "gates": "the initial directory layout",
+      "why": "Same defect as adopt.layout, one step earlier: the cheapest moment to honour someone's convention is before any file exists."
+    },
+    {
+      "id": "green.stack",
+      "skill": "align-to-standards",
+      "file": "stack.md",
+      "asks": "Which stack, and which profile - core or scale?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional"
+      ],
+      "gates": "stack.manifest.json"
+    },
+    {
+      "id": "spec.scope",
+      "skill": "spec-clarify",
+      "asks": "What is in scope for this specification, and what is explicitly out?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional"
+      ],
+      "gates": "the spec's Requirements section",
+      "why": "The skill's own description promises 'Asks one question at a time' and has no mechanism to ask anything."
+    },
+    {
+      "id": "spec.acceptance",
+      "skill": "spec-clarify",
+      "asks": "What must be true for this to count as done?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional"
+      ],
+      "gates": "the spec's Acceptance criteria section",
+      "why": "Acceptance criteria written by the party that will satisfy them are not criteria."
+    },
+    {
+      "id": "spec.unknowns",
+      "skill": "spec-clarify",
+      "asks": "These points are undetermined. Decide them now, mark them provisional, or leave them open?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional",
+        "absent"
+      ],
+      "gates": "the spec's open questions",
+      "why": "Silently resolving an unknown is the failure mode; naming it as unresolved is the whole job."
+    },
+    {
+      "id": "discover.materials",
+      "skill": "discovery-digest",
+      "asks": "What existing material should this draw on, and where does it live?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional",
+        "absent"
+      ],
+      "gates": "the discovery record",
+      "why": "Discovery already carries the idea of provenance for materials; it just never asks whose they are."
+    },
+    {
+      "id": "discover.decisions",
+      "skill": "discovery-digest",
+      "asks": "Which of the decisions surfaced here are already settled, and which are still open?",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional"
+      ],
+      "gates": "any decision record produced by discovery",
+      "why": "A settled decision and an assumed one are indistinguishable once written down."
+    },
+    {
+      "id": "record.participation",
+      "skill": "record-run",
+      "asks": "Whose run is this - yours, or someone else's - and may the transcript excerpt be kept as evidence?",
+      "required": true,
+      "allowed_provenance": [
+        "human"
+      ],
+      "gates": "docs/validation/**/runs/*.json",
+      "why": "The skill that records human participation was itself the one that recorded a person who does not exist.",
+      "evidence": "The corpus entry framed as an external adopter, with an anonymity caveat nobody requested, was the repository author's own run. External adopters: zero."
+    }
+  ]
+}
