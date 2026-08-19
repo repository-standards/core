@@ -10,7 +10,7 @@
 Make asking a mechanism rather than an instruction. Declare the points where this standard
 must ask a person instead of deciding, refuse the write that would settle one of them
 unasked, and record what became of every answer. The promise "hand-holding is the product"
-had no implementation: zero of twenty-two skills contained a call to `AskUserQuestion`, and
+had no implementation: zero of twenty-three skills contained a call to `AskUserQuestion`, and
 a complete adoption asked one question in 1140 transcript lines while inventing personas,
 renaming a repository's own directories across seventy-eight files, and quoting its owner
 saying something he never said (ADR-054).

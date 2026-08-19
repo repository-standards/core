@@ -48,12 +48,16 @@ const results = declared.points.map((point) => {
     return { id: point.id, ok: false, why: `no file for skill "${point.skill}"${point.file ? `/${point.file}` : ""}` };
   }
   const bodies = files.map((f) => readFileSync(f, "utf8"));
+  // Both in one file, not both somewhere in the directory. Six points name no file, so a
+  // skill whose SKILL.md mentions the id in prose while some other page asks about something
+  // else entirely would otherwise read as wired - which is the shape of the original defect.
+  const wired = bodies.some((b) => b.includes("AskUserQuestion") && b.includes(`[${point.id}]`));
+  if (wired) return { id: point.id, ok: true };
   const invokes = bodies.some((b) => b.includes("AskUserQuestion"));
   const tagged = bodies.some((b) => b.includes(`[${point.id}]`));
   if (!invokes && !tagged) return { id: point.id, ok: false, why: "no AskUserQuestion and no point id anywhere in the skill" };
   if (!invokes) return { id: point.id, ok: false, why: "point id present but nothing calls AskUserQuestion" };
-  if (!tagged) return { id: point.id, ok: false, why: `AskUserQuestion is called but no question header carries [${point.id}]` };
-  return { id: point.id, ok: true };
+  return { id: point.id, ok: false, why: `AskUserQuestion is called, but no single file pairs it with a [${point.id}] header` };
 });
 
 const missing = results.filter((r) => !r.ok);
