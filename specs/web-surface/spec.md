@@ -33,6 +33,18 @@ deploy since the backlog/dashboard unification, but until now nothing on the lan
 pointed a reader at it. Visual/navigation-only, no invariant, acceptance criterion or
 contract in this spec changes; noted for the same reason as above.
 
+### Session 2026-08-19
+
+The landing's plain-language toggle (the hero sticker, EXPLAIN-1) swapped the headline for a
+shorter one and took two unrelated pieces of the hero with it: the "Live adoptions" badge
+dropped onto the headline's own line, and the sticker overflowed the window by 129px, so the
+page scrolled sideways. Both were CSS defects in `site/index.html` - the badge was inline-level
+beside an inline-block headline stage, and the sticker's stacking breakpoint sat at 900px when
+the layout needs about 1580px to seat it beside a centred headline. Layout-only, no invariant,
+acceptance criterion or contract in this spec changes; noted for the same reason as the entries
+above, and because neither defect is reachable by `site-check`, which reads the file rather than
+rendering it.
+
 ## Scope
 
 The docsite generator, the site-check gate, and the `site/` directory they operate on. Repo-own tooling - never shipped.
