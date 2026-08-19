@@ -40,6 +40,18 @@ const withAsked = (name, ids) => {
   return p;
 };
 
+// A second repository, because an adoption is driven from a checkout of the standard and
+// writes into a different tree - so the move it runs names a path this repository knows
+// nothing about. Asking git here about a path over there answers "untracked" for everything,
+// which is the answer that waves the whole rename through.
+const OTHER = mkdtempSync(join(tmpdir(), "target-"));
+const inOther = (...args) =>
+  spawnSync("git", ["-C", OTHER, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", ...args], { encoding: "utf8" });
+inOther("init", "-q");
+writeFileSync(join(OTHER, "PRODUCT.md"), "# theirs\n");
+inOther("add", "-A");
+inOther("commit", "-q", "--no-verify", "-m", "the target repository's own work");
+
 const ALLOW = "allow", DENY = "DENY";
 
 // Mirrors verifyAgentGuards.sh's score(): nonzero exit or anything on stderr is BROKEN,
@@ -83,6 +95,8 @@ const CASES = [
   ["a command that merely mentions mv is not a rename", { tool_name: "Bash", tool_input: { command: "grep -rn 'git mv' docs" } }, ALLOW],
   ["the destination-first form of mv is read the same way", { tool_name: "Bash", tool_input: { command: "mv -t docs/archive VERSION" } }, DENY],
   ["a flag between the command and its source does not hide it", { tool_name: "Bash", tool_input: { command: "git mv -k VERSION VERSION.old" } }, DENY],
+  ["a move in another repository, named with -C, is checked in that repository", { tool_name: "Bash", tool_input: { command: `git -C ${OTHER} mv PRODUCT.md docs/PRODUCT.md` } }, DENY],
+  ["a move in another repository, named absolutely, is checked in that repository", { tool_name: "Bash", tool_input: { command: `mv ${OTHER}/PRODUCT.md ${OTHER}/docs/PRODUCT.md` } }, DENY],
 
   // The stub escape, both ways. Without the refusals below it is a bypass with a comment
   // on it: anything that lets a write through has to be shown refusing something too.
@@ -108,6 +122,7 @@ function inRepoWithLedger(ledgerBody, call) {
   writeFileSync(join(dir, "docs/adoption-provenance.md"), ledgerBody);
   const run = spawnSync("node", [resolve(GUARD)], { input: JSON.stringify(call), encoding: "utf8", cwd: dir });
   rmSync(dir, { recursive: true, force: true });
+rmSync(OTHER, { recursive: true, force: true });
   if (run.status !== 0 || run.stderr.trim()) return `BROKEN:exit ${run.status} ${run.stderr.trim().slice(0, 60)}`;
   if (!run.stdout.trim()) return ALLOW;
   try { return JSON.parse(run.stdout).hookSpecificOutput?.permissionDecision === "deny" ? DENY : "BROKEN:not a deny verdict"; }

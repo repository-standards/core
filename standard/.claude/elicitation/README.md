@@ -79,6 +79,13 @@ It fails closed. No transcript to check against means refused, because a guard t
 work through when it has no evidence is the defect it was built to catch, wearing the
 uniform of the fix.
 
+**It cannot bootstrap itself.** A `PreToolUse` hook binds when the session starts, so a
+session that began in a repository without this wiring has no guard, whatever gets copied in
+later. That is why an adoption lands the hook, `points.json`, the `PreToolUse` matcher and
+the ledger before it writes anything else, and then stops so the session can restart. None of
+those four is gated by any point, so the ordering costs nothing - and skipping it costs the
+whole layer on the one run it was built for.
+
 Thirteen of the eighteen points are enforced here - twelve by the path they gate,
 `adopt.layout` by the rename. `adopt.continue` is a phase boundary, which is not a tool call
 at all, so the static check and human review carry that one; the guard says so rather than
