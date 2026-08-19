@@ -388,6 +388,22 @@ Unfinished work written down informally is the highest-value thing an adoption c
 
 Records to `docs/adoption-provenance.md`: the `adopt.existing-material` row takes the state, who answered, the date, and `the discovery record and docs/adoption-intake.md` as where the answer landed.
 
+### `[green.conventions]` Conventions this repository already has
+
+Fires **before `docs/conventions.md` is written**, which on this path is not a blank file: the repository already has conventions - a formatter, a commit format, where documents live, which language they are written in - and they are scattered across the files that happened to need them.
+
+Call `AskUserQuestion` with the header `[green.conventions]` and the question:
+
+> This repository already works to conventions of its own, and the standard brings defaults. Which of them wins where they disagree?
+
+Options, in order: **the standard's defaults apply**, and every deliberate difference is recorded as a manifest exception with its reason plus a backlog row (recommended) / **the repository's win**, written into `docs/conventions.md` as they are / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
+
+The recommendation is the standard's defaults, and it is not a claim that they are better. It is that a difference nobody wrote down stops being a decision within a month: the next contributor reads the standard, does the standard thing, and gets a review comment nobody can point at a record for. An exception with a reason costs one line and keeps the difference - which is why "the repository's win" is on the list and not off it, and why choosing it is only an answer once each difference is written where the standard says conventions live.
+
+Where the standard has no default at all - a formatter, a CSS toolchain, a commit trailer this repository needs - there is nothing to disagree with: carry it in, unchanged, and do not manufacture a deviation to record.
+
+Records to `docs/adoption-provenance.md`: the `green.conventions` row takes the state, who answered, the date, and `docs/conventions.md` as where the answer landed.
+
 ### `[adopt.guards]` Guards that overlap the standard's
 
 Fires **when the target already carries agent guards or hooks the standard also ships**.
