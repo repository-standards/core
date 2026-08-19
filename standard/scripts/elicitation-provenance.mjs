@@ -29,14 +29,11 @@
 //      tree's own template where every row is pending because nothing has happened yet. A
 //      guard that is red the moment it lands teaches people to disable it.
 //
-//      Two edges, both stated rather than hidden. A point that gates no path (a rename, a
-//      phase boundary) can never be reached here - the static check and human review carry
-//      those. And a shipped template FILLED IN PLACE does not trip it either: the manifest
-//      carries hashes only for files meant to stay verbatim, so `docs/personas.md` written
-//      over is indistinguishable here from `docs/personas.md` untouched. What is caught is
-//      the artifact that did not ship at all - a decision record, a spec, a dossier entry, a
-//      run record - which is most of what an adoption actually produces. A guard claiming
-//      coverage it does not have is worse than one that names its edge.
+//      One edge, stated rather than hidden: a point that gates no path - a rename, a phase
+//      boundary - can never be reached here, and the static check and human review carry
+//      those. Everything else is read: an artifact that never shipped is the adopter's, a
+//      file meant to stay verbatim is compared to its hash, and a fill-from-repo slot counts
+//      as untouched only while it still holds the placeholders it shipped with.
 //
 // A repo with no ledger at all fails rather than passes. Absence of the record is the
 // state this whole mechanism exists to stop being invisible.
@@ -109,23 +106,53 @@ const FILES = tracked();
 const rx = (g) =>
   new RegExp("(^|/)" + g.split("**").map((x) => x.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^/]*")).join(".*") + "$");
 
-// Deliberately loose, in the direction of NOT tripping. Directory entries cover what is under
-// them - the manifest lists `docs/discovery`, not each template inside it - and a manifest path
-// is matched at any depth, because the tree that ships and the tree an adopter unpacks do not
-// agree on every prefix (`backlog.md` here lives at `docs/backlog.md`). Erring the other way
-// would report the standard's own templates as adopter work, which is a false accusation, and
-// a guard that cries wolf gets switched off long before it catches anything real.
+// Three kinds of shipped path, and they need three different answers. Reading them all the
+// same way was the first attempt and it was useless: the manifest lists `docs/decision-records`
+// as one entry, so treating everything beneath it as shipped material meant a repo could hold
+// thirty-seven decision records and the check would still report that nothing had been written.
+// A rule that cannot fire is worse than no rule, because it reads in the output as a pass.
 const SHIPPED_LIST = [...SHIPPED.paths];
-const listed = (rel) =>
-  SHIPPED.paths.has(rel) ||
-  SHIPPED_LIST.some((p) => rel.endsWith(`/${p}`) || rel.startsWith(`${p}/`) || rel.includes(`/${p}/`));
+const matchesEntry = (rel, p) => rel === p || rel.endsWith(`/${p}`);
+const inside = (rel) => SHIPPED_LIST.some((p) => rel.startsWith(`${p}/`) || rel.includes(`/${p}/`));
+const slot = (rel) => SHIPPED_LIST.some((p) => matchesEntry(rel, p));
+
+// What the standard puts inside a directory it ships: the scaffolding an adopter reads and
+// copies, never edits in place. The naming is the standard's own and is consistent across every
+// such directory - `_template.md`, `_entry-template.md`, `README.md`, `*.example.json`.
+const scaffolding = (rel) => {
+  const base = rel.slice(rel.lastIndexOf("/") + 1);
+  return base.startsWith("_") || base === "README.md" || /template|example/i.test(base);
+};
+
+// A `fill-from-repo` slot shipped to be written into, so no hash could be carried for it. What
+// separates the unwritten copy from the answered one is the standard's own placeholder
+// convention (AGENTS.md): angle brackets in prose mean replace me, angle brackets in code
+// formatting are notation. The same read `self-verify`'s fill check makes, for the same reason.
+// Two notations, because the templates use both: `{{NAME}}` wherever the slot sits inside code
+// formatting (a table cell, an identifier), and <angle brackets> in prose. Code spans are
+// stripped before the second is looked for, exactly as the fill check does - generic notation
+// legitimately lives in backticks, and a placeholder written there hides from both of us.
+const MUSTACHE = /\{\{[A-Za-z0-9_]+\}\}/;
+const ANGLED = /<[A-Za-z][^<>\n]{2,}>/;
+const unfilled = (rel) => {
+  try {
+    const raw = readFileSync(at(rel), "utf8");
+    if (MUSTACHE.test(raw)) return true;
+    return ANGLED.test(raw.replace(/```[\s\S]*?```/g, "").replace(/`[^`]*`/g, ""));
+  } catch { return false; }
+};
 
 const template = (rel) => {
   const want = SHIPPED.hashes.get(rel);
   if (want) {
+    // Meant to stay verbatim: byte-identical is the whole question.
     try { return createHash("sha256").update(readFileSync(at(rel))).digest("hex") === want; } catch { return false; }
   }
-  return listed(rel);
+  // Inside first: a file under a shipped directory is that directory's scaffolding, whatever
+  // its basename happens to collide with elsewhere in the manifest.
+  if (inside(rel)) return scaffolding(rel);
+  if (slot(rel)) return unfilled(rel);
+  return false; // never shipped at all - this is the adopter's own work
 };
 
 // Reached: something this point gates exists and is not the template that shipped there.
