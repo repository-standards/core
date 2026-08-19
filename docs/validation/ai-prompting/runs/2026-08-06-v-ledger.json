@@ -1,5 +1,12 @@
 {
   "$about": "One case, found while reconciling two conventions that had appeared across the day's in-flight branches: some run files cited the pull request carrying the fix, some deliberately did not because the pull request had not merged. Reconciling them exposed a defect in the renderer rather than in either convention. Verified on this branch, not on the mainline - the failures-found total was computed on real data both ways before anything was changed.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "VAL-01",

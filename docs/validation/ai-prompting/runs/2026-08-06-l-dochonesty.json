@@ -1,5 +1,12 @@
 {
   "$about": "2026-08-06, later the same day: the two severe documentation-honesty findings re-run against the current tree before anything was written. DOC-16 closes - both halves measured, and the earlier round's disproving numbers turned out to be an artifact of the same ambiguous command. DOC-10 stays open on purpose: the gap is now recorded and gated forward, and twelve entries were deliberately not reconstructed. Neither observation carries a `fix` field, deliberately: the render counts those as merged pull requests, and the change this round rests on is open and unmergeable while GitHub Actions is in a major outage. The evidence names the commits instead, which is checkable today.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "DOC-16",

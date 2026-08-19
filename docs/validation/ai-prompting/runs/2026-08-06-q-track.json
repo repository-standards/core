@@ -1,5 +1,12 @@
 {
   "$about": "2026-08-06, the track round: the eight open failures in the backlog/sprint/board machinery, each reproduced against the live tree before anything was written. Reproductions ran against a copy of fixture:test-greenfield-core with the case's `given` planted into it, and against purpose-built minimal fixtures where the case describes a shape the greenfield repo does not carry. Every fix was then re-run against the same fixture, against the worked adopting repository (three closed sprints, one open, a populated pool, a live in-flight pointer row), and against the greenfield fixture untouched - a guard that only learned to fail is a guard that stopped letting correct repos through.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "TRACK-10",

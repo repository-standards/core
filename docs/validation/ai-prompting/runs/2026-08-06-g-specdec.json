@@ -1,5 +1,12 @@
 {
   "$about": "2026-08-06, seventh round of the day: the two severe spec-vs-decision-record findings. Both were first re-verified against the current tree (the documented procedure, by grep), then the fix was tested the only way prose can be - paired dry runs of one product-owner request against copies of the test-greenfield-core fixture, pre-fix and post-fix, each agent told to follow the repo's documented procedure literally and to say which of its reads the procedure instructed and which were its own initiative. The fixture itself was not modified; the runs used copies with the patched skills installed. The post-fix run found two holes in the fix and both were closed before this was recorded.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "SPEC-17",

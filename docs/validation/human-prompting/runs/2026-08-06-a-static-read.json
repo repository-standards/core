@@ -1,5 +1,12 @@
 {
   "$about": "A static reading of the shipped procedures, not a live run - taken before any prompt was executed, to see whether the hand-holding invariant is even instructed. Method: each of the 20 shipped SKILL.md files searched for language instructing the agent to ask, to read existing state, and to name a next step. This is a keyword proxy and not a semantic read: a skill can name the next step in words this search misses, and a skill can match without really doing it. Treat it as a pointer to where to look, never as a verdict. No repository was adopted and no prompt was typed.",
+  "$elicitation": {
+    "provenance": "unverified",
+    "transcript": null,
+    "questions_asked": null,
+    "asked_claims": 1,
+    "$why": "Recorded as human-prompting, but no session transcript was ever kept, so not one of the asked/checked/suggested claims in here can be checked against what was actually said. Worse for the ones that can be read: they were scored by reading whether a skill's text instructs asking - the exact layer that turned out to have no force. `unverified` is the honest state and it is counted apart from validated on purpose; see .claude/elicitation/README.md."
+  },
   "observations": [
     {
       "prompt": "INVARIANT",

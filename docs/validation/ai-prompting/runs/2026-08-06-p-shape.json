@@ -1,5 +1,12 @@
 {
   "$about": "2026-08-06, shape round: the nine open findings in the shape area re-run against the current tree before anything was changed, then fixed where the fix was the standard's to make. All nine still reproduced. Seven are closed here and two are left open on purpose - each of those has a half that is a decision for the maintainer rather than an author's guess, and the waiver states the options. Every fix in this round is rule-text or catalogue text except one, which is code and carries tests.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "SHAPE-11",

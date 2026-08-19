@@ -1,5 +1,12 @@
 {
   "$about": "2026-08-06, the tail of the punch list: the 21 cases left in the stack, update, greenfield, discovery, loop, security, intake and adoption areas after the other rounds of the day took their own. Every one was re-run against the current tree BEFORE anything was changed, on the rule that a finding is open only while it still reproduces - three of them did not, and are recorded closed with the commit that closed them rather than fixed again. Four are defects in repository-standards/node and cannot be closed by a pull request against this repository; they are measured here and left open with the reason. The rest are fixed in this change, each with a test that was checked to fail against the pre-fix code. Observations keep the target label of the round they supersede (2026-08-03 for STACK-01, 2026-08-04 for the rest) so they replace those findings on the punch list. No `fix` URL is claimed: the pull request carrying these fixes is not merged, and the evidence says which tree each run was executed against. UPD-04 was in this batch and is deliberately not re-recorded - the sixth round of the same day re-ran it and its observation stands.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "DISC-05",

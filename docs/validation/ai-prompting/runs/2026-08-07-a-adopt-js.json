@@ -1,5 +1,12 @@
 {
   "$about": "adopt-wave-js, 2026-08-07: three more L3 adoptions, all JavaScript/TypeScript, on the one registered stack. honojs/hono (single-package framework, 178 non-test source files under src/), drizzle-team/drizzle-orm (pnpm workspace, eight published packages, 946 tracked .ts/.js files) and usebruno/bruno (npm workspace, sixteen workspaces under packages/, an Electron desktop application plus a CLI, 2448 tracked .js/.jsx/.ts/.tsx files). Each was cloned, branched locally and taken through the align router's brownfield path; nothing was pushed to any of the three and no issue or pull request was opened against them. Every number below is a line the shipped scripts printed, measured before anything was authored and again at the end. Where the three runs agree on a finding, that is said explicitly - one repo produces a story, three produce a pattern.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "ADOPT-08",

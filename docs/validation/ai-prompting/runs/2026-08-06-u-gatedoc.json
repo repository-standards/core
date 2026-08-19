@@ -1,5 +1,12 @@
 {
   "$about": "2026-08-06: ten open failures re-run before anything was changed - five gates that passed where they had to fail, five claims the tree makes about itself. Every case was reproduced against the shipped code first, on the rule that a finding is open only while it still reproduces. Two did not reproduce as recorded: DOC-15 was closed by a commit on 2026-08-04 and is proved closed here rather than re-fixed, and GATE-32's recorded instances (all directory-shaped) are closed while the same coincidence survives one entry-shape over. The observations keep the earlier rounds' target labels so they supersede those findings on the punch list; each evidence field states which tree the run was executed against. The fix for all ten is pull request #46, open and deliberately unmerged at the time of writing - sibling pull requests touch the same generated files and integration order is handled centrally.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "GATE-07",

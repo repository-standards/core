@@ -1,5 +1,12 @@
 {
   "$about": "field-1 round, 2026-08-06: the first L3 adoption in the project's history - the align router run against a real third-party repo rather than read. Closes the depth gap FIELD-1 and EXHIBIT-1 both name, for one repo of the three FIELD-1 asks for. Every observation below was produced by running the shipped scripts against the adopted working copy, not by reading the method docs.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "ADOPT-08",

@@ -1,5 +1,12 @@
 {
   "$about": "The cited pull request is OPEN, not merged: GitHub Actions was in a major outage while this round ran (jobs never got a runner and cancelled at 15 minutes), so its CI could not go green and nothing was merged on a check that never fired. Both observations were re-verified against that branch's tree, not against main, and a later round re-runs them against whatever main carries then - which is exactly the rule that a cited fix is not a verified fix. 2026-08-06, drift-honesty round: the two severe findings about the drift NUMBER meaning less than it appears to - GREEN-02 (drift 0 on a repo that has specified nothing) and STACK-04's core-side half (a missing tool scored as repository drift, and a compliance check with install side effects) - re-run against the current tree before anything was changed, on the rule that a finding is open only while it still reproduces. Both reproduced, with exact numbers. Both are addressed here; one is closed and re-verified, one is half-closed and stays on the punch list, because its remaining half is a one-line declaration in the Layer 2 stack repo and no core change can make it for that repo. The observations keep the 2026-08-04 round's target label so they supersede those findings there. One 2026-08-04 claim did not survive re-measurement and is corrected in the evidence rather than quietly inherited.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "GREEN-02",

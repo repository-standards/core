@@ -1,5 +1,12 @@
 {
   "$about": "Three L3 adoptions against trending Python repositories, 2026-08-07: simonw/llm, pydantic/pydantic-ai and Textualize/textual. Python has no registered stack, so all three also exercise the honest-miss path - the second, third and fourth times it has been walked against a real repository, and the first three times end to end rather than as a dry run. Every number below was produced by running the shipped scripts against the adopted working copy, or by running the target's own documentation build; none was read out of a method doc. All three adoptions live on local branches. Nothing was pushed to any of the three repositories and no issue or pull request was opened against them.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "ADOPT-08",

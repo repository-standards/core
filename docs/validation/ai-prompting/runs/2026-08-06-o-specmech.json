@@ -1,5 +1,12 @@
 {
   "$about": "2026-08-06: the eight mechanical spec-area findings still open on the punch list (SPEC-01, SPEC-12 to SPEC-16, SPEC-19, SPEC-21), each reproduced against the current tree BEFORE anything was changed, then fixed and re-run. All eight reproduced - none had been closed in passing by a sibling fix - and the reproduction output is quoted in each evidence field beside the output of the same command after the change. The five guard-shaped fixes carry cases in the harnesses (tools/clarify-gate-test.mjs, tools/spec-guard-test.mjs, tools/self-verify-fill-test.mjs) covering both directions: the defect now fails, and the legitimate shapes it neighbours still pass. The three template and skill fixes are shape changes with no script behind them - SPEC-14's is asserted against the shipped template by tools/clarify-gate-test.mjs, and SPEC-19's and SPEC-21's are stated in specs/spec-engine/spec.md and the record templates, where reading is the only check that exists. The `fix` field on all eight names pull request 42, which carries every change quoted here and is open rather than merged as this round is written - the re-runs were executed against that branch's tree, which is what the evidence describes.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "SPEC-01",

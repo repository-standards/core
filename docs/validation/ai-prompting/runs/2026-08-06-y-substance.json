@@ -1,5 +1,12 @@
 {
   "$about": "The second half of a case whose first half shipped separately. The 2026-08-04 evidence for this case bundled two findings; the CI-gate half was fixed in core/pull/35 and this run closes the other, which had been recorded as deliberately open. Reproduced from clean fixtures before anything was changed, and the recorded numbers were re-measured rather than carried over - one of them did not hold.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "SHAPE-03",

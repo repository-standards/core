@@ -1,5 +1,12 @@
 {
   "$about": "adopt-wave-ecosystems round, 2026-08-07: L3 adoptions of the four ecosystems the catalogue had never touched for real - rails/rails (Ruby), BurntSushi/ripgrep (Rust), square/okhttp (JVM/Kotlin) and nlohmann/json (C++), each aligned on a local branch, none pushed upstream and no issue or pull request opened against any of them. Five findings from the four adoption reports were already fixed directly on main by commit fd15bde before this round started; those are recorded here as re-verified pass/partial observations against the current tree, not as new discoveries. The remaining findings are recorded as new cases and observed as still open. Every number below traces to a command run against the adopted working copy or a scratch reproduction, and the procedure to redo it is in the case.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "SEC-05",
