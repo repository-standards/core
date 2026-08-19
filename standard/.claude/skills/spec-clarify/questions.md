@@ -2,6 +2,28 @@
 
 Sibling file of `spec-clarify`. Load it at the point where you would otherwise settle an open question yourself.
 
+## How every call is shaped
+
+The loop's own rules are in `SKILL.md`; this is the shape each call takes, and it is the same
+whether the question is one of the three declared below or one this skill invented for the spec
+in front of it.
+
+- The `question` field carries a full interrogative plus one plain sentence on why it matters -
+  what changes depending on the answer. Everyday wording; introduce a term only if the same
+  sentence defines it.
+- The `header` is the chip the user reads first: two or three words, and where the question is a
+  declared point, it carries the id - `[spec.scope] zakres`.
+- **The recommended option goes first and is the only one labelled.** Pick it on best practice
+  for this project type, common patterns, risk (security, performance, maintainability), and the
+  spec's own goals and constraints; put it at the top of `options` with `(recommended)` ending
+  its label, and give the reason in one sentence. Order and label are the same claim, so no other
+  option may carry it. Where the axis is consent rather than correctness, recommend nothing.
+- Each option's `description` says what happens if it is chosen - the trade-off, not a
+  restatement of the label. Two to five options; the tool always lets the user type their own, so
+  a free-form alternative needs no option of its own.
+- Ask in the language the user is writing in. The option strings below are the authored English
+  the static check reads; what reaches the user is that same order, in their language.
+
 ## Questions this phase must ask
 
 Declared in `standard/.claude/elicitation/points.json`; the shape and the provenance states are in

@@ -25,7 +25,15 @@
 // to catch. The refusal says which point is missing and what the three answers are, so the
 // remedy is one call away rather than a puzzle.
 //
-// One thing it deliberately does NOT forbid: writing a stub. A run with nobody watching
+// Two things settle a point besides asking in this session. A repository-scoped question -
+// who the product is for, how the records are kept, which profile it runs at - is asked once,
+// and a committed row in docs/adoption-provenance.md answers it for every session after. Work-
+// scoped questions get none of that: the scope of a specification is not answered by a row
+// about a different one, so those are asked every time. Without the distinction this guard is
+// not strict but unlivable, refusing an ordinary decision record months after adoption until
+// the run re-asks an adoption question - and a guard nobody can work under gets deleted.
+//
+// The other thing it deliberately does NOT forbid: writing a stub. A run with nobody watching
 // cannot ask, and a guard that only accepts an answered question would leave such a run no
 // legal move at all - which in practice means the guard gets taken out rather than obeyed.
 // So the write is also allowed when the content itself declares that point `absent` (or
@@ -165,9 +173,46 @@ process.stdin.on("end", () => {
   const stubbed = (p) =>
     (p.allowed_provenance || []).some((state) => state !== "human" && state !== "provisional" && declares(p.id, state));
 
+  // A repository-scoped question is asked once and the answer belongs to the repository, so a
+  // committed answered row is what satisfies it from then on. Without this the guard is
+  // unlivable rather than strict: every point gating `docs/decision-records/**` or
+  // `docs/personas.md` was answered during the adoption, and demanding transcript evidence
+  // again would refuse an ordinary `adr-write` months later until it re-asked how the
+  // repository wants its records handled. A guard nobody can work under gets removed, and a
+  // removed guard catches nothing.
+  //
+  // Committed, not merely written. Reading the file on disk would let a run add the row and
+  // the artifact in one breath, which is the laundering path the transcript check exists to
+  // close. `git show HEAD:` means the answer was recorded in a commit somebody can review, in
+  // a session that had to satisfy this guard to write the row at all.
+  //
+  // Work-scoped points are never settled this way. The scope of *this* specification is not
+  // answered by a row somebody wrote about a different one.
+  let committed = null;
+  const committedLedger = () => {
+    if (committed !== null) return committed;
+    committed = ["docs/adoption-provenance.md", "standard/docs/adoption-provenance.md"]
+      .map((f) => spawnSync("git", ["show", `HEAD:${f}`], { encoding: "utf8" }))
+      .map((r) => (r.status === 0 ? r.stdout : ""))
+      .join("\n");
+    return committed;
+  };
+  const settled = (p) => {
+    if (p.scope !== "repository") return false;
+    const led = committedLedger();
+    const k = p.id.replace(/\./g, "\\.");
+    // An answer, not any recorded state: `absent` is a stub and `inferred` is a conclusion the
+    // agent drew, and neither is somebody having decided. A recorded stub still passes, but one
+    // line up, through the content declaration - which is where it belongs, because that path
+    // says out loud that the write is standing on a gap rather than on an answer.
+    return ["human", "provisional"]
+      .filter((state) => (p.allowed_provenance || []).includes(state))
+      .some((state) => new RegExp(`\\|\\s*\`?${k}\`?\\s*\\|\\s*${state}\\s*\\|`, "m").test(led));
+  };
+
   // Ahead of the transcript check on purpose. A stub asserts nothing about a human, so
   // requiring evidence of one would leave a run with no witness no legal move at all.
-  const unmet = gating.filter((p) => !stubbed(p));
+  const unmet = gating.filter((p) => !stubbed(p) && !settled(p));
   if (!unmet.length) allow();
 
   const transcript = call.transcript_path;
@@ -220,6 +265,11 @@ process.stdin.on("end", () => {
       ? `With nobody to ask, write the stub instead of a guess: put \`${p.id}: ${stubStates[0]}\` in the\n` +
         `artifact's provenance and leave the gap visible. That passes here and reads as unfinished later.\n`
       : `This one has no stub form: ${p.why || "the answer is a preference, not a fact about the repo."}\n` +
-        `It has to be answered by a person, so an unattended run stops here rather than inventing it.\n`),
+        `It has to be answered by a person, so an unattended run stops here rather than inventing it.\n`) +
+    (p.scope === "repository"
+      ? `\nThis question belongs to the repository, not to this piece of work: it is asked once, and\n` +
+        `docs/adoption-provenance.md is where the answer lives. If it was already answered, the row\n` +
+        `has not been committed yet - commit it and this write goes through without asking again.\n`
+      : ""),
   );
 });

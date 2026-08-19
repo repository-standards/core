@@ -26,6 +26,7 @@
     {
       "id": "adopt.language",
       "skill": "align-to-standards",
+      "scope": "repository",
       "file": "intake.md",
       "asks": "Which language do the written artifacts use - code and commits in English with docs and specs in yours, all of it in English, or all of it in yours?",
       "recommended": "code and commits in English, docs and specs in mine",
@@ -44,6 +45,7 @@
     {
       "id": "adopt.layout",
       "skill": "align-to-standards",
+      "scope": "repository",
       "file": "intake.md",
       "asks": "This repository already names and arranges things its own way, and the standard names them differently. Move what you have into the standard's layout, keep yours and map the standard onto it, or decide case by case?",
       "recommended": "move ours into the standard's layout",
@@ -60,6 +62,7 @@
     {
       "id": "adopt.profile",
       "skill": "align-to-standards",
+      "scope": "repository",
       "file": "intake.md",
       "asks": "Does this repository run at the `core` profile or the `scale` one - is the work handed off between people, or does one person carry each piece end to end?",
       "recommended": "confirm the detection",
@@ -77,6 +80,7 @@
     {
       "id": "adopt.intent",
       "skill": "align-to-standards",
+      "scope": "repository",
       "file": "intake.md",
       "asks": "How far does this adoption go: migrate everything to the standard, adopt selected parts, or assess only and change nothing yet?",
       "recommended": "migrate",
@@ -95,6 +99,7 @@
     {
       "id": "adopt.continue",
       "skill": "align-to-standards",
+      "scope": "work",
       "file": "SKILL.md",
       "asks": "Phase finished. Continue to the next one, stop here, or hand the rest back to you?",
       "recommended": "continue",
@@ -109,6 +114,7 @@
     {
       "id": "adopt.existing-material",
       "skill": "align-to-standards",
+      "scope": "repository",
       "file": "intake.md",
       "asks": "This repository holds informal working material - scratch notes, PRDs, plans, TODO files - that the standard has a home for. Route it into discovery and the backlog now, list it for you to triage, or leave it untouched?",
       "recommended": "route it now",
@@ -128,6 +134,7 @@
     {
       "id": "adopt.records",
       "skill": "align-to-standards",
+      "scope": "repository",
       "file": "onboard.md",
       "asks": "This repository already has decision records, and the standard expects more. Take what is there as it stands, rewrite it into the standard's shape, or leave it and only add new ones? And for the new ones - write them now, leave stubs, or have them drafted for you to check later?",
       "recommended": "rewrite them into the standard's shape",
@@ -147,6 +154,7 @@
     {
       "id": "adopt.personas",
       "skill": "align-to-standards",
+      "scope": "repository",
       "file": "onboard.md",
       "asks": "Who are the users of this product? Define them yourself, have them suggested from the code for you to correct, or skip personas for now?",
       "recommended": "define them",
@@ -166,6 +174,7 @@
     {
       "id": "adopt.tracker",
       "skill": "align-to-standards",
+      "scope": "repository",
       "file": "onboard.md",
       "asks": "The standard's backlog.md is the source of truth for tracked work, and this repository already tracks work elsewhere. Fold that into the backlog, keep both with the backlog as the source, or keep the external tracker and let the backlog bridge to it?",
       "recommended": "fold it into the backlog",
@@ -185,6 +194,7 @@
     {
       "id": "adopt.backlog",
       "skill": "align-to-standards",
+      "scope": "repository",
       "file": "onboard.md",
       "asks": "Should the adoption seed a backlog, and if so how is the work attributed - each row naming the role it needs, assigned to you by name, or with nothing said about who does it?",
       "recommended": "seed it, each row naming the role it needs",
@@ -204,6 +214,7 @@
     {
       "id": "adopt.guards",
       "skill": "align-to-standards",
+      "scope": "repository",
       "file": "intake.md",
       "asks": "The repository already has agent guards that overlap the standard's. Replace, merge, or keep both?",
       "recommended": "merge",
@@ -219,6 +230,7 @@
     {
       "id": "adopt.commit-plan",
       "skill": "align-to-standards",
+      "scope": "work",
       "file": "intake.md",
       "asks": "This adoption touches many files. Split the work into commits how - one per concern, one per phase, or a single change?",
       "recommended": "per concern",
@@ -235,6 +247,7 @@
     {
       "id": "green.product",
       "skill": "align-to-standards",
+      "scope": "repository",
       "file": "greenfield.md",
       "asks": "What is this going to be, and who is it for?",
       "recommended": "tell me now",
@@ -252,6 +265,7 @@
     {
       "id": "green.conventions",
       "skill": "align-to-standards",
+      "scope": "repository",
       "file": [
         "greenfield.md",
         "intake.md"
@@ -269,6 +283,7 @@
     {
       "id": "green.stack",
       "skill": "align-to-standards",
+      "scope": "repository",
       "file": "stack.md",
       "asks": "Which stack, and which profile - core or scale?",
       "recommended": "confirm the detection",
@@ -284,7 +299,13 @@
     },
     {
       "id": "spec.scope",
-      "skill": "spec-clarify",
+      "skill": [
+        "spec-clarify",
+        "spec-specify",
+        "spec-update",
+        "spec-reconcile"
+      ],
+      "scope": "work",
       "asks": "What is in scope for this specification, and what is explicitly out?",
       "recommended": "tell me now",
       "required": true,
@@ -300,7 +321,12 @@
     },
     {
       "id": "spec.acceptance",
-      "skill": "spec-clarify",
+      "skill": [
+        "spec-clarify",
+        "spec-specify",
+        "spec-reconcile"
+      ],
+      "scope": "work",
       "asks": "What must be true for this to count as done?",
       "recommended": "tell me now",
       "required": true,
@@ -316,7 +342,12 @@
     },
     {
       "id": "spec.unknowns",
-      "skill": "spec-clarify",
+      "skill": [
+        "spec-clarify",
+        "spec-specify",
+        "spec-update"
+      ],
+      "scope": "work",
       "asks": "These points are undetermined. Decide them now, mark them provisional, or leave them open?",
       "recommended": "decide now",
       "required": true,
@@ -331,6 +362,7 @@
     {
       "id": "discover.materials",
       "skill": "discovery-digest",
+      "scope": "work",
       "asks": "What existing material should this draw on, and where does it live?",
       "recommended": "here it is",
       "required": true,
@@ -348,6 +380,7 @@
     {
       "id": "discover.decisions",
       "skill": "discovery-digest",
+      "scope": "work",
       "asks": "Which of the decisions surfaced here are already settled, and which are still open?",
       "recommended": "I will mark them",
       "required": true,
@@ -364,6 +397,7 @@
     {
       "id": "record.participation",
       "skill": "record-run",
+      "scope": "work",
       "asks": "Whose run is this - yours, or someone else's - and may the transcript excerpt be kept as evidence?",
       "recommended": null,
       "required": true,
@@ -379,5 +413,6 @@
     }
   ],
   "$gate_globs": "Paths a write must not reach before the point is answered. Only points whose artifact is a file appear here. adopt.layout gates a rename, which the hook does see; the rest gate something it cannot - a phase boundary, a commit, guard configuration whose path the repository chooses, a layout that does not exist yet, a decision inside a spec - and the static check and human review carry those. Saying that here beats leaving a reader to assume full coverage.",
-  "$recommended_answer": "Every point declares which answer is recommended, and the skill offers it first. Two axes decide it and both point the same way: the answer that converges on the standard - its layout, its shape, the whole of it - and the answer a person gives now rather than defers. Keeping the repository's own way stays on the list, because a standard imposed without consent gets reverted; it is never the default. Left to choose, an agent recommends the cautious option and adoption becomes an opt-in menu - measured on stayget 2026-08-19, where four of five recommendations pointed at the least convergent answer, including 'keep yours and map' for the layout. null means the point has no such axis: record.participation asks for consent, and consent is never nudged. A point asked on more than one path lists every file that asks it, because the copy nobody checked is the one that drifts: the first field run reached green.conventions on the brownfield path, where no file declared it, and recommended that the repository's own conventions win. elicitation-points-check reads this against the option order of every call site, so the two cannot drift apart - it can check the text where it is written, never the question as spoken, because a question asked in the user's own language does not match any string we could hold here."
+  "$recommended_answer": "Every point declares which answer is recommended, and the skill offers it first. Two axes decide it and both point the same way: the answer that converges on the standard - its layout, its shape, the whole of it - and the answer a person gives now rather than defers. Keeping the repository's own way stays on the list, because a standard imposed without consent gets reverted; it is never the default. Left to choose, an agent recommends the cautious option and adoption becomes an opt-in menu - measured on stayget 2026-08-19, where four of five recommendations pointed at the least convergent answer, including 'keep yours and map' for the layout. null means the point has no such axis: record.participation asks for consent, and consent is never nudged. A point asked on more than one path lists every file that asks it, because the copy nobody checked is the one that drifts: the first field run reached green.conventions on the brownfield path, where no file declared it, and recommended that the repository's own conventions win. elicitation-points-check reads this against the option order of every call site, so the two cannot drift apart - it can check the text where it is written, never the question as spoken, because a question asked in the user's own language does not match any string we could hold here.",
+  "$scope": "Whether the answer belongs to the repository or to the piece of work in front of you, and it decides what satisfies the hook. A `repository` point is asked once - who the product is for, what the layout is, which profile it runs at - so once the ledger carries an answered row and that row is committed, later sessions write the artifact without asking again. A `work` point is asked every time, because the answer belongs to this spec, this digest, this run: no committed row can stand in for the scope of a specification nobody has written yet. Getting this wrong in either direction breaks the layer - treat every point as `work` and an ordinary `adr-write` in an adopted repo is refused until it re-asks an adoption question, which ends with the guard deleted; treat every point as `repository` and one answer at adoption time licenses every write for the life of the repo."
 }

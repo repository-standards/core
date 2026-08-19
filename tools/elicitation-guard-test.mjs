@@ -115,15 +115,23 @@ const CASES = [
 // The ledger path needs its own working tree: the guard reads docs/adoption-provenance.md
 // relative to where it runs. Asserted from this repo it would read the shipped template,
 // where every row is `pending`, and prove nothing either way.
-function inRepoWithLedger(ledgerBody, call) {
+function inRepoWithLedger(ledgerBody, call, { committed = false } = {}) {
   const dir = mkdtempSync(join(tmpdir(), "elicit-repo-"));
   mkdirSync(join(dir, ".claude/elicitation"), { recursive: true });
   mkdirSync(join(dir, "docs"), { recursive: true });
   copyFileSync(resolve("standard/.claude/elicitation/points.json"), join(dir, ".claude/elicitation/points.json"));
   writeFileSync(join(dir, "docs/adoption-provenance.md"), ledgerBody);
+  // Committed is a different fact from written, and the guard treats it as one: a
+  // repository-scoped answer counts once it is in a commit somebody can review, never
+  // while it is a line the same run just added.
+  if (committed) {
+    const git = (...a) => spawnSync("git", ["-C", dir, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", ...a], { encoding: "utf8" });
+    git("init", "-q");
+    git("add", "-A");
+    git("commit", "-q", "--no-verify", "-m", "the adoption's own answers");
+  }
   const run = spawnSync("node", [resolve(GUARD)], { input: JSON.stringify(call), encoding: "utf8", cwd: dir });
   rmSync(dir, { recursive: true, force: true });
-rmSync(OTHER, { recursive: true, force: true });
   if (run.status !== 0 || run.stderr.trim()) return `BROKEN:exit ${run.status} ${run.stderr.trim().slice(0, 60)}`;
   if (!run.stdout.trim()) return ALLOW;
   try { return JSON.parse(run.stdout).hookSpecificOutput?.permissionDecision === "deny" ? DENY : "BROKEN:not a deny verdict"; }
@@ -134,6 +142,16 @@ const LEDGER_CASES = [
   ["a ledger row recording the stub is read as one", "| `adopt.personas` | absent | - | - | - | - |\n", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "# Personas\n" } }, ALLOW],
   ["a pending ledger row is not a stub, and does not let the write through", "| `adopt.personas` | pending | - | - | - | - |\n", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "# Personas\n" } }, DENY],
   ["a ledger claiming a person answered still needs the transcript to say so", "| `adopt.personas` | human | owner | 2026-08-19 | docs/personas.md | - |\n", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "# Personas\n" } }, DENY],
+];
+
+// Scope, which is the difference between a guard people can work under and one they delete.
+// Both directions are asserted, because either mistake is fatal: a repository-scoped answer
+// that never settles refuses ordinary work forever, and a work-scoped one that settles hands
+// a single adoption-time row the right to write every specification the repo will ever have.
+const COMMITTED_CASES = [
+  ["a committed answer settles a repository-scoped point for later sessions", "| `adopt.personas` | human | owner | 2026-08-19 | docs/personas.md | - |\n", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "# Personas\n" } }, ALLOW],
+  ["a committed row still has to say somebody answered", "| `adopt.personas` | pending | - | - | - | - |\n", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "# Personas\n" } }, DENY],
+  ["a committed answer settles nothing work-scoped - this spec is not that spec", "| `spec.scope` | human | owner | 2026-08-19 | specs/billing/spec.md | - |\n| `spec.acceptance` | human | owner | 2026-08-19 | specs/billing/spec.md | - |\n", { tool_name: "Write", tool_input: { file_path: "specs/refunds/spec.md", content: "# Refunds\n" } }, DENY],
 ];
 
 // The cases above call the guard directly, which is exactly how a guard nothing routes to
@@ -165,6 +183,15 @@ for (const [name, ledgerBody, call, expected] of LEDGER_CASES) {
   console.log(`  ${ok ? "ok  " : "FAIL"}  ${name}${ok ? "" : ` (got ${got}, expected ${expected})`}`);
 }
 
-const total = CASES.length + LEDGER_CASES.length + 1; // + the wiring assertion above
+for (const [name, ledgerBody, call, expected] of COMMITTED_CASES) {
+  const got = inRepoWithLedger(ledgerBody, call, { committed: true });
+  const ok = got === expected;
+  if (!ok) bad++;
+  console.log(`  ${ok ? "ok  " : "FAIL"}  ${name}${ok ? "" : ` (got ${got}, expected ${expected})`}`);
+}
+
+rmSync(OTHER, { recursive: true, force: true });
+
+const total = CASES.length + LEDGER_CASES.length + COMMITTED_CASES.length + 1; // + the wiring assertion above
 console.log(bad ? `\nelicitation-guard-test: FAIL - ${bad}/${total}` : `\nelicitation-guard-test: OK - ${total} cases, refusals and pass-throughs both`);
 process.exit(bad ? 1 : 0);
