@@ -1,0 +1,96 @@
+#!/usr/bin/env node
+// elicitation-guard-test - the guard prints only when it refuses, so a broken one is silent.
+//
+// Silence is the failure mode that matters here. A guard that has stopped refusing looks
+// exactly like a guard with nothing to refuse, and the standard already lost months to a
+// check that passed because it was measuring nothing. These cases assert both answers:
+// what must be refused, and what must not be, including a path that merely resembles a
+// gated one.
+//
+// It scores the same way verifyAgentGuards.sh scores the bash guards, and for the same
+// reason: a refusal is well-formed deny JSON on stdout with exit 0. Judging by exit code
+// alone would read a crashed guard as a refusal, which is how a dead guard keeps passing
+// its own test.
+//
+// Usage: node tools/elicitation-guard-test.mjs
+// Zone 1 tooling - never shipped.
+
+import { spawnSync } from "node:child_process";
+import { writeFileSync, mkdtempSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+
+const GUARD = "standard/.claude/hooks/elicitation-guard.mjs";
+const dir = mkdtempSync(join(tmpdir(), "elicit-"));
+
+const line = (ids) =>
+  JSON.stringify({
+    message: {
+      role: "assistant",
+      content: ids.map((id) => ({
+        type: "tool_use", name: "AskUserQuestion",
+        input: { questions: [{ header: `[${id}] asked`, question: "?" }] },
+      })),
+    },
+  });
+
+const withAsked = (name, ids) => {
+  const p = join(dir, `${name}.jsonl`);
+  writeFileSync(p, line(ids) + "\n");
+  return p;
+};
+
+const ALLOW = "allow", DENY = "DENY";
+
+// Mirrors verifyAgentGuards.sh's score(): nonzero exit or anything on stderr is BROKEN,
+// empty stdout is allow, and only a well-formed deny verdict counts as a refusal.
+function score(call) {
+  const run = spawnSync("node", [GUARD], { input: JSON.stringify(call), encoding: "utf8" });
+  if (run.status !== 0) return `BROKEN:exit ${run.status}`;
+  if (run.stderr.trim()) return `BROKEN:stderr ${run.stderr.trim().split("\n")[0]}`;
+  if (!run.stdout.trim()) return ALLOW;
+  let parsed;
+  try { parsed = JSON.parse(run.stdout); } catch { return `BROKEN:stdout is not JSON: ${run.stdout.slice(0, 80)}`; }
+  const out = parsed.hookSpecificOutput || {};
+  if (out.permissionDecision !== "deny") return `BROKEN:output is not a deny verdict: ${run.stdout.slice(0, 80)}`;
+  if (!out.permissionDecisionReason) return "BROKEN:deny with no reason - the message IS the remedy";
+  return DENY;
+}
+
+const CASES = [
+  ["a path nothing gates is none of this guard's business", { tool_name: "Write", tool_input: { file_path: "src/index.ts" } }, ALLOW],
+  ["a tool that does not write is none of its business", { tool_name: "Bash", tool_input: { command: "ls" } }, ALLOW],
+  ["personas with no transcript fails closed", { tool_name: "Write", tool_input: { file_path: "docs/personas.md" } }, DENY],
+  ["personas after its own question is allowed", { tool_name: "Write", tool_input: { file_path: "docs/personas.md" }, transcript_path: withAsked("personas", ["adopt.personas"]) }, ALLOW],
+  ["personas after somebody else's question is still refused", { tool_name: "Write", tool_input: { file_path: "docs/personas.md" }, transcript_path: withAsked("other", ["adopt.guards"]) }, DENY],
+  ["a decision record matches through the ** glob", { tool_name: "Write", tool_input: { file_path: "docs/decision-records/ADR-001-thing.md" } }, DENY],
+  ["a spec matches through a ** in the middle", { tool_name: "Write", tool_input: { file_path: "specs/billing/spec.md" } }, DENY],
+  ["a run record matches a * that must not span a slash", { tool_name: "Write", tool_input: { file_path: "docs/validation/human-prompting/runs/a.json" } }, DENY],
+  ["a path that merely resembles a gated one is left alone", { tool_name: "Write", tool_input: { file_path: "docs/personas.md.bak" } }, ALLOW],
+  ["a nested path a single * must not reach is left alone", { tool_name: "Write", tool_input: { file_path: "docs/validation/human-prompting/runs/old/a.json" } }, ALLOW],
+  ["an absolute path still matches", { tool_name: "Write", tool_input: { file_path: "/home/x/repo/backlog.md" } }, DENY],
+  ["Edit is gated exactly as Write is", { tool_name: "Edit", tool_input: { file_path: "PRODUCT.md" } }, DENY],
+
+  // The stub escape, both ways. Without the refusals below it is a bypass with a comment
+  // on it: anything that lets a write through has to be shown refusing something too.
+  ["a declared stub passes, because it claims nothing about a human", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "---\nelicitation:\n  adopt.personas: absent\n---\n" } }, ALLOW],
+  // Deliberately a path whose only gate allows a stub, so an ALLOW here can only mean the
+  // JSON spelling was read. Asserted against a path that would deny either way, this case
+  // would pass while parsing nothing.
+  ["the JSON spelling of the same declaration is read the same way", { tool_name: "Write", tool_input: { file_path: "backlog.md", content: '{"elicitation": {"adopt.backlog": "absent"}}' } }, ALLOW],
+  ["stubbing two of three gating points still leaves the third refusing", { tool_name: "Write", tool_input: { file_path: "docs/discovery/x/dossier.md", content: "elicitation:\n  adopt.existing-material: absent\n  discover.materials: absent\n" } }, DENY],
+  ["a stub for a point that has no stub form is still refused", { tool_name: "Write", tool_input: { file_path: "docs/adoption-intake.md", content: "elicitation:\n  adopt.intent: absent\n" } }, DENY],
+  ["a stub declared for some other point does not cover this one", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "elicitation:\n  adopt.backlog: absent\n" } }, DENY],
+  ["prose merely mentioning the word does not count as a declaration", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "The owner was absent, so adopt.personas was hard to pin down.\n" } }, DENY],
+];
+
+let bad = 0;
+for (const [name, call, expected] of CASES) {
+  const got = score(call);
+  const ok = got === expected;
+  if (!ok) bad++;
+  console.log(`  ${ok ? "ok  " : "FAIL"}  ${name}${ok ? "" : ` (got ${got}, expected ${expected})`}`);
+}
+
+console.log(bad ? `\nelicitation-guard-test: FAIL - ${bad}/${CASES.length}` : `\nelicitation-guard-test: OK - ${CASES.length} cases, refusals and pass-throughs both`);
+process.exit(bad ? 1 : 0);

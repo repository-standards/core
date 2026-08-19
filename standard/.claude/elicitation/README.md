@@ -3,8 +3,17 @@
 The places this standard must ask a person instead of deciding for them, and the shape
 every one of those questions takes.
 
-`points.json` is the declaration. `tools/elicitation-points-check.mjs` fails when a
-declared point has no call site, against a baseline that may only shrink.
+`points.json` is the declaration. Three things read it, and each catches what the one
+before it lets through:
+
+| Layer | What it proves | When it fires |
+|---|---|---|
+| `elicitation-points-check` | every declared point has a call site somewhere in a skill | every pull request, against a baseline that may only shrink |
+| `elicitation-check` | the answers in a finished run were really given, and the quotes were really said | against a session transcript, after the fact |
+| `.claude/hooks/elicitation-guard.mjs` | the artifact is not written until its question fired | at the moment of the write, and it is not the agent's decision |
+
+Only the third is unskippable, and only the third is useless on its own: it knows a
+question happened, not whether the answer was honoured.
 
 ## Why this is a mechanism and not advice
 
@@ -35,15 +44,37 @@ attributable, timestamped, and produces an artifact that says what it is. The fa
 prevents is not "the agent proposed something" - it is "the agent proposed something and
 the record reads as though a person agreed".
 
-A run with nobody watching still asks. The answer records as `inferred` and the run is
-labelled unattended, so the flow stays identical and testable, and the artifact still says
-who decided. A question that never fires is the only illegitimate outcome.
+A run with nobody watching takes the third answer. It cannot ask - so it writes the stub,
+declares the point `absent` in the artifact's provenance, and leaves the gap visible; the
+run then reads as unfinished, which is what it is. `inferred` is narrower than it sounds
+and most points refuse it outright: concluding a preference from a repository is guessing
+with a better name, and guessing dressed as a finding is the failure that produced all of
+this. A handful of points refuse the stub too - who the repo is for, what the owner meant
+by the adoption - and an unattended run simply stops there rather than inventing an answer.
+
+Which is the point. Not asking is allowed; **not asking and shipping an answer anyway** is
+not.
 
 ## Carrying the id
 
 The question's header carries its point id in brackets - `[adopt.layout] directory naming`.
 Without it the replay layer can only count questions, and count is exactly the metric that
 let eighteen missing questions look like a working product.
+
+## What the guard actually refuses
+
+A `Write` or `Edit` to a path some point gates is refused unless one of two things is true:
+that point's question already fired in this session, or the content being written declares
+the point `absent` (`adopt.personas: absent`, in frontmatter or as a JSON key - either
+spelling is read).
+
+It fails closed. No transcript to check against means refused, because a guard that waves
+work through when it has no evidence is the defect it was built to catch, wearing the
+uniform of the fix.
+
+Twelve of the eighteen points gate a path. `adopt.layout` is a rename and `adopt.continue`
+a phase boundary - neither is a file write, so the static check and human review carry
+those two, and the guard says so rather than implying coverage it does not have.
 
 ## Provenance
 

@@ -17,7 +17,7 @@
 
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 
-const POINTS = "standard/elicitation/points.json";
+const POINTS = "standard/.claude/elicitation/points.json";
 // Skills live in two roots and the difference is not cosmetic: the shipped ones under
 // standard/ are copied into every adopting repository, while the adoption router itself stays
 // here. Resolving only one root made twelve points report "no such skill" when the real answer

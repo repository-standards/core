@@ -126,8 +126,8 @@ will only ever collect successes, and the corpus already knows what those look l
 
 ## Questions this phase must ask
 
-Declared in `standard/elicitation/points.json`; the shape and the provenance states are in
-`standard/elicitation/README.md`. Each block below is a real `AskUserQuestion` call, not a
+Declared in `standard/.claude/elicitation/points.json`; the shape and the provenance states are in
+`standard/.claude/elicitation/README.md`. Each block below is a real `AskUserQuestion` call, not a
 reminder to consider asking - the rule existed as prose first and a full adoption ignored it.
 
 ### `[record.participation]` Whose run this is
