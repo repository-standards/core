@@ -58,6 +58,23 @@
       "gate_renames": true
     },
     {
+      "id": "adopt.profile",
+      "skill": "align-to-standards",
+      "file": "intake.md",
+      "asks": "Does this repository run at the `core` profile or the `scale` one - one or two people working directly, or a team with sprints and hand-offs?",
+      "recommended": "confirm the detection",
+      "why": "green.stack asks this on the greenfield path, bundled with the stack, and nothing asks it on the brownfield one - where the manifest is copied in early and carries a default profile. A repository that adopts under the wrong profile is scored against gates its team does not run, or silently excused from ones it does. There is no convergent answer here: `scale` is not a fuller adoption than `core` (ADR-011), it is a different shape, and pushing a solo repo onto the team gate is how a standard gets reverted.",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional"
+      ],
+      "gates": "standard.manifest.json - its top-level `profile`",
+      "gate_globs": [
+        "standard.manifest.json"
+      ]
+    },
+    {
       "id": "adopt.intent",
       "skill": "align-to-standards",
       "file": "intake.md",

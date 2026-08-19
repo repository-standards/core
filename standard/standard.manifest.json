@@ -614,8 +614,8 @@
       "since": "1.1.23",
       "rule": "R28",
       "sha256": {
-        "README.md": "2b9e2a6c6addb9b3f1910e1b299ba370c2caaee4bf808df63a70ecef8d0b1749",
-        "points.json": "20117d90b34bab6ceed1dcdb92c955e86aafbe5d6e39727edf766eeb48d5d715"
+        "README.md": "9c1026bab6c3523d538295f55004281a7bb03497f3b89e10df955c48363155b9",
+        "points.json": "35f60ca456a3ee5920025eb98d45f8c93709fcdd0c10281a52ff832873bf6046"
       }
     },
     {
