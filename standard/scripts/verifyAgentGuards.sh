@@ -149,6 +149,22 @@ check "${DB}" allow "mysqldump -h prod-db.example.com app > dump.sql"
 check "${DB}" allow "pg_dump -h prod-db.example.com -t users > users.sql"
 check "${DB}" allow "pnpm test:unit"
 
+# Four holes an adopter found in 2026-08-19 by probing the guards it had just been handed, rather
+# than by reading them. Each is asserted in both directions on purpose: a fix that only tightens
+# turns a bypass into a false positive, and a guard that refuses ordinary work gets switched off,
+# which is the same failure one direction over.
+echo "== remote-database write guard: the statement is never in the command line"
+# The file arrives through a pipe or attached to the flag, so no write verb appears anywhere.
+check "${DB}" DENY  "cat migration.sql | psql -h prod-db.example.com"
+check "${DB}" DENY  "psql -h prod-db.example.com -fmigration.sql app"
+# A semicolon inside the quoted statement used to cut the client away from its own host.
+check "${DB}" DENY  'psql -c "UPDATE t SET x = 1; SELECT 1" -h prod-db.example.com'
+check "${DB}" DENY  'mysql -e "DROP TABLE users; SELECT 1" -h prod-db.example.com'
+check "${DB}" allow 'psql -h localhost -c "UPDATE t SET x = 1; SELECT 1"'
+check "${DB}" allow "cat migration.sql | psql -h localhost"
+# Reading the guard's own documentation is not running what it documents.
+check "${DB}" allow "grep -rn 'psql -h prod-db.example.com' docs/"
+
 PUSH=no-force-push.sh
 echo "== force-push guard"
 check "${PUSH}" DENY  "git push --force origin main"
@@ -170,6 +186,12 @@ check "${PUSH}" allow "git push -u origin feature"
 check "${PUSH}" allow "git push --dry-run origin feature"
 check "${PUSH}" allow "git push origin main:main"
 check "${PUSH}" allow "git -C /some/dir push origin feature"
+# The force flag inside a cluster, wherever it sits in it. -qf was denied and -fq was not.
+check "${PUSH}" DENY  "git push -qf origin main"
+check "${PUSH}" DENY  "git push -fq origin main"
+check "${PUSH}" DENY  "git push -dq origin somebranch"
+# A cluster without f or d is an ordinary push and stays one.
+check "${PUSH}" allow "git push -qu origin feature"
 check "${PUSH}" allow "git commit -m 'do not force push'"
 check "${PUSH}" allow "git commit --amend --no-edit && git push origin feature"
 
@@ -180,6 +202,12 @@ check "${SEC}" DENY  "gh variable delete FOO"
 check "${SEC}" DENY  "gh pr list && gh secret set TOKEN --body x"
 check "${SEC}" allow "gh pr create --title x"
 check "${SEC}" allow "gh run list"
+# Searching for the phrase is not running it. Denying this is how a repository ends up unable to
+# document its own guard, or writing the documentation through a file tool to get around it.
+check "${SEC}" allow "grep -rn 'gh secret set' docs/"
+check "${SEC}" allow "rg 'gh variable delete' --glob '*.md'"
+# But a search tool that runs the command in a substitution really does run it.
+check "${SEC}" DENY  "echo \$(gh secret set TOKEN --body x)"
 
 # The dispatcher, and the wiring that reaches it. Every guard above fails closed on a missing jq
 # or an unreadable lib.sh, and then the outermost link failed open: settings.json named each guard
@@ -225,17 +253,26 @@ else
   assert "dispatcher denies when a guard is missing" DENY "$(verdict "${out}")"
 
   # The command string settings.json actually ships, run the three ways it can fail.
-  HOOK_CMD="$(jq -r '.hooks.PreToolUse[0].hooks[0].command' "${ROOT}/.claude/settings.json")"
-  mkdir -p "${SANDBOX}/empty"
-  out="$(printf '%s' "${DISPATCH_PAYLOAD}" \
-    | (cd "${SANDBOX}/empty" && env -u CLAUDE_PROJECT_DIR bash -c "${HOOK_CMD}") 2>/dev/null)"
-  assert "wiring denies with CLAUDE_PROJECT_DIR unset" DENY "$(verdict "${out}")"
-  out="$(printf '%s' "${DISPATCH_PAYLOAD}" \
-    | env CLAUDE_PROJECT_DIR="${SANDBOX}/empty" bash -c "${HOOK_CMD}" 2>/dev/null)"
-  assert "wiring denies when .claude/hooks is absent" DENY "$(verdict "${out}")"
-  out="$(printf '%s' "${DISPATCH_PAYLOAD}" \
-    | env CLAUDE_PROJECT_DIR="${ROOT}" bash -c "${HOOK_CMD}" 2>/dev/null)"
-  assert "wiring denies a remote write end to end" DENY "$(verdict "${out}")"
+  #
+  # Its absence is named rather than scored. `.claude/settings.json` is a merge entry, so a repo
+  # part-way through adoption has the guards on disk and nothing calling them - and reading that
+  # as three broken guards sends whoever is adopting to debug files that are fine.
+  if [ ! -f "${ROOT}/.claude/settings.json" ]; then
+    printf '  FAIL .claude/settings.json is missing, so nothing wires these guards to Claude Code and the hooks on disk are never called. It is a merge entry: merge the shipped settings.json into yours, then run this again.\n'
+    FAILURES=$((FAILURES + 1))
+  else
+    HOOK_CMD="$(jq -r '.hooks.PreToolUse[0].hooks[0].command' "${ROOT}/.claude/settings.json")"
+    mkdir -p "${SANDBOX}/empty"
+    out="$(printf '%s' "${DISPATCH_PAYLOAD}" \
+      | (cd "${SANDBOX}/empty" && env -u CLAUDE_PROJECT_DIR bash -c "${HOOK_CMD}") 2>/dev/null)"
+    assert "wiring denies with CLAUDE_PROJECT_DIR unset" DENY "$(verdict "${out}")"
+    out="$(printf '%s' "${DISPATCH_PAYLOAD}" \
+      | env CLAUDE_PROJECT_DIR="${SANDBOX}/empty" bash -c "${HOOK_CMD}" 2>/dev/null)"
+    assert "wiring denies when .claude/hooks is absent" DENY "$(verdict "${out}")"
+    out="$(printf '%s' "${DISPATCH_PAYLOAD}" \
+      | env CLAUDE_PROJECT_DIR="${ROOT}" bash -c "${HOOK_CMD}" 2>/dev/null)"
+    assert "wiring denies a remote write end to end" DENY "$(verdict "${out}")"
+  fi
 
   rm -rf "${SANDBOX}"
 fi
