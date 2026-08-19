@@ -120,6 +120,30 @@ Declared in `standard/.claude/elicitation/points.json`; the shape and the proven
 `standard/.claude/elicitation/README.md`. Each block below is a real `AskUserQuestion` call, not a
 reminder to consider asking - the rule existed as prose first and a full adoption ignored it.
 
+**These are the floor, not the list.** They are the questions that can be *enforced* - the hook
+refuses a write for a point somebody declared, and it cannot refuse one nobody wrote down. This
+repository is not one of the repositories the list was written against, so ask the questions it
+actually raises: a tracker nobody mentioned, a build step with two owners, a directory whose name
+means something local. Two rules bind those questions exactly as they bind the declared ones.
+
+**Offer the recommended answer first and label it as the recommended one** - both, not either.
+Where `AskUserQuestion` renders a recommendation, it goes on that first option and on nothing
+else; an option list in the right order with the label on the third entry is the same failure
+with extra steps.
+
+**The recommended answer is the one that converges on the standard** - its layout, its shape, all
+of it rather than the parts that cost least - and where that is not the axis, the answer a person
+gives now rather than defers. Keeping what the repository already does stays on the list, because
+a standard imposed without consent gets reverted; it is not what leads. Measured on a live run on
+2026-08-19: every question was asked properly and four of five recommendations pointed at the
+least convergent answer on offer, including *keep your own layout and map the standard onto it*.
+Most people take the recommendation, so that is a slower version of not asking.
+
+**Record every question you invented** in the ledger's own section, `## Questions this run asked
+that no point declares` - what you asked, which answer led, what was chosen. That table is where
+the point list grows from: `adopt.tracker` is in it because one live adoption invented the
+question and nothing would have remembered it otherwise.
+
 ### `[adopt.continue]` Checkpoint between phases
 
 Fires **at the end of every phase, before the next one writes anything**.

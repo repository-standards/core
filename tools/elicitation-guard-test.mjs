@@ -103,8 +103,9 @@ const CASES = [
   ["a declared stub passes, because it claims nothing about a human", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "---\nelicitation:\n  adopt.personas: absent\n---\n" } }, ALLOW],
   // Deliberately a path whose only gate allows a stub, so an ALLOW here can only mean the
   // JSON spelling was read. Asserted against a path that would deny either way, this case
-  // would pass while parsing nothing.
-  ["the JSON spelling of the same declaration is read the same way", { tool_name: "Write", tool_input: { file_path: "backlog.md", content: '{"elicitation": {"adopt.backlog": "absent"}}' } }, ALLOW],
+  // would pass while parsing nothing. It moved off backlog.md when adopt.tracker started
+  // gating that file too - a second gate is exactly what would have made it vacuous.
+  ["the JSON spelling of the same declaration is read the same way", { tool_name: "Write", tool_input: { file_path: "docs/decision-records/ADR-001-x.md", content: '{"elicitation": {"adopt.records": "absent"}}' } }, ALLOW],
   ["stubbing two of three gating points still leaves the third refusing", { tool_name: "Write", tool_input: { file_path: "docs/discovery/x/dossier.md", content: "elicitation:\n  adopt.existing-material: absent\n  discover.materials: absent\n" } }, DENY],
   ["a stub for a point that has no stub form is still refused", { tool_name: "Write", tool_input: { file_path: "docs/adoption-intake.md", content: "elicitation:\n  adopt.intent: absent\n" } }, DENY],
   ["a stub declared for some other point does not cover this one", { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "elicitation:\n  adopt.backlog: absent\n" } }, DENY],

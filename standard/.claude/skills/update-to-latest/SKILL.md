@@ -98,12 +98,41 @@ with `self-verify`.
      additions go unapplied while `self-verify` still says drift 0: these entries carry
      no `sha256`, so nothing downstream will ever notice the miss. Report every file
      merged this way and every collision the human decided;
+   - the item **moved** - a renamed file, or a directory the standard reorganised -> move
+     this repo's content to the new path, rather than adding the new path beside the old one.
+     A rename reaches the manifest as one entry gone and one entry arrived, and the target's
+     `removedPaths` names the old path; a repo that ends up carrying both satisfies every
+     "required entry is present" check and is still wrong, with its content split across two
+     places and every link pointing at the older half;
    - the item was **removed** in the target -> remove or migrate the repo's use of it, and
      check the target manifest's `removedPaths` for an entry naming it. That list is what
      self-verify checks in step 6, so a removal skipped here fails there rather than passing
      quietly the way it used to (ADR-052). Where the repo deliberately keeps a removed path,
      record it as an exception in step 4 - not as a silent miss;
    - re-applying the whole standard is wrong - it erases the repo's local adaptation.
+
+   **A layer that binds the session lands first, and then the session restarts.** Some of
+   what the standard ships is not a file the repo merely carries - it changes what an agent is
+   allowed to do while it runs. The elicitation layer is the one that exists today:
+   `.claude/hooks/elicitation-guard.mjs`, `.claude/elicitation/points.json`, the `PreToolUse`
+   entry in `.claude/settings.json`, and `docs/adoption-provenance.md`. A `PreToolUse` hook
+   binds when the session starts, so a session that began before those files existed has no
+   guard however faithfully this update copied them in. Apply those four first, commit them,
+   then stop and have the user restart the session before the rest of the delta is applied.
+   None of the four is gated by any point, so the ordering costs nothing - and skipping it
+   means the remainder of this update writes gated artifacts with the guard inert, which is
+   the exact run the layer was built to stop.
+
+   The `PreToolUse` entry is the half that gets dropped, because `.claude/settings.json` is a
+   `merge` entry every repo has edited: adding a matcher to a list somebody else also writes to
+   is not a file copy, and an update that lands the hook script without wiring it produces a
+   guard that never runs and a repo that believes it has one.
+
+   **Do not back-fill the ledger.** It arrives with every row `pending`, and that is accurate -
+   nobody in this repo has been asked anything. Rows move to a real state when a question is
+   really put, which for most points is the next time this repo does something they gate.
+   Writing `human` across the table so the check goes quiet is precisely the fabrication this
+   layer exists to catch, committed by the run that installed it.
 
 4. **Preserve local deviations.** Where the repo deliberately deviates from a standard
    default (its own superseding ADR, per ADR-004 on link-not-copy), the update **must
@@ -128,10 +157,20 @@ with `self-verify`.
    may have moved while the update was being applied. Bookmark, manifest and provenance move
    together; the next update measures from the SHA.
 
-6. **Self-verify.** Run the compliance check - `node scripts/self-verify.mjs --version <target>`
-   (see `self-verify.md` (by reference)). It must pass: the bookmark matches the manifest, every
-   required entry is met, every `removedPaths` entry is actually gone, the guards are green -
-   **drift 0**. Do not open the PR on a red self-verify.
+6. **Self-verify - against the whole tree, not against the delta.** Run the compliance check -
+   `node scripts/self-verify.mjs --version <target>` (see `self-verify.md` (by reference)). It
+   must pass: the bookmark matches the manifest, every required entry is met, every
+   `removedPaths` entry is actually gone, the guards are green - **drift 0**. Do not open the PR
+   on a red self-verify.
+
+   Reading the whole tree is the point of running it here rather than trusting that the delta
+   was applied. An update is measured against what changed between two versions; compliance is
+   measured against the target, and those are different sets. A directory the standard
+   reorganised three versions ago that this repo never followed, a required entry someone
+   deleted locally, a `removedPaths` path still sitting there - none of that is in this update's
+   diff, and all of it is drift against the target. If self-verify surfaces drift the delta
+   never mentioned, that is not noise to route around: it is the older miss this update finally
+   made visible, and it is fixed here.
 
 7. **One focused PR.** Title it with the version move (`update to repository-standards
    @<target>`); summarize what the delta changed and any preserved deviation. Never push
@@ -157,6 +196,14 @@ with `self-verify`.
 - **Not a delta measured from the version string** - two trees can carry the same version
   number, since a PR bumps PATCH by default and `main` runs ahead of what shipped.
   `provenanceCommit` names one tree; `.standards-version` names a bookmark for humans.
+- **Not a hook landed without its wiring** - copying `elicitation-guard.mjs` while leaving
+  `.claude/settings.json` unmerged ships a guard that never fires, and a repo that thinks it is
+  guarded is worse off than one that knows it is not.
+- **Not a ledger back-filled to make the check quiet** - `pending` is the honest state for a
+  repo nobody has asked yet, and it is not a failure to be cleared.
+- **Not a compliance claim scoped to the delta** - drift 0 is a statement about the whole tree
+  against the target. An update that applied its own diff perfectly and left a three-version-old
+  structural miss in place has not reached it.
 - **Not merged on a red self-verify** - the update is complete only when the repo proves
   it complies with the target.
 

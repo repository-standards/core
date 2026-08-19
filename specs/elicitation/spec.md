@@ -94,6 +94,17 @@ it as the known gap rather than claiming coverage.
 - **R28** (`SPEC.md`) is the shipped rule this capability implements.
 - Each point declares which provenance states it permits, and a point whose answer is a
   preference rather than a fact about the repository MUST forbid `inferred`.
+- Each point MUST declare `recommended`: the answer that leads. It is the answer converging on
+  the standard, or where convergence is not the axis, the answer given now rather than
+  deferred. `null` is legal only where no such axis exists, which is consent. The skill MUST
+  offer that answer first, and the static check MUST fail when the two disagree.
+- The rule binds every question a run asks, not only the declared ones - a check can only
+  reach what is written down, and that is a limit of the check rather than of the rule.
+- The declared points are the enforceable floor. A run MUST ask what the repository in front
+  of it needs beyond them, and MUST record each such question in the ledger's own section for
+  them; `elicitation-provenance` MUST fail when that section is absent.
+- Questions MUST be put in the language the person is writing in. Which language the written
+  artifacts use is itself a point, never an assumption.
 - The guard MUST fail closed: absent or unreadable evidence is a refusal, never a pass.
 - The guard MUST read the transcript structurally. Compaction replays the model's own summary
   of a session back as a user turn, so any textual scan lets the agent vouch for itself.
@@ -109,8 +120,10 @@ it as the known gap rather than claiming coverage.
   fired question, or permitted by a declared stub. There is no fourth outcome, and no
   environment variable adds one.
 - What the repository had before the adoption is never read as evidence that somebody was
-  asked. Where that boundary cannot be drawn, the check announces it and stands down; it never
-  passes quietly.
+  asked, and neither is what it wrote before this layer existed: the boundary is the commit
+  that introduced the point list, so a repository taking this layer through an update is
+  judged only for what it writes from then on. Where that boundary cannot be drawn, the check
+  announces it and stands down; it never passes quietly.
 - The point id in an `AskUserQuestion` header is the only link between a question and the
   artifact it licenses. A question without one counts as not asked.
 - The guard proves a question happened. It does not and cannot prove the answer was honoured;
@@ -145,6 +158,16 @@ it as the known gap rather than claiming coverage.
 - GIVEN a repo holding real decision records under `docs/decision-records/` - a directory the
   manifest ships - THEN those records read as the adopter's work, not as that directory's
   scaffolding.
+- GIVEN a skill whose first option is not the point's declared `recommended` THEN
+  `elicitation-points-check` exits 1 naming both; GIVEN a point that declares no `recommended`
+  key at all THEN it exits 1; GIVEN `recommended: null` THEN it passes.
+- GIVEN a skill file that mentions a point id in prose before the heading that calls it THEN
+  the check reads the option list under the heading, not the one nearest the mention.
+- GIVEN a ledger with no section for questions no point declares THEN `elicitation-provenance`
+  exits 1.
+- GIVEN a repository that adopted the standard long before this layer, whose personas and
+  decision records were committed then, WHEN the point list arrives uncommitted in this run
+  THEN it exits 0 - those files predate every question and cannot evidence a skipped one.
 - GIVEN a validation run record claiming `"provenance": "human"` with no transcript on disk
   THEN `validation-claims-check` exits 1.
 

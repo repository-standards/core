@@ -17,13 +17,20 @@
 
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 
-const POINTS = "standard/.claude/elicitation/points.json";
+const arg = (flag, fallback) => {
+  const i = process.argv.indexOf(flag);
+  return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : fallback;
+};
+
+// Both overridable so the test can point the checker at fixtures. A checker with no way to
+// be run against a known-bad tree is one that can only be trusted to say yes.
+const POINTS = arg("--points", "standard/.claude/elicitation/points.json");
 // Skills live in two roots and the difference is not cosmetic: the shipped ones under
 // standard/ are copied into every adopting repository, while the adoption router itself stays
 // here. Resolving only one root made twelve points report "no such skill" when the real answer
 // was "found it, nothing in it asks" - a check failing for the wrong reason, which is the exact
 // class of defect this tool exists to find.
-const SKILL_ROOTS = ["standard/.claude/skills", "skills"];
+const SKILL_ROOTS = process.argv.includes("--skills") ? [arg("--skills")] : ["standard/.claude/skills", "skills"];
 const AS_JSON = process.argv.includes("--json");
 
 const declared = JSON.parse(readFileSync(POINTS, "utf8"));
@@ -42,6 +49,44 @@ function skillFiles(point) {
     .map((e) => `${dir}/${e.name}`);
 }
 
+// The recommended answer is declared, not left to the agent. It has to be, because an agent
+// choosing for itself chooses the cautious option: on stayget four of five recommendations
+// pointed at the least convergent answer, and "keep yours and map" was recommended for the
+// repository layout - an adoption that recommends not adopting.
+//
+// What can be checked here is the skill's own option order against the declaration. What
+// cannot is the question as it reaches the user: it is asked in whatever language the user
+// writes in, and no string held here would match it. Better a check that covers the text we
+// author than one that quietly passes because it never matched anything.
+function recommendationDrift(point, bodies) {
+  if (!("recommended" in point)) {
+    return "no `recommended` key - every point states which answer leads, or states null for a question with no such axis (consent)";
+  }
+  if (point.recommended === null) return null;
+  // Scoped to the point's own section, never the file's first list: nine points share
+  // intake.md, so a file-wide search reads every one of them against the topmost question.
+  // The anchor is the heading that opens the block, not the first mention of the id anywhere -
+  // prose cites these ids legitimately ("see `[adopt.language]`, below"), and anchoring on a
+  // citation slices from the wrong place and reports a disagreement that is not there.
+  const tag = `[${point.id}]`;
+  const heading = (body) => body.split("\n").findIndex((l) => l.startsWith("#") && l.includes(tag));
+  const mentions = bodies.filter((b) => b.includes(tag));
+  // A file that opens a block for this point is the call site; a file that merely names it is
+  // not, and must not contribute an option list. Only when no file has the heading at all does
+  // the slice fall back to the mention, which is the older skill layout.
+  const withHeading = mentions.filter((b) => heading(b) !== -1);
+  const scoped = withHeading.length
+    ? withHeading.flatMap((b) => b.split("\n").slice(heading(b)))
+    : mentions.flatMap((b) => b.slice(b.indexOf(tag)).split("\n"));
+  const line = scoped.find((l) => l.includes("Options, in order:"));
+  if (!line) return `declares recommended "${point.recommended}" but the skill lists no "Options, in order:" line to lead with it`;
+  const first = line.split("Options, in order:")[1].split(" / ")[0];
+  if (!first.includes(point.recommended)) {
+    return `declares recommended "${point.recommended}", but the skill offers "${first.trim()}" first - the recommendation is whichever one is spoken first, so these cannot disagree`;
+  }
+  return null;
+}
+
 const results = declared.points.map((point) => {
   const files = skillFiles(point);
   if (!files.length) {
@@ -52,7 +97,10 @@ const results = declared.points.map((point) => {
   // skill whose SKILL.md mentions the id in prose while some other page asks about something
   // else entirely would otherwise read as wired - which is the shape of the original defect.
   const wired = bodies.some((b) => b.includes("AskUserQuestion") && b.includes(`[${point.id}]`));
-  if (wired) return { id: point.id, ok: true };
+  if (wired) {
+    const bad = recommendationDrift(point, bodies);
+    return bad ? { id: point.id, ok: false, why: bad } : { id: point.id, ok: true };
+  }
   const invokes = bodies.some((b) => b.includes("AskUserQuestion"));
   const tagged = bodies.some((b) => b.includes(`[${point.id}]`));
   if (!invokes && !tagged) return { id: point.id, ok: false, why: "no AskUserQuestion and no point id anywhere in the skill" };
@@ -64,7 +112,7 @@ const missing = results.filter((r) => !r.ok);
 const required = new Set(declared.points.filter((p) => p.required).map((p) => p.id));
 const missingRequired = missing.filter((m) => required.has(m.id));
 
-// The baseline is what makes this a gate today rather than an aspiration. Wiring 18 points is
+// The baseline is what makes this a gate today rather than an aspiration. Wiring every point is
 // weeks of work; waiting for zero before switching the check on would leave exactly the gap
 // that produced this situation - a rule everybody agreed with and nothing enforced.
 const BASELINE = "tools/elicitation-baseline.json";

@@ -384,7 +384,7 @@ The first, when records already exist:
 
 > This repository already has decision records. Take them as they stand, rewrite them into the standard's shape, or leave them and only add new ones alongside?
 
-Options, in order: **take them as they stand** / **rewrite them into the standard's shape** / **leave them, add new ones alongside** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
+Options, in order: **rewrite them into the standard's shape** (recommended) / **take them as they stand** / **leave them, add new ones alongside** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
 
 Rewriting somebody's records is allowed and often right - a record in the wrong format is still a decision worth keeping, and reshaping it beats leaving it in a second parallel structure. It is doing it unasked that is the failure: thirty-three owner-authored records each gained a section nobody requested, and the run read as tidying.
 
@@ -412,16 +412,30 @@ Personas are a claim about people outside the repository, and nothing in the cod
 
 Records to `docs/adoption-provenance.md`: the `adopt.personas` row takes the state, who answered, the date, and `docs/personas.md` as where the answer landed.
 
+### `[adopt.tracker]` Where tracked work lives
+
+Fires **when the repository already tracks work somewhere other than `backlog.md`** - its own tracker directory, an issue tracker, a board.
+
+Call `AskUserQuestion` with the header `[adopt.tracker]` and the question:
+
+> The standard's `backlog.md` is the source of truth for tracked work, and this repository already tracks work elsewhere. Fold that into the backlog, keep both with the backlog as the source, or keep the external tracker and let the backlog bridge to it?
+
+Options, in order: **fold it into the backlog** (recommended) / **keep both, backlog is the source** / **external tracker, backlog bridges** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
+
+Two live trackers is the failure this asks about, and it is the one the repository is most likely to walk into by inertia - both stay, both rot differently, and the question of which one is true gets answered per person. Folding leads because the product's own claim is that the work lives in the repository next to the code that does it.
+
+Records to `docs/adoption-provenance.md`: the `adopt.tracker` row takes the state, who answered, the date, and `backlog.md` as where the answer landed.
+
 ### `[adopt.backlog]` Seeding the backlog
 
 Fires **before writing backlog rows, and again before assigning an owner to any of them**.
 
 Call `AskUserQuestion` with the header `[adopt.backlog]` and the question:
 
-> Should the adoption seed a backlog, and if so who owns the items - you, or left unassigned?
+> Should the adoption seed a backlog, and if so how is the work attributed - each row naming the role it needs, assigned to you by name, or with nothing said about who does it?
 
-Options, in order: **seed it, mine** / **seed it, unassigned** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **leave a stub, do not guess** (`absent`)
+Options, in order: **seed it, each row naming the role it needs** (recommended) / **seed it, assigned to me** / **seed it, no owner named** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **leave a stub, do not guess** (`absent`)
 
-Assigning work to a named person is an act with consequences outside the repository.
+The role leads because it is the part that is always true and always useful: a row that says *product decision* or *architect* tells whoever picks it up what kind of work it is, without claiming anyone agreed to do it. Assigning a named person is an act with consequences outside the repository - and in a repo with one or two people it is theatre, because the name is the same on every row. Saying nothing at all is the one to avoid: an unowned row is work nobody can even categorise, and the alignment gate asks for an owner precisely so that a backlog cannot fill up with orphans.
 
 Records to `docs/adoption-provenance.md`: the `adopt.backlog` row takes the state, who answered, the date, and `backlog.md` as where the answer landed.

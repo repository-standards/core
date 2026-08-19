@@ -71,12 +71,15 @@ const fixture = () => {
 // `pending`, and any case writing an artifact one of those points gates - `stack.manifest.json`
 // is the one that bites here - adds a drift this suite is not measuring. The elicitation
 // ledger has its own suite; these cases are about self-verify's arithmetic.
+//
+// It carries the harvest heading for the same reason: a ledger missing it is a finding over
+// there, and every case here would then be measuring that finding rather than its own.
 function answeredProvenance(dir) {
   const points = JSON.parse(readFileSync(join(dir, ".claude/elicitation/points.json"), "utf8")).points || [];
   const rows = points.map((p) => `| \`${p.id}\` | human | fixture | 2026-08-19 | docs/x.md | - |`).join("\n");
   writeFileSync(
     join(dir, "docs/adoption-provenance.md"),
-    `# Adoption provenance\n\n| Point | State | Answered by | When | Landed in | Backlog row |\n|---|---|---|---|---|---|\n${rows}\n`,
+    `# Adoption provenance\n\n| Point | State | Answered by | When | Landed in | Backlog row |\n|---|---|---|---|---|---|\n${rows}\n\n## Questions this run asked that no point declares\n`,
   );
 }
 
