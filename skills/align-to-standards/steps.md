@@ -167,8 +167,10 @@ Phase file of `align-to-standards`. Runs inside it, never as a separate skill.
    abandoned or failed run is more valuable than a clean one and the offer must say
    so before asking anything. `adopt.evidence` decides whether this step runs at all:
    **record nothing** means skip it and say you are skipping it, **keep it local**
-   means assemble and stop there, and only the first option reaches a pull request
-   upstream. Beyond that gate the levels are consent-gated per item, exactly like
+   means assemble and stop there, and only the two keep-and-send options reach a
+   pull request upstream - under the anonymised one, the scrub `record-run` performs
+   anyway is a condition of the consent, so an excerpt that fails it has no yes.
+   Beyond that gate the levels are consent-gated per item, exactly like
    step 7 - never automatic, and "no" leaves the assembled record local and costs
    the user nothing.
 

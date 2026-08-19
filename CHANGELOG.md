@@ -11,6 +11,48 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.1.25 - 2026-08-19
+
+Three defects, one source: the first repository to run `update-to-latest` against 1.1.24
+found all of them from inside its own adoption, where each was obvious and none had been
+visible from here. That is the second time an adopter's checkout caught what every gate in
+this repository missed, and this release also closes the class, not only the instances.
+
+### The guard suite no longer assumes the repository was never adopted (2026-08-19)
+
+`verifyAgentGuards.sh`'s elicitation cases expected refusals that only hold before anything
+was answered: the guard reads the committed provenance ledger from the repository it runs
+in, so in an adopted repository - a committed row answering `adopt.personas`, another
+answering `adopt.layout` - it rightly allows, and the suite scored the mechanism working
+exactly as designed as two failures. The cases now build a scratch git repository (the
+shipped `points.json`, one tracked file, no ledger) and run inside it, so the expectations
+hold in every repository the suite ships to. `adoption-fixture-test` now drives that state
+too: it commits a ledger answering every repository-scoped point and asserts the suite
+still passes - the assertion that reproduces the adopter's failure verbatim against the old
+suite, and the reason this cannot regress silently.
+
+### Restoring a dump into a remote database is a write (2026-08-19)
+
+`pg_restore -d <remote-uri> dump.tar` carries every statement in `WRITE_RE` without
+spelling out any of them: no verb, no `-f`, no `.sql` name ever reaches the command line,
+so the write scan had nothing to find and the client list did not know the name. The
+remote-database guard now treats `pg_restore` and `mysqlimport` as what they are - clients
+whose only job is to write - and denies them against any non-loopback host, while a local
+restore and `pg_restore --list` stay allowed. The adopting repository's own guard had
+covered both for its whole life; the coverage is now upstream where every other adopter
+gets it.
+
+### Consent can now be conditional on anonymisation (2026-08-19)
+
+The `adopt.evidence` question offered keep-and-send, keep-local, or nothing - and the first
+real adopter answered none of them: keep it, on the condition that machine paths and
+identity are scrubbed and the repository appears only as `/git/<repo>`. The option list now
+carries that fourth answer. It is not a different scrub - `record-run` scrubs paths and
+identity at every level regardless - but chosen here the scrub becomes a condition of the
+consent rather than a courtesy of the tooling, so an excerpt that fails it was never agreed
+to. The close step maps it accordingly: two options now reach a pull request upstream, not
+one.
+
 ## 1.1.24 - 2026-08-19
 
 ### What this stands on, said where a reader will see it (2026-08-19)

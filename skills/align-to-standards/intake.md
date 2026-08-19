@@ -341,7 +341,17 @@ Call `AskUserQuestion` with the header `[adopt.evidence]` and the question:
 
 > This session can be kept as evidence for the standard - the questions it asked, the answers you gave, what it produced. May it be kept, and may an excerpt be sent upstream after you have read it?
 
-Options, in order: **keep it, and I will read the excerpt before anything is sent** / **keep it local - assemble it, send nothing** / **record nothing**
+Options, in order: **keep it, and I will read the excerpt before anything is sent** / **keep it
+anonymised - the same, on the condition that machine paths and identity are scrubbed and the
+repository appears only as `/git/<repo>`** / **keep it local - assemble it, send nothing** /
+**record nothing**
+
+The anonymised option is not a different scrub - `record-run` scrubs paths and identity at every
+level regardless. What it changes is the standing of that scrub: chosen here, anonymisation is a
+condition of the consent rather than a courtesy of the tooling, so an excerpt that fails it was
+never agreed to. The option exists because the first real adopter asked for exactly this and the
+list could not say it - the answer they gave attached a condition no option carried, which is the
+one shape of answer a fixed list must learn from.
 
 No option is recommended and none may be inferred or stubbed: consent that an agent supplied is
 not consent. The answer governs step 8 at the close - `record-run` assembles and offers only what
