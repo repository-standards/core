@@ -117,11 +117,26 @@ process.stdin.on("end", () => {
     );
   }
 
+  // Structural, not textual. A question counts when an assistant turn really called the
+  // tool - not when the model wrote the tool's name. Compaction replays the model's own
+  // summary of a session back as a user turn, so a summary saying it asked about personas
+  // would otherwise vouch for the write it is summarising. That is the laundering path,
+  // and it is the one an agent under pressure to finish would find first.
   let asked = new Set();
   try {
     for (const line of readFileSync(transcript, "utf8").split("\n")) {
-      if (!line.includes("AskUserQuestion")) continue;
-      for (const m of line.matchAll(/\[([a-z0-9.\-]+)\]/gi)) asked.add(m[1]);
+      if (!line.includes("AskUserQuestion")) continue; // cheap prefilter; transcripts are large
+      let entry;
+      try { entry = JSON.parse(line); } catch { continue; }
+      const msg = entry.message || {};
+      if (msg.role !== "assistant" || !Array.isArray(msg.content)) continue;
+      for (const b of msg.content) {
+        if (b.type !== "tool_use" || b.name !== "AskUserQuestion") continue;
+        for (const q of b.input?.questions || []) {
+          const m = /\[([a-z0-9.\-]+)\]/i.exec(q.header || "");
+          if (m) asked.add(m[1]);
+        }
+      }
     }
   } catch {
     deny(`Refused: cannot read the session transcript, so ${target} cannot be shown to have been asked about.`);
