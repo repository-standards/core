@@ -67,6 +67,10 @@ jobs:
       # in the remote-database guard shipped with every check on this list green.
       - name: agent guards (the shipped PreToolUse hooks deny and allow what they should)
         run: bash standard/scripts/verifyAgentGuards.sh
+      # Everything above scores the standard against itself. Both defects an adopter found by
+      # hand were invisible from here and obvious from inside the repository being adopted.
+      - name: adoption fixtures (the payload behaves the same in a repository that is not ours)
+        run: node tools/adoption-fixture-test.mjs
       - name: self-verify fill + drift test (placeholder warning clearable; removed skill/section is drift)
         run: node tools/self-verify-fill-test.mjs
       - name: self-verify drift test (content, declared keys and the bounds on exceptions)
