@@ -10,7 +10,13 @@
   ],
   "verify-engine": [
     "standard/scripts/self-verify.mjs",
-    { "glob": "standard/standard.manifest.json", "couples": "shape", "dataKeys": ["files[].sha256"] }
+    {
+      "glob": "standard/standard.manifest.json",
+      "couples": "shape",
+      "dataKeys": [
+        "files[].sha256"
+      ]
+    }
   ],
   "web-surface": [
     "tools/docsite.mjs",
@@ -26,6 +32,13 @@
     "standard/docs/sprints/**",
     "standard/.claude/skills/sprint-*/**",
     "standard/.claude/skills/timeline-update/**"
+  ],
+  "elicitation": [
+    "standard/.claude/elicitation/**",
+    "standard/.claude/hooks/elicitation-guard.mjs",
+    "standard/scripts/elicitation-provenance.mjs",
+    "tools/elicitation-*.mjs",
+    "tools/validation-claims-check.mjs"
   ],
   "$unclaimed": [
     "*",
