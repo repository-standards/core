@@ -144,6 +144,14 @@ declares, and `elicitation-provenance.mjs` fails when it is missing: an unrecord
 question is indistinguishable from one nobody needed. What accumulates there is better
 evidence for what the point list should contain than anything written at a desk.
 
+The same run also showed what happens where the declaration does not reach. It asked the
+conventions question on the brownfield path, which no file declared - the point named only its
+greenfield call site - so the agent wrote the question itself and recommended that the
+repository's own conventions win, while the declared greenfield copy led with the standard's
+defaults. A point now names every file that asks it, `elicitation-points-check` reads the
+option order of each one rather than the first it finds, and the brownfield call site is
+written down.
+
 It has already produced two. `adopt.tracker` - where tracked work lives, when a repository
 already tracks it somewhere else - came from that live run, which invented the question and
 then recommended keeping the parallel tracker. `adopt.profile` came from the same run asking
@@ -204,6 +212,59 @@ in the README, the quick start and the method - four words and a domain, matchin
 adopter actually writes. The interview survives the shortening because the hook above refuses
 to write an artifact nobody was asked about; before this release, shortening the line would
 have silently removed the asking with it.
+
+### The flow that writes specifications now asks (2026-08-19)
+
+Hand-holding through spec writing is the flagship promise of this standard, and the flow made
+**zero** `AskUserQuestion` calls. `spec-clarify` had its questions written as chat markdown - a
+bolded question, a `Recommended: Option A` line, a lettered table and "reply with the option
+letter" - which is a question-shaped paragraph rather than a question: it does not block, the
+answer arrives as free text the run then interprets, and nothing downstream can see that it
+happened. Its three real call sites sat in a sibling file reachable through one sentence at the
+end of the skill. `spec-specify` asked nothing at all: it took the boundary, the acceptance
+criteria and every undetermined point from its own informed guesses and wrote them as though
+somebody had agreed.
+
+Every question in the clarify loop is now a tool call, and the pointer to those call sites sits
+inside the loop rather than after it. `spec-specify` asks the boundary before it writes Purpose
+and Scope, asks what done means before it writes acceptance criteria, and asks the unknowns in
+place of the informed guess - the guess is now what it does with the ones handed back, not a way
+around asking. `spec-update` asks before a change moves a capability's boundary, and
+`spec-reconcile` asks before it rewrites a criterion to match what was built, because bending
+the criteria to fit the code is the one resolution the party that wrote the code cannot take on
+its own authority.
+
+That meant the declaration had to grow a dimension: `skill` now takes a list exactly as `file`
+does, `elicitation-points-check` requires a call site in every declared skill and the same
+recommended answer in each, and a file a point names but which does not exist fails loudly
+instead of being skipped. A point wired in one of its four skills and forgotten in the other
+three is a refusal with no instructions - which is how a guard stops being obeyed.
+
+Paying for it in place: both patched skills were already at their recorded instruction-budget
+ceiling, and the ratchet in `skill-format-check` may only shrink. The question detail moved to
+sibling files, and the marker cap and priority order - which upstream states twice, once in the
+flow and once in the guidelines, along with a list of areas that restates them a third time -
+are now stated once.
+
+### Asked once, or asked every time (2026-08-19)
+
+The guard shipped demanding evidence from the current session for every point, which made it
+unlivable the day after an adoption. Who the product is for, how its decision records are kept,
+which profile it runs at - these are answered once and recorded, and a `personas-write` or
+`adr-write` months later would have been refused until it re-asked an adoption question. A guard
+nobody can work under is removed, and a removed guard catches nothing.
+
+Every point now declares a `scope`. A **repository**-scoped answer belongs to the repository:
+once its ledger row says somebody answered **and that row is committed**, later sessions write
+the artifact without asking again. Committed rather than merely written, because reading the file
+on disk would let one run add the row and the artifact in the same breath - the laundering the
+transcript check exists to close. A **work**-scoped answer belongs to the piece of work in front
+of the run - this specification, this digest, this run - and no ledger row settles it; the scope
+of last month's spec is not the boundary of this one.
+
+Both directions are asserted by the guard's own cases, because only one of the two failures is
+loud: everything work-scoped refuses ordinary work forever, and everything repository-scoped
+hands one adoption-time row the right to write every artifact the repository will ever have.
 
 ### The validation corpus now says what it can and cannot evidence (2026-08-19)
 
