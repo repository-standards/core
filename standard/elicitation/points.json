@@ -25,7 +25,7 @@
     {
       "id": "adopt.layout",
       "skill": "align-to-standards",
-      "file": "onboard.md",
+      "file": "intake.md",
       "asks": "This repository already names and arranges things its own way, and the standard names them differently. Adopt the standard's layout, or keep yours and map the standard onto it?",
       "required": true,
       "allowed_provenance": [
@@ -39,7 +39,7 @@
     {
       "id": "adopt.intent",
       "skill": "align-to-standards",
-      "file": "onboard.md",
+      "file": "intake.md",
       "asks": "How far does this adoption go: migrate everything to the standard, adopt selected parts, or assess only and change nothing yet?",
       "required": true,
       "allowed_provenance": [
@@ -52,7 +52,7 @@
     {
       "id": "adopt.continue",
       "skill": "align-to-standards",
-      "file": "onboard.md",
+      "file": "SKILL.md",
       "asks": "Phase finished. Continue to the next one, stop here, or hand the rest back to you?",
       "required": true,
       "allowed_provenance": [
@@ -65,7 +65,7 @@
     {
       "id": "adopt.existing-material",
       "skill": "align-to-standards",
-      "file": "onboard.md",
+      "file": "intake.md",
       "asks": "This repository holds informal working material - scratch notes, PRDs, plans, TODO files - that the standard has a home for. Route it into discovery and the backlog now, list it for you to triage, or leave it untouched?",
       "required": true,
       "allowed_provenance": [
@@ -125,7 +125,7 @@
     {
       "id": "adopt.guards",
       "skill": "align-to-standards",
-      "file": "onboard.md",
+      "file": "intake.md",
       "asks": "The repository already has agent guards that overlap the standard's. Replace, merge, or keep both?",
       "required": true,
       "allowed_provenance": [
@@ -139,7 +139,7 @@
     {
       "id": "adopt.commit-plan",
       "skill": "align-to-standards",
-      "file": "onboard.md",
+      "file": "intake.md",
       "asks": "This adoption touches many files. Split the work into commits how - one per concern, one per phase, or a single change?",
       "required": false,
       "allowed_provenance": [

@@ -48,3 +48,24 @@ phase is the procedure that consumes it.
   second app.
 - Not a tool war: if the user keeps their tool (say, ESLint over the stack's
   pick), that is a recorded exception with the trade-off named, not a fight.
+
+
+## Questions this phase must ask
+
+Declared in `standard/elicitation/points.json`; the shape and the provenance states are in
+`standard/elicitation/README.md`. Each block below is a real `AskUserQuestion` call, not a
+reminder to consider asking - the rule existed as prose first and a full adoption ignored it.
+
+### `[green.stack]` Technology and profile
+
+Fires **after detecting the technology from the repo's own evidence, before writing the manifest**.
+
+Call `AskUserQuestion` with the header `[green.stack]` and the question:
+
+> Which stack, and which profile - core or scale?
+
+Options, in order: **confirm the detection** / **a different stack** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
+
+Detection is evidence and evidence is `inferred`; the confirmation is what makes it `human`. Name what the registry actually has, so the answer is informed rather than a guess that gets downgraded three steps later.
+
+Records to `stack.manifest.json` as `point_id: green.stack` with the provenance state the answer implies.

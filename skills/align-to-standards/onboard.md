@@ -366,3 +366,52 @@ guards are green - not when every file has a paragraph.
   that exists (a request is not a capability).
 - **Not guessing behavior** to make a spec look complete - an unknown is a backlog
   item, not a fabricated `MUST`.
+
+
+## Questions this phase must ask
+
+Declared in `standard/elicitation/points.json`; the shape and the provenance states are in
+`standard/elicitation/README.md`. Each block below is a real `AskUserQuestion` call, not a
+reminder to consider asking - the rule existed as prose first and a full adoption ignored it.
+
+### `[adopt.records]` Decision records
+
+Fires **before writing anything into the decision-records directory**.
+
+Call `AskUserQuestion` with the header `[adopt.records]` and the question:
+
+> The standard expects decision records. Write them now one at a time, leave stubs, or have them drafted for you to check later?
+
+Options, in order: **write them now** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **leave a stub, do not guess** (`absent`)
+
+A decision record's whole value is that a person decided it. Never append to a record somebody else wrote without asking.
+
+Records to `docs/decision-records/` as `point_id: adopt.records` with the provenance state the answer implies.
+
+### `[adopt.personas]` Who the product is for
+
+Fires **before writing personas**.
+
+Call `AskUserQuestion` with the header `[adopt.personas]` and the question:
+
+> Who are the users of this product? Define them yourself, have them suggested from the code for you to correct, or skip personas for now?
+
+Options, in order: **define them** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **leave a stub, do not guess** (`absent`)
+
+Personas are a claim about people outside the repository, and nothing in the code can settle them. A suggested roster is never closed.
+
+Records to `docs/personas.md` as `point_id: adopt.personas` with the provenance state the answer implies.
+
+### `[adopt.backlog]` Seeding the backlog
+
+Fires **before writing backlog rows, and again before assigning an owner to any of them**.
+
+Call `AskUserQuestion` with the header `[adopt.backlog]` and the question:
+
+> Should the adoption seed a backlog, and if so who owns the items - you, or left unassigned?
+
+Options, in order: **seed it, mine** / **seed it, unassigned** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **leave a stub, do not guess** (`absent`)
+
+Assigning work to a named person is an act with consequences outside the repository.
+
+Records to `backlog.md` as `point_id: adopt.backlog` with the provenance state the answer implies.
