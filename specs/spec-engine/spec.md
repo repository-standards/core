@@ -109,11 +109,24 @@ fails naming each one that carries neither the substring `github/spec-kit v0.13.
 - **A question MUST be a question.** Each asked item leads with a full interrogative that can be answered as written, never a topic label, section heading or requirement id (an id MAY trail the question), and carries one plain-language line on what changes depending on the answer. A label is a subject; answering it means guessing what was meant, which is how a clarify round returns nothing usable.
 - **The questions this phase owns MUST be real calls.** `spec.scope`, `spec.acceptance` and
   `spec.unknowns` are declared in [`points.json`](../../standard/.claude/elicitation/points.json),
-  and `spec-clarify` MUST carry an `AskUserQuestion` call site for each, with the point id in the
-  question's header as `[spec.scope]`. Prose instructing the agent to ask is not a call site: it was
-  written, in the right file and in plain words, and a full adoption asked one question in 1140
-  transcript lines (ADR-054). The [elicitation](../elicitation/spec.md) capability owns the
-  declaration, the refusal and the record; this capability owns only whether the calls are here.
+  and every skill that writes a specification MUST carry an `AskUserQuestion` call site for the
+  points gating that write, with the point id in the question's header as `[spec.scope]`: the
+  boundary and the acceptance criteria are asked by `spec-specify` before it writes them, by
+  `spec-clarify` in its loop, by `spec-update` before it moves a boundary, and by `spec-reconcile`
+  before it rewrites a criterion to match what was built. Prose instructing the agent to ask is not
+  a call site: it was written, in the right file and in plain words, and a full adoption asked one
+  question in 1140 transcript lines (ADR-054). The [elicitation](../elicitation/spec.md) capability
+  owns the declaration, the refusal and the record; this capability owns only whether the calls are
+  here.
+- **The clarify loop MUST ask with the tool, not in prose.** Every question the loop puts is an
+  `AskUserQuestion` call - never a rendered markdown table with "reply with the option letter".
+  A question-shaped paragraph does not block, returns free text the run then interprets, and
+  leaves nothing the guard or the replay layer can see; a specification written that way is
+  indistinguishable from one the agent decided alone. The recommended option leads and is the only
+  one labelled, and an answer typed off the list is recorded as given rather than mapped onto the
+  nearest option.
+- **Asking is per specification, not per repository.** These three points are work-scoped: no
+  committed provenance row licenses the next spec's boundary, so each run asks again.
 
 - **Provenance duty.** The upstream MIT licence MUST ship at `scripts/spec/LICENSE` (Copyright GitHub, Inc.); every extracted file MUST carry a provenance line naming github/spec-kit v0.13.2, with standard-authored hunks and files marked `PATCHED(repository-standards)`. A hunk taken from upstream **after** the extraction point MUST be marked `CHERRY-PICKED` with the upstream commit it came from - the baseline stays v0.13.2, and every deviation from it is readable in place.
 - **Staying current with upstream is a manual, per-release scan** and MUST stay one: the prompts are ours (ADR-015), so at each release the maintainer reads github/spec-kit's prompt changes since v0.13.2 and cherry-picks what earns it. No mechanical sync exists by design - it would overwrite the patches that make the engine speak this standard's spec shape.
@@ -240,6 +253,11 @@ fails naming each one that carries neither the substring `github/spec-kit v0.13.
 - **Stale citation caught, decision text untouched.** GIVEN a capability spec cites an ADR that has since flipped to `Superseded` WHEN `/spec-reconcile` runs THEN the citation is repointed to the superseding record and the surrounding prose is flagged for a human, and the cited record's own text is unchanged.
 - **A forbidding BDR is opened, not missed.** GIVEN a change that an Accepted BDR's `What this rules out` explicitly forbids, against a capability whose spec `Status` is anything but `retired` WHEN `/spec-impact` runs THEN the ripple names that BDR and stops, instead of reporting no decision impact after reading the ADR directory alone.
 - **A shim is documented as a shim.** GIVEN a capability whose code carries a body that exists only to keep a previous release's contract working WHEN `/spec-reconcile` runs THEN the spec gains a subsection naming what it preserves and the condition for removing it, the capability's contracts still describe the current design, and the shim is neither missing from the spec nor written into it as intended behaviour.
+- **The spec flow asks with the tool.** GIVEN the shipped tree WHEN `elicitation-points-check`
+  runs THEN `spec.scope`, `spec.acceptance` and `spec.unknowns` each resolve to an
+  `AskUserQuestion` call site in every skill declared for them - `spec-specify`, `spec-clarify`,
+  `spec-update`, `spec-reconcile` - and a point wired in one of its skills but not another exits
+  1 naming the skill that does not ask.
 - **Ripple filed, not lost.** GIVEN `/spec-impact` finds an affected capability, a needed ADR/BDR, or a code area the current change will not address WHEN the analysis completes THEN a backlog item exists for it, sourced to the analysis; GIVEN `/spec-update` edits a spec to a target state broader than the current change WHEN the edit completes THEN a backlog item exists for the unbuilt delta, sourced to the spec diff.
 
 ## Open questions

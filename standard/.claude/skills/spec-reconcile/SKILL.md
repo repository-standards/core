@@ -25,7 +25,11 @@ truth - so the spec, the code, and the tests must agree.
      route kept alive for an old client.
 
 3. Resolve each: update the spec, fix the code, or explicitly record why. Prefer
-   making the spec accurate to the real behavior.
+   making the spec accurate to the real behavior - **and where that preference would
+   rewrite what "done" means, or move the capability's boundary, ask before it does.**
+   The calls are in "Questions this skill must ask", below. Bending the criteria to fit
+   what was built is the one resolution this skill cannot take on its own authority,
+   because it is the party that built it.
 
    **A compatibility artifact is documented as one, or the record gets worse.**
    Where the source of truth for some behavior is something already out in the
@@ -110,3 +114,47 @@ truth - so the spec, the code, and the tests must agree.
    If the work is not finished, say so and stop - the scaffolding stays until it is.
 
 No knowingly-contradicting spec merges (rule 8: no silent drift).
+
+## Questions this skill must ask
+
+Reconciliation is where a specification is rewritten to match what was actually built, which is
+the most defensible edit in the loop and the easiest place to launder a decision. Two of the
+resolutions available here are not this skill's to take alone, and the elicitation guard refuses
+the write to `specs/**/spec.md` until they have been put to somebody. They fire per
+reconciliation, not once per repository.
+
+Declared in `.claude/elicitation/points.json`; the shape and the provenance states are in
+`.claude/elicitation/README.md`. Each is a real `AskUserQuestion` call, in the language the user
+is writing in, with the point id in the header.
+
+### `[spec.acceptance]` Which side moves - the criteria or the code
+
+Fires **at step 3, before an Acceptance criterion is edited to describe what was built**. A
+divergence found here is not a spec error by default; it is a disagreement, and which side is
+wrong is somebody else's call.
+
+Ask: *The built behaviour and the acceptance criteria disagree on `<point>`. Does the criterion
+change to match what was built, or does the code change to match the criterion?* Say which
+divergences you found, one option per resolution, and say what each costs.
+
+Options, in order: **tell me now** (`human`) / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **leave a stub, do not guess** (`absent`, the divergence written into `## Open questions` rather than resolved)
+
+Acceptance criteria written by the party that will satisfy them are not criteria - and at this
+step, that party is this skill.
+
+Records to `docs/adoption-provenance.md`: the `spec.acceptance` row takes the state, who answered,
+the date, and the spec it edited as where the answer landed.
+
+### `[spec.scope]` Behaviour that was built and never specified
+
+Fires **when the code does something the spec never claimed** - the resolution that grows a
+capability rather than correcting it.
+
+Ask: *`<capability>` does `<behaviour>`, which no spec claims. Does it belong to this capability,
+somewhere else, or nowhere?* An unspecified behaviour absorbed silently is how two capabilities
+end up owning the same rule, and neither spec is wrong on its own.
+
+Options, in order: **tell me now** (`human`) / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **leave a stub, do not guess** (`absent`, a `[NEEDS CLARIFICATION: ...]` marker naming the behaviour)
+
+Records to `docs/adoption-provenance.md`: the `spec.scope` row takes the state, who answered, the
+date, and the spec it edited as where the answer landed.

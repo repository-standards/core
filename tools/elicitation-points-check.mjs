@@ -35,20 +35,34 @@ const AS_JSON = process.argv.includes("--json");
 
 const declared = JSON.parse(readFileSync(POINTS, "utf8"));
 
-// A point names its skill, and optionally the file - or files - within it that ask it. With no
-// file named, any file in the skill directory may carry the call site. More than one is normal:
-// the same question reaches a greenfield repo and a brownfield one down different paths, and
-// both have to lead with the same answer.
-function skillFiles(point) {
-  const dir = SKILL_ROOTS.map((r) => `${r}/${point.skill}`).find((d) => existsSync(d));
-  if (!dir) return [];
-  if (point.file) {
-    const named = (Array.isArray(point.file) ? point.file : [point.file]).map((f) => `${dir}/${f}`);
-    return named.filter((f) => existsSync(f));
-  }
-  return readdirSync(dir, { withFileTypes: true })
-    .filter((e) => e.isFile() && e.name.endsWith(".md"))
-    .map((e) => `${dir}/${e.name}`);
+// A point names its skill - or skills - and optionally the file, or files, within them that ask
+// it. With no file named, any file in the skill directory may carry the call site. More than one
+// is normal, and it is where drift lives: the same question reaches a greenfield repo and a
+// brownfield one down different paths, and one spec question is asked by the skill that writes
+// Requirements as well as by the one that clarifies them. Every declared site must ask, and every
+// one of them must lead with the same answer - a point wired in one skill and forgotten in the
+// other is the shape of the defect the field run found.
+function callSites(point) {
+  const skills = Array.isArray(point.skill) ? point.skill : [point.skill];
+  return skills.map((skill) => {
+    const dir = SKILL_ROOTS.map((r) => `${r}/${skill}`).find((d) => existsSync(d));
+    if (!dir) return { skill, dir: null, files: [], exact: false };
+    if (point.file) {
+      const named = (Array.isArray(point.file) ? point.file : [point.file]).map((f) => `${dir}/${f}`);
+      // A named file that is not there is a broken declaration, not a call site to skip. It used
+      // to be filtered out silently, which let a point pass on the strength of the sibling file
+      // it also names.
+      return { skill, dir, files: named, exact: true };
+    }
+    return {
+      skill,
+      dir,
+      files: readdirSync(dir, { withFileTypes: true })
+        .filter((e) => e.isFile() && e.name.endsWith(".md"))
+        .map((e) => `${dir}/${e.name}`),
+      exact: false,
+    };
+  });
 }
 
 // The recommended answer is declared, not left to the agent. It has to be, because an agent
@@ -101,25 +115,42 @@ function recommendationDrift(point, bodies) {
   return null;
 }
 
+// One file has to carry both the call and the id. Points that name no file would otherwise read
+// as wired when a skill's SKILL.md mentions the id in prose while some other page asks about
+// something else entirely - which is the shape of the original defect.
+const asks = (body, id) => body.includes("AskUserQuestion") && body.includes(`[${id}]`);
+
 const results = declared.points.map((point) => {
-  const files = skillFiles(point);
-  if (!files.length) {
-    return { id: point.id, ok: false, why: `no file for skill "${point.skill}"${point.file ? `/${point.file}` : ""}` };
+  const sites = callSites(point);
+  const bodies = [];
+  for (const site of sites) {
+    if (!site.dir) return { id: point.id, ok: false, why: `no skill directory "${site.skill}"` };
+    const present = site.files.filter((f) => existsSync(f));
+    if (site.exact) {
+      const gone = site.files.filter((f) => !existsSync(f));
+      if (gone.length) return { id: point.id, ok: false, why: `declares ${gone.join(", ")}, which does not exist` };
+    }
+    if (!present.length) return { id: point.id, ok: false, why: `no file for skill "${site.skill}"` };
+    const read = present.map((f) => [f, readFileSync(f, "utf8")]);
+    bodies.push(...read.map(([, b]) => b));
+    // Named files are each a call site in their own right; an unnamed directory needs one file
+    // in it that asks. What the diagnosis reads is what actually failed, not the whole site -
+    // a site where one named file asks and the other does not should not be reported as a
+    // skill that never calls the tool.
+    const failing = site.exact
+      ? read.filter(([, b]) => !asks(b, point.id))
+      : read.some(([, b]) => asks(b, point.id)) ? [] : read;
+    if (failing.length) {
+      const where = site.exact ? failing.map(([f]) => f).join(", ") : site.dir;
+      const anyCall = failing.some(([, b]) => b.includes("AskUserQuestion"));
+      const anyTag = failing.some(([, b]) => b.includes(`[${point.id}]`));
+      if (!anyCall && !anyTag) return { id: point.id, ok: false, why: `no AskUserQuestion and no point id in ${where}` };
+      if (!anyCall) return { id: point.id, ok: false, why: `point id present but nothing calls AskUserQuestion in ${where}` };
+      return { id: point.id, ok: false, why: `AskUserQuestion is called, but nothing pairs it with a [${point.id}] header in ${where}` };
+    }
   }
-  const bodies = files.map((f) => readFileSync(f, "utf8"));
-  // Both in one file, not both somewhere in the directory. Six points name no file, so a
-  // skill whose SKILL.md mentions the id in prose while some other page asks about something
-  // else entirely would otherwise read as wired - which is the shape of the original defect.
-  const wired = bodies.some((b) => b.includes("AskUserQuestion") && b.includes(`[${point.id}]`));
-  if (wired) {
-    const bad = recommendationDrift(point, bodies);
-    return bad ? { id: point.id, ok: false, why: bad } : { id: point.id, ok: true };
-  }
-  const invokes = bodies.some((b) => b.includes("AskUserQuestion"));
-  const tagged = bodies.some((b) => b.includes(`[${point.id}]`));
-  if (!invokes && !tagged) return { id: point.id, ok: false, why: "no AskUserQuestion and no point id anywhere in the skill" };
-  if (!invokes) return { id: point.id, ok: false, why: "point id present but nothing calls AskUserQuestion" };
-  return { id: point.id, ok: false, why: `AskUserQuestion is called, but no single file pairs it with a [${point.id}] header` };
+  const bad = recommendationDrift(point, bodies);
+  return bad ? { id: point.id, ok: false, why: bad } : { id: point.id, ok: true };
 });
 
 const missing = results.filter((r) => !r.ok);
