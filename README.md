@@ -22,11 +22,13 @@ Product owners, analysts, architects, developers, QA and agents contribute throu
 There is nothing to install and nothing to build.
 
 ```
-follow repositorystandards.com - take this repo onto the standard, interview me for what you need
+adopt this repo to repositorystandards.com
 ```
 
 The agent reads the standard, works out whether your repository is new or has ten years of
-history, and asks you what it cannot work out for itself.
+history, and asks you what it cannot work out for itself. You never have to request the
+interview. What makes it ask is a hook that refuses to write an artifact nobody was asked
+about - not a clause you remembered to type.
 
 ## What this is
 

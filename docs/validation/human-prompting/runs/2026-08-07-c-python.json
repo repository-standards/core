@@ -13,7 +13,7 @@
   "$fractions": "The headline, unrounded, counted two ways because the method changed mid-wave and both units are now defined. Per run, over 34 observations: asked 18 of 31 (3 n/a), checked 33 of 34, suggested 26 of 34. Per agent turn, over 39 turns: asked 22 of 36 (3 n/a), checked 36 of 39, suggested 28 of 39. The three n/a are A3, R1 and R2 - a score-only instruction and two questions about a named spec, each complete as typed with nothing underdetermined. Verdicts: 13 pass, 14 partial, 7 fail. Split by repository: llm 14 observations, pydantic-ai 9, textual 11. The asked fraction is the finding, and it is worse than the number looks. Of the 18 runs scored asked, three are prompts that literally contain 'interview me for what you need', and eight more are runs where the sentence was ambiguous or deictic and the agent could not have proceeded without asking. Asking as a property of the product rather than as a consequence of the prompt or of confusion is visible in seven of thirty-four - the three V2 runs, V6, V9, V14 and A26 on textual - and every one of those is a refusal to write something wrong or a report of something already wrong, never an interview before starting work. checked at 33 of 34 is close to universal and is this product's real strength: the single miss is A13, which answered after one tool call. suggested at 26 of 34 hides its own pattern - the misses cluster in the runs that end holding a number or a question, including A3, which counts 46 artifacts of work and never says what to do with the count.",
   "observations": [
     {
-      "prompt": "A1",
+      "prompt": "RET1",
       "target": "repo:simonw/llm@f3f4f29",
       "mode": "stop-and-ask",
       "preamble": "open",
@@ -41,7 +41,7 @@
       "evidence": "The persona preview is the single best move in this wave: 'from the code I'm already seeing: (a) CLI end-user running prompts/chat from the terminal, (b) Python developer embedding llm as a library, (c) plugin author extending it via hookspecs.py, (d) self-hoster running local/on-device models through a plugin. Flag now if that's off - I'll formally confirm at Gate 1.' It converts an unanswerable interview question into a cheap correction. Nothing else in this wave does that."
     },
     {
-      "prompt": "A1",
+      "prompt": "RET1",
       "target": "repo:pydantic/pydantic-ai@916fc83e8",
       "mode": "stop-and-ask",
       "preamble": "open",
@@ -69,7 +69,7 @@
       "evidence": "Best line in the run is the one that refuses to invent: 'pydantic-ai doesn't own a runtime database (it's a library). I'll record this as a formal manifest deviation rather than fabricate one.' Worst is the shape of the ask - nine questions, four in private vocabulary, one escape hatch."
     },
     {
-      "prompt": "A1",
+      "prompt": "RET1",
       "target": "repo:Textualize/textual@06dbeef4b",
       "mode": "full-loop (peer-channel)",
       "preamble": "open",
