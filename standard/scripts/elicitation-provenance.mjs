@@ -18,10 +18,25 @@
 //   4. `human` names who and when. Unverifiable here on purpose - the transcript checker is
 //      what tests that claim, and a gate that pretends to verify it would be worse than one
 //      that says it cannot.
-//   5. `pending` is legal while the repo has no `.standards-version`, and fails once it has
-//      one. That file is the repo saying it is adopted; a required point still pending after
-//      it exists is an adoption that stopped halfway and closed the door behind itself. No
-//      flag decides this - a flag nobody remembers to pass is the same as no check.
+//   5. `pending` is legal until the point is REACHED, and reaching it is a fact about the
+//      tree rather than a flag: the point gates a path that now holds an artifact the
+//      adopter created. Something was written where the question belonged, so it was either
+//      asked or skipped, and `pending` is false either way.
+//
+//      The obvious rule - pending fails once `.standards-version` exists - was tried and is
+//      wrong. That file is written at align time, before a single question has been put to
+//      anyone, so it fails every freshly adopted repo on its first run, and fails the shipped
+//      tree's own template where every row is pending because nothing has happened yet. A
+//      guard that is red the moment it lands teaches people to disable it.
+//
+//      Two edges, both stated rather than hidden. A point that gates no path (a rename, a
+//      phase boundary) can never be reached here - the static check and human review carry
+//      those. And a shipped template FILLED IN PLACE does not trip it either: the manifest
+//      carries hashes only for files meant to stay verbatim, so `docs/personas.md` written
+//      over is indistinguishable here from `docs/personas.md` untouched. What is caught is
+//      the artifact that did not ship at all - a decision record, a spec, a dossier entry, a
+//      run record - which is most of what an adoption actually produces. A guard claiming
+//      coverage it does not have is worse than one that names its edge.
 //
 // A repo with no ledger at all fails rather than passes. Absence of the record is the
 // state this whole mechanism exists to stop being invisible.
@@ -30,7 +45,8 @@
 //
 // Ships to adopting repos. Node built-ins only.
 
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { createHash } from "node:crypto";
 
 const arg = (flag, fallback) => {
   const i = process.argv.indexOf(flag);
@@ -40,8 +56,88 @@ const arg = (flag, fallback) => {
 const POINT_ROOTS = ["standard/.claude/elicitation/points.json", ".claude/elicitation/points.json"];
 const LEDGER = arg("--ledger", ["docs/adoption-provenance.md", "standard/docs/adoption-provenance.md"].find(existsSync) ?? "docs/adoption-provenance.md");
 const BACKLOGS = ["backlog.md", "docs/backlog.md", "standard/docs/backlog.md"];
-const ADOPTED = existsSync(".standards-version");
 const AS_JSON = process.argv.includes("--json");
+
+// The ledger records the adoption of the tree it sits in, so that tree is what gets read -
+// not the whole checkout. It matters in this repo, where the shipped tree is a subdirectory
+// and the surrounding files are the standard's own work rather than an adopter's.
+const SUFFIX = "docs/adoption-provenance.md";
+const ROOT = (LEDGER.endsWith(SUFFIX) ? LEDGER.slice(0, -SUFFIX.length) : "").replace(/\/$/, "") || ".";
+const at = (rel) => (ROOT === "." ? rel : `${ROOT}/${rel}`);
+
+// Directories no repo wants walked, and a cap so a monorepo cannot turn a guard into a wait.
+const SKIP = new Set([".git", "node_modules", ".next", "dist", "build", "coverage", "vendor", "target", ".venv"]);
+const WALK_CAP = 50000;
+
+function tracked() {
+  const found = [];
+  const walk = (rel, depth) => {
+    if (found.length > WALK_CAP || depth > 12) return;
+    let entries;
+    try { entries = readdirSync(rel === "" ? ROOT : at(rel), { withFileTypes: true }); } catch { return; }
+    for (const e of entries) {
+      const next = rel === "" ? e.name : `${rel}/${e.name}`;
+      if (e.isDirectory()) { if (!SKIP.has(e.name)) walk(next, depth + 1); }
+      else found.push(next);
+    }
+  };
+  walk("", 0);
+  return found;
+}
+
+// A shipped file still byte-identical to what shipped is a template nobody has answered
+// into. The manifest already carries those hashes for self-verify, so this is a read of an
+// existing record rather than a second source of truth.
+function shipped() {
+  const paths = new Set(), hashes = new Map();
+  const file = at("standard.manifest.json");
+  if (!existsSync(file)) return { paths, hashes };
+  let manifest;
+  try { manifest = JSON.parse(readFileSync(file, "utf8")); } catch { return { paths, hashes }; }
+  for (const f of manifest.files || []) {
+    if (!f.path) continue;
+    paths.add(f.path);
+    if (f.sha256) hashes.set(f.path, f.sha256);
+  }
+  return { paths, hashes };
+}
+
+const SHIPPED = shipped();
+const FILES = tracked();
+
+// The same small glob dialect the hook uses: ** spans directories, * does not span a slash.
+const rx = (g) =>
+  new RegExp("(^|/)" + g.split("**").map((x) => x.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^/]*")).join(".*") + "$");
+
+// Deliberately loose, in the direction of NOT tripping. Directory entries cover what is under
+// them - the manifest lists `docs/discovery`, not each template inside it - and a manifest path
+// is matched at any depth, because the tree that ships and the tree an adopter unpacks do not
+// agree on every prefix (`backlog.md` here lives at `docs/backlog.md`). Erring the other way
+// would report the standard's own templates as adopter work, which is a false accusation, and
+// a guard that cries wolf gets switched off long before it catches anything real.
+const SHIPPED_LIST = [...SHIPPED.paths];
+const listed = (rel) =>
+  SHIPPED.paths.has(rel) ||
+  SHIPPED_LIST.some((p) => rel.endsWith(`/${p}`) || rel.startsWith(`${p}/`) || rel.includes(`/${p}/`));
+
+const template = (rel) => {
+  const want = SHIPPED.hashes.get(rel);
+  if (want) {
+    try { return createHash("sha256").update(readFileSync(at(rel))).digest("hex") === want; } catch { return false; }
+  }
+  return listed(rel);
+};
+
+// Reached: something this point gates exists and is not the template that shipped there.
+function reached(point) {
+  const globs = point.gate_globs || [];
+  if (!globs.length) return null; // gates nothing - see note 5
+  for (const g of globs) {
+    const re = rx(g);
+    for (const f of FILES) if (re.test(f) && !template(f)) return f;
+  }
+  return null;
+}
 
 function fail(lines) {
   if (AS_JSON) console.log(JSON.stringify({ verdict: "FAIL", problems: lines }, null, 2));
@@ -78,7 +174,7 @@ for (const line of readFileSync(LEDGER, "utf8").split("\n")) {
   rows.push({ point: cells[0], state: cells[1], who: cells[2], when: cells[3], landed: cells[4], backlog: cells[5] });
 }
 
-const backlogText = BACKLOGS.filter(existsSync).map((f) => readFileSync(f, "utf8")).join("\n");
+const backlogText = BACKLOGS.map(at).filter(existsSync).map((f) => readFileSync(f, "utf8")).join("\n");
 const problems = [...malformed];
 const byPoint = new Map(rows.map((r) => [r.point, r]));
 
@@ -89,8 +185,9 @@ for (const p of declared.points || []) {
     continue;
   }
   if (row.state === "pending") {
-    if (p.required && ADOPTED) {
-      problems.push(`${p.id}: still pending, but .standards-version says this repo is adopted - the run stopped before reaching it`);
+    const evidence = p.required ? reached(p) : null;
+    if (evidence) {
+      problems.push(`${p.id}: still pending, but ${at(evidence)} exists - an artifact this point gates was written, so the question was either asked or skipped`);
     }
     continue;
   }
@@ -121,9 +218,9 @@ if (problems.length) fail(problems);
 const tally = {};
 for (const r of rows) tally[r.state] = (tally[r.state] || 0) + 1;
 const summary = Object.entries(tally).map(([k, v]) => `${v} ${k}`).join(", ");
-if (!ADOPTED && tally.pending) {
-  console.log(`  ${tally.pending} point(s) pending - legal here because there is no .standards-version yet.`);
-  console.log("  Writing that file is the repo claiming to be adopted, and these stop being legal then.");
+if (tally.pending) {
+  console.log(`  ${tally.pending} point(s) pending - nothing they gate has been written yet.`);
+  console.log("  Each stops being legal the moment its artifact exists, which is the point of asking first.");
 }
 if (AS_JSON) console.log(JSON.stringify({ verdict: "PASS", ledger: LEDGER, rows: rows.length, tally }, null, 2));
 else console.log(`elicitation-provenance: OK - ${rows.length} point(s) recorded in ${LEDGER} (${summary})`);
