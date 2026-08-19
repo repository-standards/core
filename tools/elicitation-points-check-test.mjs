@@ -20,24 +20,25 @@ const root = mkdtempSync(`${tmpdir()}/points-check-`);
 const skills = `${root}/skills`;
 mkdirSync(`${skills}/t`, { recursive: true });
 
-const skill = (options, preamble = []) =>
-  writeFileSync(
-    `${skills}/t/q.md`,
-    [
-      ...preamble,
-      "### `[t.one]` A question",
-      "",
-      "Call `AskUserQuestion` with the header `[t.one]`.",
-      "",
-      `Options, in order: ${options}`,
-      "",
-    ].join("\n"),
-  );
+const block = (options) => [
+  "### `[t.one]` A question",
+  "",
+  "Call `AskUserQuestion` with the header `[t.one]`.",
+  "",
+  `Options, in order: ${options}`,
+  "",
+];
 
-const points = (point) => {
-  const file = `${root}/points.json`;
-  writeFileSync(file, JSON.stringify({ points: [{ id: "t.one", skill: "t", file: "q.md", required: true, ...point }] }));
-  return file;
+const skill = (options, preamble = [], second = null) => {
+  writeFileSync(`${skills}/t/q.md`, [...preamble, ...block(options)].join("\n"));
+  rmSync(`${skills}/t/other.md`, { force: true });
+  if (second !== null) writeFileSync(`${skills}/t/other.md`, block(second).join("\n"));
+};
+
+const points = (point, file = "q.md") => {
+  const path = `${root}/points.json`;
+  writeFileSync(path, JSON.stringify({ points: [{ id: "t.one", skill: "t", file, required: true, ...point }] }));
+  return path;
 };
 
 const run = (pointsFile) =>
@@ -79,6 +80,25 @@ const CASES = [
     why: "skills cite these ids in prose; anchoring on the citation reads the wrong question's list",
   },
   {
+    name: "a second call site leading with the other answer fails, even though the first agrees",
+    options: CONVERGENT,
+    second: CAUTIOUS,
+    file: ["q.md", "other.md"],
+    point: { recommended: "move ours into the standard's layout" },
+    exit: 1,
+    expect: "at one of its 2 call sites",
+    why: "the same question reaches greenfield and brownfield repos down different paths; checking only the first found is how the brownfield copy came to recommend keeping the repository's own conventions",
+  },
+  {
+    name: "both call sites agreeing passes",
+    options: CONVERGENT,
+    second: CONVERGENT,
+    file: ["q.md", "other.md"],
+    point: { recommended: "move ours into the standard's layout" },
+    exit: 0,
+    why: "or the case above would pass for the mere fact of a second file",
+  },
+  {
     name: "null is a legal declaration, for a question with no such axis",
     options: "**mine** / **somebody else's** / **do not record it**",
     point: { recommended: null },
@@ -89,8 +109,8 @@ const CASES = [
 
 let bad = 0;
 for (const c of CASES) {
-  skill(c.options, c.preamble);
-  const r = run(points(c.point));
+  skill(c.options, c.preamble, c.second ?? null);
+  const r = run(points(c.point, c.file));
   const out = `${r.stdout}${r.stderr}`;
   const wrongExit = r.status !== c.exit;
   const wrongText = c.expect && !out.includes(c.expect);

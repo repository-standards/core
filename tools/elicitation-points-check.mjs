@@ -35,14 +35,16 @@ const AS_JSON = process.argv.includes("--json");
 
 const declared = JSON.parse(readFileSync(POINTS, "utf8"));
 
-// A point names its skill, and optionally one file within it. With no file named, any file in
-// the skill directory may carry the call site.
+// A point names its skill, and optionally the file - or files - within it that ask it. With no
+// file named, any file in the skill directory may carry the call site. More than one is normal:
+// the same question reaches a greenfield repo and a brownfield one down different paths, and
+// both have to lead with the same answer.
 function skillFiles(point) {
   const dir = SKILL_ROOTS.map((r) => `${r}/${point.skill}`).find((d) => existsSync(d));
   if (!dir) return [];
   if (point.file) {
-    const named = `${dir}/${point.file}`;
-    return existsSync(named) ? [named] : [];
+    const named = (Array.isArray(point.file) ? point.file : [point.file]).map((f) => `${dir}/${f}`);
+    return named.filter((f) => existsSync(f));
   }
   return readdirSync(dir, { withFileTypes: true })
     .filter((e) => e.isFile() && e.name.endsWith(".md"))
@@ -75,14 +77,26 @@ function recommendationDrift(point, bodies) {
   // not, and must not contribute an option list. Only when no file has the heading at all does
   // the slice fall back to the mention, which is the older skill layout.
   const withHeading = mentions.filter((b) => heading(b) !== -1);
-  const scoped = withHeading.length
-    ? withHeading.flatMap((b) => b.split("\n").slice(heading(b)))
-    : mentions.flatMap((b) => b.slice(b.indexOf(tag)).split("\n"));
-  const line = scoped.find((l) => l.includes("Options, in order:"));
-  if (!line) return `declares recommended "${point.recommended}" but the skill lists no "Options, in order:" line to lead with it`;
-  const first = line.split("Options, in order:")[1].split(" / ")[0];
-  if (!first.includes(point.recommended)) {
-    return `declares recommended "${point.recommended}", but the skill offers "${first.trim()}" first - the recommendation is whichever one is spoken first, so these cannot disagree`;
+  // Every call site, not the first one found. A point asked on two paths - greenfield and
+  // brownfield - is two option lists, and the one nobody checked is the one that drifts: the
+  // first field run recommended "your conventions win" on a path whose question no file
+  // declared, while the declared greenfield copy led with the standard's defaults.
+  const blocks = withHeading.map((b) => {
+    const lines = b.split("\n");
+    const start = heading(b);
+    const depth = lines[start].match(/^#+/)[0].length;
+    let end = start + 1;
+    while (end < lines.length && !(lines[end].startsWith("#") && lines[end].match(/^#+/)[0].length <= depth)) end++;
+    return lines.slice(start, end);
+  });
+  const scoped = blocks.length ? blocks : [mentions.flatMap((b) => b.slice(b.indexOf(tag)).split("\n"))];
+  const lines = scoped.map((b) => b.find((l) => l.includes("Options, in order:"))).filter(Boolean);
+  if (!lines.length) return `declares recommended "${point.recommended}" but the skill lists no "Options, in order:" line to lead with it`;
+  for (const line of lines) {
+    const first = line.split("Options, in order:")[1].split(" / ")[0];
+    if (!first.includes(point.recommended)) {
+      return `declares recommended "${point.recommended}", but the skill offers "${first.trim()}" first${lines.length > 1 ? ` at one of its ${lines.length} call sites` : ""} - the recommendation is whichever one is spoken first, so these cannot disagree`;
+    }
   }
   return null;
 }
