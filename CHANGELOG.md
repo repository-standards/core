@@ -11,6 +11,37 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.1.19 - 2026-08-19
+
+### The skills this standard ships are Agent Skills, and the file now says so (2026-08-19)
+
+R22 describes the lifecycle procedures as Claude-format skills, which was true when it was
+written and is no longer the useful description. The format is an open standard - published
+2025-12-18, developed in the open at `agentskills/agentskills`, read unmodified by several
+dozen agent products - and every skill in this repo and in the node stack already conforms to
+it: `name` inside the character set and matching its own directory, `description` inside the
+1024-character limit, no frontmatter key the spec does not define. That was measured across
+both repos, not assumed.
+
+[`ATTRIBUTIONS.md`](ATTRIBUTIONS.md) gains a fourth kind of debt above the three it already
+kept apart: **a standard this project conforms to**. It is the strongest of the four, because
+an adopter can check it against the upstream spec rather than taking our word for it. Two
+entries go in it - Agent Skills, and the `AGENTS.md` convention R1 has required all along
+without ever crediting where it came from, which was an unlisted debt by the file's own rule.
+
+The entry is deliberately not a badge. It names where this standard differs on purpose (one
+shared spec engine rather than per-skill `scripts/`), where it does not currently meet the
+recommendation (the router and the two longest spec-loop skills are over the instruction
+budget), and where the skill-writing practice comes from, so the advice these procedures
+follow arrives with a source instead of an air of authority.
+
+Three backlog rows carry what the review found rather than leaving it in prose: the
+instruction-budget overrun; the open call on whether a single skill's value gets measured the
+way the format's own guidance measures it, the task run with the skill and without it, or
+whether the adoption run stays the only level this project evidences; and whether R22 should
+name the open format rather than one client's directory, since for an agent that reads the
+standard the port the rule demands is no port at all.
+
 ## 1.1.18 - 2026-08-19
 
 ### A finding that closes off a design is a decision, not behaviour (2026-08-19)
