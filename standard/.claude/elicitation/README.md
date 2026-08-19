@@ -75,7 +75,7 @@ adopting. Every one of those runs had asked properly. Asking the right question 
 nudging toward the cautious answer is a slower version of the same failure, because most
 people take the recommendation.
 
-**It binds every question, not only the twenty declared here.** In the same run the agent
+**It binds every question, not only the twenty-one declared here.** In the same run the agent
 invented a question the point list does not contain - where tracked work lives - and
 recommended keeping the repository's parallel tracker beside `backlog.md`. A question this
 file has not anticipated is exactly where the rule has to hold on its own.
@@ -130,7 +130,7 @@ the ledger before it writes anything else, and then stops so the session can res
 those four is gated by any point, so the ordering costs nothing - and skipping it costs the
 whole layer on the one run it was built for.
 
-Fifteen of the twenty points are enforced here - fourteen by the path they gate,
+Sixteen of the twenty-one points are enforced here - fifteen by the path they gate,
 `adopt.layout` by the rename. `adopt.continue` is a phase boundary, which is not a tool call
 at all, so the static check and human review carry that one; the guard says so rather than
 implying coverage it does not have.
