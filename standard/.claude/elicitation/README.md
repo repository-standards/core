@@ -55,6 +55,14 @@ by the adoption - and an unattended run simply stops there rather than inventing
 Which is the point. Not asking is allowed; **not asking and shipping an answer anyway** is
 not.
 
+**The options are never the whole answer space, and a run has to be built for that.** The
+question tool always lets a person type their own, and in the first live run somebody did:
+asked to pick `core` or `scale`, they wrote *several people, no sprints, tasks taken off a
+backlog* - a shape neither option named. An answer off the list is the most informative one
+a run gets, because it is the person saying the question was framed on the wrong axis. Take
+it as the answer, record what they actually said rather than the option it is nearest to,
+and fix the question.
+
 ## Which answer leads
 
 The first option is the recommended one, **and it is the one the question labels as
