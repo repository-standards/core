@@ -11,6 +11,38 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.1.22 - 2026-08-19
+
+### The landing page's top bar collapses on a phone instead of running off the edge (2026-08-19)
+
+At a 375px viewport the document was 604px wide. The hero itself measured a correct 375; the
+header was what stuck out. `.nav` is a single flex row and it had no mobile form at all - the
+820px breakpoint moved the language switcher out of its absolute centring but still asked
+brand, links and switcher to share one line. Every one of those children is `nowrap` by
+design, so the row could not break; it squeezed the switcher until its own label wrapped to
+two lines, and then pushed its right edge to 604.
+
+The row costs 704px at full size: brand 128, links 263, switcher 207, three 18px gaps and the
+wrap's 52px of padding. Below that the header now wraps - brand and switcher keep the top row,
+the links take a full-width row beneath - and below 420px, which is what brand and switcher
+alone need, both step down in size rather than claim a third row that the sticky header would
+then carry down the whole page. A burger menu would have cost script and a focus trap on a
+page that ships neither.
+
+Two things named in the report were not causes. The animated terminal's code lines do run past
+the viewport, but `.cc-body` is `overflow:auto`, so the terminal carries them internally: at
+375 it is 323 wide, shows 321 of line and scrolls 551 of content, without widening the
+document by a pixel. The `.glow` background divs likewise sit inside `.atmos`, which is
+`overflow:hidden`.
+
+One real overflow did turn up below the reported width. The file map's tags never wrap, because
+each caption is sized off its own tag, and the longest name - `standard.manifest.json` - is
+304px of tag, so it needs a 356px viewport and quietly forced the document to 330 at 320. The
+type steps down below 380px instead, which brings it to 241.
+
+Measured in a browser at 320, 375, 414, 420, 421, 720, 721, 768 and 1280px, in both languages:
+`document.documentElement.scrollWidth` equals `window.innerWidth` at every one.
+
 ## 1.1.21 - 2026-08-19
 
 ### The landing page's plain-language toggle no longer moves the furniture (2026-08-19)
