@@ -40,6 +40,17 @@ git history (which hunks came from the ADR-014/ADR-015 extraction versus this we
 ADR-010 bridge-precondition fix) rather than templated, and the missing enforcement is now
 `tools/provenance-check.mjs`.
 
+### Session 2026-08-19
+
+The loop's own promise - "propose answers, ask the user only what needs their call" - had no
+implementation. The clarify skill described asking one question at a time and contained no
+call to `AskUserQuestion`; across the whole shipped tree there were none. Nothing to decide:
+the three points this phase owns were already declared in
+[`points.json`](../../standard/.claude/elicitation/points.json), so the fix is wiring, and
+what makes it hold is a hook rather than a sentence (ADR-054). The overflow moved to sibling
+files at the same time, because the skill was already over the format's instruction budget
+and three inline question blocks would have widened the overrun the ratchet is closing.
+
 ## Scope
 
 The loop, its state file, the clarify gate, the setup scripts, the templates, and the provenance duty.
@@ -96,6 +107,14 @@ fails naming each one that carries neither the substring `github/spec-kit v0.13.
 - `/spec-specify` MUST mint prefix-free capability directories and persist `specs/feature.json`.
 - The clarify loop MUST be AI-led: propose answers, ask the user only what needs their call, and record every deferral under `## Clarifications` instead of dropping it.
 - **A question MUST be a question.** Each asked item leads with a full interrogative that can be answered as written, never a topic label, section heading or requirement id (an id MAY trail the question), and carries one plain-language line on what changes depending on the answer. A label is a subject; answering it means guessing what was meant, which is how a clarify round returns nothing usable.
+- **The questions this phase owns MUST be real calls.** `spec.scope`, `spec.acceptance` and
+  `spec.unknowns` are declared in [`points.json`](../../standard/.claude/elicitation/points.json),
+  and `spec-clarify` MUST carry an `AskUserQuestion` call site for each, with the point id in the
+  question's header as `[spec.scope]`. Prose instructing the agent to ask is not a call site: it was
+  written, in the right file and in plain words, and a full adoption asked one question in 1140
+  transcript lines (ADR-054). The [elicitation](../elicitation/spec.md) capability owns the
+  declaration, the refusal and the record; this capability owns only whether the calls are here.
+
 - **Provenance duty.** The upstream MIT licence MUST ship at `scripts/spec/LICENSE` (Copyright GitHub, Inc.); every extracted file MUST carry a provenance line naming github/spec-kit v0.13.2, with standard-authored hunks and files marked `PATCHED(repository-standards)`. A hunk taken from upstream **after** the extraction point MUST be marked `CHERRY-PICKED` with the upstream commit it came from - the baseline stays v0.13.2, and every deviation from it is readable in place.
 - **Staying current with upstream is a manual, per-release scan** and MUST stay one: the prompts are ours (ADR-015), so at each release the maintainer reads github/spec-kit's prompt changes since v0.13.2 and cherry-picks what earns it. No mechanical sync exists by design - it would overwrite the patches that make the engine speak this standard's spec shape.
 - **Re-entry is a first-class case, not a first run repeated** (ADR-032). When `/spec-plan` runs against a
@@ -163,9 +182,14 @@ fails naming each one that carries neither the substring `github/spec-kit v0.13.
 - Re-planning a capability MUST NOT silently overwrite in-flight scaffolding: either the delta is reported, or the
   run stops because the delta is empty.
 - No shipped engine file MUST lack provenance (LICENSE reference or PATCHED marker).
+- A skill in this family MUST NOT settle a declared elicitation point by writing the artifact that
+  point gates. The guard refuses the write, so the failure is a stopped run rather than a spec that
+  reads as agreed.
 
 ## Acceptance criteria
 
+- **The declared questions exist as calls.** GIVEN the three points `points.json` assigns to
+  `spec-clarify` WHEN `elicitation-points-check` runs THEN each has a call site carrying its id.
 - **Gate pass.** GIVEN a spec with `## Clarifications` and no open markers WHEN the gate runs THEN it prints the PASS line and exits 0.
 - **Re-entry reports rather than overwrites.** GIVEN a capability with an existing `tasks.md` and a spec that has
   changed WHEN `/spec-plan` runs THEN it reports what the change adds, invalidates and leaves untouched, instead of
