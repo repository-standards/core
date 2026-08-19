@@ -64,6 +64,7 @@ copied into your repository as folder READMEs that then age in place.
 | `docs/research` | anonymized research studies feeding personas, ideas and specs | optional, scale | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `docs/runbooks` | operational runbooks + postmortems - agent-followable at 3 a.m. | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `docs/sprints` | work sprints - what a team committed to and by when; an intent is in the pool or in exactly one sprint (ADR-028) | optional, scale | `fill-from-repo` | [R15](../standard/SPEC.md) |
+| `docs/adoption-provenance.md` | what became of every answer: state, who, when, where it landed, and the backlog row carrying a deferred one | **required**, core | `fill-from-repo` | [R28](../standard/SPEC.md) |
 
 ## `specs/` - behaviour, by capability
 
@@ -88,6 +89,7 @@ copied into your repository as folder READMEs that then age in place.
 | `scripts/sprint-guard.mjs` | proves the one-place invariant the pool and the sprints depend on | optional, scale | `copy` | [R15](../standard/SPEC.md) |
 | `scripts/backlog-archive-check.mjs` | a closed row reached the archive with a pointer to what its content became, instead of being deleted (ADR-051) | **required**, core | `copy` | [R15](../standard/SPEC.md) |
 | `scripts/generate-dashboard` | renders the work state - pool, sprints, timeline, records, changelog - as one static page for the people who never open the repository; index.mjs is the generator, src/ the page and password-gate material it inlines. A projection, never a second place work is tracked | optional, core | `copy` | [R15](../standard/SPEC.md) |
+| `scripts/elicitation-provenance.mjs` | the provenance ledger stays honest - every required point has a row, a deferred answer names a backlog row that exists, and pending stops being legal once the repo claims to be adopted | **required**, core | `copy` | [R28](../standard/SPEC.md) |
 
 ## `.claude/` - the procedures, in Claude Code's reference form
 
@@ -96,6 +98,8 @@ copied into your repository as folder READMEs that then age in place.
 | `.claude/skills` <br><small>or `.agents/skills`</small> | the lifecycle skills - the standard as executable procedures (Claude reference form; a non-Claude repo ports them to its agent's own mechanism) | **required**, core | `copy` | [R22](../standard/SPEC.md) |
 | `.claude/settings.json` | agent settings baseline - permission lists, and which guards run | optional, core | `merge` | [R19](../standard/SPEC.md) |
 | `.claude/hooks` | the pre-execution guards themselves - remote-DB writes, force-push, CI secrets - behind one dispatcher that denies when any of them is missing or broken | optional, core | `copy` | [R19](../standard/SPEC.md) |
+| `.claude/elicitation` | the points this standard must ask a person about - question, answers in order, permitted provenance and the paths each one gates | **required**, core | `copy` | [R28](../standard/SPEC.md) |
+| `.claude/hooks/elicitation-guard.mjs` | refuses a write to a gated artifact until that point's question actually fired - read from the transcript structurally, so prose about having asked does not count | **required**, core | `copy` | [R28](../standard/SPEC.md) |
 
 ## `.github/` - templates, never enabled in this repo
 

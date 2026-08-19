@@ -11,6 +11,60 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > entry below was rewritten to make it read better. Both passes and the reasoning behind
 > them are [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.1.23 - 2026-08-19
+
+### Asking is now a mechanism, not an instruction (2026-08-19)
+
+The standard's own pitch is that hand-holding is the product - `AGENTS.md` has said "ask
+once, up front" since the beginning. Across twenty-two shipped skills there were **zero**
+calls to `AskUserQuestion`. The gap was not subtle in effect: a complete adoption run
+against a real repository asked one question in 1140 transcript lines, invented five
+personas, appended a section to thirty-three decision records their owner had written,
+renamed that repository's own `docs/ADR` and `docs/BDR` across seventy-eight files, and
+quoted the owner authorising a full migration in a sentence the transcript shows he never
+typed.
+
+Three layers now hold it, and the third is the only one that is not the agent's decision:
+
+- [`.claude/elicitation/points.json`](standard/.claude/elicitation/points.json) declares the
+  eighteen places this standard must ask instead of decide - the question, the three answers
+  it always offers, the provenance each answer records, and the paths it gates.
+  `elicitation-points-check` fails when a declared point has no call site, against a baseline
+  that may only shrink.
+- [`.claude/hooks/elicitation-guard.mjs`](standard/.claude/hooks/elicitation-guard.mjs) is a
+  `PreToolUse` hook: a `Write` or `Edit` to a gated path is refused unless that point's
+  question really fired this session. It reads the transcript **structurally** - an assistant
+  turn that called the tool - because compaction replays the model's own summary back as a
+  user turn, so any textual scan would let a run vouch for itself.
+- [`docs/adoption-provenance.md`](standard/docs/adoption-provenance.md) is one table with one
+  row per point, and `scripts/elicitation-provenance.mjs` checks it: a `provisional` answer
+  must name a backlog row that exists, a `human` answer must name who and when, and `pending`
+  stops being acceptable the moment `.standards-version` exists.
+
+The guard deliberately permits one thing: writing a **stub**. A run with nobody to ask cannot
+ask, and a guard leaving such a run no legal move gets removed rather than obeyed. So a write
+that declares its point `absent` passes, the gap stays visible, and the run reads as
+unfinished - which is what it is. Guessing is what has no legal path.
+
+Measured rather than asserted: replayed past the real guard, the run that caused all of this
+is stopped at **5 of 5** of its artifact writes; a run that only *claims* to have asked is
+stopped too; a run that genuinely asked first is never refused. Those three cases and two
+more are `tools/elicitation-replay-test.mjs`, alongside 21 guard cases and 13 ledger cases.
+
+What this does **not** prove is that an answer, once given, was honoured - no layer here sees
+that, and [ADR-054](docs/decision-records/ADR-054-asking-is-a-mechanism-with-provenance-not-an-instruction.md)
+records it as the known gap rather than letting the coverage read wider than it is.
+
+### The validation corpus now says what it can and cannot evidence (2026-08-19)
+
+Thirty-eight run records were being read as evidence the standard elicits well. They are not:
+31 of 377 observations across one suite and 7 of 109 across the other bear on human
+interaction at all, and none was checked against a transcript. Each record now carries an
+`$elicitation` block stating exactly that, `validation-claims-check` fails when a record's
+counts disagree with its own observations, and a record claiming a person was present must
+name a transcript file that exists. The records were kept - they are real conformance
+evidence - and only the claim attached to them changed.
+
 ## 1.1.22 - 2026-08-19
 
 ### The landing page's top bar collapses on a phone instead of running off the edge (2026-08-19)
