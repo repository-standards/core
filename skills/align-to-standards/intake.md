@@ -114,7 +114,7 @@ Before any phase runs, one intake pass:
        in `self-verify` reads what a convention says, so the drift number is identical
        whichever rule survives. The surviving rule goes into `AGENTS.md` as the single
        source, the reason it beat the other one into a decision record, and the friction
-       goes upstream at the closing loop (step 8) - a mandate this standard cannot satisfy
+       goes upstream at the closing loop (step 7) - a mandate this standard cannot satisfy
        is exactly what that loop exists for.
 2. **Ask the user - one short round** (skip or compress this round when step 1
    already surfaced a strong lifecycle signal - confirm it instead of interviewing
@@ -329,6 +329,27 @@ Options, in order: **migrate** / **selected parts** / **assess only** / **sugges
 Everything downstream is scoped by this answer, so inferring it means inferring the whole run.
 
 Records to `docs/adoption-provenance.md`: the `adopt.intent` row takes the state, who answered, the date, and `docs/adoption-intake.md` as where the answer landed.
+
+### `[adopt.evidence]` Whether this run may be kept as evidence
+
+Fires **in the intake round, before `docs/adoption-intake.md` is written** - not at the close.
+Every version of this question until now sat in the last step of the run, and across every
+adoption ever run it was asked zero times: by then the artifacts exist, the user is waiting for
+a pull request, and the tail of a phase file is exactly what a long run does not reach.
+
+Call `AskUserQuestion` with the header `[adopt.evidence]` and the question:
+
+> This session can be kept as evidence for the standard - the questions it asked, the answers you gave, what it produced. May it be kept, and may an excerpt be sent upstream after you have read it?
+
+Options, in order: **keep it, and I will read the excerpt before anything is sent** / **keep it local - assemble it, send nothing** / **record nothing**
+
+No option is recommended and none may be inferred or stubbed: consent that an agent supplied is
+not consent. The answer governs step 8 at the close - `record-run` assembles and offers only what
+was permitted here, and on **record nothing** it does not run at all. It does not govern step 9:
+the adoption ping carries no session content and is disclosed rather than asked (ADR-047).
+
+Records to `docs/adoption-provenance.md`: the `adopt.evidence` row takes the state, who answered,
+the date, and `docs/adoption-intake.md` as where the answer landed.
 
 ### `[adopt.language]` The language the artifacts are written in
 

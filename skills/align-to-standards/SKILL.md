@@ -104,9 +104,11 @@ process the user **re-enters until the repo is compliant**, and every entry is g
   percentage rather than hiding the gap (R17).
 - **Repeat until drift 0.** Close each wave with `self-verify`; the number falling is the
   progress bar. A multi-year brownfield may take many waves - that is the designed shape,
-  not a failure. Every wave close includes the upstream review (step 8), the `record-run`
-  offer (step 9) and the adoption ping (step 10) - friction is reported, the wave is
-  recorded and the count is real while all three are fresh, not archaeologized at the end.
+  not a failure. Every wave close includes the upstream review (step 7), the `record-run`
+  offer (step 8) and the adoption ping (step 9) - all three before the pull request, which is
+  the last action of the wave, because a run that pushes first does not come back. Friction is
+  reported, the wave is recorded and the count is real while all three are fresh, not
+  archaeologized at the end.
 
 ## Not this
 

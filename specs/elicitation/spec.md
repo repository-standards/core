@@ -115,6 +115,11 @@ it as the known gap rather than claiming coverage.
 - Every skill that writes a path a point gates MUST carry that point's call site. A gated path
   with no call site in the skill that writes it is a refusal with no instructions, and a guard
   that cannot be satisfied is a guard that gets removed.
+- A point MUST gate an artifact the runs that ask it actually write, and MUST be asked where
+  that run still is. `record.participation` gated a path that exists only in this repository,
+  so no adoption ever reached it and no adopter was ever asked whether their session could be
+  kept; the question a close needs is asked in the intake round, on the artifact the run writes
+  first.
 - The rule binds every question a run asks, not only the declared ones - a check can only
   reach what is written down, and that is a limit of the check rather than of the rule.
 - The declared points are the enforceable floor. A run MUST ask what the repository in front

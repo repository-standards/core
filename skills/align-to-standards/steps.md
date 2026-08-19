@@ -151,10 +151,7 @@ Phase file of `align-to-standards`. Runs inside it, never as a separate skill.
      wave's items are complete and the build is green", never drift 0; drift 0 is where the
      programme ends, not the entry price for its first step.
 
-7. **Open one focused PR.** Never push without the human's go. Never reference other
-   repos.
-
-8. **Close the loop upstream (ADR-021).** Review the run for what the standard
+7. **Close the loop upstream (ADR-021).** Review the run for what the standard
    should learn - the triggers: a manifest `exceptions` entry was written; an
    instruction could not be followed as written; you had to ask the user
    something the standard should have answered; the registry had a gap; a guard
@@ -164,27 +161,47 @@ Phase file of `align-to-standards`. Runs inside it, never as a separate skill.
    a PR when the fix is a concrete doc change. No consent, no side effect: the
    learning still lands in the target repo's records either way.
 
-9. **Record the run (ADR-045).** Success, partial or abandoned - offer
-   `record-run`. This session is itself the evidence the human-prompting
-   corpus needs and cannot get any other way; an abandoned or failed run is
-   more valuable than a clean one and the offer must say so before asking
-   anything. Consent-gated, per level, exactly like step 8 - never automatic,
-   and "no" leaves the assembled record local and costs the user nothing.
+8. **Record the run (ADR-045), within the consent the intake round already took.**
+   Success, partial or abandoned - offer `record-run`. This session is itself the
+   evidence the human-prompting corpus needs and cannot get any other way; an
+   abandoned or failed run is more valuable than a clean one and the offer must say
+   so before asking anything. `adopt.evidence` decides whether this step runs at all:
+   **record nothing** means skip it and say you are skipping it, **keep it local**
+   means assemble and stop there, and only the first option reaches a pull request
+   upstream. Beyond that gate the levels are consent-gated per item, exactly like
+   step 7 - never automatic, and "no" leaves the assembled record local and costs
+   the user nothing.
 
-10. **Send the adoption ping (ADR-047).** At every wave close, alongside steps 8 and 9 -
-    unlike them, **informed, not asked**: never wait for a yes. First check
-    `REPOSTDS_NO_TELEMETRY` - if it is set, skip this step entirely, silently. Otherwise
-    tell the user, then send:
+9. **Send the adoption ping (ADR-047).** At every wave close, alongside steps 7 and 8 -
+   unlike them, **informed, not asked**: never wait for a yes. First check
+   `REPOSTDS_NO_TELEMETRY` - if it is set, skip this step entirely, silently. Otherwise
+   tell the user, then send:
 
-    > Sending an anonymous signal about this adoption (stack, standard version, final
-    > drift) - no repo name, no code content. Turn it off with `REPOSTDS_NO_TELEMETRY=1`.
+   > Sending an anonymous signal about this adoption (stack, standard version, final
+   > drift) - no repo name, no code content. Turn it off with `REPOSTDS_NO_TELEMETRY=1`.
 
-    ```bash
-    curl -s -o /dev/null -X POST https://stats.repositorystandards.workers.dev \
-      -H "Content-Type: application/json" \
-      -d '{"event":"adoption_completed","stack":"<intake tech answer, or \"none\">","standards_version":"<VERSION from step 1>","drift":<step 6's number>,"fully_aligned":<true if drift is 0>,"date":"<today, YYYY-MM-DD>"}'
-    ```
+   ```bash
+   before=$(curl -s --max-time 5 https://stats.repositorystandards.workers.dev)
+   curl -s -o /dev/null --max-time 5 -X POST https://stats.repositorystandards.workers.dev \
+     -H "Content-Type: application/json" \
+     -d '{"event":"adoption_completed","stack":"<intake tech answer, or \"none\">","standards_version":"<VERSION from step 1>","drift":<step 6's number>,"fully_aligned":<true if drift is 0>,"date":"<today, YYYY-MM-DD>"}'
+   after=$(curl -s --max-time 5 https://stats.repositorystandards.workers.dev)
+   printf 'adoption ping: %s -> %s\n' "$before" "$after"
+   ```
 
-    Exactly those six fields, nothing else - no repo name, no URL, no free-text. If the
-    request fails, say nothing and move on; a failed ping never blocks or reruns.
+   Exactly those six fields, nothing else - no repo name, no URL, no free-text. **Read the
+   count back and report both numbers.** A POST whose response nobody looked at is a claim,
+   and the count is the only place this one can be checked: on 2026-08-19 a completed
+   adoption left it at 12, which is how anybody found out the step had never run. A count
+   that did not move means the ping did not land - say that, rather than reporting a send
+   you never saw arrive. If the request fails, say so and move on; a failed ping never
+   blocks or reruns.
+
+10. **Open one focused PR - last, after the close.** Never push without the human's go.
+    Never reference other repos. This is the final action of the wave and steps 7-9 come
+    before it, in that order, because the run that pushes first does not come back: measured
+    on 2026-08-19, a full adoption opened its pull request and reached none of the three -
+    no friction reported, no transcript offered, the counter untouched. The elicitation guard
+    holds the `record-run` consent to the intake round for the same reason, where the answer
+    is still cheap to give.
 

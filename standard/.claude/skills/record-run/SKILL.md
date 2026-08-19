@@ -24,11 +24,13 @@ will only ever collect successes, and the corpus already knows what those look l
 ## Steps
 
 1. **When this fires.** At the close of an `align-to-standards` session (wired in at that
-   skill's own step 9) - success, partial, or abandoned mid-run all count. It also runs by
+   skill's own step 8) - success, partial, or abandoned mid-run all count. It also runs by
    hand against any past session that used a shipped skill. It does **not** fire, or asks
-   before assembling anything, when: the session never left Step 0 (nothing happened yet to
-   score); the intake named a dry run or assessment-only with nothing the user intends to
-   send anywhere; the user has said the repo is under NDA or otherwise cannot be named at all.
+   before assembling anything, when: the intake answered `adopt.evidence` with **record
+   nothing** (say that you are skipping it, rather than skipping it quietly); the session
+   never left Step 0 (nothing happened yet to score); the intake named a dry run or
+   assessment-only with nothing the user intends to send anywhere; the user has said the repo
+   is under NDA or otherwise cannot be named at all.
 
 2. **Assemble first, ask nothing yet.** Walk this session's turns in order and pull out every
    literal thing the user typed. For each, check whether it already has a row in
