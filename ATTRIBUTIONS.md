@@ -1,9 +1,78 @@
 # Attributions
 
-What this project took from others, and in what form. Three kinds, kept apart deliberately:
+What this project took from others, and in what form. Four kinds, kept apart deliberately:
+a **standard we conform to** is a claim a third party can falsify against the upstream spec,
 **vendored code** carries a licence obligation, a **borrowed idea** carries a debt of
 credit, and a project we merely **compare against** carries neither and must not appear as
 an influence - claiming an influence that did not happen is its own kind of dishonesty.
+
+## Standards this project conforms to
+
+Formats and conventions written elsewhere, which this standard implements rather than
+reinvents. They come first because they are the strongest of the four claims: an adopter can
+check them against the upstream spec instead of taking our word for it, and because a
+practice that arrives with a source attached is one nobody has to argue out again here.
+
+### Agent Skills - [agentskills.io](https://agentskills.io), open standard published 2025-12-18
+
+**What it is.** The open format for packaging agent capability: a directory whose `SKILL.md`
+carries YAML frontmatter (`name`, `description`) followed by markdown instructions, loaded in
+three stages - every skill's metadata at startup, one skill's instructions when a task matches
+it, bundled files only when those instructions call for them. Anthropic wrote the format and
+released it as an open standard; development is public at
+[agentskills/agentskills](https://github.com/agentskills/agentskills), spec under Apache-2.0
+and docs under CC-BY-4.0, and several dozen agent products read it unmodified.
+
+**What conformance means here.** Every skill this project ships - the lifecycle procedures R22
+requires, and the `align-to-standards` router itself - is a conforming skill: `name` lowercase
+and hyphens only and identical to its own directory, `description` non-empty and inside the
+1024-character limit, and no frontmatter key the spec does not define. Checked across both
+repos on 2026-08-19, and it held. That is a measurement, not an intention.
+
+**What that changes about R22.** The rule requires the lifecycle procedures to ship in a form
+the repo's coding agent can execute, names `.claude/skills/` as the reference implementation,
+and requires a strict port to the agent's own mechanism otherwise. The port is lighter than the
+rule makes it sound, because the format is not Claude's: for any agent that reads the open
+standard, the same unchanged directory under `.agents/skills` is the whole of the port.
+
+**Where this standard differs on purpose.** The spec suggests a skill bundle its executables in
+its own `scripts/`. The spec loop's skills share one engine, so it lives once in
+`standard/scripts/spec/` and each skill calls it by relative path - the same idea with one copy
+instead of one per caller.
+
+**Where it does not meet the recommendation.** The spec asks for a `SKILL.md` under 500 lines
+and roughly 5,000 tokens of instructions, because everything past that is context paid on every
+activation. On 2026-08-19 the `align-to-standards` router and the two longest spec-loop skills
+are over it. The router already splits its phases into sibling files, which is the spec's own
+remedy applied halfway. Tracked in [the backlog](backlog.md) as `SKILL-BUDGET-1` - named here
+rather than waived, because a conformance claim that quietly excludes its worst case is worth
+less than no claim.
+
+**Where the practice comes from.** The skill-creation guides on that site are the reference this
+project writes its own procedures against, and they are the thing to read before writing a skill
+for an adopting repo: [best
+practices](https://agentskills.io/skill-creation/best-practices) - gotchas rather than general
+advice, one default rather than a menu, a method rather than an answer;
+[optimizing descriptions](https://agentskills.io/skill-creation/optimizing-descriptions) - the
+description carries the entire trigger, and trigger accuracy can be measured instead of guessed;
+[evaluating skills](https://agentskills.io/skill-creation/evaluating-skills) - run the task with
+the skill and without it, or the skill's value stays an assumption;
+[using scripts](https://agentskills.io/skill-creation/using-scripts) - no interactive prompts,
+structured output, errors an agent can act on.
+
+**One layer above, and not adopted.** Agent Plugins 1.0 - published August 2026 by a technical
+steering committee drawn from Amazon, Cursor, Microsoft, OpenAI and Vercel - packages skills
+together with MCP server configuration behind a `plugin.json` manifest. It carries Agent Skills rather than competing
+with them. This standard ships skills into a repository that already has a git history to carry
+them, so it needs no distribution envelope, and nothing here depends on that spec.
+
+### AGENTS.md - [agents.md](https://agents.md), an Agentic AI Foundation project since December 2025
+
+R1 requires `AGENTS.md` at a repo's root as the single entry point for the agent working in it.
+The file is not this project's invention: the convention came from OpenAI and now sits under the
+Linux Foundation's Agentic AI Foundation, alongside MCP and goose. What this standard adds is
+what has to be inside it and a check that fails when that drifts - the convention settles where
+an agent looks, not what it must find when it gets there.
 
 ## Vendored code
 
