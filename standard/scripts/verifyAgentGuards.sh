@@ -165,6 +165,17 @@ check "${DB}" allow "cat migration.sql | psql -h localhost"
 # Reading the guard's own documentation is not running what it documents.
 check "${DB}" allow "grep -rn 'psql -h prod-db.example.com' docs/"
 
+echo "== remote-database write guard: restoring a dump is a write"
+# The restore clients carry every statement inside the archive, so no verb, no `-f` and no
+# `.sql` name ever reaches the command line for the write scan to find. Found by an adopting
+# repository whose own guard already covered both.
+check "${DB}" DENY  "pg_restore -d postgresql://admin:pw@prod-db.example.com/app dump.tar"
+check "${DB}" DENY  "pg_restore -h prod-db.example.com -d app dump.tar"
+check "${DB}" DENY  "mysqlimport -h prod-db.example.com app /tmp/users.txt"
+# Restoring locally and reading an archive's table of contents are not remote writes.
+check "${DB}" allow "pg_restore -h localhost -d app dump.tar"
+check "${DB}" allow "pg_restore --list dump.tar"
+
 PUSH=no-force-push.sh
 echo "== force-push guard"
 check "${PUSH}" DENY  "git push --force origin main"

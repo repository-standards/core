@@ -37,6 +37,10 @@ WRITE_RE='\b(insert|update|delete|drop|alter|create|truncate|grant|revoke|merge|
 # worse than the gap itself.
 SQL_CLIENT_RE='psql|pgcli|mysql|mysqlsh|mysqladmin|mariadb|mariadb-admin'
 SQL_SCHEME_RE='postgres(ql)?|mysql2?|mariadb'
+# Loading a dump is the one remote write that names no statement and no file flag of its own:
+# `pg_restore -d <remote> dump.tar` carries every verb in WRITE_RE without spelling out any of
+# them, so the verb scan has nothing to find and the client list above does not know the name.
+RESTORE_RE='pg_restore|mysqlimport'
 
 # What may precede a client name. The old anchor was `[[:space:];|&]`, which rejected a preceding
 # `/` or quote, so `/usr/local/bin/psql` and `bash -c "psql ..."` were not clients at all and every
@@ -105,7 +109,8 @@ while IFS= read -r segment; do
   # take the same lowercase -h, so the same reasoning covers them.
   #
   # `pg_dump` and `mysqldump` are deliberately absent from the client list: a dump is a read.
-  if printf '%s' "${segment}" | grep -qiE "${CLIENT_BOUNDARY}(${SQL_CLIENT_RE})([[:space:]]|$)"; then
+  # The restore clients join it here so their `-h` host is read the same way.
+  if printf '%s' "${segment}" | grep -qiE "${CLIENT_BOUNDARY}(${SQL_CLIENT_RE}|${RESTORE_RE})([[:space:]]|$)"; then
     # `^[^-]*` rather than `.*` so a host containing `-h` (`-h my-host`) is not re-split on itself.
     flag_hosts=$(printf '%s' "${segment}" \
       | grep -oE '(^|[^[:alnum:]_-])(-h[[:space:]]*|--host[[:space:]=]+)[^[:space:]]+' \
@@ -132,6 +137,11 @@ while IFS= read -r segment; do
   fi
 
   if [ "${remote}" = 1 ]; then
+    # Restoring a dump only ever loads it into the database it connects to, so a remote
+    # restore is a write whether or not any write signal appeared in the command text.
+    if printf '%s' "${segment}" | grep -qiE "${CLIENT_BOUNDARY}(${RESTORE_RE})([[:space:]]|$)"; then
+      deny "Blocked by repository policy: restoring a dump writes to the database, and this one is not local. Restore into a local database instead, or hand the dump to a human to load."
+    fi
     if [ "${WRITE_PRESENT}" = 1 ]; then
       deny "Blocked by repository policy: never WRITE to a remote database - no DDL, no DML, no migration CLI, no executing .sql files. Read-only SELECT is fine. Ship a schema change as a reviewed .sql file under database/schema/ for a human to apply."
     fi
