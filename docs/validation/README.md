@@ -27,6 +27,32 @@ but **what the agent actually did**, in enough detail to argue with.
 Calling one of them "the suite" and the other an annex would have made the second one optional,
 which is backwards: the machine half is the floor, and the human half is the product.
 
+## What these suites do not evidence (measured 2026-08-19)
+
+Both suites were green and neither said which claim its numbers supported, so read together
+they made a claim neither one had tested.
+
+- **ai-prompting: 31 runs, 377 observations, nobody prompted in any of them.** That is not a
+  flaw - the suite measures machinery and does it well. The flaw was that nothing said so, so
+  a growing pile of passing observations read as evidence for a product whose central promise
+  is being guided. Every record now carries `"provenance": "none"`.
+- **human-prompting: 7 runs, 109 observations, no session transcript kept for any of them.**
+  Not one asked/checked/suggested claim can be checked against what was actually said. The
+  ones that can be read are worse than unverifiable: they were scored by reading whether a
+  skill's text *instructs* asking - the layer that turned out to have no force at all, since
+  the rule was written in the right file, in plain words, and a full adoption ignored it.
+  Every record now carries `"provenance": "unverified"`, counted apart from validated.
+
+Nothing was deleted. These are real records of real work and the observations in them stand;
+what changed is that each one states which question it answers.
+`tools/validation-claims-check.mjs` keeps them saying it, and promoting a run to `"human"`
+now requires naming a transcript that exists - a corpus that could upgrade itself by editing
+a string is the corpus this repo already had.
+
+The suite that answers the remaining question is neither of these. It is
+`tools/elicitation-replay-test.mjs`: recorded sessions replayed past the guard, asserting
+which writes it refuses. That one is reproducible and it is about asking.
+
 ## Contributing a failure
 
 **If you typed something and the standard did not do the right thing, that belongs in

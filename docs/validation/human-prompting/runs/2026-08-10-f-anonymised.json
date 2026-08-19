@@ -1,5 +1,12 @@
 {
   "$about": "A live adoption run in a private company repository, typed by a working developer in a real Claude Code session (Claude Opus 5), not simulated and not relayed. The repository owner asked for this observation to be contributed anonymised: no repository name, no owner, no paths, no ticket ids. What is kept is the behaviour, because that is the part the corpus scores.",
+  "$elicitation": {
+    "provenance": "unverified",
+    "transcript": null,
+    "questions_asked": null,
+    "asked_claims": 0,
+    "$why": "Recorded as human-prompting, but no session transcript was ever kept, so not one of the asked/checked/suggested claims in here can be checked against what was actually said. Worse for the ones that can be read: they were scored by reading whether a skill's text instructs asking - the exact layer that turned out to have no force. `unverified` is the honest state and it is counted apart from validated on purpose; see .claude/elicitation/README.md."
+  },
   "$anonymisation": "The target is described by shape rather than named. Everything the user typed is reproduced verbatim, including typos - none of their sentences name the project. Agent behaviour is described rather than quoted where a quote would carry an internal name. Third-party tools that are public products (a spec-driven-development toolchain, a tracker, a second editor) are named, because the collisions with them are the finding and naming them identifies nobody.",
   "observations": [
     {

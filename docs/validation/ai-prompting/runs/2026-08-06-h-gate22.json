@@ -1,5 +1,12 @@
 {
   "$about": "GATE-22, 2026-08-06: the persona gate re-run against the fixture after the roster-membership fix. The three reproductions the 2026-08-04 round logged as open were re-executed against the pristine script first (all three exit 0, confirming the finding still stood), then against the fixed one. Every quoted line below is copied from a real run, not paraphrased. The 2026-08-04 round keeps its \"fail\" and its waiver: that is what was true when it ran, and this round supersedes it as the current reading of the same case and target rather than editing the older one.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "GATE-22",

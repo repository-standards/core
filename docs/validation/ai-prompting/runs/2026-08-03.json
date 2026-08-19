@@ -1,5 +1,12 @@
 {
   "$about": "Observations for the 2026-08-03 round, backfilled on 2026-08-04 from research/testing-log-2026-08-03.md. Every 'fix' link was independently re-verified via `gh pr view <n> -R repository-standards/core --json number,title,state,mergedAt,body` on 2026-08-04, not copied from the log. PR #10 is confirmed CLOSED (not merged) per the log's own account. One observation (case STACK-01) is a real, verified mismatch: the log attributes its fix to PR #1, but PR #1's actual diff does not contain it - see the evidence field and the codify report. On 2026-08-05, every observation in this file that had verdict \"fail\" with a non-empty \"fix\" field was independently re-run against the current, fully-merged tree (not re-read from the PR) - the fixed-defect-keeps-its-fail convention this suite started with was itself a defect: a fixed bug should read as fixed. Verdicts that held were flipped to \"pass\" with the fix field kept as provenance; one (DOC-01) did not fully hold and stays \"fail\" with a corrected evidence field.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "GATE-01",

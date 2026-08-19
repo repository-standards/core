@@ -1,5 +1,12 @@
 {
   "$about": "2026-08-06 re-run after ADR-032 landed. Honest split: the re-entry half is now a mechanism and passes; the silent-loss defect is closed; but task ids are deliberately still positional, so the case that asked for STABLE ids is recorded partial, not pass - the promise changed rather than being met.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "SPEC-22",

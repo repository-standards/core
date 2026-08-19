@@ -1,5 +1,12 @@
 {
   "$about": "2026-08-06, sixth round of the day: the three severe update-path findings logged on 2026-08-04 (UPD-02, UPD-03, UPD-04) re-run against the current tree before anything was changed, on the rule that a finding is open only while it still reproduces. They had not aged the same way. One is still live and is fixed here; one was already closed by PR #16 and is now proved closed rather than assumed; one is closed in the tree and stays open only until the maintainer cuts a release, which no pull request may do. The observations keep the 2026-08-04 round's target label so they supersede those findings on the punch list; each evidence field states exactly which tree the run was executed against.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "UPD-02",

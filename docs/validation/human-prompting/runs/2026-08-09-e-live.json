@@ -1,5 +1,12 @@
 {
   "$about": "The first genuinely live round in this corpus. Every prior run (a, b, c, d) was AI-simulated end to end: an assistant played both sides, typing the user's lines itself. Here the user turns were typed by the product's own owner, live, in a real Claude Code session - relayed to a fresh, uncontaminated subagent (Claude Sonnet 5, via the Agent tool, `run_in_background`) that was told nothing about the standard beyond a working directory and, in A19's case, permission to use the open web. The owner did not know in advance what a 'good' answer looked like and was not shown the corpus's own commentary on either prompt before answering.",
+  "$elicitation": {
+    "provenance": "unverified",
+    "transcript": null,
+    "questions_asked": null,
+    "asked_claims": 1,
+    "$why": "Recorded as human-prompting, but no session transcript was ever kept, so not one of the asked/checked/suggested claims in here can be checked against what was actually said. Worse for the ones that can be read: they were scored by reading whether a skill's text instructs asking - the exact layer that turned out to have no force. `unverified` is the honest state and it is counted apart from validated on purpose; see .claude/elicitation/README.md."
+  },
   "$relay_caveat": "The owner did not type into the subagent's own interface - they typed into the coordinating session, which relayed the message verbatim via SendMessage and relayed the reply back verbatim. That is a real difference from a single continuous conversation and the corpus has flagged it before (run b's `$fixture.residual`): a relay adds one more place for something to be paraphrased. Every user turn quoted below was checked against the coordinating session's own transcript and is reproduced exactly as sent, including typos, rather than cleaned up.",
   "$environment_caveat": "Both subagents ran as Task-tool agents launched from a session whose global CLAUDE.md and project memory index belong to this same product. Unlike run b's later checkouts, no separate `claude -p` process was used to rule out inherited context, and neither subagent was asked to declare whether it relied on outside knowledge. Take `checked` on these two observations as good evidence the agent read the repository in front of it, not as proof it was a total stranger to the product.",
   "observations": [

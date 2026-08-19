@@ -1,5 +1,12 @@
 {
   "$about": "adopt-old round, 2026-08-07: three L3 adoptions of codebases whose history begins in the 1990s or 2000s - git/git (81,873 commits since 2005-04-07), vdukhovni/postfix (a mirror of a tarball line whose HISTORY starts 1998-01-05) and vim/vim (git history from 2004-06-13, the editor from 1991). Chosen for one property the catalogue had never tested: two of the three do not accept pull requests, and the third does but is older than the convention. Every number below was produced by running a shipped script against the adopted working copy and can be reproduced from the procedure in its case. All three reached drift 0; none was pushed anywhere and no issue or pull request was opened against any of them.",
+  "$elicitation": {
+    "provenance": "none",
+    "transcript": null,
+    "questions_asked": 0,
+    "asked_claims": 0,
+    "$why": "This corpus measures whether the tooling conforms - gates, manifests, drift counts. No person was prompted in any of these runs and none was meant to be, so it evidences nothing about whether the standard asks anybody anything. It was never labelled that way, which is how 377 green observations came to read as validation of a product whose central promise is being guided."
+  },
   "observations": [
     {
       "case": "ADOPT-08",
