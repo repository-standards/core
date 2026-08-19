@@ -51,7 +51,7 @@ unfinished - which is what it is. Guessing is what has no legal path.
 Measured rather than asserted: replayed past the real guard, the run that caused all of this
 is stopped at **5 of 5** of its artifact writes; a run that only *claims* to have asked is
 stopped too; a run that genuinely asked first is never refused. Those three cases and two
-more are `tools/elicitation-replay-test.mjs`, alongside 28 guard cases and 20 ledger cases.
+more are `tools/elicitation-replay-test.mjs`, alongside 30 guard cases and 20 ledger cases.
 
 The ledger check was then run over that repository's real artifacts on a tree carrying this
 release, and named the same five - intake, decision records, personas, backlog, product -
@@ -86,6 +86,14 @@ that boundary cannot be drawn - no git work tree - the check says so in its outp
 down, because a silent skip reads exactly like a pass. Verified both directions against a
 real pre-adoption clone: clean on arrival, and failing again the moment a section is appended
 to a record the owner wrote.
+
+**The hook cannot bootstrap itself, so the adoption lands it first.** A `PreToolUse` hook
+binds when a session starts, and an unaligned repository has no wiring - which made the
+adoption run, the one run this exists to stop, the single run nothing enforced. Alignment now
+lands the guard, the points, the matcher and the ledger before anything else and stops for a
+restart; none of the four is gated, so the ordering is all it costs. The guard also asks git
+about renames in the repository the move targets rather than the one it is running in, since
+an adoption is driven from a checkout of the standard and writes into a different tree.
 
 What this does **not** prove is that an answer, once given, was honoured - no layer here sees
 that, and [ADR-054](docs/decision-records/ADR-054-asking-is-a-mechanism-with-provenance-not-an-instruction.md)

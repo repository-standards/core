@@ -353,7 +353,7 @@
       "since": "0.8.0",
       "rule": "R19",
       "sha256": {
-        "elicitation-guard.mjs": "b0d3daf9bfdc71c4c9433099e4b3d180083178a29942e4e3a63301af80cdadea",
+        "elicitation-guard.mjs": "fabccc02ac8dc00ea93a20a9788c1e114f3d86ec0ecb204e9e669706a892c8c4",
         "guards.sh": "e2cb07f370a7875f10f3f5eef5529fe6be1ab85b7ccf52027dffac564d9b188e",
         "lib.sh": "06f1822d3110e5de9eb68d253bbafae6121326a30815955a48bd78578d428e34",
         "no-ci-secret-writes.sh": "db8381dd7b3e58b7a349c8bb3312a03ac792cffa0a04a781d790f2b14ef61793",
@@ -614,7 +614,7 @@
       "since": "0.9.23",
       "rule": "R28",
       "sha256": {
-        "README.md": "29d303cd1b479cd2271fe29c91aa255e9cd29c8061d0805f6daef34ba412dab2",
+        "README.md": "479a38f0a9166309522a5c9e8e9b27b2f77fd2fbd575ab59a6750713157b7c67",
         "points.json": "7f9e080fa0f9f5646334eb614dc7c2348ca51a3910251aec045604f578e12b04"
       }
     },
@@ -626,7 +626,7 @@
       "profile": "core",
       "since": "0.9.23",
       "rule": "R28",
-      "sha256": "b0d3daf9bfdc71c4c9433099e4b3d180083178a29942e4e3a63301af80cdadea"
+      "sha256": "fabccc02ac8dc00ea93a20a9788c1e114f3d86ec0ecb204e9e669706a892c8c4"
     },
     {
       "path": "docs/adoption-provenance.md",
