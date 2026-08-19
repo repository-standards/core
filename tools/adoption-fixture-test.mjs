@@ -151,6 +151,29 @@ for (const name of NAMES) {
   if (!drift) fail(`self-verify said nothing a reader could act on: ${said.trim().split("\n")[0] || "(no output)"}`);
   else if (drift[1] === "0") fail("self-verify reports drift 0 on a repository whose authored files do not exist yet");
   else ok(`self-verify reports the ${drift[1]} entries still to author, rather than a clean bill of health`);
+
+  // The state neither fixture reaches on its own: the repository after its adoption, with a
+  // committed ledger answering every repository-scoped point. The guard suite's elicitation
+  // cases used to expect refusals that only hold before anything was answered, so in an adopted
+  // repository they scored the guard rightly allowing as a failure - found by the first adopted
+  // repository to re-run the suite, not by these fixtures, which only exercised the state above.
+  const points = JSON.parse(readFileSync(join(repo, ".claude/elicitation/points.json"), "utf8"));
+  const rows = points.points
+    .filter((p) => p.scope === "repository")
+    .map((p) => `| \`${p.id}\` | human | fixture | 2026-08-19 | \`docs/adoption-intake.md\` | - |`);
+  mkdirSync(join(repo, "docs"), { recursive: true });
+  writeFileSync(join(repo, "docs/adoption-provenance.md"), [
+    "# Adoption provenance", "",
+    "| Point | State | Answered by | When | Landed in | Backlog row |",
+    "|---|---|---|---|---|---|",
+    ...rows, "",
+  ].join("\n"));
+  git(repo, "add", "docs/adoption-provenance.md");
+  git(repo, "commit", "-q", "--no-verify", "-m", "the adoption answered its repository-scoped points");
+  const adopted = spawnSync("bash", [join(repo, "scripts/verifyAgentGuards.sh")], { encoding: "utf8", cwd: repo });
+  adopted.status === 0
+    ? ok("the shipped guard suite still passes once the adoption has answered its points")
+    : fail(`the shipped guard suite fails in an adopted repository: ${(adopted.stdout || "").split("\n").filter((l) => l.includes("FAIL")).join(" | ") || adopted.stderr}`);
 }
 
 rmSync(work, { recursive: true, force: true });
