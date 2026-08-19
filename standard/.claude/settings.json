@@ -124,6 +124,16 @@
             "statusMessage": "Checking agent guards"
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/elicitation-guard.mjs || printf '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Blocked by repository policy: the elicitation guard could not be run (.claude/hooks/elicitation-guard.mjs was not found, or node is missing), so nothing checked whether this artifact was ever asked about.\"}}'",
+            "statusMessage": "Checking the artifact was asked about"
+          }
+        ]
       }
     ]
   }
