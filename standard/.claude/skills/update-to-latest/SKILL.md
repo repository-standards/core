@@ -157,6 +157,14 @@ with `self-verify`.
    may have moved while the update was being applied. Bookmark, manifest and provenance move
    together; the next update measures from the SHA.
 
+   **This write is gated, and the refusal is the point.** `adopt.profile` gates
+   `standard.manifest.json`, so once the layer from step 3 is live the guard stops this write
+   until the profile has actually been put to somebody in this session. Carrying the existing
+   `profile` forward is not an answer to it - a repo that grew from two people to a team
+   between versions is exactly the case where the value on disk is stale and nothing else in
+   the update would ever notice. Ask, confirm what the history suggests, and carry the
+   confirmed value. Do not stub it and do not take the matcher back out to get past it.
+
 6. **Self-verify - against the whole tree, not against the delta.** Run the compliance check -
    `node scripts/self-verify.mjs --version <target>` (see `self-verify.md` (by reference)). It
    must pass: the bookmark matches the manifest, every required entry is met, every
