@@ -126,6 +126,9 @@ it as the known gap rather than claiming coverage.
   row still reads `pending`, THEN `elicitation-provenance` exits 1.
 - GIVEN the same row and a gated file still byte-identical to the template that shipped there
   THEN it exits 0 - a fresh adoption is not a finding.
+- GIVEN a repo holding real decision records under `docs/decision-records/` - a directory the
+  manifest ships - THEN those records read as the adopter's work, not as that directory's
+  scaffolding.
 - GIVEN a validation run record claiming `"provenance": "human"` with no transcript on disk
   THEN `validation-claims-check` exits 1.
 
