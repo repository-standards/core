@@ -66,7 +66,7 @@ The daily lifecycle skills ship inside the tree (`standard/.claude/skills/`); th
 
 ## Status
 
-**1.1.23** - the first stable line, mechanics field-run on the author's production repositories.
+**1.1.24** - the first stable line, mechanics field-run on the author's production repositories.
 
 **There is no version to pin to: the standard is living, and latest is the only target**
 ([ADR-025](docs/decision-records/ADR-025-the-standard-is-living-latest-is-the-target.md)).
@@ -182,14 +182,41 @@ and your repo, sees the difference, and applies it - it does not blind-copy.
 
 ## Where this came from
 
-The spec loop's five prompts are extracted from [GitHub Spec Kit](https://github.com/github/spec-kit)
-v0.13.2 (MIT) and heavily rewritten since - ancestry and a licence obligation, not an
-integration. **Spec Kit builds specs; this runs a repository** - decisions, guards, adoption,
-drift as a number - and the spec loop is the one component it gave us a head start on.
+**Almost none of the conventions here are this project's invention, and that is the point.**
+A standard that invents its own commit format, its own decision-record shape and its own
+changelog costs a team a re-learning it gains nothing from. What this project adds is the
+layer above: the rules stated in one place, and a check that fails when a repo stops meeting
+them.
 
-The decision-record form is MADR, the changelog shape is Keep a Changelog, the word *sprint*
-is Linear's. What was taken as code, what was borrowed as an idea, and what this project is
-only compared against are kept apart in [`ATTRIBUTIONS.md`](ATTRIBUTIONS.md).
+**Formats it conforms to** - claims you can falsify against the upstream spec, not badges:
+
+| Format | What it governs here |
+|---|---|
+| [Agent Skills](https://agentskills.io) | the format every shipped procedure is packaged in, checked on every PR by `tools/skill-format-check.mjs` |
+| [AGENTS.md](https://agents.md) | the entry point R1 requires at an adopting repo's root - an [Agentic AI Foundation](https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation) project, alongside MCP and goose |
+
+**Practices it follows**, at the version it follows them:
+[Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) for commit
+messages · [MADR 4.0.0](https://adr.github.io/madr/) for decision records ·
+[Keep a Changelog 1.1.2](https://keepachangelog.com/) for the changelog ·
+[Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html) for its own versions ·
+[RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) for what MUST and SHOULD mean in the spec ·
+[Impact Mapping](https://www.impactmapping.org/) and
+[Story Mapping](https://jpattonassociates.com/story-mapping/) for breaking a product into
+capabilities · [INVEST](https://xp123.com/invest-in-good-stories-and-smart-tasks/) for when a
+backlog item is ready · [Backlog.md](https://github.com/MrLesk/Backlog.md) as the tool the
+shipped backlog stays compatible with.
+
+**Code it inherited.** The spec loop's five prompts are extracted from
+[GitHub Spec Kit](https://github.com/github/spec-kit) v0.13.2 (MIT) and heavily rewritten
+since - ancestry and a licence obligation, not an integration. **Spec Kit builds specs; this
+runs a repository** - decisions, guards, adoption, drift as a number - and the spec loop is the
+one component it gave us a head start on.
+
+What is conformed to, what was taken as code, what was borrowed as an idea, and what this
+project is only compared against are kept apart in [`ATTRIBUTIONS.md`](ATTRIBUTIONS.md) -
+including where this standard deliberately differs, and where it does not currently meet a
+recommendation it cites.
 
 ## Versioning
 
