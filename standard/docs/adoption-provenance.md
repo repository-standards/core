@@ -42,6 +42,7 @@ which as `scope`.
 | `adopt.layout` | pending | - | - | - | - |
 | `adopt.profile` | pending | - | - | - | - |
 | `adopt.intent` | pending | - | - | - | - |
+| `adopt.evidence` | pending | - | - | - | - |
 | `adopt.continue` | pending | - | - | - | - |
 | `adopt.existing-material` | pending | - | - | - | - |
 | `adopt.records` | pending | - | - | - | - |

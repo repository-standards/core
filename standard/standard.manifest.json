@@ -241,7 +241,7 @@
         "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",
         "pre-pr-review/SKILL.md": "aa43d020310c9c684720c58ec9e0efbeca4abf78fcce23b7dc2ec78544a0ce4f",
         "product-write/SKILL.md": "f99093c02371ef8e5411702dbad3bd1dc6481855bcee1f2b1b328e3937062123",
-        "record-run/SKILL.md": "72dc217559227a39acb81f142cf02199a4a1f90e30a3a05e12f40fb4a1300b06",
+        "record-run/SKILL.md": "4661351fcfdc0288b351e34ade9d92213d34069a609f18d3a5d9eabdcd9f0351",
         "show-backlog/SKILL.md": "73123f319e99c837259e500c25462e3395a93df2f7b5130a0a53c3515408eb04",
         "spec-clarify/SKILL.md": "b278518a739daa9338a1d4ca2c55d08f5c82f9daa5f0b74749291ae9f979a4f0",
         "spec-clarify/completion.md": "445251988cb73ecd6be25a86172e7ba0f40ab639adfb7720b30f3a523d9015ef",
@@ -615,8 +615,8 @@
       "since": "1.1.23",
       "rule": "R28",
       "sha256": {
-        "README.md": "da41698fd32f351f0c45b7739af7753fc2ccf0b50a107fd692440d57bf20c0d1",
-        "points.json": "01aeedbcf8a5e61f9e4e6b9e8f45b03863bc74c2f555dec16a35e4a900a5bc8b"
+        "README.md": "07083cc1df99f4a95d1dd0e10ee8df65be76c4022ef45a8a11fad1c47e4a1821",
+        "points.json": "a42e9f68ed62cb53c56dc01eb0db22084ee19b81c0598ee046dbcbed3fe2d993"
       }
     },
     {
