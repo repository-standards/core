@@ -242,4 +242,4 @@ ourselves), **STACK-ALIGN-1** (the node satellite aligns; waits on the first tag
 **UPSTREAM-1** (adopter-driven operate depth; the upstream scan rides with each
 release). The open questions and the idea below stand independent of this list - none
 block a release; each waits on a challenger, not on being worked. A PR cuts its
-own release, PATCH by default (R18, R25).
+own release, PATCH by default (R25).

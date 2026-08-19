@@ -6,9 +6,8 @@ PATCH = fixes and clarifications.
 
 ## Unreleased
 
-<!-- A PR describes its change here, one entry per change, and promotes this section into a
-     version heading itself - PATCH by default; the requester directs a MINOR/MAJOR bump or
-     an explicit no-bump instruction per PR (R18/R25):
+<!-- A PR describes its change here, one entry per change - never a version heading, never
+     VERSION itself (R18). The maintainer alone promotes this section into a release:
      https://github.com/repository-standards/core/blob/main/docs/method/changelog-process.md -->
 
 ### A short headline saying what changed and for whom (YYYY-MM-DD)

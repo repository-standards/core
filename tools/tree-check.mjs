@@ -125,7 +125,7 @@ try {
 }
 
 // --- 4. the spec header agrees with VERSION ----------------------------------------------
-// Whoever bumps VERSION - a PR, by default (R18) - this only ensures the bump
+// Whoever bumps VERSION - a PR, by default in this repo (R25) - this only ensures the bump
 // cannot leave the spec header advertising a different number.
 //
 // The README quick start is NOT checked for `@<version>` any more, and the removal is the
@@ -147,7 +147,7 @@ if (!vFails) ok(`SPEC.md agrees with VERSION (${version})`);
 // It is not a typo class. A `since` ahead of VERSION cannot match any real commit, so the
 // field stops being reconstructible from history - which is the whole reason it exists - and
 // the manifest quietly asserts a release nobody has actually cut yet: a PR bumps the version
-// itself by default now (R18), but only the PR that actually lands the bump gets to name it.
+// itself by default in this repo (R25), but only the PR that actually lands the bump gets to name it.
 // It shipped inside an unrelated fix and nothing said a word, which is what this check is for.
 function versionParts(v) {
   return /^\d+\.\d+\.\d+$/.test(v) ? v.split(".").map(Number) : null;

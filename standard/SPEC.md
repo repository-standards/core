@@ -1,6 +1,6 @@
 # The repository-standards spec
 
-Version 1.0.0 - the spec is versioned with the standard (`VERSION`). **The standard is
+Version 1.0.1 - the spec is versioned with the standard (`VERSION`). **The standard is
 living and the only target is latest** (ADR-025): a repo complies against the state it
 last aligned to, recorded in its own `.standards-version`. That record is a bookmark -
 it makes an update a delta and self-verify a meaningful assertion, and it never names a
@@ -160,20 +160,18 @@ binds every repo, a solo one included.
 
 ## Releases and hygiene
 
-- **R18.** A PR describes its change under the changelog's Unreleased heading and
-  bumps the version itself, as part of that PR - PATCH by default, with no
-  request required. The requester directs anything else, per PR and explicitly:
-  a stated MINOR or MAJOR bump, or an instruction to withhold the bump entirely
-  and leave the entry under Unreleased for a later PR to promote (see
-  CONTRIBUTING.md) - at every profile, with no second mechanism. A repo that
-  maintains more than one release line (R23) carries one changelog per line, each
-  with its own Unreleased heading, and a PR bumps the line it targets - the same one
-  mechanism applied per line, never a second one. A repo that ships more than
-  one independently-versioned, independently-publishable unit from the same
-  tree - a monorepo of packages, gems or crates, each on its own release
-  cadence - carries one changelog per unit instead of one at the root, each
-  with its own Unreleased heading, and a PR bumps every unit it actually
-  touches. This is a different axis from the release-line clause above, not a
+- **R18.** A PR MUST NOT add a version heading to the changelog and MUST NOT bump
+  a version; the maintainer cuts every release. A PR describes its change under
+  the changelog's Unreleased heading - at every profile, with no second
+  mechanism. A repo that maintains more than one release line (R23) carries one
+  changelog per line, each with its own Unreleased heading, and a PR writes its
+  entry under the heading on the branch it targets - the same one mechanism
+  applied per line, never a second one. A repo that ships more than one
+  independently-versioned, independently-publishable unit from the same tree -
+  a monorepo of packages, gems or crates, each on its own release cadence -
+  carries one changelog per unit instead of one at the root, each with its own
+  Unreleased heading, and a PR writes its entry under the heading of every unit
+  it actually touches. This is a different axis from the release-line clause above, not a
   variant of it: release lines split a changelog across branches over time,
   units split it across the same tree at once, and a repo can face either,
   both or neither - the one mechanism per line becomes one mechanism per unit,
@@ -252,8 +250,11 @@ binds every repo, a solo one included.
   builds on it, it MUST NOT be (ADR-026).
 
 - **R25.** A PR that changes what the standard ships describes that change under
-  `CHANGELOG.md`'s `## Unreleased` heading and MUST move the version itself, in the
-  same PR (R18) - the version MUST be one fact restated nowhere unchecked: every
+  `CHANGELOG.md`'s `## Unreleased` heading (R18's one home of history) and MUST
+  move the version itself, in the same PR - this repository's own workflow,
+  deliberately tighter than the R18 default it ships, because here the
+  maintainer reviews every PR (CONTRIBUTING.md) - and the version MUST be one
+  fact restated nowhere unchecked: every
   surface that carries it is declared and verified against its single home (R4).
   **Patch is the default and covers nearly everything** - the ordinary PR, however
   much prose it moves, bumps patch with no request required. **Minor is a judgment,

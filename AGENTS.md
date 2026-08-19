@@ -71,8 +71,9 @@ took from where, and where it deliberately differs, is
   standard's. `tree-check` fails on a stale one, so this is a step, not a habit.
 - **Changelog:** a PR describes its change under `CHANGELOG.md`'s `## Unreleased`
   heading and bumps the version itself - PATCH by default, unless the maintainer
-  directs a different bump or an explicit no-bump for that PR. One mechanism at
-  every profile - the per-PR fragments folder was removed on 2026-08-02.
+  directs a different bump or an explicit no-bump for that PR. This is this
+  repo's own workflow (R25); the shipped R18 keeps releases maintainer-cut in
+  adopting repos. The per-PR fragments folder was removed on 2026-08-02.
 - **The spec wins:** where any document appears to add a requirement,
   [`standard/SPEC.md`](standard/SPEC.md) is the normative text; the
   manifest cites the rule each entry enforces.

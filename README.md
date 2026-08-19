@@ -66,7 +66,7 @@ The daily lifecycle skills ship inside the tree (`standard/.claude/skills/`); th
 
 ## Status
 
-**1.0.0** - the first stable release, mechanics field-run on the author's production repositories.
+**1.0.1** - the first stable release line, mechanics field-run on the author's production repositories.
 
 **There is no version to pin to: the standard is living, and latest is the only target**
 ([ADR-025](docs/decision-records/ADR-025-the-standard-is-living-latest-is-the-target.md)).
@@ -221,9 +221,9 @@ recommendation it cites.
 ## Versioning
 
 Semver (`VERSION` + `CHANGELOG.md`). A PR describes its change under the changelog's
-`## Unreleased` heading and bumps the version itself - PATCH by default, unless the
-maintainer directs a different bump or an explicit no-bump for that PR - the same way
-at every profile (`docs/method/changelog-process.md`).
+`## Unreleased` heading and never bumps a version; the maintainer cuts every release
+and writes the release notes - the same way at every profile
+(`docs/method/changelog-process.md`).
 
 ## Start
 

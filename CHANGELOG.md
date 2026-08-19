@@ -17,6 +17,36 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.1 - 2026-08-19
+
+### The elicitation guard no longer waves NotebookEdit through (2026-08-19)
+
+The shipped PreToolUse hook read the write target only from `file_path`, and the
+NotebookEdit tool passes `notebook_path` - so a NotebookEdit call always produced an
+empty target and was allowed without its question ever firing. The guard now reads
+both fields, and reads `new_source` (NotebookEdit's content field) alongside
+`content`/`new_string` when checking whether a write already declares its provenance.
+Found by code review on the first repository to vendor the 1.0.0 copy, the same day
+it shipped.
+
+### PATCH-per-PR returns to being this repository's own workflow (2026-08-19)
+
+The 2026-08-18 workflow change ("a PR bumps PATCH by default, not the maintainer") was
+a convention for this repository and leaked into the shipped standard: R18 started
+telling every adopting repo that its PRs bump versions. Reversed at every shipped and
+adopter-facing surface - R18 again says a PR never adds a version heading and never
+bumps, the maintainer cuts every release; the shipped changelog template, manifest
+purpose, file map, decision catalog and the changelog method pages say the same. R25
+keeps the PR-bumps rule where it was meant to live - this repository's own releases
+(CONTRIBUTING.md) - and the method page now names that divergence instead of
+implying it is everyone's.
+
+### Three arrow glyphs leave a shipped skill (2026-08-19)
+
+`spec-clarify/completion.md` used "->" spelled as a decorative arrow glyph three
+times, against the plain-hyphen convention the rest of the shipped tree keeps. Same
+review, same day.
+
 ## 1.0.0 - 2026-08-19
 
 The first stable release, and the first tagged one. No behaviour changes ride this cut -
