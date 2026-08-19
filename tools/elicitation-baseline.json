@@ -1,0 +1,11 @@
+{
+  "$what": "How many declared elicitation points still have no call site.",
+  "$rule": [
+    "This number may never rise. A pull request that wires a point lowers it in the same",
+    "commit, so the improvement appears in the diff and is reviewed like any other claim.",
+    "A stale baseline fails too - the number is an assertion about the repository, and an",
+    "assertion nobody has to update is one nobody reads."
+  ],
+  "$target": 0,
+  "unwired": 18
+}
