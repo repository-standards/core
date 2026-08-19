@@ -59,7 +59,7 @@ function score(call) {
 
 const CASES = [
   ["a path nothing gates is none of this guard's business", { tool_name: "Write", tool_input: { file_path: "src/index.ts" } }, ALLOW],
-  ["a tool that does not write is none of its business", { tool_name: "Bash", tool_input: { command: "ls" } }, ALLOW],
+  ["a shell command that moves nothing is none of its business", { tool_name: "Bash", tool_input: { command: "ls" } }, ALLOW],
   ["personas with no transcript fails closed", { tool_name: "Write", tool_input: { file_path: "docs/personas.md" } }, DENY],
   ["personas after its own question is allowed", { tool_name: "Write", tool_input: { file_path: "docs/personas.md" }, transcript_path: withAsked("personas", ["adopt.personas"]) }, ALLOW],
   ["personas after somebody else's question is still refused", { tool_name: "Write", tool_input: { file_path: "docs/personas.md" }, transcript_path: withAsked("other", ["adopt.guards"]) }, DENY],
@@ -70,6 +70,19 @@ const CASES = [
   ["a nested path a single * must not reach is left alone", { tool_name: "Write", tool_input: { file_path: "docs/validation/human-prompting/runs/old/a.json" } }, ALLOW],
   ["an absolute path still matches", { tool_name: "Write", tool_input: { file_path: "/home/x/repo/backlog.md" } }, DENY],
   ["Edit is gated exactly as Write is", { tool_name: "Edit", tool_input: { file_path: "PRODUCT.md" } }, DENY],
+
+  // Renames, which reach the agent as shell commands rather than writes. The pair that
+  // carries the rule is tracked-versus-untracked: reshaping what a repository already has
+  // is legitimate and needs asking, moving a file this run created two steps ago is not
+  // anybody else's business and must not be refused, or the guard becomes an obstacle to
+  // ordinary work and gets removed.
+  ["moving a path the repository already tracks is refused", { tool_name: "Bash", tool_input: { command: "git mv VERSION VERSION.old" } }, DENY],
+  ["moving a file git never tracked is the run's own business", { tool_name: "Bash", tool_input: { command: "mv scratch-of-this-run.md elsewhere.md" } }, ALLOW],
+  ["a rename after [adopt.layout] was asked is allowed", { tool_name: "Bash", tool_input: { command: "git mv VERSION VERSION.old" }, transcript_path: withAsked("layout", ["adopt.layout"]) }, ALLOW],
+  ["a rename chained behind a harmless command is still seen", { tool_name: "Bash", tool_input: { command: "ls docs && git -C . mv VERSION VERSION.old" } }, DENY],
+  ["a command that merely mentions mv is not a rename", { tool_name: "Bash", tool_input: { command: "grep -rn 'git mv' docs" } }, ALLOW],
+  ["the destination-first form of mv is read the same way", { tool_name: "Bash", tool_input: { command: "mv -t docs/archive VERSION" } }, DENY],
+  ["a flag between the command and its source does not hide it", { tool_name: "Bash", tool_input: { command: "git mv -k VERSION VERSION.old" } }, DENY],
 
   // The stub escape, both ways. Without the refusals below it is a bypass with a comment
   // on it: anything that lets a write through has to be shown refusing something too.

@@ -24,10 +24,15 @@ saying something he never said (ADR-054).
   rather than obeyed, and guessing is the behaviour worth forbidding, not proceeding.
 - Q: Where does provenance live - on each artifact, or in one ledger? A: One ledger.
   Fifty-four decision records each carrying a provenance key is metadata nobody compares.
-- Q: What makes `pending` stop being acceptable? A: the point being reached - a path it gates
-  holding an artifact that did not ship as a template. `.standards-version` was tried first
-  and is wrong: it is written before anybody has been asked anything, so it fails every fresh
-  adoption and the shipped tree itself.
+- Q: What makes `pending` stop being acceptable? A: this adoption writing something at a path
+  the point gates. Two narrower rules were tried and both were red on arrival.
+  `.standards-version` is written before anybody has been asked anything, so it fails every
+  fresh adoption and the shipped tree itself; "the path holds a non-template artifact" fails
+  every brownfield repository, whose records and specs predate the standard by years.
+- Q: May an adoption rename what the repository already has? A: Yes, once asked. Reshaping
+  material into the standard's layout is often the right call - two parallel homes for
+  decision records is worse than one converted home. It is doing it by default, as a side
+  effect of tidying, that is forbidden.
 - Q: Delete the validation corpus that measured nothing? A: No. The observations are real
   records of real work; what they lacked was a statement of which question they answer.
 
@@ -76,10 +81,10 @@ it as the known gap rather than claiming coverage.
 
 | Tool | Exit | Condition |
 |---|---|---|
-| elicitation-guard | 0, silent | the tool is not a write, the path is gated by nothing, the point's question fired, or the content declares a stub the point permits |
-| elicitation-guard | 0, deny JSON | a gated path with no fired question and no permitted stub; or no transcript to check against |
+| elicitation-guard | 0, silent | the tool is neither a write nor a move, the path is gated by nothing, the moved path is untracked, the point's question fired, or the content declares a stub the point permits |
+| elicitation-guard | 0, deny JSON | a gated path, or a `Bash` move of a tracked path, with no fired question and no permitted stub; or no transcript to check against |
 | elicitation-provenance | 0 | every required point has a row with a permitted state, every `provisional` names a backlog row that exists, every `human` names who and when |
-| elicitation-provenance | 1 | a missing ledger, a missing or malformed row, a forbidden state, a named backlog row that is not there, an orphan row, or a required point still `pending` once a path it gates holds a non-template artifact |
+| elicitation-provenance | 1 | a missing ledger, a missing or malformed row, a forbidden state, a named backlog row that is not there, an orphan row, or a required point still `pending` once this adoption has written a non-template artifact at a path it gates |
 | elicitation-points-check | 0 / 1 | every declared point has a call site, against a baseline that may only shrink / the count grew or the baseline went stale |
 | elicitation-check | 0 / 1 / 2 | quotes covered and a question answered / a fabricated quote or no human presence / no transcript to read |
 | validation-claims-check | 0 / 1 | every run record states what it can evidence and its counts agree / any does not |
@@ -100,8 +105,12 @@ it as the known gap rather than claiming coverage.
 
 ## Invariants
 
-- A write to a gated path is refused, permitted by a fired question, or permitted by a
-  declared stub. There is no fourth outcome, and no environment variable adds one.
+- A write to a gated path, or a move of a path git already tracks, is refused, permitted by a
+  fired question, or permitted by a declared stub. There is no fourth outcome, and no
+  environment variable adds one.
+- What the repository had before the adoption is never read as evidence that somebody was
+  asked. Where that boundary cannot be drawn, the check announces it and stands down; it never
+  passes quietly.
 - The point id in an `AskUserQuestion` header is the only link between a question and the
   artifact it licenses. A question without one counts as not asked.
 - The guard proves a question happened. It does not and cannot prove the answer was honoured;
@@ -122,8 +131,15 @@ it as the known gap rather than claiming coverage.
   of its artifact writes are refused.
 - GIVEN a ledger whose `provisional` row names a backlog row that is not in the backlog THEN
   `elicitation-provenance` exits 1 naming that row.
-- GIVEN a repo where a path `adopt.records` gates holds a record that did not ship, and that
+- GIVEN a session in which `[adopt.layout]` never fired WHEN the agent runs `git mv` on a path
+  the repository already tracks THEN the guard refuses; WHEN the moved path is untracked THEN
+  it does not.
+- GIVEN a repo where this adoption wrote a record at a path `adopt.records` gates, and that
   row still reads `pending`, THEN `elicitation-provenance` exits 1.
+- GIVEN a repo whose decision records were committed before the adoption's own commit THEN it
+  exits 0 - a brownfield repository's own history is not evidence of a question.
+- GIVEN a tree that is not a git work tree THEN it says the boundary cannot be drawn and
+  leaves `pending` rows alone, rather than passing silently.
 - GIVEN the same row and a gated file still byte-identical to the template that shipped there
   THEN it exits 0 - a fresh adoption is not a finding.
 - GIVEN a repo holding real decision records under `docs/decision-records/` - a directory the

@@ -68,13 +68,21 @@ that point's question already fired in this session, or the content being writte
 the point `absent` (`adopt.personas: absent`, in frontmatter or as a JSON key - either
 spelling is read).
 
+A `Bash` command that moves a path **git already tracks** is refused the same way, under
+`adopt.layout`. Renaming is not forbidden - reshaping what a repository already has into the
+standard's layout is a legitimate and often useful thing to do, and the question offers it as
+the first answer. What is forbidden is doing it without asking, which is how seventy-eight
+files changed name and fifty-three links broke in a single unattended run. A file the
+adoption itself created is untracked, and moving it is nobody's business but the run's.
+
 It fails closed. No transcript to check against means refused, because a guard that waves
 work through when it has no evidence is the defect it was built to catch, wearing the
 uniform of the fix.
 
-Twelve of the eighteen points gate a path. `adopt.layout` is a rename and `adopt.continue`
-a phase boundary - neither is a file write, so the static check and human review carry
-those two, and the guard says so rather than implying coverage it does not have.
+Thirteen of the eighteen points are enforced here - twelve by the path they gate,
+`adopt.layout` by the rename. `adopt.continue` is a phase boundary, which is not a tool call
+at all, so the static check and human review carry that one; the guard says so rather than
+implying coverage it does not have.
 
 ## Provenance
 

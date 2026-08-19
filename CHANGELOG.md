@@ -33,14 +33,15 @@ Three layers now hold it, and the third is the only one that is not the agent's 
   that may only shrink.
 - [`.claude/hooks/elicitation-guard.mjs`](standard/.claude/hooks/elicitation-guard.mjs) is a
   `PreToolUse` hook: a `Write` or `Edit` to a gated path is refused unless that point's
-  question really fired this session. It reads the transcript **structurally** - an assistant
+  question really fired this session, and so is a `Bash` command that moves a path git
+  already tracks. It reads the transcript **structurally** - an assistant
   turn that called the tool - because compaction replays the model's own summary back as a
   user turn, so any textual scan would let a run vouch for itself.
 - [`docs/adoption-provenance.md`](standard/docs/adoption-provenance.md) is one table with one
   row per point, and `scripts/elicitation-provenance.mjs` checks it: a `provisional` answer
   must name a backlog row that exists, a `human` answer must name who and when, and `pending`
-  stops being acceptable the moment a path that point gates holds an artifact that did not
-  ship as a template.
+  stops being acceptable the moment **this adoption** writes something at a path that point
+  gates.
 
 The guard deliberately permits one thing: writing a **stub**. A run with nobody to ask cannot
 ask, and a guard leaving such a run no legal move gets removed rather than obeyed. So a write
@@ -50,7 +51,7 @@ unfinished - which is what it is. Guessing is what has no legal path.
 Measured rather than asserted: replayed past the real guard, the run that caused all of this
 is stopped at **5 of 5** of its artifact writes; a run that only *claims* to have asked is
 stopped too; a run that genuinely asked first is never refused. Those three cases and two
-more are `tools/elicitation-replay-test.mjs`, alongside 21 guard cases and 16 ledger cases.
+more are `tools/elicitation-replay-test.mjs`, alongside 28 guard cases and 20 ledger cases.
 
 The ledger check was then run over that repository's real artifacts on a tree carrying this
 release, and named the same five - intake, decision records, personas, backlog, product -
@@ -62,6 +63,29 @@ reported nothing wrong. What ships is now separated three ways - a file meant to
 verbatim is compared to its hash, a directory's scaffolding is recognised by the standard's
 own naming, and a fill-from-repo slot counts as untouched only while it still holds the
 placeholders it shipped with.
+
+**Renaming what a repository already has is allowed - unasked renaming is not.** The single
+most destructive thing that run did was move `docs/ADR` and `docs/BDR` under the standard's
+own naming, and the point covering it was the one point nothing could enforce: a rename
+arrives as `git mv`, and the hook only watched writes. It now reads `Bash` as well, and
+refuses a move whose source git already tracks. Untracked paths pass untouched, so a file the
+run created a step earlier is still the run's to move. The question this unblocks offers
+reshaping as its second answer rather than treating the repository's material as untouchable:
+records in the wrong format are usually worth converting, and two parallel homes for decision
+records is the worse outcome. `[adopt.records]` was widened the same way - it used to ask only
+about records the repository does not have yet, which left editing the thirty-three it did
+have covered by nothing.
+
+**The `pending` rule was red on arrival for exactly the repositories worth adopting.** Keyed
+on whether a gated path holds a non-template artifact, it fired on the decision records,
+`PRODUCT.md` and specs a brownfield repository wrote years before it had heard of this
+standard - four failures on the first run, none of them evidence that anybody skipped a
+question. Reaching is now scoped to what the adoption itself wrote: the commit that
+introduced `.standards-version`, everything after it, and everything not yet committed. Where
+that boundary cannot be drawn - no git work tree - the check says so in its output and stands
+down, because a silent skip reads exactly like a pass. Verified both directions against a
+real pre-adoption clone: clean on arrival, and failing again the moment a section is appended
+to a record the owner wrote.
 
 What this does **not** prove is that an answer, once given, was honoured - no layer here sees
 that, and [ADR-054](docs/decision-records/ADR-054-asking-is-a-mechanism-with-provenance-not-an-instruction.md)

@@ -376,15 +376,25 @@ reminder to consider asking - the rule existed as prose first and a full adoptio
 
 ### `[adopt.records]` Decision records
 
-Fires **before writing anything into the decision-records directory**.
+Fires **before writing anything into the decision-records directory** - which includes editing a record that was already there, not only creating one.
 
-Call `AskUserQuestion` with the header `[adopt.records]` and the question:
+Ask this as two questions in one `AskUserQuestion` call, both under the header `[adopt.records]`. Where the repository has no records yet, ask only the second.
 
-> The standard expects decision records. Write them now one at a time, leave stubs, or have them drafted for you to check later?
+The first, when records already exist:
+
+> This repository already has decision records. Take them as they stand, rewrite them into the standard's shape, or leave them and only add new ones alongside?
+
+Options, in order: **take them as they stand** / **rewrite them into the standard's shape** / **leave them, add new ones alongside** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
+
+Rewriting somebody's records is allowed and often right - a record in the wrong format is still a decision worth keeping, and reshaping it beats leaving it in a second parallel structure. It is doing it unasked that is the failure: thirty-three owner-authored records each gained a section nobody requested, and the run read as tidying.
+
+The second, about records the standard expects and this repository does not have:
+
+> The standard expects decision records this repository has not written. Write them now one at a time, leave stubs, or have them drafted for you to check later?
 
 Options, in order: **write them now** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **leave a stub, do not guess** (`absent`)
 
-A decision record's whole value is that a person decided it. Never append to a record somebody else wrote without asking.
+A decision record's whole value is that a person decided it.
 
 Records to `docs/adoption-provenance.md`: the `adopt.records` row takes the state, who answered, the date, and `docs/decision-records/` as where the answer landed.
 

@@ -19,15 +19,22 @@
 //      what tests that claim, and a gate that pretends to verify it would be worse than one
 //      that says it cannot.
 //   5. `pending` is legal until the point is REACHED, and reaching it is a fact about the
-//      tree rather than a flag: the point gates a path that now holds an artifact the
-//      adopter created. Something was written where the question belonged, so it was either
-//      asked or skipped, and `pending` is false either way.
+//      tree rather than a flag: the point gates a path where the adoption has now written
+//      something. Something was written where the question belonged, so it was either asked
+//      or skipped, and `pending` is false either way.
 //
-//      The obvious rule - pending fails once `.standards-version` exists - was tried and is
-//      wrong. That file is written at align time, before a single question has been put to
-//      anyone, so it fails every freshly adopted repo on its first run, and fails the shipped
-//      tree's own template where every row is pending because nothing has happened yet. A
-//      guard that is red the moment it lands teaches people to disable it.
+//      Two spellings of that rule were tried and both were red on arrival, which is the
+//      failure mode worth naming: a guard that fails the day it lands teaches people to
+//      delete it. First, pending fails once `.standards-version` exists - but that file is
+//      written at align time, before a single question has been put to anyone. Then, pending
+//      fails once a gated path holds any non-template file - but a brownfield repository
+//      arrives holding decision records, a PRODUCT.md and specs it wrote years before it had
+//      heard of this standard, and its own history is not evidence that anybody was asked.
+//
+//      So reaching is scoped to what the adoption itself wrote: git separates the two, at the
+//      commit that introduced the standard, plus everything not yet committed. Where that
+//      boundary cannot be drawn - no git work tree - the check says so out loud and stands
+//      down. A silent skip reads in the output exactly like a pass.
 //
 //      One edge, stated rather than hidden: a point that gates no path - a rename, a phase
 //      boundary - can never be reached here, and the static check and human review carry
@@ -44,6 +51,7 @@
 
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { spawnSync } from "node:child_process";
 
 const arg = (flag, fallback) => {
   const i = process.argv.indexOf(flag);
@@ -155,13 +163,65 @@ const template = (rel) => {
   return false; // never shipped at all - this is the adopter's own work
 };
 
-// Reached: something this point gates exists and is not the template that shipped there.
+// Which files the adoption itself wrote. Everything else in the tree is the repository's own
+// history, and a repository's history says nothing about whether anyone was asked anything.
+//
+// The boundary is the commit that introduced the standard, and anything still uncommitted -
+// that second half is the ordinary case, because the gate usually runs mid-adoption, before
+// the branch has a commit to measure from. Returns null when there is no boundary to draw.
+const git = (...args) => {
+  const r = spawnSync("git", ["-C", ROOT, ...args], { encoding: "utf8" });
+  return r.status === 0 ? r.stdout : null;
+};
+
+const BASELINE_MARKERS = [".standards-version", ".claude/elicitation/points.json", "standard.manifest.json"];
+
+function adoptionWrote() {
+  if (git("rev-parse", "--is-inside-work-tree") === null) return null;
+  // git prints paths from the repository root; this tree may sit below it.
+  const prefix = (git("rev-parse", "--show-prefix") ?? "").trim();
+  const files = new Set();
+  const dirs = [];
+  const add = (raw) => {
+    let rel = raw.trim().replace(/^"|"$/g, "");
+    if (!rel || !rel.startsWith(prefix)) return;
+    rel = rel.slice(prefix.length);
+    // An untracked directory is reported as one entry, not as its contents.
+    if (rel.endsWith("/")) dirs.push(rel);
+    else files.add(rel);
+  };
+
+  for (const line of (git("status", "--porcelain") ?? "").split("\n")) {
+    if (line.length < 4) continue;
+    const rest = line.slice(3);
+    const arrow = rest.indexOf(" -> "); // a rename names both sides; the new one is the write
+    add(arrow === -1 ? rest : rest.slice(arrow + 4));
+  }
+
+  let baseline = null;
+  for (const marker of BASELINE_MARKERS) {
+    const adds = (git("log", "--diff-filter=A", "--format=%H", "--", marker) ?? "").trim().split("\n").filter(Boolean);
+    if (adds.length) { baseline = adds[adds.length - 1]; break; } // oldest add, if it was ever re-added
+  }
+  if (baseline) {
+    for (const p of (git("show", "--format=", "--name-only", baseline) ?? "").split("\n")) add(p);
+    for (const p of (git("log", "--format=", "--name-only", `${baseline}..HEAD`) ?? "").split("\n")) add(p);
+  }
+
+  return { has: (rel) => files.has(rel) || dirs.some((d) => rel.startsWith(d)) };
+}
+
+const WROTE = adoptionWrote();
+
+// Reached: the adoption wrote something at a path this point gates, and what it wrote is not
+// the template that shipped there.
 function reached(point) {
   const globs = point.gate_globs || [];
   if (!globs.length) return null; // gates nothing - see note 5
+  if (!WROTE) return null; // no boundary - announced below rather than passed off as a check
   for (const g of globs) {
     const re = rx(g);
-    for (const f of FILES) if (re.test(f) && !template(f)) return f;
+    for (const f of FILES) if (re.test(f) && WROTE.has(f) && !template(f)) return f;
   }
   return null;
 }
@@ -214,7 +274,7 @@ for (const p of declared.points || []) {
   if (row.state === "pending") {
     const evidence = p.required ? reached(p) : null;
     if (evidence) {
-      problems.push(`${p.id}: still pending, but ${at(evidence)} exists - an artifact this point gates was written, so the question was either asked or skipped`);
+      problems.push(`${p.id}: still pending, but this adoption wrote ${at(evidence)} - a path this point gates, so the question was either asked or skipped`);
     }
     continue;
   }
@@ -237,6 +297,11 @@ for (const p of declared.points || []) {
   }
 }
 
+if (!WROTE) {
+  console.log(`  ${ROOT === "." ? "This tree" : ROOT} is not a git work tree, so nothing here can tell what the adoption`);
+  console.log("  wrote from what the repository already had. `pending` rows are being left alone.");
+}
+
 const orphans = rows.filter((r) => !(declared.points || []).some((p) => p.id === r.point));
 for (const o of orphans) problems.push(`${o.point}: a row for a point that is not declared - a renamed point leaves its old row behind`);
 
@@ -246,8 +311,8 @@ const tally = {};
 for (const r of rows) tally[r.state] = (tally[r.state] || 0) + 1;
 const summary = Object.entries(tally).map(([k, v]) => `${v} ${k}`).join(", ");
 if (tally.pending) {
-  console.log(`  ${tally.pending} point(s) pending - nothing they gate has been written yet.`);
-  console.log("  Each stops being legal the moment its artifact exists, which is the point of asking first.");
+  console.log(`  ${tally.pending} point(s) pending - this adoption has not written anything they gate.`);
+  console.log("  Each stops being legal the moment it does, which is the point of asking first.");
 }
 if (AS_JSON) console.log(JSON.stringify({ verdict: "PASS", ledger: LEDGER, rows: rows.length, tally }, null, 2));
 else console.log(`elicitation-provenance: OK - ${rows.length} point(s) recorded in ${LEDGER} (${summary})`);
