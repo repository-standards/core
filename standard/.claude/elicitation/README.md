@@ -131,9 +131,13 @@ those four is gated by any point, so the ordering costs nothing - and skipping i
 whole layer on the one run it was built for.
 
 Sixteen of the twenty-one points are enforced here - fifteen by the path they gate,
-`adopt.layout` by the rename. `adopt.continue` is a phase boundary, which is not a tool call
-at all, so the static check and human review carry that one; the guard says so rather than
-implying coverage it does not have.
+`adopt.layout` by the rename. The other five are not writes to a path this file can name in
+advance: `adopt.continue` is a phase boundary and `adopt.commit-plan` a commit, neither of
+which is a file at all; `adopt.guards` gates whatever guard configuration the target
+repository already keeps; `green.conventions` gates the layout before there is one; and
+`spec.unknowns` gates a decision inside a spec the run is writing anyway. The static check
+and human review carry those five, and the guard says so rather than implying coverage it
+does not have.
 
 ## Provenance
 

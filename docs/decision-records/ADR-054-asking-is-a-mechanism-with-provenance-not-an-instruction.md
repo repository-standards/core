@@ -98,7 +98,9 @@ for, and it can only refuse what somebody wrote down; the questions worth asking
 repository are mostly ones no list anticipated. Inventing them is the product working. So the
 ledger carries a second table for questions no point declares, `elicitation-provenance.mjs`
 fails without it, and what accumulates there is the evidence for what the point list should
-grow. `adopt.tracker` entered the list exactly that way, from the same live run.
+grow. Two points entered the list exactly that way from the same live run: `adopt.tracker`, and
+`adopt.profile` - which the greenfield path asks bundled with the stack and the brownfield
+path never asked at all, because the manifest is copied in early and carries a default.
 
 **The question is asked in the language the person is writing in**, which is not a point and
 must not become one - a question asking which language to use has answered itself wrongly by

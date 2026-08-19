@@ -11,14 +11,14 @@
 // owner's directory naming was replaced across seventy-eight files. Only a hook refuses
 // before the write lands, and only a hook is not the model's decision to make.
 //
-// It cannot cover everything, and says so rather than implying it does. Twelve of eighteen
-// points gate a path, and adopt.layout gates a rename - which arrives as a shell command
+// It cannot cover everything, and says so rather than implying it does. Most points gate a
+// path, and adopt.layout gates a rename - which arrives as a shell command
 // rather than a write, so this hook reads Bash too. Renaming what a repository already has
 // is the single most destructive thing an adoption does, because it looks like tidying: one
 // unasked move put seventy-eight files under different names and broke fifty-three links.
 // Only paths git already tracks count - a file the adoption itself created a minute ago is
-// its own to move. adopt.continue gates a phase boundary, which is not observable here at
-// all; the static check and human review carry that one.
+// its own to move. The rest gate something this hook cannot see - a phase boundary, a commit,
+// a layout that does not exist yet; the static check and human review carry those.
 //
 // Fail-close. No transcript means the question cannot be shown to have happened, and a
 // guard that waves work through when it has no evidence is the exact defect it was built
