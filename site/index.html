@@ -149,6 +149,11 @@
   .eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;
     letter-spacing:.06em;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line);
     border-radius:999px;padding:7px 14px;margin-bottom:26px}
+  /* An author `display` beats the UA sheet's `[hidden]{display:none}`, so the badge has to
+     opt back in: without this the adoptions pill renders its placeholder 0 on every load and
+     keeps showing it whenever the stats endpoint is unreachable, which is the one state the
+     fetch below deliberately leaves it in. */
+  .eyebrow[hidden]{display:none}
   .eyebrow .pip{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 12px var(--orange);animation:blink 2.6s ease-in-out infinite}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
   @media (prefers-reduced-motion: reduce){.eyebrow .pip{animation:none}}

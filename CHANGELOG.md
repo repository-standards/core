@@ -33,6 +33,12 @@ it clears, more than the 900px breakpoint that dropped it under the headline ass
 technical, so the page scrolled sideways and the sticker was cut. The breakpoint now sits at
 1600px, and the hero clips horizontally as a backstop rather than growing a scrollbar.
 
+The badge also could not hide itself. It carries `hidden` until the adoption-stats Worker
+answers, and the fetch's failure path leaves it there on purpose, but an author `display`
+declaration beats the UA sheet's `[hidden]{display:none}` - so the pill rendered its
+placeholder `0` on every load and would have kept showing `0` for as long as the endpoint was
+unreachable. `.eyebrow[hidden]` now opts back in.
+
 Measured in a browser at 375, 900, 1280, 1440, 1600, 1601 and 1680px, in both languages: the
 document never exceeds the window and the badge stays centred on its own line.
 

@@ -45,6 +45,11 @@ acceptance criterion or contract in this spec changes; noted for the same reason
 above, and because neither defect is reachable by `site-check`, which reads the file rather than
 rendering it.
 
+The same pass fixed a third defect on the badge: it carries `hidden` until the adoption-stats
+Worker answers and the fetch's failure path leaves it there, but `.eyebrow`'s author `display`
+declaration outranked the UA sheet's `[hidden]{display:none}`, so the placeholder `0` rendered
+on every load. Also layout-only against this spec, and also outside what `site-check` can see.
+
 ## Scope
 
 The docsite generator, the site-check gate, and the `site/` directory they operate on. Repo-own tooling - never shipped.
