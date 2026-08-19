@@ -39,6 +39,19 @@ clients get them by reference (ADR-004), never as copies.
 | **Lifecycle** - ships and stays (the standard in daily use) | the 22 under `standard/.claude/skills/`: `spec-specify`, `spec-clarify`, `spec-plan`, `spec-tasks`, `spec-implement` (the engine, extracted from Spec Kit - ADR-015), `discovery-digest`, `spec-impact`, `spec-update`, `spec-reconcile`, `add-to-backlog`, `pre-pr-review`, `update-to-latest`, `sprint-open`, `sprint-close`, `timeline-update`, `adr-write`, `bdr-write`, `product-write`, `personas-write`, `idea-write`, `record-run`, `show-backlog` | ship with the tree and stay - they ARE the ways of working |
 | **Transition** - getting TO the standard | `skills/align-to-standards/` (one router: greenfield / brownfield / update phases) | NEVER shipped - run from a checkout of this repo |
 
+**The format is not ours, and that is the point.** Both classes are
+[Agent Skills](https://agentskills.io/specification) - the open format published
+2025-12-18 and read unmodified by several dozen agent products - so a skill written here
+is portable by construction, and `.agents/skills` is a move rather than a port.
+`node tools/skill-format-check.mjs` keeps that true. Writing a new skill, or reworking
+one, starts at the format's own guidance rather than at our taste: [best
+practices](https://agentskills.io/skill-creation/best-practices),
+[optimizing descriptions](https://agentskills.io/skill-creation/optimizing-descriptions),
+[evaluating skills](https://agentskills.io/skill-creation/evaluating-skills),
+[using scripts](https://agentskills.io/skill-creation/using-scripts). What this project
+took from where, and where it deliberately differs, is
+[`ATTRIBUTIONS.md`](ATTRIBUTIONS.md).
+
 ## Working here
 
 - **Checks before any PR:** `node tools/gates.mjs` - one command, and it is the whole set.
