@@ -290,9 +290,9 @@ fi
 # == elicitation guard ==
 # Node, not bash, and it reads a written path rather than a command - so it needs its own
 # payload and cannot go through check(). What it shares with the rest is the failure mode:
-# it says nothing when it allows, so a dead one is indistinguishable from a quiet one. These
-# three cases are the minimum that tells them apart - one refusal, one pass-through, and one
-# path it must leave alone entirely.
+# it says nothing when it allows, so a dead one is indistinguishable from a quiet one. Each
+# thing it watches therefore gets a refusal and a pass-through: a write to a gated artifact,
+# a declared stub, a path it must leave alone, and a rename of something already tracked.
 echo "== elicitation guard"
 ELICIT="${HOOKS}/elicitation-guard.mjs"
 if [ ! -f "${ELICIT}" ]; then
@@ -324,6 +324,21 @@ else
     "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/personas.md","content":"adopt.personas: absent"}}')"
   assert "a path no point gates is left alone" allow \
     "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"src/index.ts"}}')"
+  # A rename reaches the agent as a shell command, not a write, and it is the move that did
+  # the damage this guard exists for. The tracked path is taken from whatever repository this
+  # runs in rather than named: the script ships, and no two repositories track the same files.
+  TRACKED="$(git ls-files 2>/dev/null | head -1)"
+  if [ -z "${TRACKED}" ]; then
+    printf '  FAIL nothing tracked here, so the rename cases never ran\n'
+    FAILURES=$((FAILURES + 1))
+  else
+    assert "moving a path the repository already tracks is refused" DENY \
+      "$(elicit "$(printf '{"tool_name":"Bash","tool_input":{"command":"git mv %s moved-aside"}}' "${TRACKED}")")"
+    assert "moving a file the repository never tracked is not this guard's business" allow \
+      "$(elicit '{"tool_name":"Bash","tool_input":{"command":"mv untracked-scratch.tmp elsewhere.tmp"}}')"
+    assert "an ordinary shell command is not read as a rename" allow \
+      "$(elicit "$(printf '{"tool_name":"Bash","tool_input":{"command":"ls %s"}}' "${TRACKED}")")"
+  fi
   # Two of the three above expect `allow`, and a guard that never ran also produces no output.
   # So the scorer is shown catching a dead one, on the same payload that legitimately passes.
   CRASH="$(mktemp -d 2>/dev/null || printf '')"

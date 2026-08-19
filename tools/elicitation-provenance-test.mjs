@@ -7,9 +7,14 @@
 // works and leave the part that decides untested.
 //
 // The pair that matters most is the pending rule, asserted in both directions: an artifact
-// the adopter created stops `pending` from being true, and a template that merely shipped
+// the adoption wrote stops `pending` from being true, and a template that merely shipped
 // there does not. Only the first is a finding; the second is every freshly adopted repo, and
 // a guard red on arrival is a guard someone deletes.
+//
+// Which is why each repo here has real git history rather than a flat directory. The rule
+// turns on who wrote a file and when, so a case built without history could only assert that
+// the file exists - and "exists" was the wrong rule twice: it fails every brownfield repo,
+// whose decision records predate the standard by years.
 //
 // Usage: node tools/elicitation-provenance-test.mjs
 // Zone 1 tooling - never shipped.
@@ -29,20 +34,40 @@ const row = (id, state, who = "-", when = "-", landed = "-", backlog = "-") =>
 
 const DECLARED = JSON.parse(readFileSync(POINTS, "utf8")).points;
 
+// Three ages of file, because the check has to tell them apart:
+//   preexisting - committed before the standard arrived. The repository's own work.
+//   adopted     - committed by the adoption, alongside `.standards-version`.
+//   files       - written and not yet committed. The ordinary case: the gate runs mid-run.
+//
 // A repo is only what the case needs: no backlog file unless the case is about one, no
 // artifacts unless the case is about them. Anything written unconditionally would trip the
 // pending rule in every other case and hide what each one is actually asserting.
-function repo({ ledger, backlog = null, files = {}, manifest = null }) {
+function repo({ ledger, backlog = null, files = {}, manifest = null, preexisting = null, adopted = null, git = true }) {
   const dir = mkdtempSync(join(tmpdir(), "prov-"));
+  const write = (rel, body) => {
+    mkdirSync(join(dir, dirname(rel)), { recursive: true });
+    writeFileSync(join(dir, rel), body);
+  };
+  // -c rather than `git config`, so a developer's global hooks, signing key or default
+  // branch name cannot decide whether these cases pass.
+  const g = (...args) =>
+    spawnSync("git", ["-C", dir, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", ...args], { encoding: "utf8" });
+  if (git) g("init", "-q");
+  const commit = (tree, message) => {
+    for (const [rel, body] of Object.entries(tree)) write(rel, body);
+    g("add", "-A");
+    g("commit", "-q", "--no-verify", "-m", message);
+  };
+
+  if (preexisting) commit(preexisting, "the repository's own work, years before any of this");
+  if (adopted) commit({ ".standards-version": "1.1.21\n", ...adopted }, "adopt repository-standards");
+
   mkdirSync(join(dir, ".claude/elicitation"), { recursive: true });
   mkdirSync(join(dir, "docs"), { recursive: true });
   copyFileSync(POINTS, join(dir, ".claude/elicitation/points.json"));
   if (ledger !== null) writeFileSync(join(dir, "docs/adoption-provenance.md"), ledger);
   if (backlog !== null) writeFileSync(join(dir, "backlog.md"), backlog);
-  for (const [rel, body] of Object.entries(files)) {
-    mkdirSync(join(dir, dirname(rel)), { recursive: true });
-    writeFileSync(join(dir, rel), body);
-  }
+  for (const [rel, body] of Object.entries(files)) write(rel, body);
   if (manifest) writeFileSync(join(dir, "standard.manifest.json"), JSON.stringify(manifest, null, 2));
   return dir;
 }
@@ -72,6 +97,21 @@ const CASES = [
     { ledger: HEAD + DECLARED.map((x) => (x.id === "adopt.layout" ? row(x.id, "pending") : row(x.id, "human", "owner", "2026-08-19", "docs/x.md"))).join(""),
       files: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n" } }, PASS],
 
+  // The brownfield pair. A repository that already had decision records is not a repository
+  // that answered a question about them, and reading it that way made this check red on the
+  // first run of every repo worth adopting.
+  ["a record the repository wrote before the adoption is not evidence anyone was asked",
+    { ledger: baseline(), preexisting: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n" } }, PASS],
+  ["the same record, once the adoption edits it, is",
+    { ledger: baseline(), preexisting: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n" },
+      files: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n\n## Revisit when\n" } }, FAIL],
+  ["a record the adoption committed counts too, not only one it left uncommitted",
+    { ledger: baseline(), preexisting: { "README.md": "# app\n" },
+      adopted: { "docs/decision-records/ADR-002-new.md": "# ADR-002\n" } }, FAIL],
+  ["outside a git work tree the pending rule stands down rather than passing quietly",
+    { ledger: baseline(), files: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n" }, git: false },
+    PASS, "not a git work tree"],
+
   ["no ledger at all fails - absence is the state this exists to make visible", { ledger: null }, FAIL],
   ["a required point with no row fails", { ledger: HEAD + row("adopt.intent", "pending") }, FAIL],
   ["a state the point forbids fails", { ledger: baseline({ "adopt.personas": ["inferred"] }) }, FAIL],
@@ -89,11 +129,13 @@ const CASES = [
 ];
 
 let bad = 0;
-for (const [name, spec, expected] of CASES) {
+for (const [name, spec, expected, wants] of CASES) {
   const dir = repo(spec);
   const run = spawnSync("node", [SCRIPT], { cwd: dir, encoding: "utf8" });
   const got = run.status === 0 ? PASS : FAIL;
-  const ok = got === expected;
+  // A case that stands down has to be seen standing down. Passing is what a working check
+  // and a check that gave up look like from the exit code alone.
+  const ok = got === expected && (!wants || (run.stdout + run.stderr).includes(wants));
   if (!ok) bad++;
   console.log(`  ${ok ? "ok  " : "FAIL"}  ${name}${ok ? "" : `\n          got ${got}: ${(run.stdout + run.stderr).trim().split("\n").slice(0, 3).join(" / ")}`}`);
   rmSync(dir, { recursive: true, force: true });

@@ -325,13 +325,15 @@ Records to `docs/adoption-provenance.md`: the `adopt.intent` row takes the state
 
 ### `[adopt.layout]` Directory naming and structure
 
-Fires **before moving or renaming any directory that already exists in the target**.
+Fires **before moving or renaming any path the target repository already tracks**. The hook enforces this one on `Bash`, not on `Write`: a rename reaches the agent as `git mv`, and until it did, this point was the only required one nothing could enforce.
 
 Call `AskUserQuestion` with the header `[adopt.layout]` and the question:
 
-> This repository already names and arranges things its own way, and the standard names them differently. Adopt the standard's layout, or keep yours and map the standard onto it?
+> This repository already names and arranges things its own way, and the standard names them differently. Move what you have into the standard's layout, keep yours and map the standard onto it, or decide case by case?
 
-Options, in order: **keep ours** / **adopt the standard's** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
+Options, in order: **keep ours** / **move ours into the standard's layout** / **case by case, ask me per directory** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
+
+Moving is a real answer, not the wrong one. Material that is already there in the wrong shape is usually worth reshaping rather than leaving beside a parallel structure - two homes for decision records is worse than either home. What must not happen is the reshaping happening by default, unmentioned, as a side effect of tidying.
 
 Never `inferred`: a naming convention is a preference, not a fact you can read off the repo. A repository's own naming is a decision somebody already made, and overwriting it silently is the most destructive thing an adoption can do, because it looks like tidying.
 

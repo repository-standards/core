@@ -12,8 +12,13 @@
 // before the write lands, and only a hook is not the model's decision to make.
 //
 // It cannot cover everything, and says so rather than implying it does. Twelve of eighteen
-// points gate a path. adopt.layout gates a rename and adopt.continue a phase boundary -
-// neither is a file write, so the static check and human review carry those two.
+// points gate a path, and adopt.layout gates a rename - which arrives as a shell command
+// rather than a write, so this hook reads Bash too. Renaming what a repository already has
+// is the single most destructive thing an adoption does, because it looks like tidying: one
+// unasked move put seventy-eight files under different names and broke fifty-three links.
+// Only paths git already tracks count - a file the adoption itself created a minute ago is
+// its own to move. adopt.continue gates a phase boundary, which is not observable here at
+// all; the static check and human review carry that one.
 //
 // Fail-close. No transcript means the question cannot be shown to have happened, and a
 // guard that waves work through when it has no evidence is the exact defect it was built
@@ -37,6 +42,7 @@
 // allow, so an exit code is the one signal that cannot be told apart from a crash.
 
 import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 
 // Core keeps the shipped tree under standard/; an adopting repo unpacks it at the root.
 // Try both rather than assume, so the guard behaves the same on either side of adoption.
@@ -66,10 +72,8 @@ process.stdin.on("end", () => {
   try { call = JSON.parse(payload); } catch { allow(); }
 
   const tool = call.tool_name || "";
-  if (tool !== "Write" && tool !== "Edit" && tool !== "NotebookEdit") allow();
-
-  const target = (call.tool_input?.file_path || "").replace(/\\/g, "/");
-  if (!target) allow();
+  const WRITE_TOOLS = ["Write", "Edit", "NotebookEdit"];
+  if (!WRITE_TOOLS.includes(tool) && tool !== "Bash") allow();
 
   let declared = null;
   for (const p of POINTS) {
@@ -81,9 +85,53 @@ process.stdin.on("end", () => {
   const rx = (g) =>
     new RegExp("(^|/)" + g.split("**").map((p) => p.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^/]*")).join(".*") + "$");
 
-  const gating = (declared.points || []).filter((p) =>
-    (p.gate_globs || []).some((g) => rx(g).test(target)),
-  );
+  // Tracked means the repository had it before this session started caring. That is the whole
+  // distinction worth drawing: moving somebody's directory needs their say-so, moving the file
+  // you wrote two steps ago does not. Outside a git work tree there is no repository naming to
+  // overwrite, so nothing to refuse - this is the one place passing is the correct answer to
+  // an unanswerable question rather than a hole in a fail-closed guard.
+  const tracked = (path) =>
+    spawnSync("git", ["ls-files", "--error-unmatch", "--", path], { encoding: "utf8" }).status === 0;
+
+  // Segment-by-segment, like the other guards here, so a harmless command chained before a
+  // move cannot vouch for it. `git -C <dir> mv` is spelled out because it is the form an agent
+  // reaches for when it does not want to cd.
+  const movedFromUnder = (cmd) => {
+    const out = [];
+    for (const segment of cmd.split(/\n|;|&&|\|\||\|/)) {
+      const m = /^\s*(?:git\s+(?:-C\s+\S+\s+)?)?mv\s+(.+)$/.exec(segment);
+      if (!m) continue;
+      const tokens = (m[1].match(/"[^"]*"|'[^']*'|\S+/g) || []).map((a) => a.replace(/^["']|["']$/g, ""));
+      // `mv -t DIR src...` names its destination first, so the usual last-argument rule reads
+      // the only source as a destination and finds nothing to check.
+      const sources = [];
+      let target = true;
+      for (let i = 0; i < tokens.length; i++) {
+        const t = tokens[i];
+        if (!t) continue;
+        if (t === "-t" || t === "--target-directory") { i++; target = false; continue; }
+        if (t.startsWith("-")) continue;
+        sources.push(t);
+      }
+      if (target) sources.pop();
+      for (const src of sources) if (tracked(src) && !out.includes(src)) out.push(src);
+    }
+    return out;
+  };
+
+  let target, verb, gating;
+  if (tool === "Bash") {
+    const moved = movedFromUnder(String(call.tool_input?.command || ""));
+    if (!moved.length) allow();
+    target = moved.join(", ");
+    verb = "moving";
+    gating = (declared.points || []).filter((p) => p.gate_renames);
+  } else {
+    target = (call.tool_input?.file_path || "").replace(/\\/g, "/");
+    if (!target) allow();
+    verb = "writing";
+    gating = (declared.points || []).filter((p) => (p.gate_globs || []).some((g) => rx(g).test(target)));
+  }
   if (!gating.length) allow();
 
   // Two places a declaration can live, and both count. The ledger is the real record - one
@@ -148,7 +196,7 @@ process.stdin.on("end", () => {
   const p = missing[0];
   const stubStates = (p.allowed_provenance || []).filter((s) => s === "absent" || s === "inferred");
   deny(
-    `Refused: writing ${target} needs [${p.id}] answered first.\n\n` +
+    `Refused: ${verb} ${target} needs [${p.id}] answered first.\n\n` +
     `  ${p.asks}\n\n` +
     `Call AskUserQuestion with the header [${p.id}]. Three answers, always:\n` +
     `  - they answer now                      -> provenance human\n` +
