@@ -82,6 +82,8 @@ const CASES = [
   ["a nested path a single * must not reach is left alone", { tool_name: "Write", tool_input: { file_path: "docs/validation/human-prompting/runs/old/a.json" } }, ALLOW],
   ["an absolute path still matches", { tool_name: "Write", tool_input: { file_path: "/home/x/repo/backlog.md" } }, DENY],
   ["Edit is gated exactly as Write is", { tool_name: "Edit", tool_input: { file_path: "PRODUCT.md" } }, DENY],
+  ["NotebookEdit is gated through notebook_path, not waved through", { tool_name: "NotebookEdit", tool_input: { notebook_path: "docs/personas.md" } }, DENY],
+  ["NotebookEdit on an ungated notebook is left alone", { tool_name: "NotebookEdit", tool_input: { notebook_path: "notebooks/scratch.ipynb" } }, ALLOW],
 
   // Renames, which reach the agent as shell commands rather than writes. The pair that
   // carries the rule is tracked-versus-untracked: reshaping what a repository already has

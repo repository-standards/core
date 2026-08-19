@@ -71,7 +71,7 @@ it as the known gap rather than claiming coverage.
 | Input | Format | Whose shape it is |
 |---|---|---|
 | `.claude/elicitation/points.json` | JSON | this capability's. `points[]` with `id`, `asks`, `skill`, `required`, `allowed_provenance[]`, `gate_globs[]`, `why`, `evidence`. |
-| the `PreToolUse` payload | JSON on stdin | Claude Code's: `tool_name`, `tool_input.file_path`, `tool_input.content`, `tool_input.new_string`, `transcript_path`. No other field is read. |
+| the `PreToolUse` payload | JSON on stdin | Claude Code's: `tool_name`, `tool_input.file_path` (or `tool_input.notebook_path` - NotebookEdit's name for its target), `tool_input.content`, `tool_input.new_string`, `tool_input.new_source`, `transcript_path`. No other field is read. |
 | the session transcript | JSONL | Claude Code's. Read structurally: an entry whose `message.role` is `assistant` and whose `content[]` holds a `tool_use` named `AskUserQuestion`. Textual matching is explicitly not used - see Invariants. |
 | `docs/adoption-provenance.md` | markdown table | this capability's: six cells, `point / state / who / when / landed in / backlog row`. Parsed by position. |
 | `standard.manifest.json` | JSON | [verify-engine](../verify-engine/spec.md)'s; read here for `files[].path` and `files[].sha256` only, to tell a shipped template from an adopter's artifact. Never written. |
