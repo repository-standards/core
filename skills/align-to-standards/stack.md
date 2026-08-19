@@ -68,4 +68,4 @@ Options, in order: **confirm the detection** / **a different stack** / **suggest
 
 Detection is evidence and evidence is `inferred`; the confirmation is what makes it `human`. Name what the registry actually has, so the answer is informed rather than a guess that gets downgraded three steps later.
 
-Records to `stack.manifest.json` as `point_id: green.stack` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `green.stack` row takes the state, who answered, the date, and `stack.manifest.json` as where the answer landed.

@@ -86,11 +86,20 @@ process.stdin.on("end", () => {
   );
   if (!gating.length) allow();
 
-  // Written content, whichever tool carried it. The two notations a repo actually uses -
-  // YAML frontmatter and a JSON key - are one pattern, so neither format is privileged.
-  const written = String(call.tool_input?.content ?? call.tool_input?.new_string ?? "");
-  const declares = (id, state) =>
-    new RegExp(`(^|[\\s"'])${id.replace(/\./g, "\\.")}["']?\\s*:\\s*["']?${state}\\b`, "m").test(written);
+  // Two places a declaration can live, and both count. The ledger is the real record - one
+  // table a reviewer reads in a single pass - and the content of the write itself is the
+  // bootstrap case, for the write that creates the ledger or precedes it.
+  const ledger = ["docs/adoption-provenance.md", "standard/docs/adoption-provenance.md"]
+    .map((f) => { try { return readFileSync(f, "utf8"); } catch { return ""; } })
+    .join("\n");
+  const written = String(call.tool_input?.content ?? call.tool_input?.new_string ?? "") + "\n" + ledger;
+  // Three spellings, one pattern: YAML `id: state`, JSON `"id": "state"`, and the ledger's
+  // `| \`id\` | state |`. A repo should not have to learn a notation to be honest.
+  const declares = (id, state) => {
+    const k = id.replace(/\./g, "\\.");
+    return new RegExp(`(^|[\\s"'])${k}["']?\\s*:\\s*["']?${state}\\b`, "m").test(written)
+      || new RegExp(`\\|\\s*\`?${k}\`?\\s*\\|\\s*${state}\\s*\\|`, "m").test(written);
+  };
   const stubbed = (p) =>
     (p.allowed_provenance || []).some((state) => state !== "human" && state !== "provisional" && declares(p.id, state));
 

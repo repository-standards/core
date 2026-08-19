@@ -189,7 +189,7 @@ Options, in order: **here it is** / **suggest it, I will check later** (`provisi
 
 Discovery already gives materials a home with their provenance; it just never asked whose they were.
 
-Records to `the discovery record` as `point_id: discover.materials` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `discover.materials` row takes the state, who answered, the date, and `the discovery record` as where the answer landed.
 
 ### `[discover.decisions]` Settled versus still open
 
@@ -203,4 +203,4 @@ Options, in order: **I will mark them** / **suggest it, I will check later** (`p
 
 A settled decision and an assumed one are indistinguishable once written down.
 
-Records to `the discovery record and any decision record it produces` as `point_id: discover.decisions` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `discover.decisions` row takes the state, who answered, the date, and `the discovery record and any decision record it produces` as where the answer landed.

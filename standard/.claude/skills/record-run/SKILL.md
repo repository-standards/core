@@ -142,4 +142,4 @@ Options, in order: **mine** / **somebody else's** / **do not record it**
 
 Only `human` is valid here. The skill that records human participation is the one that recorded a participant who did not exist: a run framed as an external adopter's, with an anonymity caveat nobody had asked for, was the author's own. A claim about a person is never `inferred`.
 
-Records to `docs/validation/**/runs/*.json` as `point_id: record.participation` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `record.participation` row takes the state, who answered, the date, and `docs/validation/**/runs/*.json` as where the answer landed.

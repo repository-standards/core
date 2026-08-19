@@ -386,7 +386,7 @@ Options, in order: **write them now** / **suggest it, I will check later** (`pro
 
 A decision record's whole value is that a person decided it. Never append to a record somebody else wrote without asking.
 
-Records to `docs/decision-records/` as `point_id: adopt.records` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `adopt.records` row takes the state, who answered, the date, and `docs/decision-records/` as where the answer landed.
 
 ### `[adopt.personas]` Who the product is for
 
@@ -400,7 +400,7 @@ Options, in order: **define them** / **suggest it, I will check later** (`provis
 
 Personas are a claim about people outside the repository, and nothing in the code can settle them. A suggested roster is never closed.
 
-Records to `docs/personas.md` as `point_id: adopt.personas` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `adopt.personas` row takes the state, who answered, the date, and `docs/personas.md` as where the answer landed.
 
 ### `[adopt.backlog]` Seeding the backlog
 
@@ -414,4 +414,4 @@ Options, in order: **seed it, mine** / **seed it, unassigned** / **suggest it, I
 
 Assigning work to a named person is an act with consequences outside the repository.
 
-Records to `backlog.md` as `point_id: adopt.backlog` with the provenance state the answer implies.
+Records to `docs/adoption-provenance.md`: the `adopt.backlog` row takes the state, who answered, the date, and `backlog.md` as where the answer landed.
