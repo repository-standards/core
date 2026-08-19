@@ -93,6 +93,15 @@ failure, because most people take the recommendation. Keeping the repository's o
 on the list - a standard imposed without consent gets reverted - but never first, and `null`
 is reserved for a question with no such axis, which is consent itself.
 
+**One point, every path it is asked on.** The declaration covers the file that asks the
+question, and a question asked on two paths is two option lists - the second one written by
+whoever happened to need it, held to nothing. The first field run reached the conventions
+question on the brownfield path, where no file declared it, invented it, and recommended that
+the repository's own conventions win; the greenfield copy of the same point had led with the
+standard's defaults since the day it was written. A point therefore names every file that asks
+it and the check reads all of them, because a rule enforced at one of two call sites is a rule
+with a documented way around it.
+
 **The declared points are a floor, not a ceiling.** They are what a hook can refuse a write
 for, and it can only refuse what somebody wrote down; the questions worth asking in any real
 repository are mostly ones no list anticipated. Inventing them is the product working. So the
@@ -133,6 +142,29 @@ every row is pending because nothing has happened yet. A guard that is red on ar
 people delete rather than satisfy, and it would have taught exactly the wrong lesson about
 what these states mean.
 
+**Every point declares a scope, and it decides what the guard accepts after the adoption.** A
+`repository`-scoped answer belongs to the repository - who it is for, how its records are kept,
+which profile it runs at - and a **committed** ledger row answering it satisfies the guard from
+then on. Committed rather than written, because reading the working file would let one run add
+the row and the artifact in the same breath, which is the laundering the transcript check exists
+to close. A `work`-scoped answer belongs to the piece of work in front of the run - this
+specification, this digest, this run - and no row settles it.
+
+Without the distinction the guard is not strict, it is unlivable: the points gating
+`docs/decision-records/**` and `docs/personas.md` are answered during the adoption, and an
+ordinary `adr-write` months later would be refused until it re-asked an adoption question. The
+opposite mistake is quieter and worse - treat every point as repository-scoped and one row
+written at adoption time licenses every artifact the repository will ever write.
+
+**A point is declared at every path that asks it, and every skill that writes a gated path
+carries the call site.** `skill` and `file` both take lists, and the static check requires a call
+site in each with the same recommended answer. The rule was learned twice. Once from the field
+run, which asked the conventions question on a path no file declared and recommended the
+repository's own conventions while the declared path led with the standard's defaults. Once from
+the spec flow, where three points named `spec-clarify` alone while `spec-specify`, `spec-update`
+and `spec-reconcile` all write the file those points gate - a refusal with no instructions in
+three of the four skills that hit it.
+
 Claims about human participation are separated from claims about machinery. Every validation
 run record carries `provenance`: `none` (measures tooling, nobody prompted), `unverified`
 (claims a person, no transcript), or `human` (claims it and names a transcript that must
@@ -142,6 +174,11 @@ exist on disk).
 
 - **Adoption gets slower and louder.** It stops at each point instead of proceeding on an
   assumption. That is the product working, not the product regressing.
+- **Writing a specification is now an interview.** `spec-specify` asks the boundary before it
+  writes one, `spec-clarify` asks with the tool rather than rendering a markdown table nobody
+  downstream can see, `spec-update` asks before a boundary moves and `spec-reconcile` asks before
+  a criterion is rewritten to match what was built. The flagship flow made zero `AskUserQuestion`
+  calls before this.
 - **An adopting repo receives a hook that can refuse its own agent's writes.** It ships
   enabled. A repo that wants it off deletes the matcher, visibly, in a diff.
 - **The old validation numbers stop being quotable as evidence of guided adoption.** Nothing
