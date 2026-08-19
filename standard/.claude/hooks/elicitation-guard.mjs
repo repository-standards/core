@@ -149,7 +149,7 @@ process.stdin.on("end", () => {
     verb = "moving";
     gating = (declared.points || []).filter((p) => p.gate_renames);
   } else {
-    target = (call.tool_input?.file_path || "").replace(/\\/g, "/");
+    target = String(call.tool_input?.file_path ?? call.tool_input?.notebook_path ?? "").replace(/\\/g, "/");
     if (!target) allow();
     verb = "writing";
     gating = (declared.points || []).filter((p) => (p.gate_globs || []).some((g) => rx(g).test(target)));
@@ -162,7 +162,7 @@ process.stdin.on("end", () => {
   const ledger = ["docs/adoption-provenance.md", "standard/docs/adoption-provenance.md"]
     .map((f) => { try { return readFileSync(f, "utf8"); } catch { return ""; } })
     .join("\n");
-  const written = String(call.tool_input?.content ?? call.tool_input?.new_string ?? "") + "\n" + ledger;
+  const written = String(call.tool_input?.content ?? call.tool_input?.new_string ?? call.tool_input?.new_source ?? "") + "\n" + ledger;
   // Three spellings, one pattern: YAML `id: state`, JSON `"id": "state"`, and the ledger's
   // `| \`id\` | state |`. A repo should not have to learn a notation to be honest.
   const declares = (id, state) => {
