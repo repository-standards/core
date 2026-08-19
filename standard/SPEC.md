@@ -1,6 +1,6 @@
 # The repository-standards spec
 
-Version 1.1.22 - the spec is versioned with the standard (`VERSION`). **The standard is
+Version 1.1.23 - the spec is versioned with the standard (`VERSION`). **The standard is
 living and the only target is latest** (ADR-025): a repo complies against the state it
 last aligned to, recorded in its own `.standards-version`. That record is a bookmark -
 it makes an update a delta and self-verify a meaningful assertion, and it never names a
