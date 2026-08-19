@@ -28,6 +28,10 @@ import { tmpdir } from "node:os";
 const SCRIPT = resolve("standard/scripts/elicitation-provenance.mjs");
 const POINTS = resolve("standard/.claude/elicitation/points.json");
 
+// The record is the table; the harvest section sits below it and is where the parser stops.
+// Fixtures build the same order the shipped ledger has, or they would be testing a shape no
+// repository carries.
+const HARVEST = "\n## Questions this run asked that no point declares\n";
 const HEAD = "| Point | State | Answered by | When | Landed in | Backlog row |\n|---|---|---|---|---|---|\n";
 const row = (id, state, who = "-", when = "-", landed = "-", backlog = "-") =>
   `| \`${id}\` | ${state} | ${who} | ${when} | ${landed} | ${backlog} |\n`;
@@ -74,10 +78,15 @@ function repo({ ledger, backlog = null, files = {}, manifest = null, preexisting
 
 const sha = (body) => createHash("sha256").update(Buffer.from(body)).digest("hex");
 const baseline = (override = {}) =>
-  HEAD + DECLARED.map((p) => row(p.id, override[p.id]?.[0] ?? "pending", ...(override[p.id]?.slice(1) ?? []))).join("");
+  HEAD + DECLARED.map((p) => row(p.id, override[p.id]?.[0] ?? "pending", ...(override[p.id]?.slice(1) ?? []))).join("") + HARVEST;
 
 const TEMPLATE = "# Personas\n\n<who this repo is for>\n";
-const ANSWERED = { "adopt.backlog": ["human", "owner", "2026-08-19", "backlog.md"] };
+// backlog.md is gated twice - by who owns the rows, and by whether tracked work lives here
+// at all - so a fixture that writes one has to have answered both.
+const ANSWERED = {
+  "adopt.backlog": ["human", "owner", "2026-08-19", "backlog.md"],
+  "adopt.tracker": ["human", "owner", "2026-08-19", "backlog.md"],
+};
 
 const PASS = "PASS", FAIL = "FAIL";
 const CASES = [
@@ -94,7 +103,7 @@ const CASES = [
   // adopt.layout gates a rename, not a file. Nothing here can reach it, and the check must
   // say so by passing rather than by inventing a trigger it cannot observe.
   ["a point that gates no path stays pending even in a repo that has built things",
-    { ledger: HEAD + DECLARED.map((x) => (x.id === "adopt.layout" ? row(x.id, "pending") : row(x.id, "human", "owner", "2026-08-19", "docs/x.md"))).join(""),
+    { ledger: HEAD + DECLARED.map((x) => (x.id === "adopt.layout" ? row(x.id, "pending") : row(x.id, "human", "owner", "2026-08-19", "docs/x.md"))).join("") + HARVEST,
       files: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n" } }, PASS],
 
   // The brownfield pair. A repository that already had decision records is not a repository
@@ -105,15 +114,32 @@ const CASES = [
   ["the same record, once the adoption edits it, is",
     { ledger: baseline(), preexisting: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n" },
       files: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n\n## Revisit when\n" } }, FAIL],
+  // points.json rides in the adoption commit because that is where a real adoption puts it -
+  // the layer lands before anything it gates. Committing the adoption without it would be
+  // describing an update instead, which is the case below and behaves differently on purpose.
   ["a record the adoption committed counts too, not only one it left uncommitted",
     { ledger: baseline(), preexisting: { "README.md": "# app\n" },
-      adopted: { "docs/decision-records/ADR-002-new.md": "# ADR-002\n" } }, FAIL],
+      adopted: { "docs/decision-records/ADR-002-new.md": "# ADR-002\n", ".claude/elicitation/points.json": readFileSync(POINTS, "utf8") } }, FAIL],
+  // The updater's case, and the reason the boundary is the point list rather than
+  // `.standards-version`. This repo adopted the standard long ago and is only now taking the
+  // elicitation layer: it has decision records, personas and a backlog, none of which any
+  // question could have preceded. Measuring from the older marker would count all of it and
+  // hand every existing adopter a ledger that is red before they have done anything - which
+  // is how a guard gets deleted rather than followed.
+  ["a repo taking this layer years after it adopted is not judged for what it wrote before",
+    { ledger: baseline(),
+      preexisting: { "README.md": "# app\n" },
+      adopted: { "docs/decision-records/ADR-002-old.md": "# ADR-002\n", "docs/personas.md": "# Personas\n\nBogdan.\n" } }, PASS],
   ["outside a git work tree the pending rule stands down rather than passing quietly",
     { ledger: baseline(), files: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n" }, git: false },
     PASS, "not a git work tree"],
 
   ["no ledger at all fails - absence is the state this exists to make visible", { ledger: null }, FAIL],
-  ["a required point with no row fails", { ledger: HEAD + row("adopt.intent", "pending") }, FAIL],
+  // Dropping the section is how the standard would stop learning: the run still passes every
+  // point, and the questions it had to invent leave no trace at all.
+  ["a ledger with no section for the questions the point list did not have fails",
+    { ledger: baseline().replace(HARVEST, "\n") }, FAIL],
+  ["a required point with no row fails", { ledger: HEAD + row("adopt.intent", "pending") + HARVEST }, FAIL],
   ["a state the point forbids fails", { ledger: baseline({ "adopt.personas": ["inferred"] }) }, FAIL],
   ["provisional with no backlog row named fails", { ledger: baseline({ "adopt.personas": ["provisional"] }) }, FAIL],
   ["provisional naming a backlog row that does not exist fails",
@@ -122,10 +148,14 @@ const CASES = [
     { ledger: baseline({ ...ANSWERED, "adopt.personas": ["provisional", "-", "-", "docs/personas.md", "BL-77"] }), backlog: "| BL-77 | verify the personas with the owner |" }, PASS],
   ["human without who or when fails", { ledger: baseline({ "adopt.personas": ["human"] }) }, FAIL],
   ["human naming who and when passes", { ledger: baseline({ "adopt.personas": ["human", "owner", "2026-08-19", "docs/personas.md"] }) }, PASS],
-  ["a row for a point nobody declares fails rather than being ignored", { ledger: baseline() + row("adopt.renamed-away", "human", "owner", "2026-08-19") }, FAIL],
-  ["a row with the wrong number of cells is reported, not skipped", { ledger: baseline() + "| `adopt.gone` | human | owner |\n" }, FAIL],
+  ["a row for a point nobody declares fails rather than being ignored", { ledger: baseline().replace(HARVEST, row("adopt.renamed-away", "human", "owner", "2026-08-19") + HARVEST) }, FAIL],
+  ["a row with the wrong number of cells is reported, not skipped", { ledger: baseline().replace(HARVEST, "| `adopt.gone` | human | owner |\n" + HARVEST) }, FAIL],
+  // The harvest table names candidate ids in a four-cell row - which is what the rule above
+  // rejects. The record is the table before that heading, and nothing after it is a row.
+  ["a candidate id written into the harvest table is not read as a malformed record row",
+    { ledger: baseline() + "\n| Question asked | Which answer led | What was chosen | Worth declaring? |\n|---|---|---|---|\n| `adopt.tracker` | fold it in | fold it in | yes |\n" }, PASS],
   ["a fully answered ledger passes on a repo that built things",
-    { ledger: HEAD + DECLARED.map((p) => row(p.id, "human", "owner", "2026-08-19", "docs/x.md")).join(""), files: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n" } }, PASS],
+    { ledger: HEAD + DECLARED.map((p) => row(p.id, "human", "owner", "2026-08-19", "docs/x.md")).join("") + HARVEST, files: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n" } }, PASS],
 ];
 
 let bad = 0;

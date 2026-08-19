@@ -45,6 +45,7 @@ jobs:
         # skipped by an agent, so it is also the one whose silence would go unnoticed.
         run: |
           node tools/elicitation-points-check.mjs
+          node tools/elicitation-points-check-test.mjs
           node tools/elicitation-check-test.mjs
           node tools/elicitation-guard-test.mjs
           node tools/elicitation-provenance-test.mjs

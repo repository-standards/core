@@ -256,7 +256,7 @@
         "sprint-close/SKILL.md": "824301f0205dfa2200135b9c91d77fbf500086c37d2b710f317c1e47246be698",
         "sprint-open/SKILL.md": "f611d74e2ee6904718c07af2497e1accd9578efbff30b2dbf414f5e2f53750ea",
         "timeline-update/SKILL.md": "6e11d5c5540aff03f01a98b9a74498067715bd75104a323dc8110a5bb2c12339",
-        "update-to-latest/SKILL.md": "20d0ff9344b9aebbb1f0a7964f0b56195e3dfecc6add88e056a3b9ff8dfd5feb"
+        "update-to-latest/SKILL.md": "914515c0796bc42fb71eddaacd4567647010b786fe3814af0bc23a2486182a71"
       }
     },
     {
@@ -614,8 +614,8 @@
       "since": "0.9.23",
       "rule": "R28",
       "sha256": {
-        "README.md": "479a38f0a9166309522a5c9e8e9b27b2f77fd2fbd575ab59a6750713157b7c67",
-        "points.json": "7f9e080fa0f9f5646334eb614dc7c2348ca51a3910251aec045604f578e12b04"
+        "README.md": "2b9e2a6c6addb9b3f1910e1b299ba370c2caaee4bf808df63a70ecef8d0b1749",
+        "points.json": "20117d90b34bab6ceed1dcdb92c955e86aafbe5d6e39727edf766eeb48d5d715"
       }
     },
     {
@@ -645,7 +645,7 @@
       "profile": "core",
       "since": "0.9.23",
       "rule": "R28",
-      "sha256": "59afb33b32865ff0c1bbbc0b9498d48ff6ee458a34deff7651e09d5cd797b6bf"
+      "sha256": "cdd72c39b67542066555ac13ccb3d537f59974e622052c4b4f49b346b787f51d"
     }
   ],
   "references": [

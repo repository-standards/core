@@ -24,10 +24,29 @@
   },
   "points": [
     {
+      "id": "adopt.language",
+      "skill": "align-to-standards",
+      "file": "intake.md",
+      "asks": "Which language do the written artifacts use - code and commits in English with docs and specs in yours, all of it in English, or all of it in yours?",
+      "recommended": "code and commits in English, docs and specs in mine",
+      "why": "AGENTS.md has carried a `Working language` slot from the beginning and nothing ever asked for it, so it gets filled with whatever the agent was already writing in - which is English, because the standard is written in English. That is a decision about the repository made by accident. The split leads because it is the one the standard's own template names, and because it is what most teams actually want: the toolchain speaks English, the people do not have to.",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional",
+        "inferred"
+      ],
+      "gates": "AGENTS.md - the Working language line under Conventions",
+      "gate_globs": [
+        "AGENTS.md"
+      ]
+    },
+    {
       "id": "adopt.layout",
       "skill": "align-to-standards",
       "file": "intake.md",
       "asks": "This repository already names and arranges things its own way, and the standard names them differently. Move what you have into the standard's layout, keep yours and map the standard onto it, or decide case by case?",
+      "recommended": "move ours into the standard's layout",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -43,6 +62,7 @@
       "skill": "align-to-standards",
       "file": "intake.md",
       "asks": "How far does this adoption go: migrate everything to the standard, adopt selected parts, or assess only and change nothing yet?",
+      "recommended": "migrate",
       "required": true,
       "allowed_provenance": [
         "human"
@@ -60,6 +80,7 @@
       "skill": "align-to-standards",
       "file": "SKILL.md",
       "asks": "Phase finished. Continue to the next one, stop here, or hand the rest back to you?",
+      "recommended": "continue",
       "required": true,
       "allowed_provenance": [
         "human"
@@ -73,6 +94,7 @@
       "skill": "align-to-standards",
       "file": "intake.md",
       "asks": "This repository holds informal working material - scratch notes, PRDs, plans, TODO files - that the standard has a home for. Route it into discovery and the backlog now, list it for you to triage, or leave it untouched?",
+      "recommended": "route it now",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -91,6 +113,7 @@
       "skill": "align-to-standards",
       "file": "onboard.md",
       "asks": "This repository already has decision records, and the standard expects more. Take what is there as it stands, rewrite it into the standard's shape, or leave it and only add new ones? And for the new ones - write them now, leave stubs, or have them drafted for you to check later?",
+      "recommended": "rewrite them into the standard's shape",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -109,6 +132,7 @@
       "skill": "align-to-standards",
       "file": "onboard.md",
       "asks": "Who are the users of this product? Define them yourself, have them suggested from the code for you to correct, or skip personas for now?",
+      "recommended": "define them",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -123,10 +147,30 @@
       ]
     },
     {
+      "id": "adopt.tracker",
+      "skill": "align-to-standards",
+      "file": "onboard.md",
+      "asks": "The standard's backlog.md is the source of truth for tracked work, and this repository already tracks work elsewhere. Fold that into the backlog, keep both with the backlog as the source, or keep the external tracker and let the backlog bridge to it?",
+      "recommended": "fold it into the backlog",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional"
+      ],
+      "gates": "backlog.md - the first row written into it",
+      "why": "Two live trackers is the state a repository drifts into by inertia, and it is worse than either one alone: both stay, both rot differently, and which one is true gets decided per person.",
+      "evidence": "stayget 2026-08-19: the agent asked this question without it being declared anywhere, and recommended keeping the repository's own tracker beside backlog.md - the least convergent answer on offer.",
+      "gate_globs": [
+        "backlog.md",
+        "docs/backlog.md"
+      ]
+    },
+    {
       "id": "adopt.backlog",
       "skill": "align-to-standards",
       "file": "onboard.md",
-      "asks": "Should the adoption seed a backlog, and if so who owns the items - you, or left unassigned?",
+      "asks": "Should the adoption seed a backlog, and if so how is the work attributed - each row naming the role it needs, assigned to you by name, or with nothing said about who does it?",
+      "recommended": "seed it, each row naming the role it needs",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -134,7 +178,7 @@
         "absent"
       ],
       "gates": "backlog.md",
-      "why": "Assigning work to a named person is an act with consequences outside the repository.",
+      "why": "Assigning work to a named person is an act with consequences outside the repository, and in a one- or two-person repo the name is the same on every row, which makes it noise. The role is the part that is always true: it says what kind of work the row is without claiming anybody agreed to it.",
       "evidence": "stayget 2026-08-19: 20 items written with owners and definitions of done, unasked.",
       "gate_globs": [
         "backlog.md"
@@ -145,6 +189,7 @@
       "skill": "align-to-standards",
       "file": "intake.md",
       "asks": "The repository already has agent guards that overlap the standard's. Replace, merge, or keep both?",
+      "recommended": "merge",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -159,6 +204,7 @@
       "skill": "align-to-standards",
       "file": "intake.md",
       "asks": "This adoption touches many files. Split the work into commits how - one per concern, one per phase, or a single change?",
+      "recommended": "per concern",
       "required": false,
       "allowed_provenance": [
         "human",
@@ -174,6 +220,7 @@
       "skill": "align-to-standards",
       "file": "greenfield.md",
       "asks": "What is this going to be, and who is it for?",
+      "recommended": "tell me now",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -190,6 +237,7 @@
       "skill": "align-to-standards",
       "file": "greenfield.md",
       "asks": "Do you have naming and structure conventions you want carried in, or should the standard's defaults apply?",
+      "recommended": "the standard's defaults apply",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -203,6 +251,7 @@
       "skill": "align-to-standards",
       "file": "stack.md",
       "asks": "Which stack, and which profile - core or scale?",
+      "recommended": "confirm the detection",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -217,6 +266,7 @@
       "id": "spec.scope",
       "skill": "spec-clarify",
       "asks": "What is in scope for this specification, and what is explicitly out?",
+      "recommended": "tell me now",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -232,6 +282,7 @@
       "id": "spec.acceptance",
       "skill": "spec-clarify",
       "asks": "What must be true for this to count as done?",
+      "recommended": "tell me now",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -247,6 +298,7 @@
       "id": "spec.unknowns",
       "skill": "spec-clarify",
       "asks": "These points are undetermined. Decide them now, mark them provisional, or leave them open?",
+      "recommended": "decide now",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -260,6 +312,7 @@
       "id": "discover.materials",
       "skill": "discovery-digest",
       "asks": "What existing material should this draw on, and where does it live?",
+      "recommended": "here it is",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -276,6 +329,7 @@
       "id": "discover.decisions",
       "skill": "discovery-digest",
       "asks": "Which of the decisions surfaced here are already settled, and which are still open?",
+      "recommended": "I will mark them",
       "required": true,
       "allowed_provenance": [
         "human",
@@ -291,6 +345,7 @@
       "id": "record.participation",
       "skill": "record-run",
       "asks": "Whose run is this - yours, or someone else's - and may the transcript excerpt be kept as evidence?",
+      "recommended": null,
       "required": true,
       "allowed_provenance": [
         "human"
@@ -303,5 +358,6 @@
       ]
     }
   ],
-  "$gate_globs": "Paths a write must not reach before the point is answered. Only points whose artifact is a file appear here; adopt.layout gates a rename and adopt.continue a phase boundary, neither of which is a path, so the hook cannot see them and the static check and review carry those two. Saying that here beats leaving a reader to assume full coverage."
+  "$gate_globs": "Paths a write must not reach before the point is answered. Only points whose artifact is a file appear here; adopt.layout gates a rename and adopt.continue a phase boundary, neither of which is a path, so the hook cannot see them and the static check and review carry those two. Saying that here beats leaving a reader to assume full coverage.",
+  "$recommended_answer": "Every point declares which answer is recommended, and the skill offers it first. Two axes decide it and both point the same way: the answer that converges on the standard - its layout, its shape, the whole of it - and the answer a person gives now rather than defers. Keeping the repository's own way stays on the list, because a standard imposed without consent gets reverted; it is never the default. Left to choose, an agent recommends the cautious option and adoption becomes an opt-in menu - measured on stayget 2026-08-19, where four of five recommendations pointed at the least convergent answer, including 'keep yours and map' for the layout. null means the point has no such axis: record.participation asks for consent, and consent is never nudged. elicitation-points-check reads this against the skill's own option order, so the two cannot drift apart - it can check the text where it is written, never the question as spoken, because a question asked in the user's own language does not match any string we could hold here."
 }

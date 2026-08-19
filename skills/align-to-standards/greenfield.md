@@ -228,7 +228,7 @@ Call `AskUserQuestion` with the header `[green.conventions]` and the question:
 
 > Do you have naming and structure conventions you want carried in, or should the standard's defaults apply?
 
-Options, in order: **mine, here they are** / **standard defaults** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
+Options, in order: **the standard's defaults apply** (recommended) / **mine, here they are** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
 
 The same decision as `adopt.layout`, one step earlier and far cheaper: the moment to honour somebody's convention is before any file exists.
 
