@@ -220,5 +220,29 @@
         "pattern": "too weak to carry the weight - (\\d+) entries"
       }
     ]
+  },
+  {
+    "id": "entry-line",
+    "what": "the one line an adopter types to start - the landing's animation typed a line of its own from the day the page was built, agreeing neither with the form 0.9.23 removed nor with the short one that replaced it, because nothing tied it to the README it was quoting",
+    "home": {
+      "match": {
+        "file": "README.md",
+        "pattern": "^(adopt this repo to \\S+)$"
+      }
+    },
+    "claims": [
+      {
+        "file": "README.md",
+        "pattern": "^(adopt this repo to \\S+)$"
+      },
+      {
+        "file": "docs/quick-start.md",
+        "pattern": "^> (adopt this repo to \\S+)$"
+      },
+      {
+        "file": "site/index.html",
+        "pattern": "var CMD = \"(adopt this repo to \\S+)\";"
+      }
+    ]
   }
 ]
