@@ -1,6 +1,6 @@
 ---
 name: adr-write
-description: Use when a technical choice gets made that someone will argue about again - "we went with Postgres over Mongo", "we're dropping the queue", "let's use Fastify", "why did we do it this way?". Drafts the decision record from what you say plus what the code and discovery notes already show, then asks only what neither can answer.
+description: Use when a technical choice gets made that someone will argue about again - "we went with Postgres over Mongo", "we're dropping the queue", "let's use Fastify". Drafts the decision record from what you say plus what the code and discovery notes already show, then asks only what neither can answer. This writes a record for a decision just taken; "why did we do it this way?" about a past one is answered from the records that already exist, not by writing a new one.
 ---
 
 # adr-write

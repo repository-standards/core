@@ -234,7 +234,7 @@
       "rule": "R22",
       "sha256": {
         "add-to-backlog/SKILL.md": "68092f72af6e7e4f0c1e3f8a7d2b075729802a81c932990d57c680095302594c",
-        "adr-write/SKILL.md": "2b7121dcd4753fb8ae5ac3805090a2dc910fc63af3ed3efd3afd33bd0e46719c",
+        "adr-write/SKILL.md": "1211db6c93fad3b2b3ba1af6ffbae22e7f427ec2130132bfd5c239a7a2a479ac",
         "bdr-write/SKILL.md": "56395b525b71516f878f888b51bd7ea2f02d76c7cd3f5dfe48faacda4a0e459e",
         "discovery-digest/SKILL.md": "468e4c40ad655d872797b3ec15e02adbe69ea109c75e8a8b9fecf6650424263a",
         "idea-write/SKILL.md": "0c6bf300123b8b7b2be4b9d5d757158bd3a8524be95b858876cfd35e532c68fd",

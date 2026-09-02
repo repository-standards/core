@@ -185,15 +185,29 @@ sentence will each lose that sentence half the time: sharpen both, or merge them
   `/spec-specify`. If a spec already exists, route only entries newer than the
   dossier's `Last reconciled:` stamp through `/spec-clarify` - a dossier is never
   normative and nothing the spec settled gets re-asked (ADR-024).
-- **You are about to research something, or explain how something works** -> search
-  `docs/discovery/` first, **all of it, including entries older than the stamp**. The
+- **You are answering a question about this repo** - what is true, why a decision went the
+  way it did, whether something exists - or you are about to research something, or explain
+  how something works **-> answer from the corpus, and name the file you took it from.** The
+  corpus is `docs/decision-records/` (both streams - an ADR and a BDR bind equally, and the
+  product-side one is what a request usually collides with), `specs/` for behaviour,
+  `docs/discovery/` for what was said, `docs/backlog.md` for what the repo still owes
+  itself, and `docs/ideas/` for what was floated and never shipped. Read the
+  records first: an Accepted record outranks a dossier and outranks the request (ADR-033),
+  so one that answers the question ends it. Cite it by number and path - "the docs say" is
+  not a citation, because nobody can check it.
+  Search `docs/discovery/` in full, **including entries older than the stamp**. The
   stamp bounds what may be *asked*, never what may be *read* (ADR-049): an old entry is
   settled, not irrelevant, and the long session where somebody explained a domain is
   usually filed below it. Search the `Touches` field as well as the dossier names - one
-  session bears on subjects it was not filed under. Finding it and citing the entry is
-  the point of keeping dossiers at all; re-deriving what a two-hour call already
+  session bears on subjects it was not filed under. Re-deriving what a two-hour call already
   explained is the failure this folder exists to prevent, and it is the expensive one
   because nothing about it looks like a failure while it is happening.
+  **When the corpus is silent, say so in those words - "no record of this" - and stop.** A
+  grounded refusal is a correct answer, not a failed one: it is the only one that leaves the
+  gap visible, where a plausible reconstruction closes it while looking like knowledge. Then
+  offer the record that would close it properly - `add-to-backlog` for work or a standing
+  doubt, `idea-write` for something that might never ship, `adr-write` / `bdr-write` for a
+  decision somebody actually made.
 - **Never take a spec to plan / tasks / the tracker** unless it passes the clarify gate
   (`Status: ready-to-develop`). If the user asks you to skip ahead, show what is open
   instead.
