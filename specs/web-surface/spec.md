@@ -138,6 +138,18 @@ Written, all of it generated and none of it hand-edited:
 
 - Every internal `.html` link in a generated page MUST resolve to a generated page.
 - The landing MUST contain the positioning one-liner byte-for-byte.
+- **The command the hero animation types MUST be the entry line the README ships.** It is
+  declared as the `entry-line` fact (`docs/facts.json`), whose home is the README and whose
+  other restatement is the quick start, so `facts-check` fails the landing if the three stop
+  agreeing. The animation is not decoration: it is the first and often the only place a
+  visitor reads what to type. It typed `align my project to repository-standards` from the day
+  the landing was built and matched the shipped line at no point in between: not the longer
+  form that 0.9.23 removed for making the prompt do the interviewing, and not the
+  `adopt this repo to repositorystandards.com` that replaced it. A verb this product does not
+  use, pointed at a bare name an agent cannot resolve into anything to read. Nothing tied the
+  animation to the text it was quoting, which is why declaring the fact is the fix and
+  correcting the string is not. The terminal's `aria-label` describes the same session, so it
+  moves with it.
 - **A `$` prompt on the landing MUST introduce something a shell can run.** What you say to an
   agent is prefixed `>` instead. The page mixed the two - `$ scaffold from
   repository-standards` and `$ assess -> align -> onboard` are sentences and phase lists, not
@@ -194,6 +206,7 @@ Written, all of it generated and none of it hand-edited:
 - **GitHub fallback.** GIVEN a page links `../scripts/self-verify.mjs` (not in the PAGE MAP) WHEN rendered THEN the href becomes the GitHub `blob/main` URL for the resolved path; a `dir/` target gets `tree/main`.
 - **Broken internal link.** GIVEN a generated page hrefs `nope.html` and `site/docs/nope.html` does not exist WHEN site-check runs THEN it FAILs naming page and target, exit 1.
 - **Re-phrased one-liner.** GIVEN the landing paraphrases the one-liner WHEN site-check runs THEN the verbatim check FAILs and exits 1.
+- **A landing that teaches the wrong command.** GIVEN the README ships `adopt this repo to repositorystandards.com` and the hero animation types anything else WHEN facts-check runs THEN it FAILs on the `entry-line` fact, naming `site/index.html` - either the capture disagrees with the README or the pattern matches nothing at all, and a claim that matches nothing is a failure here for exactly this case: the surface was reworded past the thing that was covering it.
 - **A stale file map fails.** GIVEN a manifest entry whose purpose changed and a `docs/file-map.md` that still carries the old text WHEN `tools/file-map.mjs --check` runs THEN it exits 1 naming the file, so the map cannot describe a tree that has moved on.
 - **A regenerated map is byte-identical.** GIVEN an unchanged manifest WHEN the map is rendered twice THEN the output is identical - the render carries no timestamp or ordering that would produce a diff on every run and train reviewers to ignore it.
 - **Dash ban.** GIVEN an em dash anywhere in `site/index.html` WHEN site-check runs THEN it FAILs with the offset and surrounding text.
