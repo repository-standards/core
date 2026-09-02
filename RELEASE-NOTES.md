@@ -3,6 +3,19 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.2 - 2026-09-02
+
+**Releases tag themselves.** Since 1.0.0 a release was supposed to carry a tag, and both
+tags so far were made by hand after the fact. Merging to `main` now creates the tag from
+`VERSION`, with the release's changelog headings as its message, so "which tree does 1.0.2
+name" has an answer nobody has to remember to give it.
+
+**The site shows the version it can prove.** The number in the header is read from the
+newest tag when the page loads, not written into the page at build time. It was written in
+five places on the landing alone, which is how a page once shipped showing two different
+versions at once; now there is nothing to keep in step, and a release stops rewriting the
+whole documentation site to change one number.
+
 ## 1.0.0 - 2026-08-19
 
 **The standard is stable.** The contract an adopting repository relies on - the numbered

@@ -17,6 +17,61 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.2 - 2026-09-02
+
+### The release tag is created by CI instead of by memory (2026-09-02)
+
+Two tags existed, `1.0.0` and `1.0.1`, and both were typed by hand: nothing in the
+repository created one or noticed a missing one. `.github/workflows/release-tag.yml` now
+runs on every push to `main`, reads `VERSION`, and tags that commit if the version has no
+tag yet - annotated, with the release's own changelog headings as the body, and a no-op on
+every push that does not move `VERSION`. Its own workflow file rather than a job in
+`pages.yml`: tagging needs `contents: write` where the deploy runs on `contents: read`, and
+`pages.yml` cancels in-progress runs, which for a deploy costs nothing and for a tag is
+unrecoverable - the next run reads only the newer version and the one it stepped over is
+never tagged. Tags from this release on are authored by `github-actions[bot]`.
+
+### The version is stated only where something reads it (2026-09-02)
+
+A bump used to rewrite ten places. `docs/facts.json` declared nine of them, and that
+declaration undercounted the surface that mattered most: the landing stated a version five
+times - pill, disclosure prose, footer and twice in the hero script - and only the pill had
+a structural hook a pattern could bind to. The generated docs carried it in their shell, so
+every page of the deployed documentation restated it too. Two of those places sit inside coupled capabilities, so
+every release cut fired the spec coupling guard and was merged past with `--admin`.
+
+The landing's pill now reads the newest tag from the GitHub API at runtime, the way the
+"Live adoptions" badge has read its count since ADR-047; it starts hidden and stays hidden
+if the fetch fails, so the page is silent rather than wrong. Prose that named a number names
+the release line instead, usage examples read `--version <x.y.z>`, and `standard/SPEC.md`
+says where the number lives rather than repeating it. One restatement remains, in
+`standard/standard.manifest.json`, because `self-verify` compares it against an adopter's
+`.standards-version` - a program reads it, not a person.
+
+Both gates invert to match: `site-check` fails any version-shaped string on the landing
+rather than a wrong one, and `tree-check` fails a shipped tree that restates the version at
+all. "The current version appears somewhere" is a condition a page satisfies while showing a
+reader two different numbers, and one shipped that way. Recorded as
+[ADR-056](docs/decision-records/ADR-056-the-release-tag-is-made-by-ci-and-the-version-is-stated-once.md);
+closes the coupling-guard row this repository had been overriding on every release.
+
+### Writing a changelog entry no longer walks a contributor into a red gate (2026-09-02)
+
+`CONTRIBUTING.md` said to add the entry under `## Unreleased`. `tree-check` requires a
+`VERSION` move to arrive with its own heading, so following the instruction literally and
+bumping in the same pull request - which the next rule in the same file requires - failed
+CI. The step now describes the whole act: write under `## Unreleased`, promote it to
+`## x.y.z - <date>` and bump `VERSION` in the same pull request, leave a fresh empty
+`## Unreleased` behind. It also says the tag is not the contributor's to make.
+
+### Every answer about this repository starts from its records (2026-09-02)
+
+`standard/AGENTS.md` now requires an answer about the repo - its state, its history, why
+something is the way it is - to come from the repository's own records and to cite them,
+rather than from the model's memory of the session. The `adr-write` skill's description is
+narrowed to match, so "what did we decide about X" routes to reading the log rather than to
+writing a new record.
+
 ## 1.0.1 - 2026-08-19
 
 ### The elicitation guard no longer waves NotebookEdit through (2026-08-19)
