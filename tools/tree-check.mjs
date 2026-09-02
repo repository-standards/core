@@ -124,19 +124,29 @@ try {
   fail("recorded content hashes are stale or missing:\n" + out.split("\n").map((l) => "        " + l).join("\n"));
 }
 
-// --- 4. the spec header agrees with VERSION ----------------------------------------------
-// Whoever bumps VERSION - a PR, by default in this repo (R25) - this only ensures the bump
-// cannot leave the spec header advertising a different number.
+// --- 4. the spec header restates no version -----------------------------------------------
+// SPEC.md used to open with `Version <x.y.z>` and this asserted the number matched VERSION.
+// Both are gone. The version had three homes in the shipped tree - that header, the
+// manifest's `version`, and the adopter's own `.standards-version` - and only the last two
+// do any work: self-verify asserts the record equals the manifest, and nothing ever read
+// the header. What the header bought was a shipped file whose hash moved on every release,
+// which dragged each version cut through the verify-engine coupling guard for a line no
+// decision depended on (ADR-056).
 //
-// The README quick start is NOT checked for `@<version>` any more, and the removal is the
-// point: that assertion required the quick start to tell an adopter to pin a version, which
-// is the model ADR-025 removed. A guard demanding the phrasing a decision deleted keeps
-// putting it back, and this one did - it failed the moment the README was corrected.
+// So the assertion inverts, and it is deliberately the header **pattern** that is refused
+// rather than today's number: `Version 1.0.1` left behind by a bump is exactly the defect
+// the old check existed for, and a rule that only rejected the current version would wave
+// the stale one through. Anchored to the line start, because SPEC.md's prose talks about
+// version numbers (R18's ordering example runs 1.0.12, 1.0.13, 1.0.99, 1.0.100) and that
+// is discussion, not a restatement.
 const version = readFileSync("VERSION", "utf8").trim();
 const spec = readFileSync(`${TREE}/SPEC.md`, "utf8");
-let vFails = 0;
-if (!spec.includes(`Version ${version}`)) { fail(`${TREE}/SPEC.md header does not say "Version ${version}" (VERSION file is ${version})`); vFails++; }
-if (!vFails) ok(`SPEC.md agrees with VERSION (${version})`);
+const specVersion = spec.match(/^Version \d+\.\d+\.\d+/m);
+if (specVersion) {
+  fail(`${TREE}/SPEC.md restates the version ("${specVersion[0]}") - the number lives in VERSION and in the manifest, nowhere else`);
+} else {
+  ok("SPEC.md restates no version");
+}
 
 // --- 4c. no manifest entry claims a version that has never shipped -----------------------
 // `since` names the release that first shipped an entry, and an entry riding the next cut

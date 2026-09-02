@@ -92,7 +92,6 @@ Read:
 |---|---|---|---|
 | every PAGE MAP `src` | yes - a missing one exits 1 and writes nothing | Markdown | the source document's own. Only headings, tables, lists, fenced code and link targets are interpreted. |
 | `site/site.config.json` (repo root accepted as a legacy location) | no - every field falls back | JSON | `brand`, `repo_url`, `out_dir`, `node_stack_url`, `landing`, `pages` (a PAGE MAP: `{ src, out, nav, group }` per entry), `sidebar_links`, and `topbar` read for its external entry only. |
-| `VERSION` | yes | text, one line | `x.y.z`, rendered into the version pill and asserted on the landing. |
 | `site/index.html` | yes | HTML | the landing: its `--bg` custom property is read at check time, so the docs take their ink from the landing rather than from a number written twice. |
 | `docs/positioning.md` | yes | Markdown | the `> `-prefixed lines under `## The one-liner`, joined with single spaces - the positioning one-liner, quoted verbatim, never re-phrased. |
 
@@ -102,18 +101,18 @@ Written, all of it generated and none of it hand-edited:
 |---|---|
 | `OUT_DIR/<out>` per PAGE MAP entry | HTML: the shared shell plus the rendered source, ending in the generated footer that names the source file. |
 | `OUT_DIR/README.md` | Markdown declaring the folder generated and naming the generator by URL, so it still reads correctly inside a satellite repo. |
-| `site/llms.txt` | a byte copy of the repo root's `llms.txt` - only `site/` is deployed, so the copy is how the file reaches the deployed root. It restates the standard's version, and **both copies** are declared in `docs/facts.json`: the generated one is covered separately from its source, so a root edit that was never regenerated is caught rather than assumed. |
+| `site/llms.txt` | a byte copy of the repo root's `llms.txt` - only `site/` is deployed, so the copy is how the file reaches the deployed root. Nothing in it restates the standard's version: the copy exists to be deployed, not to be a second place a release has to reach. |
 
 ## Interface contracts
 
-`node tools/docsite.mjs` - repo root, no flags, no dependencies. For each PAGE MAP entry: read `src`, render markdown to HTML (headings with slugified ids, GFM tables, nested lists, fenced code escaped verbatim), wrap in the shared shell (the fixed top bar - mark, wordmark, version pill read from `VERSION`, centred ecosystem switcher, one link home; sidebar nav from the PAGE MAP, active page marked; sidebar footer links from config; `<title><nav> - <brand> docs</title>`), write `OUT_DIR/<out>`. Also writes `OUT_DIR/README.md` declaring the folder generated (naming the core repo's generator by URL - the file must make sense inside a satellite repo too). Every page ends with the generated footer: `Generated from <src> (linked to its GitHub blob) by tools/docsite.mjs - edit the source there, not this HTML.`
+`node tools/docsite.mjs` - repo root, no flags, no dependencies. For each PAGE MAP entry: read `src`, render markdown to HTML (headings with slugified ids, GFM tables, nested lists, fenced code escaped verbatim), wrap in the shared shell (the fixed top bar - mark, wordmark, centred ecosystem switcher, one link home; sidebar nav from the PAGE MAP, active page marked; sidebar footer links from config; `<title><nav> - <brand> docs</title>`), write `OUT_DIR/<out>`. Also writes `OUT_DIR/README.md` declaring the folder generated (naming the core repo's generator by URL - the file must make sense inside a satellite repo too). Every page ends with the generated footer: `Generated from <src> (linked to its GitHub blob) by tools/docsite.mjs - edit the source there, not this HTML.`
 
 **Link resolution** (every relative href in a rendered page): absolute (`scheme://`), `mailto:` and pure `#` hrefs pass through; otherwise resolve the target against the source file's directory (handling `.` and `..`), then
 
 1. a PAGE MAP hit by resolved `src` rewrites to that page's `.html` (fragment preserved);
 2. anything else rewrites to GitHub: `https://github.com/repository-standards/core/blob/main/<path>` for files, `/tree/main/<path>` for directories (trailing-slash targets).
 
-`node tools/site-check.mjs` - repo root, no flags. Landing checks (`site/index.html`): HTML tag balance (void elements, comments, script/style bodies skipped); em/en dash ban (a regex character class of U+2013 and U+2014, matched anywhere in the file); the positioning one-liner must appear **verbatim** - the check re-derives it mechanically by taking `docs/positioning.md`, splitting on `## The one-liner`, keeping the `> `-prefixed lines of that section, stripping the `> ` and joining with single spaces; external hosts limited to `github.com`, `*.github.com`, and one named exception - `stats.repositorystandards.workers.dev`, the adoption-stats Worker (ADR-047) the landing fetches client-side for the "Live adoptions" badge - exact match only, not a wildcard, so no other third-party host rides in on it; the landing MUST advertise `v<VERSION>` (read from the `VERSION` file) **and MUST state no other version anywhere on the page** - every `\d+\.\d+\.\d+` on it is compared against `VERSION`, with `<svg>` bodies masked out first (path data is a coordinate stream that reads as a version number: the header's GitHub mark alone contributes thirteen, seventeen across the page's marks) and nothing else exempt. Docsite checks (`site/docs/*.html`): the generated pages MUST be exactly the page map - every declared `out` exists, and every `.html` present is declared, so a missing page and a stale survivor cannot cancel each other out in a count. The map is **imported** from `tools/docsite.mjs` (which exports `PAGES` and runs only when executed directly), never re-derived by parsing its source. Per page - dash ban, no leaked `|---` or triple-backtick fence, every internal `.html` href resolves to a generated page; `index.html` must contain the landing's own ink, read at check time from the `--bg` custom property in `site/index.html` rather than written here.
+`node tools/site-check.mjs` - repo root, no flags. Landing checks (`site/index.html`): HTML tag balance (void elements, comments, script/style bodies skipped); em/en dash ban (a regex character class of U+2013 and U+2014, matched anywhere in the file); the positioning one-liner must appear **verbatim** - the check re-derives it mechanically by taking `docs/positioning.md`, splitting on `## The one-liner`, keeping the `> `-prefixed lines of that section, stripping the `> ` and joining with single spaces; external hosts limited to `github.com`, `*.github.com`, and one named exception - `stats.repositorystandards.workers.dev`, the adoption-stats Worker (ADR-047) the landing fetches client-side for the "Live adoptions" badge - exact match only, not a wildcard, so no other third-party host rides in on it; the landing MUST state **no version at all** - every `\d+\.\d+\.\d+` on it fails, with `<svg>` bodies masked out first (path data is a coordinate stream that reads as a version number: the header's GitHub mark alone contributes thirteen, seventeen across the page's marks) and nothing else exempt. The page reads the newest release tag from the GitHub API at runtime, the way it already reads the adoption count, so there is no copy for the gate to keep in step with. Docsite checks (`site/docs/*.html`): the generated pages MUST be exactly the page map - every declared `out` exists, and every `.html` present is declared, so a missing page and a stale survivor cannot cancel each other out in a count. The map is **imported** from `tools/docsite.mjs` (which exports `PAGES` and runs only when executed directly), never re-derived by parsing its source. Per page - dash ban, no leaked `|---` or triple-backtick fence, every internal `.html` href resolves to a generated page; `index.html` must contain the landing's own ink, read at check time from the `--bg` custom property in `site/index.html` rather than written here.
 
 ### Exit codes
 
@@ -146,22 +145,38 @@ Written, all of it generated and none of it hand-edited:
   terminal block twenty lines below used the convention correctly. **Not script-enforced**:
   `site-check` cannot tell a real command from a plausible one, so this is a review rule, and it
   is written here because the page has already broken it once.
-- The landing MUST advertise the standard's current version (the badge and footer) and MUST NOT
-  present that version as something an adopter pins to or requests: no `@<version>` in a
-  quickstart command, no `--version` in the shown invocation, and no dependency-bump analogy for
-  updating. Latest is the only target ([ADR-025](../../docs/decision-records/ADR-025-the-standard-is-living-latest-is-the-target.md));
+- **The landing MUST NOT state a version; it reads the newest release tag at runtime.**
+  The header pill fetches `https://api.github.com/repos/repository-standards/core/tags`,
+  picks the highest `x.y.z` tag name and shows it, exactly as the "Live adoptions" badge
+  already reads its count from the stats Worker (ADR-047). The pill starts `hidden` and a
+  failed or rate-limited fetch leaves it hidden, so the page is silent about the version
+  rather than wrong about it - which is also why `.tag[hidden]` restates `display:none`,
+  the same author-`display`-beats-the-UA-sheet trap `.eyebrow[hidden]` is there for. The
+  highest tag is **computed and paged for**, not taken from the first element of the first
+  response: the endpoint documents no ordering, refs list lexicographically (a two-digit
+  patch ahead of a one-digit one), and once the repository passes a hundred tags the newest
+  need not be on page one. The walk stops at a short page or at a hard cap of five, because
+  an unbounded loop against an unauthenticated, rate-limited endpoint fails worse than a
+  slightly old number does.
+- **Whatever the pill shows MUST NOT be presented as something an adopter pins to or
+  requests**: no `@<version>` in a quickstart command, no `--version` in the shown
+  invocation, and no dependency-bump analogy for updating. Latest is the only target
+  ([ADR-025](../../docs/decision-records/ADR-025-the-standard-is-living-latest-is-the-target.md));
   the version is a fact about the standard, not an instruction to the reader. **Not
-  script-enforced** - `site-check` asserts the badge is present and cannot judge copy, so this is
-  a review rule and is written here rather than implied. It is recorded because the landing did
-  teach pinning, in four places, for as long as the decision had been in force.
-- **The landing's version coverage is a scan, not a list of declared places.**
-  `docs/facts.json` binds one restatement on this page - the header pill, whose
-  `class="tag mono">v` hook is structural and survives a rewording. The other places the page
-  names a version are prose, footer layout and hero-script copy; a pattern for each would be
-  four more patterns to keep in step with copy that is expected to change, and `facts-check`
-  fails loudly when a declared pattern stops matching, so an enumeration blocks the legitimate
-  edit and still misses the sixth occurrence somebody adds next. `site-check` scans every
-  version-shaped string instead, which needs no declaration and cannot be outrun by a new one.
+  script-enforced** - `site-check` cannot judge copy, so this is a review rule and is written
+  here rather than implied. It is recorded because the landing did teach pinning, in four
+  places, for as long as the decision had been in force.
+- **The landing's version rule is a scan for absence, not a list of declared places.**
+  The page named a version in five places - pill, disclosure prose, footer, and twice in the
+  hero script - and `docs/facts.json` could bind only the pill, whose `class="tag mono">v`
+  hook is structural. A pattern for each of the others would be four more patterns to keep in
+  step with copy that is expected to change, and `facts-check` fails loudly when a declared
+  pattern stops matching, so an enumeration blocks the legitimate edit and still misses the
+  sixth occurrence somebody adds next. `site-check` scans every version-shaped string instead,
+  which needs no declaration and cannot be outrun by a new one. Requiring none rather than the
+  right one is what makes the scan decidable: a page showing two numbers still satisfies "the
+  current version appears", and one shipped that way - four places reading `0.8.12` beside a
+  pill reading `0.8.13`, with this gate green.
 - No authored surface MUST contain an em or en dash.
 - No non-GitHub external host MUST appear on the landing, except the one named,
   exact-match adoption-stats host above - a wildcard or a second exception is not this
@@ -203,11 +218,10 @@ Written, all of it generated and none of it hand-edited:
 ## Acceptance criteria (config)
 
 - **Page count derived.** GIVEN the PAGE MAP gains an entry and the site is regenerated WHEN site-check runs THEN it passes with the new count - no check-side edit needed; GIVEN a generated page is deleted THEN site-check FAILs on the count mismatch.
-- **Stale landing version.** GIVEN `VERSION` moves and the landing still advertises the old `vX.Y.Z` WHEN site-check runs THEN it FAILs.
-- **A second version on the page fails, even with the right one present.** GIVEN the landing's header pill reads the current version and its footer, disclosure or hero script still reads the previous one WHEN site-check runs THEN it FAILs, naming the line and the string. "The current version appears somewhere" is a condition a page satisfies while showing a reader two different numbers, and it shipped: four places read `0.8.12` beside a pill reading `0.8.13`, with both this gate and `facts-check` green.
-- **Path data is not a version.** GIVEN a landing whose `<svg>` carries `d="M1.9.9 4.5.6 2.3.9"` and whose stated version is correct WHEN site-check runs THEN it passes - the exemption is `<svg>` bodies and only those, masked in place so the reported line numbers still belong to the real file. Without it the strict check reports seventeen failures against a correct page, which is how a gate gets switched off.
-- **The mask is not a hiding place.** GIVEN a landing carrying a self-closing `<svg/>` before a stale version and a real mark after it WHEN site-check runs THEN it still FAILs - the mask pairs an opening tag with `</svg>` only when that tag is not self-closing, because pairing a self-closing one with the next `</svg>` blanks out everything between them. A guard that goes quiet is worse than the defect it looks for.
-- **Both halves are tested.** `tools/site-check-test.mjs` drives the gate over fixture sites: a clean landing passes, a stale version in the footer or in the hero script fails, a version ahead of the release fails, a stale version behind a self-closing mark fails, and a landing naming no version at all still fails the original advertise check. Reverting the scan turns five of the six red, which is the property that makes them a test rather than a description.
+- **A version on the landing fails, even the current one.** GIVEN the landing states `vX.Y.Z` anywhere - pill, footer, disclosure prose or hero script - and that string is exactly what `VERSION` holds WHEN site-check runs THEN it FAILs, naming the line and the string. The correct number is still a copy, and a copy is what a release has to remember to move.
+- **Path data is not a version.** GIVEN a landing whose `<svg>` carries `d="M1.9.9 4.5.6 2.3.9"` and which states no version of its own WHEN site-check runs THEN it passes - the exemption is `<svg>` bodies and only those, masked in place so the reported line numbers still belong to the real file. Without it the strict check reports seventeen failures against a correct page, which is how a gate gets switched off.
+- **The mask is not a hiding place.** GIVEN a landing carrying a self-closing `<svg/>` before a version and a real mark after it WHEN site-check runs THEN it still FAILs - the mask pairs an opening tag with `</svg>` only when that tag is not self-closing, because pairing a self-closing one with the next `</svg>` blanks out everything between them. A guard that goes quiet is worse than the defect it looks for.
+- **Both halves are tested.** `tools/site-check-test.mjs` drives the gate over four fixture sites: a landing stating no version passes with the mark's path data intact, a landing stating the current version fails, a version inside the hero script fails, and a version behind a self-closing mark fails. Dropping the mask turns the passing case red and dropping the scan turns the other three green, so neither half can be removed quietly.
 - **Brand follows config.** GIVEN a `site/site.config.json` with `brand: "x"` WHEN docsite renders THEN page titles end `- x docs`.
 - **The header does not move across the boundary.** GIVEN the landing and any docs page at the same viewport width WHEN both are rendered THEN the brand's left edge, the last top-bar link's right edge and the switcher's centre are identical - the docs read the landing's `--maxw` instead of declaring their own, so one spine serves both surfaces.
 - **Legacy location still resolves.** GIVEN no `site/site.config.json` but a `site.config.json` at the repo root WHEN docsite runs THEN it is read - moving the file must not silently drop an ecosystem repo back to the core defaults.

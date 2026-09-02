@@ -79,6 +79,10 @@
     -webkit-background-clip:text;background-clip:text;color:transparent}
   .tag{font-family:var(--mono);font-size:11px;color:var(--orange);border:1px solid rgba(255,122,47,.34);
     border-radius:999px;padding:2px 8px;letter-spacing:.04em}
+  /* Same trap as `.eyebrow[hidden]` below: this pill ships hidden and is revealed only once
+     the tag fetch resolves, so any author `display` on .tag would beat the UA sheet's
+     `[hidden]{display:none}` and render an empty pill on every load. */
+  .tag[hidden]{display:none}
   .nav .spacer{flex:1}
   .nav .links{display:flex;gap:2px;align-items:center}
   .nav .links a{color:var(--muted);font-size:14.5px;font-weight:600;padding:8px 11px;border-radius:9px;
@@ -507,7 +511,7 @@
 <header>
   <div class="wrap nav">
     <span class="brand"><img class="mark" src="logo-mark.png" alt="" width="428" height="512"><span class="wordmark"><b>repository</b><i>Standards</i></span></span>
-    <span class="tag mono">v1.0.1</span>
+    <span class="tag mono" id="relTag" hidden></span>
     <span class="spacer"></span>
     <nav class="links">
       <a href="docs/">Docs</a>
@@ -1017,7 +1021,7 @@
   <div class="closing">
     <div class="wrap reveal">
       <p class="oneliner">The missing layer between business, engineering and AI: one repository every role contributes to, and a standard that proves it still holds.</p>
-      <p class="disclose">Open source, MIT, no build step. Version 1.0.1, the first stable line - and no public
+      <p class="disclose">Open source, MIT, no build step. The first stable line - and no public
         adopter to point at, because the mechanics have been run on the author's own repositories. Every guard here is dependency-free and runs
         in a clone, so test the mechanism before you trust it.</p>
     </div>
@@ -1026,7 +1030,7 @@
 
 <footer>
   <div class="wrap foot">
-    <span>repository-standards &middot; v1.0.1 &middot; MIT</span>
+    <span>repository-standards &middot; MIT</span>
     <span>no build &middot; one standard &middot; self-verifying</span>
     <a href="https://github.com/repository-standards/core">github.com/repository-standards/core</a>
   </div>
@@ -1053,7 +1057,7 @@
   var CMD = "align my project to repository-standards";
   var SCRIPT = [
     {sp:1, d:340},
-    {h:'<span class="cb">&#9210;</span> Reading the standard&hellip; <span class="cv">repository-standards@1.0.1</span> <span class="cmuted">- the rules, one file</span>', d:640},
+    {h:'<span class="cb">&#9210;</span> Reading the standard&hellip; <span class="cv">repository-standards</span> <span class="cmuted">- the rules, one file</span>', d:640},
     {h:'<span class="cb">&#9210;</span> Scanning <span class="cw">booking-api</span> <span class="cmuted">- 214 files</span>', d:520},
     {h:'  <span class="cmuted">&#9151;</span>  12 capabilities detected &middot; 0 specs &middot; the decisions live in chat history', d:720},
     {h:'<span class="cb">&#9210;</span> Comparing the tree against the manifest&hellip;', d:700},
@@ -1061,7 +1065,7 @@
     {sp:1, d:280},
     {h:'<span class="cb">&#9210;</span> Building the fit report + adoption plan&hellip;', d:840},
     {sp:1, d:260},
-    {h:'  <span class="cw">Adoption plan</span> <span class="cmuted">booking-api -&gt; repository-standards@1.0.1</span>', d:360},
+    {h:'  <span class="cw">Adoption plan</span> <span class="cmuted">booking-api -&gt; repository-standards</span>', d:360},
     {h:'  &#9500; 7 ADRs to record           <span class="cmuted">the why that today lives only in chat</span>', d:300},
     {h:'  &#9500; 1 BDR                      <span class="cmuted">the pricing rule that exists only in code</span>', d:300},
     {h:'  &#9500; PRODUCT.md                 <span class="cmuted">what this app is, and for whom</span>', d:300},
@@ -1204,6 +1208,49 @@
         liveAdopt.hidden = false;
       })
       .catch(function(){ /* endpoint unreachable - badge stays hidden, not broken */ });
+  }
+
+  // Version pill: the released version is whatever the newest tag says, fetched the same
+  // way the badge above is, so that a version bump stops rewriting this file. Nothing on
+  // this page states a version statically any more - site-check enforces that - because a
+  // second copy is the thing that goes stale while looking authoritative.
+  var relTag = document.getElementById("relTag");
+  if(relTag && window.fetch){
+    // The API documents no ordering for this collection - refs list lexicographically, where
+    // a two-digit patch sorts ahead of a one-digit one - so the newest tag is computed
+    // rather than assumed to be first, and pages are walked rather than assumed to fit in
+    // one. The walk stops at a short page or at PAGE_CAP, because an unbounded loop against
+    // an unauthenticated, rate-limited endpoint is a worse failure than a slightly old
+    // number. (No version literal in this comment on purpose: site-check reads comments too,
+    // and it is right to.)
+    var PAGE_CAP = 5, best = null, bp = null;
+    var consider = function(tags){
+      tags.forEach(function(t){
+        var m = /^(\d+)\.(\d+)\.(\d+)$/.exec(t && t.name);
+        if(!m) return;
+        var p = [+m[1], +m[2], +m[3]];
+        if(!bp || p[0]>bp[0] || (p[0]===bp[0] && (p[1]>bp[1] || (p[1]===bp[1] && p[2]>bp[2])))){
+          best = t.name; bp = p;
+        }
+      });
+    };
+    var page = function(n){
+      return fetch("https://api.github.com/repos/repository-standards/core/tags?per_page=100&page=" + n, {mode:"cors"})
+        .then(function(r){ if(!r.ok) throw new Error("bad status"); return r.json(); })
+        .then(function(tags){
+          if(!Array.isArray(tags)) throw new Error("bad payload");
+          consider(tags);
+          if(tags.length < 100 || n >= PAGE_CAP) return;
+          return page(n + 1);
+        });
+    };
+    page(1)
+      .then(function(){
+        if(!best) throw new Error("no release tag");
+        relTag.textContent = "v" + best;
+        relTag.hidden = false;
+      })
+      .catch(function(){ /* rate-limited or unreachable - the pill stays hidden, never wrong */ });
   }
 })();
 </script>

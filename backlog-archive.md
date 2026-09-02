@@ -10,6 +10,12 @@
 > No surface in the dashboard reads this file, and that is a decision rather than an omission
 > ([ADR-053](docs/decision-records/ADR-053-the-backlog-view-does-not-carry-the-archive.md)).
 
+## 1.0.2 - 2026-09-02
+
+| id | title | type | where |
+|---|---|---|---|
+| COUPLING-VERSION-1 | Bumping the version stops tripping the coupling guard | task | [docs/decision-records/ADR-056-the-release-tag-is-made-by-ci-and-the-version-is-stated-once.md](docs/decision-records/ADR-056-the-release-tag-is-made-by-ci-and-the-version-is-stated-once.md) - closed by the second of the row's two routes: the version string stopped living inside coupled code, rather than the guard learning to tell it apart from behaviour |
+
 ## 0.9.17 - 2026-08-19
 
 | id | title | type | where |
