@@ -2,9 +2,10 @@ The register of facts that are stated in more than one place, and where each one
 lives. `facts-check` reads it and fails the build when a restatement stops agreeing with its
 source.
 
-It exists because R4 says a fact has one home, and reality says sometimes it cannot. A
-version number belongs in `VERSION`, but the landing page has to print it. A count belongs
-where the things are counted, but a sentence somewhere wants to say it out loud.
+It exists because R4 says a fact has one home, and reality says sometimes it cannot. The
+Node version belongs in `.nvmrc`, but every workflow that installs Node has to name it
+again. A count belongs where the things are counted, but a sentence somewhere wants to say
+it out loud.
 
 ## What it is for
 
@@ -22,12 +23,11 @@ extracts it.
 ```json
 [
   {
-    "id": "standard-version",
-    "what": "the version the standard currently ships",
-    "home": { "read": "VERSION" },
+    "id": "node-runtime-version",
+    "what": "the Node version the dependency-free guards are pinned to",
+    "home": { "match": { "file": "standard/.nvmrc", "pattern": "^(\\d+\\.\\d+\\.\\d+)" } },
     "claims": [
-      { "file": "standard/SPEC.md",  "pattern": "^Version (\\d+\\.\\d+\\.\\d+)" },
-      { "file": "site/index.html",   "pattern": "class=\"tag mono\">v(\\d+\\.\\d+\\.\\d+)" }
+      { "file": ".github/workflows/checks.yml", "pattern": "node-version: \"(\\d+\\.\\d+\\.\\d+)\"" }
     ]
   }
 ]
@@ -57,7 +57,10 @@ extracts it. "The standard ships several guards" is not a fact you can check; th
 guards is.
 
 **A restatement you could delete instead.** Declaring it is the fallback. Linking to the
-home is the answer, and it is available more often than it looks.
+home is the answer, and it is available more often than it looks. The standard's own version
+was declared on nine surfaces and is now declared on one: the landing reads the newest
+release tag at runtime, and the prose that named a number says which release line it is on
+instead. Eight entries left this file by deleting the copy, not by checking it harder.
 
 ## Decisions behind it
 

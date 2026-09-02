@@ -76,40 +76,8 @@
     },
     "claims": [
       {
-        "file": "standard/SPEC.md",
-        "pattern": "^Version (\\d+\\.\\d+\\.\\d+)"
-      },
-      {
-        "file": "docs/method/self-verify.md",
-        "pattern": "self-verify\\.mjs --version (\\d+\\.\\d+\\.\\d+)"
-      },
-      {
-        "file": "standard/scripts/self-verify.mjs",
-        "pattern": "self-verify\\.mjs --version (\\d+\\.\\d+\\.\\d+)"
-      },
-      {
-        "file": "site/index.html",
-        "pattern": "class=\"tag mono\">v(\\d+\\.\\d+\\.\\d+)"
-      },
-      {
         "file": "standard/standard.manifest.json",
         "pattern": "\"version\": \"(\\d+\\.\\d+\\.\\d+)\""
-      },
-      {
-        "file": "README.md",
-        "pattern": "^\\*\\*(\\d+\\.\\d+\\.\\d+)\\*\\* - the first stable release"
-      },
-      {
-        "file": "docs/faq.md",
-        "pattern": "The standard is at (\\d+\\.\\d+\\.\\d+)"
-      },
-      {
-        "file": "llms.txt",
-        "pattern": "^- \\*\\*(\\d+\\.\\d+\\.\\d+), the first stable release"
-      },
-      {
-        "file": "site/llms.txt",
-        "pattern": "^- \\*\\*(\\d+\\.\\d+\\.\\d+), the first stable release"
       }
     ]
   },

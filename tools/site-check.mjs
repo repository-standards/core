@@ -5,8 +5,8 @@
 // check asserts the two human surfaces are shippable:
 //   landing  - tags balanced, the positioning one-liner quoted VERBATIM (PDLC-1's
 //              "surfaces quote it, never re-phrase" rule, enforced mechanically),
-//              no em/en dashes, no unexpected external hosts, and every version string
-//              on the page - not merely one of them - the one in VERSION.
+//              no em/en dashes, no unexpected external hosts, and no version string
+//              anywhere - the pill reads the newest tag at runtime.
 //   docsite  - every generated page exists, every internal .html link resolves,
 //              no raw markdown artifacts leaked ("|---", "```"), dark-first palette
 //              present (the landing's ink), no em/en dashes.
@@ -128,22 +128,19 @@ else {
 }
 }
 
-// The landing must advertise the released version - VERSION is the source. Same reasoning
-// as above: a repository without one is not lying about its version, it just has none.
-if (!existsSync("VERSION")) {
-  ok("VERSION absent - the advertised-version criterion is skipped");
-} else {
-const version = readFileSync("VERSION", "utf8").trim();
-const vRe = new RegExp(`v${version.replace(/\./g, "\\.")}(?![0-9.])`);
-if (vRe.test(landing)) ok(`${LANDING}: advertises v${version} (matches VERSION)`);
-else fail(`${LANDING}: does not advertise v${version} - VERSION moved and the landing did not`);
-
-// ...and it must be the ONLY version the page states. "the current version appears
-// somewhere" is a condition a page satisfies while still naming the previous one, which
-// is exactly what shipped: v0.8.12 in the disclosure, in the footer and twice in the hero
-// script, four lines above a header pill correctly reading v0.8.13, with this check green.
-// Every version-shaped string is compared now, so a release that updates one of the five
-// and forgets four cannot pass - and nothing has to be told where the five are.
+// The landing states NO version, anywhere. It used to be required to advertise
+// `v<VERSION>` and to state no other, and that rule is why a release rewrote this file in
+// five places and dragged every version cut through the web-surface coupling guard. The
+// pill now reads the newest tag at runtime, the way the adoptions badge reads its count
+// (ADR-047), so the page holds no version to keep true and a bump touches `VERSION`, the
+// changelog and the manifest only.
+//
+// The old rule was defending against something real and this one inherits it: "the current
+// version appears somewhere" is a condition a page satisfies while still naming the
+// previous one, which is exactly what shipped once - v0.8.12 in the disclosure, in the
+// footer and twice in the hero script, four lines above a header pill correctly reading
+// v0.8.13, with that check green. One copy plus a scan could go stale, and did. Zero
+// copies cannot.
 //
 // SVG path data is masked out first, and it is the only exemption: `d="M12 .3a12 12 0 0
 // 0-3.8 23.4c.6.1.8-.3..."` is a stream of coordinates that reads as a version to any
@@ -151,32 +148,25 @@ else fail(`${LANDING}: does not advertise v${version} - VERSION moved and the la
 // the page's marks). Masked rather than deleted so the offsets, and therefore the line
 // numbers below, still belong to the real file.
 //
-// Nothing else is exempt, and the landing needs nothing else: every version on it is meant
-// to be the current one, the hero's simulated session included. No historical reference, no
-// changelog link naming an old release, no example pinned to an older tag - the one surface
-// that does legitimately carry an old version is the frozen previous landing (v0.7.2
-// throughout), which this gate has never read. The stylesheet cannot produce a false hit
-// either: a CSS number has one decimal point, so `1.05s` is not version-shaped. Comments
-// stay in scope, because a version in one is still a version somebody has to keep true.
-//
 // The opening tag must not be self-closing. `<svg class="x"/>` closes itself, so pairing
-// it with a later `</svg>` would mask everything in between - including a stale version -
-// and the guard would go quiet rather than loud, which is the one way it must not fail.
+// it with a later `</svg>` would mask everything in between - including a version this is
+// meant to catch - and the guard would go quiet rather than loud, which is the one way it
+// must not fail.
 //
-// Anything x.y.z shaped counts, so a dotted date (2026.08.06) would be reported as a
-// wrong version. That is the intended trade: the page writes dates as 2026-08-06, and a
-// check that tried to tell dates from versions would be guessing about the one thing it
-// exists to be certain of.
+// Anything x.y.z shaped counts, so a dotted date (2026.08.06) would be reported too. That
+// is the intended trade: the page writes dates as 2026-08-06, and a check that tried to
+// tell dates from versions would be guessing about the one thing it exists to be certain
+// of. The stylesheet cannot produce a false hit either - a CSS number has one decimal
+// point, so `1.05s` is not version-shaped. Comments stay in scope, because a version in
+// one is still a version somebody has to keep true.
 const masked = landing.replace(/<svg\b(?:[^>]*[^/>])?>[\s\S]*?<\/svg>/gi, (s) => s.replace(/[^\n]/g, " "));
 const found = [...masked.matchAll(/\d+\.\d+\.\d+/g)];
-const stale = found.filter((m) => m[0] !== version);
-for (const m of stale) {
+for (const m of found) {
   const line = masked.slice(0, m.index).split("\n").length;
   const context = landing.slice(Math.max(0, m.index - 40), m.index + 20).replace(/\s+/g, " ").trim();
-  fail(`${LANDING}:${line}: states ${m[0]}, and VERSION says ${version} ("...${context}...")`);
+  fail(`${LANDING}:${line}: states version ${m[0]} - the landing reads the newest tag at runtime and must state none ("...${context}...")`);
 }
-if (!stale.length) ok(`${LANDING}: all ${found.length} version string(s) on the page state ${version}`);
-}
+if (!found.length) ok(`${LANDING}: states no version - the pill reads the newest tag at runtime`);
 
 // External hosts allowlist: only GitHub links may leave the page. Inlined `data:` URIs are
 // stripped first - an SVG's xmlns is a namespace identifier, not a request that leaves.

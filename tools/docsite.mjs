@@ -56,13 +56,12 @@ const OG_IMAGE = CONFIG.og_image || `${SITE_ROOT}og.png`;
 const BRAND = CONFIG.brand || "repository-standards";
 // Which surface of the ecosystem this is. Empty on the core, which IS the unqualified one.
 const WORDMARK_SUFFIX = CONFIG.wordmark_suffix || "";
-// The header wears the released version, read from its one home rather than restated here.
-// A VERSION file is this repository's convention, not the ecosystem's - a stack running this
-// same generator against its own markdown need not have one, and crashing on its absence
-// would make "one form, many sites" true only for the site that owns the generator.
-const VERSION = existsSync("VERSION") ? readFileSync("VERSION", "utf8").trim() : CONFIG.version || "";
-// The header is fixed now - brand, version, ecosystem switcher, one link home - so the
-// only thing a site still configures up there is where the switcher's entries point.
+// The header wears no version. It used to read one out of VERSION, which meant every
+// release rewrote every generated page - and put each version cut through the coupling
+// guard for a string no decision depended on. The landing carries the one version this
+// project shows, and it fetches the newest tag at runtime rather than baking it in.
+// The header is fixed now - brand, ecosystem switcher, one link home - so the only thing
+// a site still configures up there is where the switcher's entries point.
 // The old `topbar` list is read as a fallback so a config written for the previous header
 // still resolves, but it no longer draws anything.
 const NODE_STACK_URL =
@@ -634,8 +633,6 @@ const TOPBAR_CSS = `
 /* The tracking that makes STANDARDS sit under repository stops working once a suffix
    doubles the line: same spacing, twice the width, and the lockup outgrows the mark. */
 .tb-word i.has-suffix{letter-spacing:.19em;font-size:9px}
-.tb-tag{font-family:var(--font-mono);font-size:11px;color:var(--accent);
-  border:1px solid rgba(var(--accent-rgb), .34);border-radius:999px;padding:2px 8px;letter-spacing:.04em}
 .tb-spacer{flex:1}
 .tb-links{display:flex;gap:2px;align-items:center}
 .tb-links a{color:var(--muted);font-size:14.5px;font-weight:600;padding:8px 11px;
@@ -674,7 +671,6 @@ const TOPBAR_CSS = `
   .tb-switch{position:static;transform:none;margin-left:auto}
   .tb-menu{left:auto;right:0;transform:translateY(-8px) scale(.98)}
   .tb-switch[data-open] .tb-menu{transform:none}
-  .tb-tag{display:none}
 }
 `;
 
@@ -1331,7 +1327,6 @@ function topbarHtml({ drawer = false, awayLabel = "Homepage", awayHref = SITE_RO
   return `<header class="topbar"><div class="topbar-in">
 ${drawer ? `<button class="nav-toggle" type="button" aria-label="Open the navigation" aria-expanded="false" aria-controls="docs-nav"><span></span><span></span><span></span></button>` : ""}
 <a class="tb-brand" href="${SITE_ROOT}"><img class="tb-mark" src="${SITE_ROOT}logo-mark.png" alt="" width="428" height="512"><span class="tb-word"><b>repository</b><i${WORDMARK_SUFFIX ? ' class="has-suffix"' : ""}>Standards${WORDMARK_SUFFIX ? ` + ${escapeHtml(WORDMARK_SUFFIX)}` : ""}</i></span></a>
-${VERSION ? `<span class="tb-tag">v${escapeHtml(VERSION)}</span>` : ""}
 <span class="tb-spacer"></span>
 <nav class="tb-links"><a href="${awayHref}">${awayLabel}</a><a class="tb-gh" href="${escapeAttr(GITHUB_REPO_URL)}" target="_blank" rel="noopener noreferrer"><svg class="gh-mark" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a></nav>
 <div class="tb-switch" id="ecoswitch">

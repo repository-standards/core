@@ -47,7 +47,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R2",
-      "sha256": "1dc09d3fc62af34b95b12a593dda52328a2a27191ef5607dca0b3ada45cd6879"
+      "sha256": "a11d0a77bea82b39530e7c13493723c711fd6e5969acbdb8f05f77e08b89309e"
     },
     {
       "path": "CLAUDE.md",
@@ -150,7 +150,7 @@
       "profile": "core",
       "since": "0.4.0",
       "rule": "R16",
-      "sha256": "4132e56306f0881c805d0945f50b68136ffd2d5afac317fef348021dc5e6e668"
+      "sha256": "6fc450d5226e573268e3e851184578e5141509ad8deb82f06a38756b8405a6ff"
     },
     {
       "path": "scripts/spec-structure.mjs",

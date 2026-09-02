@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 // site-check-test - drive the landing gate over fixture sites.
 //
-// The case this file exists for is the one the gate used to pass: a landing that states
-// the current version somewhere AND the previous one somewhere else. "v0.8.13 appears"
-// was true while four other places on the same page still read v0.8.12, so the check
-// agreed the page was shippable and a reader got both numbers. A gate that only looks
-// for the right answer cannot see a wrong one sitting next to it.
+// The rule under test is that the landing states NO version. It used to have to advertise
+// the current one, and the case this file was built around is what that permitted: a page
+// stating v0.8.13 in the header while four other places on it still read v0.8.12, with the
+// gate green, because "the right answer appears" is true of a page showing two answers.
+// The pill now reads the newest tag at runtime, so there is no copy to keep true - and the
+// cases below assert that even the correct version fails, which is the only form of the
+// rule that cannot be satisfied by a page carrying two.
 //
-// The other half is the false positive that makes the strict version of that check
-// unusable if it is not handled: SVG path data is a stream of coordinates, and the
-// GitHub mark in the landing's own header reads as a dozen version numbers to any
-// regex. The fixtures below carry both, so neither half can regress alone.
+// The other half is the false positive that makes any version scan unusable if it is not
+// handled: SVG path data is a stream of coordinates, and the GitHub mark in the landing's
+// own header reads as a dozen version numbers to any regex. The fixtures below carry both,
+// so neither half can regress alone.
 //
 // Usage: node tools/site-check-test.mjs   # exit 1 on any failure
 // Zone 1 tooling - never shipped.
@@ -22,8 +24,8 @@ import { dirname, join } from "node:path";
 
 const CHECK = join(process.cwd(), "tools/site-check.mjs");
 
-// The released version of the fixture site. Deliberately not this repo's own, so a test
-// that reads the wrong VERSION file cannot accidentally agree with itself.
+// The version the fixture site states in the cases that must fail. Deliberately not this
+// repo's own: a test agreeing with the checkout it runs in would prove nothing.
 const VERSION = "2.4.0";
 
 // Path data holding three version-shaped triples, two of which the failing cases below
@@ -67,7 +69,6 @@ const docsPage = `<meta charset="utf-8">
 `;
 
 const BASE = {
-  VERSION: `${VERSION}\n`,
   "site/site.config.json": JSON.stringify(
     {
       site_url: "https://example.test",
@@ -93,52 +94,40 @@ const run = (dir) => {
 
 const CASES = [
   {
-    name: "a landing stating one version, the released one, passes - path data and all",
+    // The mark's path data holds three version-shaped triples, so a page carrying no
+    // version of its own still has to survive the scan. The masking is what this proves.
+    name: "a landing stating no version passes - path data and all",
     fails: false,
-    says: `all 4 version string(s) on the page state ${VERSION}`,
+    says: "states no version",
+    files: { "site/index.html": landing({ pill: "", prose: "", footer: "", script: "" }) },
   },
   {
-    // DOC-12, reproduced: the header pill is right, the footer is a release behind, and
-    // the old check called that shippable because the right answer was present.
-    name: "a stale version beside the right one fails",
+    // The rule is none, not "the right one". A version on the page is a second copy of a
+    // number that already lives in VERSION and in the newest tag, and the copy is the one
+    // that goes stale while looking authoritative.
+    name: "even the current version fails - the page must state none",
     fails: true,
-    says: ["states 2.3.9", `VERSION says ${VERSION}`, "site-check: FAIL - 1 problem(s)"],
-    files: { "site/index.html": landing({ footer: "2.3.9" }) },
+    says: [`states version ${VERSION}`, "must state none"],
+    files: { "site/index.html": landing({}) },
   },
   {
-    // Two of the four stale occurrences were inside the hero's <script>. Tag balance
-    // skips script bodies, so a check reading markup only would have missed them.
-    name: "a stale version inside the hero script fails too",
+    // Tag balance skips script bodies, so a check reading markup only would miss this.
+    // Two of the four occurrences in DOC-12 were exactly here.
+    name: "a version inside the hero script fails too",
     fails: true,
-    says: "states 1.9.9",
-    files: { "site/index.html": landing({ script: "1.9.9" }) },
+    says: "states version 1.9.9",
+    files: { "site/index.html": landing({ pill: "", prose: "", footer: "", script: "1.9.9" }) },
   },
   {
-    // Equality, not recency: a page that ran ahead of the release is as wrong as one
-    // that lagged behind it, and only one of the two looks like a mistake.
-    name: "a version the release has not reached yet fails as well",
-    fails: true,
-    says: "states 2.4.1",
-    files: { "site/index.html": landing({ prose: "2.4.1" }) },
-  },
-  {
-    // The mask must not be an opening a stale version can hide behind. This fixture puts
-    // a self-closing <svg/> before the stale footer and a real mark after it: a mask that
+    // The mask must not be an opening a version can hide behind. This fixture puts a
+    // self-closing <svg/> before the footer version and a real mark after it: a mask that
     // paired the self-closing tag with the NEXT </svg> blanks out everything in between,
     // the version included, and reports the page clean. Verified load-bearing - swap the
     // opener back to a plain <svg and this case is the one that goes red.
-    name: "a self-closing mark does not open a hiding place for a stale version",
+    name: "a self-closing mark does not open a hiding place for a version",
     fails: true,
-    says: ["states 2.3.9", "site-check: FAIL - 1 problem(s)"],
-    files: { "site/index.html": landing({ deco: true, footer: "2.3.9" }) },
-  },
-  {
-    // The criterion the strict check must not replace: every version agreeing is not the
-    // same as the page carrying one at all.
-    name: "a landing naming no version at all still fails",
-    fails: true,
-    says: `does not advertise v${VERSION}`,
-    files: { "site/index.html": landing({ pill: "", prose: "", footer: "", script: "" }) },
+    says: ["states version 2.3.9", "site-check: FAIL - 1 problem(s)"],
+    files: { "site/index.html": landing({ deco: true, pill: "", prose: "", script: "", footer: "2.3.9" }) },
   },
 ];
 
@@ -169,4 +158,4 @@ if (failures) {
   console.log(`\nsite-check-test: FAIL - ${failures} of ${CASES.length} cases`);
   process.exit(1);
 }
-console.log(`\nsite-check-test: OK - ${CASES.length} cases, a landing carrying a second version cannot pass`);
+console.log(`\nsite-check-test: OK - ${CASES.length} cases, a landing carrying any version cannot pass`);
