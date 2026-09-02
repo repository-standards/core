@@ -1,0 +1,87 @@
+# Creates the release tag, so that the step stops hanging on someone remembering it.
+#
+# A release here is three things: a `## <version>` heading in CHANGELOG.md, a VERSION
+# bump, and a tag. The first two are guarded - tree-check fails a VERSION move that
+# arrives without its heading. The third was guarded by nothing at all, which put
+# "the latest tag names the tip of main" on a maintainer's memory. Elsewhere this
+# project refuses that trade explicitly: `docs/open-questions/staying-current.md`
+# rejects the maintainer-marks-it option as "the class of thing this project usually
+# refuses to rely on". It does not become acceptable here.
+#
+# Its own file rather than a job inside pages.yml, for two reasons and the second is
+# the serious one. Tagging needs `contents: write` while the deploy job runs on
+# `contents: read`. And pages.yml carries `concurrency: group: pages` with
+# `cancel-in-progress: true`, so of two merges landing close together the earlier run
+# is cancelled. A cancelled deploy costs nothing - the next push republishes the whole
+# site. A cancelled tag is unrecoverable: the next run reads only the newer VERSION,
+# and the version it stepped over is never tagged, silently. Every pull request bumps
+# PATCH here (CONTRIBUTING.md), so two releases in quick succession is the ordinary
+# case rather than a corner of it.
+#
+# The tag names a commit on main and is true whether or not Pages ever published it,
+# so this deliberately does not wait on the deploy.
+name: release-tag
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-tag
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          fetch-depth: 0
+      - name: Tag the release when VERSION names one that has none
+        run: |
+          set -euo pipefail
+          version="$(tr -d '[:space:]' < VERSION)"
+          # A tag is permanent, so a malformed VERSION fails here rather than minting one
+          # nothing can read: the landing shows only x.y.z tags and would silently ignore it.
+          case "$version" in
+            "") echo "VERSION is empty - nothing names this release"; exit 1 ;;
+            *[!0-9.]*|*..*|.*|*.) echo "VERSION is not x.y.z: '$version'"; exit 1 ;;
+          esac
+          if [ "$(echo "$version" | tr -cd . | wc -c)" -ne 2 ]; then
+            echo "VERSION is not x.y.z: '$version'"
+            exit 1
+          fi
+          # Idempotent on purpose: a re-run, and every push that does not move VERSION,
+          # must be a no-op rather than a failure.
+          if git rev-parse -q --verify "refs/tags/$version" >/dev/null; then
+            echo "$version is already tagged - nothing to do"
+            exit 0
+          fi
+          # The message is derived, never invented. The subject names the version; the
+          # body is that release's own section headings, dates stripped. A generated
+          # summary of prose somebody wrote deliberately would be a worse copy of it.
+          # The heading must not merely start with the version: `## 1.0.2` is a prefix of
+          # `## 1.0.21`, and tree-check refuses that same confusion for the same reason.
+          body="$(awk -v want="## $version" '
+            index($0, want) == 1 && substr($0, length(want) + 1, 1) !~ /[0-9.]/ { inside = 1; next }
+            index($0, "## ") == 1 { inside = 0 }
+            inside && index($0, "### ") == 1 {
+              line = substr($0, 5)
+              sub(/ \([0-9-]+\)$/, "", line)
+              print "- " line
+            }
+          ' CHANGELOG.md)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$body" ]; then
+            git tag -a "$version" -m "repository-standards $version" -m "$body"
+          else
+            # A version heading with no sections under it is odd but not a reason to
+            # leave the release untagged.
+            git tag -a "$version" -m "repository-standards $version"
+          fi
+          git push origin "refs/tags/$version"
+          echo "tagged $version"
