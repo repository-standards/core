@@ -19,12 +19,17 @@ contribution this repo takes.
 - **Before a PR:** run `node tools/gates.mjs` - it is the whole gate set, read out of the
   CI workflow so it cannot be a shorter version of it - and self-review your diff (the
   `pre-pr-review` skill).
-- **Changelog:** describe your change under `CHANGELOG.md`'s `## Unreleased`
-  heading and bump `VERSION` yourself as part of the PR - PATCH by default,
-  unless the maintainer directs a different bump or an explicit no-bump for
-  that PR (see
-  [`docs/method/changelog-process.md`](./docs/method/changelog-process.md) for
-  how the two outputs are cut).
+- **Changelog:** draft your change under `CHANGELOG.md`'s `## Unreleased` heading,
+  then **promote that section into a `## x.y.z - <date>` heading and bump `VERSION`
+  in the same PR** - PATCH by default, unless the maintainer directs a different
+  bump or an explicit no-bump. Landing the change and cutting the version are one
+  act here, which is this repository's own workflow and not the standard's (see
+  [`docs/method/changelog-process.md`](./docs/method/changelog-process.md) for the
+  separate cut an adopting repo does instead). The two halves are not optional
+  separately: stopping at `## Unreleased` while `VERSION` moves fails `tree-check`,
+  which requires the version's own heading. Nothing is left waiting under
+  `## Unreleased`, so this file carries none between releases. The tag is not yours
+  to make - `release-tag.yml` creates it from `VERSION` once the PR is on `main`.
 - **One tree:** the standard is authored directly in `standard/` at client-repo
   paths (ADR-014). There is nothing to sync; `tree-check` fails if repo-own
   material leaks in or a manifest promise goes missing.
