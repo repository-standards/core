@@ -128,6 +128,23 @@ for (const name of NAMES) {
     ? ok(`${copied} entries land in the repository without anyone authoring them`)
     : fail("nothing was copied");
 
+  // Two of ADOPT-DEFAULTS-1's three shipped defaults a real adoption had to except, checked
+  // against what actually lands here rather than against the manifest's own claims about
+  // itself - record-run left the .claude/skills copy-class entry entirely, and dashboard.yml's
+  // trigger changed inside a file this loop already copies verbatim. The third default (the
+  // sprint scaffold, skipped only when adopt.tracker's answer says so) is not checked here: it
+  // is a decision the align-to-standards skill's prose makes while landing the tree, and this
+  // harness does a mechanical manifest copy, not a simulated agent session reading an intake
+  // answer - there is no transcript here for it to read.
+  existsSync(join(repo, ".claude/skills/record-run"))
+    ? fail("record-run landed in the adopted repo - it is a transition skill, run from a checkout of the standards repo, never shipped to a client tree")
+    : ok("record-run does not land in the adopted repo (transition skill, never shipped)");
+
+  const dashboardWorkflow = readFileSync(join(repo, ".github/workflows/dashboard.yml"), "utf8");
+  /^\s*push:/m.test(dashboardWorkflow)
+    ? fail("dashboard.yml lands with a push trigger - it should ship workflow_dispatch only")
+    : ok("dashboard.yml lands with no push trigger, workflow_dispatch only");
+
   const guards = spawnSync("bash", [join(repo, "scripts/verifyAgentGuards.sh")], { encoding: "utf8", cwd: repo });
   guards.status === 0
     ? ok("the shipped guard suite passes from the adopting repository")
