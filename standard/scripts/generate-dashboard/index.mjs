@@ -985,10 +985,13 @@ const switcher = (() => {
     if (!ok) console.error('dashboard: registry entry missing technology/repo, skipped for the switcher:', JSON.stringify(s))
     return ok
   })
+  // Named by repo slug, not a friendly label - the same identity the masthead's own h1
+  // already shows for every surface, so the switcher names the thing it switches to
+  // exactly as that thing names itself once you are there.
   const surfaces = [
-    { name: 'Repository Standards', blurb: 'the method - align, verify, drift 0', url: '/dashboard/', repo: CORE_REPO },
+    { name: CORE_REPO, blurb: 'the method - align, verify, drift 0', url: '/dashboard/', repo: CORE_REPO },
     ...stacks.map((s) => ({
-      name: s.technology[0].toUpperCase() + s.technology.slice(1),
+      name: s.repo,
       blurb: typeof s.description === 'string' ? s.description : '',
       url: `/${s.technology}/dashboard/`,
       repo: s.repo,

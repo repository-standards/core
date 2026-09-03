@@ -29,6 +29,14 @@ instead. A build with no `--registry` (nearly every one - `--registry` is only e
 this repository's own `pages.yml`) loses the second line rather than gaining a replacement it
 has no data for, and keeps the same single click home it always had, just from the title.
 
+### The switcher names a surface by its repo slug, not a friendly label (2026-09-03)
+
+The switcher read "Repository Standards" and "Node" while the masthead's own `h1` on the
+same page reads `repository-standards/core` and `repository-standards/node` - two different
+names for the same two things, one click apart. The switcher now names each surface exactly
+as `stacks.json` and `CORE_REPO` already do (`owner/repo`), so the identity a reader lands on
+matches the one they picked from the dropdown.
+
 ## 1.0.7 - 2026-09-03
 
 ### The elicitation guard is landed through its own file, reached only through Step -1 (2026-09-03)
