@@ -16,9 +16,9 @@ These are those three fractions, counted from the runs rather than asserted.
 
 | | Per agent turn | Per observation |
 |---|---|---|
-| `asked` | **73/116** (63%) <br><sub>8 n/a, 246 unscored</sub> | **30/45** (67%) <br><sub>3 n/a</sub> |
-| `checked` | **119/126** (94%) <br><sub>244 unscored</sub> | **46/48** (96%) |
-| `suggested` | **106/126** (84%) <br><sub>244 unscored</sub> | **39/48** (81%) |
+| `asked` | **74/123** (60%) <br><sub>8 n/a, 246 unscored</sub> | **31/51** (61%) <br><sub>3 n/a</sub> |
+| `checked` | **126/133** (95%) <br><sub>244 unscored</sub> | **52/54** (96%) |
+| `suggested` | **112/133** (84%) <br><sub>244 unscored</sub> | **44/54** (81%) |
 
 Two units, because a run may score at either and both are honest. **Per agent turn** is the
 finer one and the one every live run shares: an agent that asks well at turn two and then
@@ -31,9 +31,9 @@ read at all - most often because the run was recorded from the repository state 
 rather than from the agent's own words, which shows what it did and not what it asked. Both stay
 out of the numerator and the denominator, and both are printed rather than absorbed.
 
-Verdicts across every run: 55 pass, 39 partial, 16 fail.
+Verdicts across every run: 56 pass, 43 partial, 17 fail.
 
-Agent turns quoted verbatim from a session transcript, across every run: **268/370 (72%)**.
+Agent turns quoted verbatim from a session transcript, across every run: **268/377 (71%)**.
 The rest are descriptions of what the agent did, written afterwards by whoever scored the run -
 accurate or not, that is a different kind of evidence than a quote, and this is the fraction that
 says which kind a given run mostly is. See `Agent turns quoted` below for run by run.
@@ -50,6 +50,7 @@ says which kind a given run mostly is. See `Agent turns quoted` below for run by
 | [`2026-08-10-f-adopter-nextjs-mt.json`](runs/2026-08-10-f-adopter-nextjs-mt.json) | 29 | 269 agent turns | **8/26** (31%) <br><sub>4 n/a, 239 unscored</sub> | **26/30** (87%) <br><sub>239 unscored</sub> | **25/30** (83%) <br><sub>239 unscored</sub> | 268/269 (100%) | 12 pass, 12 partial, 5 fail | `$anonymity_caveat`<br>`$recovery_caveat` |
 | [`2026-08-10-f-anonymised.json`](runs/2026-08-10-f-anonymised.json) | 1 | 6 agent turns | **1/6** (17%) | **6/6** (100%) | **4/6** (67%) | 0/6 (0%) | 1 partial | - |
 | [`2026-08-19-g-adoption.json`](runs/2026-08-19-g-adoption.json) | 1 | 1 observation | **1/1** (100%) | **1/1** (100%) | **1/1** (100%) | - | 1 pass | - |
+| [`2026-09-03-h-monorepo-adoption.json`](runs/2026-09-03-h-monorepo-adoption.json) | 6 | 7 agent turns | **1/7** (14%) | **7/7** (100%) | **6/7** (86%) | 0/7 (0%) | 1 pass, 4 partial, 1 fail | - |
 
 **Every conversation behind these numbers is readable.** One page per run under
 [`scenarios/`](scenarios/), rendered from the same rows: what was typed, what the agent did,
