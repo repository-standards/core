@@ -107,6 +107,20 @@ it says.
      keep the standard's, or merge the two. A directory content entry only checks the
      members the standard ships, so the repo's own skills are never at risk - the risk is
      only ambiguity, and only the user can resolve it.
+   - **`docs/sprints/` is `required: false` (`scale` profile, ADR-028/041), and the three
+     sprint skills (`sprint-open`, `sprint-close`, `timeline-update`) say the same of
+     themselves in their own SKILL.md ("scale profile only") - read the `adopt.tracker`
+     answer before landing them, never scaffold on the assumption that `scale` means
+     sprints.** A run that answered **external tracker, backlog bridges** already said
+     this repository does not run this standard's own sprint mechanism; a run scaffolding
+     the directory and the three skills anyway asks a question it already has the answer
+     to, and only a person notices the second time. Read the recorded answer from
+     `docs/adoption-provenance.md`'s `adopt.tracker` row - a later wave has nothing else to
+     read it from - and skip landing all four when it says so, recording why as a manifest
+     content exception rather than leaving an unexplained gap. **Fold it into the backlog**
+     or **keep both, backlog is the source** both still land them; only the third option
+     skips. Reuse the answer given at onboarding - do not ask a second question to get it
+     again.
 
 4. **Watch repo gotchas** (e.g. a broad `settings.json` `.gitignore` rule swallowing
    `.claude/settings.json` - add a `!` negation).
