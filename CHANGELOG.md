@@ -17,6 +17,41 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.14 - 2026-09-04
+
+### Two checks read a shipped artifact as a defect, on the same repository they shipped it to (2026-09-04)
+
+Both were found by one real update, from 1.0.7 to 1.0.12, on a monorepo of eight
+applications. Neither is a check that failed to fire; both are checks that fired on something
+correct, which is the more expensive shape: the repository can only clear the report by
+undoing what the standard told it to do.
+
+**The fill check read the templates' own guidance as an unfilled shell.** `docs/PRODUCT.md`
+and `docs/personas.md` ship an HTML comment showing a drafting run where to put its
+`[NEEDS REVIEW]` marker, and it writes `<date>` and `<ID>` inside itself to show the shape.
+`stripCode` removed fenced blocks, indented blocks and code spans, but not comments, so the
+angle pattern read the standard's own note as two placeholders - on two documents the
+adopting repository had written and confirmed. The only way to clear it was to delete the
+note, which is what the first repository to hit it did. `stripCode` now strips comments, the
+way `proseOf` further down the same file already did. The mustache form is deliberately unchanged:
+`RAW_PLACEHOLDER_RE` scans the raw body, so `{{AUTHOR}}` inside a comment still warns - the
+angle form is ambiguous enough that a comment is reason to let it pass, and the mustache form
+never is. Three cases pin all of it, and two of them are the ones that would catch a fix that
+silenced the check instead.
+
+This repository could not have caught it on itself. `fillPaths` reads an adopter's tree, and
+`docs/PRODUCT.md` exists here only as the shipped template under `standard/`, never at the
+root the check looks at.
+
+**The marker check could not read an id that wrapped.** `[NEEDS REVIEW] ... Backlog: DOC-3.`
+is matched with `Backlog:\s*([A-Za-z][\w-]*)`, and `\s` crosses the newline but stops at the
+next line's `>`. A repository that wraps prose at a column - the adopting one wrapped six
+markers this way - got `a [NEEDS REVIEW] marker names no backlog row`, naming a marker that
+names its row two characters further on. The block is now read as its prose rather than its
+markup, by stripping the blockquote prefix before the id is matched. The misleading diagnosis
+was the costly half here, not the refusal: it points the reader at the marker, and the marker
+is right.
+
 ## 1.0.13 - 2026-09-03
 
 ### The agent guards no longer fail open on a payload they cannot parse (2026-09-03)
