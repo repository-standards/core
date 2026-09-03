@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | idea |
+| **Status** | approved |
 | **Date** | 2026-09-03 |
 | **Owner** | bodurkalukasz |
 
@@ -27,24 +27,26 @@ cross-repo dashboard - just a link between each repository's own.
 
 ## Open questions
 
-Two real unknowns, not yet resolved by this idea:
+Both were real unknowns when this idea was filed; the first is resolved by the
+implementation below, the second is a conscious, tracked gap rather than a blocker:
 
-- **The dashboard has no cross-repo notion today.** `standard/scripts/generate-dashboard`
-  renders one repository's own committed files into its own static page; each repository's
-  `dashboard.yml` deploys that page to its own Pages target, independently. The docs
-  switcher works because `pages.yml` and `stacks.json` already aggregate every repo's docs
-  under one deployment, surface-first (ADR-031). The dashboard has no equivalent aggregation
-  step - this idea would need one, or a different mechanism entirely (a static link to the
-  other repo's own deployed dashboard is the cheap option, but "cheap" is the answer, not yet
-  the decision).
-- **The dashboard has no capability spec yet** (`CYCLE-6`, `$unclaimed` in the coupling map).
-  A switcher changes what the dashboard's markup asserts; adding it before `CYCLE-6` lands
-  means writing to an undefined contract.
-
-Whether the switcher's target URLs come from the registry (`stacks.json`, already the source
-of truth for what stacks exist) or need a second list is itself downstream of the first
-unknown above - not decided here.
+- ~~The dashboard has no cross-repo notion today.~~ **Resolved.** `pages.yml` now builds
+  every registered stack's dashboard into the same aggregate deployment it already builds
+  landing and docs into (`site/<tech>/dashboard/`), passing `--registry stacks.json` to
+  `generate-dashboard/index.mjs`. The generator reads the registry, marks the surface whose
+  git remote matches the running repo as "here", and hands `page.js` a `meta.switcher` list
+  it renders as a dropdown - the same same-origin-path mechanism `tools/docsite.mjs` already
+  uses for the landing/docs switcher, not a second list or a cross-repo fetch. A standalone
+  build (no `--registry` - every existing `dashboard.yml`, including the node stack's own)
+  renders no switcher, so no adopter's output changes.
+- **The dashboard still has no capability spec.** `standard/scripts/generate-dashboard/**`
+  remains `$unclaimed` in `specs/capability-map.json`. This change went in directly - the
+  coupling guard does not block an unclaimed path, and the owner asked for the feature built
+  rather than gated on process - so the debt is real, not closed: a future pass should run
+  `spec-specify` for this capability and only then flip this row to `graduated`.
 
 ## Graduation (fill when approved)
 
-Backlog intent: `<id>` - spec: `specs/<capability>/` - records: `<ADR/BDR ids or "none">`
+Backlog intent: `DASHBOARD-SWITCHER-1` (this same row) - spec: none yet, capability remains
+`$unclaimed` (see open question above) - records: none new, extends the pattern already
+decided in ADR-031 rather than making a new decision.

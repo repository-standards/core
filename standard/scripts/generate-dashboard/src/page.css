@@ -113,6 +113,26 @@ a { color: var(--accent-ink); }
 }
 .brand .home::after { content: "↗"; font-size: 10px; }
 .brand .home:hover { color: var(--accent-ink); border-color: var(--accent); }
+.tb-switcher { position: relative; }
+.tb-switch {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  font-family: var(--mono); font-size: 11.5px; color: var(--ink-3);
+  border: 1px solid var(--line); border-radius: 999px; padding: 3px 11px;
+  background: var(--surface);
+}
+.tb-switch:hover { color: var(--accent-ink); border-color: var(--accent); }
+.tb-caret { font-size: 9px; }
+.tb-menu {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 30; display: none;
+  min-width: 240px; padding: 6px; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--surface); box-shadow: var(--shadow);
+}
+.tb-switcher.open .tb-menu { display: block; }
+.tb-item { display: block; padding: 8px 10px; border-radius: 7px; text-decoration: none; color: var(--ink); }
+.tb-item:hover { background: var(--ground); }
+.tb-item.here { background: var(--accent-soft); }
+.tb-item-name { font-family: var(--display); font-size: 14px; }
+.tb-item-blurb { margin-top: 2px; font-family: var(--mono); font-size: 11px; color: var(--ink-3); line-height: 1.4; }
 .stamp { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); text-align: right; line-height: 1.9; white-space: nowrap; }
 .stamp b { color: var(--ink); font-weight: 600; }
 .stamp .theme { margin-top: 6px; display: flex; justify-content: flex-end; }

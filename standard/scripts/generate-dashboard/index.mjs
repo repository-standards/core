@@ -7,11 +7,18 @@
 // where work is tracked. Sources that a repo does not have are skipped, not faked.
 //
 //   node scripts/generate-dashboard/index.mjs [repo-root] [--out <file>] [--watch] [--serve [port]]
-//                                            [--anonymise] [--with-discovery]
+//                                            [--anonymise] [--with-discovery] [--registry <path>]
 //
 // --watch rebuilds when a source file changes; --serve adds a local server so an open page
 // notices and offers a refresh. Neither ever touches git: a page going stale is a display
 // problem, and fixing it by moving somebody's branch would be a much worse one.
+//
+// --registry points at a stack registry (this repo's own stacks.json shape: {"stacks":
+// [{"technology","repo",...}]}) this build is one surface of, and turns on a switcher between
+// this dashboard and every other one the registry names - the dashboard's counterpart to the
+// core_url/node_url switcher tools/docsite.mjs already renders for landing and docs. Only the
+// core's own pages.yml passes it today; a standalone run (a stack's own dashboard.yml, or
+// anyone running this by hand) omits it and renders no switcher.
 //
 // --anonymise keeps names out of the structured fields: assignees, and the person a sprint
 // names as its owner. It is not redaction - prose written by hand (an item's status note, a
@@ -38,6 +45,7 @@ const here = dirname(fileURLToPath(import.meta.url))
 const argv = process.argv.slice(2)
 const outFlag = argv.indexOf('--out')
 const serveFlag = argv.indexOf('--serve')
+const registryFlag = argv.indexOf('--registry')
 // 9675 spells "work" on a phone keypad, and belongs to nothing: the ports a developer
 // actually has in use - 3000, 4173, 5173, 5432, 8080, 9229 - are all somewhere else. A
 // dashboard that squats on the port your app wants is a dashboard you turn off.
@@ -54,7 +62,15 @@ const withDiscovery = argv.includes('--with-discovery') && !anonymise
 const taken = new Set()
 if (outFlag >= 0) taken.add(outFlag + 1)
 if (serveFlag >= 0 && /^\d+$/.test(argv[serveFlag + 1] || '')) taken.add(serveFlag + 1)
+if (registryFlag >= 0) taken.add(registryFlag + 1)
 const root = resolve(argv.find((a, n) => !a.startsWith('--') && !taken.has(n)) || join(here, '..', '..'))
+// --registry points at the stack registry (stacks.json) this build is one surface of. Only
+// the core's own pages.yml passes it - it is what turns "several dashboards" into "one
+// ecosystem with a switcher", the same way core_url/node_url do for tools/docsite.mjs. A
+// standalone run (a stack's own dashboard.yml, or anyone running this by hand) omits it and
+// gets no switcher: outside that one aggregate deployment, the other dashboard's URL is not
+// a real same-origin link.
+const registryPath = registryFlag >= 0 ? resolve(argv[registryFlag + 1] || '') : null
 
 const read = (p) => readFileSync(join(root, p), 'utf8')
 const has = (p) => existsSync(join(root, p))
@@ -946,6 +962,42 @@ const ghRepo = remote.startsWith('git@github.com:')
     : null
 const src = ghRepo && commit ? ghRepo + '/blob/' + commit + '/' : null
 
+// The ecosystem switcher - present only when --registry was given. Built from stacks.json,
+// the one list that already names every official stack, plus this repository's own identity -
+// read the same way `repoName` above is, from its git remote. "here" is decided by comparing
+// repo slugs rather than by which command line happened to build this page, so the core's own
+// dashboard and every stack's dashboard agree on which one they are looking at.
+const CORE_REPO = 'repository-standards/core'
+const switcher = (() => {
+  if (!registryPath || !existsSync(registryPath)) return null
+  let registry
+  try {
+    registry = JSON.parse(readFileSync(registryPath, 'utf8'))
+  } catch {
+    return null
+  }
+  // A stack entry missing what the switcher needs is skipped and reported, the same way the
+  // stack loop in pages.yml reports an unreachable repo instead of failing the whole
+  // deployment over one bad registry row - the switcher is additive, so its own malformed
+  // input must degrade the switcher, never the build.
+  const stacks = (Array.isArray(registry.stacks) ? registry.stacks : []).filter((s) => {
+    const ok = s && typeof s.technology === 'string' && s.technology && typeof s.repo === 'string' && s.repo
+    if (!ok) console.error('dashboard: registry entry missing technology/repo, skipped for the switcher:', JSON.stringify(s))
+    return ok
+  })
+  const surfaces = [
+    { name: 'Repository Standards', blurb: 'the method - align, verify, drift 0', url: '/dashboard/', repo: CORE_REPO },
+    ...stacks.map((s) => ({
+      name: s.technology[0].toUpperCase() + s.technology.slice(1),
+      blurb: typeof s.description === 'string' ? s.description : '',
+      url: `/${s.technology}/dashboard/`,
+      repo: s.repo,
+    })),
+  ]
+  // Fewer than two surfaces is nothing to switch between.
+  return surfaces.length < 2 ? null : surfaces.map((s) => ({ ...s, here: s.repo === repoName }))
+})()
+
 const data = {
   meta: {
     name: pkg.name || repoName || basename(root),
@@ -961,6 +1013,7 @@ const data = {
           existsSync(join(root, skillDir, d.name, 'SKILL.md')),
         ).length
       : 0,
+    switcher,
   },
   backlog,
   items,
