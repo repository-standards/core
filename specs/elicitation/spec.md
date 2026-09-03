@@ -55,6 +55,23 @@ saying something he never said (ADR-054).
   because nothing here reads scope to know which route asked. `tools/elicitation-replay-test.mjs`
   carries a case asserting this as a documented limitation rather than a silent gap.
 
+### Session 2026-09-03 (NEEDS-REVIEW-2)
+
+Not a retrofit: [ADR-057](../../docs/decision-records/ADR-057-a-drafted-artifact-says-so-at-the-top.md),
+revised by [ADR-058](../../docs/decision-records/ADR-058-one-marker-says-a-human-has-not-looked-yet.md),
+is this addition's clarify record. A `suggest` or `stub` answer opens its artifact with a
+`[NEEDS REVIEW]` marker naming a backlog row (`Backlog: <ID>.`); this capability's part is
+proving that row is not made up, the same trust a `provisional` ledger row's own `backlog`
+cell already gets under R28. The marker check is fatal (a made-up or absent row is exactly
+the fabrication ADR-054 exists to catch) and scans every non-scaffolding markdown file
+`elicitation-provenance` already reads, not a separate file set. A second, non-fatal check
+reads whether a `provisional` row's own gated files actually carry the marker they promise -
+this warns rather than fails, because the marker is how a person finds the gap later, not a
+precondition for the row itself; a gated file may not exist yet, or may answer a later
+question this point does not gate. `self-verify` is the marker's counter (declared in
+[verify-engine](../verify-engine/spec.md)); this capability is the only one that
+cross-references what a marker names.
+
 ## Scope
 
 [`standard/.claude/elicitation/points.json`](../../standard/.claude/elicitation/points.json)
@@ -105,7 +122,8 @@ it as the known gap rather than claiming coverage.
 | elicitation-guard | 0, silent | the tool is neither a write nor a move, the path is gated by nothing, the moved path is untracked, the point's question fired, or the content declares a stub the point permits |
 | elicitation-guard | 0, deny JSON | a gated path, or a `Bash` move of a tracked path, with no fired question and no permitted stub; or no transcript to check against |
 | elicitation-provenance | 0 | every required point has a row with a permitted state, every `provisional` names a backlog row that exists, every `human` names who and when |
-| elicitation-provenance | 1 | a missing ledger, a missing or malformed row, a forbidden state, a named backlog row that is not there, an orphan row, a required point still `pending` once this adoption has written a non-template artifact at a path it gates, or a Gate artifact that reached a commit before the guard's own landing commit did |
+| elicitation-provenance | 1 | a missing ledger, a missing or malformed row, a forbidden state, a named backlog row that is not there, an orphan row, a required point still `pending` once this adoption has written a non-template artifact at a path it gates, a Gate artifact that reached a commit before the guard's own landing commit did, or a `[NEEDS REVIEW]` marker naming no backlog row or one that does not exist |
+| elicitation-provenance | 0, warning printed | a `provisional` row whose gated files carry no `[NEEDS REVIEW]` marker - reported, never counted against exit status |
 | elicitation-points-check | 0 / 1 | every declared point has a call site, against a baseline that may only shrink / the count grew or the baseline went stale |
 | elicitation-check | 0 / 1 / 2 | quotes covered and a question answered / a fabricated quote or no human presence / no transcript to read |
 | validation-claims-check | 0 / 1 | every run record states what it can evidence and its counts agree / any does not |
@@ -154,6 +172,11 @@ it as the known gap rather than claiming coverage.
 - A refusal MUST name the point, restate the question and state the three answers. A refusal
   that only says no gets worked around.
 - A `provisional` answer MUST name a backlog row that exists.
+- Every `[NEEDS REVIEW]` marker MUST name a backlog row, and that row MUST exist - checked
+  against every non-scaffolding markdown file, not only the artifacts a ledger row points at.
+- A `provisional` row whose gated files carry no `[NEEDS REVIEW]` marker MUST be reported, but
+  MUST NOT fail the check - the row is a promise about a future write, not evidence one
+  happened yet.
 - A validation run record MUST state which claim its observations support, and `human` MUST
   name a transcript file that is present.
 - The guard MUST reach a commit before any of the three Gate artifacts it protects does -
@@ -233,6 +256,15 @@ it as the known gap rather than claiming coverage.
   THEN it exits 0 - those files predate every question and cannot evidence a skipped one.
 - GIVEN a validation run record claiming `"provenance": "human"` with no transcript on disk
   THEN `validation-claims-check` exits 1.
+- GIVEN a `[NEEDS REVIEW]` marker naming a backlog row that exists THEN
+  `elicitation-provenance` passes; GIVEN the same marker naming a row that does not exist, or
+  naming no row at all, THEN it exits 1 naming the file and the problem.
+- GIVEN the shipped elicitation README's own two illustrative marker blocks THEN they are not
+  read as live markers - scaffolding is skipped, so an adopter who has not touched the file is
+  never failed by it.
+- GIVEN a `provisional` row whose gated file carries no `[NEEDS REVIEW]` marker THEN
+  `elicitation-provenance` still exits 0 and prints a warning naming the point; GIVEN the
+  gated file carries the marker THEN nothing is printed about it.
 
 ## Open questions
 

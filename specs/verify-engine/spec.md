@@ -30,6 +30,20 @@ checks below - the gap surfaced while fixing `ADOPT-DEFAULTS-1`'s dashboard-work
 was the only place any of this was written down). Recorded as step 2b below rather than folded
 into an existing step, because it runs over every shipped workflow file, not one entry class.
 
+### Session 2026-09-03 (NEEDS-REVIEW-2)
+
+Not a retrofit: [ADR-057](../../docs/decision-records/ADR-057-a-drafted-artifact-says-so-at-the-top.md),
+revised by [ADR-058](../../docs/decision-records/ADR-058-one-marker-says-a-human-has-not-looked-yet.md),
+is this addition's clarify record. A `suggest` or `stub` answer now opens its artifact with a
+`[NEEDS REVIEW]` marker; this engine's part is counting how many are still in the tree and
+reporting that next to the adoption percentage, without moving the percentage itself
+(ADR-038 - structure is what the number measures). The scan reuses the three file sets step 8
+already walks (fill-from-repo entries plus the fixed floor, decision records, capability
+specs) rather than building a fourth list, because those are the only places the marker is
+ever written. Recorded as step 8c below. Validating that a marker's named backlog row exists
+is [elicitation](../elicitation/spec.md)'s check, not this one - this engine counts, it does
+not cross-reference the backlog.
+
 ## Scope
 
 The shipped verifier: manifest loading, version pin, file/content/key/section/guard/removed-path checks, profiles, skeleton mode, the bounds on recorded exceptions, drift accounting, exit codes.
@@ -122,6 +136,15 @@ aligned to, with no second source of truth:
 
    The boundary is **"visibly nothing written", never "not enough written"**, and that is normative rather than an implementation detail: a required-sections check converts substance into ceremony the moment an adopter adds the heading and writes `TODO` beneath it, and a length threshold fails a genuine two-sentence `SECURITY.md` while passing a padded one. Both shapes above are cleared by writing one real sentence. When any such warning is raised, the **verdict line MUST state that the percentage counts entries present, not substance written** - the adopted percentage is a structural reading, and whether what is written is any good stays the judgment tier's call.
 
+8c. **What still waits on a human (ADR-057, revised by ADR-058).** Outside `--skeleton`, the
+   union of step 8's fill-from-repo files, every decision record found under
+   `docs/decision-records/`, and every capability spec found under `specs/` is scanned for a
+   line matching `/^>\s*\[NEEDS REVIEW\]/m`. Each match adds one to a count reported in the
+   verdict line, next to the adoption percentage, without changing drift, adoption or the
+   percentage itself - a marked file is present and counts as adopted exactly as an unmarked
+   one does (ADR-038). Never drift, never a WARN per file: the count is a companion number,
+   not a check with a pass or fail state.
+
 9. **Decisions.** A non-empty `decisions[]` produces one note (judgment tier, confirmed recorded at review) - never checked mechanically. The note carries **no count**: R7 "names no subset and asserts no count", so a summary line printing the catalog's length reads as a quota the standard explicitly refuses to set, in a report whose other numbers are drift and adoption. An entry declaring `required` is a FAIL naming R7 - `required` decides drift-vs-note for `files[]` and `sections[]`, nothing reads it here, so on a decision it could only ever assert the subset the rule denies.
 10. **References.** A non-empty `references[]` produces one note naming the count (method docs read in the standards repo at latest - the living standard, ADR-023/025) - never a file check; a `files[]` entry with `adapt: "reference"` is likewise noted and skipped, never existence-checked.
 
@@ -171,6 +194,7 @@ has no opinion on that.
 - The verifier MUST NOT print, and the manifest MUST NOT declare, any count or subset of decision areas as required (R7).
 - The verifier MUST fail a repo that still carries a path the standard has removed, and MUST decide it without history, a second tree, or any input beyond the manifest the repo already carries.
 - The verifier MUST warn, never fail, when a shipped workflow's `branches:` trigger cannot fire on the repo's actual default branch, and MUST say nothing when the default branch cannot be determined.
+- The verifier MUST report the count of files still carrying a `[NEEDS REVIEW]` marker next to the adoption percentage, and MUST NOT let that count change drift, adoption or the percentage.
 
 ## Invariants
 
@@ -226,6 +250,11 @@ has no opinion on that.
 - **A manifest with no profile says so.** GIVEN a manifest copy carrying no `profile` field WHEN run with no flag THEN a WARN names the fallback to scale, and drift is unchanged.
 - **A committed dependency tree is named.** GIVEN a git repo tracking files under `node_modules/`, at the root or nested inside a workspace package, WHEN self-verify runs THEN a WARN names the count and (when there is none) the missing `.gitignore`, and drift is unchanged; GIVEN a repo whose only match is a directory named `my_node_modules`, or no such paths at all, THEN nothing is said.
 - **Recursion guard.** GIVEN the manifest lists guard `id: "self-verify"` WHEN guards run THEN that entry is skipped.
+- **A marked file is counted, singular wording.** GIVEN one fill-from-repo file opening with a `[NEEDS REVIEW]` marker WHEN self-verify runs THEN the verdict reports one entry still carrying the marker, worded in the singular; GIVEN the same file with the marker removed THEN the count is zero and nothing is said.
+- **Two marked files, plural wording.** GIVEN two files each opening with a marker WHEN self-verify runs THEN the verdict reports two entries, worded in the plural.
+- **A marker in a decision record is counted.** GIVEN an ADR whose body opens with the marker WHEN self-verify runs THEN it adds to the count exactly as a marked fill-from-repo file does.
+- **A marker in a capability spec is counted.** GIVEN a `specs/<capability>/spec.md` opening with the marker WHEN self-verify runs THEN it adds to the count.
+- **The count never moves the percentage.** GIVEN the same file once unmarked and once carrying the marker WHEN self-verify runs on each THEN the adopted, applicable and percentage figures are identical between the two runs - a marked file is present and counts as adopted exactly as an unmarked one does (ADR-038).
 - **Stray skill.** GIVEN `.claude/skills/align-to-standards/` exists WHEN run THEN a WARN names it and drift is unchanged.
 - **References are not files.** GIVEN the manifest carries `references[]` and none of the referenced paths exist in the repo WHEN run THEN drift is unchanged (one note, zero file checks).
 - **Manifest data grows without the engine.** GIVEN a new `references[]` (or `files[]` / `sections[]`) entry is added to the manifest and no engine source changes WHEN run THEN the note's count follows the manifest and every other result is unchanged - manifest content is data, and only a change to how an entry is *interpreted* is an engine change.
