@@ -57,7 +57,13 @@ const CASES = [
     name: "point coverage passes when the asked point is the required one",
     args: [`--transcript`, `${F}/honest-adoption.jsonl`, `--points`, `${F}/points-one.json`],
     exit: PASS,
-    why: "the id travels in the question header; this proves the header is read, not the count",
+    why: "the id travels in the question header, as in every transcript before 1.0.4; this proves the header is read, not the count",
+  },
+  {
+    name: "point coverage reads the id from metadata.source",
+    args: [`--transcript`, `${F}/honest-adoption-metadata.jsonl`, `--points`, `${F}/points-one.json`],
+    exit: PASS,
+    why: "the carrier every call since 1.0.4 uses; the guard test proves it, this checker had only the header",
   },
   {
     name: "point coverage fails on a required point that was never asked",

@@ -111,9 +111,12 @@ fails naming each one that carries neither the substring `github/spec-kit v0.13.
   `spec.unknowns` are declared in [`points.json`](../../standard/.claude/elicitation/points.json),
   and every skill that writes a specification MUST carry an `AskUserQuestion` call site for the
   points gating that write, with the point id passed in the call's `metadata.source`
-  (`spec.scope`) and a plain header: the boundary and the acceptance criteria are asked by `spec-specify` before it writes them, by
-  `spec-clarify` in its loop, by `spec-update` before it moves a boundary, and by `spec-reconcile`
-  before it rewrites a criterion to match what was built. Prose instructing the agent to ask is not
+  (`spec.scope`) and a plain header. Each point's block names its own id beside the call - a
+  file-level sentence covering every block is what `elicitation-points-check` cannot tell from
+  a block that never asks. The boundary and the acceptance criteria are asked by `spec-specify`
+  before it writes them, by `spec-clarify` in its loop, by `spec-update` before it moves a
+  boundary, and by `spec-reconcile` before it rewrites a criterion to match what was built.
+  Prose instructing the agent to ask is not
   a call site: it was written, in the right file and in plain words, and a full adoption asked one
   question in 1140 transcript lines (ADR-054). The [elicitation](../elicitation/spec.md) capability
   owns the declaration, the refusal and the record; this capability owns only whether the calls are

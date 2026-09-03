@@ -229,11 +229,10 @@ process.stdin.on("end", () => {
   // summary of a session back as a user turn, so a summary saying it asked about personas
   // would otherwise vouch for the write it is summarising. That is the laundering path,
   // and it is the one an agent under pressure to finish would find first.
-  // The id travels in metadata.source, which the person answering never sees, so the header
-  // can say "Evidence" rather than [adopt.evidence] - which read as code to the first adopters
-  // and does not fit the header's twelve characters anyway. One call can put several questions,
-  // so the field lists every id asked, space-separated. The bracketed header is still read: it is
-  // what every transcript before 1.0.3 carries, and what an adopted repo on an older skill sends.
+  // The id rides in metadata.source, which the person answering never sees (points.json,
+  // $point_id_contract); one call can put several questions, so the field lists every id asked.
+  // The bracketed [id] header is still read: every transcript before 1.0.4 carries it, and so
+  // does an adopted repo on an older skill.
   const pointIds = (input) => {
     const ids = new Set();
     for (const id of String(input?.metadata?.source || "").split(/[\s,]+/)) if (id) ids.add(id);

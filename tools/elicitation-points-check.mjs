@@ -6,9 +6,9 @@
 // standard/elicitation/points.json declared the rule; onboard.md already stated the same rule
 // in prose and a full adoption ignored it. Prose is not a call site.
 //
-// A point is satisfied when its owning skill both invokes AskUserQuestion and names the
-// point as [id] beside the call - the call passes the id on in metadata.source, and the
-// bracketed form in the prose is what this check reads. The id is what lets the replay layer
+// A point is satisfied when its owning skill, inside the block headed by the point's [id],
+// invokes AskUserQuestion and names the id beside the call as `metadata.source` `<id>` - the
+// form the guard and the transcript checker read back. The id is what lets the replay layer
 // assert which points were reached rather than counting questions, and count is the metric
 // that hid this defect for months.
 //
@@ -86,40 +86,64 @@ function recommendationDrift(point, bodies) {
   // prose cites these ids legitimately ("see `[adopt.language]`, below"), and anchoring on a
   // citation slices from the wrong place and reports a disagreement that is not there.
   const tag = `[${point.id}]`;
-  const heading = (body) => body.split("\n").findIndex((l) => l.startsWith("#") && l.includes(tag));
   const mentions = bodies.filter((b) => b.includes(tag));
-  // A file that opens a block for this point is the call site; a file that merely names it is
-  // not, and must not contribute an option list. Only when no file has the heading at all does
-  // the slice fall back to the mention, which is the older skill layout.
-  const withHeading = mentions.filter((b) => heading(b) !== -1);
   // Every call site, not the first one found. A point asked on two paths - greenfield and
   // brownfield - is two option lists, and the one nobody checked is the one that drifts: the
   // first field run recommended "your conventions win" on a path whose question no file
   // declared, while the declared greenfield copy led with the standard's defaults.
-  const blocks = withHeading.map((b) => {
-    const lines = b.split("\n");
-    const start = heading(b);
-    const depth = lines[start].match(/^#+/)[0].length;
-    let end = start + 1;
-    while (end < lines.length && !(lines[end].startsWith("#") && lines[end].match(/^#+/)[0].length <= depth)) end++;
-    return lines.slice(start, end);
-  });
+  const blocks = bodies.flatMap((b) => pointBlocks(b, point.id));
   const scoped = blocks.length ? blocks : [mentions.flatMap((b) => b.slice(b.indexOf(tag)).split("\n"))];
-  const lines = scoped.map((b) => b.find((l) => l.includes("Options, in order:"))).filter(Boolean);
-  if (!lines.length) return `declares recommended "${point.recommended}" but the skill lists no "Options, in order:" line to lead with it`;
-  for (const line of lines) {
-    const first = line.split("Options, in order:")[1].split(" / ")[0];
-    if (!first.includes(point.recommended)) {
-      return `declares recommended "${point.recommended}", but the skill offers "${first.trim()}" first${lines.length > 1 ? ` at one of its ${lines.length} call sites` : ""} - the recommendation is whichever one is spoken first, so these cannot disagree`;
+  // The list is read from its opening line to the next blank one: a long list wraps, and the
+  // first option is whatever the first bold span says, compared whole - "do not migrate yet"
+  // contains "migrate" and is its opposite.
+  const lists = scoped
+    .map((b) => {
+      const start = b.findIndex((l) => l.includes("Options, in order:"));
+      if (start === -1) return null;
+      let end = start + 1;
+      while (end < b.length && b[end].trim() !== "") end++;
+      return b.slice(start, end).join(" ").split("Options, in order:")[1];
+    })
+    .filter(Boolean);
+  if (!lists.length) return `declares recommended "${point.recommended}" but the skill lists no "Options, in order:" line to lead with it`;
+  for (const list of lists) {
+    const first = (/\*\*([^*]+)\*\*/.exec(list) || [])[1]?.trim() ?? "";
+    if (first !== point.recommended) {
+      return `declares recommended "${point.recommended}", but the skill offers "${first}" first${lists.length > 1 ? ` at one of its ${lists.length} call sites` : ""} - the recommendation is whichever one is spoken first, so these cannot disagree`;
     }
   }
   return null;
 }
 
-// One file has to carry both the call and the id. Points that name no file would otherwise read
-// as wired when a skill's SKILL.md mentions the id in prose while some other page asks about
-// something else entirely - which is the shape of the original defect.
-const asks = (body, id) => body.includes("AskUserQuestion") && body.includes(`[${id}]`);
+// The block a point owns: from the heading that names it to the next heading of the same or
+// a higher level. A file that opens a block for the point is a call site; a file that merely
+// cites the id ("see `[adopt.language]`, below") is not, and must not contribute an option
+// list or vouch for a call. Nine points share intake.md, so nothing here is file-wide.
+function pointBlocks(body, id) {
+  const lines = body.split("\n");
+  const tag = `[${id}]`;
+  const out = [];
+  for (let start = 0; start < lines.length; start++) {
+    if (!(lines[start].startsWith("#") && lines[start].includes(tag))) continue;
+    const depth = lines[start].match(/^#+/)[0].length;
+    let end = start + 1;
+    while (end < lines.length && !(lines[end].startsWith("#") && lines[end].match(/^#+/)[0].length <= depth)) end++;
+    out.push(lines.slice(start, end));
+    start = end - 1;
+  }
+  return out;
+}
+
+// A call site names its point beside the call: `metadata.source` `<id>` since 1.0.4, or the
+// header `[<id>]` every skill before it carried. The bare tag is not enough - a heading plus
+// the tool's name somewhere in the file is what four sites left on the old contract looked
+// like, and they passed. Files without a heading for the point are read whole, the older
+// skill layout.
+const namesPoint = (text, id) => text.includes(`\`metadata.source\` \`${id}\``) || text.includes(`header \`[${id}]\``);
+const asks = (body, id) => {
+  const blocks = pointBlocks(body, id).map((b) => b.join("\n"));
+  return (blocks.length ? blocks : [body]).some((t) => t.includes("AskUserQuestion") && namesPoint(t, id));
+};
 
 const results = declared.points.map((point) => {
   const sites = callSites(point);
@@ -147,7 +171,7 @@ const results = declared.points.map((point) => {
       const anyTag = failing.some(([, b]) => b.includes(`[${point.id}]`));
       if (!anyCall && !anyTag) return { id: point.id, ok: false, why: `no AskUserQuestion and no point id in ${where}` };
       if (!anyCall) return { id: point.id, ok: false, why: `point id present but nothing calls AskUserQuestion in ${where}` };
-      return { id: point.id, ok: false, why: `AskUserQuestion is called, but nothing pairs it with a [${point.id}] header in ${where}` };
+      return { id: point.id, ok: false, why: `AskUserQuestion is called, but nothing names \`metadata.source\` \`${point.id}\` beside it in ${where}` };
     }
   }
   const bad = recommendationDrift(point, bodies);

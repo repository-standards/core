@@ -20,17 +20,19 @@ const root = mkdtempSync(`${tmpdir()}/points-check-`);
 const skills = `${root}/skills`;
 mkdirSync(`${skills}/t`, { recursive: true });
 
-const block = (options) => [
+const CALL = "Call `AskUserQuestion` for point `[t.one]` - header **One**, `metadata.source` `t.one` - and the question:";
+
+const block = (options, call = CALL) => [
   "### `[t.one]` A question",
   "",
-  "Call `AskUserQuestion` with the header `[t.one]`.",
+  call,
   "",
   `Options, in order: ${options}`,
   "",
 ];
 
-const skill = (options, preamble = [], second = null, sibling = null) => {
-  writeFileSync(`${skills}/t/q.md`, [...preamble, ...block(options)].join("\n"));
+const skill = (options, preamble = [], second = null, sibling = null, call = CALL) => {
+  writeFileSync(`${skills}/t/q.md`, [...preamble, ...block(options, call)].join("\n"));
   rmSync(`${skills}/t/other.md`, { force: true });
   if (second !== null) writeFileSync(`${skills}/t/other.md`, block(second).join("\n"));
   // A second skill, for the points asked down more than one skill rather than more than one
@@ -136,11 +138,43 @@ const CASES = [
     exit: 0,
     why: "consent has no convergent answer and must not be nudged into one",
   },
+  {
+    name: "the id carried in the header, as every skill before 1.0.4 did, is still a call site",
+    options: CONVERGENT,
+    call: "Call `AskUserQuestion` with the header `[t.one]`.",
+    point: { recommended: "move ours into the standard's layout" },
+    exit: 0,
+    why: "an adopted repository on an older skill is still wired; the guard reads that shape too",
+  },
+  {
+    name: "a heading and the tool's name with no id beside the call is not a call site",
+    options: CONVERGENT,
+    call: "Call `AskUserQuestion` and ask about the layout.",
+    point: { recommended: "move ours into the standard's layout" },
+    exit: 1,
+    expect: "nothing names",
+    why: "four sites left on the old contract passed on exactly this - the heading plus the tool's name anywhere in the file",
+  },
+  {
+    name: "an option list wrapped over several lines is read whole",
+    options: "**move ours into the standard's layout**\n(recommended) / **keep ours** /\n**suggest it**",
+    point: { recommended: "move ours into the standard's layout" },
+    exit: 0,
+    why: "the lists in intake.md wrap; reading one physical line made a reflow a build failure",
+  },
+  {
+    name: "a first option that negates the recommendation is not the recommendation",
+    options: "**do not move ours into the standard's layout yet** / **move ours into the standard's layout**",
+    point: { recommended: "move ours into the standard's layout" },
+    exit: 1,
+    expect: "offers",
+    why: "substring matching passed the cautious answer whenever it was phrased as a negation of the convergent one",
+  },
 ];
 
 let bad = 0;
 for (const c of CASES) {
-  skill(c.options, c.preamble, c.second ?? null, c.sibling ?? null);
+  skill(c.options, c.preamble, c.second ?? null, c.sibling ?? null, c.call ?? CALL);
   const r = run(points(c.point, c.file));
   const out = `${r.stdout}${r.stderr}`;
   const wrongExit = r.status !== c.exit;

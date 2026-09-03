@@ -21,7 +21,7 @@ user is writing in, with the point id in `metadata.source` and a header that say
 Fires **before step 5.4 fills Purpose, Scope and Out of scope** - before the boundary exists,
 not after.
 
-Ask: *What is in scope for this capability, and what is explicitly out?* Where the description
+Call `AskUserQuestion` for point `[spec.scope]` - header **Scope**, `metadata.source` `spec.scope` - and ask: *What is in scope for this capability, and what is explicitly out?* Where the description
 already implies a boundary, put it in the option and ask them to confirm or cut it, rather than
 asking an open question they have already answered.
 
@@ -38,7 +38,7 @@ date, and this spec's path as where the answer landed.
 
 Fires **before step 5.7 writes the Acceptance criteria**.
 
-Ask: *What must be true for this to count as done?* Offer the criteria you would write, as
+Call `AskUserQuestion` for point `[spec.acceptance]` - header **Acceptance**, `metadata.source` `spec.acceptance` - and ask: *What must be true for this to count as done?* Offer the criteria you would write, as
 options, so the answer is a judgement rather than an essay.
 
 Options, in order: **tell me now** (`human`) / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **leave a stub, do not guess** (`absent`)
@@ -54,7 +54,7 @@ the date, and this spec's path as where the answer landed.
 Fires **at step 5.3, in place of the informed guess** - whenever you are about to settle
 something the description does not settle.
 
-Ask: *These points are undetermined. Decide them now, mark them provisional, or leave them open?*
+Call `AskUserQuestion` for point `[spec.unknowns]` - header **Unknowns**, `metadata.source` `spec.unknowns` - and ask: *These points are undetermined. Decide them now, mark them provisional, or leave them open?*
 Name them in the options; a question about unknowns that does not say which unknowns is not
 answerable.
 

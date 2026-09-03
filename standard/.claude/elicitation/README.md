@@ -118,9 +118,12 @@ declaration rather than a matter of judgement in the moment.
 
 ## Carrying the id
 
-The question's header carries its point id in brackets - `[adopt.layout] directory naming`.
-Without it the replay layer can only count questions, and count is exactly the metric that
-let eighteen missing questions look like a working product.
+Every `AskUserQuestion` call names the points it asks in `metadata.source`, space-separated -
+a field the person answering never sees, so the header reads as prose: **Layout**, not
+`[adopt.layout]`. The bracketed `[id]` in the header is still read: every transcript before
+1.0.4 carries it, and so does an adopted repository on an older skill. Without the id the
+replay layer can only count questions, and count is exactly the metric that let eighteen
+missing questions look like a working product.
 
 ## What the guard actually refuses
 
