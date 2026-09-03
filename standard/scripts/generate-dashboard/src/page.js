@@ -151,15 +151,11 @@ document.body.append(
   el('header', { class: 'masthead' }, [
     wrap([
       el('div', { class: 'brand' }, [
-        el('h1', { html: D.meta.name + ' <span class="sub">- dashboard</span>' }),
         D.meta.home
-          ? el('a', {
-              class: 'home',
-              href: D.meta.home,
-              rel: 'noopener',
-              text: D.meta.home.replace(/^https?:\/\//, '').replace(/\/$/, ''),
-            })
-          : null,
+          ? el('a', { class: 'home-link', href: D.meta.home, rel: 'noopener' }, [
+              el('h1', { html: D.meta.name + ' <span class="sub">- dashboard</span> <span class="leaves" aria-hidden="true">↗</span>' }),
+            ])
+          : el('h1', { html: D.meta.name + ' <span class="sub">- dashboard</span>' }),
         switcherUI(),
       ]),
       el('div', { class: 'stamp' }, [
