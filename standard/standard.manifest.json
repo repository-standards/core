@@ -150,7 +150,7 @@
       "profile": "core",
       "since": "0.4.0",
       "rule": "R16",
-      "sha256": "6fc450d5226e573268e3e851184578e5141509ad8deb82f06a38756b8405a6ff"
+      "sha256": "b187ba550c7f520a7b9590c4e7e523a9e67ffb5fbce32fe681b7122432dfeaa7"
     },
     {
       "path": "scripts/spec-structure.mjs",
@@ -595,14 +595,14 @@
     },
     {
       "path": ".github/workflows/dashboard.yml",
-      "purpose": "builds the dashboard on every push to main; publishes it only when the repository is public or the build is locked with a password, because Pages on a private repository is served publicly",
+      "purpose": "builds the dashboard manually (workflow_dispatch); publishes it only when the repository is public or the build is locked with a password, because Pages on a private repository is served publicly",
       "adapt": "merge",
       "required": false,
       "profile": "core",
       "since": "0.9.0",
       "rule": "R15",
       "requiredKeys": [
-        "on.push"
+        "on.workflow_dispatch"
       ]
     },
     {

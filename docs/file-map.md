@@ -109,7 +109,7 @@ copied into your repository as folder READMEs that then age in place.
 | `.github/workflows/standards-update-watch.yml` | weekly notification that a newer standard exists - opens one issue per release, never edits the recorded state (ADR-025) | optional, core | `merge` | [R2](../standard/SPEC.md) |
 | `.github/workflows/spec-guard.yml` | the CI workflow that wires self-verify + both guards - how R16's gate actually runs | **required**, core | `merge` | [R16](../standard/SPEC.md) |
 | `.github/pull_request_template.md` | PR template - what/why, decision-record impact across both streams, test plan, checklist | optional, scale | `merge` | [R5](../standard/SPEC.md) |
-| `.github/workflows/dashboard.yml` | builds the dashboard on every push to main; publishes it only when the repository is public or the build is locked with a password, because Pages on a private repository is served publicly | optional, core | `merge` | [R15](../standard/SPEC.md) |
+| `.github/workflows/dashboard.yml` | builds the dashboard manually (workflow_dispatch); publishes it only when the repository is public or the build is locked with a password, because Pages on a private repository is served publicly | optional, core | `merge` | [R15](../standard/SPEC.md) |
 
 ## Adopted by reference, never copied
 
