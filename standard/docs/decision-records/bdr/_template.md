@@ -1,5 +1,11 @@
 # BDR-NNN: <short title of the business decision>
 
+<!-- Drafted by an adoption run under `suggest`, not decided by a person yet? Open here,
+     directly under the title, with the one marker (ADR-057/058) - this comment is not it:
+       > [NEEDS REVIEW] drafted by the adoption run on <date> from <source>. Backlog: <ID>.
+     Leave Status below as `Proposed` until a human confirms it; the marker and the status
+     both leave in the commit that does. A record a person is writing now carries neither. -->
+
 | | |
 | --- | --- |
 | **Status** | Proposed |

@@ -3,6 +3,12 @@
 > The single "what is this and where is it going" doc. Plain language, kept
 > current. A new developer, PO, or agent should get the whole picture in 5 minutes.
 
+<!-- Drafted by an adoption run under `suggest`, not confirmed by a person yet? Open here,
+     right after this intro, with the one marker (ADR-057/058):
+       > [NEEDS REVIEW] drafted by the adoption run on <date> from the repo and its
+       > README. Backlog: <ID>.
+     A frame a person wrote themselves carries no marker. -->
+
 ## What it is
 
 One paragraph: the product, who it serves, the core value it delivers.
