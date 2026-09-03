@@ -442,6 +442,12 @@ Two live trackers is the failure this asks about, and it is the one the reposito
 
 Records to `docs/adoption-provenance.md`: the `adopt.tracker` row takes the state, who answered, the date, and `backlog.md` as where the answer landed.
 
+**This answer also decides whether `docs/sprints/` and the three sprint skills land at
+all** (steps.md, landing the shipped tree) - **external tracker, backlog bridges** means
+skip them, the other two options still land them. A run that scaffolded the sprint
+mechanism for a team that had just said it does not run sprints, minutes earlier, is what
+this cross-reference exists to prevent; reuse this answer there rather than asking again.
+
 ### `[adopt.backlog]` Seeding the backlog
 
 Fires **before writing backlog rows, and again before assigning an owner to any of them**.
