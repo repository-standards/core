@@ -5,7 +5,7 @@ A skill earns its place when its description names a situation no other skill's 
 names; it costs something only when it overlaps one. Ten skills with blurred descriptions
 are worse than twenty with sharp ones, and the number on its own predicts nothing.
 
-Currently 22 ship into every adopted repo. That is a report, not a budget.
+Currently 21 ship into every adopted repo. That is a report, not a budget.
 
 `show-backlog` (2026-08-13) is the most recent addition, and it is the first one this entry
 asked for by name: the closing paragraph wanted field evidence of a real user's sentence
@@ -21,6 +21,13 @@ README names its worst weakness as every number in it coming from people who wro
 standard. Nothing closed that loop from inside a real adoption run - the gap was in
 reflexivity, not routing, unlike every prior addition here. Its description triggers at the
 close of an `align-to-standards` session, a moment no other skill's description claims.
+
+**Correction (2026-09-03):** `record-run` shipped into the client tree for three weeks and
+should not have. A re-adoption or re-entrant wave re-running it from the shipped copy would
+offer to record the same session twice, and a real run reported never having asked for it at
+all - the shipped instance sat unused in a repo whose owner had excepted it (`ADOPT-DEFAULTS-1`).
+It now lives at `skills/record-run/`, run from this repo's own checkout alongside
+`align-to-standards`, and no longer counts toward the 21.
 
 `idea-write` (2026-08-03) was, at the time, the most recent addition: `adr-write` and `bdr-write` both
 named `docs/ideas/` as where a not-yet-decided speculation belongs and neither wrote to

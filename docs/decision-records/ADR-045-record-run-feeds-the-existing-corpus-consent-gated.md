@@ -107,3 +107,28 @@ back at it for anyone who already ran an align session.
   executable skill rather than a prose request on a page nobody reads until too late).
 - `docs/validation/human-prompting/README.md` (the corpus and the three-flag method this
   skill's output is scored against - unchanged by this decision, only fed by it).
+
+## Correction (2026-09-03)
+
+Point 3 of the Decision was wrong, and the record stays as written above rather than being
+edited to look right in hindsight - this section is the fix.
+
+Point 3 argued `record-run` should ship as a lifecycle skill specifically *for* a re-entrant
+wave against an already-aligned repo, reasoning that such a run "has no reason to re-fetch a
+zone-1 file that was never meant to leave this repo." A real adoption (2026-09-03, prompt
+`A61`) found the opposite: the owner objected to the shipped copy mid-run, in almost the same
+words the rejected concern would have used - "to jest jednorazowy skill z adopcji przeciez i
+tyle - ewentualnie pozniej przy re-adopcji ale to znowu nie powinno byc u klienta w repo" ("it's
+a one-time adoption skill and that's it - possibly again at re-adoption, but that again
+shouldn't be in the client's repo either"). The re-entrant case this ADR built its shipping
+argument on is, in the one real run that exercised it, the case the owner named as the reason
+*not* to ship it. The agent recorded a manifest content exception rather than treating the
+default itself as the defect, and the same gap repeated across two more shipped defaults in
+the same run (`A62`, `A63`) before anyone filed it upstream - `ADOPT-DEFAULTS-1`.
+
+`record-run` now lives at `skills/record-run/`, a transition skill run from this repo's own
+checkout like `align-to-standards` - never shipped, never lands in an adopted repo's
+`.claude/skills/`. A re-entrant wave runs it the same way a first adoption does: from a
+checkout of this repo, against the target repo's session. Options A and B above are otherwise
+unaffected; only point 3's shipping-class argument was wrong, and only that mechanism is
+corrected here.

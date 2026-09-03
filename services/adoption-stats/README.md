@@ -15,7 +15,8 @@ so `COUNT(*)` becomes a real number instead of a claim. The point is a **live co
 "Live adoptions: N" - fed by `GET /` on the landing page, not a corpus to read or learn
 from. See ADR-047 for exactly what is and is not collected and why.
 
-**Not to be confused with `record-run`** (the 21st lifecycle skill, ships to adopters,
+**Not to be confused with `record-run`** (a transition skill run from this repo's own
+checkout, never shipped to adopters,
 [ADR-045](../../docs/decision-records/ADR-045-record-run-feeds-the-existing-corpus-consent-gated.md)).
 That is a different mechanism for a different purpose: consent-gated, carries far more
 detail (up to the session's own turns and agent responses at level 2), and feeds the

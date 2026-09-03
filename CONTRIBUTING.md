@@ -150,8 +150,10 @@ inside, is worth more than anything the maintainer can write.
 **Two ways in, and neither requires reading a method page first:**
 
 - **Run an adoption.** Any `align-to-standards` session ends by offering `record-run`
-  (the 21st shipped skill) - it assembles the session that just happened, shows you
-  exactly what it would send, and asks a single yes or no at one of two consent levels
+  (a transition skill run from this repo's own checkout, `skills/record-run/` -
+  it never ships into the adopted tree) - it assembles the session that just
+  happened, shows you exactly what it would send, and asks a single yes or no
+  at one of two consent levels
   (prompts only, or the full run including the agent's own responses). A "no" leaves the
   file on your machine and sends nothing. **A failed or abandoned run is more valuable
   evidence than a clean one** - report it too.
