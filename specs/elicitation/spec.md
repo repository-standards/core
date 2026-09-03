@@ -166,7 +166,9 @@ it as the known gap rather than claiming coverage.
   them; `elicitation-provenance` MUST fail when that section is absent.
 - Questions MUST be put in the language the person is writing in. Which language the written
   artifacts use is itself a point, never an assumption.
-- The guard MUST fail closed: absent or unreadable evidence is a refusal, never a pass.
+- The guard MUST fail closed: absent or unreadable evidence is a refusal, never a pass. A
+  points file that exists and does not parse is a declared gate that cannot be read, so every
+  gated write is refused until it is fixed - never treated as if no point had been declared.
 - The guard MUST read the transcript structurally. Compaction replays the model's own summary
   of a session back as a user turn, so any textual scan lets the agent vouch for itself.
 - A refusal MUST name the point, restate the question and state the three answers. A refusal
@@ -222,7 +224,10 @@ it as the known gap rather than claiming coverage.
   `elicitation-provenance` exits 1 naming that row.
 - GIVEN a session in which `[adopt.layout]` never fired WHEN the agent runs `git mv` on a path
   the repository already tracks THEN the guard refuses; WHEN the moved path is untracked THEN
-  it does not.
+  it does not. The target directory is read in every spelling the tools accept - `-t DIR`,
+  `-tDIR`, `--target-directory=DIR` - so none of them hides the source.
+- GIVEN a `points.json` that exists and does not parse WHEN the agent writes any gated path
+  THEN the guard refuses, naming the file, until the JSON is fixed.
 - GIVEN a repo where this adoption wrote a record at a path `adopt.records` gates, and that
   row still reads `pending`, THEN `elicitation-provenance` exits 1.
 - GIVEN a repo whose decision records were committed before the adoption's own commit THEN it

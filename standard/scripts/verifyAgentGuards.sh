@@ -393,10 +393,26 @@ else
     TRACKED="$(git -C "${FIX}" ls-files | head -1)"
     assert "moving a path the repository already tracks is refused" DENY \
       "$(elicit "$(printf '{"tool_name":"Bash","tool_input":{"command":"git mv %s moved-aside"}}' "${TRACKED}")")"
+    # The destination-first spellings. Detached `-t DIR` was handled; attached `-tDIR` and
+    # `--target-directory=DIR` read as unknown flags, so the only source was popped as the
+    # destination and a gated tree moved with the guard silent.
+    assert "moving a tracked path with --target-directory=DIR is refused" DENY \
+      "$(elicit "$(printf '{"tool_name":"Bash","tool_input":{"command":"mv --target-directory=moved-aside %s"}}' "${TRACKED}")")"
+    assert "moving a tracked path with -tDIR is refused" DENY \
+      "$(elicit "$(printf '{"tool_name":"Bash","tool_input":{"command":"git mv -tmoved-aside %s"}}' "${TRACKED}")")"
+    assert "moving a tracked path with -t DIR is refused" DENY \
+      "$(elicit "$(printf '{"tool_name":"Bash","tool_input":{"command":"mv -t moved-aside %s"}}' "${TRACKED}")")"
     assert "moving a file the repository never tracked is not this guard's business" allow \
       "$(elicit '{"tool_name":"Bash","tool_input":{"command":"mv untracked-scratch.tmp elsewhere.tmp"}}')"
     assert "an ordinary shell command is not read as a rename" allow \
       "$(elicit "$(printf '{"tool_name":"Bash","tool_input":{"command":"ls %s"}}' "${TRACKED}")")"
+    # A points file that exists but does not parse is not the same as none declared: the gate
+    # is declared, a guard that cannot read it has not checked anything, so it refuses.
+    cp "${FIX}/.claude/elicitation/points.json" "${FIX}/points.json.good"
+    printf '{ not json\n' > "${FIX}/.claude/elicitation/points.json"
+    assert "a points file that does not parse refuses the gated write" DENY \
+      "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/personas.md"}}')"
+    mv "${FIX}/points.json.good" "${FIX}/.claude/elicitation/points.json"
     # Two of the three above expect `allow`, and a guard that never ran also produces no output.
     # So the scorer is shown catching a dead one, on the same payload that legitimately passes.
     printf 'throw new Error("dead");\n' > "${FIX}/crash.mjs"

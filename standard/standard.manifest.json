@@ -353,7 +353,7 @@
       "since": "0.8.0",
       "rule": "R19",
       "sha256": {
-        "elicitation-guard.mjs": "d5cd569d69c4ad62cab05e96b906c586908a6dc6dc22a4d64e8848457184b689",
+        "elicitation-guard.mjs": "350c085b93828bd4620b3d457193ba0262acf7b5d12c09c71c51e147481bf959",
         "guards.sh": "e2cb07f370a7875f10f3f5eef5529fe6be1ab85b7ccf52027dffac564d9b188e",
         "lib.sh": "049109e76e434720c9215f7abca6dd8e79dd1e126412402314b756ec92bf535f",
         "no-ci-secret-writes.sh": "64873a80bbf45c76528cfc302485e69ebf5485fcaf7228551bc9195d3cdb6798",
@@ -369,7 +369,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R19",
-      "sha256": "58f1ccf669dbb0dd60fd28c91422ead063ba9a8b44b9f0a9351b4bf407bbf54c"
+      "sha256": "01902dd7c7b8bec000600dfe190a8afb34c3f06ba8cac96c4c02dcc9ac64d399"
     },
     {
       "path": "docs/PRINCIPLES.md",
@@ -626,7 +626,7 @@
       "profile": "core",
       "since": "0.9.23",
       "rule": "R28",
-      "sha256": "d5cd569d69c4ad62cab05e96b906c586908a6dc6dc22a4d64e8848457184b689"
+      "sha256": "350c085b93828bd4620b3d457193ba0262acf7b5d12c09c71c51e147481bf959"
     },
     {
       "path": "docs/adoption-provenance.md",

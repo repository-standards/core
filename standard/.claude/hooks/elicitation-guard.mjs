@@ -23,7 +23,9 @@
 // Fail-close. No transcript means the question cannot be shown to have happened, and a
 // guard that waves work through when it has no evidence is the exact defect it was built
 // to catch. The refusal says which point is missing and what the three answers are, so the
-// remedy is one call away rather than a puzzle.
+// remedy is one call away rather than a puzzle. A points file that exists but does not parse
+// is the same case one layer down: the gate is declared and cannot be read, so every gated
+// write is refused until the JSON is fixed - not skipped as if no point had been declared.
 //
 // Two things settle a point besides asking in this session. A repository-scoped question -
 // who the product is for, how the records are kept, which profile it runs at - is asked once,
@@ -49,7 +51,7 @@
 // scores a nonzero exit as BROKEN, and it is right to - the hooks are silent when they
 // allow, so an exit code is the one signal that cannot be told apart from a crash.
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
 // Core keeps the shipped tree under standard/; an adopting repo unpacks it at the root.
@@ -87,7 +89,13 @@ process.stdin.on("end", () => {
   for (const p of POINTS) {
     try { declared = JSON.parse(readFileSync(p, "utf8")); break; } catch { /* try the next */ }
   }
-  if (!declared) allow();
+  if (!declared) {
+    const broken = POINTS.find((p) => existsSync(p));
+    if (broken) {
+      deny(`Refused: ${broken} exists but could not be parsed, so nothing checked whether this artifact was ever asked about. Fix the JSON and retry.`);
+    }
+    allow();
+  }
 
   // A glob here is deliberately small: ** spans directories, * does not span a slash.
   const rx = (g) =>
@@ -125,13 +133,16 @@ process.stdin.on("end", () => {
       const cd = m[1] ? m[1].replace(/^["']|["']$/g, "") : null;
       const tokens = (m[2].match(/"[^"]*"|'[^']*'|\S+/g) || []).map((a) => a.replace(/^["']|["']$/g, ""));
       // `mv -t DIR src...` names its destination first, so the usual last-argument rule reads
-      // the only source as a destination and finds nothing to check.
+      // the only source as a destination and finds nothing to check. The attached spellings
+      // (`-tDIR`, `--target-directory=DIR`) have to be recognised too: read as unknown flags
+      // they leave `target` set, and the last real source is popped as the destination.
       const sources = [];
       let target = true;
       for (let i = 0; i < tokens.length; i++) {
         const t = tokens[i];
         if (!t) continue;
         if (t === "-t" || t === "--target-directory") { i++; target = false; continue; }
+        if (t.startsWith("--target-directory=") || /^-t./.test(t)) { target = false; continue; }
         if (t.startsWith("-")) continue;
         sources.push(t);
       }
