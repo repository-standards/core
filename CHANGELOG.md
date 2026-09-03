@@ -17,6 +17,42 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.11 - 2026-09-03
+
+### A record id in a shipped file said nothing about whose index answers it (2026-09-03)
+
+The tree cited its own decision records by bare number - `ADR-010`, `ADR-024`, `ADR-033`,
+`ADR-049` in `AGENTS.md` alone. A record id is scoped to the index it sits beside, and
+shipping moves it beside a different one: the private monorepo of run h read `ADR-010` as
+its own ADR-010, which is a different decision, and found nothing at 024, 033 or 049. It
+rewrote every citation by hand, so the convention lived in that one repository and the next
+`update-to-latest` would have landed the bare numbers again
+([#133](https://github.com/repository-standards/core/issues/133)).
+
+188 citations across 50 shipped files now carry the qualifier - `standard ADR-010`, or the
+possessive where the citation opens a sentence. 31 are markdown; the rest are the guards,
+the workflows and the elicitation points, and those are the ones that travel furthest:
+`standards-update-watch.yml` writes a citation into the body of an issue it opens in the
+adopting repo's own tracker, where nobody has this index to check it against. Two spellings
+were already qualified and did not move: the link into `repository-standards/core`, and a
+`PATCHED(repository-standards)` marker introducing its id directly, which names the source
+in the same breath - three markers whose id sat further along the line did move, because the
+marker qualifies what it introduces and not the whole line.
+
+A few ids that look like citations are not, and stayed bare or moved into a code span:
+`decision-records-check.mjs` teaches the numbering scheme by showing `ADR-004` and
+`BDR-004` as distinct ids, and that is a statement about the *adopter's* index, which is
+exactly what a bare id should mean.
+
+`standard/docs/conventions.md`, Writing, states the rule from the adopter's side - a bare id
+in their repo is their own record - and `tools/prose-check.mjs` now fails on an unqualified
+one in any of the 104 files under `standard/`, whatever its type, so the tree cannot regrow
+them.
+
+The issue also asked for `decision-records-check` to treat the qualified form as external.
+It needs no change: that guard reads the index against the directory and never reads prose,
+so it never resolved these citations in the first place.
+
 ## 1.0.10 - 2026-09-03
 
 Five of the entries below are guard and workflow defects found by the real adoption of a
