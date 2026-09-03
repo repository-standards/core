@@ -10,7 +10,7 @@ standard the first time; **this** brings an already-aligned repo up to the stand
 latest - the way you'd bump a dependency, not re-scaffold from scratch.
 
 The target is always latest, never a pin: `.standards-version` is a bookmark of where the
-repo got to, not a version it is held at (ADR-025). Updating reads the **delta** between the
+repo got to, not a version it is held at (standard ADR-025). Updating reads the **delta** between the
 tree the repo last aligned to and latest, applies only what changed, and proves the result
 with `self-verify`.
 
@@ -31,7 +31,7 @@ with `self-verify`.
    which version a commit carries - and use that. It is a one-time approximation, and it is
    approximate on purpose: since the standard's own PRs bump PATCH by default (R25), `main` carries unreleased change
    under a version number that has not shipped, so a version string names a range of trees
-   rather than one (ADR-052). Say in the PR that the base was back-filled. From this run on,
+   rather than one (standard ADR-052). Say in the PR that the base was back-filled. From this run on,
    the field is exact.
 
    Target = the standard's latest (`origin/main`), unless the user named something else.
@@ -42,7 +42,7 @@ with `self-verify`.
    standard/`. Nothing else sees all of the delta. The manifest and the changelog index that
    diff; neither stands in for it.
 
-   - The **manifest diff** (`standard.manifest.json`, ADR-005, keyed by kind + id/path)
+   - The **manifest diff** (`standard.manifest.json`, standard ADR-005, keyed by kind + id/path)
      says which *entries* arrived, changed shape, or went away: a new required file, an
      entry that stopped being required, a changed profile, changed `requiredKeys`. It does
      not say what changed *inside* a file the standard already shipped. Only `copy` entries
@@ -80,7 +80,7 @@ with `self-verify`.
    **The stack layer updates too:** if the repo carries a `stack.manifest.json` - or one
    `stack.<technology>.manifest.json` per stack, where more than one coexists - re-read
    each from its stack repo's checkout and apply its entry deltas the same way. A stack
-   is linked by the registry pointer, never by a core version (ADR-022), so each one's
+   is linked by the registry pointer, never by a core version (standard ADR-022), so each one's
    update rides on its own clock, and updating one never implies the others.
 
 3. **Apply the delta, adapted - never a blind re-scaffold.** For each changed item:
@@ -107,7 +107,7 @@ with `self-verify`.
    - the item was **removed** in the target -> remove or migrate the repo's use of it, and
      check the target manifest's `removedPaths` for an entry naming it. That list is what
      self-verify checks in step 6, so a removal skipped here fails there rather than passing
-     quietly the way it used to (ADR-052). Where the repo deliberately keeps a removed path,
+     quietly the way it used to (standard ADR-052). Where the repo deliberately keeps a removed path,
      record it as an exception in step 4 - not as a silent miss;
    - re-applying the whole standard is wrong - it erases the repo's local adaptation.
 
@@ -135,7 +135,7 @@ with `self-verify`.
    layer exists to catch, committed by the run that installed it.
 
 4. **Preserve local deviations.** Where the repo deliberately deviates from a standard
-   default (its own superseding ADR, per ADR-004 on link-not-copy), the update **must
+   default (its own superseding ADR, per standard ADR-004 on link-not-copy), the update **must
    not** clobber it. Such deviations live as `exceptions` entries in the repo's manifest;
    carry them forward. Detect the conflict, keep the repo's decision, and record what the
    new version would otherwise have changed so the human can reconcile it consciously.
@@ -199,7 +199,7 @@ with `self-verify`.
 - **Not "done" on an unread changelog** - if you cannot determine the delta between the
   two trees, stop and say so rather than re-applying blindly.
 - **Not a removal left half-applied** - a path the target removed and this repo still carries
-  is drift, and since ADR-052 self-verify says so. Delete it, migrate it, or except it
+  is drift, and since standard ADR-052 self-verify says so. Delete it, migrate it, or except it
   deliberately; do not leave it and call the update done.
 - **Not a delta measured from the version string** - two trees can carry the same version
   number, since the standard's own PRs bump PATCH by default (R25) and `main` runs ahead of what shipped.

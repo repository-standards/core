@@ -3,7 +3,7 @@ name: discovery-digest
 description: Use when someone hands over raw material rather than a request - meeting notes, a mail thread, a transcript, "here's what they said on the call", a half-decision nobody wrote down. Files it into the topic's dossier with its provenance, flags where it contradicts what is already recorded, and says whether the topic is ready to be specced. Never writes specs itself.
 ---
 
-The curator of `docs/discovery/` (ADR-024). This skill maintains dossiers; it
+The curator of `docs/discovery/` (standard ADR-024). This skill maintains dossiers; it
 **never writes specs** - when a topic is ripe, it says so and hands off to
 `/spec-specify`. The user's habit is one line: "had a meeting? drop the
 extract" - everything else is this procedure.
@@ -43,7 +43,7 @@ puts it in front of them.
 ## Procedure
 
 1. **Resolve the dossier.** Slugify the topic (`booking-changes`, not a spec
-   or ticket name - a dossier is per discovery topic, ADR-024). If
+   or ticket name - a dossier is per discovery topic, standard ADR-024). If
    `docs/discovery/<topic>/` does not exist, create it by **copying the shipped
    `docs/discovery/_template.md` to `docs/discovery/<topic>/README.md`** and filling
    its title and summary - that template's own first line says to copy it, and it carries the

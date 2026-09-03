@@ -9,7 +9,7 @@
 //   Gate 5 - the counted backlog: a scope block whose categories sum to a stated total,
 //            every item naming its owner role. That total is the human's go/no-go.
 //
-// Gate 0's artifact became a manifest entry in 0.9.0 (R26, ADR-042) and is, measurably, the
+// Gate 0's artifact became a manifest entry in 0.9.0 (R26, standard ADR-042) and is, measurably, the
 // only one of the three that adoption runs reliably produce. That is the whole argument for
 // this guard: presence in the manifest is what makes a gate happen, and presence alone is not
 // enough for these two, because a file can exist and still not carry the number.

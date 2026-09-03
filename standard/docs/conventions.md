@@ -123,8 +123,18 @@ adopted by reference from the living standard - always latest.
   the restatement in `docs/facts.json` (shape: [`facts.example.json`](facts.example.json)) - source and claim - and
   `node scripts/facts-check.mjs` fails when they disagree. Undeclared restatements
   rot: "twenty rules" outlived the twenty-first by weeks.
+- **A bare record number means this repo's record.** `ADR-014` anywhere here resolves
+  against this repo's own `docs/decision-records/` index. A citation of the *standard's*
+  record carries the qualifier - `standard ADR-014`, `the standard's ADR-014`, or a link to
+  it under
+  [`repository-standards/core`](https://github.com/repository-standards/core/tree/main/docs/decision-records).
+  It applies to every file that ships, not only the documents: a guard's failure message and a
+  workflow that opens an issue in your tracker are read by someone holding your index.
+  The two indexes number independently and do collide: the tree you adopted cites
+  standard ADR-010, and the first repo to adopt it already had an `ADR-010` of its own,
+  about something else.
 
-### Where rules live (ADR-012)
+### Where rules live (standard ADR-012)
 
 **In-repo instructions are the source of truth.** Every rule about working in this
 repo lives in the repo, at its taxonomy home: conventions here / `AGENTS.md`,

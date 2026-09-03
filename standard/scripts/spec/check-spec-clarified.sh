@@ -4,7 +4,7 @@
 #
 # Blocks plan/tasks on a spec that is not ready-to-develop. A spec passes when:
 #   1. it contains a "## Clarifications" section, and
-#   2. it contains zero open markers of the "[NEEDS ..." family (ADR-024):
+#   2. it contains zero open markers of the "[NEEDS ..." family (standard ADR-024):
 #      CLARIFICATION (a question), DECISION (a missing ADR/BDR), INPUT (e.g. a
 #      UX design), ASSET (e.g. credentials) - each names what is missing and
 #      who brings it, so the open markers double as the spec's gap list, and

@@ -52,7 +52,7 @@ spec honest. Honest scope - only part of this is mechanical; the rest needs an A
   Keys starting with `$` are metadata about the map, not capabilities: `$about` (a note
   for whoever opens the file) and `$unclaimed`. Any other `$` key is refused - a
   misspelt `$unclaimed` that exempted nothing would be the same silence again.
-- **Clarify gate (ADR-010; field-proven in production, 2026-07):** a spec may not reach
+- **Clarify gate (standard ADR-010; field-proven in production, 2026-07):** a spec may not reach
   plan / tasks / the tracker mirror unless **all four** hold - it has a `## Clarifications`
   section; **zero** open markers of the `[NEEDS ...` family - CLARIFICATION, DECISION,
   INPUT and ASSET alike, which is what the gate script counts, so a missing decision blocks
@@ -135,7 +135,7 @@ capability globs - a version bump is not a behavior change; it is reviewed as a
 dependency diff (R21) and recorded in the changelog. When the guard still fires
 on a genuinely behavior-free change, the answer is to reconcile the spec's
 content or narrow the map - never to append a history note to the spec (R4,
-ADR-018: specs carry no change-log sections).
+standard ADR-018: specs carry no change-log sections).
 
 **Data a capability reads** - a rules table, a tariff file, a manifest - belongs in
 the map, but its *content* is not its behavior. Declare it

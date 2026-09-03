@@ -61,7 +61,7 @@ jobs:
             node scripts/spec-structure.mjs --block
           fi
       - name: Spec policy coupling guard (blocks at scale, advises at core)
-        # The repo's manifest copy declares its profile (ADR-011); the blocking
+        # The repo's manifest copy declares its profile (standard ADR-011); the blocking
         # coupling gate is a scale-profile prescription (R11).
         #
         # Coupling is a statement about a change, so it needs two sides. On a push the

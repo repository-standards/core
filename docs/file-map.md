@@ -27,14 +27,14 @@ copied into your repository as folder READMEs that then age in place.
 | Path | What it is, and why | Needed | Adapt | Rule |
 |---|---|---|---|---|
 | `AGENTS.md` | the single agent entry point | **required**, core | `fill-from-repo` | [R1](../standard/SPEC.md) |
-| `.standards-version` | the state this repo last aligned to - a bookmark the delta is measured from, never a version to stay at (ADR-025); written by align-to-standards / update-to-latest | **required**, core | `fill-from-repo` | [R2](../standard/SPEC.md) |
+| `.standards-version` | the state this repo last aligned to - a bookmark the delta is measured from, never a version to stay at (standard ADR-025); written by align-to-standards / update-to-latest | **required**, core | `fill-from-repo` | [R2](../standard/SPEC.md) |
 | `standard.manifest.json` | this manifest, matching the recorded state - what self-verify checks against | **required**, core | `copy` | [R2](../standard/SPEC.md) |
 | `SPEC.md` | the normative core this manifest projects - readable in place | optional, core | `copy` | [R2](../standard/SPEC.md) |
 | `CLAUDE.md` <br><small>or `AGENTS.md`</small> | the file Claude Code loads first - points at AGENTS.md and carries the rule to check the skills before acting (R1); a non-Claude repo carries the same content in whatever its agent loads first | optional, core | `merge` | [R1](../standard/SPEC.md) |
 | `specs` | living capability specs | **required**, core | `fill-from-repo` | [R8](../standard/SPEC.md) |
 | `backlog.md` <br><small>or `docs/backlog.md`</small> | the work ledger; items leave only when their DoD is met | **required**, core | `fill-from-repo` | [R15](../standard/SPEC.md) |
-| `backlog-archive.md` <br><small>or `docs/backlog-archive.md`</small> | where a closed row goes, with a `where` cell naming what its content became; ships empty, and a repo that has closed nothing deletes it until the first row moves (ADR-051) | optional, core | `fill-from-repo` | [R15](../standard/SPEC.md) |
-| `CHANGELOG.md` <br><small>or `docs/CHANGELOG.md`</small> | the only home of history (ADR-018); a PR describes its change under `## Unreleased` and never touches the version - R18's one path, at every profile | **required**, core | `fill-from-repo` | [R18](../standard/SPEC.md) |
+| `backlog-archive.md` <br><small>or `docs/backlog-archive.md`</small> | where a closed row goes, with a `where` cell naming what its content became; ships empty, and a repo that has closed nothing deletes it until the first row moves (standard ADR-051) | optional, core | `fill-from-repo` | [R15](../standard/SPEC.md) |
+| `CHANGELOG.md` <br><small>or `docs/CHANGELOG.md`</small> | the only home of history (standard ADR-018); a PR describes its change under `## Unreleased` and never touches the version - R18's one path, at every profile | **required**, core | `fill-from-repo` | [R18](../standard/SPEC.md) |
 | `.gitleaks.toml` | secret-scan config (the shipped scan SHOULD gate CI) | optional, core | `copy` | [R19](../standard/SPEC.md) |
 | `.gitattributes` | forces LF on the shipped bash guards and Node scripts - a repo whose own setting is eol=crlf makes every hook exit 127 with empty stdout, which for a deny-guard is silence, not a refusal | **required**, core | `merge` | [R19](../standard/SPEC.md) |
 | `README.md` | the repo's front door - authored from this repo's reality | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
@@ -47,14 +47,14 @@ copied into your repository as folder READMEs that then age in place.
 | Path | What it is, and why | Needed | Adapt | Rule |
 |---|---|---|---|---|
 | `docs/decision-records` | the ADR/BDR decision log | **required**, core | `fill-from-repo` | [R5](../standard/SPEC.md) |
-| `docs/ideas` | pre-decision ideas - status-driven, graduate into records/specs on approval (ADR-010) | optional, core | `fill-from-repo` | [R14](../standard/SPEC.md) |
-| `docs/discovery` | discovery dossiers - provenance-stamped extracts per topic, never normative (ADR-024) | optional, core | `fill-from-repo` | [R5](../standard/SPEC.md) |
+| `docs/ideas` | pre-decision ideas - status-driven, graduate into records/specs on approval (standard ADR-010) | optional, core | `fill-from-repo` | [R14](../standard/SPEC.md) |
+| `docs/discovery` | discovery dossiers - provenance-stamped extracts per topic, never normative (standard ADR-024) | optional, core | `fill-from-repo` | [R5](../standard/SPEC.md) |
 | `docs/facts.json` | the facts this repo restates: one home each, every restatement declared | optional, core | `fill-from-repo` | [R4](../standard/SPEC.md) |
 | `docs/facts.example.json` | the shape of a declared fact, reference only - do not rename or copy its placeholder content into docs/facts.json; write docs/facts.json from scratch, in this shape, once this repo has its first fact worth declaring (R4) | optional, core | `copy` | [R4](../standard/SPEC.md) |
 | `docs/PRINCIPLES.md` | the altitude apex R1 names - optional but expected | optional, core | `fill-from-repo` | [R1](../standard/SPEC.md) |
 | `docs/personas.md` | the persona roster the R10 gate checks specs against - without it the gate has nothing to hold | **required**, core | `fill-from-repo` | [R10](../standard/SPEC.md) |
-| `docs/adoption-intake.md` | what Step 0 measured and asked before any align work proceeded - the record that makes intake checkable, not just performed (ADR-042) | **required**, core | `fill-from-repo` | [R26](../standard/SPEC.md) |
-| `docs/adoption-assessment.md` | what Gate 2's eight-pass assessment found - maturity per pass, top risks, findings grouped by the owner role that must act; the evidence Gate 5's count is derived from (ADR-048) | **required**, core | `fill-from-repo` | [R27](../standard/SPEC.md) |
+| `docs/adoption-intake.md` | what Step 0 measured and asked before any align work proceeded - the record that makes intake checkable, not just performed (standard ADR-042) | **required**, core | `fill-from-repo` | [R26](../standard/SPEC.md) |
+| `docs/adoption-assessment.md` | what Gate 2's eight-pass assessment found - maturity per pass, top risks, findings grouped by the owner role that must act; the evidence Gate 5's count is derived from (standard ADR-048) | **required**, core | `fill-from-repo` | [R27](../standard/SPEC.md) |
 | `docs/README.md` | the docs hub table | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `docs/ARCHITECTURE.md` | how it is built - the altitude names it (filled from this repo) | optional, core | `fill-from-repo` | [R1](../standard/SPEC.md) |
 | `docs/PRODUCT.md` | what it is and where it is going (filled from this repo) | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
@@ -63,7 +63,7 @@ copied into your repository as folder READMEs that then age in place.
 | `docs/journeys` | per-persona journey maps coupled to capabilities | optional, scale | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `docs/research` | anonymized research studies feeding personas, ideas and specs | optional, scale | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `docs/runbooks` | operational runbooks + postmortems - agent-followable at 3 a.m. | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
-| `docs/sprints` | work sprints - what a team committed to and by when; an intent is in the pool or in exactly one sprint (ADR-028) | optional, scale | `fill-from-repo` | [R15](../standard/SPEC.md) |
+| `docs/sprints` | work sprints - what a team committed to and by when; an intent is in the pool or in exactly one sprint (standard ADR-028) | optional, scale | `fill-from-repo` | [R15](../standard/SPEC.md) |
 | `docs/adoption-provenance.md` | what became of every answer: state, who, when, where it landed, and the backlog row carrying a deferred one | **required**, core | `fill-from-repo` | [R28](../standard/SPEC.md) |
 
 ## `specs/` - behaviour, by capability
@@ -87,7 +87,7 @@ copied into your repository as folder READMEs that then age in place.
 | `scripts/verifyAgentGuards.sh` | drives every guard with real commands - they only emit output on a denial, so a broken guard is otherwise silent | optional, core | `copy` | [R19](../standard/SPEC.md) |
 | `scripts/spec-guard.mjs` | code<->spec coupling guard (+ --audit) - the tool ships at core, the blocking CI gate is scale (R11) | **required**, core | `copy` | [R11](../standard/SPEC.md) |
 | `scripts/sprint-guard.mjs` | proves the one-place invariant the pool and the sprints depend on | optional, scale | `copy` | [R15](../standard/SPEC.md) |
-| `scripts/backlog-archive-check.mjs` | a closed row reached the archive with a pointer to what its content became, instead of being deleted (ADR-051) | **required**, core | `copy` | [R15](../standard/SPEC.md) |
+| `scripts/backlog-archive-check.mjs` | a closed row reached the archive with a pointer to what its content became, instead of being deleted (standard ADR-051) | **required**, core | `copy` | [R15](../standard/SPEC.md) |
 | `scripts/generate-dashboard` | renders the work state - pool, sprints, timeline, records, changelog - as one static page for the people who never open the repository; index.mjs is the generator, src/ the page and password-gate material it inlines. A projection, never a second place work is tracked | optional, core | `copy` | [R15](../standard/SPEC.md) |
 | `scripts/elicitation-provenance.mjs` | the provenance ledger stays honest - every required point has a row, a deferred answer names a backlog row that exists, and a point stops being legally pending once something it gates has been written; and the guard itself reached a commit before any Gate artifact it protects did | **required**, core | `copy` | [R28](../standard/SPEC.md) |
 
@@ -106,7 +106,7 @@ copied into your repository as folder READMEs that then age in place.
 | Path | What it is, and why | Needed | Adapt | Rule |
 |---|---|---|---|---|
 | `.github/workflows/gitleaks.yml` | the secret-scan workflow template | optional, core | `merge` | [R19](../standard/SPEC.md) |
-| `.github/workflows/standards-update-watch.yml` | weekly notification that a newer standard exists - opens one issue per release, never edits the recorded state (ADR-025) | optional, core | `merge` | [R2](../standard/SPEC.md) |
+| `.github/workflows/standards-update-watch.yml` | weekly notification that a newer standard exists - opens one issue per release, never edits the recorded state (standard ADR-025) | optional, core | `merge` | [R2](../standard/SPEC.md) |
 | `.github/workflows/spec-guard.yml` | the CI workflow that wires self-verify + both guards - how R16's gate actually runs | **required**, core | `merge` | [R16](../standard/SPEC.md) |
 | `.github/pull_request_template.md` | PR template - what/why, decision-record impact across both streams, test plan, checklist | optional, scale | `merge` | [R5](../standard/SPEC.md) |
 | `.github/workflows/dashboard.yml` | builds the dashboard manually (workflow_dispatch); publishes it only when the repository is public or the build is locked with a password, because Pages on a private repository is served publicly | optional, core | `merge` | [R15](../standard/SPEC.md) |
@@ -126,7 +126,7 @@ them rather than checking files.
 | [`docs/method/ways-of-working.md`](#) | how work flows around the spec (PO -> dev -> AI) |
 | [`docs/method/changelog-process.md`](#) | the two-outputs changelog model teams follow |
 | [`docs/method/working-with-specs.md`](#) | real situations -> the prompt -> what the standard does (specs day to day) |
-| [`docs/method/discovery.md`](#) | discovery dossiers: from a meeting to a spec with provenance (ADR-024) |
+| [`docs/method/discovery.md`](#) | discovery dossiers: from a meeting to a spec with provenance (standard ADR-024) |
 | [`docs/method/working-with-ai/README.md`](#) | evidence-checked practices for driving the agent: context, verification, review load, blast radius |
 | [`docs/method/self-verify.md`](#) | what drift 0 does and does not certify - the tiers, the flags, the arithmetic |
 | [`docs/method/prerequisites.md`](#) | what must be installed before an agent starts an adoption |
@@ -138,7 +138,7 @@ them rather than checking files.
 | [`docs/method/lead-work.md`](#) | rolling the standard out across more than one repo, consistently |
 | [`docs/method/product-work.md`](#) | the product owner's job: what should be true, and for whom |
 | [`docs/method/tracking-work.md`](#) | the three files that answer what is still owed, what is happening now, and when it lands |
-| [`docs/method/tracker-sync.md`](#) | the OPTIONAL tracker-sync extension - a per-capability sidecar core never reads; skip it entirely if you sync to no tracker (ADR-032) |
+| [`docs/method/tracker-sync.md`](#) | the OPTIONAL tracker-sync extension - a per-capability sidecar core never reads; skip it entirely if you sync to no tracker (standard ADR-032) |
 | [`docs/method/working-language.md`](#) | language is a configuration, not a constraint - the reasoning and the guidance for a non-English team |
 
 ## Required headings

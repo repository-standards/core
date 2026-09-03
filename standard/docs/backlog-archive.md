@@ -1,6 +1,6 @@
 # Backlog archive
 
-<!-- Where a closed row goes (ADR-051). Closing a row is a relocation, not a deletion: a
+<!-- Where a closed row goes (standard ADR-051). Closing a row is a relocation, not a deletion: a
      closed row is often the only place a finding was ever written down - a control that
      turned out to protect nothing, a design killed by a probe, an answer of "correct as
      built, nothing to change" that produced no commit and so never reached the changelog.

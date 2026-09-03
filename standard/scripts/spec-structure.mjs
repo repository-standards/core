@@ -6,7 +6,7 @@
 //      e.g. a leaked GitHub Spec Kit `specs/001-core/` folder. Capability specs live at
 //      `specs/<capability>/spec.md` (or named sub-specs `specs/<capability>/<name>.md`) -
 //      domain names, never numbers.
-//   2. Every capability spec names a **persona from the roster** it serves (ADR-006, R10),
+//   2. Every capability spec names a **persona from the roster** it serves (standard ADR-006, R10),
 //      when the repo has a `docs/personas.md` - a spec that serves no one is incomplete,
 //      and so is one that serves someone who does not exist. The roster table is the
 //      constraint: a `**Serves:**` value naming nobody on it fails, and a roster the guard
@@ -97,7 +97,7 @@ for (const f of files) {
   if (segment) numbered.push({ file: f, segment });
 }
 
-// --- check 2: every capability spec serves a persona on the roster (ADR-006, R10) -----
+// --- check 2: every capability spec serves a persona on the roster (standard ADR-006, R10) -----
 // A capability spec is specs/<capability>/<file>.md (depth >= 3), not a template or README.
 // Files under specs/ that the engine writes and that are not themselves capability specs -
 // so the persona gate below has no opinion about them. All six of them: `/spec-plan` is
@@ -364,7 +364,7 @@ for (const f of files.filter(isCapSpec)) {
 // Full-tree mode only (mid-work diffs legitimately carry them); never a violation.
 //
 // `checklists/` is deliberately NOT here, though it is not a capability spec either.
-// R13 and ADR-010 make plan.md and tasks.md ephemeral and name nothing else, and
+// R13 and standard ADR-010 make plan.md and tasks.md ephemeral and name nothing else, and
 // spec-reconcile - the only step that actually deletes scaffolding - removes exactly
 // those. `checklists/requirements.md` is written by spec-specify when the spec is minted
 // and re-validated by spec-clarify on every later round, so warning about it told the
@@ -419,7 +419,7 @@ if (numbered.length) {
 const rosterList = () => (rosterNames.length > 8 ? `${rosterNames.slice(0, 8).join(", ")}, ...` : rosterNames.join(", "));
 
 if (personaless.length) {
-  console.error("\nspec-structure: capability specs with no persona named (ADR-006 - a spec serves someone):");
+  console.error("\nspec-structure: capability specs with no persona named (standard ADR-006 - a spec serves someone):");
   for (const f of personaless) console.error(`  - ${f}`);
   console.error('\nAdd a `**Serves:** `<persona>`` field (from docs/personas.md) - or name the persona in the spec.');
   console.error(`The roster reads: ${rosterList()}.`);
@@ -471,7 +471,7 @@ if (duplicated.length) {
 
 if (rosterHeadingMissing) {
   console.error(`\nspec-structure: ${personasPath} has no '## The roster' section, so the guard cannot tell`);
-  console.error("a live persona from a name in the worked example, and the persona gate (ADR-006) has");
+  console.error("a live persona from a name in the worked example, and the persona gate (standard ADR-006) has");
   console.error("nothing to check against. Add the heading above the roster table. It is syntax - it stays");
   console.error("'## The roster' even when the personas themselves are written in another language, because");
   console.error("a translated heading does not make the check speak that language, it makes it read the");
@@ -489,7 +489,7 @@ if (rosterUnreadable) {
 
 if (rosterMissing) {
   console.error("\nspec-structure: capability specs exist but there is no docs/personas.md roster -");
-  console.error("the persona gate (ADR-006) has nothing to check against. Write the roster first;");
+  console.error("the persona gate (standard ADR-006) has nothing to check against. Write the roster first;");
   console.error("a spec that serves nobody is incomplete, and without the roster none can prove otherwise.");
 }
 console.error("");

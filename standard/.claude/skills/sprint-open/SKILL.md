@@ -42,13 +42,13 @@ This is how one is opened.
    pasted into the sprint file unchanged - same columns, same values. An intent lives in
    the pool or in exactly one sprint, and copying is how that stops being true.
 
-   One cell fills on the way in: **`assignee`**, the person taking it (ADR-030). Ask for the
+   One cell fills on the way in: **`assignee`**, the person taking it (standard ADR-030). Ask for the
    names once, as a set, rather than row by row. A row arriving with no assignee is work the
    sprint has not really committed to - say so, and accept it if the team means it, because a
    deliberately unassigned item is honest and a silently unassigned one is not.
 
    **Flag any `L` that is being pulled unsplit.** An `L` means split before pulling
-   (ADR-029); pulling one anyway is a choice the team can make, but not one to make by
+   (standard ADR-029); pulling one anyway is a choice the team can make, but not one to make by
    accident.
 
 6. **Write the sprint file** from [`docs/sprints/_template.md`](../../../docs/sprints/_template.md)
@@ -79,8 +79,8 @@ This is how one is opened.
   discovered while opening a sprint goes through `add-to-backlog` first, then in - so it
   keeps its source and its definition of done.
 - **Do not record who *used to* hold an item.** `assignee` is present tense and reassignment
-  overwrites it; the trail of who touched what is the tracker's (ADR-010, narrowed by
-  ADR-030). If a team needs that trail, they need a tracker.
+  overwrites it; the trail of who touched what is the tracker's (standard ADR-010, narrowed by
+  standard ADR-030). If a team needs that trail, they need a tracker.
 - **Do not assign in the pool.** An item nobody has picked up is not yet anyone's, and a pool
   that assigns work has quietly become a queue of orders.
 - **Do not set a length policy.** Two-week sprints are a choice a team may make; the standard
@@ -115,7 +115,7 @@ running. These are plain table edits - say so precisely rather than leaving it t
   place - the last cell, whatever the column count. Use `blocked:<id>` when it is waiting on
   another intent named by id, plain `todo` / `doing` / `done` otherwise.
 - **Reassigning a holder** ("give PAY-3 to Ravi"): overwrite the `assignee` cell in place. It
-  is present-tense state, not a log (ADR-030) - the previous holder is not kept here; a team
+  is present-tense state, not a log (standard ADR-030) - the previous holder is not kept here; a team
   that needs that trail needs a tracker.
 - **Prove it after either edit.** `node scripts/sprint-guard.mjs --block` - a status edit that
   invents a `blocked:<id>` pointing at nothing, or an edit that duplicates the row instead of

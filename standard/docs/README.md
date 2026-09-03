@@ -15,7 +15,7 @@ Hub for this repo's docs. Start where you need:
 | [prerequisites.md](https://github.com/repository-standards/core/blob/main/docs/method/prerequisites.md) | what must be installed before the shipped guards protect anything |
 | [security-baseline.md](https://github.com/repository-standards/core/blob/main/docs/method/security-baseline.md) | the axes the security decision must each answer - the menu behind that ADR |
 | [conventions.md](conventions.md) | day-to-day conventions (merged into `AGENTS.md` at adoption) |
-| [discovery/](discovery/) | discovery dossiers - meeting/mail extracts per topic, with provenance (ADR-024) |
+| [discovery/](discovery/) | discovery dossiers - meeting/mail extracts per topic, with provenance (standard ADR-024) |
 | [ideas/](ideas/) | speculative ideas under a status, before they earn a spec or a record |
 | [journeys/](journeys/) | per-persona journey maps coupled to capabilities *(scale)* |
 | [research/](research/) | anonymized research studies feeding personas, ideas and specs *(scale)* |

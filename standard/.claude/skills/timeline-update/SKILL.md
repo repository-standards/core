@@ -18,9 +18,9 @@ So: below **three closed sprints** there is no measured throughput, and this mus
 one. Three is not a magic number; it is the point below which one unusual sprint dominates the
 average, and the file says so rather than hiding it.
 
-What it does instead is the **cold-start mode** (ADR-029): if items carry `size`, describe the
+What it does instead is the **cold-start mode** (standard ADR-029): if items carry `size`, describe the
 **shape** of what is left - "two `L`s and three `M`s remain, heavier than the last sprint's mix" -
-and say plainly that this is a ranking, not a date. ADR-029 is explicit that sizes are "never
+and say plainly that this is a ranking, not a date. The standard's ADR-029 is explicit that sizes are "never
 summed, never converted to numbers, and never fed into a projection", cold start included, so
 no duration is manufactured from a size letter under any circumstance - there is no such thing
 as an "estimated date" here, only a size-based read of how heavy the remaining work looks. If
@@ -101,11 +101,11 @@ table second, not a report to hunt through.
   reason belongs to the team, not to this file - and inventing one is worse than leaving the
   question open.
 - **Do not treat a missed target as a failure.** The date is agreed and movable by design
-  (ADR-028). Report the overrun; the judgement is the owner's.
+  (standard ADR-028). Report the overrun; the judgement is the owner's.
 - **Do not sum sizes into a velocity.** Sizes are a cold-start ranking signal and a splitting
-  trigger, not a currency (ADR-029). If they are being added up, the practice this standard
+  trigger, not a currency (standard ADR-029). If they are being added up, the practice this standard
   deliberately left behind has been rebuilt.
-- **Do not turn a size letter into a date, ever - cold start included.** ADR-029 forbids
+- **Do not turn a size letter into a date, ever - cold start included.** The standard's ADR-029 forbids
   converting sizes to numbers outright, not only once measured sprints exist. A size-based
   cold-start read is a shape ("heavier than usual"), never a duration or a projected date.
 - **Do not blend an estimate with a measurement.** Once three sprints have closed, sizes are

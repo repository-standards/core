@@ -124,7 +124,7 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
 - **Add a feature / migration / decision record** - the spec-driven flow. Raw
   discovery (meeting extracts, mails) lands via `discovery-digest` in
   `docs/discovery/<topic>/` and feeds the loop - never re-asking what a spec
-  already settled (ADR-024). New or
+  already settled (standard ADR-024). New or
   changed behavior enters through `/spec-specify` + `/spec-clarify` (one capability);
   `/spec-impact` finds the ripple; `/spec-update` edits every affected spec;
   `/spec-plan` -> `/spec-tasks` -> `/spec-implement` build it; `/spec-reconcile`
@@ -148,7 +148,7 @@ A numbered, repo-specific list of things that must halt an agent. Make each conc
 
 ## The loop runs itself (unprompted)
 
-Do not wait to be asked. The standard's loop is **AI-led** (ADR-010; the clarify gate).
+Do not wait to be asked. The standard's loop is **AI-led** (standard ADR-010; the clarify gate).
 
 **The first rule of working here: check whether a skill owns the request before you act on
 it, and check again when the work is done.** The skills in [`.claude/skills/`](.claude/skills/)
@@ -184,7 +184,7 @@ sentence will each lose that sentence half the time: sharpen both, or merge them
   `docs/discovery/`, flag contradictions, and say whether the topic is ripe for
   `/spec-specify`. If a spec already exists, route only entries newer than the
   dossier's `Last reconciled:` stamp through `/spec-clarify` - a dossier is never
-  normative and nothing the spec settled gets re-asked (ADR-024).
+  normative and nothing the spec settled gets re-asked (standard ADR-024).
 - **You are answering a question about this repo** - what is true, why a decision went the
   way it did, whether something exists - or you are about to research something, or explain
   how something works **-> answer from the corpus, and name the file you took it from.** The
@@ -192,11 +192,11 @@ sentence will each lose that sentence half the time: sharpen both, or merge them
   product-side one is what a request usually collides with), `specs/` for behaviour,
   `docs/discovery/` for what was said, `docs/backlog.md` for what the repo still owes
   itself, and `docs/ideas/` for what was floated and never shipped. Read the
-  records first: an Accepted record outranks a dossier and outranks the request (ADR-033),
+  records first: an Accepted record outranks a dossier and outranks the request (standard ADR-033),
   so one that answers the question ends it. Cite it by number and path - "the docs say" is
   not a citation, because nobody can check it.
   Search `docs/discovery/` in full, **including entries older than the stamp**. The
-  stamp bounds what may be *asked*, never what may be *read* (ADR-049): an old entry is
+  stamp bounds what may be *asked*, never what may be *read* (standard ADR-049): an old entry is
   settled, not irrelevant, and the long session where somebody explained a domain is
   usually filed below it. Search the `Touches` field as well as the dossier names - one
   session bears on subjects it was not filed under. Re-deriving what a two-hour call already

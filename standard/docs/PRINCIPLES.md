@@ -15,7 +15,7 @@ them except an explicit change to this file.
 - **Exact versions, everywhere.** Dependencies, overrides, container images, CI
   runners and actions are pinned exact - no ranges, no `latest`, no floating tags;
   a committed lockfile seals the graph. Nothing a repo consumes moves without a
-  reviewed diff (R21, ADR-017).
+  reviewed diff (R21, standard ADR-017).
 - **Supply-chain cooldown.** Never install a package version published less than 7
   days ago (enforced via the package manager's release-age cooldown - the mechanism per stack lives in your stack's DECISIONS). A critical security fix
   gets a temporary exclude, not a global lowering.

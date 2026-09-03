@@ -1,7 +1,7 @@
 # Adoption intake - <repo>
 
 > What Step 0 of `align-to-standards` measured and asked, before any greenfield,
-> brownfield or stack work proceeded (ADR-042). Updated in place on every
+> brownfield or stack work proceeded (standard ADR-042). Updated in place on every
 > re-entry - a check-up, an update, a later wave - never recreated.
 
 ## State measured

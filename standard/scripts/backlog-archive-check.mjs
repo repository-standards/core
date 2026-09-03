@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Backlog archive guard (R15, ADR-051).
+// Backlog archive guard (R15, standard ADR-051).
 //
 // Closing a backlog row is a relocation, not a deletion: the finding goes to a record, a spec
 // or a dossier, what shipped goes to the CHANGELOG, and the row itself moves to
@@ -29,7 +29,7 @@
 // the pool itself is absent.
 //
 // What this does NOT check: whether the destination actually captures the finding. That is
-// substance, and ADR-038 settled that this project measures structure and leaves substance to
+// substance, and standard ADR-038 settled that this project measures structure and leaves substance to
 // judgment rather than converting it into ceremony. A `where` can point at any file that
 // exists - the guard catches the empty answer and the broken one, never the lazy one.
 //
@@ -236,7 +236,7 @@ if (base) {
       const split = SPLIT_AS.exec(unwrap(row.status ?? ""));
       if (split && (poolIds.has(split[1].toUpperCase()) || inSprints.has(split[1].toUpperCase()))) continue;
       problems.push(
-        `${id} was removed from ${pool} and is not in ${archivePath ?? ARCHIVES[0]}. Closing a row is a relocation: put its finding where findings live, what shipped in the CHANGELOG, and the row in the archive with a \`where\` (ADR-051).`,
+        `${id} was removed from ${pool} and is not in ${archivePath ?? ARCHIVES[0]}. Closing a row is a relocation: put its finding where findings live, what shipped in the CHANGELOG, and the row in the archive with a \`where\` (standard ADR-051).`,
       );
     }
   }
