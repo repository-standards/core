@@ -141,6 +141,44 @@ check("HTML markup in a filled README does not warn", {
   warnsAbout: [["README.md", false]],
 });
 
+// Too loose in a third direction, and this one the standard aimed at itself: the shipped
+// docs/PRODUCT.md and docs/personas.md put their drafting guidance in an HTML comment that
+// writes `<date>` and `<ID>` to show the shape of the marker wanted. Read as prose, those are
+// two unfilled placeholders in a document its owner has written and confirmed, and the only
+// way to clear the warning was to delete the standard's own note - which is what the first
+// repo to hit it did. The comment below is the shipped one, verbatim.
+const SHIPPED_GUIDANCE =
+  "<!-- Drafted by an adoption run under `suggest`, not confirmed by a person yet? Open here,\n" +
+  "     right after this intro, with the one marker (standard ADR-057/058):\n" +
+  "       > [NEEDS REVIEW] drafted by the adoption run on <date> from the repo and its\n" +
+  "       > README. Backlog: <ID>.\n" +
+  "     A frame a person wrote themselves carries no marker. -->\n";
+
+check("the guidance comment a shipped template carries is not an unfilled shell", {
+  files: {
+    "docs/PRODUCT.md":
+      `# Acme Scheduling\n\n${SHIPPED_GUIDANCE}\n## What it is\n\nShift scheduling for venues that staff by the week.\n`,
+  },
+  warnsAbout: [["docs/PRODUCT.md", false]],
+});
+
+// The other half, without which the case above would pass just as well on a check that had
+// been switched off: prose outside the comment is still read.
+check("a placeholder beside a guidance comment still warns", {
+  files: {
+    "docs/PRODUCT.md": `# Acme Scheduling\n\n${SHIPPED_GUIDANCE}\n## What it is\n\nOwned by <team name>.\n`,
+  },
+  warnsAbout: [["docs/PRODUCT.md", true]],
+});
+
+// And the asymmetry is deliberate: the angle form is ambiguous enough that a comment is
+// reason to let it pass, the mustache form never is, so it is read from the raw body and a
+// comment hides it from nothing.
+check("a mustache placeholder inside a comment still warns", {
+  files: { "README.md": `${FILLED_HEAD}<!-- Contact {{SECURITY_CONTACT}} before release. -->\n` },
+  warnsAbout: [["README.md", true]],
+});
+
 // Too tight in the other: the pattern was ASCII-only, so a translated shell nobody filled
 // reached drift 0 looking complete.
 check("a placeholder in a non-Latin script warns", {
