@@ -20,6 +20,16 @@ asking. Written down because the status is now checked against this section, and
 capability with no record of what settled it is the gap that check exists to expose. New
 work on this capability goes through the loop.
 
+### Session 2026-09-03
+
+Retrofitted addendum, same reason as above: `checkWorkflowBranches()` (the WARN for a shipped
+workflow whose `branches:` trigger cannot fire on this repo's actual default branch) already
+shipped and already had a validation case (`GATE-42`), but was never listed among the numbered
+checks below - the gap surfaced while fixing `ADOPT-DEFAULTS-1`'s dashboard-workflow default
+(removing `dashboard.yml`'s push trigger touched this function's own comment, and the comment
+was the only place any of this was written down). Recorded as step 2b below rather than folded
+into an existing step, because it runs over every shipped workflow file, not one entry class.
+
 ## Scope
 
 The shipped verifier: manifest loading, version pin, file/content/key/section/guard/removed-path checks, profiles, skeleton mode, the bounds on recorded exceptions, drift accounting, exit codes.
@@ -69,6 +79,20 @@ aligned to, with no second source of truth:
 1. **Manifest load.** Parse `standard.manifest.json` if present; a present-but-unparseable manifest is a FAIL. No manifest at all -> a note plus the built-in fallback skeleton: `AGENTS.md`, `specs/`, `docs/decision-records/` must exist; a backlog at `docs/backlog.md` or `backlog.md`; `node scripts/spec-structure.mjs --block` runs if installed (a note if not).
    - **Stack manifests**, when the core manifest loaded: every root file matching the stack-manifest pattern is read in filename order, each producing a note naming the file and its `technology`, and each merged into the same four arrays - so a repo running two stacks permanently registers both and still reports one drift number ([ADR-037](../../docs/decision-records/ADR-037-a-repo-may-register-more-than-one-stack.md)). An unparseable one is a FAIL naming the file, never a silent skip. Two stacks declaring the same `files[].path` produce a WARN naming both files: the entry is checked once per declaration and counts twice, and collapsing them would mean picking a winner between two upstream repos this one does not own.
 2. **Recorded state.** `.standards-version` must exist and match `/^\d+\.\d+\.\d+/`; with `--version <target>` it must equal the target; when the manifest carries `version`, the two must agree. `--skeleton` skips the check with a note (the file is written at adoption). The check is mechanical and unchanged; the **wording** is not - "pin" was swept out of every live surface on 2026-08-02 because it named the model [ADR-025](../../docs/decision-records/ADR-025-the-standard-is-living-latest-is-the-target.md) removed. This file is a live surface, and the last four occurrences in the tree were hiding in a JSON description field, a script's usage comment, and the two entry files an agent loads first. That usage comment illustrated the flag with the version the standard happened to be on (`--version 1.0.1`), which is a restatement wearing an example's clothes: nothing read it, nothing checked it, and a release had to remember to move it. It reads `--version x.y.z` now, as this line always has ([ADR-056](../../docs/decision-records/ADR-056-the-release-tag-is-made-by-ci-and-the-version-is-stated-once.md)).
+2b. **Workflow branch triggers.** Before the files loop, every shipped `.github/workflows/*.yml`
+   or `.yml` entry present on disk (via `path` or an `altPath`) is scanned for `branches: [...]`
+   lines. When the repo's default branch is readable (`git symbolic-ref --short refs/remotes/origin/HEAD`)
+   and a matched trigger names branches that do not include it, a WARN names the file, the
+   branch(es) it triggers on and the repo's actual default branch. Never drift: the file is
+   merge-class and the branch name is exactly the local adaptation an adopter is expected to
+   make - the manifest's `requiredKeys` can only assert that `on.push` or `on.pull_request`
+   exists, never what it names, so a `master`-default repo taking a shipped `branches: [main]`
+   workflow verbatim used to reach drift 0 with a trigger that can never fire, and nothing
+   anywhere said so. Silent when the default branch cannot be read (no remote, no git at all) -
+   guessing from the checked-out branch would fire on every feature branch instead of measuring
+   the repo. A shipped workflow that carries no `branches:` line at all (`dashboard.yml`, which
+   ships `workflow_dispatch` only) has nothing here to warn about.
+
 3. **Files.** A `files[]` entry passes when `path` or any `altPaths` entry exists. Required and absent -> FAIL; optional and absent -> note. Under `--skeleton`, an absent entry with `adapt: "fill-from-repo"` is a note: authored at adoption, absent from the skeleton by design.
    - **Content of a `copy` entry.** When the entry carries `sha256` and its primary `path` exists, the local file is hashed (SHA-256 over the text, CRLF normalized to LF) and compared. A file entry produces one result. A directory entry produces **one result for the entry** however many members moved, naming what is missing and what changed - so the arithmetic stays one point per manifest entry, and a repo's own extra files inside a shipped directory are never reported. A mismatch is a FAIL whose wording says *differs from the standard's copy*, distinct from *missing*, and it is waivable by `{ "kind": "content" }`. An entry with no `sha256` is not content-checked, so a manifest from before hashes shipped behaves exactly as it did. This is also what catches a required item quietly removed from a shipped directory (e.g. a lifecycle skill under `.claude/skills`): its member entry in `sha256` goes from present to `missing`, one FAIL naming it - there is no separate presence-only mechanism for directory members, because the hash map already names every member that must exist.
    - **A directory resolved through an `altPath`** is checked by **name**, not by bytes: a ported form (`.agents/skills` for `.claude/skills`, R22) is a different format by design, so every first path segment of the recorded members, extension stripped, must appear somewhere in the ported tree (depth-limited) - a port may be a folder per skill or a file per skill. Absences FAIL, naming them and R22. This closes an altPath satisfied by an unrelated directory that happens to sit at that path: a monorepo symlinked `.claude/skills` at its own 31-skill system and reported 100% adopted while carrying none of the standard's procedures.
@@ -146,6 +170,7 @@ has no opinion on that.
 - The verifier MUST state, in the drift-0 verdict line, when no capability spec exists - the one state in which a compliant shape and an unused method are the same output.
 - The verifier MUST NOT print, and the manifest MUST NOT declare, any count or subset of decision areas as required (R7).
 - The verifier MUST fail a repo that still carries a path the standard has removed, and MUST decide it without history, a second tree, or any input beyond the manifest the repo already carries.
+- The verifier MUST warn, never fail, when a shipped workflow's `branches:` trigger cannot fire on the repo's actual default branch, and MUST say nothing when the default branch cannot be determined.
 
 ## Invariants
 
@@ -219,6 +244,7 @@ has no opinion on that.
 - **Stale exception.** GIVEN an exception whose entry is met anyway WHEN run THEN a WARN says so and drift is unchanged.
 - **No manifest.** GIVEN no `standard.manifest.json` WHEN run THEN a WARN and the verdict line both name the built-in skeleton as the yardstick.
 - **Case-only difference.** GIVEN `AGENTS.md` exists as `Agents.md` WHEN run on a case-insensitive filesystem THEN it is reported missing, exactly as on Linux.
+- **Mismatched branch trigger.** GIVEN a shipped workflow file landed verbatim with `branches: [main]` and a repo whose default branch is `master` WHEN self-verify runs THEN a WARN names the file, `main` and `master`, and drift is unchanged; GIVEN the default branch cannot be read (no remote) THEN nothing is said; GIVEN a shipped workflow with no `branches:` line (`dashboard.yml`) THEN nothing is said about it.
 - **Absent tool.** GIVEN a guard whose command resolves nowhere on `PATH` WHEN run THEN drift is unchanged, a `SKIP` row names the guard and the missing command, and the verdict line states how many checks did not run.
 - **Failing tool.** GIVEN a guard whose command exists and exits non-zero WHEN run THEN drift rises by one, the guard's own output is printed, and nothing claims a check did not run - the absent-tool case must not be satisfiable by silencing guards generally.
 - **Declared path prerequisite.** GIVEN a guard declaring `{ "kind": "path", "match": "node_modules" }` and no `node_modules` WHEN run THEN the guard's command is never executed, drift is unchanged, and the entry's `hint` appears in the message; GIVEN the path exists THEN the guard runs and its verdict counts.
