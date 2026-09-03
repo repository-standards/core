@@ -17,34 +17,7 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
-## 1.0.9 - 2026-09-03
-
-### The shipped tree writes the `[NEEDS REVIEW]` marker (2026-09-03)
-
-ADR-057, revised by ADR-058, described the marker; nothing yet produced it.
-`standard/.claude/elicitation/README.md` now shows the marker's line for both a drafted and
-an empty artifact, with the fields ADR-058 actually kept - no role word. The ADR and BDR
-templates, `docs/personas.md` and `standard/docs/PRODUCT.md` carry the same illustrative
-block. `skills/align-to-standards/onboard.md` writes it for real: steps 1, 4 and 5 open a
-`suggest`-drafted or `stub`-left artifact with the marker, naming what it was drafted from
-(or, for an empty file, what it should contain) and the backlog row that tracks it, and a
-drafted retroactive decision record now lands `Proposed`, not `Accepted`. Manifest hashes
-regenerated for the copy-class files this touched. Closes `NEEDS-REVIEW-1`.
-
-### `self-verify` counts the marker; `elicitation-provenance` checks what it names (2026-09-03)
-
-The convention ADR-057 described had no check behind it. `self-verify.mjs` now scans every
-manifest entry for `[NEEDS REVIEW]` and reports the count next to the adoption percentage
-without moving it (ADR-038) - one flat number, not grouped by role, per ADR-058's own
-revision. `elicitation-provenance.mjs` gained two checks: every marker must name a backlog
-row that actually exists (fatal), and a `provisional` ledger row whose gated files carry no
-marker is a non-fatal warning - the marker is how a person finds the gap later, not a
-precondition for the row itself. Both checks skip scaffolding, so the elicitation README's
-own illustrative marker blocks are never read as live. Tests land in
-`tools/self-verify-fill-test.mjs` and `tools/elicitation-provenance-test.mjs`; manifest
-hashes regenerated. Closes `NEEDS-REVIEW-2`.
-
-## Unreleased
+## 1.0.10 - 2026-09-03
 
 Five of the entries below are guard and workflow defects found by the real adoption of a
 private monorepo, recorded as run h in
@@ -144,6 +117,33 @@ every check green. A step now runs it between the coupling guard and the full-tr
 against the pull request's base or the push's `before` commit, and skips with a message when
 there is neither. The job also declares `permissions: contents: read`, as the sibling
 secret-scan job already did.
+
+## 1.0.9 - 2026-09-03
+
+### The shipped tree writes the `[NEEDS REVIEW]` marker (2026-09-03)
+
+ADR-057, revised by ADR-058, described the marker; nothing yet produced it.
+`standard/.claude/elicitation/README.md` now shows the marker's line for both a drafted and
+an empty artifact, with the fields ADR-058 actually kept - no role word. The ADR and BDR
+templates, `docs/personas.md` and `standard/docs/PRODUCT.md` carry the same illustrative
+block. `skills/align-to-standards/onboard.md` writes it for real: steps 1, 4 and 5 open a
+`suggest`-drafted or `stub`-left artifact with the marker, naming what it was drafted from
+(or, for an empty file, what it should contain) and the backlog row that tracks it, and a
+drafted retroactive decision record now lands `Proposed`, not `Accepted`. Manifest hashes
+regenerated for the copy-class files this touched. Closes `NEEDS-REVIEW-1`.
+
+### `self-verify` counts the marker; `elicitation-provenance` checks what it names (2026-09-03)
+
+The convention ADR-057 described had no check behind it. `self-verify.mjs` now scans every
+manifest entry for `[NEEDS REVIEW]` and reports the count next to the adoption percentage
+without moving it (ADR-038) - one flat number, not grouped by role, per ADR-058's own
+revision. `elicitation-provenance.mjs` gained two checks: every marker must name a backlog
+row that actually exists (fatal), and a `provisional` ledger row whose gated files carry no
+marker is a non-fatal warning - the marker is how a person finds the gap later, not a
+precondition for the row itself. Both checks skip scaffolding, so the elicitation README's
+own illustrative marker blocks are never read as live. Tests land in
+`tools/self-verify-fill-test.mjs` and `tools/elicitation-provenance-test.mjs`; manifest
+hashes regenerated. Closes `NEEDS-REVIEW-2`.
 
 ## 1.0.8 - 2026-09-03
 
