@@ -17,6 +17,18 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### The dashboard masthead has one navigational control, not two (2026-09-03)
+
+The switcher added in 1.0.7 sat next to a second link that already did a similar job - the
+repository's `h1` was plain text, and a separate pill below it (`D.meta.home`) was the only
+way off the page. Where both render, that read as two switchers with no clear reason to pick
+one. The `h1` is now that link itself; the pill is gone, and the switcher takes its place
+instead. A build with no `--registry` (nearly every one - `--registry` is only ever passed by
+this repository's own `pages.yml`) loses the second line rather than gaining a replacement it
+has no data for, and keeps the same single click home it always had, just from the title.
+
 ## 1.0.7 - 2026-09-03
 
 ### The elicitation guard is landed through its own file, reached only through Step -1 (2026-09-03)
