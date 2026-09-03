@@ -41,6 +41,11 @@
 //      those. Everything else is read: an artifact that never shipped is the adopter's, a
 //      file meant to stay verbatim is compared to its hash, and a fill-from-repo slot counts
 //      as untouched only while it still holds the placeholders it shipped with.
+//   6. The guard itself landed first. Gate 0, Gate 2 and the version pin must not reach a
+//      commit before the elicitation guard does - a fresh adoption that committed one of
+//      them first has no guard covering the run that wrote it, which is exactly the failure
+//      the guard exists to stop. Ancestry, never a date; see the comment above
+//      `guardOrderProblems`.
 //
 // A repo with no ledger at all fails rather than passes. Absence of the record is the
 // state this whole mechanism exists to stop being invisible.
@@ -224,6 +229,72 @@ function adoptionWrote() {
 
 const WROTE = adoptionWrote();
 
+// Order: the guard must land before any of the three Gate artifacts it exists to protect -
+// Gate 0 (docs/adoption-intake.md), Gate 2 (docs/adoption-assessment.md), the version pin
+// (.standards-version). This is the backstop for what `reached()` above cannot see:
+// LomondGroup/propertycloud #1199 committed docs/adoption-intake.md a commit before the guard
+// ever landed, on a fresh adoption - self-verify was green the whole time, because nothing
+// here compared commit order, only content. A human reading the diff caught it.
+//
+// Detection is ancestry, never a date: the guard's own commit (the same "commit that
+// introduced .claude/elicitation/points.json" adoptionWrote() reads, walked the other way -
+// instead of "was this written after the guard", "did this reach a commit before it").
+//
+// Exempted whenever .standards-version already existed the commit before the guard's own
+// commit: that means this repo had a prior alignment before this guard ever landed here, so
+// old Gate-artifact history predating it is the update-to-latest shape - a repo catching up a
+// guard the standard did not carry when it first aligned - not a fresh run that skipped a
+// step. This is the same class of false positive .standards-version's bare *existence*
+// produces for `reached()` (see the comment above `reached`), avoided the same way: by reading
+// what the tree looked like one commit before the guard landed, never whether the file exists
+// now.
+//
+// Also skipped whenever ROOT is a subdirectory (see the ROOT/SUFFIX comment above
+// `adoptionWrote`) - this repo's own shipped tree, not an adopter's. There, repo-wide commit
+// order is the standard's own feature history: R26 and R27 shipped in `standard/` versions
+// before R28 did, which is this project adding the guard after it already had Gate 0 and
+// Gate 2, not an adoption that skipped a step. Nothing about that history is what this check
+// exists to catch.
+const GATE_ARTIFACTS = ["docs/adoption-intake.md", "docs/adoption-assessment.md", ".standards-version"];
+
+function oldestAdd(path) {
+  const commits = (git("log", "--diff-filter=A", "--follow", "--format=%H", "--", path) ?? "")
+    .trim().split("\n").filter(Boolean);
+  return commits.length ? commits[commits.length - 1] : null;
+}
+
+function isAncestor(older, newer) {
+  if (!older || !newer || older === newer) return false;
+  return spawnSync("git", ["-C", ROOT, "merge-base", "--is-ancestor", older, newer]).status === 0;
+}
+
+function existedBefore(commit, path) {
+  return spawnSync("git", ["-C", ROOT, "show", `${commit}^:${path}`], { encoding: "utf8" }).status === 0;
+}
+
+// null = no work tree, or a subdirectory ROOT (this repo's own shipped tree, not an
+// adopter's) - back off exactly like adoptionWrote() does. [] = checked, nothing wrong.
+function guardOrderProblems() {
+  if (!WROTE || ROOT !== ".") return null;
+  const guardCommit = oldestAdd(LAYER_MARKER);
+  if (!guardCommit) return { commit: null, problems: [] }; // guard not committed yet - nothing to order against
+  if (existedBefore(guardCommit, ".standards-version")) return { commit: guardCommit, problems: [], exempt: true };
+  const problems = [];
+  for (const gate of GATE_ARTIFACTS) {
+    const commit = oldestAdd(gate);
+    if (commit && isAncestor(commit, guardCommit)) {
+      problems.push(
+        `${at(gate)} was committed at ${commit.slice(0, 12)}, before the elicitation guard landed at ` +
+          `${guardCommit.slice(0, 12)} - a gated artifact reached history before the guard that was ` +
+          "supposed to ask about it existed",
+      );
+    }
+  }
+  return { commit: guardCommit, problems };
+}
+
+const ORDER = guardOrderProblems();
+
 // Reached: the adoption wrote something at a path this point gates, and what it wrote is not
 // the template that shipped there.
 function reached(point) {
@@ -330,6 +401,17 @@ if (!WROTE) {
 
 const orphans = rows.filter((r) => !(declared.points || []).some((p) => p.id === r.point));
 for (const o of orphans) problems.push(`${o.point}: a row for a point that is not declared - a renamed point leaves its old row behind`);
+
+if (ORDER) {
+  if (ORDER.exempt) {
+    console.log("  .standards-version already existed before the elicitation guard's own commit - this repo");
+    console.log("  had a prior alignment before the guard did, so old Gate-artifact history is not checked.");
+  } else if (!ORDER.commit) {
+    console.log("  the elicitation guard is not committed yet, so nothing here can yet tell whether a Gate");
+    console.log("  artifact reached history before it did - checked again once the guard lands.");
+  }
+  problems.push(...ORDER.problems);
+}
 
 if (problems.length) fail(problems);
 

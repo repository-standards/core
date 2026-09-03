@@ -46,7 +46,7 @@ const DECLARED = JSON.parse(readFileSync(POINTS, "utf8")).points;
 // A repo is only what the case needs: no backlog file unless the case is about one, no
 // artifacts unless the case is about them. Anything written unconditionally would trip the
 // pending rule in every other case and hide what each one is actually asserting.
-function repo({ ledger, backlog = null, files = {}, manifest = null, preexisting = null, adopted = null, git = true }) {
+function repo({ ledger, backlog = null, files = {}, manifest = null, preexisting = null, adopted = null, sequence = null, git = true }) {
   const dir = mkdtempSync(join(tmpdir(), "prov-"));
   const write = (rel, body) => {
     mkdirSync(join(dir, dirname(rel)), { recursive: true });
@@ -65,6 +65,10 @@ function repo({ ledger, backlog = null, files = {}, manifest = null, preexisting
 
   if (preexisting) commit(preexisting, "the repository's own work, years before any of this");
   if (adopted) commit({ ".standards-version": "0.9.21\n", ...adopted }, "adopt repository-standards");
+  // The order cases need more than two named buckets - an arbitrary run of commits, so the
+  // guard and a Gate artifact can land in either order and the check reads which one actually
+  // came first from the history itself, never from which bucket a case happened to name it.
+  if (sequence) for (const { tree, message } of sequence) commit(tree, message);
 
   mkdirSync(join(dir, ".claude/elicitation"), { recursive: true });
   mkdirSync(join(dir, "docs"), { recursive: true });
@@ -91,6 +95,10 @@ const ANSWERED = {
   "adopt.backlog": ["human", "owner", "2026-08-19", "backlog.md"],
   "adopt.tracker": ["human", "owner", "2026-08-19", "backlog.md"],
 };
+
+// Every point answered, so the order cases below fail (or pass) on the order check alone -
+// none of them is also meant to exercise the pending rule `baseline()` feeds.
+const FULLY_ANSWERED = HEAD + DECLARED.map((p) => row(p.id, "human", "owner", "2026-08-19", "docs/x.md")).join("") + HARVEST;
 
 const PASS = "PASS", FAIL = "FAIL";
 const CASES = [
@@ -160,6 +168,31 @@ const CASES = [
     { ledger: baseline() + "\n| Question asked | Which answer led | What was chosen | Worth declaring? |\n|---|---|---|---|\n| `adopt.tracker` | fold it in | fold it in | yes |\n" }, PASS],
   ["a fully answered ledger passes on a repo that built things",
     { ledger: HEAD + DECLARED.map((p) => row(p.id, "human", "owner", "2026-08-19", "docs/x.md")).join("") + HARVEST, files: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n" } }, PASS],
+
+  // Order: the guard must reach a commit before any Gate artifact it exists to protect does.
+  // A fully answered ledger keeps every one of these on the order check alone - nothing here
+  // is meant to also exercise the pending rule above.
+  ["the guard landing before a Gate artifact is not flagged",
+    { ledger: FULLY_ANSWERED,
+      sequence: [
+        { tree: { ".claude/elicitation/points.json": readFileSync(POINTS, "utf8") }, message: "land the elicitation guard" },
+        { tree: { "docs/adoption-intake.md": "# intake\n" }, message: "write the intake record" },
+      ] }, PASS],
+  ["a Gate artifact committed before the guard lands is flagged, blocking",
+    { ledger: FULLY_ANSWERED,
+      sequence: [
+        { tree: { "docs/adoption-intake.md": "# intake\n" }, message: "write the intake record" },
+        { tree: { ".claude/elicitation/points.json": readFileSync(POINTS, "utf8") }, message: "land the elicitation guard, late" },
+      ] }, FAIL, "before the elicitation guard landed"],
+  ["outside a git work tree the order check stands down too, not just the pending rule",
+    { ledger: FULLY_ANSWERED, files: { "docs/adoption-intake.md": "# intake\n" }, git: false }, PASS, "not a git work tree"],
+  ["a Gate artifact from before the guard existed here is not retroactively flagged on update-to-latest",
+    { ledger: FULLY_ANSWERED,
+      sequence: [
+        { tree: { ".standards-version": "0.5.0\n", "README.md": "# app\n" }, message: "adopt repository-standards, long ago" },
+        { tree: { "docs/adoption-assessment.md": "# assessment\n" }, message: "write the assessment" },
+        { tree: { ".claude/elicitation/points.json": readFileSync(POINTS, "utf8") }, message: "catch up: land the elicitation guard" },
+      ] }, PASS, "prior alignment"],
 ];
 
 let bad = 0;

@@ -10,7 +10,7 @@ are to be read as in RFC 2119.
 
 This page is the whole normative core. Everything else in the standard explains,
 templates or enforces what is written here; where any other document appears to add
-a requirement, this page wins. Rules are numbered R1-R27 and the numbers are stable -
+a requirement, this page wins. Rules are numbered R1-R28 and the numbers are stable -
 tooling cites them. `standard.manifest.json` is this spec's machine-readable
 projection (each manifest entry names the rule it enforces), and
 `scripts/self-verify.mjs` reports unmet rules as a drift count. Rules the manifest
@@ -157,6 +157,24 @@ binds every repo, a solo one included.
   checkable by requiring it to exist; these two are the case where existing is
   not enough, because the count a human says go or no-go on is the part a file
   can omit while still being present.
+- **R28.** Every point this standard asks about MUST be answered through a mechanism
+  with provenance, not by an instruction an agent might skip (ADR-054):
+  `.claude/elicitation/points.json` declares each point, its permitted provenance
+  states and the paths it gates; a `PreToolUse` hook
+  (`.claude/hooks/elicitation-guard.mjs`) MUST refuse a write to a gated path until
+  that point's question has actually fired, read from the transcript structurally
+  rather than trusted as prose; and `docs/adoption-provenance.md`, a required
+  manifest entry, records what became of every point - state, who, when, where the
+  answer landed, and the backlog row carrying a deferred one.
+  `scripts/elicitation-provenance.mjs` MUST check the ledger is internally
+  consistent (every required point has a row, a deferred answer names a backlog row
+  that exists, a point stops being legally pending once something it gates has been
+  written) and MUST check the guard itself reached a commit before any of the three
+  Gate artifacts it protects did - `docs/adoption-intake.md`,
+  `docs/adoption-assessment.md`, `.standards-version` - since a `PreToolUse` hook
+  only binds once a session that has it wired has started, and a fresh adoption that
+  committed one of these first ran the very step this rule exists to enforce with
+  nothing enforcing it (ADR-059).
 
 ## Releases and hygiene
 
