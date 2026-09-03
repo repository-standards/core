@@ -86,7 +86,7 @@ it as the known gap rather than claiming coverage.
 | elicitation-guard | 0, silent | the tool is neither a write nor a move, the path is gated by nothing, the moved path is untracked, the point's question fired, or the content declares a stub the point permits |
 | elicitation-guard | 0, deny JSON | a gated path, or a `Bash` move of a tracked path, with no fired question and no permitted stub; or no transcript to check against |
 | elicitation-provenance | 0 | every required point has a row with a permitted state, every `provisional` names a backlog row that exists, every `human` names who and when |
-| elicitation-provenance | 1 | a missing ledger, a missing or malformed row, a forbidden state, a named backlog row that is not there, an orphan row, or a required point still `pending` once this adoption has written a non-template artifact at a path it gates |
+| elicitation-provenance | 1 | a missing ledger, a missing or malformed row, a forbidden state, a named backlog row that is not there, an orphan row, a required point still `pending` once this adoption has written a non-template artifact at a path it gates, or a Gate artifact that reached a commit before the guard's own landing commit did |
 | elicitation-points-check | 0 / 1 | every declared point has a call site, against a baseline that may only shrink / the count grew or the baseline went stale |
 | elicitation-check | 0 / 1 / 2 | quotes covered and a question answered / a fabricated quote or no human presence / no transcript to read |
 | validation-claims-check | 0 / 1 | every run record states what it can evidence and its counts agree / any does not |
@@ -137,6 +137,15 @@ it as the known gap rather than claiming coverage.
 - A `provisional` answer MUST name a backlog row that exists.
 - A validation run record MUST state which claim its observations support, and `human` MUST
   name a transcript file that is present.
+- The guard MUST reach a commit before any of the three Gate artifacts it protects does -
+  `docs/adoption-intake.md`, `docs/adoption-assessment.md`, `.standards-version` - checked by
+  commit ancestry, never a date: a `PreToolUse` hook binds only once a session with it wired
+  has started, so a fresh adoption that committed one of these first ran the very step this
+  rule exists to enforce with nothing enforcing it (ADR-054's own named gap, closed by
+  ADR-059). Exempted whenever `.standards-version` already existed the commit before the
+  guard's own commit - the update-to-latest shape, not a fresh skip - and whenever the ledger
+  this check reads sits under a subdirectory ROOT, which is this project's own shipped tree
+  dogfooding itself rather than an adopter's repository.
 
 ## Invariants
 
