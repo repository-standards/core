@@ -219,6 +219,13 @@ check "${SEC}" allow "grep -rn 'gh secret set' docs/"
 check "${SEC}" allow "rg 'gh variable delete' --glob '*.md'"
 # But a search tool that runs the command in a substitution really does run it.
 check "${SEC}" DENY  "echo \$(gh secret set TOKEN --body x)"
+# The REST route sets the same secret without the `gh secret` verb. Nothing asserted this branch
+# before, so its pattern could rot unnoticed - and it had: `\+` in a basic regex is a GNU and BSD
+# extension, not POSIX, and only a case here proves the match on the grep that is running.
+check "${SEC}" DENY  "gh api -X PUT repos/o/r/actions/secrets/NAME --input -"
+check "${SEC}" DENY  "gh api --method PATCH repos/o/r/actions/variables/NAME -f value=x"
+check "${SEC}" allow "gh api repos/o/r/actions/secrets"
+check "${SEC}" allow "grep -rn 'gh api' docs/"
 
 # The dispatcher, and the wiring that reaches it. Every guard above fails closed on a missing jq
 # or an unreadable lib.sh, and then the outermost link failed open: settings.json named each guard
