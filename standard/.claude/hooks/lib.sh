@@ -23,8 +23,15 @@ deny() {
 # read the command has not checked it, so it denies instead.
 command -v jq >/dev/null 2>&1 || deny "Blocked by repository policy: the agent guards cannot run because 'jq' is not installed, and a guard that cannot read the command has not checked it. Install jq (macOS: brew install jq; Debian/Ubuntu: apt-get install jq - see https://github.com/repository-standards/core/blob/main/docs/method/prerequisites.md) and retry."
 
+# Exit status carries a parse failure the way stdout cannot: a malformed or truncated payload
+# and a well-formed call with no command both print nothing, and only jq's own exit code tells
+# them apart (0 either way jq actually produced a result, nonzero on a parse error). Callers
+# check it before trusting an empty CMD as "nothing to look at" rather than "could not look".
+# jq's own parse error goes to stderr and stays there - the caller's denial message names the
+# failure in the guard's own words, and a guard invoked outside guards.sh's own stderr
+# redirection should not leak jq's diagnostics as if they were part of its verdict.
 read_command() {
-  jq -r '.tool_input.command // ""'
+  jq -r '.tool_input.command // ""' 2>/dev/null
 }
 
 # Splits a command line into segments on ; && || | & and newlines.

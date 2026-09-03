@@ -41,6 +41,23 @@ score() { # score <script> <command>
   fi
 }
 
+# Same shape as score(), for a case that has to bypass payload() to be malformed at all: JSON
+# it cannot build. jq's own parse error goes to lib.sh's own stderr redirect now, not here, so
+# this does not need score()'s errtext handling to tell a real parse failure from a broken guard.
+score_raw() { # score_raw <script> <raw-stdin>
+  local script="$1" raw="$2" out rc
+  out="$(printf '%s' "${raw}" | "${HOOKS}/${script}" 2>/dev/null)"
+  rc=$?
+  if [ "${rc}" -ne 0 ]; then printf 'BROKEN:exit %s' "${rc}"; return; fi
+  if [ -z "${out}" ]; then printf 'allow'; return; fi
+  if printf '%s' "${out}" \
+    | jq -e '.hookSpecificOutput.permissionDecision == "deny"' >/dev/null 2>&1; then
+    printf 'DENY'
+  else
+    printf 'BROKEN:output is not a deny verdict: %s' "${out%%$'\n'*}"
+  fi
+}
+
 check() { # check <script> <DENY|allow> <command>
   local script="$1" expect="$2" cmd="$3" got label
   got="$(score "${script}" "${cmd}")"
@@ -64,6 +81,13 @@ assert() { # assert <what> <expected> <actual>
 }
 
 DB=no-remote-db-writes.sh
+echo "== remote-database write guard: malformed payload fails closed"
+# Truncated mid-object: valid JSON and "no command" both parse as an empty CMD, and only jq's
+# exit code (checked in lib.sh's read_command, not the empty string itself) tells this apart
+# from either. A guard that let this through would pass the exact payload shape a truncated
+# hook invocation actually produces.
+assert "DB guard denies a payload that does not parse as JSON" \
+  DENY "$(score_raw "${DB}" '{"tool_input":{"command":"psql -h prod')"
 echo "== remote-database write guard"
 check "${DB}" DENY  'psql -h prod-db.example.com -U admin -c "DELETE FROM users"'
 check "${DB}" DENY  "psql -h prod-db.example.com -U admin -f migration.sql"
@@ -326,6 +350,9 @@ else
 fi
 
 PUSH=no-force-push.sh
+echo "== force-push guard: malformed payload fails closed"
+assert "force-push guard denies a payload that does not parse as JSON" \
+  DENY "$(score_raw "${PUSH}" 'not json at all')"
 echo "== force-push guard"
 check "${PUSH}" DENY  "git push --force origin main"
 check "${PUSH}" DENY  "git push --force-with-lease origin feature"
@@ -356,6 +383,9 @@ check "${PUSH}" allow "git commit -m 'do not force push'"
 check "${PUSH}" allow "git commit --amend --no-edit && git push origin feature"
 
 SEC=no-ci-secret-writes.sh
+echo "== CI secrets guard: malformed payload fails closed"
+assert "CI secrets guard denies a payload that does not parse as JSON" \
+  DENY "$(score_raw "${SEC}" '{"tool_input":')"
 echo "== CI secrets guard"
 check "${SEC}" DENY  "gh secret set MY_TOKEN --body abc"
 check "${SEC}" DENY  "gh variable delete FOO"
@@ -396,6 +426,10 @@ out="$(printf '%s' "${DISPATCH_PAYLOAD}" | "${HOOKS}/guards.sh" 2>/dev/null)"
 assert "dispatcher relays a guard's denial" DENY "$(verdict "${out}")"
 out="$(printf '{"tool_input":{"command":"pnpm test:unit"}}' | "${HOOKS}/guards.sh" 2>/dev/null)"
 assert "dispatcher passes a clean command" allow "$(verdict "${out}")"
+# A malformed payload reaches every guard through the dispatcher's own buffer-and-replay, so the
+# fix has to hold there too, not just when a guard script is invoked on its own.
+out="$(printf 'not json at all' | "${HOOKS}/guards.sh" 2>/dev/null)"
+assert "dispatcher relays a denial for a payload that does not parse as JSON" DENY "$(verdict "${out}")"
 
 SANDBOX="$(mktemp -d 2>/dev/null || printf '')"
 if [ -z "${SANDBOX}" ] || [ ! -d "${SANDBOX}" ]; then
@@ -562,6 +596,10 @@ else
       "$(elicit '{"tool_name":"Bash","tool_input":{"command":"mv untracked-scratch.tmp elsewhere.tmp"}}')"
     assert "an ordinary shell command is not read as a rename" allow \
       "$(elicit "$(printf '{"tool_name":"Bash","tool_input":{"command":"ls %s"}}' "${TRACKED}")")"
+    # A malformed call payload is a different failure than a malformed points file: this is the
+    # guard's own stdin, not something it reads off disk after parsing that stdin successfully.
+    assert "a payload that does not parse as JSON refuses the gated write" DENY \
+      "$(elicit 'not json at all')"
     # A points file that exists but does not parse is not the same as none declared: the gate
     # is declared, a guard that cannot read it has not checked anything, so it refuses.
     cp "${FIX}/.claude/elicitation/points.json" "${FIX}/points.json.good"

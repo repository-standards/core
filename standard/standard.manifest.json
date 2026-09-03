@@ -353,12 +353,12 @@
       "since": "0.8.0",
       "rule": "R19",
       "sha256": {
-        "elicitation-guard.mjs": "c39b2a610391baf16dc7745bf58ce4fba647c31635008080e5e9395a766fd9b8",
+        "elicitation-guard.mjs": "da6a99390e6926154c5727ff994a9c56353a075d7b810db8444a21aac5f65347",
         "guards.sh": "e2cb07f370a7875f10f3f5eef5529fe6be1ab85b7ccf52027dffac564d9b188e",
-        "lib.sh": "19cf94f51f4d498b2f5c1184fdf3d94b25e50b0d333812fb8b7bab74ec37e7e3",
-        "no-ci-secret-writes.sh": "355ad81d57f4bbb3f0c933d1567bf2f407c2dd10c3d04c542c1b14f67d02e0ee",
-        "no-force-push.sh": "47c1d0ad0612ef23096d95a0fd589d7954e02593fe05d58d96d129b39a2515b3",
-        "no-remote-db-writes.sh": "90a8e9044b386f7384b14a765c8e484fa1fc51bb9eb7262fd1ada7c83a4e620c"
+        "lib.sh": "4af2b468edbc7394f6ef3008bf9d13da09ab016b17f42a434fe0f41a435bef16",
+        "no-ci-secret-writes.sh": "7170c2b57a1876c3a189e5be8fab115f47397c2589f5d68d4d5aae0113430467",
+        "no-force-push.sh": "313b98e7fbf40f42ff2e4d05104ad4e332e6efd4cc508244bdceb5800bcd83d4",
+        "no-remote-db-writes.sh": "78539ee38c79644103b0dd3315e838fecc5e019561fe43cee9b1b76e5d260185"
       }
     },
     {
@@ -369,7 +369,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R19",
-      "sha256": "d62bc7953462ce477d40185b4e5ec5d16e3647ba70c0181008b89968a1edccd9"
+      "sha256": "77092883a0da6eabc884868328689eb3916d0a2c33d19c54cd83183405959f67"
     },
     {
       "path": "docs/PRINCIPLES.md",
@@ -626,7 +626,7 @@
       "profile": "core",
       "since": "0.9.23",
       "rule": "R28",
-      "sha256": "c39b2a610391baf16dc7745bf58ce4fba647c31635008080e5e9395a766fd9b8"
+      "sha256": "da6a99390e6926154c5727ff994a9c56353a075d7b810db8444a21aac5f65347"
     },
     {
       "path": "docs/adoption-provenance.md",

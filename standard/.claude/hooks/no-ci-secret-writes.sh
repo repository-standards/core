@@ -11,6 +11,10 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 }
 
 CMD=$(read_command)
+# Nonzero here means the payload could not be read at all, not that there was no command to
+# read - jq exits 0 on a well-formed call with none. Passing on the first would let a
+# malformed or truncated payload through as if it were the second, silently.
+[ $? -eq 0 ] || deny "Blocked by repository policy: this guard could not parse its input as JSON, so the command was never checked."
 [ -n "${CMD}" ] || exit 0
 
 while IFS= read -r segment; do

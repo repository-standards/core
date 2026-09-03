@@ -193,6 +193,8 @@ it as the known gap rather than claiming coverage.
 - The guard MUST fail closed: absent or unreadable evidence is a refusal, never a pass. A
   points file that exists and does not parse is a declared gate that cannot be read, so every
   gated write is refused until it is fixed - never treated as if no point had been declared.
+  The same holds for the guard's own input: a call payload that does not parse as JSON is
+  refused, never read as a call with nothing to check.
 - The guard MUST read the transcript structurally. Compaction replays the model's own summary
   of a session back as a user turn, so any textual scan lets the agent vouch for itself.
 - A refusal MUST name the point, restate the question and state the three answers. A refusal
@@ -270,6 +272,9 @@ it as the known gap rather than claiming coverage.
   `-tDIR`, `--target-directory=DIR` - so none of them hides the source.
 - GIVEN a `points.json` that exists and does not parse WHEN the agent writes any gated path
   THEN the guard refuses, naming the file, until the JSON is fixed.
+- GIVEN a call payload that does not parse as JSON - a truncated or malformed `PreToolUse`
+  invocation - WHEN the agent writes any gated path THEN the guard refuses; it does not read
+  the unparseable payload as a call with no command to check.
 - GIVEN a repo where this adoption wrote a record at a path `adopt.records` gates, and that
   row still reads `pending`, THEN `elicitation-provenance` exits 1.
 - GIVEN a repo whose decision records were committed before the adoption's own commit THEN it
