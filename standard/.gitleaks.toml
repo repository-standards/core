@@ -32,14 +32,20 @@ regexes = [
 # word the entropy rule keys on - a hook called `no-ci-secret-writes.sh` - the hash beside
 # it reads as a credential and the adoption commit fails the scan on a shipped file.
 #
-# Scoped by shape, not by file. `paths` is the wrong tool: gitleaks matches it before it
-# evaluates `condition`, so a path entry switches the rule off for the whole file whatever
-# else the allowlist says. This matches the line - a JSON key whose entire value is 64
-# lowercase hex characters - and only for `generic-api-key`, so every named-vendor rule
-# still fires everywhere, manifests included.
+# Scoped by shape AND by file. The shape alone - a JSON key whose entire value is 64
+# lowercase hex characters - is also the shape of an HMAC signing secret pasted into a
+# service config, so on its own it would switch `generic-api-key` off for that line in
+# every JSON file in the repo. `condition = "AND"` makes gitleaks require both the path
+# and the line (the default OR lets either one allow) - and only that line: a non-hash
+# secret elsewhere in a manifest is still reported. The rule stays scoped to
+# `generic-api-key`, so every named-vendor rule still fires everywhere, manifests included.
+# The path is matched repo-relative in git mode and absolute in `gitleaks dir`, hence the
+# optional directory prefix rather than a `^` anchor.
 [[allowlists]]
-description = "sha256 values recorded by manifest-hashes."
+description = "sha256 values recorded by manifest-hashes, in the manifests only."
 targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''(.*/)?(standard|stack)\.manifest\.json$''']
 regexTarget = "line"
 regexes = ['''^\s*"[^"]+":\s*"[a-f0-9]{64}",?\s*$''']
 

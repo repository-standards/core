@@ -298,7 +298,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R19",
-      "sha256": "3c644361180d774962ddbb88aedef0176ae0264b7e5b8b7db75cb46e18571386"
+      "sha256": "63d2a6ed5b18b75f1232486c6312ed62e88cb40304b5abadde14752740937be6"
     },
     {
       "path": ".github/workflows/gitleaks.yml",
