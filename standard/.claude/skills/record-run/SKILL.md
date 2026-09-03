@@ -26,7 +26,7 @@ will only ever collect successes, and the corpus already knows what those look l
 1. **When this fires.** At the close of an `align-to-standards` session (wired in at that
    skill's own step 8) - success, partial, or abandoned mid-run all count. It also runs by
    hand against any past session that used a shipped skill. It does **not** fire, or asks
-   before assembling anything, when: the intake answered `adopt.evidence` with **record
+   before assembling anything, when: the intake answered `adopt.evidence` with **send
    nothing** (say that you are skipping it, rather than skipping it quietly); the session
    never left Step 0 (nothing happened yet to score); the intake named a dry run or
    assessment-only with nothing the user intends to send anywhere; the user has said the repo

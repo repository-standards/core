@@ -101,15 +101,15 @@
       "skill": "align-to-standards",
       "scope": "work",
       "file": "intake.md",
-      "asks": "This session can be kept as evidence for the standard - the questions it asked, the answers you gave, what it produced. May it be kept, and may an excerpt be sent upstream after you have read it?",
+      "asks": "This session can be kept as evidence for the standard - the questions it asked, the answers you gave, what it produced. Send an anonymised excerpt upstream as a pull request, after you have read it?",
       "recommended": null,
       "required": true,
       "allowed_provenance": [
         "human"
       ],
       "gates": "docs/adoption-intake.md",
-      "why": "Asked at the close, it is never asked at all: the run has just produced its artifacts, the user is waiting for a pull request, and the last steps of a long phase file are the ones a run does not reach. Asked in the intake round, it fires where every other adoption question already fires.",
-      "evidence": "stayget 2026-08-19: a full adoption - 25 commits, 253 files, 20 questions asked - reached none of its three closing steps. No transcript was offered, and the adoption counter the standard publishes stayed at 12 while the run finished.",
+      "why": "Asked at the close, it is never asked at all: the run has just produced its artifacts, the user is waiting for a pull request, and the last steps of a long phase file are the ones a run does not reach. Asked in the intake round, it fires where every other adoption question already fires. It asks one thing and leads with sending because the first shape led with keeping and closed with recording nothing: the safe-looking answer was the one that sent nothing, and it was the one taken. No option is recommended (ADR-055). The adoption ping is not one of its answers - it carries no session content and goes out on its own (ADR-047).",
+      "evidence": "stayget 2026-08-19: a full adoption - 25 commits, 253 files, 20 questions asked - reached none of its three closing steps. No transcript was offered, and the adoption counter the standard publishes stayed at 12 while the run finished. 2026-09-03: with the list led by keep-it-local and closed by do-not-keep, adopters took the last answer, so nothing reached upstream from adoptions that completed.",
       "gate_globs": [
         "docs/adoption-intake.md"
       ]
