@@ -1,5 +1,5 @@
 ---
-status: Accepted
+status: Accepted, revised by ADR-061 (adopt.evidence gets a recommended default)
 date: 2026-08-19
 ---
 
