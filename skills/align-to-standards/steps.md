@@ -166,13 +166,11 @@ Phase file of `align-to-standards`. Runs inside it, never as a separate skill.
    evidence the human-prompting corpus needs and cannot get any other way; an
    abandoned or failed run is more valuable than a clean one and the offer must say
    so before asking anything. `adopt.evidence` decides whether this step runs at all:
-   **record nothing** means skip it and say you are skipping it, **keep it local**
-   means assemble and stop there, and only the two keep-and-send options reach a
-   pull request upstream - under the anonymised one, the scrub `record-run` performs
-   anyway is a condition of the consent, so an excerpt that fails it has no yes.
-   Beyond that gate the levels are consent-gated per item, exactly like
-   step 7 - never automatic, and "no" leaves the assembled record local and costs
-   the user nothing.
+   only **send an anonymised excerpt** reaches it - **send nothing** means skip it
+   and say you are skipping it. The scrub `record-run` performs anyway is a condition
+   of that consent, so an excerpt that fails it has no yes. Beyond that gate the
+   levels are consent-gated per item, exactly like step 7 - never automatic, and
+   "no" leaves the assembled record local and costs the user nothing.
 
 9. **Send the adoption ping (ADR-047).** At every wave close, alongside steps 7 and 8 -
    unlike them, **informed, not asked**: never wait for a yes. First check

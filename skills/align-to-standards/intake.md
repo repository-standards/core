@@ -330,7 +330,7 @@ Everything downstream is scoped by this answer, so inferring it means inferring 
 
 Records to `docs/adoption-provenance.md`: the `adopt.intent` row takes the state, who answered, the date, and `docs/adoption-intake.md` as where the answer landed.
 
-### `[adopt.evidence]` Whether this run may be kept as evidence
+### `[adopt.evidence]` Whether an anonymised excerpt of this run goes upstream
 
 Fires **in the intake round, before `docs/adoption-intake.md` is written** - not at the close.
 Every version of this question until now sat in the last step of the run, and across every
@@ -339,24 +339,32 @@ a pull request, and the tail of a phase file is exactly what a long run does not
 
 Call `AskUserQuestion` with the header `[adopt.evidence]` and the question:
 
-> This session can be kept as evidence for the standard - the questions it asked, the answers you gave, what it produced. May it be kept, and may an excerpt be sent upstream after you have read it?
+> This session can be kept as evidence for the standard - the questions it asked, the answers you gave, what it produced. Send an anonymised excerpt upstream as a pull request, after you have read it?
 
-Options, in order: **keep it, and I will read the excerpt before anything is sent** / **keep it
-anonymised - the same, on the condition that machine paths and identity are scrubbed and the
-repository appears only as `/git/<repo>`** / **keep it local - assemble it, send nothing** /
-**record nothing**
+Options, in order: **send an anonymised excerpt** (`record-run` assembles it with machine paths
+and identity scrubbed and the repository named only as `/git/<repo>`, you read and edit it before
+anything is sent, and it reaches upstream as a pull request you can see) / **send nothing** (no
+excerpt and no run record; only the provenance ledger the guard requires is written)
 
-The anonymised option is not a different scrub - `record-run` scrubs paths and identity at every
-level regardless. What it changes is the standing of that scrub: chosen here, anonymisation is a
-condition of the consent rather than a courtesy of the tooling, so an excerpt that fails it was
-never agreed to. The option exists because the first real adopter asked for exactly this and the
-list could not say it - the answer they gave attached a condition no option carried, which is the
-one shape of answer a fixed list must learn from.
+Sending leads because the other order was tried. The first shape of this list led with keeping
+the excerpt local and closed with "record nothing". Adopters took the last
+answer, and the corpus this question exists to feed got nothing from adoptions that completed. A
+list whose safe-looking answer is the one that sends nothing collects nothing, so the question now
+asks one thing and says what that answer sends.
 
-No option is recommended and none may be inferred or stubbed: consent that an agent supplied is
-not consent. The answer governs step 8 at the close - `record-run` assembles and offers only what
-was permitted here, and on **record nothing** it does not run at all. It does not govern step 9:
-the adoption ping carries no session content and is disclosed rather than asked (ADR-047).
+No option is recommended and none may be inferred or stubbed: consent an agent supplied is not
+consent, and `allowed_provenance` says so (ADR-055). Anonymisation is not an option
+because it is not optional: `record-run` scrubs paths and identity at every level, and here that
+scrub is a condition of the consent rather than a courtesy of the tooling, so an excerpt that
+fails it was never agreed to. A separate anonymised option existed because the first real
+adopter asked for exactly this and the list could not say it; now the only sending answer says it.
+
+The answer governs step 8 at the close and nothing else. `record-run` assembles and offers only
+under **send an anonymised excerpt**, and still takes a per-item yes on the exact file before
+anything is sent (ADR-045) - the intake answer is permission to assemble and to come back, not
+permission to send. The adoption ping is not on this list: it carries no session content, goes
+out on its own at every wave close and is disclosed rather than asked (ADR-047), with
+`REPOSTDS_NO_TELEMETRY` as its only switch.
 
 Records to `docs/adoption-provenance.md`: the `adopt.evidence` row takes the state, who answered,
 the date, and `docs/adoption-intake.md` as where the answer landed.
