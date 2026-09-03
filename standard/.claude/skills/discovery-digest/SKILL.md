@@ -181,7 +181,7 @@ reminder to consider asking - the rule existed as prose first and a full adoptio
 
 Fires **before digesting handed-over material into a record**.
 
-Call `AskUserQuestion` with the header `[discover.materials]` and the question:
+Call `AskUserQuestion` for point `[discover.materials]` - header **Materials**, `metadata.source` `discover.materials` - and the question:
 
 > What existing material should this draw on, and where does it live?
 
@@ -195,7 +195,7 @@ Records to `docs/adoption-provenance.md`: the `discover.materials` row takes the
 
 Fires **before writing any decision the digest surfaced into a record**.
 
-Call `AskUserQuestion` with the header `[discover.decisions]` and the question:
+Call `AskUserQuestion` for point `[discover.decisions]` - header **Decisions**, `metadata.source` `discover.decisions` - and the question:
 
 > Which of the decisions surfaced here are already settled, and which are still open?
 

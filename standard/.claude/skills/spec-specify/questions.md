@@ -14,7 +14,7 @@ Sibling file of `spec-specify`. Load it at step 5.3, where the flow would otherw
 
 Declared in `.claude/elicitation/points.json`; the shape and the provenance states are in
 `.claude/elicitation/README.md`. Each block is a real `AskUserQuestion` call, in the language the
-user is writing in, with the point id in the header.
+user is writing in, with the point id in `metadata.source` and a header that says what it asks.
 
 ### `[spec.scope]` What is in and what is out
 

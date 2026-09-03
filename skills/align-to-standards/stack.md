@@ -60,7 +60,7 @@ reminder to consider asking - the rule existed as prose first and a full adoptio
 
 Fires **after detecting the technology from the repo's own evidence, before writing the manifest**.
 
-Call `AskUserQuestion` with the header `[green.stack]` and the question:
+Call `AskUserQuestion` for point `[green.stack]` - header **Stack**, `metadata.source` `green.stack` - and the question:
 
 > Which stack, and which profile - core or scale?
 

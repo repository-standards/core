@@ -6,10 +6,11 @@
 // standard/elicitation/points.json declared the rule; onboard.md already stated the same rule
 // in prose and a full adoption ignored it. Prose is not a call site.
 //
-// A point is satisfied when its owning skill both invokes AskUserQuestion and carries the
-// point's id in a question header as [id]. The id is what lets the replay layer assert which
-// points were reached rather than counting questions, and count is the metric that hid this
-// defect for months.
+// A point is satisfied when its owning skill both invokes AskUserQuestion and names the
+// point as [id] beside the call - the call passes the id on in metadata.source, and the
+// bracketed form in the prose is what this check reads. The id is what lets the replay layer
+// assert which points were reached rather than counting questions, and count is the metric
+// that hid this defect for months.
 //
 // Usage: node tools/elicitation-points-check.mjs [--json]
 // Exit: 0 all points wired | 1 any point declared with no call site

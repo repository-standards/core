@@ -210,7 +210,7 @@ reminder to consider asking - the rule existed as prose first and a full adoptio
 
 Fires **before writing PRODUCT.md, which on an empty repo means before writing anything**.
 
-Call `AskUserQuestion` with the header `[green.product]` and the question:
+Call `AskUserQuestion` for point `[green.product]` - header **Product**, `metadata.source` `green.product` - and the question:
 
 > What is this going to be, and who is it for?
 
@@ -224,7 +224,7 @@ Records to `docs/adoption-provenance.md`: the `green.product` row takes the stat
 
 Fires **before creating the initial directory layout**.
 
-Call `AskUserQuestion` with the header `[green.conventions]` and the question:
+Call `AskUserQuestion` for point `[green.conventions]` - header **Conventions**, `metadata.source` `green.conventions` - and the question:
 
 > Do you have naming and structure conventions you want carried in, or should the standard's defaults apply?
 

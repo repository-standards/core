@@ -378,7 +378,7 @@ reminder to consider asking - the rule existed as prose first and a full adoptio
 
 Fires **before writing anything into the decision-records directory** - which includes editing a record that was already there, not only creating one.
 
-Ask this as two questions in one `AskUserQuestion` call, both under the header `[adopt.records]`. Where the repository has no records yet, ask only the second.
+Ask this as two questions in one `AskUserQuestion` call for point `[adopt.records]` - header **Records**, `metadata.source` `adopt.records`. Where the repository has no records yet, ask only the second.
 
 The first, when records already exist:
 
@@ -402,7 +402,7 @@ Records to `docs/adoption-provenance.md`: the `adopt.records` row takes the stat
 
 Fires **before writing personas**.
 
-Call `AskUserQuestion` with the header `[adopt.personas]` and the question:
+Call `AskUserQuestion` for point `[adopt.personas]` - header **Personas**, `metadata.source` `adopt.personas` - and the question:
 
 > Who are the users of this product? Define them yourself, have them suggested from the code for you to correct, or skip personas for now?
 
@@ -416,7 +416,7 @@ Records to `docs/adoption-provenance.md`: the `adopt.personas` row takes the sta
 
 Fires **when the repository already tracks work somewhere other than `backlog.md`** - its own tracker directory, an issue tracker, a board.
 
-Call `AskUserQuestion` with the header `[adopt.tracker]` and the question:
+Call `AskUserQuestion` for point `[adopt.tracker]` - header **Tracker**, `metadata.source` `adopt.tracker` - and the question:
 
 > The standard's `backlog.md` is the source of truth for tracked work, and this repository already tracks work elsewhere. Fold that into the backlog, keep both with the backlog as the source, or keep the external tracker and let the backlog bridge to it?
 
@@ -430,7 +430,7 @@ Records to `docs/adoption-provenance.md`: the `adopt.tracker` row takes the stat
 
 Fires **before writing backlog rows, and again before assigning an owner to any of them**.
 
-Call `AskUserQuestion` with the header `[adopt.backlog]` and the question:
+Call `AskUserQuestion` for point `[adopt.backlog]` - header **Backlog**, `metadata.source` `adopt.backlog` - and the question:
 
 > Should the adoption seed a backlog, and if so how is the work attributed - each row naming the role it needs, assigned to you by name, or with nothing said about who does it?
 
