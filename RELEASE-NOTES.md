@@ -3,6 +3,17 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.11 - 2026-09-03
+
+**The standard's own decision records now say so when a shipped file cites them.** A record
+number means whatever the index next to it says, and the tree ships into repositories with
+their own index - so `ADR-010` in the file you adopted was read, correctly, as your ADR-010.
+Every citation in the shipped tree now names the standard explicitly - not only in the
+documents, but in the guards' failure messages and in the issue the update watcher opens in
+your tracker, which is where an unexplained number is hardest to look up. The writing rule is
+stated in `docs/conventions.md` for your own docs, and a check keeps it that way. Found by
+the first repository to hit it.
+
 ## 1.0.10 - 2026-09-03
 
 **Five holes a real adoption found in the guards and workflows, closed upstream.** A
