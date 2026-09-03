@@ -112,6 +112,14 @@ check "${DB}" DENY  'psql -h "prod-db.example.com" -c "DROP TABLE users"'
 # An explicit host beats the environment, because psql resolves it that way too.
 check "${DB}" allow 'PGHOST=prod-db.example.com psql -h localhost -c "DROP TABLE users"'
 check "${DB}" allow 'PGHOST=localhost psql -c "DROP TABLE users"'
+# The environment reaches a client from the segment that exports it, or from a bare assignment
+# that names a remote host - and from nowhere else. Read from the whole command, a search for
+# the assignment is a remote client, and an early local assignment vouches for a later client
+# that never saw it.
+check "${DB}" DENY  'export PGHOST=prod-db.example.com; psql -c "DROP TABLE users"'
+check "${DB}" DENY  $'PGHOST=prod-db.example.com\npsql -c "DROP TABLE users"'
+check "${DB}" allow 'grep -rn "PGHOST=prod-db.example.com" docs/; psql -c "DROP TABLE t"'
+check "${DB}" allow 'export PGHOST=prod-db.example.com; PGHOST=localhost psql -c "DROP TABLE t"'
 # Quoting a local host does not make it remote.
 check "${DB}" allow 'psql -h "localhost" -c "TRUNCATE t"'
 check "${DB}" allow "psql -h '127.0.0.1' -c \"DROP TABLE t\""
@@ -175,6 +183,128 @@ check "${DB}" DENY  "mysqlimport -h prod-db.example.com app /tmp/users.txt"
 # Restoring locally and reading an archive's table of contents are not remote writes.
 check "${DB}" allow "pg_restore -h localhost -d app dump.tar"
 check "${DB}" allow "pg_restore --list dump.tar"
+
+# A migration or seed runner names no client and no statement, so every case above is blind to
+# it, and it applies a whole migration to whatever host its environment resolves. The guard
+# resolves that host the way the runner does - the command, an earlier export, the process
+# environment, the env files - so the suite has to own every one of those places: the process
+# variables are cleared here and set per case, and the env files are fixtures selected per case.
+# Found by an adopting monorepo whose own guard already covered its runner.
+echo "== remote-database write guard: migration and seed runners"
+for v in DB_HOST DATABASE_HOST POSTGRES_HOST PGHOST PGHOSTADDR MYSQL_HOST DATABASE_URL DB_URL DB_SSL_TUNNEL PGSSLTUNNEL; do
+  unset "${v}"
+done
+ENVDIR="$(mktemp -d 2>/dev/null || printf '')"
+if [ -z "${ENVDIR}" ] || [ ! -d "${ENVDIR}" ]; then
+  printf '  FAIL could not create a temp dir, so the runner cases never ran\n'
+  FAILURES=$((FAILURES + 1))
+else
+  printf 'DB_HOST=localhost\nDB_PORT=5432\n' > "${ENVDIR}/local.env"
+  printf 'DB_HOST=localhost\nDB_HOST=prod-db.example.com # the last assignment wins\n' > "${ENVDIR}/remote.env"
+  printf 'export DB_HOST="prod-db.example.com"\r\n' > "${ENVDIR}/export-crlf.env"
+  printf 'DATABASE_URL=postgres://app:pw@prod-db.example.com:5432/app\n' > "${ENVDIR}/url.env"
+  printf 'DATABASE_URL=postgresql://app:pw@localhost:5432/app\n' > "${ENVDIR}/url-local.env"
+  printf 'DB_HOST=localhost\nDB_SSL_TUNNEL=true\n' > "${ENVDIR}/tunnel.env"
+  printf '# DB_HOST=prod-db.example.com\n' > "${ENVDIR}/commented.env"
+
+  # runner <env files under ENVDIR, or -> <NAME=value for the process environment, or -> <DENY|allow> <command>
+  # The env files default to one that does not exist, so a case that names none is judged on
+  # the command and the process environment alone. No subshell: FAILURES has to survive.
+  runner() {
+    local files="" f got label
+    for f in $1; do
+      [ "${f}" = - ] || files="${files}${files:+ }${ENVDIR}/${f}"
+    done
+    export REMOTE_DB_ENV_FILES="${files:-${ENVDIR}/missing.env}"
+    [ "$2" = - ] || export "$2"
+    got="$(score "${DB}" "$4")"
+    [ "$2" = - ] || unset "${2%%=*}"
+    unset REMOTE_DB_ENV_FILES
+    label="$4"
+    [ "$2" = - ] || label="${label}  [env: $2]"
+    [ "$1" = - ] || label="${label}  [env file: $1]"
+    assert "${label}" "$3" "${got}"
+  }
+
+  # The host named on the command, across the runners a repo is likely to have.
+  runner - - DENY  'DB_HOST=prod-db.example.com pnpm migrate'
+  runner - - DENY  'DB_HOST=prod-db.example.com pnpm --filter @app/database-schema migrate'
+  runner - - DENY  'DB_HOST=prod-db.example.com pnpm seed'
+  runner - - DENY  'DB_HOST=prod-db.example.com npm run db:migrate'
+  runner - - DENY  'DB_HOST=prod-db.example.com node scripts/migrate/run.mjs'
+  runner - - DENY  'DATABASE_URL=postgres://app:pw@prod-db.example.com:5432/app npx prisma migrate deploy'
+  runner - - DENY  'DATABASE_URL=postgres://app:pw@prod-db.example.com/app prisma db push'
+  runner - - DENY  'DB_HOST=prod-db.example.com bundle exec rails db:migrate'
+  runner - - DENY  'DB_HOST=prod-db.example.com python manage.py migrate'
+  runner - - DENY  'DB_HOST=prod-db.example.com alembic upgrade head'
+  runner - - DENY  'DB_HOST=prod-db.example.com flyway migrate'
+  runner - - DENY  'DB_HOST=prod-db.example.com dotnet ef database update'
+  runner - - DENY  'DB_HOST=prod-db.example.com mix ecto.migrate'
+  runner - - DENY  'DB_HOST=prod-db.example.com docker compose exec app pnpm migrate'
+  runner - - allow 'DB_HOST=localhost pnpm migrate'
+  runner - - allow 'DB_HOST=127.0.0.1 pnpm seed'
+  runner - - allow 'DATABASE_URL=postgresql://app:pw@localhost:5432/app npx prisma migrate deploy'
+  runner - - allow 'DATABASE_URL=sqlite:./dev.db pnpm migrate'
+  runner - - allow 'DB_HOST=localhost bundle exec rails db:migrate'
+  runner - - allow 'DB_HOST=localhost python manage.py migrate'
+  # Reading a remote database is allowed, and the runners' read-only modes read - unless
+  # `--reset` rides along.
+  runner - - allow 'DB_HOST=prod-db.example.com pnpm migrate:status'
+  runner - - allow 'DB_HOST=prod-db.example.com pnpm migrate --dry-run'
+  runner - - allow 'DB_HOST=prod-db.example.com npx prisma migrate status'
+  runner - - allow 'DB_HOST=prod-db.example.com bundle exec rails db:migrate:status'
+  runner - - allow 'DB_HOST=prod-db.example.com flyway info'
+  runner - - DENY  'DB_HOST=prod-db.example.com pnpm migrate:status --reset'
+  # Words that look like the verb and are not, and reading about the runner rather than running it.
+  runner - - allow 'pnpm update'
+  runner - - allow 'npm run build'
+  runner - - allow 'pnpm --filter web-app dev'
+  runner - - allow "grep -rn 'pnpm migrate' docs/"
+  runner - - allow 'git log --oneline -- database/migrate/'
+  # A host carried from an earlier segment: an export carries what it names; a bare assignment
+  # carries only a remote host, because nothing says a later command will read it - so a bare
+  # local one after an exported remote one does not clear it. The maintainer's call, made on
+  # the safe side. An assignment on the runner's own segment beats anything carried.
+  runner - - DENY  'export DB_HOST=prod-db.example.com; pnpm migrate'
+  runner - - DENY  $'DB_HOST=prod-db.example.com\npnpm migrate'
+  runner - - DENY  'export DATABASE_URL=postgres://app:pw@prod-db.example.com/app && npx prisma migrate deploy'
+  runner - - allow 'export DB_HOST=localhost; pnpm migrate'
+  runner - - allow 'export DB_HOST=prod-db.example.com; DB_HOST=localhost pnpm migrate'
+  runner - - allow 'DB_HOST=prod-db.example.com pnpm migrate:status; DB_HOST=localhost pnpm migrate'
+  runner - - DENY  'export DB_HOST=prod-db.example.com; DB_HOST=localhost; pnpm migrate'
+  # The process environment, which the Bash tool inherits. The command beats it.
+  runner - DB_HOST=prod-db.example.com DENY  'pnpm migrate'
+  runner - DB_HOST=localhost allow 'pnpm migrate'
+  runner - DATABASE_URL=postgres://app:pw@prod-db.example.com/app DENY  'npx prisma migrate deploy'
+  runner - PGHOST=prod-db.example.com DENY  'python manage.py migrate'
+  runner - DB_SSL_TUNNEL=true DENY  'pnpm migrate'
+  runner - DB_HOST=localhost DENY  'DB_HOST=prod-db.example.com pnpm migrate'
+  runner - DB_HOST=prod-db.example.com allow 'DB_HOST=localhost pnpm migrate'
+  # The env files the runner reads: the last assignment wins, `export`, quotes, a trailing
+  # comment and CRLF are all stripped, a commented-out host is no host, every listed file that
+  # names a host is judged, and a tunnel ends at a remote database whatever host it names.
+  runner local.env - allow 'pnpm migrate'
+  runner remote.env - DENY  'pnpm migrate'
+  runner export-crlf.env - DENY  'pnpm migrate'
+  runner url.env - DENY  'npx prisma migrate deploy'
+  runner url-local.env - allow 'npx prisma migrate deploy'
+  runner tunnel.env - DENY  'pnpm migrate'
+  runner commented.env - DENY  'pnpm migrate'
+  runner 'local.env remote.env' - DENY  'pnpm migrate'
+  runner remote.env - allow 'DB_HOST=localhost pnpm migrate'
+  runner remote.env - allow 'pnpm migrate:status'
+  runner remote.env DB_HOST=localhost allow 'pnpm migrate'
+  runner local.env DB_HOST=prod-db.example.com DENY  'pnpm migrate'
+  runner local.env - DENY  'DB_SSL_TUNNEL=true pnpm migrate'
+  # No host anywhere is a denial, not a pass: the runner is reading a place the guard cannot see.
+  runner - - DENY  'pnpm migrate'
+  runner - - DENY  'yarn seed'
+  runner - - DENY  'docker compose exec app pnpm migrate'
+  runner - - allow 'pnpm migrate:status'
+
+  rm -f "${ENVDIR}"/*.env
+  rmdir "${ENVDIR}"
+fi
 
 PUSH=no-force-push.sh
 echo "== force-push guard"

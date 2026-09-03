@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Denies any write against a database that is not on this machine.
+# Denies any write against a database that is not on this machine: a SQL client, a dump restore,
+# or a migration/seed runner judged by the host its environment would hand it.
 set -uo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -69,20 +70,105 @@ printf '%s' "${CMD}" | grep -qiE "${WRITE_RE}" && WRITE_PRESENT=1
 OPAQUE=0
 printf '%s' "${CMD}" | grep -qE '\$\(|`' && OPAQUE=1
 
-# libpq and mysql read the host from the environment when no flag gives one. The assignment is
-# command-wide on purpose: `export PGHOST=prod; psql -c 'DROP TABLE t'` puts it in an earlier
-# segment than the client, and an exported variable really does apply to what follows it. A
-# segment that names its own host is judged on that host instead, so `-h localhost` still wins.
-ENV_HOSTS=$(printf '%s' "${CMD}" \
-  | grep -oE '(^|[^[:alnum:]_])(PGHOST|PGHOSTADDR|MYSQL_HOST)=[^[:space:]]+' \
-  | sed -E 's/^[^=]*=//' || true)
-ENV_REMOTE=0
-if [ -n "${ENV_HOSTS}" ] && printf '%s\n' "${ENV_HOSTS}" | grep -viE "^${LOCAL_HOST_RE}" | grep -q .; then
-  ENV_REMOTE=1
-fi
+# libpq and mysql read the host from the environment when no flag gives one. An assignment is
+# read from the client's own segment first (`PGHOST=prod psql ...`), else carried from an earlier
+# segment that was nothing but assignments (`export PGHOST=prod; psql ...`) - carried_value in
+# lib.sh says exactly what carries. Not from anywhere in the command: that lets a
+# `grep "PGHOST=prod"` deny an unrelated local client, and lets `PGHOST=localhost psql -c 'select 1'`
+# vouch for a `psql` two segments on that reads a different host. A segment that names its own
+# host is judged on that host instead, so `-h localhost` still wins.
+CLIENT_ENV_VARS='PGHOST PGHOSTADDR MYSQL_HOST'
+
+# Migration and seed runners: a package runner or interpreter followed anywhere by the migrate or
+# seed verb, or by an entry file under migrate/ or seed/. Tools whose write verb is a word too
+# common to trust after any runner (`update`, `upgrade` - `pnpm update` is not a migration) are
+# matched with their own name in front.
+#
+# A runner shows no client and no statement, so nothing above sees it, and it applies a whole
+# migration to whatever host its environment names. That host is resolved the way dotenv and libpq
+# resolve it: an inline assignment on the runner's segment, else one carried from an earlier
+# assignment-only segment, else this process's own environment (the Bash tool inherits it), else
+# the env files the runner would read - last assignment in a file wins, `export` and a trailing
+# comment stripped, CRLF tolerated. REMOTE_DB_ENV_FILES (space-separated, relative to the repo
+# root or absolute) overrides the file list for a repo that keeps its env elsewhere.
+#
+# No host visible in any of those is a denial, not a pass. A runner reaches a host from
+# somewhere; one that shows none is reading a place this guard cannot see, and a guard that
+# cannot see the target has not checked it - the same reasoning that makes a missing jq a denial.
+RUNNER_TOOLS='pnpm|npm|yarn|npx|bun|bunx|deno|node|tsx|ts-node|python[0-9.]*|php|bundle|rake|rails|mix|knex|prisma|drizzle-kit|sequelize(-cli)?|typeorm'
+RUNNER_VERB_RE='(db:)?migrate(:[a-z-]+)*|(db:)?seed(-with-reset)?(:[a-z-]+)*|migration:(run|revert)|ecto\.(migrate|rollback)|db[[:space:]]+(push|seed)|([^[:space:]]*/)?(migrate|seed)/[^[:space:]]+'
+RUNNER_RE="${CLIENT_BOUNDARY}(${RUNNER_TOOLS})[[:space:]]+([^[:space:]]+[[:space:]]+)*(${RUNNER_VERB_RE})([[:space:]]|$)"
+RUNNER_NAMED_RE="${CLIENT_BOUNDARY}(alembic[[:space:]]+(upgrade|downgrade)|flask[[:space:]]+db[[:space:]]+(upgrade|downgrade)|flyway[[:space:]]+(migrate|undo|clean|baseline|repair)|liquibase[[:space:]]+(update|rollback)[[:alnum:]-]*|dotnet[[:space:]]+ef[[:space:]]+database[[:space:]]+(update|drop))([[:space:]]|$)"
+# The runners' read-only modes: reading a remote database is allowed, so these pass regardless
+# of host - unless `--reset` rides along, which is a write whatever else the line says.
+RUNNER_READ_RE='migrate:(status|verify|list|current[a-z]*|check[a-z-]*)([[:space:]]|$)|migrate[[:space:]]+(status|diff)([[:space:]]|$)|--(status|verify|dry-run|plan)([[:space:]]|$)'
+RUNNER_HOST_VARS='DB_HOST DATABASE_HOST POSTGRES_HOST PGHOST PGHOSTADDR MYSQL_HOST DATABASE_URL DB_URL'
+# A tunnel terminates on loopback and still ends at a remote database.
+RUNNER_TUNNEL_VARS='DB_SSL_TUNNEL PGSSLTUNNEL'
+RUNNER_ENV_FILES="${REMOTE_DB_ENV_FILES:-.env .env.local database/.env}"
+REPO_ROOT="$(cd "${DIR}/../.." && pwd)"
+
+# The host a variable's value names. A connection URL is stripped to its host part; a sqlite or
+# file URL is this machine by construction; anything else is taken as a host name.
+host_of() { # host_of <NAME> <value>
+  case "$1" in
+    *URL)
+      if printf '%s' "$2" | grep -qiE "^(${SQL_SCHEME_RE})://"; then
+        printf '%s' "$2" | sed -E 's#^[^:]+://([^@/]*@)?##; s#/.*$##'
+      elif printf '%s' "$2" | grep -qiE '^(sqlite|file):'; then
+        printf 'localhost'
+      else
+        printf '%s' "$2"
+      fi ;;
+    *) printf '%s' "$2" ;;
+  esac
+}
+url_is_remote() { host_is_remote "$(host_of DATABASE_URL "$1")"; }
+tunnel_is_on() { printf '%s' "$1" | grep -qiE '^["'"'"']?(true|1|yes|on)["'"'"']?$'; }
+# Which values a bare (unexported) assignment carries forward: the ones that would be refused.
+unsafe_fn_for() { # unsafe_fn_for <NAME>
+  case "$1" in *URL) printf 'url_is_remote' ;; *TUNNEL) printf 'tunnel_is_on' ;; *) printf 'host_is_remote' ;; esac
+}
+file_value() { # file_value <NAME> <file> - the file's last assignment; empty when none or unreadable
+  [ -r "$2" ] || return 0
+  grep -E "^[[:space:]]*(export[[:space:]]+)?$1=" "$2" \
+    | tail -1 \
+    | tr -d '\r' \
+    | sed -E "s/^[[:space:]]*(export[[:space:]]+)?$1=//; s/[[:space:]]+#.*$//; s/^[\"']//; s/[\"']$//"
+}
+# Every value NAME resolves to for the runner in <segment>, as `value<TAB>source` lines, in the
+# runner's own precedence: the first source that has it ends the search, except the env files,
+# which are all reported - which file a runner reads is not known, so each one that names a
+# host is judged.
+runner_values() { # runner_values <NAME> <segment>
+  local name="$1" segment="$2" value ref file path
+  value="$(inline_value "${name}" "${segment}")"
+  [ -n "${value}" ] && { printf '%s\t%s\n' "${value}" "the command"; return; }
+  ref="CARRY_${name}"
+  value="${!ref:-}"
+  [ -n "${value}" ] && { printf '%s\t%s\n' "${value}" "an earlier assignment"; return; }
+  value="${!name:-}"
+  [ -n "${value}" ] && { printf '%s\t%s\n' "${value}" "the environment"; return; }
+  for file in ${RUNNER_ENV_FILES}; do
+    case "${file}" in /*) path="${file}" ;; *) path="${REPO_ROOT}/${file}" ;; esac
+    value="$(file_value "${name}" "${path}")"
+    [ -n "${value}" ] && printf '%s\t%s\n' "${value}" "${file}"
+  done
+  return 0
+}
 
 while IFS= read -r segment; do
   [ -n "${segment}" ] || continue
+
+  # A segment that is nothing but assignments runs nothing, so there is nothing to judge here;
+  # what it hands to the segments after it is recorded and the loop moves on.
+  if printf '%s' "${segment}" | grep -qE "${ASSIGNMENT_ONLY_RE}"; then
+    for name in ${RUNNER_HOST_VARS} ${RUNNER_TUNNEL_VARS}; do
+      ref="CARRY_${name}"
+      printf -v "${ref}" '%s' "$(carried_value "${name}" "${segment}" "${!ref:-}" "$(unsafe_fn_for "${name}")")"
+    done
+    continue
+  fi
   # A segment that searches for text is not a segment that runs it, so documenting a remote psql
   # call does not read as making one. The write signals above are still taken from the whole
   # command, so a search piped into a client is judged on the client's segment.
@@ -131,8 +217,12 @@ while IFS= read -r segment; do
       if printf '%s\n' "${hosts}" | grep -v '^/' | grep -viE "^${LOCAL_HOST_RE}" | grep -q .; then
         remote=1
       fi
-    elif [ "${ENV_REMOTE}" = 1 ]; then
-      remote=1
+    else
+      for name in ${CLIENT_ENV_VARS}; do
+        value="$(inline_value "${name}" "${segment}")"
+        if [ -z "${value}" ]; then ref="CARRY_${name}"; value="${!ref:-}"; fi
+        if [ -n "${value}" ] && host_is_remote "${value}"; then remote=1; fi
+      done
     fi
   fi
 
@@ -147,6 +237,39 @@ while IFS= read -r segment; do
     fi
     if [ "${OPAQUE}" = 1 ]; then
       deny "Blocked by repository policy: this command reaches a remote database and builds its SQL from a command substitution, so what it would run cannot be read here. A guard that cannot read the command has not checked it. Inline the statement, or read the file and ship the change as a reviewed .sql under database/schema/."
+    fi
+  fi
+
+  if printf '%s' "${segment}" | grep -qE "${RUNNER_RE}|${RUNNER_NAMED_RE}"; then
+    if printf '%s' "${segment}" | grep -qiE "${RUNNER_READ_RE}" \
+      && ! printf '%s' "${segment}" | grep -qE -- '--reset([[:space:]]|$)'; then
+      continue
+    fi
+    for name in ${RUNNER_TUNNEL_VARS}; do
+      while IFS=$'\t' read -r value source; do
+        [ -n "${value}" ] || continue
+        if tunnel_is_on "${value}"; then
+          deny "Blocked by repository policy: ${name}=${value} (from ${source}) means the local port this runner would reach is a tunnel to a remote database, and a migration is a write. Ship the schema change as a reviewed .sql under database/schema/ for a human to apply."
+        fi
+      done <<VALUES
+$(runner_values "${name}" "${segment}")
+VALUES
+    done
+    hosts_seen=0
+    for name in ${RUNNER_HOST_VARS}; do
+      while IFS=$'\t' read -r value source; do
+        [ -n "${value}" ] || continue
+        hosts_seen=1
+        host="$(host_of "${name}" "${value}")"
+        if host_is_remote "${host}"; then
+          deny "Blocked by repository policy: this migration or seed runner would write to ${host} (${name} from ${source}), which is not a local database. Never WRITE to a remote database - a migration is a write. Point ${name} at the local database, or ship the schema change as a reviewed .sql under database/schema/ for a human to apply."
+        fi
+      done <<VALUES
+$(runner_values "${name}" "${segment}")
+VALUES
+    done
+    if [ "${hosts_seen}" = 0 ]; then
+      deny "Blocked by repository policy: this looks like a migration or seed runner and no database host is visible - not on the command, not carried from an earlier export, not in this process's environment (${RUNNER_HOST_VARS// /, }) and not in ${RUNNER_ENV_FILES// /, }. A runner reaches a host from somewhere, and a guard that cannot see it has not checked it. Name the host on the command (DB_HOST=localhost ...), or set REMOTE_DB_ENV_FILES in the hook command in .claude/settings.json to the env file this runner reads."
     fi
   fi
 done <<EOF
