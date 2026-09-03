@@ -3,17 +3,7 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
-## 1.0.9 - 2026-09-03
-
-**A file the standard drafted for you now says so.** When an adoption run answers a
-question by proposing content instead of asking a person, or leaves a placeholder rather
-than guessing, the file itself now opens with a `[NEEDS REVIEW]` line naming what it was
-drafted from (or what it should hold) and the backlog row tracking it - so six months from
-now, nobody mistakes a draft for a decision just because it reads like one. `self-verify`
-now reports how many files still carry that marker, right next to the adoption percentage,
-without changing the percentage itself.
-
-## Unreleased
+## 1.0.10 - 2026-09-03
 
 **Five holes a real adoption found in the guards and workflows, closed upstream.** A
 private monorepo adopted the standard and, in the same day, fixed its own copy of the shipped
@@ -33,6 +23,16 @@ carries forward - are the maintainer's to confirm and are named in the changelog
 now splits a command on a lone `&` as well, and a runner's read-only flag is trusted only
 where it reaches the program it names, not after a package-manager script. The
 dashboard also loses a duplicate masthead control and names surfaces by their repo slug.
+
+## 1.0.9 - 2026-09-03
+
+**A file the standard drafted for you now says so.** When an adoption run answers a
+question by proposing content instead of asking a person, or leaves a placeholder rather
+than guessing, the file itself now opens with a `[NEEDS REVIEW]` line naming what it was
+drafted from (or what it should hold) and the backlog row tracking it - so six months from
+now, nobody mistakes a draft for a decision just because it reads like one. `self-verify`
+now reports how many files still carry that marker, right next to the adoption percentage,
+without changing the percentage itself.
 
 ## 1.0.8 - 2026-09-03
 
