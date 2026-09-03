@@ -88,6 +88,7 @@ function pushHuman(text) {
 }
 
 const questions = [];
+const metaPointIds = new Set();
 const records = new Map();
 const askIds = new Set();
 const answeredIds = new Set();
@@ -128,6 +129,7 @@ for (const line of raw.split("\n")) {
       if (b.type !== "tool_use") continue;
       if (b.name === "AskUserQuestion") {
         askIds.add(b.id);
+        for (const id of String(b.input?.metadata?.source || "").split(/[\s,]+/)) if (id) metaPointIds.add(id);
         for (const q of b.input?.questions || []) {
           questions.push({ id: b.id, header: q.header || "", question: q.question || "" });
         }
@@ -186,9 +188,12 @@ if (POINTS) {
     unverified(`cannot read --points ${POINTS}: ${err.message}`);
   }
   const required = (declared.points || []).filter((p) => p.required);
-  const askedIds = new Set(
-    questions.map((q) => (q.header.match(/\[([a-z0-9.\-]+)\]/i) || [])[1]).filter(Boolean),
-  );
+  // metadata.source is where the id travels since 1.0.3; the bracketed header is what every
+  // transcript before that carries, and both are read - see the guard, which reads the same two.
+  const askedIds = new Set([
+    ...metaPointIds,
+    ...questions.map((q) => (q.header.match(/\[([a-z0-9.\-]+)\]/i) || [])[1]).filter(Boolean),
+  ]);
   const missing = required.filter((p) => !askedIds.has(p.id)).map((p) => p.id);
   pointReport = { required: required.length, asked: askedIds.size, missing };
   if (missing.length) {

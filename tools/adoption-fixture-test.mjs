@@ -78,9 +78,9 @@ function copyPayload(repo) {
   return copied;
 }
 
-// One AskUserQuestion turn per point, in the shape the guard reads structurally: the header
-// carries the id in brackets. Nothing here says what was answered, because the guard checks
-// that the question was put, not what came back.
+// One AskUserQuestion turn per point, in the shape the guard reads structurally: the call
+// names the point in metadata.source. Nothing here says what was answered, because the guard
+// checks that the question was put, not what came back.
 const transcript = (dir, name, ids) => {
   const path = join(dir, `${name}.jsonl`);
   writeFileSync(path, `${JSON.stringify({
@@ -89,7 +89,7 @@ const transcript = (dir, name, ids) => {
       content: ids.map((id) => ({
         type: "tool_use",
         name: "AskUserQuestion",
-        input: { questions: [{ header: `[${id}] asked`, question: "?" }] },
+        input: { metadata: { source: id }, questions: [{ header: "asked", question: "?" }] },
       })),
     },
   })}\n`);

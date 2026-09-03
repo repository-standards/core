@@ -150,7 +150,7 @@ question and nothing would have remembered it otherwise.
 
 Fires **at the end of every phase, before the next one writes anything**.
 
-Call `AskUserQuestion` with the header `[adopt.continue]` and the question:
+Call `AskUserQuestion` for point `[adopt.continue]` - header **Next phase**, `metadata.source` `adopt.continue` - and the question:
 
 > Phase finished. Continue to the next one, stop here, or hand the rest back to you?
 

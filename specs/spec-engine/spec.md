@@ -110,8 +110,8 @@ fails naming each one that carries neither the substring `github/spec-kit v0.13.
 - **The questions this phase owns MUST be real calls.** `spec.scope`, `spec.acceptance` and
   `spec.unknowns` are declared in [`points.json`](../../standard/.claude/elicitation/points.json),
   and every skill that writes a specification MUST carry an `AskUserQuestion` call site for the
-  points gating that write, with the point id in the question's header as `[spec.scope]`: the
-  boundary and the acceptance criteria are asked by `spec-specify` before it writes them, by
+  points gating that write, with the point id passed in the call's `metadata.source`
+  (`spec.scope`) and a plain header: the boundary and the acceptance criteria are asked by `spec-specify` before it writes them, by
   `spec-clarify` in its loop, by `spec-update` before it moves a boundary, and by `spec-reconcile`
   before it rewrites a criterion to match what was built. Prose instructing the agent to ask is not
   a call site: it was written, in the right file and in plain words, and a full adoption asked one

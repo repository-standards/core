@@ -136,7 +136,7 @@ reminder to consider asking - the rule existed as prose first and a full adoptio
 
 Fires **before writing a run record, always, with no suggest path**.
 
-Call `AskUserQuestion` with the header `[record.participation]` and the question:
+Call `AskUserQuestion` for point `[record.participation]` - header **Whose run**, `metadata.source` `record.participation` - and the question:
 
 > Whose run is this - yours, or somebody else's - and may the transcript excerpt be kept as evidence?
 

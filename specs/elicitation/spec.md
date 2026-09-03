@@ -58,8 +58,10 @@ it as the known gap rather than claiming coverage.
 - **Point** - a place the standard must ask. Carries its question, its answers in order, the
   provenance states it permits, and the paths it gates.
 - **Gated path** - a glob a point owns. A write to it is the act that would settle the point.
-- **Call site** - the block in a skill that fires the question, carrying the point id in the
-  `AskUserQuestion` header as `[point.id]`.
+- **Call site** - the block in a skill that fires the question. It names the point as
+  `[point.id]` beside the call, and the call passes the id on in `metadata.source` - a field
+  the person answering never sees, so the header reads as prose (Evidence, Intent). One call
+  may put several questions; the field lists every id asked, space-separated.
 - **Provenance state** - `pending`, `human`, `provisional`, `inferred`, `absent`,
   `unverified`. What is claimed about how the answer was arrived at.
 - **Stub** - a write that declares its point `absent` and leaves the gap visible. Claims
@@ -146,8 +148,9 @@ it as the known gap rather than claiming coverage.
   that introduced the point list, so a repository taking this layer through an update is
   judged only for what it writes from then on. Where that boundary cannot be drawn, the check
   announces it and stands down; it never passes quietly.
-- The point id in an `AskUserQuestion` header is the only link between a question and the
-  artifact it licenses. A question without one counts as not asked.
+- The point id an `AskUserQuestion` call carries - in `metadata.source`, or in the header as
+  `[point.id]` as every transcript before 1.0.3 did - is the only link between a question and
+  the artifact it licenses. A question without one counts as not asked.
 - The guard proves a question happened. It does not and cannot prove the answer was honoured;
   nothing here may be described as if it does.
 - Coverage never grows silently: `elicitation-baseline.json` may shrink, and a stale baseline

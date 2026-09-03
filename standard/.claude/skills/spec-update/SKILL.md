@@ -78,7 +78,7 @@ than once per repository - what somebody said about last month's edit does not l
 
 Declared in `.claude/elicitation/points.json`; the shape and the provenance states are in
 `.claude/elicitation/README.md`. Each is a real `AskUserQuestion` call, in the language the user
-is writing in, with the point id in the header.
+is writing in, with the point id in `metadata.source` and a header that says what it asks.
 
 ### `[spec.scope]` What this change puts in and takes out
 

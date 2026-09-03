@@ -320,7 +320,7 @@ to the owner - `[adopt.language]`, below.
 
 Fires **in the intake round, before any phase is routed**.
 
-Call `AskUserQuestion` with the header `[adopt.intent]` and the question:
+Call `AskUserQuestion` for point `[adopt.intent]` - header **Intent**, `metadata.source` `adopt.intent` - and the question:
 
 > How far does this adoption go: migrate everything to the standard, adopt selected parts, or assess only and change nothing yet?
 
@@ -337,7 +337,7 @@ Every version of this question until now sat in the last step of the run, and ac
 adoption ever run it was asked zero times: by then the artifacts exist, the user is waiting for
 a pull request, and the tail of a phase file is exactly what a long run does not reach.
 
-Call `AskUserQuestion` with the header `[adopt.evidence]` and the question:
+Call `AskUserQuestion` for point `[adopt.evidence]` - header **Evidence**, `metadata.source` `adopt.evidence` - and the question:
 
 > This session can be kept as evidence for the standard - the questions it asked, the answers you gave, what it produced. Send an anonymised excerpt upstream as a pull request, after you have read it?
 
@@ -373,7 +373,7 @@ the date, and `docs/adoption-intake.md` as where the answer landed.
 
 Fires **in the intake round, before writing `AGENTS.md`** - which is where the answer lands, and which is written early enough that guessing here decides the language of everything after it.
 
-Call `AskUserQuestion` with the header `[adopt.language]` and the question:
+Call `AskUserQuestion` for point `[adopt.language]` - header **Language**, `metadata.source` `adopt.language` - and the question:
 
 > Which language do the written artifacts use: code and commits in English with docs and specs in yours, all of it in English, or all of it in yours?
 
@@ -387,7 +387,7 @@ Records to `docs/adoption-provenance.md`: the `adopt.language` row takes the sta
 
 Fires **before moving or renaming any path the target repository already tracks**. The hook enforces this one on `Bash`, not on `Write`: a rename reaches the agent as `git mv`, and until it did, this point was the only required one nothing could enforce.
 
-Call `AskUserQuestion` with the header `[adopt.layout]` and the question:
+Call `AskUserQuestion` for point `[adopt.layout]` - header **Layout**, `metadata.source` `adopt.layout` - and the question:
 
 > This repository already names and arranges things its own way, and the standard names them differently. Move what you have into the standard's layout, keep yours and map the standard onto it, or decide case by case?
 
@@ -403,7 +403,7 @@ Records to `docs/adoption-provenance.md`: the `adopt.layout` row takes the state
 
 Fires **before the manifest copy is written**, which is early: the shipped manifest carries a default `profile`, so a run that copies it without asking has answered this by accident.
 
-Count the distinct authors in the repository's recent history and say what you found, then call `AskUserQuestion` with the header `[adopt.profile]` and the question:
+Count the distinct authors in the repository's recent history and say what you found, then call `AskUserQuestion` for point `[adopt.profile]` - header **Profile**, `metadata.source` `adopt.profile` - and the question:
 
 > Does this repository run at the `core` profile or the `scale` one - is the work handed off between people, or does one person carry each piece end to end?
 
@@ -417,7 +417,7 @@ There is no answer here that converges more than the other. `scale` is not a ful
 
 Fires **when the measurement pass finds scratch notes, PRDs, plans, TODO files or any other informal working material**.
 
-Call `AskUserQuestion` with the header `[adopt.existing-material]` and the question:
+Call `AskUserQuestion` for point `[adopt.existing-material]` - header **Material**, `metadata.source` `adopt.existing-material` - and the question:
 
 > This repository holds informal working material the standard has a home for. Route it into discovery and the backlog now, list it for you to triage, or leave it untouched?
 
@@ -431,7 +431,7 @@ Records to `docs/adoption-provenance.md`: the `adopt.existing-material` row take
 
 Fires **before `docs/conventions.md` is written**, which on this path is not a blank file: the repository already has conventions - a formatter, a commit format, where documents live, which language they are written in - and they are scattered across the files that happened to need them.
 
-Call `AskUserQuestion` with the header `[green.conventions]` and the question:
+Call `AskUserQuestion` for point `[green.conventions]` - header **Conventions**, `metadata.source` `green.conventions` - and the question:
 
 > This repository already works to conventions of its own, and the standard brings defaults. Which of them wins where they disagree?
 
@@ -447,7 +447,7 @@ Records to `docs/adoption-provenance.md`: the `green.conventions` row takes the 
 
 Fires **when the target already carries agent guards or hooks the standard also ships**.
 
-Call `AskUserQuestion` with the header `[adopt.guards]` and the question:
+Call `AskUserQuestion` for point `[adopt.guards]` - header **Guards**, `metadata.source` `adopt.guards` - and the question:
 
 > This repository already has guards that overlap the standard's. Replace them, merge them, or keep both?
 
@@ -461,7 +461,7 @@ Records to `docs/adoption-provenance.md`: the `adopt.guards` row takes the state
 
 Fires **before the first commit of the adoption branch, when the change spans more than a handful of files**.
 
-Call `AskUserQuestion` with the header `[adopt.commit-plan]` and the question:
+Call `AskUserQuestion` for point `[adopt.commit-plan]` - header **Commits**, `metadata.source` `adopt.commit-plan` - and the question:
 
 > This adoption touches many files. Split the work into commits how: one per concern, one per phase, or a single change?
 

@@ -34,7 +34,7 @@ reminder to consider asking - the rule existed as prose first and a full adoptio
 
 Fires **before the spec's Requirements section is written or changed**.
 
-Call `AskUserQuestion` with the header `[spec.scope]` and the question:
+Call `AskUserQuestion` for point `[spec.scope]` - header **Scope**, `metadata.source` `spec.scope` - and the question:
 
 > What is in scope for this specification, and what is explicitly out?
 
@@ -48,7 +48,7 @@ Records to `docs/adoption-provenance.md`: the `spec.scope` row takes the state, 
 
 Fires **before the spec's Acceptance criteria are written**.
 
-Call `AskUserQuestion` with the header `[spec.acceptance]` and the question:
+Call `AskUserQuestion` for point `[spec.acceptance]` - header **Acceptance**, `metadata.source` `spec.acceptance` - and the question:
 
 > What must be true for this to count as done?
 
@@ -62,7 +62,7 @@ Records to `docs/adoption-provenance.md`: the `spec.acceptance` row takes the st
 
 Fires **whenever you are about to resolve an open question yourself rather than leave it open**.
 
-Call `AskUserQuestion` with the header `[spec.unknowns]` and the question:
+Call `AskUserQuestion` for point `[spec.unknowns]` - header **Unknowns**, `metadata.source` `spec.unknowns` - and the question:
 
 > These points are undetermined. Decide them now, mark them provisional, or leave them open?
 

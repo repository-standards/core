@@ -229,6 +229,20 @@ process.stdin.on("end", () => {
   // summary of a session back as a user turn, so a summary saying it asked about personas
   // would otherwise vouch for the write it is summarising. That is the laundering path,
   // and it is the one an agent under pressure to finish would find first.
+  // The id travels in metadata.source, which the person answering never sees, so the header
+  // can say "Evidence" rather than [adopt.evidence] - which read as code to the first adopters
+  // and does not fit the header's twelve characters anyway. One call can put several questions,
+  // so the field lists every id asked, space-separated. The bracketed header is still read: it is
+  // what every transcript before 1.0.3 carries, and what an adopted repo on an older skill sends.
+  const pointIds = (input) => {
+    const ids = new Set();
+    for (const id of String(input?.metadata?.source || "").split(/[\s,]+/)) if (id) ids.add(id);
+    for (const q of input?.questions || []) {
+      const m = /\[([a-z0-9.\-]+)\]/i.exec(q.header || "");
+      if (m) ids.add(m[1]);
+    }
+    return ids;
+  };
   let asked = new Set();
   try {
     for (const line of readFileSync(transcript, "utf8").split("\n")) {
@@ -239,10 +253,7 @@ process.stdin.on("end", () => {
       if (msg.role !== "assistant" || !Array.isArray(msg.content)) continue;
       for (const b of msg.content) {
         if (b.type !== "tool_use" || b.name !== "AskUserQuestion") continue;
-        for (const q of b.input?.questions || []) {
-          const m = /\[([a-z0-9.\-]+)\]/i.exec(q.header || "");
-          if (m) asked.add(m[1]);
-        }
+        for (const id of pointIds(b.input)) asked.add(id);
       }
     }
   } catch {
@@ -257,7 +268,7 @@ process.stdin.on("end", () => {
   deny(
     `Refused: ${verb} ${target} needs [${p.id}] answered first.\n\n` +
     `  ${p.asks}\n\n` +
-    `Call AskUserQuestion with the header [${p.id}]. Three answers, always:\n` +
+    `Call AskUserQuestion with "${p.id}" in metadata.source and a plain header. Three answers, always:\n` +
     `  - they answer now                      -> provenance human\n` +
     `  - you suggest, they verify later       -> provisional, plus a backlog row naming the point\n` +
     `  - a stub, and you do not guess         -> absent, with a visible gap marker\n\n` +

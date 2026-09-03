@@ -29,7 +29,7 @@ const line = (ids) =>
       role: "assistant",
       content: ids.map((id) => ({
         type: "tool_use", name: "AskUserQuestion",
-        input: { questions: [{ header: `[${id}] asked`, question: "?" }] },
+        input: { metadata: { source: id }, questions: [{ header: "asked", question: "?" }] },
       })),
     },
   });
@@ -37,6 +37,26 @@ const line = (ids) =>
 const withAsked = (name, ids) => {
   const p = join(dir, `${name}.jsonl`);
   writeFileSync(p, line(ids) + "\n");
+  return p;
+};
+
+// The two shapes the id may arrive in besides one-call-per-point above: a single call that
+// puts several questions and lists every id in metadata.source, and the bracketed header every
+// transcript before 1.0.3 carries - an adopted repo on an older skill still sends that one.
+const withOneCall = (name, ids) => {
+  const p = join(dir, `${name}.jsonl`);
+  writeFileSync(p, JSON.stringify({ message: { role: "assistant", content: [{
+    type: "tool_use", name: "AskUserQuestion",
+    input: { metadata: { source: ids.join(" ") }, questions: ids.map(() => ({ header: "asked", question: "?" })) },
+  }] } }) + "\n");
+  return p;
+};
+const withLegacyHeader = (name, ids) => {
+  const p = join(dir, `${name}.jsonl`);
+  writeFileSync(p, JSON.stringify({ message: { role: "assistant", content: ids.map((id) => ({
+    type: "tool_use", name: "AskUserQuestion",
+    input: { questions: [{ header: `[${id}] asked`, question: "?" }] },
+  })) } }) + "\n");
   return p;
 };
 
@@ -75,6 +95,8 @@ const CASES = [
   ["personas with no transcript fails closed", { tool_name: "Write", tool_input: { file_path: "docs/personas.md" } }, DENY],
   ["personas after its own question is allowed", { tool_name: "Write", tool_input: { file_path: "docs/personas.md" }, transcript_path: withAsked("personas", ["adopt.personas"]) }, ALLOW],
   ["personas after somebody else's question is still refused", { tool_name: "Write", tool_input: { file_path: "docs/personas.md" }, transcript_path: withAsked("other", ["adopt.guards"]) }, DENY],
+  ["personas asked in one call beside other points is allowed", { tool_name: "Write", tool_input: { file_path: "docs/personas.md" }, transcript_path: withOneCall("bundled", ["adopt.intent", "adopt.personas"]) }, ALLOW],
+  ["personas asked with the id in the header, as before 1.0.3, is still allowed", { tool_name: "Write", tool_input: { file_path: "docs/personas.md" }, transcript_path: withLegacyHeader("legacy", ["adopt.personas"]) }, ALLOW],
   ["a decision record matches through the ** glob", { tool_name: "Write", tool_input: { file_path: "docs/decision-records/ADR-001-thing.md" } }, DENY],
   ["a spec matches through a ** in the middle", { tool_name: "Write", tool_input: { file_path: "specs/billing/spec.md" } }, DENY],
   ["a run record matches a * that must not span a slash", { tool_name: "Write", tool_input: { file_path: "docs/validation/human-prompting/runs/a.json" } }, DENY],
