@@ -142,6 +142,52 @@ const CASES = [
     { ledger: baseline(),
       preexisting: { "README.md": "# app\n" },
       adopted: { "docs/decision-records/ADR-002-old.md": "# ADR-002\n", "docs/personas.md": "# Personas\n\nBogdan.\n" } }, PASS],
+
+  // NEEDS-REVIEW-2: the [NEEDS REVIEW] marker (ADR-057, revised by ADR-058) names a backlog
+  // row for every artifact a `suggest` or `stub` answer wrote. This reads the marker directly
+  // out of the tree, independent of the per-question ledger rows checked above.
+  ["a [NEEDS REVIEW] marker naming a backlog row that exists passes",
+    { ledger: FULLY_ANSWERED, backlog: "| SEC-1 | confirm the incident note |\n",
+      files: { "docs/decision-records/ADR-900-notes.md":
+        "# ADR-900\n\n> [NEEDS REVIEW] drafted by the adoption run on 2026-09-03 from the incident\n> channel. Backlog: SEC-1.\n" } },
+    PASS],
+  ["a [NEEDS REVIEW] marker naming a backlog row that does not exist fails",
+    { ledger: FULLY_ANSWERED, backlog: "| SEC-9 | something unrelated |\n",
+      files: { "docs/decision-records/ADR-901-notes.md":
+        "# ADR-901\n\n> [NEEDS REVIEW] drafted by the adoption run on 2026-09-03. Backlog: SEC-1.\n" } },
+    FAIL, "which is not in the backlog"],
+  ["a [NEEDS REVIEW] marker with no backlog row named fails",
+    { ledger: FULLY_ANSWERED, backlog: "| SEC-1 | confirm the incident note |\n",
+      files: { "docs/decision-records/ADR-902-notes.md":
+        "# ADR-902\n\n> [NEEDS REVIEW] nothing written here yet.\n" } },
+    FAIL, "names no backlog row"],
+  // The elicitation README ships two illustrative marker blocks of its own, naming backlog
+  // rows no real repo has (PERSONAS-1, ADR-013-1). Reading those as live markers would fail
+  // every adopter who has never touched the file - scaffolding is excluded from this scan for
+  // exactly that reason, the same helper `template()` already uses to tell a shipped README
+  // from a repo's own content.
+  ["the shipped elicitation README's own illustrative markers are not read as live ones",
+    { ledger: FULLY_ANSWERED,
+      files: { "standard/.claude/elicitation/README.md":
+        "# Elicitation\n\n" +
+        "> [NEEDS REVIEW] drafted by the adoption run on 2026-09-03 from the route table and\n> `roles.js`. Backlog: PERSONAS-1.\n\n" +
+        "> [NEEDS REVIEW] nothing written here yet; should hold the datastore decision and why.\n> Backlog: ADR-013-1.\n" } },
+    PASS],
+  // Non-fatal companion: a `provisional` row promises the artifact it produced carries the
+  // marker, but the row is only a promise. This warns - never fails - when none of the
+  // point's gated paths actually carry it; the marker is how a person finds the gap later,
+  // not a precondition for the row.
+  ["a provisional row whose gated file carries no marker warns, and still passes",
+    { ledger: baseline({ ...ANSWERED, "adopt.personas": ["provisional", "-", "-", "docs/personas.md", "BL-77"] }),
+      backlog: "| BL-77 | verify the personas with the owner |",
+      files: { "docs/personas.md": "# Personas\n\nBogdan, Olga.\n" } },
+    PASS, "gate a path with no [NEEDS REVIEW] marker found in it"],
+  ["a provisional row whose gated file carries the marker does not warn",
+    { ledger: baseline({ ...ANSWERED, "adopt.personas": ["provisional", "-", "-", "docs/personas.md", "BL-77"] }),
+      backlog: "| BL-77 | verify the personas with the owner |",
+      files: { "docs/personas.md":
+        "# Personas\n\n> [NEEDS REVIEW] drafted by the adoption run on 2026-09-03 from the routes table. Backlog: BL-77.\n\nBogdan, Olga.\n" } },
+    PASS, undefined, "no [NEEDS REVIEW] marker found in it"],
   ["outside a git work tree the pending rule stands down rather than passing quietly",
     { ledger: baseline(), files: { "docs/decision-records/ADR-001-thing.md": "# ADR-001\n" }, git: false },
     PASS, "not a git work tree"],
@@ -196,13 +242,15 @@ const CASES = [
 ];
 
 let bad = 0;
-for (const [name, spec, expected, wants] of CASES) {
+for (const [name, spec, expected, wants, notWants] of CASES) {
   const dir = repo(spec);
   const run = spawnSync("node", [SCRIPT], { cwd: dir, encoding: "utf8" });
   const got = run.status === 0 ? PASS : FAIL;
+  const out = run.stdout + run.stderr;
   // A case that stands down has to be seen standing down. Passing is what a working check
-  // and a check that gave up look like from the exit code alone.
-  const ok = got === expected && (!wants || (run.stdout + run.stderr).includes(wants));
+  // and a check that gave up look like from the exit code alone. `notWants` is the other
+  // direction, for a non-fatal message that must not appear when nothing prompted it.
+  const ok = got === expected && (!wants || out.includes(wants)) && (!notWants || !out.includes(notWants));
   if (!ok) bad++;
   console.log(`  ${ok ? "ok  " : "FAIL"}  ${name}${ok ? "" : `\n          got ${got}: ${(run.stdout + run.stderr).trim().split("\n").slice(0, 3).join(" / ")}`}`);
   rmSync(dir, { recursive: true, force: true });

@@ -28,19 +28,23 @@
 // Zone 1 tooling - never shipped.
 
 import { spawnSync } from "node:child_process";
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 const TREE = join(process.cwd(), "standard");
 
 // A repo the check can run against: the shipped tree, plus the pin an adopter writes at
-// align time. Files under test are overwritten per case.
+// align time. Files under test are overwritten per case - including into a directory the
+// shipped tree does not itself carry, such as a first capability under specs/.
 const fixture = (files) => {
   const dir = mkdtempSync(join(tmpdir(), "fill-check-"));
   cpSync(TREE, dir, { recursive: true });
   writeFileSync(join(dir, ".standards-version"), "0.7.2\n");
-  for (const [rel, body] of Object.entries(files)) writeFileSync(join(dir, rel), body);
+  for (const [rel, body] of Object.entries(files)) {
+    mkdirSync(dirname(join(dir, rel)), { recursive: true });
+    writeFileSync(join(dir, rel), body);
+  }
   return dir;
 };
 
@@ -563,11 +567,94 @@ checkSubstance("a heading plus a real list is content, not an empty shell", {
   warnsAbout: [["docs/ARCHITECTURE.md", false]],
 });
 
+// NEEDS-REVIEW-2: self-verify counts [NEEDS REVIEW] markers (ADR-057, revised by ADR-058) as
+// a companion note next to the percentage, without moving pct/adopted/applicable/drift - a
+// marked file is present and counts as adopted either way (ADR-038); the note says how much
+// of that presence still waits on a human.
+const NEEDS_REVIEW_NOTE_RE = /(\d+) entr(?:y|ies) still carr(?:y|ies) a \[NEEDS REVIEW\] marker and awaits? a human/;
+const checkNeedsReview = (name, { files, wantCount }) => {
+  const dir = fixture(files);
+  const r = spawnSync("node", [join(dir, "scripts/self-verify.mjs")], { cwd: dir, encoding: "utf8" });
+  const out = `${r.stdout ?? ""}${r.stderr ?? ""}`;
+  rmSync(dir, { recursive: true, force: true });
+
+  const got = Number(out.match(NEEDS_REVIEW_NOTE_RE)?.[1] ?? 0);
+  if (got !== wantCount) {
+    failures++;
+    console.error(`  FAIL ${name}\n       expected ${wantCount}, got ${got}\n       ${out.split("\n").find((l) => l.startsWith("self-verify:")) ?? "(no report line)"}`);
+  } else {
+    console.log(`  ok    ${name}`);
+  }
+  return out;
+};
+
+const MARK = (backlog) => `> [NEEDS REVIEW] drafted by the adoption run on 2026-09-03 from the route table. Backlog: ${backlog}.\n\n`;
+
+checkNeedsReview("a marked fill-from-repo file is counted, singular wording", {
+  files: { "SECURITY.md": `# Security\n\n${MARK("SEC-1")}Email security@acme.example about anything.\n` },
+  wantCount: 1,
+});
+
+checkNeedsReview("an unmarked file is not counted", {
+  files: { "SECURITY.md": "# Security\n\nEmail security@acme.example about anything.\n" },
+  wantCount: 0,
+});
+
+checkNeedsReview("two marked files are both counted, plural wording", {
+  files: {
+    "SECURITY.md": `# Security\n\n${MARK("SEC-1")}Email security@acme.example about anything.\n`,
+    "docs/personas.md":
+      `# Personas\n\n${MARK("PERSONAS-1")}## Roster\n\n| Persona | Primary? | One-line |\n|---|---|---|\n| Bogdan | yes | runs four rentals |\n`,
+  },
+  wantCount: 2,
+});
+
+checkNeedsReview("a marker in a decision record is counted", {
+  files: {
+    "docs/decision-records/adr/ADR-001-use-postgres.md":
+      `# ADR-001: use Postgres\n\n${MARK("ADR-001-1")}| | |\n| --- | --- |\n| **Status** | Proposed |\n` +
+      "| **Date** | 2026-09-03 |\n| **Author** | agent |\n\n## Context\n\nThe scheduling data outgrew the file store.\n" +
+      "\n## Decision\n\nWe will use Postgres.\n",
+  },
+  wantCount: 1,
+});
+
+checkNeedsReview("a marker in a capability spec is counted", {
+  files: {
+    "specs/booking/spec.md": `# Booking\n\n${MARK("BOOKING-1")}## Behaviour\n\nA guest can reserve a unit for a date range.\n`,
+  },
+  wantCount: 1,
+});
+
+// The count is a companion, not a second score: pct/adopted/applicable stay identical whether
+// or not the marked file carries the line, because a marked file is present either way. Both
+// fixtures carry the same backlog row the marker names, so the elicitation-provenance guard
+// self-verify itself runs sees an identical backlog in both and the only variable is the marker.
+const BACKLOG_FOR_SEC_1 = { "docs/backlog.md": "# Backlog\n\n| SEC-1 | confirm the security file |\n" };
+{
+  const unmarkedOut = checkNeedsReview("no-effect-on-pct pair: unmarked baseline", {
+    files: { ...BACKLOG_FOR_SEC_1, "SECURITY.md": "# Security\n\nEmail security@acme.example about anything.\n" },
+    wantCount: 0,
+  });
+  const markedOut = checkNeedsReview("no-effect-on-pct pair: same file, marked", {
+    files: { ...BACKLOG_FOR_SEC_1, "SECURITY.md": `# Security\n\n${MARK("SEC-1")}Email security@acme.example about anything.\n` },
+    wantCount: 1,
+  });
+  const pctOf = (out) => out.match(/(\d+)% adopted \((\d+)\/(\d+)\)/);
+  const a = pctOf(unmarkedOut);
+  const b = pctOf(markedOut);
+  expect(
+    "the marker note never moves pct/adopted/applicable",
+    !!a && !!b && a[1] === b[1] && a[2] === b[2] && a[3] === b[3],
+    `unmarked ${a?.[0] ?? "(no match)"} vs marked ${b?.[0] ?? "(no match)"}`,
+  );
+}
+
 console.log();
 if (failures) {
   console.error(`self-verify-fill-test: ${failures} case(s) failed`);
   process.exit(1);
 }
 console.log(
-  "self-verify-fill-test: OK - the fill warning is clearable, still fires, reads any script, catches an ellipsis row and an unfilled record author, leaves the templates alone, a file that says only TODO is flagged as unfilled, a removed required AGENTS.md section is reported as drift, and the decision catalog is surfaced without asserting a count",
+  "self-verify-fill-test: OK - the fill warning is clearable, still fires, reads any script, catches an ellipsis row and an unfilled record author, leaves the templates alone, a file that says only TODO is flagged as unfilled, a removed required AGENTS.md section is reported as drift, the decision catalog is surfaced without asserting a count, and a [NEEDS REVIEW] marker is counted as a companion note that never moves the percentage",
 );

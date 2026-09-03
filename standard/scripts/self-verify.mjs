@@ -868,6 +868,7 @@ if (manifest) {
 // 2d. surviving template placeholders - drift 0 with empty shells is a hollow win.
 // A warning, never drift: substance stays the judgment tier's call.
 let hollow = false; // no capability spec here - what drift 0 does not say (2e below)
+let needsReviewCount = 0; // files still carrying [NEEDS REVIEW] - what still waits on a human (2f below)
 if (!skeleton) {
   // The shapes the shipped templates actually use, and nothing wider:
   //   {{NORTH_STAR}}   mustache, in PRODUCT and SECURITY
@@ -1156,6 +1157,23 @@ if (!skeleton) {
     hollow = true;
     warning("spec", 'no capability spec exists here yet (specs/<capability>/spec.md) - drift measures the manifest, so it reaches 0 on a repo that has specified no behaviour at all; the shape is right, which is not the same claim as "the method has been used here"');
   }
+
+  // 2f. what still waits on a human (ADR-057, revised by ADR-058; NEEDS-REVIEW-2) ----------
+  // Every artifact written under `suggest` or `stub` opens with `[NEEDS REVIEW]` directly
+  // under its title (standard/.claude/elicitation/README.md). The three lists already built
+  // above - fill content, decision records, capability specs - are exhaustive, because those
+  // are the only places the marker is ever written; this is a count, not a fourth curated
+  // list, and it is reported next to the percentage without moving it (ADR-038).
+  const NEEDS_REVIEW_RE = /^>\s*\[NEEDS REVIEW\]/m;
+  for (const p of new Set([...fillPaths, ...recordFiles("docs/decision-records"), ...capabilitySpecs])) {
+    let raw;
+    try {
+      raw = readFileSync(p, "utf8");
+    } catch {
+      continue;
+    }
+    if (NEEDS_REVIEW_RE.test(raw)) needsReviewCount++;
+  }
 }
 
 // 2c. a committed dependency tree ------------------------------------------------
@@ -1264,14 +1282,22 @@ const substance = fillWarnings
   ? ` - ${fillWarnings} authored file${fillWarnings === 1 ? "" : "s"} flagged above as unfilled or empty: this percentage counts entries present, not substance written`
   : "";
 
+// A companion count, not a second percentage: how much of what "is present" still waits on
+// a human to confirm it (ADR-057, revised by ADR-058). It does not move the number above -
+// a marked file is present and counts as adopted (ADR-038) - it says how much of that
+// presence is a draft rather than a review.
+const needsReviewNote = needsReviewCount
+  ? ` - ${needsReviewCount} entr${needsReviewCount === 1 ? "y" : "ies"} still carr${needsReviewCount === 1 ? "ies" : "y"} a [NEEDS REVIEW] marker and await${needsReviewCount === 1 ? "s" : ""} a human`
+  : "";
+
 // `OK` is reserved for a run that actually performed every check it was asked to. Drift 0
 // with a blocking guard that never started is a true statement about a smaller question, and
 // the word a reader skims must not say otherwise: this loosened the gate (a missing tool used
 // to exit 1, and now does not), so what stops a skipped check reading as a clean bill of
 // health is the wording and the count, not the exit code.
 if (drift === 0) {
-  console.log(`self-verify: ${notRun.length ? "" : "OK - "}drift 0 - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${manifest ? "compliant with the standard" : "every skeleton check met"}${scope}${notRunNote}${substance}${hollowNote}\n`);
+  console.log(`self-verify: ${notRun.length ? "" : "OK - "}drift 0 - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${manifest ? "compliant with the standard" : "every skeleton check met"}${scope}${notRunNote}${substance}${hollowNote}${needsReviewNote}\n`);
   process.exit(0);
 }
-console.error(`self-verify: drift ${drift} - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${drift} required entr${drift === 1 ? "y is" : "ies are"} unmet${scope}${notRunNote}${substance}\n`);
+console.error(`self-verify: drift ${drift} - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${drift} required entr${drift === 1 ? "y is" : "ies are"} unmet${scope}${notRunNote}${substance}${needsReviewNote}\n`);
 process.exit(warn ? 0 : 1);
