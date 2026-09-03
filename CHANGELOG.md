@@ -17,6 +17,27 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.6 - 2026-09-03
+
+### One marker says a human has not looked yet (2026-09-03)
+
+ADR-058, revising ADR-057. The 1.0.3 decision gave a drafted artifact `[NEEDS REVIEW]` and
+an empty one `[STUB]`. Applied to a real adoption the same day, both markers answered the
+same question - has a person looked at this file - and the second told the person less than
+an empty file deserves: who fills it, not what it is for. Whether the text under the marker
+is a draft or nothing is a property of the file, not a second status, and a check that wants
+"a human has not looked at this yet" needs one string to grep for.
+
+Decided: `[NEEDS REVIEW]` is the only marker. A drafted artifact's line is as ADR-057 had
+it (what it was drafted from, which owner role confirms or rewrites it, the backlog row); an
+empty artifact's line says nothing is written yet, what the file should contain in one
+sentence, which owner role fills it, and the backlog row. One backlog row per marked file, a
+drafted decision record stays `Proposed`, the marker leaves in the commit that verifies the
+content, and the percentage does not move (ADR-038) - all unchanged. The companion count
+`self-verify` will gain is one number by owner role. ADR-057's status becomes `Accepted,
+revised by 058`; the three rows under "Adoption leaves the human work visible" name the one
+marker. Nothing in the shipped tree changes in this release.
+
 ## 1.0.5 - 2026-09-03
 
 ### Every call site names its point beside the call, and the check reads what the guard reads (2026-09-03)

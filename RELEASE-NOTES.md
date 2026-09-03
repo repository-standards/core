@@ -3,6 +3,15 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.6 - 2026-09-03
+
+**One marker, not two.** A file the adoption guessed at, or left empty for you, opens with
+`[NEEDS REVIEW]` either way; the `[STUB]` marker from 1.0.3 is gone before anything wrote
+it. An empty file's line now says what should end up in it, in one sentence, beside who
+fills it and the backlog row - so the person picking it up knows the target, and anyone
+looking for "has a human checked this" has one thing to search for. Decided in ADR-058,
+which narrows ADR-057 and changes nothing else in it.
+
 ## 1.0.5 - 2026-09-03
 
 **The wiring check reads what the guard reads.** A question's id now has to be named beside
