@@ -2,8 +2,8 @@
 # Common functions and variables for all scripts
 # PATCHED(repository-standards): based on github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE)
 # scripts/bash/common.sh, adapted throughout rather than marked hunk-by-hunk given the extent:
-# .specify/ paths renamed to scripts/spec/ and specs/ (ADR-014), speckit-prefixed identifiers
-# renamed to spec-* (ADR-015), and the unused preset-manifest template-composition engine
+# .specify/ paths renamed to scripts/spec/ and specs/ (standard ADR-014), speckit-prefixed identifiers
+# renamed to spec-* (standard ADR-015), and the unused preset-manifest template-composition engine
 # (resolve_template_content) removed as dead code.
 
 # Find repository root by searching upward for the scripts/spec directory

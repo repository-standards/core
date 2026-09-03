@@ -3,8 +3,8 @@
 //
 // Two decision-record streams (ADR technical / BDR business) each keep files on disk and a
 // README table that indexes them by number. Nothing checked the two against each other:
-// following adr-write/bdr-write's numbering step literally minted a second BDR-004 (a
-// duplicate id survived), and separately an Accepted BDR-004 was missing from bdr/README.md's
+// following adr-write/bdr-write's numbering step literally minted a second `BDR-004` (a
+// duplicate id survived), and separately an Accepted `BDR-004` was missing from bdr/README.md's
 // own index - both at self-verify drift 0. This guard closes that gap mechanically:
 //
 //   1. duplicate id       - two files, or two index rows, claim the same stream + number.
@@ -18,15 +18,15 @@
 // was found, so it is not an artifact of old records predating the template. `discovery-digest`
 // greps every record's signal against incoming material, which means a missing section does
 // not fail loudly; it silently narrows that tripwire to whichever records happened to get one.
-// Read for shape, not presence (ADR-048): an empty heading, or the template's own prompt text
+// Read for shape, not presence (standard ADR-048): an empty heading, or the template's own prompt text
 // left in place, is a record with no signal wearing one. Only records that no longer bind
 // (superseded, rejected) are exempt - there is nothing left to reopen. A `Proposed` record is
 // not exempt: naming the signal is part of writing the record, not of accepting it.
 //
 // Layout-agnostic on purpose: it works against the shipped `adr/` + `bdr/` split (each with
-// its own README, ADR-005) and against a flat `docs/decision-records/` with one README
+// its own README, standard ADR-005) and against a flat `docs/decision-records/` with one README
 // covering both prefixes (this repo's own layout - R5 requires the two streams, never a
-// subfolder shape). Numbering is always per-prefix: ADR-004 and BDR-004 are not the same id.
+// subfolder shape). Numbering is always per-prefix: `ADR-004` and `BDR-004` are not the same id.
 //
 // What this does NOT check: whether the record's *content* is any good, whether `Status` is
 // accurate, or whether prose elsewhere still cites a superseded record (that is
@@ -86,7 +86,7 @@ const streams =
 // tells a bare `BDR-004` row from `ADR-004`, which the number alone cannot.
 const ROW_LINKED = /^\[(?:(ADR|BDR)-)?(\d+)\]\(([^)]+)\)$/i;
 const ROW_BARE = /^(?:(ADR|BDR)-)?(\d+)$/i;
-const ROW_FORMS = "[001](FILE.md), [ADR-001](FILE.md), 001 or ADR-001";
+const ROW_FORMS = "`[001](FILE.md)`, `[ADR-001](FILE.md)`, `001` or `ADR-001`";
 
 // Rows inside an HTML comment or a fenced code block are examples, not index entries. Every
 // other shipped template documents its own row shape that way (the backlog, the sprint file),
@@ -155,7 +155,7 @@ const rowNoFile = [];
 const noSignal = [];
 
 // A record that no longer binds has nothing to reopen. Anchored at the start of the status
-// value: "Accepted (2026-07-22) - supersedes ADR-013" is an ACCEPTED record that supersedes
+// value: `Accepted (2026-07-22) - supersedes ADR-013` is an ACCEPTED record that supersedes
 // another one, and a substring match would have exempted it for containing the word.
 const EXEMPT_STATUS = /^\s*(superseded|rejected|deprecated|withdrawn)/i;
 // The prompts shipped in adr/_template.md and bdr/_template.md - they differ, so both are
@@ -175,7 +175,7 @@ for (const { dir, prefixes } of streams) {
     continue;
   }
 
-  // files on disk, grouped by "prefix-number" so ADR-004 and BDR-004 never collide.
+  // files on disk, grouped by "prefix-number" so `ADR-004` and `BDR-004` never collide.
   const byKey = new Map(); // "ADR-4" -> [filename, ...]
   for (const name of filesIn(dir)) {
     const [, prefix, numStr] = FILE_RE.exec(name);

@@ -7,7 +7,7 @@
 
 <!-- Roster reconstructed from the code by an adoption run under `suggest`, not confirmed
      by a person yet? Open here, right after this intro - above `## The roster` so the
-     marker line is never read as a persona row - with the one marker (ADR-057/058):
+     marker line is never read as a persona row - with the one marker (standard ADR-057/058):
        > [NEEDS REVIEW] drafted by the adoption run on <date> from the route table and
        > `roles.js`. Backlog: <ID>.
      A roster a person wrote themselves carries no marker. -->

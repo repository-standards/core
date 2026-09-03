@@ -303,7 +303,7 @@ function splitSections(text) {
   return out.map((s) => [s.heading, mdHtml(s.lines.join('\n'))]).filter((s) => s[1])
 }
 
-// The open-marker family (ADR-024) is a spec's own gap list, typed by what is missing:
+// The open-marker family (standard ADR-024) is a spec's own gap list, typed by what is missing:
 // a question, a decision, an input, an asset - each naming who owes it. The clarify gate
 // counts them to decide whether a spec is ready to develop. Counting them here is what lets
 // the page say which specs are blocked and on whom, which today needs the gate run by hand,
@@ -316,7 +316,7 @@ function markersIn(text) {
 }
 
 // task/bug run todo|doing|blocked|done; open-question and idea rows carry their own
-// vocabulary (ADR-046) and are matched here too, so an unrecognised word never silently
+// vocabulary (standard ADR-046) and are matched here too, so an unrecognised word never silently
 // becomes "todo" - it would corrupt counts that assume the task vocabulary.
 const STATUS_WORDS = 'done|doing|todo|blocked|split|open|decided|idea|exploring|approved|parked|dropped|graduated'
 const STATUS_RE = new RegExp('\\b(' + STATUS_WORDS + ')\\b', 'gi')
@@ -576,7 +576,7 @@ function parseDecisions() {
 }
 
 // Reads the older shape: a table in docs/open-questions/README.md, topic per row. A repo
-// that migrated its open questions into backlog.md (ADR-046) has no such table any more -
+// that migrated its open questions into backlog.md (standard ADR-046) has no such table any more -
 // those rows are picked up instead in collect(), from backlog items of type open-question.
 // Both sources are additive, so a repo could in principle carry either or both.
 function parseQuestions() {
@@ -603,7 +603,7 @@ function parseQuestions() {
 
 // Reads one file per idea under docs/ideas/ - unaffected by whether that folder's README
 // still carries a table, since it walks the directory rather than parsing the index page.
-// A repo that also tracks ideas as backlog rows (ADR-046) gets those merged in collect().
+// A repo that also tracks ideas as backlog rows (standard ADR-046) gets those merged in collect().
 function parseIdeas() {
   const dir = 'docs/ideas'
   if (!has(dir)) return []
@@ -660,7 +660,7 @@ function parseSpecs() {
 
 /* ---------- discovery dossiers ---------- */
 
-// The inbox of a topic (ADR-024): the meetings and mails a spec will eventually be written
+// The inbox of a topic (standard ADR-024): the meetings and mails a spec will eventually be written
 // from, each entry stamped with where it came from. A dossier is never normative, so the page
 // shows it as material and never as something to act on.
 //
@@ -669,7 +669,7 @@ function parseSpecs() {
 // nobody has settled, is live work. Today that lives in a table inside a folder that no index
 // reads, which is the same failure the dossier exists to prevent, one level up.
 // An entry opens with the shipped template's instruction comment and a typed header table
-// (ADR-049), and neither is addressed to a reader: taking the first 220 characters of the file
+// (standard ADR-049), and neither is addressed to a reader: taking the first 220 characters of the file
 // verbatim summarises an entry as "Copy to docs/discovery/<topic>/...". What a reader would
 // actually read is the prose under the headings, so that is what gets clipped.
 const entryProse = (body) =>
@@ -893,7 +893,7 @@ const backlogRows = backlog.epics.flatMap((e) => e.items)
 // else. The pool only ever read backlog.md, which left the Backlog tab's Ideas chip filtering
 // over rows that repo never wrote, while the same ideas rendered fine on Documents. Merged in
 // both directions now, deduped on the lowercased title either way, so an idea that is a file
-// AND an ADR-046 row renders once per tab: the file on Documents (it carries the whole shape),
+// AND a standard ADR-046 row renders once per tab: the file on Documents (it carries the whole shape),
 // the row in the pool (it carries an id, an epic and a DoD).
 const ideaDocs = parseIdeas()
 const ideaRowTitles = new Set(backlogRows.filter((i) => i.type === 'idea').map((i) => i.title.toLowerCase()))
@@ -912,7 +912,7 @@ const items = backlogRows.concat(
   ideaDocs.filter((d) => !claimedByRow(d)).map((d) => {
     // Shaped by asItem() like every other row, so the pool, its search box and the detail
     // dialog read one kind of object. The status goes through splitStatus() with the rest,
-    // which knows the idea vocabulary (ADR-046) - so `parked` stays parked instead of
+    // which knows the idea vocabulary (standard ADR-046) - so `parked` stays parked instead of
     // defaulting to `todo`; plain() first, because a file is free to write it as `**parked**`.
     const item = asItem(
       { id: basename(d.path, '.md'), type: 'idea', status: plain(d.status), why: d.itch },
@@ -1026,7 +1026,7 @@ const data = {
   releases,
   decisions: parseDecisions(),
   // Two sources, additive: the older per-folder table (parseQuestions/parseIdeas) and,
-  // for a repo on ADR-046, backlog.md rows of type open-question/idea. asItem() already
+  // for a repo on standard ADR-046, backlog.md rows of type open-question/idea. asItem() already
   // shaped every backlog item the same way regardless of type, so these are a filter and
   // a re-map, not a second parser.
   questions: parseQuestions().concat(
@@ -1035,8 +1035,8 @@ const data = {
       .map((i) => ({
         topic: i.title,
         // page.js prefixes its own "In force:"/"The doubt:" label - strip the backlog row's
-        // own "Decided:"/"the doubt:" lead-in (the ADR-046 migration convention) so it does
-        // not render doubled, e.g. "In force: Decided: ADR-014 - ...".
+        // own "Decided:"/"the doubt:" lead-in (the standard ADR-046 migration convention) so it does
+        // not render doubled, e.g. "In force: Decided: standard ADR-014 - ...".
         decided: i.status === 'decided' ? i.why.replace(/^decided:\s*/i, '') : 'not decided',
         doubt: i.dod.replace(/^the doubt:\s*/i, ''),
         open: i.status !== 'decided',
@@ -1065,7 +1065,7 @@ const data = {
 }
 
 // Scoped to task/bug: open-question (open|decided) and idea (idea|exploring|...) items carry
-// their own vocabulary (ADR-046), whether they reached the pool as a backlog row or as a file
+// their own vocabulary (standard ADR-046), whether they reached the pool as a backlog row or as a file
 // under docs/ideas/, and folding them into the task buckets would misrepresent both - a "todo"
 // count that is actually half standing doubts answers no question honestly.
 const workItems = items.filter((i) => i.type === 'task' || i.type === 'bug')

@@ -8,7 +8,7 @@
 // buildable?) is reviewed at PR - see self-verify.md, adopted by reference:
 // https://github.com/repository-standards/core/blob/main/docs/method/self-verify.md
 //
-// Manifest-driven (ADR-005). When standard.manifest.json is present, this reads it and
+// Manifest-driven (standard ADR-005). When standard.manifest.json is present, this reads it and
 // checks the repo against every entry - files, required sections, static guards - and
 // reports DRIFT as a number (how many required entries are unmet). The manifest is the
 // single source of truth; without one, it falls back to a built-in skeleton so the check
@@ -28,21 +28,21 @@
 //      the point of the entry is a block inside it.
 //   2. Manifest (or fallback skeleton): required files/altPaths exist; required sections
 //      are present in their files; static guards pass. Each entry may carry a profile
-//      (core|scale, ADR-011) - core is whatever keeps knowledge alive, scale is whatever
+//      (core|scale, standard ADR-011) - core is whatever keeps knowledge alive, scale is whatever
 //      coordinates people. --profile core checks core only; --profile scale checks everything;
 //      no flag = the manifest copy's "profile" field, then scale. solo/team are
 //      accepted silently as deprecated aliases
 //      (solo -> core, team -> scale). An entry with no profile counts as core, so
-//      manifests from before ADR-011 still check in full either way.
+//      manifests from before standard ADR-011 still check in full either way.
 //   2b. A guard whose prerequisites are absent is NOT RUN, and that is reported as its own
 //      thing rather than as drift. Running `pnpm check:all` on a machine with no pnpm used
 //      to score exactly what a genuine lint failure scores, so the number said "this
 //      laptop" in the words of one that says "this repo".
-//   2c. removedPaths (ADR-052): every path the standard has removed must be absent from this
+//   2c. removedPaths (standard ADR-052): every path the standard has removed must be absent from this
 //      repo - hand-maintained at release time, not diffed from a tree, so the check needs no
 //      provenance data; a repo that never carried the path passes trivially. Waivable through
 //      `exceptions` like any other required entry.
-//   3. Stray transition skills (ADR-009): align-to-standards, onboard-repo, modernize,
+//   3. Stray transition skills (standard ADR-009): align-to-standards, onboard-repo, modernize,
 //      greenfield-start never ship in a consuming repo. One found under .claude/skills/
 //      is a hand-copy mistake, flagged as a warning - it does not add to drift.
 //   4. What drift 0 does NOT say. The number is the manifest, so a repo can meet every
@@ -53,7 +53,7 @@
 //   node scripts/self-verify.mjs                  # gate: exit 1 on any failure
 //   node scripts/self-verify.mjs --version x.y.z  # also assert the record equals a target
 //   node scripts/self-verify.mjs --warn           # report only, always exit 0
-//   node scripts/self-verify.mjs --profile core   # core-profile entries only (ADR-011);
+//   node scripts/self-verify.mjs --profile core   # core-profile entries only (standard ADR-011);
 //                                                 # without the flag, the repo's manifest
 //                                                 # copy's top-level "profile" field is the
 //                                                 # default, then scale (= everything)
@@ -136,7 +136,7 @@ const warning = (name, msg) => results.push({ ok: true, name, msg, isWarning: tr
 // because the one thing a skipped blocking check must not be is quiet.
 const unrun = (id, msg) => results.push({ ok: true, name: "guard", msg, dim: true, isUnrun: true, id });
 
-// 0. load the manifest (ADR-005) ------------------------------------------------
+// 0. load the manifest (standard ADR-005) ------------------------------------------------
 let manifest = null;
 if (exists("standard.manifest.json")) {
   try {
@@ -146,11 +146,11 @@ if (exists("standard.manifest.json")) {
   }
 }
 
-// 0b. a repo that adopted a stack carries the stack's manifest too (ADR-016):
+// 0b. a repo that adopted a stack carries the stack's manifest too (standard ADR-016):
 // same schema, second file - the engine eats them all and drift is one number.
 //
 // A repo whose stacks genuinely coexist carries one file per stack,
-// `stack.<technology>.manifest.json` (ADR-037). The engine read exactly one filename, so a
+// `stack.<technology>.manifest.json` (standard ADR-037). The engine read exactly one filename, so a
 // repo like flutter/flutter - a Dart framework beside a native engine, permanently, neither
 // migrating to the other - could register one stack and the second was invisible: no entry
 // checked, no drift, and nothing said a manifest had been ignored. Every match is read, in
@@ -169,7 +169,7 @@ if (manifest) {
     // The stack's own version was carried and never spoken: the run named the technology and
     // stopped, so a repo sitting on a stack version several releases behind read exactly like
     // one on the newest. Printing it does not detect staleness - nothing here knows what the
-    // stack repo currently ships (ADR-022: linked, not version-locked) - but an unspoken
+    // stack repo currently ships (standard ADR-022: linked, not version-locked) - but an unspoken
     // number cannot even be compared by hand.
     const stackVersion = stack.version ? `@ ${stack.version}` : "with no version declared";
     note("stack", `${file}: ${stack.technology || "unnamed"} ${stackVersion} - technology layer counted in the same drift number (ADR-016/022)`);
@@ -188,7 +188,7 @@ if (manifest) {
   }
 }
 
-// 0c. profile resolution (ADR-011): the CLI flag wins; else the repo's carried
+// 0c. profile resolution (standard ADR-011): the CLI flag wins; else the repo's carried
 // manifest copy may declare its chosen profile (written at align time); else
 // scale = check everything. solo/team are accepted as deprecated aliases.
 const profileArg = profileFlag || (manifest && manifest.profile) || "scale";
@@ -198,9 +198,9 @@ if (!profileFlag && manifest) {
     // The shipped manifest declares the field, so a copy without it predates that or lost it
     // in a merge - and both this and the shipped CI gate then fall back to scale. Falling
     // back is right (the stricter tier, never the looser one); doing it without saying so is
-    // not: a core repo reads "compliant" while being measured against gates ADR-011 scopes to
+    // not: a core repo reads "compliant" while being measured against gates standard ADR-011 scopes to
     // scale, and R11's own *(scale)* marker becomes text nothing acts on.
-    warning("profile", "the manifest copy declares no profile - defaulted to scale; declare core or scale so the tier is a decision, not a fallback (ADR-011)");
+    warning("profile", "the manifest copy declares no profile - defaulted to scale; declare core or scale so the tier is a decision, not a fallback (standard ADR-011)");
   } else if (["core", "scale", "solo", "team"].includes(manifest.profile)) {
     note("profile", `profile "${manifest.profile}" declared in the manifest copy - used as the default`);
   } else {
@@ -710,7 +710,7 @@ const checkWorkflowBranches = () => {
 
 if (manifest) {
   checkWorkflowBranches();
-  // method docs adopted by reference (ADR-004/023): named, never file-checked
+  // method docs adopted by reference (standard ADR-004/023): named, never file-checked
   if ((manifest.references || []).length) {
     note("reference", `${manifest.references.length} method docs adopted by reference from the living standard - always latest (ADR-023/025); read them in the standards repo, never copy them here`);
   }
@@ -761,7 +761,7 @@ if (manifest) {
     if (hasHeading(body, s.heading)) pass("section", `${at} > "${s.heading}"`);
     else if (s.required) failOrExcept("section", `${s.file}#${s.heading}`, "section", `${at} is missing the "${s.heading}" section - ${s.purpose}`);
   }
-  // removed paths (ADR-052) - a path the standard has taken away must not still be here.
+  // removed paths (standard ADR-052) - a path the standard has taken away must not still be here.
   // Unconditional existence check: needs no provenance commit, no history, nothing but the
   // manifest this repo already carries, so a repo that never had the path passes for free.
   for (const r of manifest.removedPaths || []) {
@@ -1049,7 +1049,7 @@ if (!skeleton) {
   // and both are cleared by writing one real sentence - which is the whole ask.
   //
   // Still a warning, never drift. Whether what IS written is any good stays the judgment tier's
-  // call (ADR-038), and the adopted percentage counts entries present, not substance present.
+  // call (standard ADR-038), and the adopted percentage counts entries present, not substance present.
   const NOTHING_YET = /^(?:to\s?do|todo|tbd|t\.b\.d\.?|fixme|xxx|n\/?a|none|coming soon|to be (?:written|filled|done|completed)|fill (?:me )?in|placeholder|wip|work in progress)\b[\s.!:;-]*$/i;
   // Deliberately does NOT strip code. That strip exists for the placeholder check, where the
   // question is notation-versus-prose; here the question is whether anything was written at
@@ -1143,7 +1143,7 @@ if (!skeleton) {
     return acc;
   };
   // The same shape spec-structure.mjs holds a capability spec to: specs/<capability>/<file>.md.
-  // Templates, READMEs and the spec engine's ephemeral plan/tasks artifacts (ADR-010) are not
+  // Templates, READMEs and the spec engine's ephemeral plan/tasks artifacts (standard ADR-010) are not
   // specified behaviour and must not read as any.
   const capabilitySpecs = specWalk("specs", 3, []).filter(
     (f) =>
@@ -1158,12 +1158,12 @@ if (!skeleton) {
     warning("spec", 'no capability spec exists here yet (specs/<capability>/spec.md) - drift measures the manifest, so it reaches 0 on a repo that has specified no behaviour at all; the shape is right, which is not the same claim as "the method has been used here"');
   }
 
-  // 2f. what still waits on a human (ADR-057, revised by ADR-058; NEEDS-REVIEW-2) ----------
+  // 2f. what still waits on a human (standard ADR-057, revised by standard ADR-058; NEEDS-REVIEW-2) ----------
   // Every artifact written under `suggest` or `stub` opens with `[NEEDS REVIEW]` directly
   // under its title (standard/.claude/elicitation/README.md). The three lists already built
   // above - fill content, decision records, capability specs - are exhaustive, because those
   // are the only places the marker is ever written; this is a count, not a fourth curated
-  // list, and it is reported next to the percentage without moving it (ADR-038).
+  // list, and it is reported next to the percentage without moving it (standard ADR-038).
   const NEEDS_REVIEW_RE = /^>\s*\[NEEDS REVIEW\]/m;
   for (const p of new Set([...fillPaths, ...recordFiles("docs/decision-records"), ...capabilitySpecs])) {
     let raw;
@@ -1183,7 +1183,7 @@ if (!skeleton) {
 // trips a blocking gate for a capability nobody touched. spec-guard now ignores those paths;
 // this says why they are there, because the repo is the thing that needs fixing.
 //
-// A warning, not drift: drift counts unmet MANIFEST entries (ADR-005), and no entry declares
+// A warning, not drift: drift counts unmet MANIFEST entries (standard ADR-005), and no entry declares
 // this. Naming it is what a later decision to make it cost something would be built on.
 if (!skeleton) {
   try {
@@ -1208,7 +1208,7 @@ if (!skeleton) {
   }
 }
 
-// 3. stray transition skills (ADR-009 / SKILL-1) ---------------------------------
+// 3. stray transition skills (standard ADR-009 / SKILL-1) ---------------------------------
 // These run FROM the standard repo and never ship inside a consuming repo (they can't -
 // greenfield-start runs before the target repo even exists). A hit here is a hand-copy
 // mistake, not drift - warn and suggest deleting it.
@@ -1216,7 +1216,7 @@ const TRANSITION_SKILLS = ["align-to-standards", "onboard-repo", "modernize", "g
 for (const name of TRANSITION_SKILLS) {
   const p = `.claude/skills/${name}`;
   if (existsSync(p)) {
-    warning("skill", `${p} is a transition skill and must not ship here (ADR-009) - delete it`);
+    warning("skill", `${p} is a transition skill and must not ship here (standard ADR-009) - delete it`);
   }
 }
 
@@ -1275,7 +1275,7 @@ const hollowNote = hollow
 // there is nothing to compare it against and it scores on presence: six files reading
 // "# Title / TODO." moved a sparse repo from 21% to 37% adopted with its substance unchanged.
 // Saying so where the number is printed is the honest fix; scoring prose mechanically would
-// turn substance into ceremony (ADR-038). The fill warnings above name the ones that read as
+// turn substance into ceremony (standard ADR-038). The fill warnings above name the ones that read as
 // empty, and whether the rest say anything worth saying is reviewed at PR.
 const fillWarnings = results.filter((r) => r.isWarning && r.name === "fill").length;
 const substance = fillWarnings
@@ -1283,8 +1283,8 @@ const substance = fillWarnings
   : "";
 
 // A companion count, not a second percentage: how much of what "is present" still waits on
-// a human to confirm it (ADR-057, revised by ADR-058). It does not move the number above -
-// a marked file is present and counts as adopted (ADR-038) - it says how much of that
+// a human to confirm it (standard ADR-057, revised by standard ADR-058). It does not move the number above -
+// a marked file is present and counts as adopted (standard ADR-038) - it says how much of that
 // presence is a draft rather than a review.
 const needsReviewNote = needsReviewCount
   ? ` - ${needsReviewCount} entr${needsReviewCount === 1 ? "y" : "ies"} still carr${needsReviewCount === 1 ? "ies" : "y"} a [NEEDS REVIEW] marker and await${needsReviewCount === 1 ? "s" : ""} a human`

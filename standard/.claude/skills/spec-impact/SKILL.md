@@ -3,7 +3,7 @@ name: spec-impact
 description: Use before changing how something already works - "what breaks if we change the refund window?", "who else depends on this before I touch it?". Finds everything the change ripples to across other capability specs, decision records and code, so the change does not land having updated only the obvious file.
 ---
 
-<!-- PATCHED(repository-standards): this skill is NOT vendored from github/spec-kit - ADR-015
+<!-- PATCHED(repository-standards): this skill is NOT vendored from github/spec-kit - standard ADR-015
      extracted only five prompts (specify, clarify, plan, tasks, implement); spec-impact has
      no upstream equivalent. -->
 # spec-impact
@@ -24,11 +24,11 @@ then find the ripple. This is analysis - do not edit code yet.
    **Check `Status` on every capability this reaches, not only the primary** - the
    ripple below finds retired specs too, and skipping them is how a retired spec
    ends up stating something a later change made false. A retired **ripple** target
-   is not a stop: report it as a correction target (ADR-036), so the change fixes
+   is not a stop: report it as a correction target (standard ADR-036), so the change fixes
    what it falsified rather than leaving it.
 
 2. **Read** the primary spec and the code it maps to (`specs/capability-map.json`).
-   Read the topic's dossier too, if it has one (`docs/discovery/<topic>/`, ADR-024):
+   Read the topic's dossier too, if it has one (`docs/discovery/<topic>/`, standard ADR-024):
    entries **newer** than its `Last reconciled:` stamp, plus anything still `new`/`open`,
    are the material that has not reached this spec yet - and new material is the usual
    reason a change to a shipped capability starts at all. Name those entries in the

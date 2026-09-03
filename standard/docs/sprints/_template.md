@@ -55,4 +55,4 @@ blended figure and neither is about the team that wrote it.
 
 This is the only history the repo keeps about execution, and it is kept because it cannot
 be recomputed later: git can count commits between two dates, but not that *these* intents
-were what the team believed it would finish (ADR-028). -->
+were what the team believed it would finish (standard ADR-028). -->

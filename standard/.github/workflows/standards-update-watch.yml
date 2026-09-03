@@ -3,7 +3,7 @@ name: standards-update-watch
 # TEMPLATE - enable this in a repo that adopted the standard. It never runs in the
 # standards repo itself.
 #
-# ADR-025: staying current is a *notification*, never a lock. Nothing here edits the
+# standard ADR-025: staying current is a *notification*, never a lock. Nothing here edits the
 # pin or opens a PR against your code - it tells you a newer standard exists and lets
 # a human decide when to run `update-to-latest`. A watch that bumps by itself would
 # make "aligned" a thing that happens while nobody is looking.
@@ -43,7 +43,7 @@ jobs:
           # before the first tag exists and starts speaking when one does.
           #
           # Known gap, deliberately not papered over: this compares against RELEASES, while
-          # the standard lives on main (ADR-025). Between tags the standard moves and this
+          # the standard lives on main (standard ADR-025). Between tags the standard moves and this
           # stays quiet. Watching main instead would fire on every typo, so neither answer is
           # right yet - docs/open-questions/staying-current.md holds the question.
           LATEST=$(gh api "repos/${STANDARD_REPO}/releases/latest" --jq .tag_name 2>/dev/null || true)
@@ -76,7 +76,7 @@ jobs:
           gh issue create --title "${TITLE}" --body "$(printf '%s\n' \
             "This repo last aligned to **${PIN}**; ${STANDARD_REPO} has released **${LATEST}**." \
             "" \
-            "This is a notification, not a requirement (ADR-025). \`.standards-version\` records the state this repo last aligned to - it is a bookmark, never a version to stay at; the target of an update is always the latest." \
+            "This is a notification, not a requirement (standard ADR-025). \`.standards-version\` records the state this repo last aligned to - it is a bookmark, never a version to stay at; the target of an update is always the latest." \
             "" \
             "To take it, in this repo:" \
             "" \

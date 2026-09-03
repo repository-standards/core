@@ -1,7 +1,7 @@
 # The repository-standards spec
 
 The spec is versioned with the standard: that number lives once, in `VERSION`, and is not
-restated here. **The standard is living and the only target is latest** (ADR-025): a repo
+restated here. **The standard is living and the only target is latest** (standard ADR-025): a repo
 complies against the state it last aligned to, recorded in its own `.standards-version`.
 That record is a bookmark - it makes an update a delta and self-verify a meaningful
 assertion, and it never names a version to stay at. Tags mark the standard's own
@@ -17,7 +17,7 @@ projection (each manifest entry names the rule it enforces), and
 cannot check mechanically are verified at review or by the shipped guards the
 skills invoke (the clarify gate checks R12 by script, outside the manifest).
 Rules marked *(scale)* bind repos on the scale profile - which a repo is on by
-reach, not by headcount (ADR-040); everything else is the core profile and
+reach, not by headcount (standard ADR-040); everything else is the core profile and
 binds every repo, a solo one included.
 
 ## Entry and knowledge
@@ -35,7 +35,7 @@ binds every repo, a solo one included.
   `.standards-version`, and MUST carry the matching copy of
   `standard.manifest.json`. This is a bookmark, not a constraint - it is what makes
   an update a delta and self-verify a meaningful assertion, and nothing MAY read it
-  as a version the repo is held at or as a compatibility requirement (ADR-025). The
+  as a version the repo is held at or as a compatibility requirement (standard ADR-025). The
   repo SHOULD carry the spec page (`SPEC.md`) the manifest projects, so the rules it
   is checked against are readable in place.
 - **R3.** Project knowledge - documentation, specs, decisions, conventions - MUST
@@ -54,12 +54,12 @@ binds every repo, a solo one included.
   what this rule forbids. "Not written up yet", "it is in the chat", and work someone
   would rather not publish are not embargoes. A repo that is already private needs
   none of this: its knowledge is in the repo, which is all this rule ever asked
-  (ADR-034).
+  (standard ADR-034).
 - **R4.** Documents are living: they MUST be updated in place. The current version
   is the truth; git is the history. When a change reverses something a future
   reader will need, the document SHOULD say so in one line. History MUST NOT
   accumulate inside a living document - a spec or doc carries no change-log
-  section; git and the changelog (R18) hold the past (ADR-018).
+  section; git and the changelog (R18) hold the past (standard ADR-018).
   A **fact has one home**: a count, a version, a path or a command restated in
   another document MUST either link to its home or be a **declared** restatement -
   listed in `docs/facts.json` with its source, so `scripts/facts-check.mjs` fails
@@ -99,7 +99,7 @@ binds every repo, a solo one included.
   this. A capability whose implementation lives in a repository this one does not
   own MUST still have an entry: it names that repository, with a recorded reason,
   in place of the globs it cannot have. No coupling can be enforced for that part,
-  and the audit names it on every run (ADR-039).
+  and the audit names it on every run (standard ADR-039).
 - **R12.** A spec MUST pass the clarify gate before planning or implementation:
   zero open questions, with explicit deferrals recorded as answers, never dropped.
 - **R13.** Plan and task scaffolding is ephemeral and MUST be removed when the work
@@ -139,11 +139,11 @@ binds every repo, a solo one included.
   repo to the standard - always the latest; the record then names the state
   aligned to, and an update applies the delta between that and latest,
   preserving the repo's recorded deviations (the manifest's `exceptions`).
-- **R26.** Adoption's Step 0 (intake, ADR-020) MUST leave a record of what it
+- **R26.** Adoption's Step 0 (intake, standard ADR-020) MUST leave a record of what it
   measured and asked: `docs/adoption-intake.md`, a required manifest entry
   filled before any greenfield, brownfield or stack work proceeds and never
   deferred to a later wave - the same standing this standard already gives
-  `PRODUCT.md` and `docs/personas.md` (ADR-042). An agent that skipped the
+  `PRODUCT.md` and `docs/personas.md` (standard ADR-042). An agent that skipped the
   question round and one that ran it in full produce the same tree without
   this file; the record is what makes intake checkable rather than merely
   claimed.
@@ -153,12 +153,12 @@ binds every repo, a solo one included.
   `partial` / `solid`, naming the top risks, and grouping every finding by the
   owner role that must act; and a backlog whose alignment scope block states a
   total that its own categories sum to, every item naming its owner role
-  (ADR-048). `adoption-gates` reads both for shape. R26 made a gate's artifact
+  (standard ADR-048). `adoption-gates` reads both for shape. R26 made a gate's artifact
   checkable by requiring it to exist; these two are the case where existing is
   not enough, because the count a human says go or no-go on is the part a file
   can omit while still being present.
 - **R28.** Every point this standard asks about MUST be answered through a mechanism
-  with provenance, not by an instruction an agent might skip (ADR-054):
+  with provenance, not by an instruction an agent might skip (standard ADR-054):
   `.claude/elicitation/points.json` declares each point, its permitted provenance
   states and the paths it gates; a `PreToolUse` hook
   (`.claude/hooks/elicitation-guard.mjs`) MUST refuse a write to a gated path until
@@ -174,7 +174,7 @@ binds every repo, a solo one included.
   `docs/adoption-assessment.md`, `.standards-version` - since a `PreToolUse` hook
   only binds once a session that has it wired has started, and a fresh adoption that
   committed one of these first ran the very step this rule exists to enforce with
-  nothing enforcing it (ADR-059).
+  nothing enforcing it (standard ADR-059).
 
 ## Releases and hygiene
 
@@ -193,7 +193,7 @@ binds every repo, a solo one included.
   variant of it: release lines split a changelog across branches over time,
   units split it across the same tree at once, and a repo can face either,
   both or neither - the one mechanism per line becomes one mechanism per unit,
-  never a second kind of mechanism (ADR-044).
+  never a second kind of mechanism (standard ADR-044).
 - **R19.** Secrets MUST NOT enter the repo - environment and a secret manager only.
   The shipped secret scan SHOULD gate CI, and agent access to remote databases
   SHOULD be write-blocked by the shipped settings baseline. The security baseline
@@ -213,12 +213,12 @@ binds every repo, a solo one included.
   room. Which profile a repo is on is a question about reach - work handed off
   asynchronously, contributors or readers outside the conversation, a release
   audience that is not the authors - and never about how many people it has
-  (ADR-040). Solo repos meet core alone and are compliant. A stack declares what adopting it
+  (standard ADR-040). Solo repos meet core alone and are compliant. A stack declares what adopting it
   means in its own manifest (`stack.manifest.json`, the core schema); a repo
   that adopted one carries it, and `self-verify` counts one drift across both.
   A repo whose stacks coexist permanently carries one manifest per stack
   (`stack.<technology>.manifest.json`); every one is read and the drift stays a
-  single number (ADR-037).
+  single number (standard ADR-037).
 
 ## Supply chain
 
@@ -229,7 +229,7 @@ binds every repo, a solo one included.
   A new version SHOULD clear a release-age cooldown (the paved road is seven days)
   before adoption; a critical security fix MAY bypass the cooldown through a
   recorded, temporary exclusion. Per-stack mechanics live in the stack repos
-  (ADR-017).
+  (standard ADR-017).
 
 ## Agent executability
 
@@ -240,7 +240,7 @@ binds every repo, a solo one included.
   implementation. A repo whose agent tooling is not Claude MUST port them to its
   agent's own instruction mechanism (e.g. `.agents/skills`) - strictly and
   completely, before claiming compliance; `self-verify` accepts the ported
-  location. A partial port is drift, not a variant (ADR-019).
+  location. A partial port is drift, not a variant (standard ADR-019).
 
 ## Integration and history
 
@@ -258,14 +258,14 @@ binds every repo, a solo one included.
   every requirement in this rule binds it exactly as it binds the mainline. A
   fix that applies to more than one line MUST land on the mainline first and
   reach each supported line as its own reviewed change against that line, unless
-  the mainline no longer carries the affected code (ADR-035). It MUST land by
+  the mainline no longer carries the affected code (standard ADR-035). It MUST land by
   **rebase-merge** (the paved road) or squash-merge - decided once and recorded
   with the branching decision (R7); the platform's linear-history protection
   SHOULD enforce it where the platform has one. Rebase-merge publishes every
   commit, so it MUST NOT be chosen unless each commit is a complete, buildable,
   reviewed change; a repo that will not hold that bar squashes instead. A branch
   MAY be rewritten while it is the author's alone; once another person or branch
-  builds on it, it MUST NOT be (ADR-026).
+  builds on it, it MUST NOT be (standard ADR-026).
 
 - **R25.** A PR that changes what the standard ships describes that change under
   `CHANGELOG.md`'s `## Unreleased` heading (R18's one home of history) and MUST
@@ -285,7 +285,7 @@ binds every repo, a solo one included.
   position is not a two-digit field: 1.0.12 is followed by 1.0.13, then
   eventually 1.0.99, then 1.0.100 - each larger than the last, never resetting to a
   two-digit assumption. Versions mark this standard's own development; an adopting
-  repo still tracks latest and never a pin (ADR-025).
+  repo still tracks latest and never a pin (standard ADR-025).
 
 
 ## Data and schema
@@ -307,7 +307,7 @@ binds every repo, a solo one included.
   defines is absent from the twin. Either side MAY be generated from the other
   where the stack has a generator that does not silently drop what DDL can
   express; type agreement and generation are per-stack mechanics and live in the
-  stack repos (ADR-027).
+  stack repos (standard ADR-027).
   **Owning a database and shipping the mechanism that changes one are different
   shapes.** A repo whose product *is* the schema change - a migration library, an
   ORM's DDL layer, a schema toolkit - owns no database: what it emits runs against

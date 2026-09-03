@@ -3,7 +3,7 @@ name: spec-reconcile
 description: Use when a change is finished, before opening the pull request - "I think that's done". Makes the spec, the code and the tests agree, resolves any drift rather than merging around it, and deletes the plan and task scaffolding the work no longer needs.
 ---
 
-<!-- PATCHED(repository-standards): this skill is NOT vendored from github/spec-kit - ADR-015
+<!-- PATCHED(repository-standards): this skill is NOT vendored from github/spec-kit - standard ADR-015
      extracted only five prompts (specify, clarify, plan, tasks, implement); spec-reconcile has
      no upstream equivalent. -->
 # spec-reconcile
@@ -56,7 +56,7 @@ truth - so the spec, the code, and the tests must agree.
    change if it belongs here, otherwise file a backlog item for it (`add-to-backlog`).
 
    **When one side is `retired`, the contradiction resolves in one direction**
-   (ADR-036): the live spec wins, and the retired one is corrected to say what its
+   (standard ADR-036): the live spec wins, and the retired one is corrected to say what its
    capability *did*, naming the change that superseded it. Correcting it is not
    extending it, and `Status` stays `retired` - a retired spec is frozen against new
    behaviour, never against telling the truth (R4).

@@ -215,7 +215,7 @@ h2.section:first-of-type { margin-top: 0; }
 .pill.plain { color: var(--ink-2); background: var(--raised); }
 .pill.plain::before { display: none; }
 /* open-question (open|decided) and idea (idea|exploring|approved|parked|dropped|graduated)
-   rows carry their own status vocabulary (ADR-046) - reuse the task palette by the nearest
+   rows carry their own status vocabulary (standard ADR-046) - reuse the task palette by the nearest
    sense: unresolved reads as todo, settled reads as done, everything else stays neutral. */
 .pill.open, .pill.idea, .pill.exploring { color: var(--todo); background: var(--todo-soft); }
 .pill.decided, .pill.approved, .pill.graduated { color: var(--done); background: var(--done-soft); }

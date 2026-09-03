@@ -167,7 +167,7 @@ not yet anyone's. It fills when the item is pulled into a sprint.
 `size` is `S`, `M` or `L`, and optional. It is a **splitting trigger, not a forecast**: an
 `L` means split this before pulling it. Sizes are never summed, never converted to numbers,
 and never fed into a projection - once three sprints have closed, the measured time an item
-actually took supersedes them entirely (ADR-028). An item that does not finish in its sprint
+actually took supersedes them entirely (standard ADR-028). An item that does not finish in its sprint
 is **split, not re-sized**.
 
 ### Epic: <name>
@@ -256,7 +256,7 @@ the first closure is exactly when the archive is supposed to appear.
 
 ## Who an internal item serves
 
-An item that serves no persona is parked, not queued (ADR-006) - and the roster in
+An item that serves no persona is parked, not queued (standard ADR-006) - and the roster in
 `personas.md` holds end users, while a large share of this pool is documentation, spec and
 decision debt that no end user will ever notice. Both are true, so name it rather than
 stretching a customer persona over infrastructure work:

@@ -357,7 +357,7 @@ for (const line of ledgerText.split("\n")) {
 const backlogText = BACKLOGS.map(at).filter(existsSync).map((f) => readFileSync(f, "utf8")).join("\n");
 const problems = [...malformed];
 
-// The [NEEDS REVIEW] marker (ADR-057, revised by ADR-058) names a backlog row for every
+// The [NEEDS REVIEW] marker (standard ADR-057, revised by standard ADR-058) names a backlog row for every
 // artifact a `suggest` or `stub` answer produced. `self-verify` counts the markers; this is
 // what proves the row each one names is not made up - the same trust `provisional` rows get
 // below, extended to the file rather than the question. Only markdown carries the marker.
@@ -444,7 +444,7 @@ if (tally.pending) {
 }
 
 // Non-fatal: a `provisional` row promises the artifact it produced carries the marker
-// (ADR-057/058), but the row itself is just a promise - this reads the files the point
+// (standard ADR-057/058), but the row itself is just a promise - this reads the files the point
 // actually gates and says so when none of them do. Not a failure, because the file may
 // answer a later question this point does not gate, or may not have shipped yet; a marker
 // is how a person finds the gap later, not a precondition for the row itself.

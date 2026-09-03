@@ -62,7 +62,7 @@ Given that feature description, do this:
      generated slug, in the one skill barred from asking the user. A request whose slug did
      not string-match an existing capability it functionally overlapped therefore minted a
      sibling in silence: `manager-shift-reassignment` beside an existing `shift-swap-request`
-     that already described the same behaviour - the split-by-wording failure ADR-002 exists
+     that already described the same behaviour - the split-by-wording failure standard ADR-002 exists
      to prevent, arriving through the step that is supposed to prevent it. -->
 1b. **Before minting anything, look for a capability collision - by behaviour, not by name.**
     List the directories under `specs/` and the capability keys in `specs/capability-map.json`,

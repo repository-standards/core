@@ -7,7 +7,7 @@ description: Use when someone floats something that might never ship - "what if 
 
 Someone is thinking out loud about something that might never happen. This gives that
 first-class treatment - captured in the repo, not lost in chat - **without** pretending a
-decision was made (R14, ADR-010). `adr-write` and `bdr-write` both refuse to write a record
+decision was made (R14, standard ADR-010). `adr-write` and `bdr-write` both refuse to write a record
 for a maybe and point here instead; this is the skill that actually catches it.
 
 ## Is it an idea at all?
@@ -17,7 +17,7 @@ telling you what was decided, not what they are wondering about, route there ins
 so.
 
 **A topic already accumulating real material** - meeting notes, mails, findings whose
-provenance matters - is discovery, not an idea (`discovery-digest`, ADR-024). An idea is one
+provenance matters - is discovery, not an idea (`discovery-digest`, standard ADR-024). An idea is one
 person's (or one conversation's) speculation; the moment it is being actively investigated
 with sourced material, it graduates to a dossier even before anyone approves anything.
 
@@ -34,7 +34,7 @@ still just a maybe?"
    said:
    - **The itch** - the problem or opportunity, one paragraph, plain language.
    - **For whom** - name the persona(s) from `docs/personas.md` this would serve. An idea
-     that serves no persona is parked, not explored (ADR-006) - say so rather than filing it
+     that serves no persona is parked, not explored (standard ADR-006) - say so rather than filing it
      anyway.
    - **Provisional shape** - whatever the idea needs: business model, UX sketch, technical
      approach, pricing. Speculation is welcome here and nowhere else in the repo; nothing in
@@ -46,7 +46,7 @@ still just a maybe?"
 
 ## Moving it along
 
-The statuses are the whole lifecycle (ADR-010): `idea -> exploring -> approved | parked |
+The statuses are the whole lifecycle (standard ADR-010): `idea -> exploring -> approved | parked |
 dropped`, and `approved` graduates into `graduated`.
 
 - **`idea -> exploring`**: someone is actively working the open questions, not just holding

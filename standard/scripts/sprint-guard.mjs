@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Work-sprint guard (ADR-028).
+// Work-sprint guard (standard ADR-028).
 //
 // One intent is in the backlog pool OR in exactly one sprint - never both, never two.
 // That property is what makes the pair trustworthy: a backlog that also lists what is
@@ -75,7 +75,7 @@ const walk = (dir, acc = []) => {
 const BLOCKED_BY = /^blocked\s*:\s*([A-Z][A-Z0-9]*-[A-Za-z0-9-]+)$/i;
 
 // `split:PAY-8` on a row leaving a sprint: the row finished the part it still covers, and
-// PAY-8 is the new backlog row cut for what remains (ADR-029). It is finished work, so a
+// PAY-8 is the new backlog row cut for what remains (standard ADR-029). It is finished work, so a
 // block naming it has stopped applying exactly as a `done` one has - and reading it as
 // merely "some status" is how a block on finished work kept reporting itself live.
 // The reference is checked, not decorative: without that, three words in a status cell
@@ -548,7 +548,7 @@ if (stale.length || selfBlocked.length) {
   summary.push("A `blocked:<id>` status must name an intent that exists, is not itself, and is neither `done` nor already split.");
 }
 if (splitNowhere.length || selfSplit.length) {
-  summary.push("A `split:<id>` status must name the new row cut for the remainder - a different id, and one that exists (ADR-029).");
+  summary.push("A `split:<id>` status must name the new row cut for the remainder - a different id, and one that exists (standard ADR-029).");
 }
 if (unreadable.length) {
   summary.push(

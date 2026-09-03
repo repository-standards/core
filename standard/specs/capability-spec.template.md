@@ -9,13 +9,13 @@
      so in one line ("None - this capability persists nothing"), the same way the open
      questions section at the bottom says "None known." A dropped heading and an empty
      one read identically to everyone downstream. No change-log section (R4,
-     ADR-018): the spec describes the present; git and the standard's changelog
+     standard ADR-018): the spec describes the present; git and the standard's changelog
      process (adopted by reference from the living standard - always latest:
      https://github.com/repository-standards/core/blob/main/docs/method/changelog-process.md)
      hold the past. -->
 
 **Spec tier:** buildable | behavioral   <!-- declare one; the structure guard warns while this line is unfilled, because R9 makes buildable the default and an undeclared spec is claiming it by silence -->
-**Serves:** `<persona from docs/personas.md>`   <!-- who this capability is for; required (ADR-006) -->
+**Serves:** `<persona from docs/personas.md>`   <!-- who this capability is for; required (standard ADR-006) -->
 **Status:** in-refinement | ready-to-develop | in-development | live | retired   <!-- in-refinement is the draft state; `/spec-reconcile` sets this field, and the structure guard re-runs the clarify gate on any spec claiming ready-to-develop or live - so typing one early buys a failed PR, not a head start -->
 <!-- Retiring a capability (the product bet is gone, a vendor replaces it, etc.): do not
      delete this file - it stays as the record of what was built and why (R4). Flip Status
@@ -29,10 +29,10 @@
      which it is not. A retired spec is frozen against gaining behaviour, not against being
      true: when a later change elsewhere makes one of the statements below false, that change
      corrects it in its own pull request - saying what this capability did and naming what
-     superseded it, with Status left at `retired` (R4, ADR-036). -->
+     superseded it, with Status left at `retired` (R4, standard ADR-036). -->
 **Success metric:** `<the KPI from PRODUCT's KPI tree this capability moves>`   <!-- PDLC-2; "n/a" needs a why -->
-<!-- ADR-010: ready-to-develop requires the clarify gate - a "## Clarifications" section
-     and zero open markers of the NEEDS family. Drafting early (during discovery, ADR-024)
+<!-- standard ADR-010: ready-to-develop requires the clarify gate - a "## Clarifications" section
+     and zero open markers of the NEEDS family. Drafting early (during discovery, standard ADR-024)
      is encouraged: hold each gap as a typed open marker, written EXACTLY in this literal
      bracket form (the gate greps for it - anything else is invisible to it), including in
      a spec written in another language: these four forms and the `## ...` headings below

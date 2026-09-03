@@ -1,7 +1,7 @@
 # Adoption assessment - <repo>
 
 > Gate 2's artifact: what the eight-pass `repo-assessment` found, before the alignment wave
-> changed anything (ADR-048). Updated in place on every re-entry, never recreated.
+> changed anything (standard ADR-048). Updated in place on every re-entry, never recreated.
 >
 > Gate 0's record is [`adoption-intake.md`](adoption-intake.md); Gate 5's count is the
 > alignment scope block in the backlog. This file is the middle one: the evidence the count

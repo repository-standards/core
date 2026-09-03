@@ -10,8 +10,8 @@ execution record the repo keeps. *(scale profile only.)*
 
 ## Why the record is written at all
 
-ADR-010 decided that work history lives in the tracker, not the repo, and it was right about
-per-item state. ADR-028 narrowed it for exactly one thing, and the argument matters here
+The standard's ADR-010 decided that work history lives in the tracker, not the repo, and it was right about
+per-item state. The standard's ADR-028 narrowed it for exactly one thing, and the argument matters here
 because this skill is what writes it: **the grouping is not recoverable afterwards.** Git
 can always count commits between two dates. It cannot reconstruct that *these seven intents*
 were what the team believed it would finish - the pool mutates, items get re-scoped, and the
@@ -37,10 +37,10 @@ who did what, stop - that is the tracker's.
 2. **Return what did not finish - and split it rather than re-sizing it.** Unfinished rows are
    **cut** back into the backlog (step 0) at their risk x leverage position, not appended to
    the bottom, which quietly demotes work that was important enough to commit to. Clear the
-   `assignee` on the way out: the pool holds nobody's work (ADR-030).
+   `assignee` on the way out: the pool holds nobody's work (standard ADR-030).
 
    An item that did not fit is **split into what finished and what remains**, not given a
-   bigger size (ADR-029). Propose the split; the user confirms it. Cut a **new** backlog row
+   bigger size (standard ADR-029). Propose the split; the user confirms it. Cut a **new** backlog row
    for what remains (its own id, its own DoD for the remainder), and set the original row's
    status in this sprint to **`split:<new-id>`** - the template's status vocabulary, not a
    spelling invented per repo. This is what keeps item counts comparable without an

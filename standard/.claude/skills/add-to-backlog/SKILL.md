@@ -58,11 +58,11 @@ de-duplicating against existing items first.
    Slot it by **risk x leverage** (money / security / external contracts / data integrity
    first; then churn), not at the bottom by default.
 
-   Leave `assignee` empty - a pool item is nobody's yet (ADR-030). Offer a `size` of `S`, `M`
+   Leave `assignee` empty - a pool item is nobody's yet (standard ADR-030). Offer a `size` of `S`, `M`
    or `L` if the shape is clear enough to be worth one, and skip it otherwise: an unsized row
    is a normal row, not an incomplete one. If it looks like an `L`, say so and suggest the
    split now, while the work is still fresh in mind - that is the whole job the field does
-   (ADR-029).
+   (standard ADR-029).
 
 5. **Do not do the work now**, and do not make the decision here - "write an ADR for X"
    is a backlog item; the decision itself is made in the ADR when the item is worked.

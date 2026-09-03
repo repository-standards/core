@@ -53,7 +53,7 @@ const SPEC_STATE = {
 // What closes a row, per type: done/split close a task, graduated/dropped close an idea the
 // same way - superseded by its own spec and records, or decided against. open-question's
 // "decided" is deliberately absent: a standing decision open to challenge is the point of the
-// type, not a completed state to hide (ADR-046). The tab count and the list's own filter read
+// type, not a completed state to hide (standard ADR-046). The tab count and the list's own filter read
 // this one set, so the number above the list cannot drift from the list.
 const CLOSED = new Set(['done', 'split', 'graduated', 'dropped'])
 
@@ -830,7 +830,7 @@ if (views.sprints) {
   // Filtering was by epic, which is a heading in one repository's own backlog file: the chips
   // read as a list of that repository's project names, truncated, and told a reader nothing
   // about what kind of thing a row was. Type is the axis this index is actually built on
-  // (ADR-046) - a task, a bug, an idea and a standing question are read differently and by
+  // (standard ADR-046) - a task, a bug, an idea and a standing question are read differently and by
   // different people - and it is the same everywhere, so the control means the same thing in
   // every repository. The epic is still on every row and still matched by the search box.
   const TYPES = [

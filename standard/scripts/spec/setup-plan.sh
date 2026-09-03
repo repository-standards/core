@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # PATCHED(repository-standards): based on github/spec-kit v0.13.2 (MIT - scripts/spec/LICENSE).
-# The clarify-gate call below (ADR-010) is this standard's addition; the rest is upstream.
+# The clarify-gate call below (standard ADR-010) is this standard's addition; the rest is upstream.
 
 set -e
 
@@ -41,7 +41,7 @@ if [[ ! -f "$FEATURE_SPEC" ]]; then
     exit 1
 fi
 
-# ADR-010 clarify gate, enforced here rather than only documented as a precheck in the
+# standard ADR-010 clarify gate, enforced here rather than only documented as a precheck in the
 # /spec-plan prompt: a skill can only refuse to call this script, it cannot stop an agent
 # that skips reading its own MANDATORY PRECHECK instruction. This call is what makes that
 # instruction a bridge precondition instead of a request - re-run every time, including
