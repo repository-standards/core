@@ -17,6 +17,33 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.9 - 2026-09-03
+
+### The shipped tree writes the `[NEEDS REVIEW]` marker (2026-09-03)
+
+ADR-057, revised by ADR-058, described the marker; nothing yet produced it.
+`standard/.claude/elicitation/README.md` now shows the marker's line for both a drafted and
+an empty artifact, with the fields ADR-058 actually kept - no role word. The ADR and BDR
+templates, `docs/personas.md` and `standard/docs/PRODUCT.md` carry the same illustrative
+block. `skills/align-to-standards/onboard.md` writes it for real: steps 1, 4 and 5 open a
+`suggest`-drafted or `stub`-left artifact with the marker, naming what it was drafted from
+(or, for an empty file, what it should contain) and the backlog row that tracks it, and a
+drafted retroactive decision record now lands `Proposed`, not `Accepted`. Manifest hashes
+regenerated for the copy-class files this touched. Closes `NEEDS-REVIEW-1`.
+
+### `self-verify` counts the marker; `elicitation-provenance` checks what it names (2026-09-03)
+
+The convention ADR-057 described had no check behind it. `self-verify.mjs` now scans every
+manifest entry for `[NEEDS REVIEW]` and reports the count next to the adoption percentage
+without moving it (ADR-038) - one flat number, not grouped by role, per ADR-058's own
+revision. `elicitation-provenance.mjs` gained two checks: every marker must name a backlog
+row that actually exists (fatal), and a `provisional` ledger row whose gated files carry no
+marker is a non-fatal warning - the marker is how a person finds the gap later, not a
+precondition for the row itself. Both checks skip scaffolding, so the elicitation README's
+own illustrative marker blocks are never read as live. Tests land in
+`tools/self-verify-fill-test.mjs` and `tools/elicitation-provenance-test.mjs`; manifest
+hashes regenerated. Closes `NEEDS-REVIEW-2`.
+
 ## 1.0.8 - 2026-09-03
 
 ### The dashboard masthead has one navigational control, not two (2026-09-03)
@@ -119,14 +146,14 @@ is a draft or nothing is a property of the file, not a second status, and a chec
 "a human has not looked at this yet" needs one string to grep for.
 
 Decided: `[NEEDS REVIEW]` is the only marker. A drafted artifact's line is as ADR-057 had
-it (what it was drafted from, which owner role confirms or rewrites it, the backlog row); an
-empty artifact's line says nothing is written yet, what the file should contain in one
-sentence, which owner role fills it, and the backlog row. One backlog row per marked file, a
-drafted decision record stays `Proposed`, the marker leaves in the commit that verifies the
-content, and the percentage does not move (ADR-038) - all unchanged. The companion count
-`self-verify` will gain is one number by owner role. ADR-057's status becomes `Accepted,
-revised by 058`; the three rows under "Adoption leaves the human work visible" name the one
-marker. Nothing in the shipped tree changes in this release.
+it, minus one field (what it was drafted from, the backlog row); an empty artifact's line
+says nothing is written yet, what the file should contain in one sentence, and the backlog
+row. Neither line names who acts on it - the artifact's own kind already says that. One
+backlog row per marked file, a drafted decision record stays `Proposed`, the marker leaves
+in the commit that verifies the content, and the percentage does not move (ADR-038) - all
+unchanged. The companion count `self-verify` will gain is one flat number. ADR-057's status
+becomes `Accepted, revised by 058`; the three rows under "Adoption leaves the human work
+visible" name the one marker. Nothing in the shipped tree changes in this release.
 
 ## 1.0.5 - 2026-09-03
 
@@ -186,14 +213,15 @@ hand "confirm ADR-013" to the architect had one row saying *decision records, pr
 and had to split it by hand. A separate hand-written hand-off file was rejected as a fourth
 curated record of the same fact.
 
-Decided: the artifact opens with `[NEEDS REVIEW]` (what it was drafted from, which owner
-role confirms it, which backlog row tracks it) or `[STUB]` (nothing written, who fills it,
-the backlog row); one backlog row per marked file; a drafted decision record stays
-`Proposed`; the marker leaves in the commit that verifies the content, so `git log` is the
-record of who verified. The adoption percentage does not move (ADR-038) - `self-verify`
-gains a companion count of what still waits on a human, by role. The shipped convention, the
-checks and the dashboard section are three backlog rows under the new epic "Adoption leaves
-the human work visible"; nothing in the shipped tree changes in this release.
+Decided: the artifact opens with `[NEEDS REVIEW]` (what it was drafted from, which backlog
+row tracks it) or `[STUB]` (nothing written, the backlog row); neither line names who acts
+on it - the artifact's own kind already says that; one backlog row per marked file; a
+drafted decision record stays `Proposed`; the marker leaves in the commit that verifies the
+content, so `git log` is the record of who verified. The adoption percentage does not move
+(ADR-038) - `self-verify` gains a companion count of what still waits on a human. The
+shipped convention, the checks and the dashboard section are three backlog rows under the
+new epic "Adoption leaves the human work visible"; nothing in the shipped tree changes in
+this release.
 
 ## 1.0.2 - 2026-09-02
 

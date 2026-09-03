@@ -3,6 +3,16 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.9 - 2026-09-03
+
+**A file the standard drafted for you now says so.** When an adoption run answers a
+question by proposing content instead of asking a person, or leaves a placeholder rather
+than guessing, the file itself now opens with a `[NEEDS REVIEW]` line naming what it was
+drafted from (or what it should hold) and the backlog row tracking it - so six months from
+now, nobody mistakes a draft for a decision just because it reads like one. `self-verify`
+now reports how many files still carry that marker, right next to the adoption percentage,
+without changing the percentage itself.
+
 ## 1.0.8 - 2026-09-03
 
 **A real adoption on a large monorepo found three defaults nobody had asked for and one
