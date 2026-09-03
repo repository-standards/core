@@ -156,6 +156,22 @@ const CASES = [
       files: { "docs/decision-records/ADR-901-notes.md":
         "# ADR-901\n\n> [NEEDS REVIEW] drafted by the adoption run on 2026-09-03. Backlog: SEC-1.\n" } },
     FAIL, "which is not in the backlog"],
+  // The id is read out of the block's prose, not out of its markup. `Backlog:\s*` spans the
+  // newline but stops dead at the next line's `>`, so a marker whose id wrapped was reported
+  // as naming no row at all - while naming one, two characters further on, in a form that
+  // reads correctly to a person and that any repo wrapping prose at a column will produce.
+  // The diagnosis was the expensive half: it points at the marker, and the marker is right.
+  ["a [NEEDS REVIEW] marker whose backlog id wrapped onto the next line still names it",
+    { ledger: FULLY_ANSWERED, backlog: "| DOC-3 | confirm the frame with the owner |\n",
+      files: { "docs/decision-records/ADR-903-notes.md":
+        "# ADR-903\n\n> [NEEDS REVIEW] drafted by the adoption run on 2026-09-03 from CLAUDE.md and\n> CONTRIBUTING.md as they were - dev confirms or rewrites.\n> Backlog:\n> DOC-3.\n" } },
+    PASS],
+  // And the wrap does not become a way to name a row that is not there.
+  ["a wrapped backlog id naming a row that does not exist still fails",
+    { ledger: FULLY_ANSWERED, backlog: "| SEC-9 | something unrelated |\n",
+      files: { "docs/decision-records/ADR-904-notes.md":
+        "# ADR-904\n\n> [NEEDS REVIEW] drafted by the adoption run on 2026-09-03.\n> Backlog:\n> DOC-3.\n" } },
+    FAIL, "which is not in the backlog"],
   ["a [NEEDS REVIEW] marker with no backlog row named fails",
     { ledger: FULLY_ANSWERED, backlog: "| SEC-1 | confirm the incident note |\n",
       files: { "docs/decision-records/ADR-902-notes.md":

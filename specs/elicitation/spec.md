@@ -202,6 +202,11 @@ it as the known gap rather than claiming coverage.
 - A `provisional` answer MUST name a backlog row that exists.
 - Every `[NEEDS REVIEW]` marker MUST name a backlog row, and that row MUST exist - checked
   against every non-scaffolding markdown file, not only the artifacts a ledger row points at.
+  The marker is a blockquote and the id is read from its **prose**: the `>` prefix is stripped
+  before the id is matched, so a marker whose id wrapped onto the next line names its row
+  exactly as one written on a single line does. Reading the markup instead reported a wrapped
+  marker as naming no row while it named one - a diagnosis that points at the marker, which is
+  correct - and a repository that wraps prose at a column produces markers in that shape.
 - A `provisional` row whose gated files carry no `[NEEDS REVIEW]` marker MUST be reported, but
   MUST NOT fail the check - the row is a promise about a future write, not evidence one
   happened yet.
@@ -311,6 +316,9 @@ it as the known gap rather than claiming coverage.
 - GIVEN a `[NEEDS REVIEW]` marker naming a backlog row that exists THEN
   `elicitation-provenance` passes; GIVEN the same marker naming a row that does not exist, or
   naming no row at all, THEN it exits 1 naming the file and the problem.
+- GIVEN a marker whose `Backlog:` and its id sit on separate lines of the blockquote THEN the
+  id is read and the row is found; GIVEN the same wrapped marker naming a row that is not in
+  the backlog THEN it exits 1 saying the row is not there, not that none was named.
 - GIVEN the shipped elicitation README's own two illustrative marker blocks THEN they are not
   read as live markers - scaffolding is skipped, so an adopter who has not touched the file is
   never failed by it.
