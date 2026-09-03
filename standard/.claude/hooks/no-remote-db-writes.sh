@@ -100,8 +100,14 @@ RUNNER_VERB_RE='(db:)?migrate(:[a-z-]+)*|(db:)?seed(-with-reset)?(:[a-z-]+)*|mig
 RUNNER_RE="${CLIENT_BOUNDARY}(${RUNNER_TOOLS})[[:space:]]+([^[:space:]]+[[:space:]]+)*(${RUNNER_VERB_RE})([[:space:]]|$)"
 RUNNER_NAMED_RE="${CLIENT_BOUNDARY}(alembic[[:space:]]+(upgrade|downgrade)|flask[[:space:]]+db[[:space:]]+(upgrade|downgrade)|flyway[[:space:]]+(migrate|undo|clean|baseline|repair)|liquibase[[:space:]]+(update|rollback)[[:alnum:]-]*|dotnet[[:space:]]+ef[[:space:]]+database[[:space:]]+(update|drop))([[:space:]]|$)"
 # The runners' read-only modes: reading a remote database is allowed, so these pass regardless
-# of host - unless `--reset` rides along, which is a write whatever else the line says.
-RUNNER_READ_RE='migrate:(status|verify|list|current[a-z]*|check[a-z-]*)([[:space:]]|$)|migrate[[:space:]]+(status|diff)([[:space:]]|$)|--(status|verify|dry-run|plan)([[:space:]]|$)'
+# of host - unless `--reset` rides along, which is a write whatever else the line says. A
+# read-only name is trusted anywhere; a read-only flag only where it reaches the program it
+# names. A package manager appends the flag to the end of whatever its script expands to, so
+# `pnpm seed-with-reset --status` runs the reset and hands `--status` to the seed - after a
+# package-manager script the flag proves nothing and the host is judged.
+RUNNER_READ_NAMED_RE='migrate:(status|verify|list|current[a-z]*|check[a-z-]*)([[:space:]]|$)|migrate[[:space:]]+(status|diff)([[:space:]]|$)'
+RUNNER_READ_FLAG_RE='--(status|verify|dry-run|plan)([[:space:]]|$)'
+PM_SCRIPT_RE="${CLIENT_BOUNDARY}(pnpm|npm|yarn|bun)[[:space:]]+([^[:space:]]+[[:space:]]+)*((db:)?migrate(:[a-z-]+)*|(db:)?seed(-with-reset)?(:[a-z-]+)*)([[:space:]]|$)"
 RUNNER_HOST_VARS='DB_HOST DATABASE_HOST POSTGRES_HOST PGHOST PGHOSTADDR MYSQL_HOST DATABASE_URL DB_URL'
 # A tunnel terminates on loopback and still ends at a remote database.
 RUNNER_TUNNEL_VARS='DB_SSL_TUNNEL PGSSLTUNNEL'
@@ -241,10 +247,14 @@ while IFS= read -r segment; do
   fi
 
   if printf '%s' "${segment}" | grep -qE "${RUNNER_RE}|${RUNNER_NAMED_RE}"; then
-    if printf '%s' "${segment}" | grep -qiE "${RUNNER_READ_RE}" \
-      && ! printf '%s' "${segment}" | grep -qE -- '--reset([[:space:]]|$)'; then
-      continue
+    read_only=0
+    printf '%s' "${segment}" | grep -qiE "${RUNNER_READ_NAMED_RE}" && read_only=1
+    if [ "${read_only}" = 0 ] && printf '%s' "${segment}" | grep -qE -- "${RUNNER_READ_FLAG_RE}" \
+      && ! printf '%s' "${segment}" | grep -qE "${PM_SCRIPT_RE}"; then
+      read_only=1
     fi
+    printf '%s' "${segment}" | grep -qE -- '--reset([[:space:]]|$)' && read_only=0
+    [ "${read_only}" = 1 ] && continue
     for name in ${RUNNER_TUNNEL_VARS}; do
       while IFS=$'\t' read -r value source; do
         [ -n "${value}" ] || continue

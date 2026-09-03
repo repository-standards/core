@@ -27,13 +27,16 @@ read_command() {
   jq -r '.tool_input.command // ""'
 }
 
-# Splits a command line into segments on ; && || | and newlines.
+# Splits a command line into segments on ; && || | & and newlines.
 #
 # Every guard evaluates segments independently. Judging the whole string lets one harmless segment
 # vouch for a dangerous one - `psql -h localhost -c 'select 1' && psql -h prod -c 'DROP TABLE x'`
 # reads as local because `localhost` appears somewhere in it.
+#
+# A lone `&` runs both sides just as `&&` does, so it separates; the `&` of a redirection
+# (`2>&1`, `&>log`) does not.
 split_segments() {
-  printf '%s' "$1" | sed -E 's/(\|\||&&|[;|])/\n/g'
+  printf '%s' "$1" | sed -E 's/(\|\||&&|[;|])/\n/g; s/(^|[^<>])&([^>]|$)/\1\n\2/g'
 }
 
 # The same split, except a metacharacter inside quotes is text rather than a separator.
@@ -61,6 +64,7 @@ split_segments_quoted() {
           if (c == ";") { printf "\n"; continue }
           if (c == "|") { printf "\n"; if (substr($0, i + 1, 1) == "|") i++; continue }
           if (c == "&" && substr($0, i + 1, 1) == "&") { printf "\n"; i++; continue }
+          if (c == "&" && substr($0, i + 1, 1) != ">" && (i == 1 || substr($0, i - 1, 1) !~ /[<>]/)) { printf "\n"; continue }
         }
         printf "%s", c
       }

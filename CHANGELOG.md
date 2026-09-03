@@ -44,6 +44,90 @@ own illustrative marker blocks are never read as live. Tests land in
 `tools/self-verify-fill-test.mjs` and `tools/elicitation-provenance-test.mjs`; manifest
 hashes regenerated. Closes `NEEDS-REVIEW-2`.
 
+## Unreleased
+
+Five of the entries below are guard and workflow defects found by the real adoption of a
+private monorepo, recorded as run h in
+[`docs/validation/human-prompting/scenarios/2026-09-03-h-monorepo-adoption.md`](docs/validation/human-prompting/scenarios/2026-09-03-h-monorepo-adoption.md);
+each one had been fixed in that repository's own copy first and is upstreamed here.
+
+### The remote-database guard sees migration and seed runners (2026-09-03)
+
+`no-remote-db-writes.sh` looked for a SQL client, a connection URL or a dump restore. `pnpm
+migrate`, `npx prisma migrate deploy`, `rails db:migrate` and `python manage.py migrate` show
+none of those and apply a whole migration to whatever host `DB_HOST` or `DATABASE_URL` names,
+so every one of them ran unchecked; the adopting monorepo had written its own guard for
+exactly this. The guard now recognises a package runner or interpreter followed by the migrate
+or seed verb or an entry file under `migrate/` or `seed/` (alembic, flask db, flyway,
+liquibase and dotnet ef named explicitly), and resolves the host the way the runner does: an
+assignment on the runner's segment, one carried from an earlier `export`, the process
+environment, then the env files (`.env .env.local database/.env`, overridable through
+`REMOTE_DB_ENV_FILES` in the hook command). Read-only modes (`migrate:status`, `--dry-run`,
+`prisma migrate diff`) pass regardless of host unless `--reset` rides along;
+`DB_SSL_TUNNEL` on refuses whatever host is named. Two calls made on the safe side and open
+to revision: no host visible anywhere is a denial, not a pass, with the reason naming where
+it looked; and a bare (unexported) assignment carries forward only when it names a remote
+host, so a bare `DB_HOST=localhost` after an exported remote one does not clear it. The
+"assignments that persist across segments" logic lives in `lib.sh` as `carried_value`, and
+the client branch uses it too: the old command-wide scan let `grep -rn "PGHOST=prod" docs/;
+psql -c "DROP TABLE t"` deny a local client, and let an early `export PGHOST=prod` override
+an inline `PGHOST=localhost` that psql itself would honour. A read-only flag (`--status`,
+`--dry-run`, `--plan`) is trusted only where it reaches the program it names: a package
+manager appends it to the end of whatever its script expands to, so `pnpm seed-with-reset
+--status` runs the reset and hands the flag to the seed - after a package-manager script the
+host is judged, and `pnpm migrate --dry-run` against a remote host is the one existing case
+whose verdict changed (`migrate:status` is the read-only spelling there).
+
+### A lone `&` separates guard segments (2026-09-03)
+
+`split_segments` and `split_segments_quoted` in `lib.sh` cut a command on `;`, `&&`, `||`,
+`|` and newlines, but not on a lone `&`, which runs both sides just as `&&` does. So `pnpm
+migrate:status & pnpm seed-with-reset` reached the runner branch as one segment whose
+read-only half vouched for the reset, and `grep -rn DROP docs/ & psql -h prod -c ...` was
+one search segment with a remote client hidden in it. Both splits now separate on a lone
+`&`; the `&` of a redirection (`2>&1`, `&>log`) does not split. Found by the adopting
+repository's automated review after the runner guard landed there.
+
+### The elicitation guard fails closed on a points file it cannot parse, and reads attached rename flags (2026-09-03)
+
+`elicitation-guard.mjs` treated an unparseable `.claude/elicitation/points.json` the same as
+an absent one: no declared points, nothing to gate, every write allowed - a one-character
+edit to the file switched the whole gate off in silence. A points file that exists but does
+not parse now refuses every gated write until the JSON is fixed, the same reasoning that
+makes a missing `jq` a denial in the shell guards. In the same file, `movedFromUnder`
+recognised the target-directory flag only detached (`-t DIR`); `mv -tDIR` and `mv
+--target-directory=DIR` left the flag's value in the source list and popped the last real
+source, so a rename out of a gated directory spelled either way was not seen as one. Both
+spellings are read now; the suite asserts the three forms and the corrupt points file.
+
+### `gh api` writes to CI secrets are matched with an extended regex (2026-09-03)
+
+The `gh api` branch of `no-ci-secret-writes.sh` used `grep -qi 'gh[[:space:]]\+api'` among
+three sibling `grep -qiE` calls. `\+` is undefined in a POSIX basic regex; GNU and BSD grep
+both honour it as an extension, so the branch worked wherever it had been tried and nothing
+guaranteed it anywhere else. It is `-E` with a plain `+` now, and the suite exercises the
+REST branch in both directions for the first time - a PUT and a PATCH against the secrets and
+variables routes refused, a plain read and a search for the phrase not.
+
+### The gitleaks tarball is verified against the release checksums before it is installed (2026-09-03)
+
+The shipped secret-scan workflow pinned the gitleaks version and ran whatever the download
+returned; a pin names a release, it does not prove the bytes are that release, and the binary
+runs with the repository checked out under it. The install step now fetches the release's
+checksums file next to the archive and refuses to unpack an archive whose sha256 is not the
+one listed. The archive keeps its release name because `sha256sum -c` looks it up by that
+name.
+
+### spec-guard.yml runs the backlog archive guard and declares a read-only token (2026-09-03)
+
+`scripts/backlog-archive-check.mjs` is a required core entry and a blocking diff-kind gate in
+the manifest, and no shipped workflow ran it: self-verify notes diff-kind guards instead of
+running them, so a row deleted from `backlog.md` instead of archived reached `main` with
+every check green. A step now runs it between the coupling guard and the full-tree audit,
+against the pull request's base or the push's `before` commit, and skips with a message when
+there is neither. The job also declares `permissions: contents: read`, as the sibling
+secret-scan job already did.
+
 ## 1.0.8 - 2026-09-03
 
 ### The dashboard masthead has one navigational control, not two (2026-09-03)
