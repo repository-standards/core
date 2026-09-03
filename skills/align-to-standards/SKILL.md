@@ -100,9 +100,9 @@ process the user **re-enters until the repo is compliant**, and every entry is g
   the manifest once the repo is pinned, the assessment before that - and an entry does not
   leave it because this run classified it as belonging to the standard's own repo rather
   than to this one. The ship boundary is drawn already and is not the agent's to redraw:
-  transition skills do not ship and this skill is the one that is left (ADR-009);
-  everything under `standard/.claude/skills` does, `record-run` included - a lifecycle
-  skill by ADR-045, not this repo's own tooling.
+  transition skills do not ship and this skill is one of two that are left, `record-run`
+  the other (ADR-009, corrected by ADR-045's addendum); everything under
+  `standard/.claude/skills` does ship, but `record-run` no longer lives there.
 - **Hand-hold, do not dump.** For each wave item, guide the user through it (elicit,
   propose, record) rather than emitting a pile of TODOs.
 - **Deferrals are recorded, not dropped - and the record is the number.** A deferred item

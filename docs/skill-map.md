@@ -5,7 +5,7 @@
 
 # What each skill is for
 
-22 procedures ship into an adopted repo, and their names are terse on purpose. This page
+21 procedures ship into an adopted repo, and their names are terse on purpose. This page
 says what each one is for, grouped by **the moment it fires** rather than by what it writes -
 because a reader arrives with a situation, not with an artifact name.
 
@@ -59,7 +59,6 @@ The step most loops skip. What was learned goes back into the documents before i
 | `spec-reconcile` | Use when a change is finished, before opening the pull request - "I think that's done". Makes the spec, the code and the tests agree, resolves any drift rather than merging around it, and deletes the plan and task scaffolding the work no longer needs. |
 | `pre-pr-review` | Use before pushing a branch or opening a pull request - "is this ready?", "can I push?". Runs the repo's local checks, then reads the diff as if someone else wrote it, and fixes what it finds first. A review after the push is a review of something already published. |
 | `add-to-backlog` | Use when work surfaces that does not belong to this change - a bug mentioned in passing ("btw the export is broken"), "we should fix that too", "park it", "not now but do not lose it". Files one well-formed row with its source, the role that must act and what done looks like, ordered against what is already there, without interrupting what you were doing. This adds to the backlog and never reads it back: "show me the backlog" is `show-backlog`. |
-| `record-run` | Use at the end of an align-to-standards run, success or failure - offers to record the session as validation evidence for the human-prompting corpus (prompts.md + a scored runs/*.json file), at one of two consent levels, never sent without a per-item yes. |
 
 ## Running the cadence
 
@@ -96,6 +95,7 @@ Finding one inside an adopted repo is a hand-copy mistake, and `self-verify` war
 | Skill | When to reach for it |
 |---|---|
 | `align-to-standards` | The single entry point for moving any repo onto the standard. Opens with an intake (step 0) - measure the repo's state, then one short question round (intent, technology + Layer 2 consent, appetite, plan-only vs execute) - then routes by target state - an empty repo to the greenfield phase, an existing unpinned repo to assessment-first onboarding, a pinned repo to update-to-latest or a stack add - and reconciles the repo against the shipped tree in payoff-ordered waves until drift 0. Never blind-copy; reconcile - copy-class artifacts land verbatim, merge/fill-class are adapted (the manifest's adapt classes). |
+| `record-run` | Use at the end of an align-to-standards run, success or failure - offers to record the session as validation evidence for the human-prompting corpus (prompts.md + a scored runs/*.json file), at one of two consent levels, never sent without a per-item yes. |
 
 ## If your agent is not Claude Code
 

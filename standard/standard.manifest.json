@@ -241,7 +241,6 @@
         "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",
         "pre-pr-review/SKILL.md": "aa43d020310c9c684720c58ec9e0efbeca4abf78fcce23b7dc2ec78544a0ce4f",
         "product-write/SKILL.md": "f99093c02371ef8e5411702dbad3bd1dc6481855bcee1f2b1b328e3937062123",
-        "record-run/SKILL.md": "25646b055399d61bff1bbf3f41dc4c9a9943d972cb07ff033640c48754e9d93b",
         "show-backlog/SKILL.md": "73123f319e99c837259e500c25462e3395a93df2f7b5130a0a53c3515408eb04",
         "spec-clarify/SKILL.md": "b278518a739daa9338a1d4ca2c55d08f5c82f9daa5f0b74749291ae9f979a4f0",
         "spec-clarify/completion.md": "15fae768dfd990cd01b2a584229037a8239a9dfca4190bed3713121d1112baad",
@@ -616,7 +615,7 @@
       "rule": "R28",
       "sha256": {
         "README.md": "2bc782134cb66dbb763c263837eda3aa2f4f6bfede17f6fbb46363a1dbc01224",
-        "points.json": "02045812ce7641f38598488b1c507d88fbda1245a4bc11ade51b7585c6ac08d3"
+        "points.json": "78dce24f88e8171cd847220dbea5ad97f459c25e8dbca633c0f3a4f1aecbfbc7"
       }
     },
     {
@@ -1028,6 +1027,11 @@
       "path": ".claude/skills/update-to-version",
       "since": "0.9.12",
       "note": "renamed to .claude/skills/update-to-latest - the target was always latest, never a pin (ADR-025/052); nothing to migrate, the replacement ships in the same release"
+    },
+    {
+      "path": ".claude/skills/record-run",
+      "since": "unreleased",
+      "note": "moved to skills/record-run/ in the standards repo - a transition skill run from a checkout, never shipped into the client tree (ADR-045's correction, ADOPT-DEFAULTS-1); nothing in the adopted repo replaces it, delete the directory on update"
     }
   ],
   "exceptions": []

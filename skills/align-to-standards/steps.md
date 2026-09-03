@@ -166,7 +166,9 @@ it says.
    learning still lands in the target repo's records either way.
 
 8. **Record the run (ADR-045), within the consent the intake round already took.**
-   Success, partial or abandoned - offer `record-run`. This session is itself the
+   Success, partial or abandoned - offer `record-run`, read from this repo's own
+   `skills/record-run/SKILL.md` (a transition skill, never the target repo's
+   `.claude/skills/` - ADR-045's correction). This session is itself the
    evidence the human-prompting corpus needs and cannot get any other way; an
    abandoned or failed run is more valuable than a clean one and the offer must say
    so before asking anything. `adopt.evidence` decides whether this step runs at all:
