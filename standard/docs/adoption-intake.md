@@ -23,6 +23,7 @@
 - **Profile:** {{core / scale}} - why.
 - **Tracked-work location:** {{in-repo / a tracker / both, bridged}}.
 - **Plan-only or execute:** {{...}}.
+- **Evidence:** {{send an anonymised excerpt / send nothing}}.
 
 ## Re-entry log
 

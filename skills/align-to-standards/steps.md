@@ -167,7 +167,11 @@ Phase file of `align-to-standards`. Runs inside it, never as a separate skill.
    abandoned or failed run is more valuable than a clean one and the offer must say
    so before asking anything. `adopt.evidence` decides whether this step runs at all:
    only **send an anonymised excerpt** reaches it - **send nothing** means skip it
-   and say you are skipping it. The scrub `record-run` performs anyway is a condition
+   and say you are skipping it. Read the answer from the **Evidence** line of
+   `docs/adoption-intake.md`, not from memory: a later wave or a compacted session
+   has nothing else to read it from. No line, or a `pending` ledger row, means the
+   question was never reached - put it now, as the intake round does, before
+   assembling anything. The scrub `record-run` performs anyway is a condition
    of that consent, so an excerpt that fails it has no yes. Beyond that gate the
    levels are consent-gated per item, exactly like step 7 - never automatic, and
    "no" leaves the assembled record local and costs the user nothing.
