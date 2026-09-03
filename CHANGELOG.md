@@ -118,6 +118,23 @@ checksums file next to the archive and refuses to unpack an archive whose sha256
 one listed. The archive keeps its release name because `sha256sum -c` looks it up by that
 name.
 
+### The manifest-hash allowlist is scoped to the manifests it was written for (2026-09-03)
+
+The shipped `.gitleaks.toml` allows a JSON line whose value is 64 lowercase hex characters,
+so a manifest's own sha256 entries do not read as credentials. It was scoped by that shape
+alone, on the belief that `paths` is evaluated before the rest of the allowlist and would
+therefore switch the rule off for the whole file. That is what `condition` is for: with
+`condition = "AND"` gitleaks requires the path and the line together, and only that line.
+Without it the allowlist reached every `.json` file in an adopting repository, and 64 hex
+characters is also the shape of an HMAC signing secret - `generic-api-key` is the only rule
+that catches an unnamed secret, so a signing secret pasted into a service config passed the
+scan the standard had just installed. The entry now carries `condition` and a `paths` regex
+for the two manifests; the path is matched repo-relative in git mode and absolute under
+`gitleaks dir`, so the regex allows a directory prefix rather than anchoring at `^`. Note
+the key is `condition`, not `matchCondition`: gitleaks rejects the latter as unknown.
+Verified both ways with gitleaks 8.30.1 - a 64-hex secret in an ordinary JSON file is now
+reported and was not before, and both manifests still scan clean.
+
 ### spec-guard.yml runs the backlog archive guard and declares a read-only token (2026-09-03)
 
 `scripts/backlog-archive-check.mjs` is a required core entry and a blocking diff-kind gate in

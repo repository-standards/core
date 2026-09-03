@@ -23,7 +23,9 @@ their kin) and judges them by the host their environment would hand them - and r
 it cannot see a host at all, rather than assuming the best. The elicitation guard refuses
 every gated write while its points file is unreadable instead of treating a broken file as an
 empty one, and reads the attached spellings of a rename's target flag. The CI-secrets guard's
-`gh api` match is written in the regex dialect it claimed. The secret-scan workflow verifies
+`gh api` match is written in the regex dialect it claimed. The secret-scan config's allowance
+for manifest hashes is scoped to the manifests, so a 64-hex signing secret pasted into any
+other JSON file is caught rather than waved through. The secret-scan workflow verifies
 the gitleaks download against the release checksums, and the spec-guard workflow runs the
 backlog archive check that the manifest already required and declares a read-only token.
 Two calls in the runner guard - the fail-closed no-host rule and what a bare assignment
