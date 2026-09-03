@@ -28,10 +28,17 @@ jobs:
       - name: Install gitleaks
         run: |
           set -euo pipefail
+          # The archive keeps its release name: the checksum line names that file, and
+          # sha256sum -c looks it up by name.
+          ARCHIVE="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
           curl -fsSL \
-            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
-            -o /tmp/gitleaks.tar.gz
-          tar -xzf /tmp/gitleaks.tar.gz -C /tmp
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/${ARCHIVE}" \
+            -o "/tmp/${ARCHIVE}"
+          curl -fsSL \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_checksums.txt" \
+            -o /tmp/gitleaks.sums
+          (cd /tmp && grep " ${ARCHIVE}\$" gitleaks.sums | sha256sum -c -)
+          tar -xzf "/tmp/${ARCHIVE}" -C /tmp
           sudo install -m 0755 /tmp/gitleaks /usr/local/bin/gitleaks
           gitleaks version
 
