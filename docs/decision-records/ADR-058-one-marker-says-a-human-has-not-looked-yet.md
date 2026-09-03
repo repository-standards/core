@@ -37,23 +37,25 @@ check or a reader greps for one string. What follows the marker is what differs:
 
 ```
 > [NEEDS REVIEW] drafted by the adoption run on 2026-09-03 from the route table and
-> `roles.js` - product confirms or rewrites. Backlog: PERSONAS-1.
+> `roles.js`. Backlog: PERSONAS-1.
 
 > [NEEDS REVIEW] nothing written here yet; should hold the options weighed and the reason
-> the team keeps Postgres - architect fills it by hand. Backlog: ADR-013-1.
+> the team keeps Postgres. Backlog: ADR-013-1.
 ```
 
-- A drafted artifact's line is as ADR-057 had it: what it was drafted from, which owner
-  role (product / architect / dev / agent, the backlog's vocabulary) confirms or rewrites
-  it, and which backlog row tracks it.
+- A drafted artifact's line is as ADR-057 had it, minus one field: what it was drafted
+  from, and which backlog row tracks it. It does not name who acts on it - the artifact's
+  own kind already says that (an ADR reads as technical, a BDR and `docs/personas.md` as
+  product), and a role word in every marker would duplicate what the file already is. A
+  team small enough to run this standard at `core` (one or two people) does not need a
+  field to tell it which of them a persona roster is for.
 - An empty artifact's line says that nothing is written yet, **what the file should
-  contain** in one sentence so whoever fills it knows the target, which owner role fills
-  it, and the backlog row.
+  contain** in one sentence so whoever fills it knows the target, and the backlog row.
 - Everything else in ADR-057 stands: one backlog row per marked file, a drafted decision
   record is `Proposed`, the marker leaves in the commit that verifies the content and with
   nothing else, and the percentage does not move (ADR-038). The companion count
-  `NEEDS-REVIEW-2` adds is one number grouped by owner role; a team that wants drafts and
-  empty files apart reads the lines, which say which.
+  `NEEDS-REVIEW-2` adds is one flat number; a team that wants to know who should look at an
+  entry reads the backlog row the marker names, which already says what kind of work it is.
 
 ## Consequences
 
