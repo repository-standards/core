@@ -14,6 +14,22 @@ downstream (ADR-006)**: no capability, spec or backlog item lands before they ar
 confirmed. The stack, though already named at intake, is recorded and scaffolded only
 after personas and product.
 
+## Before step 1: confirm the guard landed
+
+This phase's step 1 is this run's first write. Do not trust that Step -1
+(`land-guard.md`) already ran earlier in the conversation - a resumed or compacted
+session can reach this phase on a stale memory of having done that. Confirm it fresh:
+
+```bash
+test -f .claude/elicitation/points.json \
+  && grep -q elicitation-guard.mjs .claude/settings.json \
+  && test -f docs/adoption-provenance.md
+```
+
+Nonzero exit: stop. Do not run step 1 or anything after it - go read
+[`land-guard.md`](land-guard.md) and land the guard first, then restart the session as
+it says.
+
 ## Steps
 
 1. **Scaffold + pin.** Bring in the shipped tree (the align steps in `SKILL.md`), write
