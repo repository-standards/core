@@ -976,7 +976,16 @@ if (!skeleton) {
   // paragraphs, and without it an unmatched backtick in such a file would still cross one.
   const stripSpans = (s) =>
     s.replace(/(`+)([\s\S]*?)\1/g, (whole, _delim, inner) => (/\n[ \t\r]*\n/.test(inner) ? whole : ""));
-  const stripCode = (s) => stripSpans(stripIndentedBlocks(s.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, "")));
+  // An HTML comment is an instruction to whoever fills the file, never content the file
+  // claims - `proseOf` below already reads it that way. Several shipped templates put their
+  // guidance in one and write `<date>` or `<ID>` inside it to show the shape wanted, so
+  // reading those as unfilled shells warned about the very documents a repo had finished,
+  // with nothing the repo could do to clear it but delete the standard's own note. The
+  // mustache form is unaffected: `RAW_PLACEHOLDER_RE` scans the raw body, so `{{AUTHOR}}`
+  // still warns wherever it is written.
+  const stripComments = (s) => s.replace(/<!--[\s\S]*?-->/g, "");
+  const stripCode = (s) =>
+    stripSpans(stripIndentedBlocks(stripComments(s.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, ""))));
 
   // Decision records are in scope too, and they are found by the record filename pattern
   // rather than a fixed path, because their directory layout is the repo's choice (the
