@@ -26,13 +26,23 @@ on every route, greenfield through stack add. The report is not the substitute: 
 health report, the counted plan and the wave list still land in full at their own steps,
 and a progress line never carries a finding before the pass that found it is done.
 
+## Step -1 - Land the elicitation guard
+
+Before Step 0, before any phase and before any route is chosen. Read
+[`land-guard.md`](land-guard.md) now. It lands the four files a `PreToolUse` hook needs
+to bind, then tells you to restart the session so that wiring is live before the run
+that needs it starts: a session that began in an unaligned repository has no wiring,
+and nothing later in this skill can retroactively enforce a guard on it. This is a
+one-time bootstrap action, not a wave, which is why it carries no step number inside
+the reconcile waves below.
+
 ## Step 0 - Intake (measure, then ask)
 
-Every run starts here, before any phase and before any route is chosen. Read
-[`intake.md`](intake.md) now. It carries the measurement pass, the signals a repo has
-already written down about itself - lifecycle, governance config, its own decision
-process, its policy on agents - and the question round, including which of those
-questions are not this skill's to answer.
+Once the guard has landed (Step -1), every run starts here, before any phase and before
+any route is chosen. Read [`intake.md`](intake.md) now. It carries the measurement
+pass, the signals a repo has already written down about itself - lifecycle, governance
+config, its own decision process, its policy on agents - and the question round,
+including which of those questions are not this skill's to answer.
 
 ## Route by target state
 
