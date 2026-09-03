@@ -357,6 +357,26 @@ for (const line of ledgerText.split("\n")) {
 const backlogText = BACKLOGS.map(at).filter(existsSync).map((f) => readFileSync(f, "utf8")).join("\n");
 const problems = [...malformed];
 
+// The [NEEDS REVIEW] marker (ADR-057, revised by ADR-058) names a backlog row for every
+// artifact a `suggest` or `stub` answer produced. `self-verify` counts the markers; this is
+// what proves the row each one names is not made up - the same trust `provisional` rows get
+// below, extended to the file rather than the question. Only markdown carries the marker.
+// Scaffolding is skipped: the elicitation README ships two illustrative marker blocks of its
+// own (naming backlog rows no real repo has), and reading those as live markers would fail
+// every adopter who has not touched the file.
+const MARKER_BLOCK_RE = /^>\s*\[NEEDS REVIEW\][^\n]*(?:\n>[^\n]*)*/gm;
+const BACKLOG_ID_RE = /Backlog:\s*([A-Za-z][\w-]*)\s*\./;
+for (const f of FILES) {
+  if (!f.endsWith(".md") || scaffolding(f)) continue;
+  let raw;
+  try { raw = readFileSync(at(f), "utf8"); } catch { continue; }
+  for (const block of raw.match(MARKER_BLOCK_RE) || []) {
+    const id = BACKLOG_ID_RE.exec(block)?.[1];
+    if (!id) problems.push(`${f}: a [NEEDS REVIEW] marker names no backlog row (expected "Backlog: <ID>.")`);
+    else if (!backlogText.includes(id)) problems.push(`${f}: [NEEDS REVIEW] names backlog row "${id}", which is not in the backlog`);
+  }
+}
+
 if (!ledgerText.includes(HARVEST)) {
   problems.push(`${LEDGER}: the "${HARVEST.replace(/^## /, "")}" section is missing - questions the point list did not have are how it grows, and an unrecorded one is indistinguishable from one nobody needed`);
 }
@@ -422,5 +442,30 @@ if (tally.pending) {
   console.log(`  ${tally.pending} point(s) pending - this adoption has not written anything they gate.`);
   console.log("  Each stops being legal the moment it does, which is the point of asking first.");
 }
+
+// Non-fatal: a `provisional` row promises the artifact it produced carries the marker
+// (ADR-057/058), but the row itself is just a promise - this reads the files the point
+// actually gates and says so when none of them do. Not a failure, because the file may
+// answer a later question this point does not gate, or may not have shipped yet; a marker
+// is how a person finds the gap later, not a precondition for the row itself.
+const unmarked = [];
+for (const r of rows) {
+  if (r.state !== "provisional") continue;
+  const globs = (declared.points || []).find((p) => p.id === r.point)?.gate_globs || [];
+  if (!globs.length) continue; // gates nothing - see note 5 above `reached`
+  const found = globs.some((g) => {
+    const re = rx(g);
+    return FILES.some((f) => {
+      if (!re.test(f)) return false;
+      try { return /^>\s*\[NEEDS REVIEW\]/m.test(readFileSync(at(f), "utf8")); } catch { return false; }
+    });
+  });
+  if (!found) unmarked.push(r.point);
+}
+if (unmarked.length) {
+  console.log(`  ${unmarked.length} provisional point(s) gate a path with no [NEEDS REVIEW] marker found in it: ${unmarked.join(", ")}.`);
+  console.log("  Not a failure - the marker is how a person finds this later, not a precondition for the row.");
+}
+
 if (AS_JSON) console.log(JSON.stringify({ verdict: "PASS", ledger: LEDGER, rows: rows.length, tally }, null, 2));
 else console.log(`elicitation-provenance: OK - ${rows.length} point(s) recorded in ${LEDGER} (${summary})`);
