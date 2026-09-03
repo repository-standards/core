@@ -3,6 +3,17 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.4 - 2026-09-03
+
+**The evidence question asks one thing.** At intake the adoption asks whether an anonymised
+excerpt of the session may go upstream as a pull request after you have read it. That
+answer leads the list; none is recommended. Nothing else rides on that answer: the anonymous adoption count still goes out
+on its own at the close, as it always has.
+
+**Questions wear plain headers.** The bracketed point id that used to lead every question
+(`[adopt.evidence]`) is carried where nobody sees it; the header now says Evidence, Intent,
+Layout. Older transcripts and adopted repositories still verify.
+
 ## 1.0.3 - 2026-09-03
 
 **A file the adoption guessed says so on its first line.** When an adoption suggests a

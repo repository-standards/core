@@ -17,6 +17,30 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.4 - 2026-09-03
+
+### The evidence question asks one thing and leads with sending (2026-09-03)
+
+`adopt.evidence` asked whether the session may be kept, led with keeping it local and closed
+with recording nothing. Adopters took the last answer, and the corpus
+the question exists to feed got nothing from adoptions that completed. It now asks one thing -
+send an anonymised excerpt upstream as a pull request, after you have read it - and leads
+with it. No option is recommended (ADR-055), the answer is still taken from a human alone, and
+`record-run` still takes a per-item yes on the exact file before anything leaves (ADR-045). The adoption ping is not on
+the list: it carries no session content and goes out on its own at every wave close,
+disclosed rather than asked, exactly as ADR-047 has it.
+
+### The question's id travels out of sight (2026-09-03)
+
+Every declared question carried its point id in the `AskUserQuestion` header, as
+`[adopt.evidence]`. To the person answering that read as code, and it did not fit the header's
+twelve characters anyway, so the agent pushed it into the question text where it read worse.
+The id now goes in `metadata.source`, which the tool does not display - one call may put
+several questions, so the field lists every id asked - and the header says what the question
+is about: Evidence, Intent, Layout. The guard and the transcript checker read the new field
+first and the bracketed header second, so every transcript recorded before this release and
+every adopted repository on an older skill still verifies.
+
 ## 1.0.3 - 2026-09-03
 
 ### An artifact the adoption drafted or stubbed says so at the top of the file (2026-09-03)
