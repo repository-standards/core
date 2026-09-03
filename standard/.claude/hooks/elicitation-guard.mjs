@@ -86,8 +86,19 @@ function deny(reason) {
 let payload = "";
 process.stdin.on("data", (c) => (payload += c));
 process.stdin.on("end", () => {
+  // Every other early exit in this file is a denial, on exactly this reasoning: a guard that
+  // cannot read what it would check has not checked it. This one used to be the sole exception
+  // - unparseable stdin passed - which made a truncated or malformed payload the one way past
+  // a guard that is fail-closed everywhere else, indistinguishable from a clean pass.
   let call;
-  try { call = JSON.parse(payload); } catch { allow(); }
+  try { call = JSON.parse(payload); }
+  catch {
+    deny(
+      "Refused: this guard could not parse its input as JSON, so nothing checked whether the\n" +
+      "write it is being asked about was ever asked. It fails closed on purpose - a guard that\n" +
+      "passes without being able to read the call is indistinguishable from no guard at all.",
+    );
+  }
 
   const tool = call.tool_name || "";
   const WRITE_TOOLS = ["Write", "Edit", "NotebookEdit"];
