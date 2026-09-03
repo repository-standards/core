@@ -17,11 +17,15 @@
 # at the artifact - which is also a fine answer, and the one that needs no decision.
 #
 # Add `--anonymise` to the build if the page should carry no colleague's name.
+#
+# Manual by default (workflow_dispatch only): a push trigger builds and, where the gate
+# above allows it, publishes on every commit to main whether or not the dashboard is meant
+# to be deployed anywhere - a CI minute spent forever on a page nobody asked to be live. A
+# repository that wants it live on every push adds that trigger back locally; a schedule
+# for a periodically-refreshed page is a local addition too, not a shipped default.
 name: dashboard
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

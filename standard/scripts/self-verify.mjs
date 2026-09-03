@@ -665,11 +665,13 @@ const missingPrerequisites = (g) => {
 
 // The branch a shipped workflow triggers on.
 //
-// All three workflows ship `branches: [main]`, and the manifest can only require that a key
-// EXISTS - `on.push`, `on.pull_request` - never what it contains. So a repository whose default
-// branch is `master` takes the file verbatim, reaches drift 0, and carries a push trigger that
-// can never fire. `spec-guard.yml`'s own comment says it is gated from the first push; on that
-// repo the sentence was silently false, and nothing anywhere said so.
+// `spec-guard.yml` and `gitleaks.yml` ship `branches: [main]`, and the manifest can only
+// require that a key EXISTS - `on.push`, `on.pull_request` - never what it contains. So a
+// repository whose default branch is `master` takes the file verbatim, reaches drift 0, and
+// carries a push trigger that can never fire. `spec-guard.yml`'s own comment says it is gated
+// from the first push; on that repo the sentence was silently false, and nothing anywhere said
+// so. `dashboard.yml` ships no `branches:` at all (workflow_dispatch only, by default), so
+// this check simply has nothing to warn about there - not a case the loop below special-cases.
 //
 // A WARN, not drift: the file is merge-class and the branch name is exactly the kind of local
 // adaptation an adopter is expected to make. What was missing was anyone telling them.

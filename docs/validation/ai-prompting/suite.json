@@ -3489,7 +3489,7 @@
       "promise": "Compliance MUST be enforced by tooling, not prose - SPEC.md R16",
       "portable": false,
       "severity_if_failed": "moderate",
-      "given": "a repo whose default branch is not `main` (rails/ripgrep on `master`, nlohmann/json on `develop`/`master`), with the shipped spec-guard.yml/gitleaks.yml/dashboard.yml landed verbatim at `branches: [main]`",
+      "given": "a repo whose default branch is not `main` (rails/ripgrep on `master`, nlohmann/json on `develop`/`master`), with the shipped spec-guard.yml/gitleaks.yml landed verbatim at `branches: [main]` (dashboard.yml ships workflow_dispatch-only and carries no branches trigger to mismatch)",
       "when": "self-verify.mjs runs against it",
       "then": "it warns by name, naming the workflow, the branch it triggers on and the repo's actual default branch, instead of reaching drift 0 with a push trigger that can never fire and nothing anywhere saying so",
       "procedure": "land a shipped workflow with `branches: [main]` in a git repo whose `origin/HEAD` points at a different branch, and run node standard/scripts/self-verify.mjs",
