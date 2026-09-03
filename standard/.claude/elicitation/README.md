@@ -36,8 +36,8 @@ Every question offers the same three answers, in this order:
 | Answer | Means | Records |
 |---|---|---|
 | **answer** | the person decides now | `human` |
-| **suggest** | the agent proposes, the person checks later | `provisional` + a backlog row naming the point |
-| **stub** | placeholder, do not guess | `absent`, with a visible gap marker |
+| **suggest** | the agent proposes, the person checks later | `provisional` + a backlog row naming the point, and the artifact opens with the `[NEEDS REVIEW]` marker (below) |
+| **stub** | placeholder, do not guess | `absent`, and the artifact opens with the same marker naming what belongs there (below) |
 
 `suggest` is not a way around the question. It counts as human presence: it is
 attributable, timestamped, and produces an artifact that says what it is. The failure this
@@ -62,6 +62,44 @@ backlog* - a shape neither option named. An answer off the list is the most info
 a run gets, because it is the person saying the question was framed on the wrong axis. Take
 it as the answer, record what they actually said rather than the option it is nearest to,
 and fix the question.
+
+## The marker
+
+The row above records that a question was answered `suggest` or `stub`; it does not say
+which artifacts that answer wrote, or whether anyone has since confirmed them. A
+`suggest` under one question can draft twelve retroactive decision records, and the
+provenance table gets one row while the reader who opens record eleven six months later
+sees nothing - it reads `Status: Accepted`, exactly like a decision somebody made
+(ADR-057, revised by ADR-058: one marker, not two).
+
+So the artifact carries its own state. Every file written under `suggest` or `stub` opens
+with one marker, directly under the title:
+
+```
+> [NEEDS REVIEW] drafted by the adoption run on 2026-09-03 from the route table and
+> `roles.js`. Backlog: PERSONAS-1.
+```
+
+```
+> [NEEDS REVIEW] nothing written here yet; should hold the datastore decision and why.
+> Backlog: ADR-013-1.
+```
+
+What follows the marker is always the same two things: what it was drafted from (or, for
+a stub, what belongs in the file once someone writes it) and the backlog row that tracks
+it. Who acts on it is not named in the line - the record's own kind already says that (an
+ADR reads as technical, a BDR and `docs/personas.md` as product), and naming it a second
+time in every marker would duplicate what the artifact already is. A drafted decision
+record stays `Proposed`, never `Accepted` - "recorded retroactively" says where the
+content came from, not whether a person decided it.
+
+The marker leaves with the review and with nothing else - no `verified-by` field, no date
+to maintain. `git log` on the file says who removed it and when; a commit that strips the
+marker while changing nothing else in the file is not a review, it is a chore someone
+cleared. `self-verify` counts every marker still in the tree and reports it next to the
+adoption percentage, without moving that percentage (ADR-038: the percentage is
+structural, this count is what still waits on a person); `elicitation-provenance`
+requires the backlog row every marker names to actually exist.
 
 ## Which answer leads
 

@@ -170,9 +170,12 @@ guards are green - not when every file has a paragraph.
    names the persona(s) it serves.
 
    If the user cannot answer yet - the person who knows is on holiday, the business has
-   never written it down - say so and continue: seed the roster with the roles the code
-   proves, mark it explicitly as inferred and unconfirmed, and put the interview in the
-   backlog. An unconfirmed roster is a known gap; a missing one stops every spec.
+   never written it down - that is `[adopt.personas]`'s `suggest` or `stub` answer: seed
+   the roster with the roles the code proves (or, under `stub`, leave it empty naming what
+   a real interview would fill), and open the file with the `[NEEDS REVIEW]` marker
+   (ADR-057/058, format in `standard/.claude/elicitation/README.md`), naming the backlog
+   row `[adopt.personas]` already requires. An unconfirmed roster is a known, visible gap;
+   a missing one stops every spec.
 
 2. **Map the code into capabilities -> Gate 4 (opens here).** Read entry points,
    modules, routes, jobs, domain folders, tests. Group them into candidate
@@ -214,7 +217,11 @@ guards are green - not when every file has a paragraph.
    The code embodies decisions: this datastore, this framework, this auth model, this
    money handling, no DI container. Enumerate only the **contestable, re-litigable**
    ones (the ADR test - a decision someone will argue about again), and draft them as
-   **retroactive ADRs** (`Status: Accepted`, note "recorded retroactively").
+   **retroactive ADRs**, `Status: Proposed` (never `Accepted` - "recorded retroactively"
+   says where the content came from, not whether a person decided it). This is the
+   `suggest` answer under `[adopt.records]`'s second question: open every drafted record
+   with the `[NEEDS REVIEW]` marker (ADR-057/058), naming a backlog row - one row per
+   record, not one shared across the batch.
 
    **If intake produced existing material, file it first and read it here.** Anything
    the user handed over - a Confluence page, an `rfcs/` folder, a decision buried in a
@@ -297,6 +304,13 @@ guards are green - not when every file has a paragraph.
    spec<->code discrepancy or an unclear branch goes in the spec's **Open questions**
    (and becomes a tracked issue), not a guess. A capability you are **not** specing this
    pass is a backlog item - not a behavioral placeholder written to look done.
+
+   Nobody asked a dedicated question before this write - a synthesized spec is agent
+   work standing in for a review that has not happened yet, the same shape as `suggest`
+   elsewhere. Open it with the `[NEEDS REVIEW]` marker (ADR-057/058), naming a backlog
+   row. `spec-clarify`'s open questions are a different, narrower thing: they track what
+   the extraction could not answer, not whether the synthesis as a whole has been read by
+   a person.
 
 6. **Record the drift you find -> Gate 5 (items).** Where the code disagrees with any
    pre-existing README, comment or doc, capture it (this is `spec-reconcile`'s job,
