@@ -39,6 +39,19 @@ const CASES = [
   // An honest run can still write past a point it never asked about. Same fixture the
   // quote checker passes - honest about what it quotes, incomplete about what it covered.
   ["asking one point does not license writing an artifact gated by another", `${F}/honest-adoption.jsonl`, (r) => r.stopped === 1],
+
+  // STACK-OFFER-2's known limitation, asserted rather than left to be discovered again. The
+  // h run filed its stack offer under green.stack because no brownfield point existed;
+  // adopt.stack now does, with its own call site in intake.md, but it carries no gate_globs -
+  // giving it green.stack's would make the guard's AND-of-every-matching-point rule demand a
+  // greenfield-only point on a brownfield run too, refusing legitimate greenfield writes (see
+  // adopt.stack's `gates` field in points.json). So this hook still passes a stack answer
+  // filed under green.stack alone: it is caught by elicitation-points-check.mjs (adopt.stack
+  // has no call site if the offer is never asked under its own id) and by the provenance
+  // ledger a human reads, never by this hook. `through`, not `STOPPED`, is the correct and
+  // expected result here - the day this fixture starts failing is the day someone "fixed" it
+  // by recreating the greenfield regression the gates field explains.
+  ["a stack answer filed under green.stack is still a hook-level pass-through, not this layer's catch", `${F}/stack-offer-wrong-point.jsonl`, (r) => r.stopped === 0],
 ];
 
 let bad = 0;
