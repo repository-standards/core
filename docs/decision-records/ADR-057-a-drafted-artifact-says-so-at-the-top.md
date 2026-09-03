@@ -40,9 +40,9 @@ real files, and the warning that says so is one line in the check's output.
   the file mute, and the table is per question by design: it answers "was this asked and
   who answered", not "which of the things written under that answer are still unchecked".
 - **A marker in the artifact, and a list derived from the markers** - the file carries its
-  own state on its first line; scripts scan for the marker and derive the count, the list
-  by owner role, and the backlog link. Nothing to curate: the marker leaves in the commit
-  that verifies the content, and that commit is the record of who verified and when.
+  own state on its first line; scripts scan for the marker and derive the count and the
+  backlog link. Nothing to curate: the marker leaves in the commit that verifies the
+  content, and that commit is the record of who verified and when.
 
 ## Decision
 
@@ -51,20 +51,22 @@ is the unit the tooling reads.** Directly under the title:
 
 ```
 > [NEEDS REVIEW] drafted by the adoption run on 2026-09-03 from the route table and
-> `roles.js` - product confirms or rewrites. Backlog: PERSONAS-1.
+> `roles.js`. Backlog: PERSONAS-1.
 
 > [STUB] nothing written here yet - architect fills it. Backlog: ADR-013-1.
 ```
 
 - `[NEEDS REVIEW]` is the `provisional` state per file: the agent proposed the content. The
-  line says what it was drafted from, which owner role (product / architect / dev / agent,
-  the backlog's vocabulary) confirms it, and which backlog row tracks it.
+  line says what it was drafted from, and which backlog row tracks it. It does not name who
+  acts on it - the artifact's own kind already says that (an ADR reads as technical, a BDR
+  and `docs/personas.md` as product), and a role word in every marker would duplicate what
+  the file already is.
 - `[STUB]` is the `absent` state per file: nothing was written, and the line names who
   fills it and the backlog row. This is the "visible gap marker" the elicitation README
   already promised without saying what it looks like.
-- **One backlog row per marked artifact**, owner role named, so a row can be assigned to
-  a person without splitting it first. The per-question row in the provenance table stays
-  and still names one of them; the markers are what make it per file.
+- **One backlog row per marked artifact**, so a row can be assigned to a person without
+  splitting it first. The per-question row in the provenance table stays and still names
+  one of them; the markers are what make it per file.
 - **A drafted decision record is `Proposed`, not `Accepted`.** "Recorded retroactively"
   describes where the content came from, not whether anybody decided it; the marker and
   the status together say that. The human who confirms flips the status and removes the
@@ -76,8 +78,7 @@ is the unit the tooling reads.** Directly under the title:
 - **The percentage does not move.** A marked file is present and counts as adopted
   (ADR-038, structure is what the number measures). What changes is that the number gets a
   companion: `self-verify` reports how many entries carry a marker, split into drafted and
-  stubbed and grouped by owner role, next to the percentage rather than as one warning
-  among many.
+  stubbed, next to the percentage rather than as one warning among many.
 
 ## Consequences
 
@@ -99,11 +100,10 @@ is the unit the tooling reads.** Directly under the title:
 ## Confirmation
 
 Nothing confirms this mechanically yet, and that is stated here rather than implied. The
-convention lands with `NEEDS-REVIEW-1`; the checks - `self-verify` counting marked entries
-by role, `elicitation-provenance` requiring every marker to name a backlog row that exists -
-land with `NEEDS-REVIEW-2`. Until then the marker is reviewed by hand at the adoption's
-pre-PR review, and a run that writes under `suggest` without it is a defect against this
-record.
+convention lands with `NEEDS-REVIEW-1`; the checks - `self-verify` counting marked entries,
+`elicitation-provenance` requiring every marker to name a backlog row that exists - land
+with `NEEDS-REVIEW-2`. Until then the marker is reviewed by hand at the adoption's pre-PR
+review, and a run that writes under `suggest` without it is a defect against this record.
 
 ## Revisit when
 
