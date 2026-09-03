@@ -3,6 +3,15 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.3 - 2026-09-03
+
+**A file the adoption guessed says so on its first line.** When an adoption suggests a
+persona roster or a decision record for you to check later, or leaves a stub, the file will
+open with `[NEEDS REVIEW]` or `[STUB]`, naming who confirms it and the backlog row that
+tracks it - one row per file, so the work can be handed to a person. The marker leaves when
+someone verifies the content. Decided in ADR-057; the tooling that writes, counts and shows
+the markers follows in the next releases.
+
 ## 1.0.2 - 2026-09-02
 
 **Releases tag themselves.** Since 1.0.0 a release was supposed to carry a tag, and both
