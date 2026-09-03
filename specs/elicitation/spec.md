@@ -55,6 +55,29 @@ saying something he never said (ADR-054).
   because nothing here reads scope to know which route asked. `tools/elicitation-replay-test.mjs`
   carries a case asserting this as a documented limitation rather than a silent gap.
 
+### Session 2026-09-03 (the driving side)
+
+- Q: An adoption skipped the intake round and wrote `docs/adoption-intake.md` from the skill's
+  own prose, and nothing refused it. Where was the guard? A: Wired nowhere that session could
+  see. `standard/.claude/settings.json` wires it for the tree that ships into an adopted repo;
+  this checkout - the one `align-to-standards` says it runs from - carried no `.claude/settings.json`
+  at all. The repository that authors and ships the guard never ran it, in the one session it
+  exists for (ADR-060).
+- Q: Then wire it here like an adopter does? A: It cannot be wired that way. This repository
+  carries the same gated paths any adopter does behind a template ledger that is `pending` by
+  design, so every ordinary write in it would be refused - the unlivable-guard failure ADR-054
+  already names. The guard instead reads which side of an adoption it is on from the tree's own
+  shape (the shipped tree under `standard/` rather than unpacked at the root) and judges only
+  the writes that leave a driving checkout.
+- Q: Why not an environment variable, which would be simpler to read? A: Because an adopted
+  repository could set the same variable and exempt every write it makes - its own writes land
+  in its own tree. The shape of a tree is not something a settings file can claim.
+- Q: Whose ledger answers for a write, when the run spans two repositories? A: The one in the
+  repository the write lands in, for both the file and the committed row behind a settled
+  repository-scoped point. Reading it from the working directory let a driving checkout's own
+  answers vouch for writes into a repository that answered nothing; the rename check had
+  already been fixed this way and the ledger lookup had not.
+
 ### Session 2026-09-03 (NEEDS-REVIEW-2)
 
 Not a retrofit: [ADR-057](../../docs/decision-records/ADR-057-a-drafted-artifact-says-so-at-the-top.md),
@@ -77,7 +100,8 @@ cross-references what a marker names.
 [`standard/.claude/elicitation/points.json`](../../standard/.claude/elicitation/points.json)
 (the declaration), [`standard/.claude/hooks/elicitation-guard.mjs`](../../standard/.claude/hooks/elicitation-guard.mjs)
 (the refusal), [`standard/scripts/elicitation-provenance.mjs`](../../standard/scripts/elicitation-provenance.mjs)
-(the ledger check), and the repo-own tools that measure them:
+(the ledger check), this repository's own `.claude/settings.json` (the driving side's wiring),
+and the repo-own tools that measure them:
 [`elicitation-points-check`](../../tools/elicitation-points-check.mjs),
 [`elicitation-check`](../../tools/elicitation-check.mjs),
 [`elicitation-replay`](../../tools/elicitation-replay.mjs) and
@@ -190,12 +214,24 @@ it as the known gap rather than claiming coverage.
   guard's own commit - the update-to-latest shape, not a fresh skip - and whenever the ledger
   this check reads sits under a subdirectory ROOT, which is this project's own shipped tree
   dogfooding itself rather than an adopter's repository.
+- A checkout that drives adoptions MUST wire the guard for its own sessions, and MUST judge
+  only the writes that leave it. Which side it is on is read from the tree's own shape - the
+  shipped tree under `standard/` - never from configuration a repository could set for itself.
+  Without this the adoption run is the one run nothing enforces: the hook binds from the
+  session's own project directory, so what an adoption lands in the target covers every later
+  session there and none of the one doing the landing (ADR-060).
+- The ledger a write is checked against - the file, and the committed row behind a settled
+  repository-scoped point - MUST be read in the work tree that owns the write, not in the
+  working directory. A run that writes into another repository is the normal case here, not
+  the exotic one.
 
 ## Invariants
 
 - A write to a gated path, or a move of a path git already tracks, is refused, permitted by a
   fired question, or permitted by a declared stub. There is no fourth outcome, and no
-  environment variable adds one.
+  environment variable adds one. Which writes a checkout judges is a separate question from
+  what happens to a judged one, and it is answered by the tree's shape for the same reason:
+  a switch is an exemption whoever holds the settings file can grant themselves.
 - What the repository had before the adoption is never read as evidence that somebody was
   asked, and neither is what it wrote before this layer existed: the boundary is the commit
   that introduced the point list, so a repository taking this layer through an update is
@@ -220,6 +256,12 @@ it as the known gap rather than claiming coverage.
 - GIVEN a session that fired each point's question before its write THEN no write is refused.
 - GIVEN the recorded stayget adoption transcript WHEN replayed past the guard THEN all five
   of its artifact writes are refused.
+- GIVEN a checkout that carries the shipped tree under `standard/` WHEN it writes a gated path
+  in its own tree THEN the write is allowed, and WHEN it writes the same path in another
+  repository with no question asked THEN the write is refused.
+- GIVEN a gated write into another repository whose committed ledger answers the point THEN it
+  is allowed, and GIVEN the same write where only the driving checkout's ledger answers THEN it
+  is refused.
 - GIVEN a ledger whose `provisional` row names a backlog row that is not in the backlog THEN
   `elicitation-provenance` exits 1 naming that row.
 - GIVEN a session in which `[adopt.layout]` never fired WHEN the agent runs `git mv` on a path
