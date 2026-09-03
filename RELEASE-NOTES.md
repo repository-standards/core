@@ -3,6 +3,16 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.7 - 2026-09-03
+
+**Landing the guard is checked three ways, not just told once.** A real adoption committed
+its intake record a commit before the elicitation guard itself ever landed there, and nothing
+noticed until a person read the diff. Now the guard-landing step lives where it cannot be read
+past, every phase that writes first checks the guard is actually there before it writes
+anything, and the provenance check itself refuses if a gate artifact's history reached back
+before the guard's own commit - unless that repo's `.standards-version` already predates the
+guard, which means it is catching the guard up, not skipping a step. Decided in ADR-059.
+
 ## 1.0.6 - 2026-09-03
 
 **One marker, not two.** A file the adoption guessed at, or left empty for you, opens with

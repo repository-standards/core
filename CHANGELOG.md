@@ -17,6 +17,46 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.7 - 2026-09-03
+
+### The elicitation guard is landed through its own file, reached only through Step -1 (2026-09-03)
+
+ADR-059. `steps.md`'s guard-landing step sat inline as numbered item "0.", ahead of ten
+reconcile-wave steps an agent reads in the same pass - a single instruction, told once, near
+the top, which is the exact shape ADR-054 already found insufficient for everything else this
+standard asks about. It moves out to its own file,
+`skills/align-to-standards/land-guard.md`, content unchanged, reached only through a new
+`SKILL.md` Step -1 read before Step 0 - Intake and before any route is chosen. `steps.md` now
+opens with a pointer to it instead of a numbered step an agent could read past. Named Step -1
+rather than Step 0a so `intake.md` and `onboard.md`'s own existing references to "Step 0" -
+which mean the intake step, not this one - need no change.
+
+### Every phase that writes first confirms the guard landed before it writes anything (2026-09-03)
+
+ADR-059. A resumed or compacted session can reach a phase's first write on a stale memory of
+having landed the guard earlier in a conversation that no longer fits in view. `steps.md`
+(step 1), `greenfield.md` and `onboard.md` each now open their first write action with the
+same three-line check - `.claude/elicitation/points.json` exists, `.claude/settings.json`
+wires `elicitation-guard.mjs`, `docs/adoption-provenance.md` exists - and stop for a restart on
+a nonzero exit rather than proceeding on assumption. `stack.md` and `layer2.md` carry no such
+check: both routes require a pre-existing `.standards-version`, which already implies the
+guard landed in a prior run.
+
+### The guard's own commit order is checked against the Gate artifacts it protects (2026-09-03)
+
+ADR-059, closing the gap ADR-054 named in its own Consequences: a `PreToolUse` hook binds when
+a session starts, so the adoption run it exists to cover is the one run it does not cover
+unless it lands first. LomondGroup/propertycloud PR #1199 (PC-2847) committed
+`docs/adoption-intake.md` a commit before the elicitation guard ever landed there, on a fresh
+adoption; self-verify stayed green the whole time, because nothing compared commit order, only
+ledger content, and a human reading the diff caught it. `scripts/elicitation-provenance.mjs`
+(R28) now also checks, by commit ancestry rather than by date, that the guard's own landing
+commit precedes the oldest commit of `docs/adoption-intake.md`, `docs/adoption-assessment.md`
+and `.standards-version` - required, blocking. Exempted whenever `.standards-version` already
+existed the commit before the guard's own commit: the update-to-latest shape, a repo catching
+up a guard the standard did not carry when it first aligned, not a fresh run that skipped a
+step.
+
 ## 1.0.6 - 2026-09-03
 
 ### One marker says a human has not looked yet (2026-09-03)
