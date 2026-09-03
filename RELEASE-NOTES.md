@@ -13,6 +13,25 @@ now, nobody mistakes a draft for a decision just because it reads like one. `sel
 now reports how many files still carry that marker, right next to the adoption percentage,
 without changing the percentage itself.
 
+## Unreleased
+
+**Five holes a real adoption found in the guards and workflows, closed upstream.** A
+private monorepo adopted the standard and, in the same day, fixed its own copy of the shipped
+guards in five places; each fix is now the shipped one. The remote-database guard sees
+migration and seed runners (`pnpm migrate`, `prisma migrate deploy`, `rails db:migrate` and
+their kin) and judges them by the host their environment would hand them - and refuses when
+it cannot see a host at all, rather than assuming the best. The elicitation guard refuses
+every gated write while its points file is unreadable instead of treating a broken file as an
+empty one, and reads the attached spellings of a rename's target flag. The CI-secrets guard's
+`gh api` match is written in the regex dialect it claimed. The secret-scan workflow verifies
+the gitleaks download against the release checksums, and the spec-guard workflow runs the
+backlog archive check that the manifest already required and declares a read-only token.
+Two calls in the runner guard - the fail-closed no-host rule and what a bare assignment
+carries forward - are the maintainer's to confirm and are named in the changelog. Every guard
+now splits a command on a lone `&` as well, and a runner's read-only flag is trusted only
+where it reaches the program it names, not after a package-manager script. The
+dashboard also loses a duplicate masthead control and names surfaces by their repo slug.
+
 ## 1.0.8 - 2026-09-03
 
 **A real adoption on a large monorepo found three defaults nobody had asked for and one

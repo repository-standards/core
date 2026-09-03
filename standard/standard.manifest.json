@@ -355,10 +355,10 @@
       "sha256": {
         "elicitation-guard.mjs": "350c085b93828bd4620b3d457193ba0262acf7b5d12c09c71c51e147481bf959",
         "guards.sh": "e2cb07f370a7875f10f3f5eef5529fe6be1ab85b7ccf52027dffac564d9b188e",
-        "lib.sh": "d8062f798684fb4a8edc7e4b0c588e9f181297cd5ecf64c0f37a201bf62f4325",
+        "lib.sh": "19cf94f51f4d498b2f5c1184fdf3d94b25e50b0d333812fb8b7bab74ec37e7e3",
         "no-ci-secret-writes.sh": "355ad81d57f4bbb3f0c933d1567bf2f407c2dd10c3d04c542c1b14f67d02e0ee",
         "no-force-push.sh": "47c1d0ad0612ef23096d95a0fd589d7954e02593fe05d58d96d129b39a2515b3",
-        "no-remote-db-writes.sh": "62fa13670857ff1635aef144a364727277119b8f18ebcb43268e52dfd233dde1"
+        "no-remote-db-writes.sh": "90a8e9044b386f7384b14a765c8e484fa1fc51bb9eb7262fd1ada7c83a4e620c"
       }
     },
     {
@@ -369,7 +369,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R19",
-      "sha256": "83effcf2942d8953c18c9df43502fbc72404a0b662283095d910118eceb8e791"
+      "sha256": "d62bc7953462ce477d40185b4e5ec5d16e3647ba70c0181008b89968a1edccd9"
     },
     {
       "path": "docs/PRINCIPLES.md",

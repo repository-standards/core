@@ -120,6 +120,13 @@ check "${DB}" DENY  'export PGHOST=prod-db.example.com; psql -c "DROP TABLE user
 check "${DB}" DENY  $'PGHOST=prod-db.example.com\npsql -c "DROP TABLE users"'
 check "${DB}" allow 'grep -rn "PGHOST=prod-db.example.com" docs/; psql -c "DROP TABLE t"'
 check "${DB}" allow 'export PGHOST=prod-db.example.com; PGHOST=localhost psql -c "DROP TABLE t"'
+# A lone `&` runs both sides too, so a search or a local client before it vouches for nothing;
+# the `&` of a redirection is not a separator.
+check "${DB}" DENY  'grep -rn "DROP TABLE" docs/ & psql -h prod-db.example.com -c "DROP TABLE t"'
+check "${DB}" DENY  'psql -h localhost -c "select 1" & psql -h prod-db.example.com -c "DROP TABLE t"'
+check "${DB}" DENY  'psql -h localhost -c "select 1"&psql -h prod-db.example.com -c "DROP TABLE t"'
+check "${DB}" allow 'psql -h localhost -c "DROP TABLE t" 2>&1 | tail -5'
+check "${DB}" allow 'psql -h localhost -c "DROP TABLE t" &> out.log'
 # Quoting a local host does not make it remote.
 check "${DB}" allow 'psql -h "localhost" -c "TRUNCATE t"'
 check "${DB}" allow "psql -h '127.0.0.1' -c \"DROP TABLE t\""
@@ -250,11 +257,23 @@ else
   # Reading a remote database is allowed, and the runners' read-only modes read - unless
   # `--reset` rides along.
   runner - - allow 'DB_HOST=prod-db.example.com pnpm migrate:status'
-  runner - - allow 'DB_HOST=prod-db.example.com pnpm migrate --dry-run'
+  runner - - allow 'DB_HOST=prod-db.example.com python manage.py migrate --plan'
+  runner - - allow 'DB_HOST=prod-db.example.com tsx migrate/index.ts --status'
+  runner - - allow 'DB_HOST=prod-db.example.com pnpm tsx migrate/index.ts --dry-run'
   runner - - allow 'DB_HOST=prod-db.example.com npx prisma migrate status'
   runner - - allow 'DB_HOST=prod-db.example.com bundle exec rails db:migrate:status'
   runner - - allow 'DB_HOST=prod-db.example.com flyway info'
   runner - - DENY  'DB_HOST=prod-db.example.com pnpm migrate:status --reset'
+  # A flag after a package-manager script lands at the end of whatever the script expands to.
+  runner - - DENY  'DB_HOST=prod-db.example.com pnpm migrate --dry-run'
+  runner - - DENY  'DB_HOST=prod-db.example.com pnpm seed-with-reset --status'
+  runner - - DENY  'DB_HOST=prod-db.example.com npm run db:seed --verify'
+  runner - - DENY  'DB_HOST=prod-db.example.com yarn migrate --status'
+  # A lone `&` separates: the read-only half vouches for nothing.
+  runner - DB_HOST=prod-db.example.com DENY  'pnpm migrate:status & pnpm migrate'
+  runner remote.env - DENY  'pnpm migrate:status&pnpm seed'
+  runner remote.env - allow 'pnpm migrate:status 2>&1 | tail -20'
+  runner remote.env - allow 'pnpm migrate:status &> status.log'
   # Words that look like the verb and are not, and reading about the runner rather than running it.
   runner - - allow 'pnpm update'
   runner - - allow 'npm run build'
