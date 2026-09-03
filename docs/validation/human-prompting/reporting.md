@@ -4,10 +4,11 @@ You typed something, the standard did not do the right thing, and you want that 
 happening to the next person. This page says exactly what to send.
 
 **If an agent just ran `align-to-standards` for you, it already offered to do this** - the
-`record-run` skill assembles the session and asks a single yes/no before sending anything.
-Read what it shows you and answer that instead of doing the extraction below by hand. This
-page is for everything else: a session `record-run` never got to close, or a report you would
-rather write yourself.
+`record-run` skill assembles the session and acts on whichever of the three you already
+picked at intake: sends it outright, shows you the whole batch once for a final yes/no, or
+does not fire at all. Read what it shows you, if anything, and answer that instead of doing
+the extraction below by hand. This page is for everything else: a session `record-run` never
+got to close, or a report you would rather write yourself.
 
 **Every report earns a permanent row** in [`prompts.md`](prompts.md), and it keeps that row
 after the fix - which is what turns it from an anecdote into a regression test.

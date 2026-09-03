@@ -185,16 +185,19 @@ it says.
    `.claude/skills/` - ADR-045's correction). This session is itself the
    evidence the human-prompting corpus needs and cannot get any other way; an
    abandoned or failed run is more valuable than a clean one and the offer must say
-   so before asking anything. `adopt.evidence` decides whether this step runs at all:
-   only **send an anonymised excerpt** reaches it - **send nothing** means skip it
-   and say you are skipping it. Read the answer from the **Evidence** line of
-   `docs/adoption-intake.md`, not from memory: a later wave or a compacted session
-   has nothing else to read it from. No line, or a `pending` ledger row, means the
-   question was never reached - put it now, as the intake round does, before
-   assembling anything. The scrub `record-run` performs anyway is a condition
-   of that consent, so an excerpt that fails it has no yes. Beyond that gate the
-   levels are consent-gated per item, exactly like step 7 - never automatic, and
-   "no" leaves the assembled record local and costs the user nothing.
+   so before asking anything. `adopt.evidence` decides whether this step runs at all,
+   and how it behaves once it does: **send it** and **send it, once I have read it**
+   both reach it - **send nothing** means skip it and say you are skipping it. Read
+   the answer from the **Evidence** line of `docs/adoption-intake.md`, not from
+   memory: a later wave or a compacted session has nothing else to read it from. No
+   line, or a `pending` ledger row, means the question was never reached - put it
+   now, as the intake round does, before assembling anything. Under **send it**,
+   `record-run` scrubs and sends with no further question. Under **send it, once I
+   have read it**, `record-run` shows the whole assembled batch once and asks
+   exactly one final yes/no before sending. Neither is per item (ADR-061) - unlike
+   step 7's per-issue consent, one intake answer governs everything this step
+   assembles, and "no" or **send nothing** leaves the assembled record local and
+   costs the user nothing.
 
 9. **Send the adoption ping (ADR-047).** At every wave close, alongside steps 7 and 8 -
    unlike them, **informed, not asked**: never wait for a yes. First check

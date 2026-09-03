@@ -347,12 +347,13 @@ a pull request, and the tail of a phase file is exactly what a long run does not
 
 Call `AskUserQuestion` for point `[adopt.evidence]` - header **Evidence**, `metadata.source` `adopt.evidence` - and the question:
 
-> This session can be kept as evidence for the standard - the questions it asked, the answers you gave, what it produced. Send an anonymised excerpt upstream as a pull request, after you have read it?
+> This session can be kept as evidence for the standard - the questions it asked, the answers you gave, what it produced. Send an anonymised excerpt upstream as a pull request?
 
-Options, in order: **send an anonymised excerpt** (`record-run` assembles it with machine paths
-and identity scrubbed and the repository named only as `/git/<repo>`, you read and edit it before
-anything is sent, and it reaches upstream as a pull request you can see) / **send nothing** (no
-excerpt and no run record; only the provenance ledger the guard requires is written)
+Options, in order: **send it** (recommended - `record-run` assembles it with machine paths and
+identity scrubbed and the repository named only as `/git/<repo>`, and sends it; the scrub is the
+safeguard, not a read gating every send) / **send it, once I have read it** (same assembly, held
+for one more yes after you have seen it) / **send nothing** (no excerpt and no run record; only
+the provenance ledger the guard requires is written)
 
 Sending leads because the other order was tried. The first shape of this list led with keeping
 the excerpt local and closed with "record nothing". Adopters took the last
@@ -360,19 +361,20 @@ answer, and the corpus this question exists to feed got nothing from adoptions t
 list whose safe-looking answer is the one that sends nothing collects nothing, so the question now
 asks one thing and says what that answer sends.
 
-No option is recommended and none may be inferred or stubbed: consent an agent supplied is not
-consent, and `allowed_provenance` says so (ADR-055). Anonymisation is not an option
-because it is not optional: `record-run` scrubs paths and identity at every level, and here that
-scrub is a condition of the consent rather than a courtesy of the tooling, so an excerpt that
-fails it was never agreed to. A separate anonymised option existed because the first real
-adopter asked for exactly this and the list could not say it; now the only sending answer says it.
+**send it** is the recommended default (ADR-061, superseding ADR-055's `recommended: null` for
+this point). None of the three may be inferred or stubbed: consent an agent supplied is not
+consent, and `allowed_provenance` stays `human` alone - recommending an answer is not the same as
+choosing it for the person. Anonymisation is not an option because it is not optional: `record-run`
+scrubs paths and identity at every level regardless of which of the three is picked.
 
-The answer governs step 8 at the close and nothing else. `record-run` assembles and offers only
-under **send an anonymised excerpt**, and still takes a per-item yes on the exact file before
-anything is sent (ADR-045) - the intake answer is permission to assemble and to come back, not
-permission to send. The adoption ping is not on this list: it carries no session content, goes
-out on its own at every wave close and is disclosed rather than asked (ADR-047), with
-`REPOSTDS_NO_TELEMETRY` as its only switch.
+The answer governs step 8 at the close and nothing else, and it now governs the whole of step 8 -
+not only whether `record-run` assembles anything, but whether it asks again once it has. Under
+**send it**, `record-run` assembles, scrubs and sends without a further question. Under **send it,
+once I have read it**, `record-run` shows the whole assembled batch once and asks exactly one
+final yes/no before sending (ADR-061) - never one yes/no per item, the pattern this replaces.
+Under **send nothing**, `record-run` does not fire. The adoption ping is not on this list: it
+carries no session content, goes out on its own at every wave close and is disclosed rather than
+asked (ADR-047), with `REPOSTDS_NO_TELEMETRY` as its only switch.
 
 Records to `docs/adoption-provenance.md`: the `adopt.evidence` row takes the state, who answered,
 the date, and `docs/adoption-intake.md` as where the answer landed. The answer itself goes on the
