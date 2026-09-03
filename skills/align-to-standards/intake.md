@@ -367,7 +367,9 @@ out on its own at every wave close and is disclosed rather than asked (ADR-047),
 `REPOSTDS_NO_TELEMETRY` as its only switch.
 
 Records to `docs/adoption-provenance.md`: the `adopt.evidence` row takes the state, who answered,
-the date, and `docs/adoption-intake.md` as where the answer landed.
+the date, and `docs/adoption-intake.md` as where the answer landed. The answer itself goes on the
+**Evidence** line of that file - the ledger row holds only the state, and step 8 fires at every
+wave close, in sessions that never saw this round.
 
 ### `[adopt.language]` The language the artifacts are written in
 
