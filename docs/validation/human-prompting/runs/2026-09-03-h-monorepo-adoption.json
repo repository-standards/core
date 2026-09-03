@@ -1,0 +1,191 @@
+{
+  "$about": "One adoption of a private company monorepo - a web and mobile product for a property business: TypeScript, pnpm workspaces, a Next.js web app, an Expo mobile app and several Fastify services, with decision records, specs, a tracker and agent hooks of its own. Run by the repository's owner in one Claude Code session (Claude Sonnet 5) on 2026-09-03, from the shipped line A1, 09:51 UTC to the pull request the same afternoon. The standard was 1.0.2 when the run started; the repository updated to 1.0.6 the same afternoon. The owner chose 'keep + send anonymised' at intake and asked for this contribution at the end of the day. Every time below is UTC, as the session log records it.",
+  "$scoring": "Scored by the agent that ran the adoption, from its own session log, at the owner's request - not by a separate scorer. That is the weakest scoring this corpus admits, and the reason every claim below points at a time in the transcript rather than at a recollection. Where the owner's account and the log disagree - they do, once, and it is the headline - both are recorded as they stand.",
+  "$anonymisation": "The target is described by shape, never named: product, company, GitHub organisation, tracker project key and every person are replaced. Everything the owner typed is reproduced verbatim including typos; a tracker key inside a question reads [KEY] and a knowledge-base link reads [knowledge-base URL]. Technology names stay because the finding is about a technology layer, and the questions are quoted as asked, so the counts the router detected (CODEOWNERS, ADRs) stay inside them.",
+  "$elicitation": {
+    "provenance": "human",
+    "transcript": "docs/validation/human-prompting/transcripts/2026-09-03-h-monorepo-adoption.md",
+    "questions_asked": 12,
+    "asked_claims": 1,
+    "$why": "Every question is quoted verbatim from the AskUserQuestion calls, with its options and the answer given. Twelve questions in three rounds of four, 09:55 to 09:59 - the batched shape, which is what the headline finding turns on."
+  },
+  "$stack_finding": "The accept path of the Layer 2 offer ran for the first time in this corpus, and it did not survive contact with the person who accepted it. The router detected the registered technology, offered the Node stack as the second of four questions in one card, recommended AGAINST it ('Layer 1 only now'), got 'Layer 1 + Node stack' anyway, and applied it - a manifest, a version file, two workspace keys and two exceptions, authored in one commit of a nine-commit batch seventy minutes after the answer. Seventy minutes after that commit the owner asked how the Node stack had been taken into account 'because I do not see it'; at the end of the day they reported it had never been adopted and never asked about, and asked for the standard to be fixed. The log says otherwise on the asking, and the tree says otherwise on the adopting, and neither fact reached the person. The corpus should count this as the failure it looks like from the owner's chair: consent given inside a four-question card that nobody remembers, on an application that produced nothing a reviewer recognises. Two concrete defects underneath: (1) the brownfield intake has no declared elicitation point for the Layer 2 offer - the only point gating stack.manifest.json is green.stack, the greenfield one, whose question ('Which stack, and which profile - core or scale?') this run never asked; the run satisfied the guard by filing the 09:55 answer under green.stack in the provenance ledger, so the gate held on a borrowed point and a replay cannot assert which offer was made; (2) nothing in the flow ever says 'the stack is in' - not the run summary, not the PR body, not a commit message a reviewer reads as such. See docs/open-questions/stack-offer-on-adoption.md and the backlog row STACK-OFFER-2.",
+  "$defaults_finding": "A private corporate monorepo had to except its way out of three shipped defaults nothing asked about: the one-time record-run skill landed in the client tree, the dashboard workflow's push trigger landed in a repository whose dashboard is deployed nowhere, and docs/sprints/ was created for a team whose tracker answer at 09:59 ('keep Jira, backlog bridges') had already said it does not run the standard's sprints. All three were answered the cheap way, with a manifest exception, and the defaults stay in standard/ until someone files them - backlog row ADOPT-DEFAULTS-1.",
+  "$update_finding": "The standard released four times while the run was in progress (1.0.2 to 1.0.6, one working day) and one update-to-latest run carried the repository across all four at 13:55 without touching the content-excepted files. The 1.0.6 release note for ADR-058 refers to this adoption's marker pass. The update path worked; it is recorded because nothing else in the corpus has exercised a four-release jump on a live adoption.",
+  "observations": [
+    {
+      "prompt": "A1",
+      "target": "repo: private property-business monorepo - TypeScript, pnpm workspaces, Next.js web app, Expo mobile app, several Fastify services; its own decision records in a table format, Spec Kit specs, a Jira project, CODEOWNERS, its own agent hooks",
+      "mode": "full-loop",
+      "language": "entry line and all twelve answers in English; every later owner turn in Polish, with typos",
+      "live_turns": true,
+      "verdict": "partial",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "turns": [
+        {
+          "who": "user",
+          "said": "adopt this repo to repositorystandards.com"
+        },
+        {
+          "who": "agent",
+          "said": "Read the standard, measured the repository against it and, before writing anything, asked twelve questions in three rounds of four inside four minutes (09:55, 09:57, 09:59): intent, Layer 2, profile, appetite; language, layout, records, personas; tracker, guards, commit plan, evidence. Every question carried a detected fact and a recommended option. The Layer 2 question was the second of the first four, headed '[technology / Layer 2]' with no point id, and its recommended option was 'Layer 1 only now'.",
+          "asked": true,
+          "checked": true,
+          "suggested": true,
+          "note": "Twelve questions in four minutes is the batched shape the corpus already worries about (A58 is the opposite failure: zero questions). The owner answered all twelve, three of them in free text, so the gate worked as a gate. What batching cost shows up under A60: an answer given inside a four-question card at 09:55 was not something the owner remembered at 12:14, nor at the end of the day."
+        },
+        {
+          "who": "user",
+          "said": "migrate (Recommended) / Layer 1 + Node stack / adjust fully to standard, we dont need codeowners here as monorepo is handled by everyone / single PR"
+        },
+        {
+          "who": "agent",
+          "said": "Applied Layer 1 in eight per-concern commits and the Node stack layer in one - stack.manifest.json, .nvmrc, two pnpm-workspace.yaml keys and two stack exceptions for biome.json and vitest.config.ts - all nine authored 11:04-11:05 after the working tree had held the stack manifest since 10:21. By the pull request: drift 0 at 93% adopted, five entries in standard.manifest.json's exceptions (three from the owner's critiques, one for a guard fix the review asked for, one for a skill), every drafted or empty artifact marked for a human with a backlog row each.",
+          "asked": false,
+          "checked": true,
+          "suggested": true,
+          "note": "Drift 0 was real, the guards ran, and the percentage is the honest one (ADR-038) with the missing 7% counted in the backlog. The verdict is partial because of what the owner could see of it - A60."
+        }
+      ],
+      "outcome": "drift 0, 93% adopted; one pull request, rebased once and self-reviewed three times; the Node stack layer applied and invisible",
+      "evidence": "transcript 09:51-09:59 (the twelve questions verbatim); commit times 11:04-11:05 in the transcript's 10:00-12:14 section; the closing figures in its 13:46-15:00 section"
+    },
+    {
+      "prompt": "A60",
+      "target": "repo: the same monorepo, 2h23 into the run, the Node stack commit authored seventy minutes earlier",
+      "mode": "full-loop",
+      "language": "Polish, typos",
+      "live_turns": true,
+      "verdict": "fail",
+      "asked": false,
+      "checked": true,
+      "suggested": false,
+      "turns": [
+        {
+          "who": "user",
+          "said": "i jeszcz eopdoweidz w jaki sposob wziales tu pod uwage repository-standards/node bo nie widze"
+        },
+        {
+          "who": "agent",
+          "said": "The session's usage limit expired on the same second; the reply was a limit notice. On resuming at 13:46, answered at 13:58 that the Node stack had a documented path in docs/adoption-intake.md and pointed at the stack commit authored at 11:05.",
+          "asked": false,
+          "checked": true,
+          "suggested": false,
+          "note": "The answer was accurate and it did not land: at the end of the day the owner's instruction for this contribution reads 'nie bylo automatycznej adopcji node repozytorium i nie psytal o to nawet' - it was never adopted and never asked about. By the log both happened, and the commit predates the question by seventy minutes. Both accounts are kept because the disagreement is the finding: a consent the person does not remember, on an application the person could not see, is the same failure as no consent and no application. What the accept path produced was a manifest, a version file and two exception entries inside a nine-commit batch - nothing a reviewer scrolling the diff recognises as 'the Node stack is in', and nothing in the run summary or the PR body said it either. Underneath: the brownfield intake declares no elicitation point for the Layer 2 offer. The only point gating stack.manifest.json is green.stack, a greenfield point whose question this run never asked; the run filed the 09:55 answer under it in the provenance ledger and the guard was satisfied. The gate held on a borrowed point, and a replay cannot tell which offer was made."
+        }
+      ],
+      "outcome": "the owner's end-of-day account contradicts the log on the asking and the tree on the adopting; filed upstream as STACK-OFFER-2 and as evidence for STACK-OFFER-1",
+      "evidence": "transcript 09:55 question 2 (offered, recommended against, accepted); 10:00-12:14 section (nine commits at 11:04-11:05, the 12:14 turn and the limit notice); the owner's end-of-day instruction quoted at the top of the transcript"
+    },
+    {
+      "prompt": "A61",
+      "target": "repo: the same monorepo, mid-run, .claude/skills/record-run/SKILL.md shipped into the client tree by the adoption",
+      "mode": "full-loop",
+      "language": "Polish, typos",
+      "live_turns": true,
+      "verdict": "partial",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "turns": [
+        {
+          "who": "user",
+          "said": "dodatkowo, record-run skill nie powinien byc shippowany do repozytirum klienta. To jest jednorazowy skill z adopcji przeciez i tyle - ewentualnie pozniej prz re-adopcji ale to znowu nie powinno byc u klienta w repo"
+        },
+        {
+          "who": "agent",
+          "said": "Agreed, and recorded a content exception for the skill in standard.manifest.json with the owner's reason. Did not take the default out of the shipped tree upstream, and did not say that the default is the defect.",
+          "asked": false,
+          "checked": true,
+          "suggested": true,
+          "note": "The exception mechanism is cheap and visible; the fix is upstream and nobody filed it. Same route for A62 and A63 - three shipped defaults, three exceptions, zero upstream issues until this contribution."
+        }
+      ],
+      "outcome": "excepted locally; the default stays in standard/ - ADOPT-DEFAULTS-1",
+      "evidence": "transcript 12:06 and the 13:46-15:00 section; the repository's standard.manifest.json exceptions list (content, .claude/skills/record-run/SKILL.md)"
+    },
+    {
+      "prompt": "A62",
+      "target": "repo: the same monorepo, mid-run, .github/workflows/dashboard.yml with its push trigger shipped into a private repository whose dashboard is deployed nowhere",
+      "mode": "full-loop",
+      "language": "Polish, typos",
+      "live_turns": true,
+      "verdict": "partial",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "turns": [
+        {
+          "who": "user",
+          "said": "dashboard build dodane do ci/cd przeciez to porjekt korporacyjny wiec dahboard nigdize nie bediz edeployowany chyba ze zazyczy sobie tego developer ale to ich spara, autatycznie nie powinno sie ot dziac"
+        },
+        {
+          "who": "agent",
+          "said": "Agreed, and recorded a key exception for the workflow's on.push trigger. The workflow file itself stays, buildable on demand.",
+          "asked": false,
+          "checked": true,
+          "suggested": true,
+          "note": "The intake's twelve questions never asked whether the dashboard is deployed anywhere. A private repository is the common case for an adoption run by a company; a build-on-push that publishes nothing is a CI minute spent on every commit, forever, unless somebody notices."
+        }
+      ],
+      "outcome": "excepted locally; the default stays in standard/ - ADOPT-DEFAULTS-1",
+      "evidence": "transcript 12:08 and the 13:46-15:00 section; the repository's standard.manifest.json exceptions list (key, .github/workflows/dashboard.yml#on.push)"
+    },
+    {
+      "prompt": "A63",
+      "target": "repo: the same monorepo, mid-run, docs/sprints/ created for a team that had answered 'keep Jira, backlog bridges' at 09:59",
+      "mode": "full-loop",
+      "language": "Polish, typos",
+      "live_turns": true,
+      "verdict": "partial",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "turns": [
+        {
+          "who": "user",
+          "said": "dodaktowo, jesli ktos nie uzywa sprints naszych (a tak jest wp rzypadku tego repo) to katalog sprints nie powinien sie tworzyc"
+        },
+        {
+          "who": "agent",
+          "said": "Removed docs/sprints/ and recorded content exceptions for the two sprint skills (sprint-open, timeline-update).",
+          "asked": false,
+          "checked": true,
+          "suggested": true,
+          "note": "The tracker answer two hours earlier already contained this information. Nothing connected 'keep Jira, backlog bridges' to whether docs/sprints/ gets created, so an answer the owner gave was not used and had to be given again as a complaint."
+        }
+      ],
+      "outcome": "removed and excepted locally; the intake answer that should have prevented it is not wired to the scaffold - ADOPT-DEFAULTS-1",
+      "evidence": "transcript 09:59 question 9, 12:10 and the 13:46-15:00 section; the repository's standard.manifest.json exceptions list (content, sprint-open and timeline-update)"
+    },
+    {
+      "prompt": "A64",
+      "target": "repo: the same monorepo, 1h27 into the run, drafted decision records, personas and specs committed with no marker saying a human has not looked",
+      "mode": "full-loop",
+      "language": "Polish, typos",
+      "live_turns": true,
+      "verdict": "pass",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "turns": [
+        {
+          "who": "user",
+          "said": "zobacz na agentow z repository standards i nowe PRy ktore oznaczaja decyzje i aretekakty ktore nie zostlay zdecydowane przez czlowieka jako needs review czy jakos tak"
+        },
+        {
+          "who": "agent",
+          "said": "Marked every drafted or empty artifact for human review within twelve minutes, with what it was drafted from, which owner role confirms it and a backlog row each; kept every drafted decision record at Proposed. The repository's update to 1.0.6 the same afternoon brought ADR-058's single-marker rule and the markers followed it.",
+          "asked": false,
+          "checked": true,
+          "suggested": true,
+          "note": "The one turn in the run where the owner asked for something the standard was releasing that same day (1.0.3's ADR-057, then 1.0.6's ADR-058). The 1.0.6 changelog entry refers to this adoption's marker pass. Recorded as pass on the marker work; the fact that the owner had to ask for it at 11:18 belongs to the 1.0.2 baseline the run started from, not to the agent."
+        }
+      ],
+      "outcome": "every drafted or empty artifact carries one marker and one backlog row; the standard shipped the same rule while the run was in progress",
+      "evidence": "transcript 11:18 and the marker commit at 11:30; the 13:46-15:00 section (update to 1.0.6); CHANGELOG 1.0.6, ADR-058 entry"
+    }
+  ]
+}
