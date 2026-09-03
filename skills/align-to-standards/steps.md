@@ -213,3 +213,21 @@ it says.
     holds the `record-run` consent to the intake round for the same reason, where the answer
     is still cheap to give.
 
+    **If this wave landed a stack layer, name it in both the run summary and the PR body -
+    do not let it land silently.** The h run (2026-09-03) offered the stack, applied it as a
+    manifest inside a nine-commit batch, and the owner - reading the same PR the offer's
+    consent produced - reported at the end of the day that the stack was never adopted at
+    all: the application was invisible to the person reviewing it, which is the same failure
+    as the consent that was invisible to the person giving it (`[adopt.stack]`, above), one
+    step later. A reviewer reads silence as "nothing changed here"; say the opposite when it
+    is true. Add one explicit line, wherever the wave's other landed items are already listed:
+
+    > Stack: <technology> Layer 2 landed (`stack.manifest.json` + N files)
+
+    - a registered stack names the stack (`stack: <name>` in its `stack.manifest.json`) and
+      counts the files layer2.md applied;
+    - the no-match fallback names the technology and points at `docs/stack-decisions.md`
+      instead of a manifest;
+    - a wave that touched no stack says nothing here - this line exists to make a landing
+      visible, not to pad a summary with a layer nothing happened to.
+

@@ -166,8 +166,9 @@ Before any phase runs, one intake pass:
      what it pins is a supply-chain decision belonging in an ADR. Say that boundary out loud
      rather than letting the user assume 79 repos are in scope or that none of them are.
 
-     **Look the technology up in `stacks.json` before making the offer**, and say the true
-     thing:
+     **Look the technology up in `stacks.json` before making the offer**, then call
+     `AskUserQuestion` for point `[adopt.stack]` (below) **as its own round** - never as one
+     of several questions in the same card - and say the true thing:
      - a registered stack: "this repo is <technology> - the registry has a boot-verified
        stack for it, so I'll offer those best practices alongside Layer 1; ok?"
      - no entry: "this repo is <technology>, and the registry has no stack for it yet.
@@ -181,6 +182,13 @@ Before any phase runs, one intake pass:
      Promising "the <technology> best practices from the registry" before the lookup makes
      a promise the registry cannot keep, and the user only finds out when the offer
      quietly becomes something else.
+
+     **Never fold this into the same card as Intent, Evidence, Language or any other
+     question in this round.** The h run (2026-09-03) bundled it as the second of four
+     questions in one card; it was accepted and applied, and the owner reported at the end
+     of the day that the stack had never been offered at all - a batched answer is not one
+     the person who gave it can find again. One offer, one turn, `metadata.source`
+     `adopt.stack` on its own.
 
      **"We have not decided yet" is a legal answer on a greenfield, and the honest one more
      often than the question implies** - the greenfield phase is explicitly *not* stack-first,
@@ -414,6 +422,32 @@ Options, in order: **confirm the detection** (recommended - you have the evidenc
 There is no answer here that converges more than the other. `scale` is not a fuller adoption than `core` - it is a different shape (ADR-011), with gates a repo where one person carries each piece end to end has no use for. Recommending it because it is *more standard* is how a repository ends up measured against a process nobody runs.
 
 **Ask it by hand-off, not by headcount and not by sprints.** The first repository this was put to answered neither option - it typed its own: several people, no sprints, tasks taken off a backlog. That is `scale` on the only axis that decides anything (work changes hands, so the gate has to block rather than advise) and reads as `core` on both of the axes that do not. Sprints are not what `scale` means: `docs/sprints/` and `sprint-guard` are `required: false` even there, so a team that does not run sprints is not excused from the profile and does not owe the artifacts.
+
+### `[adopt.stack]` Offering the detected technology's Layer 2
+
+Fires **in the intake round, as its own `AskUserQuestion` call - never bundled inside the
+same card as `adopt.intent`, `adopt.evidence`, `adopt.language` or any other question in
+this round**, once the Technology step above has looked the detected technology up in
+`stacks.json`. The h run (2026-09-03) is the reason this is spelled out rather than left to
+follow from "each block is a real `AskUserQuestion` call": the offer there was asked as the
+second of four questions folded into one card, and by the end of the day the owner reported
+never having been asked about it at all. A card is not a transcript a person can replay from
+memory - one question, one turn, is what makes an answer something the person who gave it
+still recognises as theirs an hour later.
+
+Call `AskUserQuestion` for point `[adopt.stack]` - header **Stack**, `metadata.source` `adopt.stack` - and the question, filled with the lookup this same step already did:
+
+> This repo is <technology>. [registered] The registry has a boot-verified stack for it - apply it alongside Layer 1? / [not registered] The registry has no stack for <technology> yet; Layer 1 stays unaffected, and I can research best practices and write them into your repo as your own record instead, with an offer to file a stack request upstream - do that?
+
+Options, in order: **apply it** (recommended - a registered stack lands its boot-verified Layer 2, or an unregistered one lands its researched record; either way this is the point that gates `stack.manifest.json`, so nothing is applied without it) / **not now** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point)
+
+This is a `repository`-scoped point asked once, but it must be re-asked, as its own round,
+for every distinct stack the Technology step found - "more than one legitimate stack can
+coexist in the same repo" above applies here too: a "no" for one stack does not answer for
+another found alongside it.
+
+Records to `docs/adoption-provenance.md`: the `adopt.stack` row takes the state, who
+answered, the date, and `stack.manifest.json` as where the answer landed.
 
 ### `[adopt.existing-material]` Informal material already in the repo
 
