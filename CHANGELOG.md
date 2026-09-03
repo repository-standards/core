@@ -17,6 +17,28 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.13 - 2026-09-03
+
+### The agent guards no longer fail open on a payload they cannot parse (2026-09-03)
+
+Every early exit in these guards denies, on the same reasoning: a guard that cannot read
+what it would check has not checked it - a missing `jq`, an unreadable `lib.sh`, a points
+file that will not parse. Unparseable stdin JSON was the one exception, in the elicitation
+guard and in the three shell guards that enforce the standing bans on remote-database
+writes, force-push and CI-secret writes: a truncated or malformed `PreToolUse` payload
+passed silently rather than being refused.
+
+`elicitation-guard.mjs` now denies instead of allowing on a `JSON.parse` failure. The shell
+guards share a `read_command()` helper in `lib.sh`; a well-formed call with no command and
+unparseable input both used to print nothing, and only `jq`'s exit code tells them apart, so
+each guard now checks it before trusting an empty command as "nothing to look at" rather than
+"could not look". `read_command()` also stops leaking `jq`'s own parse-error text to stderr,
+which would otherwise misscore the new cases in `verifyAgentGuards.sh`'s stderr-sensitive
+harness as broken rather than as the intended denial. Coverage lives in that existing,
+already CI-wired harness: a malformed-payload case for each of the DB, force-push and
+CI-secrets guards, one through the `guards.sh` dispatcher, and one for the elicitation
+guard's own stdin, distinct from its existing malformed-points-file case.
+
 ## 1.0.12 - 2026-09-03
 
 ### The repository that ships the elicitation guard never ran it (2026-09-03)

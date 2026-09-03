@@ -3,6 +3,16 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.13 - 2026-09-03
+
+**The guards that refuse a bad write now refuse the write when they cannot even read the
+request.** Every one of them - the remote-database, force-push and CI-secrets guards, and
+the one that makes an adoption ask you things - was written to deny on any condition that
+stops it from checking properly: a missing tool, an unreadable helper file, a broken points
+list. One case slipped through that pattern in all four: a request the guard could not parse
+as JSON at all, which a truncated or malformed call would produce, passed silently instead.
+It now denies, same as every other case it cannot read.
+
 ## 1.0.12 - 2026-09-03
 
 **The check that makes an adoption ask you things now runs during the adoption.** The guard
