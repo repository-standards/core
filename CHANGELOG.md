@@ -17,6 +17,28 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.5 - 2026-09-03
+
+### Every call site names its point beside the call, and the check reads what the guard reads (2026-09-03)
+
+`elicitation-points-check` accepted a heading plus the tool's name anywhere in the file as a
+wired point - which is what four sites left on the old header contract looked like, and they
+passed. It now reads the block each point owns and requires the id named beside the call,
+`metadata.source` `<id>` or the header form every skill before 1.0.4 carried, so a site that
+forgets the field fails the build instead of an adopter's session. The recommended-first rule
+reads the whole option list rather than one physical line and compares the first bold option
+whole: "do not migrate yet" no longer passes for "migrate". The shipped elicitation README
+states the `metadata.source` contract, the spec-specify, spec-update and spec-reconcile blocks
+each name their point, and the transcript checker gains a fixture for the field it reads first.
+
+### The evidence answer is written where the close reads it (2026-09-03)
+
+`adopt.evidence` decides whether step 8 assembles a run record, and step 8 fires at every wave
+close - in sessions that never saw the intake round. The intake file gains an **Evidence**
+line, step 8 reads it rather than remembering it, and a missing line or a `pending` row means
+the question is put now, not assumed. `record-run` no longer reads as licensed to ask again
+after **send nothing**.
+
 ## 1.0.4 - 2026-09-03
 
 ### The evidence question asks one thing and leads with sending (2026-09-03)
