@@ -47,7 +47,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R2",
-      "sha256": "a11d0a77bea82b39530e7c13493723c711fd6e5969acbdb8f05f77e08b89309e"
+      "sha256": "a6b452829afc611f770d8a75985cdb36a9d19b4e2c9bbf38989011f46b96022d"
     },
     {
       "path": "CLAUDE.md",
@@ -640,13 +640,13 @@
     },
     {
       "path": "scripts/elicitation-provenance.mjs",
-      "purpose": "the provenance ledger stays honest - every required point has a row, a deferred answer names a backlog row that exists, and a point stops being legally pending once something it gates has been written",
+      "purpose": "the provenance ledger stays honest - every required point has a row, a deferred answer names a backlog row that exists, and a point stops being legally pending once something it gates has been written; and the guard itself reached a commit before any Gate artifact it protects did",
       "adapt": "copy",
       "required": true,
       "profile": "core",
       "since": "0.9.23",
       "rule": "R28",
-      "sha256": "cdd72c39b67542066555ac13ccb3d537f59974e622052c4b4f49b346b787f51d"
+      "sha256": "09986d68610fbe817ba2ea690feff5315b76989c07070b006972d65f89feca7e"
     }
   ],
   "references": [
@@ -941,7 +941,7 @@
       "run": "node scripts/elicitation-provenance.mjs",
       "kind": "static",
       "blocks": true,
-      "purpose": "the record of who answered what is present and internally consistent",
+      "purpose": "the record of who answered what is present and internally consistent, and the guard that produced it landed before any Gate artifact it protects did",
       "profile": "core",
       "since": "0.9.23",
       "rule": "R28"

@@ -89,7 +89,7 @@ copied into your repository as folder READMEs that then age in place.
 | `scripts/sprint-guard.mjs` | proves the one-place invariant the pool and the sprints depend on | optional, scale | `copy` | [R15](../standard/SPEC.md) |
 | `scripts/backlog-archive-check.mjs` | a closed row reached the archive with a pointer to what its content became, instead of being deleted (ADR-051) | **required**, core | `copy` | [R15](../standard/SPEC.md) |
 | `scripts/generate-dashboard` | renders the work state - pool, sprints, timeline, records, changelog - as one static page for the people who never open the repository; index.mjs is the generator, src/ the page and password-gate material it inlines. A projection, never a second place work is tracked | optional, core | `copy` | [R15](../standard/SPEC.md) |
-| `scripts/elicitation-provenance.mjs` | the provenance ledger stays honest - every required point has a row, a deferred answer names a backlog row that exists, and a point stops being legally pending once something it gates has been written | **required**, core | `copy` | [R28](../standard/SPEC.md) |
+| `scripts/elicitation-provenance.mjs` | the provenance ledger stays honest - every required point has a row, a deferred answer names a backlog row that exists, and a point stops being legally pending once something it gates has been written; and the guard itself reached a commit before any Gate artifact it protects did | **required**, core | `copy` | [R28](../standard/SPEC.md) |
 
 ## `.claude/` - the procedures, in Claude Code's reference form
 
