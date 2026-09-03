@@ -17,7 +17,7 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
-## Unreleased
+## 1.0.8 - 2026-09-03
 
 ### The dashboard masthead has one navigational control, not two (2026-09-03)
 
@@ -36,6 +36,36 @@ same page reads `repository-standards/core` and `repository-standards/node` - tw
 names for the same two things, one click apart. The switcher now names each surface exactly
 as `stacks.json` and `CORE_REPO` already do (`owner/repo`), so the identity a reader lands on
 matches the one they picked from the dropdown.
+
+### The Layer 2 offer is its own question, asked once and landed visibly (2026-09-03)
+
+The h run (2026-09-03) walked the brownfield accept path for the first time: the stack was
+offered as the second of four batched questions with no declared point, recommended against,
+accepted, and applied inside a nine-commit batch - and the owner reported at the end of the
+day that it was never asked about and never adopted. `adopt.stack` is now declared in
+`standard/.claude/elicitation/points.json` as its own point on the brownfield path, asked as
+its own `AskUserQuestion` round rather than folded into another card, with the run summary
+required to say what landed rather than leaving it to the manifest alone. The point
+deliberately carries no `gate_globs` - sharing the greenfield route's stack point's globs
+broke that route's own gate in testing - so a stack answer filed under the greenfield point on
+a brownfield run still passes the mechanical guard; `tools/elicitation-replay-test.mjs` now
+carries a case naming that as a known limitation. Closes `STACK-OFFER-2`.
+
+### Three shipped defaults a private repo had to except (2026-09-03)
+
+The same h run named three more defaults it had to work around: the one-time `record-run`
+skill landed in the client tree, `dashboard.yml`'s push trigger built on every commit to a
+repo that never intended to deploy it, and `docs/sprints/` scaffolded for a team whose
+`adopt.tracker` answer, minutes earlier, said it does not run this standard's own sprint
+mechanism. `record-run` now lives at `skills/record-run/` in the standards repo - a transition
+skill run from a checkout, never shipped (ADR-045's correction). `dashboard.yml` ships
+`workflow_dispatch` only; a repository that wants it live on every push or on a schedule adds
+that trigger back locally. `docs/sprints/` and its three skills are now gated on the recorded
+`adopt.tracker` answer - external tracker, backlog bridges skips all four, the other two
+answers still land them, reusing the answer rather than asking twice. `tools/adoption-fixture-test.mjs`
+asserts record-run's absence and the push-free workflow against a materialised fixture repo;
+the sprint-scaffold skip is prose the align-to-standards skill follows while landing the tree,
+not a mechanical copy step, so no fixture exercises it. Closes `ADOPT-DEFAULTS-1`.
 
 ## 1.0.7 - 2026-09-03
 

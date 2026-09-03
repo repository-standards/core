@@ -3,6 +3,21 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.8 - 2026-09-03
+
+**A real adoption on a large monorepo found three defaults nobody had asked for and one
+offer nobody remembered making.** The Layer 2 stack offer now asks its own question, on its
+own turn, instead of riding inside a card with three other questions where an answer stopped
+being memorable to the person who gave it. `record-run` no longer ships into the repo you
+adopt into - it was always meant to run from a checkout of this repo, not live in yours.
+`dashboard.yml` no longer builds on every push by default; it waits to be run by hand unless
+you ask for more. And `docs/sprints/` no longer scaffolds itself for a team that already said,
+minutes earlier, that it tracks work somewhere else.
+
+**The switcher between dashboards picks up its manners.** It reads each surface's real name
+(`owner/repo`) instead of a friendly label that drifted from the page's own heading, and it no
+longer stands next to a second link doing the same job.
+
 ## 1.0.7 - 2026-09-03
 
 **Landing the guard is checked three ways, not just told once.** A real adoption committed
