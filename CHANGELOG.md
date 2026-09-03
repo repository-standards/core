@@ -17,6 +17,27 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.3 - 2026-09-03
+
+### An artifact the adoption drafted or stubbed says so at the top of the file (2026-09-03)
+
+ADR-057. A `suggest` or `stub` answer at adoption leaves work for a person, and the only
+record of it was one row per question in `docs/adoption-provenance.md`: a run that drafts
+twelve retroactive ADRs under one answer leaves one row there, each written `Status:
+Accepted`, and the file a colleague opens later carries no sign that nobody confirmed it. A team lead wanting to
+hand "confirm ADR-013" to the architect had one row saying *decision records, provisional*
+and had to split it by hand. A separate hand-written hand-off file was rejected as a fourth
+curated record of the same fact.
+
+Decided: the artifact opens with `[NEEDS REVIEW]` (what it was drafted from, which owner
+role confirms it, which backlog row tracks it) or `[STUB]` (nothing written, who fills it,
+the backlog row); one backlog row per marked file; a drafted decision record stays
+`Proposed`; the marker leaves in the commit that verifies the content, so `git log` is the
+record of who verified. The adoption percentage does not move (ADR-038) - `self-verify`
+gains a companion count of what still waits on a human, by role. The shipped convention, the
+checks and the dashboard section are three backlog rows under the new epic "Adoption leaves
+the human work visible"; nothing in the shipped tree changes in this release.
+
 ## 1.0.2 - 2026-09-02
 
 ### The release tag is created by CI instead of by memory (2026-09-02)
