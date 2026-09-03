@@ -1,6 +1,6 @@
 ---
 name: record-run
-description: Use at the end of an align-to-standards run, success or failure - offers to record the session as validation evidence for the human-prompting corpus (prompts.md + a scored runs/*.json file), at one of two consent levels, never sent without a per-item yes.
+description: Use at the end of an align-to-standards run, success or failure - offers to record the session as validation evidence for the human-prompting corpus (prompts.md + a scored runs/*.json file), at one of two consent levels, governed by the intake's adopt.evidence answer rather than a fresh per-item ask.
 ---
 
 # record-run
@@ -70,15 +70,21 @@ will only ever collect successes, and the corpus already knows what those look l
    will not send a transcript that carries their repo's structure and internal names. Level 1
    exists because a smaller yes beats a large no.
 
-5. **Show the exact file before anything is sent.** Open the assembled `prompts.md` rows
-   and/or `runs/*.json` content for the user to read - not a description of what would be in
-   it. Let them edit or delete a row or a turn before answering the consent question; nothing
-   goes out that they did not have the chance to change.
+5. **What happens next is governed by the `[adopt.evidence]` answer already given at intake
+   - never re-asked, never per item (ADR-061).**
+   - **send it** - scrub (step 3), then send. No further question fires here; the run report
+     (step 8) states what went out.
+   - **send it, once I have read it** - open the assembled `prompts.md` rows and/or
+     `runs/*.json` content for the user to read, whole batch at once, not a description of
+     what would be in it. Let them edit or delete a row or a turn, then ask exactly **one**
+     final yes/no for the whole batch: send now, or keep it local. A no keeps everything
+     local - the assembled file(s) remain wherever the user chooses (their own repo, a local
+     scratch file), never silently discarded.
+   - **send nothing** - this skill does not fire at all (step 1).
 
-6. **Ask consent, per item, the same pattern as `ADR-021`.** A ready title and body, one
-   yes/no per item, never automatic. No consent on an item means it stays out - the assembled
-   file(s) remain wherever the user chooses (their own repo, a local scratch file), never
-   silently discarded, never sent regardless.
+6. *(removed - folded into step 5. There is no per-item question; one intake answer governs
+   the whole run's worth of assembled items, the same way it would have if it had been asked
+   fifty times and answered the same way fifty times.)*
 
 7. **Where it goes, on yes.** A pull request to `repository-standards/core` adding the new
    `prompts.md` row(s) and the `docs/validation/human-prompting/runs/<date>-<slug>.json` file -
@@ -120,8 +126,10 @@ will only ever collect successes, and the corpus already knows what those look l
 
 - Not a substitute for `reporting.md` - a user who wants to write the report by hand, or
   found something this skill did not run for, still sends it exactly as that page describes.
-- Not automatic upstream delivery under any circumstance - consent is per run and per item,
-  never inferred from a prior yes.
+- Not automatic upstream delivery under **send nothing** or **send it, once I have read it**
+  without that final yes. Under **send it**, delivery follows directly from the intake
+  answer with no further question - a deliberate exception (ADR-061), not an oversight of
+  this rule.
 - Not a new artifact type - the destination is the human-prompting corpus that already
   exists (`prompts.md`, `runs/`), scored by the method it already documents.
 

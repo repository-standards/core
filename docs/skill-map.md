@@ -95,7 +95,7 @@ Finding one inside an adopted repo is a hand-copy mistake, and `self-verify` war
 | Skill | When to reach for it |
 |---|---|
 | `align-to-standards` | The single entry point for moving any repo onto the standard. Opens with an intake (step 0) - measure the repo's state, then one short question round (intent, technology + Layer 2 consent, appetite, plan-only vs execute) - then routes by target state - an empty repo to the greenfield phase, an existing unpinned repo to assessment-first onboarding, a pinned repo to update-to-latest or a stack add - and reconciles the repo against the shipped tree in payoff-ordered waves until drift 0. Never blind-copy; reconcile - copy-class artifacts land verbatim, merge/fill-class are adapted (the manifest's adapt classes). |
-| `record-run` | Use at the end of an align-to-standards run, success or failure - offers to record the session as validation evidence for the human-prompting corpus (prompts.md + a scored runs/*.json file), at one of two consent levels, never sent without a per-item yes. |
+| `record-run` | Use at the end of an align-to-standards run, success or failure - offers to record the session as validation evidence for the human-prompting corpus (prompts.md + a scored runs/*.json file), at one of two consent levels, governed by the intake's adopt.evidence answer rather than a fresh per-item ask. |
 
 ## If your agent is not Claude Code
 

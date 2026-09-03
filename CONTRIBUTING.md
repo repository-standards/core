@@ -152,11 +152,12 @@ inside, is worth more than anything the maintainer can write.
 - **Run an adoption.** Any `align-to-standards` session ends by offering `record-run`
   (a transition skill run from this repo's own checkout, `skills/record-run/` -
   it never ships into the adopted tree) - it assembles the session that just
-  happened, shows you exactly what it would send, and asks a single yes or no
-  at one of two consent levels
-  (prompts only, or the full run including the agent's own responses). A "no" leaves the
-  file on your machine and sends nothing. **A failed or abandoned run is more valuable
-  evidence than a clean one** - report it too.
+  happened at one of two content levels (prompts only, or the full run including
+  the agent's own responses), then acts on whichever of the three you already
+  chose when the session asked at intake: send it outright, show you the whole
+  batch first and ask one final yes/no, or send nothing. Nothing here is asked
+  a second time, per item, once that choice is made. **A failed or abandoned run
+  is more valuable evidence than a clean one** - report it too.
 - **Report by hand.** Ran into something odd, or want to send a session `record-run`
   never got to close? [`docs/validation/human-prompting/reporting.md`](docs/validation/human-prompting/reporting.md)
   says exactly what to send: what you typed, what you expected, what happened instead.

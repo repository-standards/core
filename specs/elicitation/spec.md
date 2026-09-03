@@ -95,6 +95,22 @@ question this point does not gate. `self-verify` is the marker's counter (declar
 [verify-engine](../verify-engine/spec.md)); this capability is the only one that
 cross-references what a marker names.
 
+### Session 2026-09-04
+
+- Q: `adopt.evidence` has always shipped with `recommended: null`, on the stance that consent
+  is never nudged (ADR-055). Should it stay that way? A: No, for this point specifically -
+  `adopt.evidence` now recommends `send it` (ADR-061). The no-recommendation stance was
+  protecting against an agent inferring or stubbing consent, which `allowed_provenance:
+  ["human"]` already forbids on its own; recommending an answer to a person who still has to
+  pick one of three is a different thing, and the owner's own repeated friction with this
+  question - answered once at intake and then re-asked per item, once per turn in the
+  session, downstream in `record-run` - is what the change is for.
+- Q: Does the general rule ("`null` is legal only where no such axis exists, which is
+  consent") still hold once one consent point declares a recommendation? A: No - it was
+  overbroad. The rule now names the actual reason `null` is required where it is required:
+  no leading answer exists for an identity claim like `record.participation`. `adopt.evidence`
+  is the documented exception, not a second silent case.
+
 ## Scope
 
 [`standard/.claude/elicitation/points.json`](../../standard/.claude/elicitation/points.json)
@@ -159,8 +175,12 @@ it as the known gap rather than claiming coverage.
   preference rather than a fact about the repository MUST forbid `inferred`.
 - Each point MUST declare `recommended`: the answer that leads. It is the answer converging on
   the standard, or where convergence is not the axis, the answer given now rather than
-  deferred. `null` is legal only where no such axis exists, which is consent. The skill MUST
-  offer that answer first, and the static check MUST fail when the two disagree.
+  deferred. `null` is legal only where no such axis exists - an identity claim such as whose
+  session this is (`record.participation`) has none. A point about whether to send something
+  MAY declare a recommended default (`adopt.evidence`, ADR-061): recommending an answer is not
+  inferring or stubbing one, and `allowed_provenance` still holds every consent point to
+  `human` alone. The skill MUST offer the declared answer first, and the static check MUST
+  fail when the two disagree.
 - A point asked down more than one path MUST declare every one of them - every skill in `skill`
   and every file in `file` - and the static check MUST require a call site in each and read the
   option order of each. A question reaching a greenfield repo and a brownfield one is two option
