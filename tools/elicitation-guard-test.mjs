@@ -74,10 +74,27 @@ inOther("commit", "-q", "--no-verify", "-m", "the target repository's own work")
 
 const ALLOW = "allow", DENY = "DENY";
 
+// The cases below describe a repository that has been adopted, so they run in one rather than
+// in this checkout. The difference is not cosmetic: the guard reads which side of an adoption
+// it is on from the tree's own shape, and this repository is the other side - it carries the
+// shipped tree under standard/, so its own writes are its own business and every refusal
+// asserted below would read as a pass-through.
+const ADOPTED = mkdtempSync(join(tmpdir(), "adopted-"));
+{
+  mkdirSync(join(ADOPTED, ".claude/elicitation"), { recursive: true });
+  mkdirSync(join(ADOPTED, "docs"), { recursive: true });
+  copyFileSync(resolve("standard/.claude/elicitation/points.json"), join(ADOPTED, ".claude/elicitation/points.json"));
+  writeFileSync(join(ADOPTED, "VERSION"), "1.0.0\n");
+  const git = (...a) => spawnSync("git", ["-C", ADOPTED, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", ...a], { encoding: "utf8" });
+  git("init", "-q");
+  git("add", "-A");
+  git("commit", "-q", "--no-verify", "-m", "what this repository had before the adoption");
+}
+
 // Mirrors verifyAgentGuards.sh's score(): nonzero exit or anything on stderr is BROKEN,
 // empty stdout is allow, and only a well-formed deny verdict counts as a refusal.
 function score(call) {
-  const run = spawnSync("node", [GUARD], { input: JSON.stringify(call), encoding: "utf8" });
+  const run = spawnSync("node", [resolve(GUARD)], { input: JSON.stringify(call), encoding: "utf8", cwd: ADOPTED });
   if (run.status !== 0) return `BROKEN:exit ${run.status}`;
   if (run.stderr.trim()) return `BROKEN:stderr ${run.stderr.trim().split("\n")[0]}`;
   if (!run.stdout.trim()) return ALLOW;
@@ -178,6 +195,74 @@ const COMMITTED_CASES = [
   ["a committed answer settles nothing work-scoped - this spec is not that spec", "| `spec.scope` | human | owner | 2026-08-19 | specs/billing/spec.md | - |\n| `spec.acceptance` | human | owner | 2026-08-19 | specs/billing/spec.md | - |\n", { tool_name: "Write", tool_input: { file_path: "specs/refunds/spec.md", content: "# Refunds\n" } }, DENY],
 ];
 
+// Two working trees, because the run this guard exists for happens between them: an adoption
+// is driven from a checkout of the standard and writes into the repository being adopted.
+// Every question the guard asks there - whose ledger, whose commits, whose tree - has two
+// possible answers, and the driving checkout's is the wrong one.
+function acrossTrees({ driving, target, call, drives = true }) {
+  const PENDING = "| `adopt.personas` | pending | - | - | - | - |\n";
+  const roots = [];
+  for (const [ledger, ships] of [[driving ?? PENDING, drives], [target ?? PENDING, false]]) {
+    const root = mkdtempSync(join(tmpdir(), "tree-"));
+    mkdirSync(join(root, ".claude/elicitation"), { recursive: true });
+    mkdirSync(join(root, "docs"), { recursive: true });
+    copyFileSync(resolve("standard/.claude/elicitation/points.json"), join(root, ".claude/elicitation/points.json"));
+    // What makes a tree a driving checkout is that it carries the shipped tree under
+    // standard/ rather than unpacked at its root - the guard reads that shape and nothing else.
+    if (ships) {
+      mkdirSync(join(root, "standard/.claude/elicitation"), { recursive: true });
+      mkdirSync(join(root, "standard/.claude/hooks"), { recursive: true });
+      copyFileSync(resolve("standard/.claude/elicitation/points.json"), join(root, "standard/.claude/elicitation/points.json"));
+      copyFileSync(resolve(GUARD), join(root, "standard/.claude/hooks/elicitation-guard.mjs"));
+    }
+    writeFileSync(join(root, "docs/adoption-provenance.md"), ledger);
+    const git = (...a) => spawnSync("git", ["-C", root, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", ...a], { encoding: "utf8" });
+    git("init", "-q");
+    git("add", "-A");
+    git("commit", "-q", "--no-verify", "-m", "what this repository had before the run");
+    roots.push(root);
+  }
+  const [drive, dest] = roots;
+  const input = JSON.stringify(call).replaceAll("<TARGET>", dest);
+  const run = spawnSync("node", [resolve(GUARD)], { input, encoding: "utf8", cwd: drive });
+  for (const root of roots) rmSync(root, { recursive: true, force: true });
+  if (run.status !== 0 || run.stderr.trim()) return `BROKEN:exit ${run.status} ${run.stderr.trim().slice(0, 60)}`;
+  if (!run.stdout.trim()) return ALLOW;
+  try { return JSON.parse(run.stdout).hookSpecificOutput?.permissionDecision === "deny" ? DENY : "BROKEN:not a deny verdict"; }
+  catch { return "BROKEN:stdout is not JSON"; }
+}
+
+const ANSWERED = "| `adopt.personas` | human | owner | 2026-09-03 | docs/personas.md | - |\n";
+const OWN = { tool_name: "Write", tool_input: { file_path: "docs/personas.md", content: "# Personas\n" } };
+const THEIRS = { tool_name: "Write", tool_input: { file_path: "<TARGET>/docs/personas.md", content: "# Personas\n" } };
+const LAYOUT = "| `adopt.layout` | human | owner | 2026-09-03 | docs/adoption-intake.md | - |\n";
+const MOVE_THERE = "git mv <TARGET>/docs/adoption-provenance.md <TARGET>/docs/ledger.md";
+const FOREIGN_MOVE = { tool_name: "Bash", tool_input: { command: MOVE_THERE } };
+const MIXED_MOVE = { tool_name: "Bash", tool_input: { command: `git mv docs/adoption-provenance.md docs/ledger.md && ${MOVE_THERE}` } };
+
+const TWO_TREE_CASES = [
+  // Which side of an adoption the guard is on, both directions. A driving checkout carries the
+  // same gated paths any adopter does, so a guard that judged its own tree too would refuse
+  // every ordinary write in the repository that authors it - and the second case is what makes
+  // the first mean something rather than pass because nothing was gated in the first place.
+  ["a driving checkout's own tree is left to its own process", { call: OWN }, ALLOW],
+  ["the identical write in a tree without that shape is refused", { drives: false, call: OWN }, DENY],
+  ["the adoption's write into the repository being adopted is still refused", { call: THEIRS }, DENY],
+
+  // Whose record answers for the write. This is the defect: read from the working directory,
+  // the driving checkout's ledger vouches for a write into a repository that never answered
+  // anything - and the adoption run is exactly where that ledger is most likely to be full.
+  ["an answer committed in the repository being written to settles the point", { target: ANSWERED, call: THEIRS }, ALLOW],
+  ["an answer committed in the driving checkout settles nothing over there", { driving: ANSWERED, call: THEIRS }, DENY],
+
+  // And the same thing again for a move, where one command reaches both trees at once. The
+  // segment rule keeps a harmless command from vouching for a destructive one chained after
+  // it; this is that rule across repositories, so no tree's answer covers a batch that leaves
+  // it. The first case is what stops the second passing for the trivial reason.
+  ["a move inside the repository being adopted passes on that repository's own answer", { target: LAYOUT, call: FOREIGN_MOVE }, ALLOW],
+  ["chaining it behind a move in the driving checkout does not borrow that tree's answer", { driving: LAYOUT, target: LAYOUT, call: MIXED_MOVE }, DENY],
+];
+
 // The cases above call the guard directly, which is exactly how a guard nothing routes to
 // keeps passing its own tests. The matcher is the only thing that decides whether it is ever
 // invoked, and it was `Write|Edit|NotebookEdit` while the guard had already learned to judge
@@ -191,6 +276,29 @@ let bad = 0;
   const ok = !missing.length;
   if (!ok) bad++;
   console.log(`  ${ok ? "ok  " : "FAIL"}  every tool the guard judges is routed to it${ok ? "" : `\n          matcher "${matcher}" never sees: ${missing.join(", ")}`}`);
+}
+
+// The other half of the same wiring question, and the one that was answered "nowhere". The
+// assertion above proves the shipped settings route every tool to the guard; it says nothing
+// about the checkout adoptions are actually driven from, which shipped the guard, ran every
+// adoption, and wired none of it - so the one session the mechanism exists to cover was the
+// one session without it.
+{
+  let ok = false, why = "core/.claude/settings.json is missing - an adoption driven from here runs unguarded";
+  try {
+    const own = JSON.parse(readFileSync(".claude/settings.json", "utf8"));
+    const entry = (own.hooks?.PreToolUse || []).find((m) => JSON.stringify(m).includes("elicitation-guard"));
+    if (!entry) why = "no PreToolUse hook here runs elicitation-guard.mjs";
+    else {
+      const missing = ["Write", "Edit", "NotebookEdit", "Bash"].filter((t) => !(entry.matcher || "").split("|").includes(t));
+      const shipped = JSON.stringify(entry).includes("standard/.claude/hooks/elicitation-guard.mjs");
+      if (missing.length) why = `matcher "${entry.matcher}" never sees: ${missing.join(", ")}`;
+      else if (!shipped) why = "wired to a path this repository does not keep the guard at";
+      else ok = true;
+    }
+  } catch (e) { if (e.code !== "ENOENT") why = `.claude/settings.json could not be read: ${e.message}`; }
+  if (!ok) bad++;
+  console.log(`  ${ok ? "ok  " : "FAIL"}  the checkout that drives adoptions wires the guard it ships${ok ? "" : `\n          ${why}`}`);
 }
 
 for (const [name, call, expected] of CASES) {
@@ -214,8 +322,16 @@ for (const [name, ledgerBody, call, expected] of COMMITTED_CASES) {
   console.log(`  ${ok ? "ok  " : "FAIL"}  ${name}${ok ? "" : ` (got ${got}, expected ${expected})`}`);
 }
 
-rmSync(OTHER, { recursive: true, force: true });
+for (const [name, opts, expected] of TWO_TREE_CASES) {
+  const got = acrossTrees(opts);
+  const ok = got === expected;
+  if (!ok) bad++;
+  console.log(`  ${ok ? "ok  " : "FAIL"}  ${name}${ok ? "" : ` (got ${got}, expected ${expected})`}`);
+}
 
-const total = CASES.length + LEDGER_CASES.length + COMMITTED_CASES.length + 1; // + the wiring assertion above
+rmSync(OTHER, { recursive: true, force: true });
+rmSync(ADOPTED, { recursive: true, force: true });
+
+const total = CASES.length + LEDGER_CASES.length + COMMITTED_CASES.length + TWO_TREE_CASES.length + 2; // + both wiring assertions above
 console.log(bad ? `\nelicitation-guard-test: FAIL - ${bad}/${total}` : `\nelicitation-guard-test: OK - ${total} cases, refusals and pass-throughs both`);
 process.exit(bad ? 1 : 0);

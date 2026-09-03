@@ -189,6 +189,21 @@ the ledger before it writes anything else, and then stops so the session can res
 those four is gated by any point, so the ordering costs nothing - and skipping it costs the
 whole layer on the one run it was built for.
 
+**And an adoption happens in two repositories, not one.** `align-to-standards` is driven from
+a checkout of the standard and writes into the target, so the session doing the adopting
+belongs to the driving checkout - and landing the four files over in the target does nothing
+for it. That checkout wires the guard itself, and the guard recognises which side it is on
+from the tree's own shape - a driving checkout carries the shipped tree under `standard/`,
+where an adopter has it unpacked at the root. On that side it judges only the writes that leave
+the checkout - the adoption's own - and leaves the driving repository's tree to its own
+process. Judging both, it cannot be wired at all: the standard's own repository carries the
+same gated paths any adopter does and ships a ledger that is `pending` by design, so every
+ordinary write in it would be refused, and a guard nobody can work under gets unwired. Read
+from the tree rather than from a setting on purpose: a setting would be an exemption any
+repository could switch on for itself, and there is no such thing here. The ledger any of this
+is checked against is the one in the repository the write lands in, never the driving
+checkout's.
+
 Seventeen of the twenty-two points are enforced here - sixteen by the path they gate,
 `adopt.layout` by the rename. The other five are not writes to a path this file can name in
 advance: `adopt.continue` is a phase boundary and `adopt.commit-plan` a commit, neither of

@@ -44,6 +44,14 @@
 // artifact gate checks a declared stub really is one, and the run reads as incomplete
 // rather than as done.
 //
+// It also runs on the other side of an adoption, in the checkout that drives one - which is
+// where the adoption's own writes are actually made. There it judges only the writes that
+// leave the checkout, and leaves the driving repository's tree to its own process. Judging
+// both, the standard's repository could not wire the guard it ships at all: it holds the same
+// gated paths any adopter does behind a deliberately `pending` template ledger, so every
+// ordinary write in it would be refused. Which side it is on is read from the tree's own
+// shape, never from configuration - see DRIVES_ADOPTIONS below.
+//
 // Ships to adopting repos. Node built-ins only.
 //
 // Speaks the same contract as the other hooks here, and for the same reason: a refusal is
@@ -122,6 +130,26 @@ process.stdin.on("end", () => {
     return trackedIn(".", path);
   };
 
+  // The same reasoning one step further, for the record rather than the rename. The tree that
+  // owns the artifact is not always the tree this guard runs in: an adoption is driven from a
+  // checkout of the standard and writes into somebody else's repository. Reading the ledger
+  // from the working directory then answers a question about the wrong repository - the
+  // driving checkout's record vouching for a write into the target's tree.
+  const rootOf = (dir) => {
+    const r = spawnSync("git", ["-C", dir, "rev-parse", "--show-toplevel"], { encoding: "utf8" });
+    return r.status === 0 ? r.stdout.trim() : null;
+  };
+  // The directory need not exist yet - a gated path can be the first file in `docs/discovery/`
+  // and `git -C` on a missing one fails, which would drop the owner back to this tree and
+  // re-open exactly the confusion above. Walk up to the nearest ancestor that is there.
+  const dirOf = (path, cd) => {
+    if (cd) return cd;
+    if (!path.startsWith("/")) return ".";
+    let dir = path.slice(0, path.lastIndexOf("/")) || "/";
+    while (dir !== "/" && !existsSync(dir)) dir = dir.slice(0, dir.lastIndexOf("/")) || "/";
+    return dir;
+  };
+
   // Segment-by-segment, like the other guards here, so a harmless command chained before a
   // move cannot vouch for it. `git -C <dir> mv` is spelled out because it is the form an agent
   // reaches for when it does not want to cd.
@@ -147,31 +175,64 @@ process.stdin.on("end", () => {
         sources.push(t);
       }
       if (target) sources.pop();
-      for (const src of sources) if (tracked(src, cd) && !out.includes(src)) out.push(src);
+      for (const src of sources) if (tracked(src, cd) && !out.some((m) => m.path === src)) out.push({ path: src, cd });
     }
     return out;
   };
 
-  let target, verb, gating;
+  let target, verb, gating, ownerDirs;
   if (tool === "Bash") {
     const moved = movedFromUnder(String(call.tool_input?.command || ""));
     if (!moved.length) allow();
-    target = moved.join(", ");
+    target = moved.map((m) => m.path).join(", ");
+    ownerDirs = moved.map((m) => dirOf(m.path, m.cd));
     verb = "moving";
     gating = (declared.points || []).filter((p) => p.gate_renames);
   } else {
     target = String(call.tool_input?.file_path ?? call.tool_input?.notebook_path ?? "").replace(/\\/g, "/");
     if (!target) allow();
+    ownerDirs = [dirOf(target, null)];
     verb = "writing";
     gating = (declared.points || []).filter((p) => (p.gate_globs || []).some((g) => rx(g).test(target)));
   }
   if (!gating.length) allow();
 
+  // A checkout that drives adoptions rather than being one is recognised by its own shape: it
+  // carries the shipped tree under `standard/`, which is the same signal this file already
+  // uses to find the point list. An adopter unpacks that tree at its root and never matches.
+  //
+  // Read from the tree rather than from an environment variable on purpose. A switch would be
+  // an exemption any repository could set for itself - its own writes land in its own tree, so
+  // sparing those spares everything - and this guard has exactly three outcomes for a gated
+  // write, with no configuration adding a fourth. What the shape decides is narrower: *whose*
+  // writes are judged here. `align-to-standards` runs from a checkout of the standard and
+  // writes into the target, so that session is the one the whole mechanism exists to cover;
+  // it had no wiring at all, because wiring it to judge this tree too is unlivable. The
+  // standard's repository holds the same gated paths any adopter does (PRODUCT.md, personas,
+  // decision records, specs) behind a template ledger that is `pending` by design, so every
+  // ordinary write in it would be refused - and a guard nobody can work under gets unwired,
+  // which is the state this exists to end.
+  // One command can move several paths, and the segment rule above exists precisely so that
+  // one harmless half cannot vouch for the other. The same applies across trees: if the moved
+  // paths do not all belong to one work tree, no single ledger speaks for the batch, so there
+  // is no owner and nothing is read - which leaves the refusal below.
+  const ownerRoots = ownerDirs.map(rootOf);
+  const sameTree = ownerRoots.every((r) => r === ownerRoots[0]);
+  const ownerRoot = sameTree ? ownerRoots[0] : null;
+  const DRIVES_ADOPTIONS = existsSync("standard/.claude/elicitation/points.json")
+    && existsSync("standard/.claude/hooks/elicitation-guard.mjs");
+  if (DRIVES_ADOPTIONS) {
+    const here = rootOf(".");
+    if (here && ownerRoot === here) allow();
+  }
+
   // Two places a declaration can live, and both count. The ledger is the real record - one
   // table a reviewer reads in a single pass - and the content of the write itself is the
   // bootstrap case, for the write that creates the ledger or precedes it.
-  const ledger = ["docs/adoption-provenance.md", "standard/docs/adoption-provenance.md"]
-    .map((f) => { try { return readFileSync(f, "utf8"); } catch { return ""; } })
+  const LEDGERS = ["docs/adoption-provenance.md", "standard/docs/adoption-provenance.md"];
+  const under = (f) => (ownerRoot ? `${ownerRoot}/${f}` : f);
+  const ledger = !sameTree ? "" : LEDGERS
+    .map((f) => { try { return readFileSync(under(f), "utf8"); } catch { return ""; } })
     .join("\n");
   const written = String(call.tool_input?.content ?? call.tool_input?.new_string ?? call.tool_input?.new_source ?? "") + "\n" + ledger;
   // Three spellings, one pattern: YAML `id: state`, JSON `"id": "state"`, and the ledger's
@@ -202,8 +263,8 @@ process.stdin.on("end", () => {
   let committed = null;
   const committedLedger = () => {
     if (committed !== null) return committed;
-    committed = ["docs/adoption-provenance.md", "standard/docs/adoption-provenance.md"]
-      .map((f) => spawnSync("git", ["show", `HEAD:${f}`], { encoding: "utf8" }))
+    committed = !sameTree ? "" : LEDGERS
+      .map((f) => spawnSync("git", ["-C", ownerRoot || ".", "show", `HEAD:${f}`], { encoding: "utf8" }))
       .map((r) => (r.status === 0 ? r.stdout : ""))
       .join("\n");
     return committed;
