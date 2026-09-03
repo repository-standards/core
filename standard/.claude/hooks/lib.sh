@@ -88,3 +88,48 @@ segment_is_search() { # segment_is_search <segment>
 
 # Matches only when the host ends at the match, so localhost.evil.example.com is not loopback.
 LOCAL_HOST_RE='(localhost|127\.0\.0\.1|\[::1\]|::1)([:/[:space:]"'"'"']|$)'
+
+# True when the host a value names is not this machine. A path is a unix-socket directory, which
+# cannot be anywhere else; quotes come off first because `-h "localhost"` is ordinary and the
+# loopback pattern is anchored where the quote would sit.
+host_is_remote() { # host_is_remote <host>
+  local host
+  host="$(printf '%s' "$1" | sed -E 's/^["'"'"']+//; s/["'"'"']+$//')"
+  [ -n "${host}" ] || return 1
+  case "${host}" in /*) return 1 ;; esac
+  ! printf '%s' "${host}" | grep -qiE "^${LOCAL_HOST_RE}"
+}
+
+# The value of the last inline assignment to NAME in the text, quotes stripped; empty when none.
+inline_value() { # inline_value <NAME> <text>
+  printf '%s\n' "$2" \
+    | grep -oE "(^|[[:space:]\"'])$1=[^[:space:]]*" \
+    | tail -1 \
+    | sed -E "s/^[[:space:]\"']*$1=//; s/^[\"']//; s/[\"']$//"
+}
+
+# A segment that is nothing but assignments, exported or bare, and so runs no command of its own.
+ASSIGNMENT_ONLY_RE='^[[:space:]]*(export[[:space:]]+)?([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]*)+$'
+
+# What NAME is worth to the segments after this one: the value this segment assigns when it
+# carries forward, otherwise <previous> unchanged.
+#
+# Only a segment that is nothing but assignments outlives itself. `export PGHOST=prod; psql ...`
+# reaches the client two segments on, and an exported value carries whatever it names. A bare
+# `PGHOST=prod` might reach it too (`set -a`, an export further on), so it carries when it names
+# something <unsafe_fn> refuses - and does not when it names a local host, because a value nobody
+# exported is no evidence about what a later command will read. An inline prefix on some other
+# command (`PGHOST=prod psql -c 'select 1'; psql ...`) reaches that command alone, and a search
+# pattern that spells an assignment reaches nothing; neither has this segment's shape, so neither
+# carries. Never the whole command: that is how a harmless first segment vouches for the rest.
+carried_value() { # carried_value <NAME> <segment> <previous> <unsafe_fn>
+  local value
+  printf '%s' "$2" | grep -qE "${ASSIGNMENT_ONLY_RE}" || { printf '%s' "$3"; return; }
+  value="$(inline_value "$1" "$2")"
+  [ -n "${value}" ] || { printf '%s' "$3"; return; }
+  if printf '%s' "$2" | grep -qE '^[[:space:]]*export[[:space:]]' || "$4" "${value}"; then
+    printf '%s' "${value}"
+  else
+    printf '%s' "$3"
+  fi
+}
