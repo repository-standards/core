@@ -106,6 +106,47 @@ function paintTheme() {
 prefersDark.addEventListener('change', paintTheme)
 paintTheme()
 
+// The ecosystem switcher - present only when index.mjs was run with --registry, so most
+// standalone builds render nothing here. Mirrors tools/docsite.mjs's own switcher (name,
+// open/close/escape/click-outside), rebuilt with this file's el()-based DOM style instead
+// of that one's template-string HTML.
+function switcherUI() {
+  const items = D.meta.switcher
+  if (!items || items.length < 2) return null
+  const current = items.find((s) => s.here) || items[0]
+  const button = el(
+    'button',
+    { class: 'tb-switch', type: 'button', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+    [el('span', { text: current.name }), el('span', { class: 'tb-caret', text: '▾' })],
+  )
+  const menu = el(
+    'div',
+    { class: 'tb-menu', role: 'menu' },
+    items.map((s) =>
+      el('a', { class: 'tb-item' + (s.here ? ' here' : ''), href: s.url, role: 'menuitem' }, [
+        el('div', { class: 'tb-item-name', text: s.name }),
+        s.blurb ? el('div', { class: 'tb-item-blurb', text: s.blurb }) : null,
+      ]),
+    ),
+  )
+  const box = el('div', { class: 'tb-switcher' }, [button, menu])
+  const close = () => {
+    box.classList.remove('open')
+    button.setAttribute('aria-expanded', 'false')
+  }
+  button.addEventListener('click', (e) => {
+    e.stopPropagation()
+    button.setAttribute('aria-expanded', String(box.classList.toggle('open')))
+  })
+  document.addEventListener('click', (e) => {
+    if (!box.contains(e.target)) close()
+  })
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') close()
+  })
+  return box
+}
+
 document.body.append(
   el('header', { class: 'masthead' }, [
     wrap([
@@ -119,6 +160,7 @@ document.body.append(
               text: D.meta.home.replace(/^https?:\/\//, '').replace(/\/$/, ''),
             })
           : null,
+        switcherUI(),
       ]),
       el('div', { class: 'stamp' }, [
         D.meta.version ? el('div', { html: 'version <b>' + D.meta.version + '</b>' }) : null,

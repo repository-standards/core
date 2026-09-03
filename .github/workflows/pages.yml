@@ -54,8 +54,11 @@ jobs:
       # against ourselves. It is published because this repository is public and its backlog
       # already is: the page shows nothing a reader could not read in the tree. An adopter
       # decides this separately, which is what the shipped workflow's visibility gate is for.
+      # --registry names the stack list this build is one surface of, so the generator can
+      # render the same switcher tools/docsite.mjs already renders for landing+docs - every
+      # dashboard in the ecosystem, one click away, without a second aggregation mechanism.
       - name: build /work/ - the standard's own work state
-        run: node standard/scripts/generate-dashboard/index.mjs . --out site/dashboard/index.html
+        run: node standard/scripts/generate-dashboard/index.mjs . --out site/dashboard/index.html --registry stacks.json
 
       - name: build every registered stack into its prefix
         run: |
@@ -80,6 +83,11 @@ jobs:
             rm -rf "site/$tech/docs"
             cp -R ".src/$tech/site/docs/." "site/docs/$tech/"
             echo "published $tech at /$tech/ and /docs/$tech/"
+            # Same generator as the core's own /dashboard/ above, run against the stack's
+            # checkout instead of a vendored copy of itself - one form, every dashboard.
+            mkdir -p "site/$tech/dashboard"
+            node standard/scripts/generate-dashboard/index.mjs ".src/$tech" --out "site/$tech/dashboard/index.html" --registry stacks.json
+            echo "published $tech dashboard at /$tech/dashboard/"
           done
           rm -rf .src
 
