@@ -85,7 +85,7 @@ is writing in, with the point id in `metadata.source` and a header that says wha
 Fires **before step 2 edits the first spec**, once for the whole change rather than once per file
 if the affected specs move together.
 
-Ask: *This change moves the boundary of `<capability>` - what is in scope now, and what drops
+Call `AskUserQuestion` for point `[spec.scope]` - header **Scope**, `metadata.source` `spec.scope` - and ask: *This change moves the boundary of `<capability>` - what is in scope now, and what drops
 out?* Name what you believe is moving, in the options, and ask them to confirm or correct it. A
 spec that quietly grows a responsibility is how two capabilities end up owning the same rule.
 
@@ -99,7 +99,7 @@ date, and the specs this change edited as where the answer landed.
 Fires **whenever the edit needs something the change request does not settle** - the moment you
 would otherwise pick a default and write it as though it were agreed.
 
-Ask: *These points are undetermined. Decide them now, mark them provisional, or leave them open?*
+Call `AskUserQuestion` for point `[spec.unknowns]` - header **Unknowns**, `metadata.source` `spec.unknowns` - and ask: *These points are undetermined. Decide them now, mark them provisional, or leave them open?*
 Name them in the options.
 
 Options, in order: **decide now** (`human`) / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **leave open** (`absent`, one marker per unknown)

@@ -149,7 +149,7 @@ it as the known gap rather than claiming coverage.
   judged only for what it writes from then on. Where that boundary cannot be drawn, the check
   announces it and stands down; it never passes quietly.
 - The point id an `AskUserQuestion` call carries - in `metadata.source`, or in the header as
-  `[point.id]` as every transcript before 1.0.3 did - is the only link between a question and
+  `[point.id]` as every transcript before 1.0.4 did - is the only link between a question and
   the artifact it licenses. A question without one counts as not asked.
 - The guard proves a question happened. It does not and cannot prove the answer was honoured;
   nothing here may be described as if it does.

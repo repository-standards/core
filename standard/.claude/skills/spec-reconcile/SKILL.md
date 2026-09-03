@@ -133,7 +133,7 @@ Fires **at step 3, before an Acceptance criterion is edited to describe what was
 divergence found here is not a spec error by default; it is a disagreement, and which side is
 wrong is somebody else's call.
 
-Ask: *The built behaviour and the acceptance criteria disagree on `<point>`. Does the criterion
+Call `AskUserQuestion` for point `[spec.acceptance]` - header **Acceptance**, `metadata.source` `spec.acceptance` - and ask: *The built behaviour and the acceptance criteria disagree on `<point>`. Does the criterion
 change to match what was built, or does the code change to match the criterion?* Say which
 divergences you found, one option per resolution, and say what each costs.
 
@@ -150,7 +150,7 @@ the date, and the spec it edited as where the answer landed.
 Fires **when the code does something the spec never claimed** - the resolution that grows a
 capability rather than correcting it.
 
-Ask: *`<capability>` does `<behaviour>`, which no spec claims. Does it belong to this capability,
+Call `AskUserQuestion` for point `[spec.scope]` - header **Scope**, `metadata.source` `spec.scope` - and ask: *`<capability>` does `<behaviour>`, which no spec claims. Does it belong to this capability,
 somewhere else, or nowhere?* An unspecified behaviour absorbed silently is how two capabilities
 end up owning the same rule, and neither spec is wrong on its own.
 

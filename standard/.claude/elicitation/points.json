@@ -7,7 +7,7 @@
     "A point listed here is not advice - it is a declared call site, checked statically in CI",
     "and asserted by replay against the fixture repos."
   ],
-  "$point_id_contract": "Every AskUserQuestion call lists the ids of the points it asks in metadata.source, space-separated - a field the person answering never sees, so the header can say Evidence rather than [adopt.evidence], which read as code to the first adopters and does not fit the header's twelve characters anyway. Without the id the replay layer cannot assert which points were reached, only how many questions were asked - and count is exactly the metric that let this defect hide. A bracketed [id] in the header is still read, for transcripts and adopted repositories from before 1.0.3.",
+  "$point_id_contract": "Every AskUserQuestion call lists the ids of the points it asks in metadata.source, space-separated - a field the person answering never sees, so the header can say Evidence rather than [adopt.evidence], which read as code to the first adopters and does not fit the header's twelve characters anyway. Without the id the replay layer cannot assert which points were reached, only how many questions were asked - and count is exactly the metric that let this defect hide. A bracketed [id] in the header is still read, for transcripts and adopted repositories from before 1.0.4.",
   "answer_kinds": {
     "answer": "The human decides now. -> provenance human.",
     "suggest": "The agent proposes, the human verifies later. -> provenance provisional, plus a backlog row naming this point. Counts as human presence: it is attributable, timestamped, and produces a marked artifact.",

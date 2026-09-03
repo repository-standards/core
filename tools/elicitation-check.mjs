@@ -188,7 +188,7 @@ if (POINTS) {
     unverified(`cannot read --points ${POINTS}: ${err.message}`);
   }
   const required = (declared.points || []).filter((p) => p.required);
-  // metadata.source is where the id travels since 1.0.3; the bracketed header is what every
+  // metadata.source is where the id travels since 1.0.4; the bracketed header is what every
   // transcript before that carries, and both are read - see the guard, which reads the same two.
   const askedIds = new Set([
     ...metaPointIds,
