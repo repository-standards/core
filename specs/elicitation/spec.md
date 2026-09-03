@@ -36,6 +36,25 @@ saying something he never said (ADR-054).
 - Q: Delete the validation corpus that measured nothing? A: No. The observations are real
   records of real work; what they lacked was a statement of which question they answer.
 
+### Session 2026-09-03
+
+- Q: The h run (2026-09-03) accepted a Layer 2 stack as the second of four batched questions
+  with no point id, and the owner reported at the end of the day it was never asked about and
+  never adopted (`docs/open-questions/stack-offer-on-adoption.md`). Should the offer share the
+  greenfield route's existing stack point, or get its own? A: Its own - `adopt.stack`, asked
+  as its own round on the brownfield path (`STACK-OFFER-2`). A point asked down more than one
+  path already has to declare every path it is asked down (R28 above); a brownfield accept
+  sharing the greenfield point's identity would have made that requirement true on paper while
+  the two routes' option lists kept diverging in practice.
+- Q: Should `adopt.stack` declare `gate_globs` the way most points do? A: No, deliberately. The
+  greenfield route's own stack point already gates the same manifest paths a Layer 2 accept
+  writes; giving `adopt.stack` the same globs would satisfy the guard on *either* point's
+  question firing, which breaks the greenfield route's own gate the day a brownfield-only
+  answer starts counting for it. The known cost, not closed by this decision: a stack answer
+  filed under the greenfield point's id on a brownfield run still passes the mechanical guard,
+  because nothing here reads scope to know which route asked. `tools/elicitation-replay-test.mjs`
+  carries a case asserting this as a documented limitation rather than a silent gap.
+
 ## Scope
 
 [`standard/.claude/elicitation/points.json`](../../standard/.claude/elicitation/points.json)
