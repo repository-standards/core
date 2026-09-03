@@ -17,6 +17,45 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.12 - 2026-09-03
+
+### The repository that ships the elicitation guard never ran it (2026-09-03)
+
+An adoption skipped the intake question round and wrote `docs/adoption-intake.md` out of the
+skill's own prose. Asked why, the run answered that it had read `intake.md`'s list of points
+as content instead of executing it - "I mined the file for content when it was a procedure" -
+and nothing refused the write, because the guard was wired nowhere the session could see it.
+`standard/.claude/settings.json` wires it into the tree that ships *into* an adopted repo, and
+binds there only after the adoption lands it. This repository's own `.claude/` carried no
+`settings.json` at all. And `align-to-standards` runs from a checkout of this repository, so
+the one session the whole mechanism exists for was the one session with no enforcement.
+Hooks bind from the session's own project directory; the target's settings are never read by
+a session rooted here, and ADR-059's Step -1 and phase precondition both act on the target.
+
+The guard now reads which side of an adoption it is on from the tree's own shape: a checkout
+carrying the shipped tree under `standard/` drives adoptions, an adopter has that tree
+unpacked at its root and never matches. On the driving side it judges only writes whose
+owning work tree is not its own, and this repository wires it in its own `.claude/settings.json`
+with the same matcher and the same deny-on-failure fallback the shipped settings use.
+Deliberately not an environment variable: a switch is an exemption any adopted repository
+could set for itself, since its own writes land in its own tree.
+
+A second defect surfaced in the same reading. The guard resolved the provenance ledger, and
+the `git show HEAD:` check behind a settled repository-scoped point, relative to the working
+directory - so a driving checkout holding answered rows would have vouched for writes into a
+repository that answered nothing. Both now resolve in the work tree that owns the write, which
+is what the rename check already did. A move that reaches two work trees at once has no
+single owner, so no ledger answers for it and it is refused - the segment rule these guards
+already apply to chained commands, applied across repositories. And a gated path whose
+directory does not exist yet resolves to its nearest existing ancestor, rather than falling
+back to the tree the guard happens to be running in.
+
+The guard's own test asserts all of it: that this checkout wires the guard it ships, that a
+driving tree's own writes go through *and* that the identical write is refused in a tree
+without that shape, and that an answer committed here settles nothing over there. The escape
+is real and named rather than papered over: an unasked artifact written *here* is not
+refused. The reasoning is [ADR-060](docs/decision-records/ADR-060-the-adoption-is-guarded-from-the-checkout-that-drives-it.md).
+
 ## 1.0.11 - 2026-09-03
 
 ### A record id in a shipped file said nothing about whose index answers it (2026-09-03)
