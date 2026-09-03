@@ -1,5 +1,5 @@
 ---
-status: Accepted
+status: Accepted, revised by ADR-058 (one marker for both cases)
 date: 2026-09-03
 ---
 
