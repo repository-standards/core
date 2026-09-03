@@ -78,6 +78,22 @@
       ]
     },
     {
+      "id": "adopt.stack",
+      "skill": "align-to-standards",
+      "scope": "repository",
+      "file": "intake.md",
+      "asks": "This repo is <technology>. Registered in the stack registry: offer the boot-verified Layer 2 stack alongside Layer 1. Not registered: Layer 1 stays unaffected, and best-practice research is written into the repo as its own record instead, with an offer to file a stack request upstream. Apply it?",
+      "recommended": "apply it",
+      "why": "green.stack is the only point that gates stack.manifest.json, and it is scoped to `stack.md` - the greenfield path. Nothing was declared for the brownfield offer this file has made since before points.json existed, in the `Technology` bullet of the intake round. The h run (2026-09-03) is what that gap looks like in practice: the offer fired as the second of four questions batched into one card with intent, evidence and language, was accepted, and was applied as a manifest inside a nine-commit batch - and at the end of the day the owner reported never having been asked about it or having adopted it. The consent was not real to the person who gave it, because a four-question card does not leave a single answer memorable on its own. Underneath that, the guard was satisfied anyway: with no brownfield point declared, the run's provenance ledger filed the stack answer under `green.stack` - the only stack point that existed - so a replay of that ledger cannot tell which offer was actually made, on which path, or that a path-inappropriate point covered for a missing one.",
+      "evidence": "the h run, 2026-09-03: the offer fired as the second of four batched questions with no declared point, recommended against, accepted and applied inside a nine-commit batch; the owner reported at day's end it was never asked about (`docs/open-questions/stack-offer-on-adoption.md`, evidence section; backlog row STACK-OFFER-2).",
+      "required": true,
+      "allowed_provenance": [
+        "human",
+        "provisional"
+      ],
+      "gates": "stack.manifest.json - checked statically (elicitation-points-check.mjs) and by human review, not by gate_globs: green.stack already gates the same path on the greenfield route, and the two routes are mutually exclusive within one run. Giving both the same gate_globs entry makes the PreToolUse guard's AND-of-every-matching-point rule demand the other route's point too, which refused a legitimate greenfield write to stack.manifest.json in testing - the mechanical guard has no notion of which route a session is on, only which paths a point names (see the $gate_globs note)."
+    },
+    {
       "id": "adopt.intent",
       "skill": "align-to-standards",
       "scope": "repository",

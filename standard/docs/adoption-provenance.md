@@ -41,6 +41,7 @@ which as `scope`.
 | `adopt.language` | pending | - | - | - | - |
 | `adopt.layout` | pending | - | - | - | - |
 | `adopt.profile` | pending | - | - | - | - |
+| `adopt.stack` | pending | - | - | - | - |
 | `adopt.intent` | pending | - | - | - | - |
 | `adopt.evidence` | pending | - | - | - | - |
 | `adopt.continue` | pending | - | - | - | - |
