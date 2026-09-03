@@ -18,6 +18,22 @@ Order: **assess first** (analysis only - the passes below), then the **stack off
 guards - in place), then the derive steps below **fill** that skeleton from the code,
 draining the backlog the assessment produced.
 
+## Before the assessment: confirm the guard landed
+
+Do not trust that Step -1 (`land-guard.md`) already ran earlier in the conversation - a
+resumed or compacted session can reach this phase on a stale memory of having done
+that. Confirm it fresh before the first pass below:
+
+```bash
+test -f .claude/elicitation/points.json \
+  && grep -q elicitation-guard.mjs .claude/settings.json \
+  && test -f docs/adoption-provenance.md
+```
+
+Nonzero exit: stop. Do not run the assessment or anything after it - go read
+[`land-guard.md`](land-guard.md) and land the guard first, then restart the session as
+it says.
+
 ## Assess first (analysis, not change) -> Gate 2
 
 Before touching anything, run the assessment: read the repo, detect what is there and

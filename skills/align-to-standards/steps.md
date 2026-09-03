@@ -3,7 +3,19 @@
 Phase file of `align-to-standards`. Runs inside it, never as a separate skill.
 
 The elicitation guard lands before this file is ever reached - see
-[`land-guard.md`](land-guard.md), run from `SKILL.md`'s Step -1.
+[`land-guard.md`](land-guard.md), run from `SKILL.md`'s Step -1. Do not trust that it
+already ran earlier in the conversation - a resumed or compacted session can reach step
+1 on a stale memory of having done that. Confirm it fresh:
+
+```bash
+test -f .claude/elicitation/points.json \
+  && grep -q elicitation-guard.mjs .claude/settings.json \
+  && test -f docs/adoption-provenance.md
+```
+
+Nonzero exit: stop here. Do not run step 1 or anything after it - go read
+[`land-guard.md`](land-guard.md) and land the guard first, then restart the session as
+it says.
 
 1. **Read the shipped tree** (`standard/` in this checkout): `AGENTS.md`, `CLAUDE.md`,
    `.claude/` (settings + skills), `.github/`, `.gitleaks.toml`, `scripts/`, `docs/`
