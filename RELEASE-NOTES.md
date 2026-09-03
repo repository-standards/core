@@ -3,6 +3,14 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.15 - 2026-09-04
+
+**Sending a session upstream as evidence now has a recommended default, and answering once is
+enough.** The question asked at intake offers three choices instead of two - send it, send it
+once you have read it, or send nothing - and leads with sending. Downstream, the step that
+assembles and sends no longer asks a separate yes/no for every item in the batch; it acts on
+the choice already made, once, at intake.
+
 ## 1.0.13 - 2026-09-03
 
 **The guards that refuse a bad write now refuse the write when they cannot even read the

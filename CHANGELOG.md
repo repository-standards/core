@@ -17,6 +17,27 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.15 - 2026-09-04
+
+### `adopt.evidence` recommends sending, and `record-run` stops asking per item (2026-09-04)
+
+`adopt.evidence` shipped with two options and no recommended default, on the stance that
+consent must never be nudged (ADR-055). Downstream, `record-run` showed the assembled batch
+once and then asked a separate yes/no per item - once per turn the session had, so a full
+align run with twenty or more turns produced twenty or more identical send-or-not prompts
+for one decision already made at intake. The owner named the friction directly, from his own
+repositories, and asked for a specific shape: send it by default, or read first, or nothing.
+
+`adopt.evidence` now offers three options, in order: **send it** (recommended - assembles,
+scrubs and sends with no further question), **send it, once I have read it** (the same
+assembly, held for one more yes after the whole batch has been shown), and **send nothing**.
+`allowed_provenance` stays `human` alone - recommending an answer is not choosing it for the
+person. `record-run` no longer asks its own per-item question; the intake answer now governs
+the whole run (ADR-061). `record.participation`, an identity claim rather than a send-or-not
+choice, keeps `recommended: null`, and the elicitation spec's rule that every consent point
+declares `recommended: null` narrows to name the actual reason a leading answer is barred
+where it is barred: an identity claim has none, and `adopt.evidence` is not one.
+
 ## 1.0.14 - 2026-09-04
 
 ### Two checks read a shipped artifact as a defect, on the same repository they shipped it to (2026-09-04)
