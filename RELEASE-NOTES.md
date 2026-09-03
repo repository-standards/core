@@ -3,6 +3,18 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.12 - 2026-09-03
+
+**The check that makes an adoption ask you things now runs during the adoption.** The guard
+that refuses to write an artifact nobody was asked about was wired into the tree that ships
+into your repository - where it protects every session after the adoption - and into nothing
+at all in the checkout the adoption is actually driven from. So the one run the mechanism
+exists for was the one run without it, and an adoption skipped the intake questions and wrote
+the intake record out of its own prose instead. The guard now works out which side of an
+adoption it is on from the shape of the tree it finds itself in, and covers the writes a run
+makes into your repository from the very first one. It also reads the record of what was
+answered in the repository being written to, rather than in the one doing the writing.
+
 ## 1.0.11 - 2026-09-03
 
 **The standard's own decision records now say so when a shipped file cites them.** A record
