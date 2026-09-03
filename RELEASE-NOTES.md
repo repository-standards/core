@@ -3,6 +3,13 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.5 - 2026-09-03
+
+**The wiring check reads what the guard reads.** A question's id now has to be named beside
+the call in the skill, in the same place the runtime guard reads it back, so a skill that
+forgets it fails the build rather than an adopter's session. The answer to the evidence
+question is written into the intake file, where a later wave can read it.
+
 ## 1.0.4 - 2026-09-03
 
 **The evidence question asks one thing.** At intake the adoption asks whether an anonymised
