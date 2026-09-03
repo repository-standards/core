@@ -366,12 +366,16 @@ const problems = [...malformed];
 // every adopter who has not touched the file.
 const MARKER_BLOCK_RE = /^>\s*\[NEEDS REVIEW\][^\n]*(?:\n>[^\n]*)*/gm;
 const BACKLOG_ID_RE = /Backlog:\s*([A-Za-z][\w-]*)\s*\./;
+// The block is read as its prose, not as its markup: `\s` spans the newline but stops at the
+// next line's `>`, so a marker whose id wrapped - which any repo that wraps prose at a column
+// will write, and which reads correctly to a person - was reported as naming no row at all.
+const unquote = (block) => block.replace(/^>[ \t]?/gm, "");
 for (const f of FILES) {
   if (!f.endsWith(".md") || scaffolding(f)) continue;
   let raw;
   try { raw = readFileSync(at(f), "utf8"); } catch { continue; }
   for (const block of raw.match(MARKER_BLOCK_RE) || []) {
-    const id = BACKLOG_ID_RE.exec(block)?.[1];
+    const id = BACKLOG_ID_RE.exec(unquote(block))?.[1];
     if (!id) problems.push(`${f}: a [NEEDS REVIEW] marker names no backlog row (expected "Backlog: <ID>.")`);
     else if (!backlogText.includes(id)) problems.push(`${f}: [NEEDS REVIEW] names backlog row "${id}", which is not in the backlog`);
   }
