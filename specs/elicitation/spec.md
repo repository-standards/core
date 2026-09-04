@@ -219,6 +219,10 @@ it as the known gap rather than claiming coverage.
   of a session back as a user turn, so any textual scan lets the agent vouch for itself.
 - A refusal MUST name the point, restate the question and state the three answers. A refusal
   that only says no gets worked around.
+- A refusal MUST name both ways to carry the point id on the call that would settle it -
+  `metadata.source` and the bracketed `[point.id]` header - not only the one the skill text
+  currently prescribes. A remedy that omits an accepted path reads as though only the other
+  one exists.
 - A `provisional` answer MUST name a backlog row that exists.
 - Every `[NEEDS REVIEW]` marker MUST name a backlog row, and that row MUST exist - checked
   against every non-scaffolding markdown file, not only the artifacts a ledger row points at.
