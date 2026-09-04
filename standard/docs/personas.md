@@ -5,6 +5,15 @@
 > against a named persona. "For whom?" must have an answer before "what?" and "how?".
 > (See the standard's ADR-006 - personas are a validation gate.)
 
+> **Build it from the distrust, not the name.** Start each persona from what they fear,
+> distrust, compare against, or need to see before they act - not from who they are.
+> Identity is background you add last, not the opening move; a persona that leads with a
+> name, age, and stock photo tends to describe a person without ever pinning down a
+> decision.
+> (Source: psychographic segmentation, Anthony Dutcher / VIX Media, via
+> [Dribbble Stories](https://dribbble.com/stories/2026/08/31/cl-anthony-dutcher-vix-media-web-design-agency-research),
+> Aug 2026 - adapted here from buyer psychology to product/engineering personas.)
+
 <!-- Roster reconstructed from the code by an adoption run under `suggest`, not confirmed
      by a person yet? Open here, right after this intro - above `## The roster` so the
      marker line is never read as a persona row - with the one marker (standard ADR-057/058):
@@ -47,17 +56,22 @@ Copy this block per persona.
 
 ### `{{PERSONA_NAME_AND_ROLE}}` <!-- e.g. "Owner-operator Olga" -->
 
-- **Who / context.** One paragraph: their role, environment, tech comfort, constraints.
+- **Distrust & friction (before they trust it).** What they fear, distrust, compare against,
+  or need to see before they act - the friction that currently blocks the job, and what
+  they must not lose. Ground it in real signals (support threads, search queries,
+  competitor comparisons), not invention. This is the section a decision should actually
+  hinge on - if changing it would not change a spec, a rule, or a design, keep digging.
 - **Jobs to be done.** The progress they are trying to make ("when \_\_\_, I want to \_\_\_,
   so I can \_\_\_"). This is the durable part - features change, jobs don't.
 - **Goals.** What success looks like for them, in their words.
-- **Pains / frictions.** What currently blocks the job; what they must not lose.
 - **Decisions they influence.** Which product/technical decisions this persona pulls on
   (links to ADR/BDR).
 - **Success signals.** How we will know the product serves them (a metric, a behavior, an
   outcome - not "they are happy").
 - **Anti-goals.** What this persona explicitly does not need - so we do not gold-plate for
   them.
+- **Who / context.** One line, added last: role, environment, tech comfort. Background for
+  the fear above, not the starting point.
 
 ## Worked example (delete after filling your roster)
 
@@ -72,22 +86,24 @@ like once it is yours:
 
 ### `Owner-operator Olga` (primary)
 
-- **Who / context.** Runs 1-3 rental units herself alongside a day job. Comfortable with a
-  phone and a spreadsheet, not with dashboards. Time-poor; touches the product in short
-  bursts, often on mobile, often out of hours.
+- **Distrust & friction.** Losing a booking because a confirmation was slow, and looking
+  unresponsive to a guest because of it. Doesn't trust a dashboard she has to interpret -
+  wants a plain yes/no. A multi-step flow or a piece of jargon reads as "not built for
+  someone like me" and she disengages rather than push through it.
 - **Jobs to be done.** "When a guest asks to change dates, I want to see if it is possible
   and confirm it in under a minute, so I can get back to my day." "When money lands, I want
   to trust it reconciled itself, so I never chase a payment."
 - **Goals.** Zero double-bookings; never manually reconcile a payment; understand her month
   at a glance.
-- **Pains / frictions.** Multi-step flows; jargon; anything that assumes an ops team or a
-  desktop. Losing a booking to a slow confirmation.
 - **Decisions she influences.** Mobile-first UI (ADR-0xx); payment auto-reconciliation
   (BDR-0xx); no required onboarding call.
 - **Success signals.** >90% of date-change requests resolved in one session; 0 manual
   reconciliations per month; median back-office task < 60s.
 - **Anti-goals.** Bulk operations, role management, API access - that is `Agency admin Adam`,
   not her.
+- **Who / context.** Runs 1-3 rental units herself alongside a day job. Comfortable with a
+  phone and a spreadsheet, not with dashboards. Touches the product in short bursts, often
+  on mobile, often out of hours.
 
 ## Keeping them honest
 

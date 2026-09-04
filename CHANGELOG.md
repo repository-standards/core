@@ -17,6 +17,15 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### Personas are built distrust-first, not identity-first (2026-09-04)
+
+The persona template and the dogfooded roster both open each persona with what they fear,
+distrust, or need to see before they act; `Who / context` moved to the last line instead of
+the first. Follows psychographic segmentation rather than leading with a name and a title -
+source cited in `standard/docs/personas.md`.
+
 ## 1.0.16 - 2026-09-04
 
 ### The refusal named only one of two working ways to answer it (2026-09-04)
