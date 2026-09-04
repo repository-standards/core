@@ -2,10 +2,11 @@
   "$about": "One repository-standards core update-to-latest run against a private repository, run by its own admin/maintainer in one Claude Code session (Claude Sonnet 5), 2026-09-04. Consent level 1: the literal user turns and a per-turn pass/fail only - no agent text, no tool trace, no repository name or path. The target is referred to only as anon-r3k.",
   "$anonymisation": "No repository name, owner, path, hostname, username or IP appears anywhere in this file. Every user turn is reproduced verbatim, including typos, because none of them names the project.",
   "$elicitation": {
-    "provenance": "human",
+    "provenance": "unverified",
     "transcript": null,
     "questions_asked": null,
-    "$why": "Level 1 carries no transcript file and no agent text, so the asked/checked/suggested flags below describe the agent's response to each turn as recalled by the same session that ran it, not as read back against a kept transcript."
+    "asked_claims": 1,
+    "$why": "Recorded as human-prompting, but Level 1 ships no transcript file, so not one of the asked/checked/suggested claims below can be checked against what was actually said - they were scored by the same session that ran it, from memory of the run rather than from a kept log. unverified is the honest state, same as 2026-08-10-f-anonymised.json for the same reason."
   },
   "observations": [
     {
