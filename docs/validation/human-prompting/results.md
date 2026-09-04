@@ -31,7 +31,7 @@ read at all - most often because the run was recorded from the repository state 
 rather than from the agent's own words, which shows what it did and not what it asked. Both stay
 out of the numerator and the denominator, and both are printed rather than absorbed.
 
-Verdicts across every run: 56 pass, 43 partial, 17 fail.
+Verdicts across every run: 60 pass, 43 partial, 18 fail.
 
 Agent turns quoted verbatim from a session transcript, across every run: **268/377 (71%)**.
 The rest are descriptions of what the agent did, written afterwards by whoever scored the run -
@@ -51,6 +51,7 @@ says which kind a given run mostly is. See `Agent turns quoted` below for run by
 | [`2026-08-10-f-anonymised.json`](runs/2026-08-10-f-anonymised.json) | 1 | 6 agent turns | **1/6** (17%) | **6/6** (100%) | **4/6** (67%) | 0/6 (0%) | 1 partial | - |
 | [`2026-08-19-g-adoption.json`](runs/2026-08-19-g-adoption.json) | 1 | 1 observation | **1/1** (100%) | **1/1** (100%) | **1/1** (100%) | - | 1 pass | - |
 | [`2026-09-03-h-monorepo-adoption.json`](runs/2026-09-03-h-monorepo-adoption.json) | 6 | 7 agent turns | **1/7** (14%) | **7/7** (100%) | **6/7** (86%) | 0/7 (0%) | 1 pass, 4 partial, 1 fail | - |
+| [`2026-09-04-i-anon-r3k.json`](runs/2026-09-04-i-anon-r3k.json) | 5 | 5 observations | **1/4** (25%) <br><sub>1 n/a</sub> | **5/5** (100%) | **3/5** (60%) | - | 4 pass, 1 fail | - |
 
 **Every conversation behind these numbers is readable.** One page per run under
 [`scenarios/`](scenarios/), rendered from the same rows: what was typed, what the agent did,
