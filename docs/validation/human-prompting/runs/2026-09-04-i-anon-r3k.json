@@ -1,0 +1,63 @@
+{
+  "$about": "One repository-standards core update-to-latest run against a private repository, run by its own admin/maintainer in one Claude Code session (Claude Sonnet 5), 2026-09-04. Consent level 1: the literal user turns and a per-turn pass/fail only - no agent text, no tool trace, no repository name or path. The target is referred to only as anon-r3k.",
+  "$anonymisation": "No repository name, owner, path, hostname, username or IP appears anywhere in this file. Every user turn is reproduced verbatim, including typos, because none of them names the project.",
+  "$elicitation": {
+    "provenance": "human",
+    "transcript": null,
+    "questions_asked": null,
+    "$why": "Level 1 carries no transcript file and no agent text, so the asked/checked/suggested flags below describe the agent's response to each turn as recalled by the same session that ran it, not as read back against a kept transcript."
+  },
+  "observations": [
+    {
+      "prompt": "A65",
+      "target": "repo: anon-r3k, Node/TypeScript - already carrying an older aligned version of the standard on disk",
+      "mode": "full-loop",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "routed correctly off repository state (an update, not a fresh adoption) despite the instruction itself misnaming the flow; closed with a self-verify pass"
+    },
+    {
+      "prompt": "A40",
+      "target": "repo: anon-r3k, roughly twenty minutes into an unattended delta-apply stretch, no status given yet",
+      "mode": "full-loop",
+      "verdict": "fail",
+      "asked": "n/a",
+      "checked": true,
+      "suggested": false,
+      "evidence": "answered correctly once asked, but nothing had been volunteered before the user had to ask - this row passes only in a run where nobody types it"
+    },
+    {
+      "prompt": "A66",
+      "target": "repo: anon-r3k, one pull request open with checks pending, a second, unrelated repository named in the same sentence",
+      "mode": "full-loop",
+      "verdict": "pass",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "evidence": "kept the two repositories and their two pull requests separate rather than folding one's review/merge into the other's"
+    },
+    {
+      "prompt": "A67",
+      "target": "repo: anon-r3k, mid-wait on the pull request's CI",
+      "mode": "full-loop",
+      "verdict": "pass",
+      "asked": false,
+      "checked": true,
+      "suggested": false,
+      "evidence": "read as confirmation to keep waiting on work already in flight, not as a new instruction; nothing duplicated"
+    },
+    {
+      "prompt": "A68",
+      "target": "repo: anon-r3k, pull request merged, one local branch left stale",
+      "mode": "full-loop",
+      "verdict": "pass",
+      "asked": false,
+      "checked": true,
+      "suggested": true,
+      "evidence": "resumed every thread still open in the session, not only the newest one named, and completed the specific housekeeping ask rather than absorbing it into the vague half"
+    }
+  ],
+  "result": "self-verify: drift 0, 95% adopted (79/83), 4 recorded exceptions; one pull request opened and merged (rebase, admin override - sole repo admin, confirmed with the user before using it); 49 files touched across a small commit batch."
+}
