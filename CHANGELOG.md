@@ -17,7 +17,7 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
-## Unreleased
+## 1.0.17 - 2026-09-04
 
 ### Personas are built distrust-first, not identity-first (2026-09-04)
 
