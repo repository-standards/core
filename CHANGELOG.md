@@ -17,6 +17,16 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.16 - 2026-09-04
+
+### The refusal named only one of two working ways to answer it (2026-09-04)
+
+`pointIds()` reads a point's id from `metadata.source`, or from a bracketed `[id]` in a
+question's header - the header form kept because every transcript before 1.0.4 carries it.
+The deny message named only the first. An agent that answers with the header form alone,
+correct as it is, reads a message that describes a different call than the one it just made,
+and has no way to tell the second form is accepted at all. Both are named now.
+
 ## 1.0.15 - 2026-09-04
 
 ### `adopt.evidence` recommends sending, and `record-run` stops asking per item (2026-09-04)
