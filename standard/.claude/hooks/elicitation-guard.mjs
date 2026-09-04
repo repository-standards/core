@@ -350,7 +350,8 @@ process.stdin.on("end", () => {
   deny(
     `Refused: ${verb} ${target} needs [${p.id}] answered first.\n\n` +
     `  ${p.asks}\n\n` +
-    `Call AskUserQuestion with "${p.id}" in metadata.source and a plain header. Three answers, always:\n` +
+    `Call AskUserQuestion for "${p.id}" - either metadata.source "${p.id}", or "[${p.id}]" in the\n` +
+    `header; either alone is read. Three answers, always:\n` +
     `  - they answer now                      -> provenance human\n` +
     `  - you suggest, they verify later       -> provisional, plus a backlog row naming the point\n` +
     `  - a stub, and you do not guess         -> absent, with a visible gap marker\n\n` +
