@@ -1,5 +1,5 @@
 ---
-status: Accepted
+status: Accepted, revised by ADR-062 (two answers, the held-for-review one dropped; record.participation retired)
 date: 2026-09-04
 ---
 

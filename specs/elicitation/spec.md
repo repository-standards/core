@@ -111,6 +111,26 @@ cross-references what a marker names.
   no leading answer exists for an identity claim like `record.participation`. `adopt.evidence`
   is the documented exception, not a second silent case.
 
+### Session 2026-09-16
+
+- Q: `adopt.evidence` offers three answers (ADR-061). Does a consent point get to hold a
+  middle answer - the same send, held for one more yes after a read? A: No, not this one.
+  Two answers now, **send it** (recommended) / **send nothing** (ADR-062). The pull request
+  `record-run` opens from the person's own account is the review, so the held answer bought a
+  step without a safeguard, and the 2026-09-03 measurement showed adopters take the last
+  answer on a list. Nothing in R28 moves: the point still declares a recommended default, the
+  first option still equals it, and `allowed_provenance` still holds it to `human` alone. What
+  the yes sends is one shape, the full run anonymised - the point's `asks` says so, because a
+  consent question that does not say what goes out is not one.
+- Q: `record.participation` asked at the close whose run this was (ADR-054). With consent
+  settled at intake, does an identity question survive on its own? A: No, the point is
+  retired (ADR-062). Whose run it is reads off the pull request author, and whether a person
+  answered or the agent answered for itself reads off the agent turns the record now always
+  carries - both are facts the agent cannot type at the close. Its gate on
+  `docs/validation/**/runs/*.json` moves to `adopt.evidence`, so the refusal without a human
+  intake answer stands. `recommended: null` is now declared by no point; the R28 rule keeps
+  the slot for an identity claim that would earn it.
+
 ## Scope
 
 [`standard/.claude/elicitation/points.json`](../../standard/.claude/elicitation/points.json)
@@ -175,12 +195,12 @@ it as the known gap rather than claiming coverage.
   preference rather than a fact about the repository MUST forbid `inferred`.
 - Each point MUST declare `recommended`: the answer that leads. It is the answer converging on
   the standard, or where convergence is not the axis, the answer given now rather than
-  deferred. `null` is legal only where no such axis exists - an identity claim such as whose
-  session this is (`record.participation`) has none. A point about whether to send something
-  MAY declare a recommended default (`adopt.evidence`, ADR-061): recommending an answer is not
-  inferring or stubbing one, and `allowed_provenance` still holds every consent point to
-  `human` alone. The skill MUST offer the declared answer first, and the static check MUST
-  fail when the two disagree.
+  deferred. `null` is legal only where no such axis exists - an identity claim with no leading
+  answer would be one, and none is declared today (ADR-062). A point about whether to send
+  something MAY declare a recommended default (`adopt.evidence`, ADR-061): recommending an
+  answer is not inferring or stubbing one, and `allowed_provenance` still holds every consent
+  point to `human` alone. The skill MUST offer the declared answer first, and the static check
+  MUST fail when the two disagree.
 - A point asked down more than one path MUST declare every one of them - every skill in `skill`
   and every file in `file` - and the static check MUST require a call site in each and read the
   option order of each. A question reaching a greenfield repo and a brownfield one is two option
@@ -202,7 +222,8 @@ it as the known gap rather than claiming coverage.
   that run still is. `record.participation` gated a path that exists only in this repository,
   so no adoption ever reached it and no adopter was ever asked whether their session could be
   kept; the question a close needs is asked in the intake round, on the artifact the run writes
-  first.
+  first, and that intake point gates the run record as well (ADR-062), so the guard still
+  refuses a record written before anybody was asked.
 - The rule binds every question a run asks, not only the declared ones - a check can only
   reach what is written down, and that is a limit of the check rather than of the rule.
 - The declared points are the enforceable floor. A run MUST ask what the repository in front

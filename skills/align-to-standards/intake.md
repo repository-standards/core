@@ -338,7 +338,7 @@ Everything downstream is scoped by this answer, so inferring it means inferring 
 
 Records to `docs/adoption-provenance.md`: the `adopt.intent` row takes the state, who answered, the date, and `docs/adoption-intake.md` as where the answer landed.
 
-### `[adopt.evidence]` Whether an anonymised excerpt of this run goes upstream
+### `[adopt.evidence]` Whether the full anonymised run goes upstream
 
 Fires **in the intake round, before `docs/adoption-intake.md` is written** - not at the close.
 Every version of this question until now sat in the last step of the run, and across every
@@ -347,13 +347,12 @@ a pull request, and the tail of a phase file is exactly what a long run does not
 
 Call `AskUserQuestion` for point `[adopt.evidence]` - header **Evidence**, `metadata.source` `adopt.evidence` - and the question:
 
-> This session can be kept as evidence for the standard - the questions it asked, the answers you gave, what it produced. Send an anonymised excerpt upstream as a pull request?
+> This session can be kept as evidence for the standard. Send the full run upstream as an anonymised pull request - what you typed, what the agent replied, and the names of the tools it ran in order, with paths, hosts, usernames and the repository name removed and never any raw tool input or output?
 
-Options, in order: **send it** (recommended - `record-run` assembles it with machine paths and
-identity scrubbed and the repository named only as `/git/<repo>`, and sends it; the scrub is the
-safeguard, not a read gating every send) / **send it, once I have read it** (same assembly, held
-for one more yes after you have seen it) / **send nothing** (no excerpt and no run record; only
-the provenance ledger the guard requires is written)
+Options, in order: **send it** (recommended - `record-run` assembles the full run, scrubs
+machine paths, identity and the repository's name, replacing the name with an opaque code, shows
+the result once and opens the pull request from your own account) / **send nothing** (no run
+record; only the provenance ledger the guard requires is written)
 
 Sending leads because the other order was tried. The first shape of this list led with keeping
 the excerpt local and closed with "record nothing". Adopters took the last
@@ -362,19 +361,20 @@ list whose safe-looking answer is the one that sends nothing collects nothing, s
 asks one thing and says what that answer sends.
 
 **send it** is the recommended default (ADR-061, superseding ADR-055's `recommended: null` for
-this point). None of the three may be inferred or stubbed: consent an agent supplied is not
-consent, and `allowed_provenance` stays `human` alone - recommending an answer is not the same as
-choosing it for the person. Anonymisation is not an option because it is not optional: `record-run`
-scrubs paths and identity at every level regardless of which of the three is picked.
+this point). Neither answer may be inferred or stubbed: consent an agent supplied is not consent,
+and `allowed_provenance` stays `human` alone - recommending an answer is not the same as choosing
+it for the person. There is no third answer (ADR-062): not a prompts-only record, not a named one,
+and not one held for a review before sending - the pull request `record-run` opens from the
+person's own account is the review, and they can edit or close it there. Anonymisation is not an
+option because it is not optional: `record-run` scrubs paths, identity and the repository's name
+from every record it assembles.
 
-The answer governs step 8 at the close and nothing else, and it now governs the whole of step 8 -
-not only whether `record-run` assembles anything, but whether it asks again once it has. Under
-**send it**, `record-run` assembles, scrubs and sends without a further question. Under **send it,
-once I have read it**, `record-run` shows the whole assembled batch once and asks exactly one
-final yes/no before sending (ADR-061) - never one yes/no per item, the pattern this replaces.
-Under **send nothing**, `record-run` does not fire. The adoption ping is not on this list: it
-carries no session content, goes out on its own at every wave close and is disclosed rather than
-asked (ADR-047), with `REPOSTDS_NO_TELEMETRY` as its only switch.
+The answer governs step 8 at the close and nothing else, and it governs the whole of step 8:
+under **send it**, `record-run` assembles, scrubs, shows the record once and sends without a
+further question - never one yes/no per item, the pattern ADR-061 replaced. Under **send
+nothing**, `record-run` does not fire. The adoption ping is not on this list: it carries no
+session content, goes out on its own at every wave close and is disclosed rather than asked
+(ADR-047), with `REPOSTDS_NO_TELEMETRY` as its only switch.
 
 Records to `docs/adoption-provenance.md`: the `adopt.evidence` row takes the state, who answered,
 the date, and `docs/adoption-intake.md` as where the answer landed. The answer itself goes on the

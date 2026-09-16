@@ -180,24 +180,22 @@ it says.
    learning still lands in the target repo's records either way.
 
 8. **Record the run (ADR-045), within the consent the intake round already took.**
-   Success, partial or abandoned - offer `record-run`, read from this repo's own
+   Success, partial or abandoned - run `record-run`, read from this repo's own
    `skills/record-run/SKILL.md` (a transition skill, never the target repo's
    `.claude/skills/` - ADR-045's correction). This session is itself the
    evidence the human-prompting corpus needs and cannot get any other way; an
-   abandoned or failed run is more valuable than a clean one and the offer must say
-   so before asking anything. `adopt.evidence` decides whether this step runs at all,
-   and how it behaves once it does: **send it** and **send it, once I have read it**
-   both reach it - **send nothing** means skip it and say you are skipping it. Read
+   abandoned or failed run is more valuable than a clean one and this must be said
+   out loud. `adopt.evidence` decides whether this step runs at all: **send it**
+   reaches it - **send nothing** means skip it and say you are skipping it. Read
    the answer from the **Evidence** line of `docs/adoption-intake.md`, not from
    memory: a later wave or a compacted session has nothing else to read it from. No
    line, or a `pending` ledger row, means the question was never reached - put it
    now, as the intake round does, before assembling anything. Under **send it**,
-   `record-run` scrubs and sends with no further question. Under **send it, once I
-   have read it**, `record-run` shows the whole assembled batch once and asks
-   exactly one final yes/no before sending. Neither is per item (ADR-061) - unlike
-   step 7's per-issue consent, one intake answer governs everything this step
-   assembles, and "no" or **send nothing** leaves the assembled record local and
-   costs the user nothing.
+   `record-run` assembles the full run, scrubs it, shows it once and opens the pull
+   request from the user's own account with no further question - the pull request
+   is the review (ADR-062). Nothing here is per item (ADR-061) - unlike step 7's
+   per-issue consent, one intake answer governs everything this step assembles, and
+   **send nothing** costs the user nothing.
 
 9. **Send the adoption ping (ADR-047).** At every wave close, alongside steps 7 and 8 -
    unlike them, **informed, not asked**: never wait for a yes. First check

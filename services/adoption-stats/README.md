@@ -19,7 +19,7 @@ from. See ADR-047 for exactly what is and is not collected and why.
 checkout, never shipped to adopters,
 [ADR-045](../../docs/decision-records/ADR-045-record-run-feeds-the-existing-corpus-consent-gated.md)).
 That is a different mechanism for a different purpose: consent-gated, carries far more
-detail (up to the session's own turns and agent responses at level 2), and feeds the
+detail (the session's own turns and agent responses, anonymised), and feeds the
 `docs/validation/human-prompting/` corpus to improve the product and validate that the
 standard actually works. This service never touches that corpus and `record-run` never
 touches this database - one counts, the other teaches.
