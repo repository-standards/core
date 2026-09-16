@@ -156,14 +156,14 @@ Output: header `self-verify - compliance with manifest <version>` (or `the BUILT
 
 Drift arithmetic: one point per unmet required check. That is one point per manifest entry except for `.standards-version`, which scores two - once as the version pin, once as the required file - because a repo without it has both failed to record which version it follows and failed to carry the file that says so. A copy-class directory scores one for the entry however many members are missing or changed.
 
-Adoption arithmetic: `applicable` counts every non-warning result that is either a real check or an excepted one; `adopted = applicable - drift - excepted`. **An excepted entry stays in the denominator and is not adopted**, so excepting can only lower the percentage. It used to leave the denominator entirely, which made the percentage rise as the standard was discarded: 13 `file` exceptions reported `100% adopted (32/32)` on a tree whose intact form counted 49. Counting an exception as adopted would encode the same claim the other way - a decision not to carry something is not carrying it. The exception count is printed in the summary line always, including zero. Absent a manifest, the verdict names the built-in skeleton as the yardstick, because the same output format with a much smaller denominator otherwise reads as a manifest measurement (three real unaligned repos reported drift 4-5 where the manifest gives 13-15).
+Adoption arithmetic: `applicable` counts every non-warning result that is either a real check or an excepted one; `adopted = applicable - drift - excepted`. **An excepted entry stays in the denominator and is not adopted**, so excepting can only lower the percentage. It used to leave the denominator entirely, which made the percentage rise as the standard was discarded: 13 `file` exceptions reported `100% adopted (32/32)` on a tree whose intact form counted 49. Counting an exception as adopted would encode the same claim the other way - a decision not to carry something is not carrying it. The exception count is printed in the summary line always, including zero. **The percentage is coverage of the manifest in this repository, never an assessment of the repository**, and every verdict says so in the same breath as the number: an external adopter read `93% adopted (74/80)` as a grade and titled their pull request "assessment to 93%", on a run that raised no fill warning and so carried no clarifier at all. Absent a manifest, the verdict names the built-in skeleton as the yardstick, because the same output format with a much smaller denominator otherwise reads as a manifest measurement (three real unaligned repos reported drift 4-5 where the manifest gives 13-15).
 
 ### Exit codes and verdicts
 
 | Condition | Verdict | Stream | Exit |
 |---|---|---|---|
-| drift 0 | `self-verify: OK - drift 0 - <pct>% adopted (<a>/<n>), <e> excepted - compliant with the standard` | stdout | 0 |
-| drift > 0 | `self-verify: drift <n> - <pct>% adopted (<a>/<n>), <e> excepted - <n> required entr(y/ies) unmet` | stderr | 1 |
+| drift 0 | `self-verify: OK - drift 0 - <pct>% adopted (<a>/<n>), <e> excepted - compliant with the standard - the percentage is how much of the standard's manifest is present here, not a grade of this repository` | stdout | 0 |
+| drift > 0 | `self-verify: drift <n> - <pct>% adopted (<a>/<n>), <e> excepted - <n> required entr(y/ies) unmet - the percentage is how much of the standard's manifest is present here, not a grade of this repository` | stderr | 1 |
 | drift > 0, `--warn` | same drift line | stderr | 0 |
 | `--version X` and pin != X | counted as a version FAIL, drifts as above | stderr | 1 |
 
@@ -174,6 +174,8 @@ neither is a statement about whether the repo complies:
 |---|---|---|
 | ` - <n> CHECK(S) NOT RUN HERE (<ids>): a missing prerequisite, counted as neither drift nor adoption, so this verdict covers less than the manifest does` | any guard was not run | both |
 | ` - AND THAT IS THE WHOLE CLAIM: no capability spec exists here yet, ...` | no capability spec exists | the drift-0 line, which is the one that otherwise overclaims |
+
+The `- the percentage is how much of ... is present here, not a grade of this repository` clause is unconditional on both lines; without a manifest it names `the built-in skeleton` instead of `the standard's manifest`. Consumers parse up to `<e> excepted` and are unaffected by what follows.
 
 The leading `OK - ` is dropped when any check did not run. Treating a missing tool as the
 machine's problem rather than the repo's loosened the gate - it used to exit 1 and now does
@@ -225,7 +227,7 @@ has no opinion on that.
 - **A self-written stub warns.** GIVEN `CONTRIBUTING.md` whose whole body is `# Contributing` and `TODO.` WHEN self-verify runs THEN a WARN names it and drift is unchanged - the file carries no template placeholder, and it is a manifest entry the previous hardcoded list never covered.
 - **A file with only a heading warns.** GIVEN `SECURITY.md` containing nothing but `# Security` WHEN self-verify runs THEN a WARN names it as having no content beyond its headings.
 - **A terse but real file does not warn.** GIVEN `SECURITY.md` reading `Report vulnerabilities to security@example.com. We acknowledge within five working days.` WHEN self-verify runs THEN no substance WARN is raised for it - a check that warned here would be measuring length, and would teach adopters to pad.
-- **The verdict states what the percentage counts.** GIVEN any file raising a substance WARN WHEN self-verify runs THEN the summary line says the percentage counts entries present, not substance written.
+- **The verdict states what the percentage counts.** GIVEN any repository WHEN self-verify runs THEN the summary line says the percentage is how much of the manifest is present here and not a grade of the repository, on the drift-0 line and the drift-above-zero line alike; GIVEN any file raising a substance WARN THEN the summary line additionally counts the files flagged as unfilled or empty.
 - **A placeholder in any script warns.** GIVEN a file containing `<角色名>` or `<нужно заполнить>` outside code formatting WHEN self-verify runs THEN it raises the placeholder WARN - a translated, unfilled shell must not read as complete.
 - **Notation alongside a real marker still warns.** GIVEN a file carrying both `` `specs/<capability>/` `` and a prose `<team name>` WHEN self-verify runs THEN the WARN is raised.
 - **A code span that wraps a line break is not a placeholder.** GIVEN a filled `README.md` whose prose reads ``man git-<commandname>`` and then, across a line break, ``git help`` / ``<commandname>`` inside one span WHEN self-verify runs THEN no placeholder WARN is raised for it; GIVEN the same file with a prose `<team name>` after that span THEN the WARN is raised.

@@ -17,6 +17,21 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### The verdict says what the percentage counts, on every run (2026-09-16)
+
+An external adopter's run printed `drift 4 - 93% adopted (74/80)` and their pull request
+arrived titled "assessment to 93%": the number read as a grade of their repository. It is
+how much of the standard's manifest is present there (ADR-038), and the only thing that said
+so was a clause appended when a file was flagged as unfilled - absent from exactly the clean
+run a reader trusts most. Both verdict lines now end with
+`- the percentage is how much of the standard's manifest is present here, not a grade of this repository`
+(`the built-in skeleton` without a manifest), and the fill clause counts the flagged files
+without repeating it. `drift N - NN% adopted (a/b), N excepted` is untouched, so anything
+that parses the line keeps working; `tools/self-verify-drift-test.mjs` asserts the clause on
+both branches.
+
 ## 1.0.17 - 2026-09-04
 
 ### Personas are built distrust-first, not identity-first (2026-09-04)

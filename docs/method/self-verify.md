@@ -156,11 +156,14 @@ carries neither, and cannot: the content is yours, so there is nothing to compar
 Those entries score on presence. Measured on a sparse repo, six files reading `# Title` and
 `TODO.` moved it from `21% adopted` to `37% adopted` with its real substance unchanged.
 
-So the percentage answers "how much of the standard's structure is in place", never "how good
-is what was written". A file that reads as unfilled - nothing beyond its headings, or nothing
-but a `TODO`/`TBD`/`WIP` marker - raises a **warning, never drift**, and the verdict line then
-states that the percentage counts entries present rather than substance written. The warning
-deliberately detects only *visibly nothing written*: a terse but real `SECURITY.md` naming an
+So the percentage answers "how much of the standard's manifest is present in this repository",
+never "how good is this repository" - and every verdict line says so next to the number,
+whether or not anything was flagged: an external adopter read `93% adopted (74/80)` as an
+assessment of their repository and titled a pull request "assessment to 93%", on a clean run
+that carried no such clarifier. A file that reads as unfilled - nothing beyond its headings,
+or nothing but a `TODO`/`TBD`/`WIP` marker - raises a **warning, never drift**, and the
+verdict line then also counts the files flagged. The warning deliberately detects only
+*visibly nothing written*: a terse but real `SECURITY.md` naming an
 address and a response time is complete, and a length threshold that failed it would teach
 adopters to pad. Whether what is written is any good is the judgment tier's call, below.
 

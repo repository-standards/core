@@ -79,6 +79,9 @@ tick.
 - Positive: the number can no longer be inflated silently. Padding a repo with empty files
   now produces a named warning per file and a verdict line that says what the percentage
   counts. The manifest becomes the single source of truth for which files are authored.
+- Follow-up (1.0.18): the clarifier is printed on every verdict, not only when a file is
+  flagged - an external adopter read a clean `93% adopted (74/80)` as a grade of their
+  repository and titled their pull request "assessment to 93%".
 - Positive: no existing adopter's drift number changes. The addition is warnings and wording,
   so nobody's CI turns red on a release that only clarified what the number meant.
 - Negative: a determined adopter can still clear the warning by writing one real but empty

@@ -1280,15 +1280,17 @@ const hollowNote = hollow
   ? " - AND THAT IS THE WHOLE CLAIM: no capability spec exists here yet, so this says the repo is shaped like the standard, not that any behaviour has been specified under it"
   : "";
 
-// The percentage is structural. A `fill-from-repo` entry is content the adopter writes, so
-// there is nothing to compare it against and it scores on presence: six files reading
-// "# Title / TODO." moved a sparse repo from 21% to 37% adopted with its substance unchanged.
-// Saying so where the number is printed is the honest fix; scoring prose mechanically would
-// turn substance into ceremony (standard ADR-038). The fill warnings above name the ones that read as
-// empty, and whether the rest say anything worth saying is reviewed at PR.
+// The percentage is structural (standard ADR-038): a `fill-from-repo` entry is content the
+// adopter writes, so there is nothing to compare it against and it scores on presence - six
+// files reading "# Title / TODO." moved a sparse repo from 21% to 37% adopted with its
+// substance unchanged. Scoring prose mechanically would turn substance into ceremony, so
+// every verdict says what the number counts instead, fill warning or not: an adopter whose
+// run printed `93% adopted (74/80)` and no fill warning titled their PR "assessment to 93%",
+// reading the number as a grade of their repository.
+const counts = ` - the percentage is how much of ${manifest ? "the standard's manifest" : "the built-in skeleton"} is present here, not a grade of this repository`;
 const fillWarnings = results.filter((r) => r.isWarning && r.name === "fill").length;
 const substance = fillWarnings
-  ? ` - ${fillWarnings} authored file${fillWarnings === 1 ? "" : "s"} flagged above as unfilled or empty: this percentage counts entries present, not substance written`
+  ? ` - ${fillWarnings} authored file${fillWarnings === 1 ? "" : "s"} flagged above as unfilled or empty, counted as present`
   : "";
 
 // A companion count, not a second percentage: how much of what "is present" still waits on
@@ -1305,8 +1307,8 @@ const needsReviewNote = needsReviewCount
 // to exit 1, and now does not), so what stops a skipped check reading as a clean bill of
 // health is the wording and the count, not the exit code.
 if (drift === 0) {
-  console.log(`self-verify: ${notRun.length ? "" : "OK - "}drift 0 - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${manifest ? "compliant with the standard" : "every skeleton check met"}${scope}${notRunNote}${substance}${hollowNote}${needsReviewNote}\n`);
+  console.log(`self-verify: ${notRun.length ? "" : "OK - "}drift 0 - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${manifest ? "compliant with the standard" : "every skeleton check met"}${counts}${scope}${notRunNote}${substance}${hollowNote}${needsReviewNote}\n`);
   process.exit(0);
 }
-console.error(`self-verify: drift ${drift} - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${drift} required entr${drift === 1 ? "y is" : "ies are"} unmet${scope}${notRunNote}${substance}${needsReviewNote}\n`);
+console.error(`self-verify: drift ${drift} - ${pct}% adopted (${adopted}/${applicable}), ${exceptedNote} - ${drift} required entr${drift === 1 ? "y is" : "ies are"} unmet${counts}${scope}${notRunNote}${substance}${needsReviewNote}\n`);
 process.exit(warn ? 0 : 1);
