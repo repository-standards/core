@@ -117,6 +117,7 @@ const CASES = [
   ["a decision record matches through the ** glob", { tool_name: "Write", tool_input: { file_path: "docs/decision-records/ADR-001-thing.md" } }, DENY],
   ["a spec matches through a ** in the middle", { tool_name: "Write", tool_input: { file_path: "specs/billing/spec.md" } }, DENY],
   ["a run record matches a * that must not span a slash", { tool_name: "Write", tool_input: { file_path: "docs/validation/human-prompting/runs/a.json" } }, DENY],
+  ["a run record after [adopt.evidence] was asked is allowed - the intake answer is the only consent it needs", { tool_name: "Write", tool_input: { file_path: "docs/validation/human-prompting/runs/a.json" }, transcript_path: withAsked("evidence", ["adopt.evidence"]) }, ALLOW],
   ["a path that merely resembles a gated one is left alone", { tool_name: "Write", tool_input: { file_path: "docs/personas.md.bak" } }, ALLOW],
   ["a nested path a single * must not reach is left alone", { tool_name: "Write", tool_input: { file_path: "docs/validation/human-prompting/runs/old/a.json" } }, ALLOW],
   ["an absolute path still matches", { tool_name: "Write", tool_input: { file_path: "/home/x/repo/backlog.md" } }, DENY],

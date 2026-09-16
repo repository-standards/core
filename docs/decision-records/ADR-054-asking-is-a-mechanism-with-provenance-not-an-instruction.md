@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Accepted (2026-08-19) |
+| **Status** | Accepted (2026-08-19), revised by ADR-062 (the `record.participation` point is retired) |
 | **Date** | 2026-08-19 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | elicitation, guards, adoption, validation, methodology |

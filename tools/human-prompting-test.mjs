@@ -9,6 +9,8 @@
 //   - a hole in a series, which is what a half-finished renumbering leaves
 //   - an observation citing a row that was renumbered out from under it
 //   - a run whose own prose states a fraction its turns do not support
+//   - a run dated after the one-shape cut (ADR-062) that carries no agent turn - the shape the
+//     two records that prompted the rule arrived in
 //
 // The last case is the control and it matters as much as the rest: the real corpus must pass
 // untouched. A check that fails on everything is as useless as one that fails on nothing.
@@ -94,10 +96,10 @@ const fixture = (mutate) => {
   const root = mkdtempSync(join(tmpdir(), "hp-test-"));
   const dir = join(root, "docs/validation/human-prompting");
   mkdirSync(join(dir, "runs"), { recursive: true });
-  const state = { prompts: PROMPTS, run: structuredClone(RUN) };
+  const state = { prompts: PROMPTS, run: structuredClone(RUN), file: "2026-01-01-a-fixture.json" };
   if (mutate) mutate(state);
   writeFileSync(join(dir, "prompts.md"), state.prompts);
-  writeFileSync(join(dir, "runs/2026-01-01-a-fixture.json"), JSON.stringify(state.run, null, 2));
+  writeFileSync(join(dir, `runs/${state.file}`), JSON.stringify(state.run, null, 2));
   return root;
 };
 
@@ -183,6 +185,35 @@ const CASES = [
     },
     expect: 1,
     match: /turn 2 has said_verbatim: "yes"/,
+  },
+  {
+    name: "a run dated after the one-shape cut with no agent turn and no transcript is refused",
+    mutate: (s) => {
+      s.file = "2026-09-17-z-fixture.json";
+      for (const o of s.run.observations) {
+        delete o.turns;
+        o.asked = true;
+        o.checked = true;
+        o.suggested = true;
+      }
+      s.run.$headline = "asked 2 of 2. checked 2 of 2. suggested 2 of 2.";
+    },
+    expect: 1,
+    match: /is dated after 2026-09-16 and carries no agent turn and no transcript/,
+  },
+  {
+    name: "the same shape dated before the cut is history and passes",
+    mutate: (s) => {
+      s.file = "2026-09-04-z-fixture.json";
+      for (const o of s.run.observations) {
+        delete o.turns;
+        o.asked = true;
+        o.checked = true;
+        o.suggested = true;
+      }
+      s.run.$headline = "asked 2 of 2. checked 2 of 2. suggested 2 of 2.";
+    },
+    expect: 0,
   },
   {
     name: "a tools_in_order that is not an array of non-empty strings is refused",

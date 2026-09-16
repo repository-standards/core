@@ -17,6 +17,28 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### A contributed run is the full run, anonymised, or nothing (2026-09-16)
+
+`record-run` no longer offers a choice between a prompts-only record and the full run, and
+`adopt.evidence` no longer holds a record for review before sending. Two external records
+(`anon-r3k`, 2026-09-04; `anon-x8v`, PR #143) both took the prompts-only branch and arrived
+with `provenance: unverified`, `transcript: null` and verdicts nobody can replay - the outcome
+ADR-045's own revisit clause named. One shape now: the literal user turns, the agent's text
+verbatim, the tools that ran in order (names only), the scoring and the result line, with
+nothing that identifies the repository - an opaque code not derived from its name, no owner,
+paths, hosts or usernames. `adopt.evidence` asks one question with two answers, **send it**
+(recommended) / **send nothing**; `record-run` asks no consent question at the close, shows the
+assembled record once and opens the pull request from the adopter's own account - that pull
+request is the review. `record.participation` (ADR-054), the identity question the close used
+to ask, is retired: whose run it is reads off the pull request author and whether a person
+answered reads off the agent turns the record now carries, and the write gate on
+`docs/validation/**/runs/*.json` moves to `adopt.evidence`. `tools/human-prompting.mjs`
+refuses a run record dated after 2026-09-16 that carries no agent turn and no transcript;
+earlier records are history and still pass. ADR-062; ADR-045, ADR-054 and ADR-061 revised, not
+rewritten.
+
 ## 1.0.18 - 2026-09-16
 
 ### The verdict says what the percentage counts, on every run (2026-09-16)

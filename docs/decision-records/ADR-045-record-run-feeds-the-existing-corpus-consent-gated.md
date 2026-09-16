@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Accepted (2026-08-09) |
+| **Status** | Accepted (2026-08-09), revised by ADR-062 (one shape of record, no level choice) |
 | **Date** | 2026-08-09 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | validation, skills, feedback, consent |

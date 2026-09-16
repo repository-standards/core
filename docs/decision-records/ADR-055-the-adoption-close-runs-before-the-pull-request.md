@@ -1,5 +1,5 @@
 ---
-status: Accepted, revised by ADR-061 (adopt.evidence gets a recommended default)
+status: Accepted, revised by ADR-061 (adopt.evidence gets a recommended default) and ADR-062 (record.participation retired)
 date: 2026-08-19
 ---
 

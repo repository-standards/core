@@ -60,7 +60,6 @@ which as `scope`.
 | `spec.unknowns` | pending | - | - | - | - |
 | `discover.materials` | pending | - | - | - | - |
 | `discover.decisions` | pending | - | - | - | - |
-| `record.participation` | pending | - | - | - | - |
 
 <!-- The table is parsed by position, six cells per row. Add columns to the right if you
      need them; do not reorder these. `-` means not applicable, never "I did not fill it in". -->

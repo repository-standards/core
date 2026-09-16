@@ -43,6 +43,9 @@ const check = process.argv.includes("--check");
 
 const VERDICTS = ["pass", "partial", "fail", "not-applicable", "not-run"];
 const FLAGS = ["asked", "checked", "suggested"];
+// ADR-062: after this date a contributed run carries the agent's own turns. The records up
+// to it that did not are the evidence for the rule and stay as history.
+const FULL_RUN_SINCE = "2026-09-16";
 
 let failures = 0;
 const fail = (msg) => {
@@ -192,6 +195,11 @@ for (const file of runFiles) {
         scoreInto(perTurn, t);
       }
     }
+  }
+
+  const dated = /^(\d{4}-\d{2}-\d{2})-/.exec(file)?.[1];
+  if (dated && dated > FULL_RUN_SINCE && agentTurns === 0 && !data.$elicitation?.transcript) {
+    fail(`${file} is dated after ${FULL_RUN_SINCE} and carries no agent turn and no transcript - a run nobody can check against what the agent said is not evidence (ADR-062)`);
   }
 
   runs.push({ file, data, perTurn, perObservation, agentTurns, verbatimAgentTurns, flaggedObservations, verdicts, modes: [...modes] });
