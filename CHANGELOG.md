@@ -17,7 +17,7 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
-## Unreleased
+## 1.0.18 - 2026-09-16
 
 ### The verdict says what the percentage counts, on every run (2026-09-16)
 
