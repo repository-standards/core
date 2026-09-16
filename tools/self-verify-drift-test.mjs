@@ -1120,6 +1120,32 @@ check(
   },
 );
 
+// --- 8. the verdict says what the percentage counts, on every run ------------------------
+//
+// An external adopter's run printed `drift 4 - 93% adopted (74/80)` with no fill warning,
+// and their pull request arrived titled "assessment to 93%": the number read as a grade of
+// the repository. It is coverage of the manifest (ADR-038), and a clarifier that appears
+// only next to a fill warning is absent from exactly the clean run a reader trusts most.
+const COUNTS = "is present here, not a grade of this repository";
+
+check(
+  "the drift-0 verdict says the percentage is manifest coverage, not a grade",
+  emptyCapabilityMap,
+  (r, expect) => {
+    expect(r.drift === 0, `the case is about the drift-0 line and must reach it: got ${r.drift}`);
+    expect(says(r, COUNTS), "a clean run printed the percentage with nothing saying what it counts");
+  },
+);
+
+check(
+  "the drift-above-zero verdict says the same",
+  () => {},
+  (r, expect) => {
+    expect(r.drift > 0, `the case is about the drift-above-zero line and must take it: got ${r.drift}`);
+    expect(says(r, COUNTS), "a run with drift printed the percentage with nothing saying what it counts");
+  },
+);
+
 console.log();
 if (failures) {
   console.error(`self-verify-drift-test: ${failures} case(s) failed`);
