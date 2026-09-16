@@ -1,0 +1,54 @@
+{
+  "$about": "One live Repository Standards assessment and first governance wave against a private Node/TypeScript repository, run by its owner in Codex desktop on 2026-09-16. Consent level 1: literal user turns and per-turn scoring only - no agent text, tool trace, repository name, paths, host information or raw tool data. The target is referred to only as anon-x8v.",
+  "$anonymisation": "No repository name, owner, filesystem path, hostname, username or IP appears in this file. The retained user turns are reproduced verbatim and do not identify the project.",
+  "$elicitation": {
+    "provenance": "unverified",
+    "transcript": null,
+    "questions_asked": null,
+    "asked_claims": 1,
+    "$why": "The owner confirmed this was their run and consented to anonymized evidence, but Level 1 intentionally carries no agent transcript. The asked/checked/suggested scores therefore cannot be independently replayed and remain unverified."
+  },
+  "observations": [
+    {
+      "prompt": "A69",
+      "target": "repo: anon-x8v, private Node/TypeScript application immediately after the elicitation guard bootstrap",
+      "mode": "full-loop",
+      "verdict": "pass",
+      "asked": "n/a",
+      "checked": true,
+      "suggested": true,
+      "evidence": "Resumed from the gate artifacts and prior answers after the required session restart; did not repeat the assessment or ask the owner to reconstruct context."
+    },
+    {
+      "prompt": "A70",
+      "target": "repo: anon-x8v, assessment complete and the owner authorizing the first governance-only wave",
+      "mode": "full-loop",
+      "verdict": "pass",
+      "asked": true,
+      "checked": true,
+      "suggested": true,
+      "evidence": "Treated the terse continuation as approval of the already scoped next phase, then asked only the choices that materially controlled layout, conventions, workflow mode and collision handling. Product behavior remained out of scope."
+    },
+    {
+      "prompt": "A71",
+      "target": "repo: anon-x8v, choosing how moved historical planning and design material should be recorded",
+      "mode": "full-loop",
+      "verdict": "pass",
+      "asked": "n/a",
+      "checked": true,
+      "suggested": true,
+      "evidence": "Explained that the choice changes documentation authority and review scope only, not application behavior, and recommended the smaller first-wave scope."
+    },
+    {
+      "prompt": "A72",
+      "target": "repo: anon-x8v, confirming the safer provenance choice preserves a route to improvement",
+      "mode": "full-loop",
+      "verdict": "pass",
+      "asked": "n/a",
+      "checked": true,
+      "suggested": true,
+      "evidence": "Connected the nonnormative discovery material to the measured backlog and later product, architecture, specification and decision waves without presenting historical claims as approved."
+    }
+  ],
+  "result": "self-verify: drift 4, 93% adopted (74/80), two recorded exceptions; four structural gaps deliberately deferred to an owned backlog; 80 files touched; lint, guard harness, provenance checks, diff check and 129 unit tests passed; no product behavior changed and no local commit or pull request was made in the adopting repository."
+}
