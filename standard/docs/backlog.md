@@ -72,7 +72,7 @@ not a comment on this row.
 
 ## What feeds this backlog
 
-Items arrive from five places, and each row **names its own** in the `source` column -
+Items arrive from six places, and each row **names its own** in the `source` column -
 never invent work that has no source:
 
 - **`onboarding`** (the align router's brownfield phase): capabilities to spec, decisions to
@@ -84,15 +84,20 @@ never invent work that has no source:
 - **`decision`** (`spec-impact`): a change needs an ADR/BDR that does not exist.
 - **`asked`**: somebody said it out loud - the mid-work "park it" that `/add-to-backlog`
   exists for.
+- **`discovery`** (`discovery-digest`): a topic someone is actively investigating - the
+  finding out before any spec can say what to build. Its DoD is the dossier's readiness
+  verdict, not anything built.
 
 Write the category, then where it came from if there is anywhere to point:
-`drift: spec-reconcile 2026-08-04`, `asked: #212`, `onboarding`. Six months on, that is the
+`drift: spec-reconcile 2026-08-04`, `asked: #212`,
+`discovery: docs/discovery/booking-changes`, `onboarding`. Six months on, that is the
 difference between a row that can justify itself and a row nobody dares delete. It is a
 column rather than a habit because "every item has a source" was the claim, and folding
 provenance into `why` made the claim true only for whoever happened to remember.
 
 A finished item leaves the backlog only when its **definition of done** is met - the
-spec is buildable, the ADR is Accepted, the drift is resolved - not when someone looks
+spec is buildable, the ADR is Accepted, the drift is resolved, the dossier has its
+verdict - not when someone looks
 at it. That says *when* a row may close. Where it goes afterwards is a separate
 question with its own answer: [Closing a row](#closing-a-row).
 
@@ -139,7 +144,7 @@ One item per row. `cap` links the capability, `persona` names who it serves (fro
 `personas.md`; see below), `owner` names the **role that must act** - `product` (business:
 `PRODUCT.md`, BDRs, personas confirmation), `architect` (ADRs, boundaries), `dev` (specs,
 code, guards) or `agent` (mechanical work the agent does alone), `why` is one line, `source`
-is where the item came from (the five categories above), `DoD` is the observable finish line.
+is where the item came from (the six categories above), `DoD` is the observable finish line.
 
 ### The id
 

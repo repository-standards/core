@@ -30,8 +30,8 @@ de-duplicating against existing items first.
 ## Steps
 
 1. **Check it is a real item.** It must trace to a source, and the ledger declares which
-   ones: `onboarding`, `spec-delta`, `drift`, `decision`, `asked`. A vague wish with no
-   source is not a backlog item - drop it.
+   ones: `onboarding`, `spec-delta`, `drift`, `decision`, `asked`, `discovery`. A vague
+   wish with no source is not a backlog item - drop it.
 
 2. **De-duplicate.** Scan the ledger; if the item (or a superset of it) is already
    there, stop - do not file a second one. Sharpen the existing row instead if needed.
@@ -52,7 +52,8 @@ de-duplicating against existing items first.
    (the **role** that must act: `product`, `architect`, `dev` or `agent`), `why` (one line),
    `source` (the category from step 1, plus where it came from if there is anywhere to
    point: `drift: spec-reconcile 2026-08-04`, `asked: #212`), `DoD` (the observable finish
-   line - "spec is buildable", "ADR Accepted", "drift resolved"), `status: todo`. A row
+   line - "spec is buildable", "ADR Accepted", "drift resolved", "the dossier has its
+   verdict"), `status: todo`. A row
    missing `cap`, `persona`, `owner` or `source` fails the backlog's own Definition of
    Ready, so it cannot be pulled - writing it short only moves the work to whoever pulls it.
    Slot it by **risk x leverage** (money / security / external contracts / data integrity

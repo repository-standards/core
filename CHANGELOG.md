@@ -17,6 +17,27 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## 1.0.20 - 2026-10-15
+
+### Discovery is work too (2026-10-15)
+
+A team asked in a sprint call to evaluate a tool spent days investigating before any dossier,
+backlog row or tracker item existed, and because the usual order is a spec first and tickets
+cut from it afterwards, nothing looked like it was happening. The standard modelled discovery
+as an inbox - material handed over lands in `docs/discovery/<topic>/` - and never as work:
+every backlog source except `asked` sits downstream of a spec or a record, and `asked` is a
+parked aside, not a running investigation. The backlog vocabulary gains a sixth source,
+`discovery` (`discovery-digest`), whose definition of done is the dossier's readiness verdict -
+ripe for `spec-specify`, a spec drafted `in-refinement`, or parked - not anything built. The
+dossier template gains a `Tracked by:` line naming the backlog row and, once bridged, the
+tracker key, or `none`. `discovery-digest` asks once per dossier whether the investigation is
+tracked, offers the row through `add-to-backlog` consent-gated, writes the answer into
+`Tracked by:`, and offers to close the row when the verdict meets its DoD. Listed everywhere the
+vocabulary is: `docs/backlog.md`, `add-to-backlog`, `specs/work-sprints`,
+`docs/method/tracking-work.md`; `docs/method/discovery.md` gains the step in its worked example
+and rule 9. No timebox field, no new gate, no tracker integration - execution state stays in
+the tracker (ADR-010). ADR-063, Proposed.
+
 ## 1.0.19 - 2026-09-16
 
 ### A contributed run is the full run, anonymised, or nothing (2026-09-16)
