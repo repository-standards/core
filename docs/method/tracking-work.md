@@ -98,8 +98,8 @@ of quiet obligations.
 This is a direct read, not a skill's output - the file already answers it, which is the
 point of it being a file. "Nobody has picked up" is answered trivially, since the pool's
 `assignee` is empty by definition. "During the adoption" is answered by the `source` column:
-every row names where it came from - `onboarding`, `spec-delta`, `drift`, `decision` or
-`asked` - so the answer survives the row being re-ordered or re-grouped, which pinning it to
+every row names where it came from - `onboarding`, `spec-delta`, `drift`, `decision`,
+`asked` or `discovery` - so the answer survives the row being re-ordered or re-grouped, which pinning it to
 whichever epic the onboarding phase filed it under did not. That column exists because the
 claim "every item has a source" was made in three places while the row schema had nowhere to
 put one, and provenance folded into `why` is a convention rather than a field.

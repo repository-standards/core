@@ -233,10 +233,10 @@
       ],
       "rule": "R22",
       "sha256": {
-        "add-to-backlog/SKILL.md": "594de2bda3f94cf1b1d43a04589ef0c64e8f266bebf43b1788ddab08649b40c6",
+        "add-to-backlog/SKILL.md": "d6a97f53c3b6512466819ecf758b2bf4b73d35f66bd7f61b6fbcabfffa2c2ca0",
         "adr-write/SKILL.md": "1211db6c93fad3b2b3ba1af6ffbae22e7f427ec2130132bfd5c239a7a2a479ac",
         "bdr-write/SKILL.md": "56395b525b71516f878f888b51bd7ea2f02d76c7cd3f5dfe48faacda4a0e459e",
-        "discovery-digest/SKILL.md": "775a44a5177ec17461bc4759a159bf5b377c5f1086a6b6b527f4dfd1960403aa",
+        "discovery-digest/SKILL.md": "298f1b3f89df07bb29e3b595140a79e2f5e8c2c275671e330fe388480e453da1",
         "idea-write/SKILL.md": "71344d506c77eef27422fb9f725628719821e0e2e46e9cf709a9b9198b44fcaf",
         "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",
         "pre-pr-review/SKILL.md": "aa43d020310c9c684720c58ec9e0efbeca4abf78fcce23b7dc2ec78544a0ce4f",

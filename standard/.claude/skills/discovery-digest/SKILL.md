@@ -59,6 +59,18 @@ puts it in front of them.
    by hand in the template's shape - summary, `Last reconciled: never`, the entry
    table, the contradictions table - and say that the template is missing.
 
+   **Then ask who is doing the finding out (standard ADR-063).** A dossier is opened
+   because somebody is now spending time on a topic, and that time is work before any
+   spec exists to plan it from. If the README has no `Tracked by:` line - a new dossier,
+   or one opened before this rule - and no backlog row already names this dossier,
+   offer one through `add-to-backlog`, consent-gated like every other routing here:
+   `source: discovery: docs/discovery/<topic>`, and as its definition of done the
+   readiness verdict step 6 reports (`ripe for spec-specify`, a spec drafted
+   `in-refinement`, or the topic parked). On a yes, write the row's id into
+   `Tracked by:` - and the tracker key beside it once the bridge creates one. On a no,
+   write `Tracked by: none` so the next pass does not ask again. Ask this once per
+   dossier, not once per entry.
+
 2. **Write the entry - essence, not transcript.** Copy the shipped
    `docs/discovery/_entry-template.md` to
    `docs/discovery/<topic>/YYYY-MM-DD-<source>.md` (source names where it came
@@ -152,6 +164,11 @@ puts it in front of them.
    now doing the job (out of scope here) or a case for a genuinely new capability,
    not a reason to reopen this one.
 
+   When `Tracked by:` names a backlog row and the verdict now meets that row's
+   definition of done, say so and offer to close the row: the investigation is
+   finished even when the topic is not, and what follows it - the spec, the records,
+   the build - is filed as its own work.
+
 ## Hard rules
 
 - A dossier is **never normative**: if material differs from an existing spec
@@ -166,6 +183,7 @@ puts it in front of them.
 
 - [ ] The entry file exists, essence-only, raw linked, and every header field filled - `Kind` from the vocabulary, `Purpose` answered, `Touches` listing the subjects beyond this dossier, `Outcome` at least `none yet`
 - [ ] The dossier README lists it (`new`) with kind, touches and outcome mirrored, summary current, contradictions diffed
+- [ ] The README carries a `Tracked by:` line - a backlog row id (plus tracker key once bridged), or `none` because the user declined - and the question was not asked again on a dossier that already had one
 - [ ] The new material was checked against every decision record's `Revisit when`; any hit is on the record and in the readiness report
 - [ ] Ripe decisions/work items offered onward (consent-gated), not silently taken, and whatever came of an entry written into its `Outcome`
 - [ ] Readiness verdict reported ("ripe for spec-specify" / "still discovering" / "route via clarify")

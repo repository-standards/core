@@ -47,7 +47,7 @@ Then one table of intents, the same columns the backlog declares, so a row moves
 
 `id` is the stable backlog id, whose prefix names what the item belongs to - the row's `cap` where it has one (`INV-3`), the artifact type where `cap` is `-` (`ADR-auth`). That convention has one home, `docs/backlog.md`, because the id is the only field joining the pool to a sprint and two documented forms make the join a guess. Together with `title` it is the key the invariant is checked on.
 
-`source` is where the item came from - one of `onboarding`, `spec-delta`, `drift`, `decision`, `asked`, optionally followed by what to point at. It is a column rather than a convention because "every item has a source" was already the claim, and folding provenance into `why` made it true only for whoever remembered.
+`source` is where the item came from - one of `onboarding`, `spec-delta`, `drift`, `decision`, `asked`, `discovery`, optionally followed by what to point at. It is a column rather than a convention because "every item has a source" was already the claim, and folding provenance into `why` made it true only for whoever remembered.
 
 `owner` is the **role** that must act; `assignee` is the **person currently holding** it, present tense, sprint rows only - the pool leaves it empty and reassignment overwrites rather than accumulating (ADR-030). `size` is `S` \| `M` \| `L`, optional, a splitting trigger and a cold-start estimate that measurement supersedes at three closed sprints; it is never summed and never charted (ADR-029).
 

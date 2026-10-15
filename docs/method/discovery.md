@@ -42,6 +42,13 @@ docs/discovery/booking-changes/
   2026-07-30-kickoff-meeting.md      <- typed header + essence + link to the recording
 ```
 
+Opening the dossier is also the moment somebody starts spending time on the topic, and
+nothing is planned from a spec yet because there is none. So the digest asks once who is
+doing the finding out. On a yes, `add-to-backlog` files a row - `DISC-booking-changes`,
+`source: discovery: docs/discovery/booking-changes`, done when the dossier reaches its
+verdict - and the README's `Tracked by:` line names it, with the tracker key beside it once
+the bridge creates one. On a no it says `none`, and the question is not asked again.
+
 The entry opens with a header table, filled from the shipped
 `docs/discovery/_entry-template.md`, because these are the things nobody
 reconstructs later:
@@ -229,3 +236,7 @@ diligence the whole time it is happening.
    a dossier is a materials-bearing topic in active discovery; the spec is the
    specification. Approval moves an idea forward; drafting moves a dossier's
    essence into a spec; neither ever moves backward.
+9. **Discovery is work**: a topic being actively investigated is a backlog intent whose
+   DoD is the dossier's verdict; the tracker holds its execution state (ADR-010), the
+   dossier names it in `Tracked by:` (ADR-063). Build work is filed separately once the
+   spec is `ready-to-develop`.

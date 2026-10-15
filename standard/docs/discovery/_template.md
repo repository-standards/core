@@ -15,6 +15,14 @@
      stamp. Update it when you fold the dossier into a spec; never edit it by hand to
      silence a question. -->
 
+**Tracked by:** `<backlog id> (<tracker key>)` | `none`
+
+<!-- Who is doing the finding out, and where that time is counted (standard ADR-063).
+     The backlog row has `source: discovery` and is done when this dossier reaches a
+     verdict - ripe for a spec, a spec drafted in-refinement, or parked - not when
+     anything is built; the build is filed as its own work. `none` is an answer: it
+     stops discovery-digest asking again. -->
+
 ## Entries
 
 | Date | Kind | Source | Touches | State | Outcome |
