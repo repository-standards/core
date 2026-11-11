@@ -128,8 +128,58 @@ const clip = (s, max = 260) => {
 
 /* ---------- tables ---------- */
 
-const cells = (line) =>
-  line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim())
+// A row is split on the pipes that delimit cells, not on every pipe: GFM's `\|` is a literal
+// pipe, and so is one inside a code span (`a | b`). Splitting on each `|` shifted every cell
+// after it, and a status column read a title or a note.
+const backtickRun = (s, i) => {
+  let j = i
+  while (s[j] === '`') j++
+  return j - i
+}
+const codeSpanEnd = (s, i, n) => {
+  for (let j = i; j < s.length; ) {
+    if (s[j] !== '`') {
+      j++
+      continue
+    }
+    const m = backtickRun(s, j)
+    if (m === n) return j
+    j += m
+  }
+  return -1
+}
+const cells = (line) => {
+  const s = line.trim().replace(/^\|/, '')
+  const out = []
+  let cur = ''
+  let closed = false
+  for (let i = 0; i < s.length; ) {
+    closed = false
+    if (s[i] === '\\' && (s[i + 1] === '|' || s[i + 1] === '\\')) {
+      cur += s[i + 1] === '|' ? '|' : '\\\\'
+      i += 2
+    } else if (s[i] === '`') {
+      const n = backtickRun(s, i)
+      const end = codeSpanEnd(s, i + n, n)
+      if (end < 0) {
+        cur += s.slice(i, i + n)
+        i += n
+      } else {
+        cur += s.slice(i, end + n).replace(/\\\|/g, '|')
+        i = end + n
+      }
+    } else if (s[i] === '|') {
+      out.push(cur.trim())
+      cur = ''
+      closed = true
+      i++
+    } else {
+      cur += s[i++]
+    }
+  }
+  if (!closed) out.push(cur.trim())
+  return out
+}
 
 const isSeparator = (line) => /^\|[\s:|-]+\|$/.test(line.trim())
 const key = (s) => s.toLowerCase().replace(/[^a-z]/g, '')

@@ -30,6 +30,17 @@ the pull request that removed it. The guard now reads blobs with `git cat-file b
 fails on a missing one. `tools/spec-guard-test.mjs` covers the deletion in both modes and an
 edit of the same file, which still fires.
 
+### The dashboard splits a table row only on the pipes that delimit cells (2026-11-11)
+
+`generate-dashboard` split every Markdown table row on each `|`, so a cell holding a
+GFM-escaped pipe (`\|`) or a pipe inside a code span (`` `a | b` ``) shifted every cell after
+it one column to the right: the status column read a note, and the row fell through to
+`todo` with the counters wrong. Rows are now split the way GFM reads them - `\|` is a literal
+pipe, and a code span runs to the next backtick run of its own length - for backlog tables
+and rendered documents alike. `tools/dashboard-status-test.mjs` covers an escaped pipe in a
+title, a pipe in a code span, and a double-backtick span followed by an escape; all three fail
+against the old split.
+
 ## 1.0.19 - 2026-09-16
 
 ### A contributed run is the full run, anonymised, or nothing (2026-09-16)
