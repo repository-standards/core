@@ -586,7 +586,7 @@
       "since": "0.9.0",
       "rule": "R15",
       "sha256": {
-        "index.mjs": "c2514b580b871bb17cfb3cf50ace4d83a1bb22666555a1a23e3502ae66bc20a0",
+        "index.mjs": "becd9be48da93209507cfd8fc61bfa85e277de6bc0e128d8e2dcda1e4ad94deb",
         "src/gate.css": "63a0b56a4491c5e3686835e15886d1440be4cc497a306a9caaa2a4678d15f07c",
         "src/gate.js": "741e6d0e9115aff4e44930021875f632044857b9bc3b5fb7522fa79f9b07105e",
         "src/page.css": "18fd58adbb4fec1f059b934fe9aa52ccfc2c2a304858dc3fde87553f5b0ead0b",

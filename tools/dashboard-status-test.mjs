@@ -61,13 +61,23 @@ const FIELDS = [
 
 const row = (id, status, type = "task") => `| ${id} | ${type} | ${id} title | because | it is done | ${status} |`;
 
+// A pipe that does not delimit a cell. Splitting the row on every `|` moved each cell after it
+// one column right, so the status column read the DoD and the row fell through to `todo`.
+// id, the row verbatim, the state it must parse to, the field holding the pipe and what it
+// must contain.
+const PIPES = [
+  ["PIPE-1", "| PIPE-1 | task | Accept a \\| b in a title | because | it is done | done |", "done", "title", "a | b", "a GFM-escaped pipe is text, not a cell boundary"],
+  ["PIPE-2", "| PIPE-2 | task | PIPE-2 title | because | `x | y` exits 0 | doing |", "doing", "dod", "x | y", "a pipe inside a code span is text too"],
+  ["PIPE-3", "| PIPE-3 | task | PIPE-3 title | because | ``a `|` b`` and \\| | blocked |", "blocked", "dod", "and |", "a span closes only on a run of its own length, and an escape after it still holds"],
+];
+
 const BACKLOG = `# Backlog
 
 ## Epic: Parsing statuses the way they are written
 
 | id | type | title | why | DoD | status |
 |----|------|-------|-----|-----|--------|
-${[...ROWS.map(([id, cell, , , type]) => row(id, cell, type)), ...FIELDS.map(([id, cell]) => row(id, cell))].join("\n")}
+${[...ROWS.map(([id, cell, , , type]) => row(id, cell, type)), ...FIELDS.map(([id, cell]) => row(id, cell)), ...PIPES.map(([, line]) => line)].join("\n")}
 `;
 
 // A record whose Status cell is emphasised is the same defect on another surface: page.js maps
@@ -131,6 +141,14 @@ for (const [id, cell, want] of FIELDS) {
   else console.log(`  ok    ${JSON.stringify(cell)} -> ${Object.keys(want).join(", ")}`);
 }
 
+for (const [id, , want, field, text, why] of PIPES) {
+  const got = byId.get(id);
+  if (!got) fail(`${id} never reached the page at all`);
+  else if (got.status !== want) fail(`${id} parsed as ${got.status}, expected ${want} - ${why}`);
+  else if (!String(got[field] ?? "").includes(text)) fail(`${id} ${field} is ${JSON.stringify(got[field])}, expected it to contain ${JSON.stringify(text)} - ${why}`);
+  else console.log(`  ok    ${id} -> ${want}, ${field} keeps ${JSON.stringify(text)}`);
+}
+
 const adr = data.decisions[0];
 if (!adr) fail("the decision record never reached the page");
 else if (adr.status !== "Accepted - one gateway") fail(`the record's status is ${JSON.stringify(adr.status)}, expected "Accepted - one gateway" - emphasis is not part of the value`);
@@ -139,7 +157,7 @@ else console.log(`  ok    "**Accepted - one gateway**" -> ${JSON.stringify(adr.s
 // The counters are what a reader actually looks at, and they are the thing the bug corrupted:
 // before the fix every emphasised row landed in `todo` and these four numbers were fiction.
 // Counted from the rows above, task and bug only - the two vocabulary rows sit outside them.
-const want = { done: 8, doing: 6, blocked: 3, todo: 6 };
+const want = { done: 9, doing: 7, blocked: 4, todo: 6 };
 for (const [k, v] of Object.entries(want)) {
   if (data.counts[k] !== v) fail(`counts.${k} is ${data.counts[k]}, expected ${v}`);
   else console.log(`  ok    counts.${k} = ${v}`);
@@ -147,7 +165,7 @@ for (const [k, v] of Object.entries(want)) {
 
 rmSync(repo, { recursive: true, force: true });
 
-const total = ROWS.length + FIELDS.length + 1 + Object.keys(want).length;
+const total = ROWS.length + FIELDS.length + PIPES.length + 1 + Object.keys(want).length;
 if (failures) {
   console.log(`\ndashboard-status-test: FAIL - ${failures} of ${total} checks`);
   process.exit(1);
