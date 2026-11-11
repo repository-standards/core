@@ -209,7 +209,7 @@
       "profile": "core",
       "since": "0.9.0",
       "rule": "R5",
-      "sha256": "964e34ef1a00b8eeb7a066e7b8cf85da52cda22f3c86de02e409536de8422b45"
+      "sha256": "425adfc3ee376c0e7f7f17701c175cd0be6a8d73370181c9800191df3e4973c7"
     },
     {
       "path": "scripts/adoption-gates.mjs",

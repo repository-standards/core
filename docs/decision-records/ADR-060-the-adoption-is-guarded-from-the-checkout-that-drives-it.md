@@ -120,6 +120,12 @@ vouched for writes into a repository that answered nothing.
   is a required artifact (ADR-042), so such a run meets the guard the moment it writes the
   intake record; a run that never writes it fails the artifact gate instead.
 
+## Confirmation
+
+`tools/elicitation-guard-test.mjs` asserts it, in CI: the driving checkout wires the guard it ships, its
+own writes go through, the identical write is refused in a tree without that shape, and an answer
+committed on the driving side settles nothing in the adopter's tree.
+
 ## Revisit when
 
 - This repository gains its own honest provenance ledger - then the narrower judgement can

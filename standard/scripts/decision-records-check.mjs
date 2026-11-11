@@ -12,6 +12,7 @@
 //   3. index row, no file - a README row cites a file that is not there (renamed, reverted,
 //                            or the row was added before the file was).
 //   4. no reopening signal - a record still on the table, with no usable `## Revisit when`.
+//   5. no confirmation     - an Accepted record with no usable `## Confirmation`.
 //
 // (4) exists because the section ships in both templates, is read by tooling, and was still
 // skipped in half of this repo's own log - including records written the same week the gap
@@ -22,6 +23,12 @@
 // left in place, is a record with no signal wearing one. Only records that no longer bind
 // (superseded, rejected) are exempt - there is nothing left to reopen. A `Proposed` record is
 // not exempt: naming the signal is part of writing the record, not of accepting it.
+//
+// (5) is narrower on purpose (standard ADR-063): only a record that binds - `Accepted` - has to
+// say how it is kept, because a `Proposed` one may not know yet. Both templates already ask for
+// the section. Useful means an answer, and the templates name the honest one: "review only" or
+// "nothing confirms this yet" passes. What fails is a missing or empty section, the template's
+// prompt left in place, or a placeholder that defers the answer (`TBD`, `-`, `n/a`, `TODO`).
 //
 // Layout-agnostic on purpose: it works against the shipped `adr/` + `bdr/` split (each with
 // its own README, standard ADR-005) and against a flat `docs/decision-records/` with one README
@@ -153,6 +160,7 @@ const dupRows = [];
 const fileNoRow = [];
 const rowNoFile = [];
 const noSignal = [];
+const noConfirmation = [];
 
 // A record that no longer binds has nothing to reopen. Anchored at the start of the status
 // value: `Accepted (2026-07-22) - supersedes ADR-013` is an ACCEPTED record that supersedes
@@ -165,6 +173,25 @@ const TEMPLATE_PROMPTS = [
   "The concrete signal that would invalidate this decision",
   "The business signal that would reopen this",
 ];
+// Both templates open the section with the same sentence.
+const CONFIRMATION_PROMPTS = ["How compliance with this decision is verified in practice"];
+// Anchored like EXEMPT_STATUS, after emphasis: `**Accepted - one gateway**` is Accepted.
+const BINDING_STATUS = /^\s*accepted\b/i;
+// The whole body, once emphasis and trailing punctuation are off, is one of these.
+const PLACEHOLDER =
+  /^(?:tbd|tbc|tba|todo|tk|n\/?a|-+|\.{3}|…|\?+|to be (?:decided|determined|defined|confirmed|added)|later|pending)$/i;
+
+// A `##` section, or a `###` one where MADR nests it (`### Confirmation` under the outcome).
+const sectionBody = (text, title, levels = "##") => {
+  const heading = new RegExp(`^(${levels})\\s+${title}\\s*$`, "m").exec(text);
+  if (!heading) return null;
+  // Body runs to the next heading of the same or a higher level. HTML comments are guidance,
+  // not content.
+  const rest = text.slice(heading.index + heading[0].length);
+  const next = new RegExp(`^#{1,${heading[1].length}}\\s`, "m").exec(rest);
+  return (next ? rest.slice(0, next.index) : rest).replace(/<!--[\s\S]*?-->/g, "").trim();
+};
+const unemphasised = (s) => s.replace(/[*_`]/g, "").trim();
 
 for (const { dir, prefixes } of streams) {
   const readme = join(dir, "README.md");
@@ -220,22 +247,29 @@ for (const { dir, prefixes } of streams) {
   for (const names of byKey.values()) {
     for (const name of names) {
       const text = readFileSync(join(dir, name), "utf8");
-      const status = /^\|\s*\*\*Status\*\*\s*\|([^|]*)\|/m.exec(text)?.[1] ?? "";
+      // The shipped templates put Status in a table; MADR-style records put it in front matter.
+      const status =
+        /^\|\s*\*\*Status\*\*\s*\|([^|]*)\|/m.exec(text)?.[1] ??
+        /^status:\s*["']?(.+?)["']?\s*$/m.exec(/^---\r?\n([\s\S]*?)\r?\n---/.exec(text)?.[1] ?? "")?.[1] ??
+        "";
       if (EXEMPT_STATUS.test(status)) continue;
-      const heading = /^##\s+Revisit when\s*$/m.exec(text);
-      if (!heading) {
-        noSignal.push({ dir, name, why: "has no `## Revisit when` section" });
-        continue;
-      }
-      // Body runs to the next heading of the same level. HTML comments are guidance, not content.
-      const body = text
-        .slice(heading.index + heading[0].length)
-        .split(/^## /m)[0]
-        .replace(/<!--[\s\S]*?-->/g, "")
-        .trim();
-      if (!body) noSignal.push({ dir, name, why: "has an empty `## Revisit when` section" });
-      else if (TEMPLATE_PROMPTS.some((prompt) => body.includes(prompt)))
+      const signal = sectionBody(text, "Revisit when");
+      if (signal === null) noSignal.push({ dir, name, why: "has no `## Revisit when` section" });
+      else if (!signal) noSignal.push({ dir, name, why: "has an empty `## Revisit when` section" });
+      else if (TEMPLATE_PROMPTS.some((prompt) => signal.includes(prompt)))
         noSignal.push({ dir, name, why: "still carries the template's prompt text under `## Revisit when`" });
+
+      if (!BINDING_STATUS.test(unemphasised(status))) continue;
+      // `Compliance` is the same section under the name some MADR-derived logs use.
+      const confirmation =
+        sectionBody(text, "Confirmation", "###?") ?? sectionBody(text, "Compliance", "###?");
+      const answer = unemphasised(confirmation ?? "");
+      if (confirmation === null) noConfirmation.push({ dir, name, why: "has no `## Confirmation` section" });
+      else if (!answer) noConfirmation.push({ dir, name, why: "has an empty `## Confirmation` section" });
+      else if (CONFIRMATION_PROMPTS.some((prompt) => confirmation.includes(prompt)))
+        noConfirmation.push({ dir, name, why: "still carries the template's prompt text under `## Confirmation`" });
+      else if (PLACEHOLDER.test(answer) || PLACEHOLDER.test(answer.replace(/[.!:]+$/, "")))
+        noConfirmation.push({ dir, name, why: `answers \`## Confirmation\` with the placeholder "${answer}"` });
     }
   }
 }
@@ -274,7 +308,19 @@ if (noSignal.length) {
   );
 }
 
-problems += dupFiles.length + dupRows.length + fileNoRow.length + rowNoFile.length + noSignal.length;
+if (noConfirmation.length) {
+  console.error("\ndecision-records-check: accepted record that does not say how it is kept:");
+  for (const { dir, name, why } of noConfirmation) console.error(`  - ${dir}/${name} ${why}`);
+  console.error(
+    "    (name what verifies compliance - a guard, a test, a CI check, a review step, the spec it changes. Where nothing",
+  );
+  console.error(
+    "     does yet, say so plainly: 'review only' or 'nothing confirms this yet' is a real answer, a placeholder is not.",
+  );
+  console.error("     Only Accepted records are checked.)");
+}
+
+problems += dupFiles.length + dupRows.length + fileNoRow.length + rowNoFile.length + noSignal.length + noConfirmation.length;
 
 if (!problems) {
   console.log(`decision-records-check: OK (${checked} record(s), index and directory agree)`);

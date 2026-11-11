@@ -82,6 +82,12 @@ having none.
   velocity. That is a conversation of one sentence, and it happens once per reader rather
   than on every page.
 
+## Confirmation
+
+`scripts/sprint-guard.mjs` enforces the one-place rule (an intent in the pool or in exactly one sprint),
+and `tools/sprint-guard-test.mjs` runs in CI. The vocabulary itself - no estimates, no velocity, no
+prescribed ceremony - is confirmed by review only.
+
 ## Revisit when
 
 This record already overturned `cycle` once on field evidence, not on a design argument -

@@ -61,6 +61,11 @@ How compliance with this decision is verified in practice - a test, a guard / li
 CI check, a review checklist, or the doc / spec it updates. If nothing confirms it yet,
 say so plainly (an unconfirmed decision is a red flag).
 
+Required once Accepted: `scripts/decision-records-check.mjs` fails on an Accepted record that
+leaves this section out, empty, still carrying this prompt, or holding a placeholder (`TBD`, `-`,
+`n/a`). "Review only" and "nothing confirms this yet" are answers. Proposed, superseded and
+rejected records are exempt.
+
 ## Revisit when
 
 The concrete signal that would invalidate this decision and trigger a new ADR - a

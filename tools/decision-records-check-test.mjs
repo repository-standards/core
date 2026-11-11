@@ -69,8 +69,19 @@ const row = (n, file, status = "Accepted") => `| [${n}](${file}) | something | $
 // nothing about content - but the guard also reads every record still standing for its reopening
 // signal, and a fixture that is only a title would fail every one of those cases for a
 // reason none of them is testing.
-const rec = (title, { status = "Accepted", revisit = "The constraint this fixture stands for is lifted." } = {}) =>
-  `${title}\n\n| | |\n| --- | --- |\n| **Status** | ${status} |\n\n## Revisit when\n\n${revisit}\n`;
+// It carries a confirmation for the same reason: an Accepted record without one is reported.
+// `confirmation: null` leaves the section out.
+const rec = (
+  title,
+  {
+    status = "Accepted",
+    revisit = "The constraint this fixture stands for is lifted.",
+    confirmation = "`tools/fixture-test.mjs` asserts it in CI.",
+  } = {},
+) =>
+  `${title}\n\n| | |\n| --- | --- |\n| **Status** | ${status} |\n\n` +
+  (confirmation === null ? "" : `## Confirmation\n\n${confirmation}\n\n`) +
+  `## Revisit when\n\n${revisit}\n`;
 
 check("no docs/decision-records/ at all is nothing to check", {
   files: { "README.md": "# empty repo\n" },
@@ -334,6 +345,104 @@ check("an honest 'nothing reopens this' is a filled section", {
     "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001", {
       revisit: "Nothing short of dropping the two-layer split, which this record only names.",
     }),
+  },
+  code: 0,
+});
+
+// Confirmation (standard ADR-063): an Accepted record has to say how it is kept. Read for
+// shape like the signal above, but only on records that bind - a Proposed one may not know yet.
+const confirmationCase = (name, { status = "Accepted", confirmation, code, expect }) =>
+  check(name, {
+    files: {
+      "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md", status)),
+      "docs/decision-records/adr/ADR-001-first.md": rec("# ADR-001", { status, confirmation }),
+    },
+    code,
+    expect,
+  });
+
+confirmationCase("an accepted record with no `## Confirmation` section is reported", {
+  confirmation: null,
+  code: 1,
+  expect: ["does not say how it is kept", "ADR-001-first.md", "has no `## Confirmation` section"],
+});
+confirmationCase("an empty `## Confirmation` section is reported", {
+  confirmation: "",
+  code: 1,
+  expect: ["empty `## Confirmation` section"],
+});
+confirmationCase("only an HTML comment under `## Confirmation` counts as empty", {
+  confirmation: "<!-- fill this in -->",
+  code: 1,
+  expect: ["empty `## Confirmation` section"],
+});
+for (const placeholder of ["TBD", "-", "n/a", "N/A.", "**TODO**", "`tbd`", "...", "To be decided"]) {
+  confirmationCase(`the placeholder ${JSON.stringify(placeholder)} is not an answer`, {
+    confirmation: placeholder,
+    code: 1,
+    expect: ["with the placeholder"],
+  });
+}
+confirmationCase("the template's prompt left in place is not an answer", {
+  confirmation:
+    "How compliance with this decision is verified in practice - a test, a guard / lint, a\nCI check, a review checklist, or the doc / spec it updates.",
+  code: 1,
+  expect: ["template's prompt text under `## Confirmation`"],
+});
+confirmationCase("an honest 'review only' is an answer", { confirmation: "Review only.", code: 0 });
+confirmationCase("an honest 'nothing confirms this yet' is an answer", {
+  confirmation: "Nothing confirms this yet - the follow-up adds the guard.",
+  code: 0,
+});
+confirmationCase("an emphasised Accepted status still binds", {
+  status: "**Accepted - one gateway**",
+  confirmation: null,
+  code: 1,
+  expect: ["has no `## Confirmation` section"],
+});
+for (const status of ["Proposed", "Superseded by ADR-002 (2026-11-01)", "Rejected"]) {
+  confirmationCase(`a ${status.split(" ")[0]} record needs no confirmation`, { status, confirmation: null, code: 0 });
+}
+
+check("a front-matter `status: Accepted` record binds as well", {
+  files: {
+    "docs/decision-records/README.md": adrReadme(row("001", "ADR-001-first.md")),
+    "docs/decision-records/ADR-001-first.md":
+      "---\nstatus: Accepted\ndate: 2026-11-11\n---\n\n# ADR-001\n\n## Revisit when\n\nThe constraint is lifted.\n",
+  },
+  code: 1,
+  expect: ["has no `## Confirmation` section"],
+});
+check("a front-matter record may call the section `## Compliance`", {
+  files: {
+    "docs/decision-records/README.md": adrReadme(row("001", "ADR-001-first.md")),
+    "docs/decision-records/ADR-001-first.md":
+      "---\nstatus: Accepted\n---\n\n# ADR-001\n\n## Compliance\n\n`tools/x-test.mjs` asserts it.\n\n## Revisit when\n\nThe constraint is lifted.\n",
+  },
+  code: 0,
+});
+check("a MADR `### Confirmation` nested under the outcome is the section", {
+  files: {
+    "docs/decision-records/README.md": adrReadme(row("001", "ADR-001-first.md")),
+    "docs/decision-records/ADR-001-first.md":
+      '---\nstatus: "accepted"\n---\n\n# ADR-001\n\n## Decision Outcome\n\nChosen: A.\n\n### Confirmation\n\nReview only.\n\n## Revisit when\n\nThe constraint is lifted.\n',
+  },
+  code: 0,
+});
+check("a quoted front-matter status binds, and an empty nested section is still empty", {
+  files: {
+    "docs/decision-records/README.md": adrReadme(row("001", "ADR-001-first.md")),
+    "docs/decision-records/ADR-001-first.md":
+      '---\nstatus: "accepted"\n---\n\n# ADR-001\n\n## Decision Outcome\n\n### Confirmation\n\n### Consequences\n\nSome.\n\n## Revisit when\n\nThe constraint is lifted.\n',
+  },
+  code: 1,
+  expect: ["empty `## Confirmation` section"],
+});
+check("a front-matter `status: Proposed` record is exempt", {
+  files: {
+    "docs/decision-records/README.md": adrReadme(row("001", "ADR-001-first.md", "Proposed")),
+    "docs/decision-records/ADR-001-first.md":
+      "---\nstatus: Proposed\n---\n\n# ADR-001\n\n## Revisit when\n\nThe constraint is lifted.\n",
   },
   code: 0,
 });

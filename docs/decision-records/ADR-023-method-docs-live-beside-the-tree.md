@@ -66,6 +66,12 @@ Option **B**. Concretely:
   the old tree paths had to be re-pointed once (this change); `update-to-version`
   deltas for references are metadata-only.
 
+## Confirmation
+
+`tree-check` verifies that each `references[]` path in the manifest resolves in this repo, and fails when
+repo-own material leaks into `standard/`. That a new method document lands in `docs/method/` rather than
+the shipped tree is review.
+
 ## Revisit when
 
 - Offline clients - who lose access to the method manual without the standards
