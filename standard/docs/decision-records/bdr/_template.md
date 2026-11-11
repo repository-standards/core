@@ -67,6 +67,11 @@ mistake, and this says how you would learn it is not being kept. If nothing conf
 say so plainly - an unconfirmed decision is a red flag, and on privacy, money or safety it is
 the whole risk.
 
+Required once Accepted: `scripts/decision-records-check.mjs` fails on an Accepted record that
+leaves this section out, empty, still carrying this prompt, or holding a placeholder (`TBD`, `-`,
+`n/a`). "Review only" and "nothing confirms this yet" are answers. Proposed, superseded and
+rejected records are exempt.
+
 ## What this rules out
 
 The non-goals that come with the decision - what it commits us to *not* doing. This is the

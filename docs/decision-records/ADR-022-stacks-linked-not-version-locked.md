@@ -54,6 +54,11 @@ Option **C**. Concretely:
   manifest-contract change - the ecosystem relies on the stack's own CI (the
   boot pulse) and the delisting policy in `stacks.json` to surface that.
 
+## Confirmation
+
+Review only. Nothing asserts that `stack.manifest.json` carries no standards version requirement; a stack
+that added one would be caught in review of that stack's pull request, not by a gate here.
+
 ## Revisit when
 
 - The core ever breaks its manifest contract (schema, adapt classes) - the record

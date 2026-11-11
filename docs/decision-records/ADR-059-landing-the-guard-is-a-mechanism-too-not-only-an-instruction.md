@@ -145,6 +145,12 @@ instead of waiting for a human to notice the diff.
   for "has the guard landed here" - the four files land together in the same step, so one of
   them stands for the group.
 
+## Confirmation
+
+The order check is mechanical: `scripts/elicitation-provenance.mjs` fails when a Gate artifact was committed
+before `.claude/elicitation/points.json`, and `tools/elicitation-provenance-test.mjs` covers both orders.
+The Step -1 pointer and the phase-entry precondition are text the agent reads - review only.
+
 ## Revisit when
 
 - The phase-entry precondition check gets skipped the same way the single instruction did -

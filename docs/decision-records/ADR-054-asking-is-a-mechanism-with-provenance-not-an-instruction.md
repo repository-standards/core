@@ -211,6 +211,13 @@ exist on disk).
   writes at that stage is gated, so the ordering costs nothing; leaving it implicit costs the
   whole layer on the only run that matters.
 
+## Confirmation
+
+Each layer has its own check, all in CI: `tools/elicitation-points-check.mjs` (every declared point has a
+call site and the recommended answer first), `tools/elicitation-guard-test.mjs` (the hook refuses an
+unasked write and fails closed), `scripts/elicitation-provenance.mjs` with
+`tools/elicitation-provenance-test.mjs` (a named ledger row exists), and `tools/elicitation-replay-test.mjs`.
+
 ## Revisit when
 
 - A point's question fires and is answered but the answer is then ignored, and the ledger

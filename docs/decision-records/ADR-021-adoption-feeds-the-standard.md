@@ -64,6 +64,11 @@ Option **C**. Concretely:
   on the agent's summary discipline - the templates carry required fields to
   keep the floor.
 
+## Confirmation
+
+The three channels exist as `.github/ISSUE_TEMPLATE/` forms (stack request, adoption friction, bug). That
+the align flow offers them, and asks consent per issue, is confirmed by review only - no check reads it.
+
 ## Revisit when
 
 - Agent-filed issue quality proves poor despite the required fields the templates

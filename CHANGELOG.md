@@ -41,6 +41,20 @@ and rendered documents alike. `tools/dashboard-status-test.mjs` covers an escape
 title, a pipe in a code span, and a double-backtick span followed by an escape; all three fail
 against the old split.
 
+### An accepted decision record must say how it is kept (2026-11-11)
+
+`decision-records-check` now fails an Accepted record whose `## Confirmation` section is
+missing, empty once comments are stripped, still carrying the template's prompt, or only a
+placeholder that defers the answer (`TBD`, `TODO`, `-`, `n/a`, `...`, "to be decided"). An
+honest "review only" or "nothing confirms this yet" passes - the templates and both writing
+skills name that as the answer when nothing enforces a decision. Proposed, superseded and
+rejected records are exempt. `## Compliance` is accepted as the same section, either name may sit
+at `###` where MADR nests it under its outcome, and a record's
+status is read from front matter when it has no Status table row, so MADR-style records are
+checked instead of silently skipped. Both templates state the requirement under the section.
+This repo's own log is backfilled: nine Accepted records (ADR-019, 021, 022, 023, 041, 053,
+054, 059, 060) gain a Confirmation section stated from what each record already said. ADR-063.
+
 ## 1.0.19 - 2026-09-16
 
 ### A contributed run is the full run, anonymised, or nothing (2026-09-16)

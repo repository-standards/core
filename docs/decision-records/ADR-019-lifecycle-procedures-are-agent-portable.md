@@ -60,6 +60,12 @@ Option **C**. Concretely:
   faithful; the port is real work for a non-Claude team, and it is on them to
   keep it current when the reference skills move.
 
+## Confirmation
+
+`self-verify` counts the shipped `.claude/skills/` and `scripts/spec/` as R22 entries, or a port at the
+location the manifest's `altPaths` accepts, and reports drift when neither is there. Whether a port carries
+every procedure and every gate is not checked mechanically - review only.
+
 ## Revisit when
 
 A second agent format stabilizes enough (adoption + spec stability) that shipping

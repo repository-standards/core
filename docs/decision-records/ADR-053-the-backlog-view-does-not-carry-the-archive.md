@@ -71,6 +71,11 @@ already.
   rather than on use. If it is wrong it is wrong cheaply - a surface is additive, and nothing
   here removes data.
 
+## Confirmation
+
+Review only. No test asserts that `generate-dashboard` reads no archive input; a change that added one
+would have to pass review of the generator against this record.
+
 ## Revisit when
 
 - Someone asks *what happened to `<id>`* and neither `backlog-archive.md` nor
