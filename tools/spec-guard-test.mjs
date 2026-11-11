@@ -87,6 +87,18 @@ const withRefundsSpec = {
   },
 };
 
+// A committed file nobody claims, under a folder whose name is a glob character class -
+// the shape of a framework's dynamic route. Committed per case and dropped again, so the
+// seed the other cases audit stays as it is.
+const SLUG_PAGE = "app/[slug]/page.ts";
+const commitSlugPage = () => {
+  write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["tooling/**", "shared/paymob.ts"] }));
+  write(SLUG_PAGE, "export const page = 1;\n");
+  git("add", "-A");
+  git(...IDENT, "commit", "-qm", "slug page");
+};
+const dropSlugPage = () => git("reset", "-q", "--hard", "HEAD~1");
+
 // fires = the guard must block (exit 1 under --block); passes = it must not.
 const CASES = [
   { name: "a data addition does not couple", fires: false, says: "changed as data", act: () => write("data/rules.json", json({ version: 1, rules: [{ id: "a", on: true }, { id: "b", on: false }] })) },
@@ -524,6 +536,47 @@ const CASES = [
       write("specs/capability-map.json", json({ ...MAP, $unclaimed: ["shared/paymob.ts"] }));
       rmSync(join(repo, "tooling/build.mjs"));
     },
+  },
+  // The two git-reading modes, on a path holding a glob character. `git show <rev>:<path>`
+  // for a blob that does not exist falls back to a pathspec and exits 0, so the deletion
+  // read as a present file and was reported as unclaimed change.
+  {
+    name: "--staged: deleting an unclaimed file under a [bracketed] folder is not unclaimed change",
+    fires: false,
+    args: ["--staged"],
+    act: () => {
+      commitSlugPage();
+      git("rm", "-q", SLUG_PAGE);
+    },
+    undo: dropSlugPage,
+  },
+  {
+    name: "--base: the same deletion on a branch is not unclaimed change either",
+    fires: false,
+    args: ["--base", "main"],
+    act: () => {
+      commitSlugPage();
+      git("checkout", "-q", "-b", "slug-delete");
+      git("rm", "-q", SLUG_PAGE);
+      git(...IDENT, "commit", "-qm", "delete slug page");
+    },
+    undo: () => {
+      git("checkout", "-q", "main");
+      git("branch", "-q", "-D", "slug-delete");
+      dropSlugPage();
+    },
+  },
+  {
+    name: "--staged: editing that file still is unclaimed change",
+    fires: true,
+    args: ["--staged"],
+    says: SLUG_PAGE,
+    act: () => {
+      commitSlugPage();
+      write(SLUG_PAGE, "export const page = 2;\n");
+      git("add", SLUG_PAGE);
+    },
+    undo: dropSlugPage,
   },
   {
     name: "editing that same file still is",

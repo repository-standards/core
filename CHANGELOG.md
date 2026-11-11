@@ -17,6 +17,19 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### spec-guard reads a deleted file as deleted under a bracketed folder (2026-11-11)
+
+`spec-guard` read the after-side of a `--staged` or `--base` diff with `git show <rev>:<path>`.
+When that names no blob and the path contains a glob character - a dynamic route folder such
+as `app/[slug]/` - `git show` falls back to treating the argument as a pathspec and exits 0:
+empty output for `HEAD:<path>`, a whole commit for `:<path>`. A deleted file therefore read as
+present, and every deletion under such a folder was reported as an unclaimed change, blocking
+the pull request that removed it. The guard now reads blobs with `git cat-file blob`, which
+fails on a missing one. `tools/spec-guard-test.mjs` covers the deletion in both modes and an
+edit of the same file, which still fires.
+
 ## 1.0.19 - 2026-09-16
 
 ### A contributed run is the full run, anonymised, or nothing (2026-09-16)
