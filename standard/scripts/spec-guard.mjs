@@ -356,9 +356,13 @@ const shapeOf = (value, prefix, acc, stop = []) => {
 };
 
 // No shell: a path with a space is a path, not two arguments.
+// `cat-file blob`, not `show`: when `<rev>:<path>` names no blob and the path holds a glob
+// character (`app/[slug]/page.ts`), `git show` falls back to reading the argument as a
+// pathspec and exits 0 - empty for `HEAD:`, a whole commit for `:` - which makes a deleted
+// file read as present, and its deletion as an unclaimed change.
 const gitShow = (spec) => {
   try {
-    return execFileSync("git", ["show", spec], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+    return execFileSync("git", ["cat-file", "blob", spec], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
   } catch {
     return null;
   }
