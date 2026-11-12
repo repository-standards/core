@@ -41,9 +41,12 @@ problem:
   format: "When [situation], I want [motivation], so I can [outcome]") anchor the need in the
   situation that triggers it rather than in a demographic, which is what makes a job story
   durable when features change.
-- **NN/g on personas vs archetypes (2022)**: archetypes - behavioural modes without a fictional
-  biography - carry the decision-relevant part of a persona with less to maintain and less to
-  mistake for research. **NN/g on synthetic AI users (2024)**: AI-generated users are useful for
+- **NN/g on personas vs archetypes (2022)**: well-made personas and archetypes are
+  functionally the same - the same research, presented differently. The persona's advantage is
+  a human face that builds empathy and is remembered; the archetype's is that it carries no
+  invented detail to mistake for research. Neither is ranked above the other, which is why the
+  roster below gates on the archetype-shaped part and keeps a portrait as an optional layer on
+  top of it. **NN/g on synthetic AI users (2024)**: AI-generated users are useful for
   forming hypotheses and nothing more; they are the weakest evidence a roster can rest on.
 - **Opportunity solution trees** (Teresa Torres): outcomes break into opportunities, which are
   needs observed in real situations; solutions hang off opportunities. The job story is the
@@ -51,6 +54,15 @@ problem:
 
 No source was found that proposes dropping the "who is this for" question outright. The change
 is in what the answer is made of.
+
+**How strong this evidence is.** None of these sources measures roles, modes and job stories
+against personas. They are a tool's convention (Spec Kit), practitioner accounts (Intercom,
+Moesta, Torres) and one empirical comparison that concerns AI-generated users, not personas
+(NN/g, 2024). NN/g also defends well-maintained personas as living documents (2023). The
+decision rests on fit for this standard's purpose - a roster a guard can check, permissions a
+spec's trust boundaries can be read against, a need stated where an agent builds and a test
+proves it - not on a measured advantage. What would show it working or failing is listed under
+Revisit when.
 
 ## Options considered
 
@@ -94,6 +106,12 @@ Adopt **Option C**.
   not write in this pull request. A change that only renames the role in `**Serves:**` - the
   migration itself - is not held to it, and a named sub-spec is held to it only once it has
   the section of its own.
+- **Portraits are optional and never the gate.** A mode MAY carry a short persona-style
+  portrait - a name, a line of context, a quote from research - where a team needs the empathy
+  and memorability a human face gives. It is grounded in research (an AI-drafted one is marked
+  `[NEEDS REVIEW]` as a hypothesis), it belongs to one mode so it never averages several
+  situations into one character, and it is never what a spec serves: the guard reads only the
+  roster of roles.
 - **Journeys for key flows.** One journey per key end-to-end flow (`docs/journeys/`), pinned to
   one role and optionally a mode; each stage names the capability specs serving it.
 - **The gate stays.** An idea, backlog row or spec that cannot name the role it serves is parked
@@ -128,6 +146,10 @@ a path the manifest lists in `removedPaths`. Mode count and the "no biography" r
 only.
 
 ## Revisit when
+
+- Measured in adopting repos: job stories that changed an acceptance criterion when they were
+  written, versus ones that only restated it; specs sent back from review with "who is this
+  for" or "what do they need" after the change, versus before.
 
 - Adopting repos routinely write job stories that restate the acceptance criteria word for word
   - the section has become ceremony and should merge into the criteria instead.

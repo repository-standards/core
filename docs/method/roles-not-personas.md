@@ -101,10 +101,12 @@ starts: from the person to the situation and the problem.
   Intercom turned that into the job story, written when the team wanted something better than
   personas ([Paul Adams, How we accidentally invented Job Stories, 2016](https://www.intercom.com/blog/accidentally-invented-job-stories/);
   [Alan Klement, Designing features using Job Stories, 2013](https://www.intercom.com/blog/using-job-stories-design-features-ui-ux/)).
-- **Archetypes over biographies.** Nielsen Norman Group shows that a well-made persona and an
-  archetype carry the same research, and the archetype drops the invented human details
+- **Archetypes and personas are the same research.** Nielsen Norman Group finds well-made
+  personas and archetypes functionally the same: the persona adds a human face that builds
+  empathy and is remembered, the archetype leaves out invented detail
   ([Page Laubheimer, Personas vs. Archetypes, 2022](https://www.nngroup.com/articles/personas-archetypes/)).
-  A mode is an archetype of one role.
+  A mode is an archetype of one role; the optional portrait below is the persona's face, added
+  where a team needs it.
 - **Synthetic users are hypotheses.** AI-generated users help decide what to ask real people and
   nothing more ([Maria Rosala and Kate Moran, Synthetic Users, 2024](https://www.nngroup.com/articles/synthetic-users/)).
   A role or mode drafted that way stays marked `[NEEDS REVIEW]` until a person confirms it.
@@ -116,8 +118,42 @@ starts: from the person to the situation and the problem.
   from the problems and jobs, and use personas, if at all, to sharpen what you say afterwards
   ([Jana Frejova, Personas are dead, long live their problems, 2022](https://saassygtm.substack.com/p/the-saassy-guide-to-personas-are)).
 
+## How strong the evidence is
+
+Honestly: none of the sources above measures roles, modes and job stories against personas
+and finds one better. Spec Kit is one tool's convention; Intercom, Moesta and Torres are
+practitioners describing what worked for them; the one empirical comparison (NN/g, 2024) is
+about AI-generated users, not personas. And there is a credible case for personas done well:
+Nielsen Norman Group argues they stay valuable when kept simple, easy to update and actually
+used ([Maddie Brown, Personas Are Living Documents, 2023](https://www.nngroup.com/articles/personas-are-living-documents/)).
+
+So this model is chosen for **fit**, not for a proven win. A roster of roles is something a
+guard can check; permissions are something a spec's trust boundaries can be read against; a
+job story tied to an acceptance criterion is something an agent can build and a test can prove.
+What would show it working in a repo: job stories that change an acceptance criterion when they
+are written (not ones that restate it), and fewer specs sent back with "who is this for".
+
 The decision and the options it rejected are recorded in
 [ADR-064](../decision-records/ADR-064-roles-modes-and-job-stories-replace-personas.md).
+
+## Can personas and roles live together?
+
+Yes - as layers with different jobs. The **role** stays the gate: it is what `**Serves:**`
+names and what the guard checks. The **mode** stays the situation that changes behaviour. A
+**portrait** - the persona's human face - may be added to a mode where a team needs the empathy
+and memorability NN/g credits personas with:
+
+- **It belongs to one mode, not to the role**, so it never averages several situations into one
+  character, which is what made a role-level persona mislead.
+- **It is grounded in research** - a quote from an interview, a support thread, a real pattern.
+  One an AI drafted is a hypothesis and carries `[NEEDS REVIEW]` until a person confirms it.
+- **It is never what a spec serves.** The guard reads the roster of roles only, so a
+  `**Serves:**` naming just the portrait fails the gate like any name that is not a role. A spec
+  names the role and, where it matters, the mode - never the portrait.
+
+For the guest of a booking product, the `planned family stay` mode might carry: *Marta, booking
+for five including two small children, weeks ahead - "I need to know I can cancel if one of them
+gets sick."*
 
 ## Terms
 
@@ -128,6 +164,8 @@ The decision and the options it rejected are recorded in
   the role's permissions, has no roster row, at most three per role.
 - **Job story** - `When <situation>, I want <motivation>, so I can <outcome>`, labelled
   `**JS-n.**`, with at least one GIVEN/WHEN/THEN scenario ending `(AC: <criterion name>)`.
+- **Portrait** - an optional, research-grounded persona sketch of one mode: a name, a line of
+  context, a quote. Never on the roster, never in `**Serves:**`.
 - **Journey** - one key end-to-end flow for one role, in stages, each naming the specs serving it.
 - **The roster** - the table under `## The roster` in `docs/roles.md`; the only list the
   structure guard checks `**Serves:**` against.

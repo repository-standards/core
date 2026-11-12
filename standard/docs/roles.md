@@ -72,6 +72,10 @@ Copy this block per role.
   this role. A mode shares the role's permissions and never gets its own roster row. Per mode:
   - **`{{MODE_NAME}}`** - the situation that defines it; what the product must do differently;
     any distrust that differs from the role's.
+    - *Portrait* (optional) - a name, one line of context and a quote from research, for the
+      empathy a human face gives. Grounded in real signals; mark an AI-drafted one
+      `[NEEDS REVIEW]`. Never on the roster and never in a spec's `**Serves:**` - the guard
+      reads roles only.
 
 ## Worked example (delete after filling your roster)
 
@@ -105,6 +109,8 @@ like once it is yours:
   - **`planned family stay`** - weeks ahead, several guests, children. The product must
     filter by beds and rooms and show the cancellation window prominently; the fear is
     being locked into a non-refundable booking when plans move.
+    - *Portrait:* Marta, booking for five including two small children - "I need to know I
+      can cancel if one of them gets sick." (from support threads about refunds)
   - **`gift`** - booking for someone else. The product must let the payer and the guest be
     different people and keep the price off what the guest receives.
 

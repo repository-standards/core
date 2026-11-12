@@ -17,6 +17,23 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### The roles model says how strong its evidence is, and a mode may carry a portrait (2026-11-12)
+
+ADR-064 and `docs/method/roles-not-personas.md` overstated one source: Nielsen Norman Group
+finds well-made personas and archetypes functionally the same, with the persona's human face
+building empathy - it does not rank archetypes above personas. Both now say so, add a "how strong
+the evidence is" section (no source measures roles, modes and job stories against personas; the
+choice is made for fit with a checkable gate, not a proven win), cite NN/g's case for personas as
+living documents, and name what to measure in a repo to tell whether the model is working.
+
+Personas and roles can now live together as layers: a mode MAY carry an optional **portrait** -
+a name, one line of context and a quote from research - for the empathy a human face gives. It
+belongs to one mode, an AI-drafted one is marked `[NEEDS REVIEW]`, and it is never on the roster
+or in a spec's `**Serves:**`, so the guard is unchanged. The roster template, its worked example
+and the `roles-write` skill carry it.
+
 ## 1.0.21 - 2026-11-12
 
 ### Roles, modes and job stories replace personas; the gate stays (2026-11-12)
