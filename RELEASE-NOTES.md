@@ -3,6 +3,18 @@
 Curated, plain-language highlights per release - for a stakeholder who wants to know
 what changed, not the complete developer record (that's `CHANGELOG.md`).
 
+## 1.0.21 - 2026-11-12
+
+**Personas are now roles, and every spec says what its role needs in a form a test can hold.**
+The roster lists who uses the product and what each of them may do - no invented names or
+life stories. Where one role comes to the product in situations that need different behaviour
+(a guest booking a spontaneous weekend, a family stay, a gift), those are written as up to
+three modes of that role. Each capability spec now states its need as one to three job
+stories ("when this happens, I want that, so I can..."), each tied to the acceptance criterion
+that proves it. To move an existing repo: rename `docs/personas.md` to `docs/roles.md` and run
+`update-to-latest`, which walks the rest; until then the checks keep working and tell you the
+file still has its old name.
+
 ## 1.0.15 - 2026-09-04
 
 **Sending a session upstream as evidence now has a recommended default, and answering once is
