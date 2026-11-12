@@ -185,7 +185,7 @@ const isSeparator = (line) => /^\|[\s:|-]+\|$/.test(line.trim())
 const key = (s) => s.toLowerCase().replace(/[^a-z]/g, '')
 
 // A table is read by its header names, so a repo that ships more columns than another
-// (cap, persona, assignee) is read correctly by the same code.
+// (cap, role, assignee) is read correctly by the same code.
 function readTable(lines, start) {
   const header = cells(lines[start]).map(key)
   const rows = []
@@ -421,7 +421,7 @@ function splitStatus(raw) {
   return { status, blockedBy, statusDate: date(lead) || date(tail), statusNote: note ? inline(note) : '' }
 }
 
-// A persona is a role the product serves and stays; an assignee is a named colleague, and a
+// A role is an actor the product serves and stays; an assignee is a named colleague, and a
 // page that leaves the building should not carry them. Removed here rather than hidden in the
 // page, so the build genuinely does not contain them.
 const person = (name) => (anonymise ? '' : name || '')
@@ -447,7 +447,8 @@ const asItem = (row, epic) => ({
   why: inline(row.why),
   dod: inline(row.dod ?? row.definitionofdone ?? ''),
   cap: row.cap || '',
-  persona: row.persona || '',
+  // `persona` is the column's name before roles replaced personas (standard ADR-064).
+  role: row.role || row.persona || '',
   owner: row.owner || '',
   assignee: person(row.assignee),
   size: row.size || '',
@@ -682,6 +683,32 @@ function parseIdeas() {
     })
 }
 
+// The `**JS-n.**` stories under `## Job stories` (standard ADR-064), each with the acceptance
+// criteria its scenarios name - the need and its proof, shown side by side. Read by the same
+// rules spec-structure.mjs checks them with, so a spec the guard passes is never shown here as
+// having none: heading case and suffix, CRLF, fenced blocks, a name with parentheses.
+function jobStoriesIn(text) {
+  const lines = text.replace(/\r\n?/g, '\n').split('\n')
+  const stories = []
+  let inSection = false
+  let inFence = false
+  for (const line of lines) {
+    const fence = /^\s*(```|~~~)/.test(line)
+    if (!inFence && !fence && /^#{1,2}\s/.test(line)) {
+      if (inSection) break
+      inSection = /^##\s+job stories\b/i.test(line)
+      continue
+    }
+    if (fence) inFence = !inFence
+    if (!inSection || inFence || fence) continue
+    const js = line.match(/^\s*(?:[-*+]\s+)?\*\*(JS-\d+)\.?\*\*\s*(.*)$/)
+    if (js) stories.push({ id: js[1], text: inline(js[2].replace(/\s*\bGIVEN\b[\s\S]*$/i, '')), proves: [] })
+    if (stories.length)
+      for (const m of line.matchAll(/\(AC:\s*((?:[^()]|\([^()]*\))+)\)/gi)) stories.at(-1).proves.push(m[1].replace(/`/g, '').trim())
+  }
+  return stories
+}
+
 function parseSpecs() {
   if (!has('specs')) return []
   return readdirSync(join(root, 'specs'), { withFileTypes: true })
@@ -695,9 +722,10 @@ function parseSpecs() {
         // page.js maps the status onto a colour through a table keyed by the bare word, and
         // prints the tier as written - so `**live**` would both miss the table and render its
         // asterisks. Same reason as the pool's status cells: emphasis is not part of the value.
-        status: unemphasise((text.match(/^\*\*Status:\*\*\s*(.+)$/m) || [, 'unknown'])[1]),
+        status: unemphasise((text.match(/^\*\*Status:\*\*\s*(.+)$/m) || [, 'unknown'])[1].replace(/<!--[\s\S]*$/, '').trim()),
         tier: unemphasise((text.match(/^\*\*Spec tier:\*\*\s*(.+)$/m) || [, ''])[1]),
         serves: clip((text.match(/^\*\*Serves:\*\*\s*(.+)$/m) || [, ''])[1], 200),
+        jobStories: jobStoriesIn(text),
         metric: clip((text.match(/^\*\*Success metric:\*\*\s*(.+)$/m) || [, ''])[1], 200),
         purpose: clip(sectionBody(text, 'Purpose'), 300),
         path,
@@ -1134,6 +1162,7 @@ data.counts = {
   // material is a question somebody is about to be asked twice. Both are states the repo
   // already records and no view has ever surfaced.
   specsBlocked: data.specs.filter((s) => s.markers.length).length,
+  specsNoStories: data.specs.filter((s) => !/^retired\b/i.test(s.status) && !s.jobStories.length).length,
   discoveryLive: data.discovery.filter((t) => t.live || t.contradictions.length).length,
 }
 
