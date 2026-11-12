@@ -17,7 +17,7 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
-## Unreleased
+## 1.0.23 - 2026-11-12
 
 ### A Gate artifact that reached history before the guard can be cleared by a signed review (2026-11-12)
 
