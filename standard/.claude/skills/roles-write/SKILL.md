@@ -68,6 +68,18 @@ guest of a booking product books a **spontaneous weekend**, a **planned family s
 - A mode never gets a roster row. A spec that serves one names it after the role:
   ``**Serves:** `Guest` (spontaneous weekend)``.
 
+## Portraits - optional, per mode, never the gate
+
+A team that wants the empathy a human face gives may add a **portrait** to a mode: a name, one
+line of context, a quote. Personas and archetypes carry the same research; the portrait is the
+persona's presentation, not a second roster.
+
+- Offer it only after the mode passes its test, and only if the user wants it.
+- Ground it in a real signal - an interview quote, a support thread. If it is drafted from the
+  code or by AI, mark it `[NEEDS REVIEW]` and say it is a hypothesis.
+- Attach it to the mode, never to the role, so it cannot average several situations.
+- It never goes in the roster table or a spec's `**Serves:**`; the guard reads roles only.
+
 ## Where each part goes
 
 Two places, and mixing them up defeats the gate:
