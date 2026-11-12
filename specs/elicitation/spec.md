@@ -272,7 +272,13 @@ it as the known gap rather than claiming coverage.
   ADR-059). Exempted whenever `.standards-version` already existed the commit before the
   guard's own commit - the update-to-latest shape, not a fresh skip - and whenever the ledger
   this check reads sits under a subdirectory ROOT, which is this project's own shipped tree
-  dogfooding itself rather than an adopter's repository.
+  dogfooding itself rather than an adopter's repository. An artifact that already reached
+  history ahead of the guard MUST stay a failure until the ledger's `## Written before the guard`
+  section carries a row for that exact artifact naming who read it after the fact, a
+  `YYYY-MM-DD` date and what the review found; such a row MUST turn that artifact's failure into
+  a printed note, and a row with a placeholder in any cell, or for a different artifact, MUST
+  NOT. History cannot be rewritten, so a person reading what was written unguarded is the only
+  honest way past a true finding.
 - A checkout that drives adoptions MUST wire the guard for its own sessions, and MUST judge
   only the writes that leave it. Which side it is on is read from the tree's own shape - the
   shipped tree under `standard/` - never from configuration a repository could set for itself.
@@ -306,6 +312,10 @@ it as the known gap rather than claiming coverage.
 
 ## Acceptance criteria
 
+- **Pre-guard artifact cleared by a signed review.** GIVEN `docs/adoption-intake.md` committed before the
+  guard's own commit WHEN the ledger's `## Written before the guard` section has a filled row for it THEN
+  the check passes and prints that the artifact was reviewed after the fact; WHEN the row carries a
+  placeholder, or names `docs/adoption-assessment.md` instead, THEN the check still fails.
 - **Unasked write refused.** GIVEN a session in which `[adopt.personas]` never fired WHEN the
   agent writes `docs/roles.md` (or the legacy `docs/personas.md`) THEN the guard refuses, naming
   the point and its three answers.
