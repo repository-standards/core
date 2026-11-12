@@ -64,6 +64,18 @@ which as `scope`.
 <!-- The table is parsed by position, six cells per row. Add columns to the right if you
      need them; do not reorder these. `-` means not applicable, never "I did not fill it in". -->
 
+## Written before the guard
+
+Only for a repository whose history already holds a Gate artifact (`docs/adoption-intake.md`,
+`docs/adoption-assessment.md` or `.standards-version`) committed before the elicitation guard
+landed. `scripts/elicitation-provenance.mjs` fails on that, and history cannot be rewritten to
+fix it, so the one honest way forward is a person reading the artifact after the fact and saying
+so here. A placeholder in any cell is no review. Leave the table empty when nothing reached
+history early - the check needs no row then.
+
+| Artifact | Reviewed by | Date | What the review found |
+|---|---|---|---|
+
 ## Questions this run asked that no point declares
 
 The declared points are a floor, not a ceiling. They are the questions that can be
