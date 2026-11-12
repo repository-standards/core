@@ -261,7 +261,7 @@ function openItem(i) {
     title: i.title,
     status: i.status,
     statusLabel: i.blockedBy ? 'blocked by ' + i.blockedBy : null,
-    meta: [i.cap || i.epic, i.persona, i.owner && 'owner: ' + i.owner, i.assignee && 'with ' + i.assignee, i.size, i.statusDate],
+    meta: [i.cap || i.epic, i.role && 'for ' + i.role, i.owner && 'owner: ' + i.owner, i.assignee && 'with ' + i.assignee, i.size, i.statusDate],
     sections: [
       ['Why it matters', i.why],
       ['Done means', i.dod],
@@ -483,6 +483,15 @@ function progress(items) {
           text:
             (D.counts.specsBlocked === 1 ? 'specification is' : 'specifications are') +
             ' not ready to develop - something named in them is missing',
+          go: () => select('specs'),
+        }
+      : null,
+    D.counts.specsNoStories
+      ? {
+          n: D.counts.specsNoStories,
+          text:
+            (D.counts.specsNoStories === 1 ? 'specification says' : 'specifications say') +
+            ' who it serves but not yet what they need - no job stories',
           go: () => select('specs'),
         }
       : null,
@@ -1098,6 +1107,7 @@ if (views.specs) {
           el('span', { class: 'rm' }, [
             pill(SPEC_STATE[s.status] || 'plain', s.status),
             s.markers.length ? pill('blocked', s.markers.length + ' open') : null,
+            !/^retired\b/i.test(s.status) && !(s.jobStories || []).length ? pill('plain', 'no job stories') : null,
           ]),
         ],
       ),
@@ -1119,7 +1129,24 @@ if (views.specs) {
           s.tier ? el('span', { class: 'pill plain', text: s.tier + ' spec' }) : null,
           el('span', { class: 'id', text: s.name }),
         ]),
-        s.serves ? el('p', { class: 'field' }, [el('b', { text: 'Serves. ' }), el('span', { text: s.serves })]) : null,
+        s.serves ? el('p', { class: 'field' }, [el('b', { text: 'Serves (role). ' }), el('span', { text: s.serves })]) : null,
+        // What the role needs, and which acceptance criteria prove it (standard ADR-064).
+        (s.jobStories || []).length
+          ? el('div', { class: 'field' }, [
+              el('b', { text: 'Job stories. ' }),
+              el(
+                'ul',
+                {},
+                s.jobStories.map((j) =>
+                  el('li', {}, [
+                    el('span', { class: 'id', text: j.id + ' ' }),
+                    el('span', { html: j.text }),
+                    j.proves.length ? el('span', { class: 'id', text: ' - proven by: ' + j.proves.join(', ') }) : null,
+                  ]),
+                ),
+              ),
+            ])
+          : null,
         s.metric ? el('p', { class: 'field' }, [el('b', { text: 'Success metric. ' }), el('span', { text: s.metric })]) : null,
         // The gap list, in the spec's own words. It is the answer to "which spec is blocked,
         // and on whom", which until now needed the clarify gate run by hand, once per spec.
