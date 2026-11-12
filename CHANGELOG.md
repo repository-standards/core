@@ -17,6 +17,24 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### A Gate artifact that reached history before the guard can be cleared by a signed review (2026-11-12)
+
+The commit-order check in `scripts/elicitation-provenance.mjs` (ADR-059) exempts only a
+repository whose `.standards-version` existed before the guard's own commit. A repository that
+had aligned before that file shipped - its earlier alignment recorded in the specs and the
+commit history, not in a version file - and whose later adoption run committed one Gate
+artifact a commit ahead of the guard failed the check permanently: the finding is true, and
+the only change that would clear it is rewriting history.
+
+The ledger now has a section for that case, `## Written before the guard`: one row per
+flagged artifact naming who read it after the fact, the date and what the review found. A
+filled row turns that artifact's failure into a note; a placeholder in any cell, or a row for
+a different artifact, leaves the failure in place. The exemption a fresh adoption that
+skipped the guard would need is a person actually reading what was written without it, which
+is the thing the row records. Three cases in `tools/elicitation-provenance-test.mjs` hold it.
+
 ## 1.0.22 - 2026-11-12
 
 ### The roles model says how strong its evidence is, and a mode may carry a portrait (2026-11-12)

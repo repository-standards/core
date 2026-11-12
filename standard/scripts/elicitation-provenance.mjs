@@ -283,11 +283,13 @@ function guardOrderProblems() {
   for (const gate of GATE_ARTIFACTS) {
     const commit = oldestAdd(gate);
     if (commit && isAncestor(commit, guardCommit)) {
-      problems.push(
-        `${at(gate)} was committed at ${commit.slice(0, 12)}, before the elicitation guard landed at ` +
+      problems.push({
+        gate,
+        message:
+          `${at(gate)} was committed at ${commit.slice(0, 12)}, before the elicitation guard landed at ` +
           `${guardCommit.slice(0, 12)} - a gated artifact reached history before the guard that was ` +
           "supposed to ask about it existed",
-      );
+      });
     }
   }
   return { commit: guardCommit, problems };
@@ -338,6 +340,25 @@ if (!existsSync(LEDGER)) {
 // loses the section makes an adoption that invented five questions read like one that needed
 // none, which is the same class of silence as a guard nothing routes to.
 const HARVEST = "## Questions this run asked that no point declares";
+
+// A Gate artifact committed before the guard, read by a person afterwards. Four cells:
+// | `<path>` | <who> | <YYYY-MM-DD> | <what the review found> |
+const REVIEWED_HEADING = "## Written before the guard";
+function reviewedBeforeGuard(text) {
+  const out = new Map();
+  let inSection = false;
+  for (const line of text.split("\n")) {
+    const t = line.trim();
+    if (/^##\s/.test(t)) { inSection = t === REVIEWED_HEADING; continue; }
+    if (!inSection || !t.startsWith("|") || /^\|[\s|:-]+\|$/.test(t)) continue;
+    const cells = t.slice(1, -1).split("|").map((c) => c.trim().replace(/^`|`$/g, ""));
+    if (cells.length < 4 || !GATE_ARTIFACTS.includes(cells[0])) continue;
+    const [path, who, when, found] = cells;
+    const filled = (c) => c && c !== "-" && !/^<.*>$|\{\{/.test(c);
+    if (filled(who) && /^\d{4}-\d{2}-\d{2}$/.test(when) && filled(found)) out.set(path, { who, when });
+  }
+  return out;
+}
 
 const rows = [];
 const malformed = [];
@@ -434,7 +455,17 @@ if (ORDER) {
     console.log("  the elicitation guard is not committed yet, so nothing here can yet tell whether a Gate");
     console.log("  artifact reached history before it did - checked again once the guard lands.");
   }
-  problems.push(...ORDER.problems);
+  // History cannot be rewritten, so an artifact that already reached it unguarded has exactly one
+  // honest way forward: a person reads it after the fact and signs that in the ledger, under
+  // REVIEWED_HEADING. The row names the artifact, who reviewed it, the date and what the review
+  // found; a placeholder in any cell is no review. Without such a row the finding stays a failure
+  // - the check exists for the fresh adoption that skipped the guard, and that case has no row.
+  const reviewed = reviewedBeforeGuard(ledgerText);
+  for (const { gate, message } of ORDER.problems) {
+    const r = reviewed.get(gate);
+    if (r) console.log(`  ${gate} reached history before the guard; reviewed after the fact by ${r.who} on ${r.when}.`);
+    else problems.push(`${message} - if a person has since read it, record that under "${REVIEWED_HEADING.replace(/^## /, "")}" in ${LEDGER}`);
+  }
 }
 
 if (problems.length) fail(problems);

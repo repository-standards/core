@@ -255,6 +255,21 @@ const CASES = [
         { tree: { "docs/adoption-assessment.md": "# assessment\n" }, message: "write the assessment" },
         { tree: { ".claude/elicitation/points.json": readFileSync(POINTS, "utf8") }, message: "catch up: land the elicitation guard" },
       ] }, PASS, "prior alignment"],
+  // History cannot be rewritten, so the only way past a real finding is a person reading the
+  // artifact after the fact and signing it - a filled row, for that artifact, not another one.
+  ...[
+    ["a Gate artifact committed before the guard passes once a person signs a review of it",
+      "| `docs/adoption-intake.md` | owner | 2026-11-12 | read in full; every answer still holds |", PASS, "reviewed after the fact"],
+    ["a review row with a placeholder in it is no review",
+      "| `docs/adoption-intake.md` | <who> | 2026-11-12 | <what the review found> |", FAIL, "Written before the guard"],
+    ["a review of a different artifact does not clear the one flagged",
+      "| `docs/adoption-assessment.md` | owner | 2026-11-12 | read in full |", FAIL, "before the elicitation guard landed"],
+  ].map(([name, reviewRow, expected, wants]) => [name,
+    { ledger: FULLY_ANSWERED + "\n## Written before the guard\n\n| Artifact | Reviewed by | Date | What the review found |\n|---|---|---|---|\n" + reviewRow + "\n",
+      sequence: [
+        { tree: { "docs/adoption-intake.md": "# intake\n" }, message: "write the intake record" },
+        { tree: { ".claude/elicitation/points.json": readFileSync(POINTS, "utf8") }, message: "land the elicitation guard, late" },
+      ] }, expected, wants]),
 ];
 
 let bad = 0;
