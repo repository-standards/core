@@ -103,7 +103,14 @@ with `self-verify`.
      A rename reaches the manifest as one entry gone and one entry arrived, and the target's
      `removedPaths` names the old path; a repo that ends up carrying both satisfies every
      "required entry is present" check and is still wrong, with its content split across two
-     places and every link pointing at the older half;
+     places and every link pointing at the older half. Some moves also reshape the
+     content, and the `removedPaths` entry's `note` says how. The move to roles (standard ADR-064), for example:
+     `docs/personas.md` becomes `docs/roles.md` (procedure: the `roles-write` skill's
+     "Migrating an old docs/personas.md" section), `.claude/skills/personas-write` is
+     deleted because `roles-write` replaces it, and every `**Serves:**`, backlog row and
+     journey renames the role. Job stories are not back-filled in this update: a change that
+     only renames the role in `**Serves:**` is not held to them, and each capability spec
+     gains its `## Job stories` section the next time a change touches what it says;
    - the item was **removed** in the target -> remove or migrate the repo's use of it, and
      check the target manifest's `removedPaths` for an entry naming it. That list is what
      self-verify checks in step 6, so a removal skipped here fails there rather than passing

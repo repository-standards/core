@@ -91,7 +91,7 @@ anything is touched ([ADR-020](docs/decision-records/ADR-020-intake-first-adopti
 | "**Verify** this repo still complies with its pinned standard." | `node scripts/self-verify.mjs`, run inside your repo once align has copied `scripts/` in - drift as a number, the same pass/fail your CI asserts. |
 | "We are a **Node team** - adopt the standard **with the Node stack**." | Layer 1 + Layer 2 together: the standard plus the Node best practices, one drift number across both. |
 | "My stack is **Python** - does the standard cover it?" | An honest registry check - and on a miss, the agent offers to file a stack request here, so the gap becomes an issue, not a dead end. |
-| "**Explain** this repo's decisions and specs in plain language." | The PO view: any ADR/BDR/spec retold against the personas - no jargon, with examples. |
+| "**Explain** this repo's decisions and specs in plain language." | The PO view: any ADR/BDR/spec retold against the roles - no jargon, with examples. |
 
 Entry point for all of them: [`skills/align-to-standards`](skills/align-to-standards/SKILL.md)
 (updates: [`update-to-latest`](standard/.claude/skills/update-to-latest/SKILL.md)). If your

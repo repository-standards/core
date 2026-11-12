@@ -91,8 +91,10 @@ binds every repo, a solo one included.
 - **R9.** A capability spec MUST be buildable by default: an agent could rebuild
   and verify the capability from the spec alone. The behavioral tier is an escape
   hatch that MUST be justified in the spec and SHOULD be rare.
-- **R10.** Every capability spec MUST name the persona it serves; a spec that
-  serves nobody fails the structure guard.
+- **R10.** Every capability spec MUST name the role it serves (from
+  `docs/roles.md`, optionally qualified by a mode) and carry 1-3 job stories with
+  Given/When/Then scenarios linked to its acceptance criteria; a spec that serves
+  nobody fails the structure guard.
 - **R11.** Every capability MUST have an entry in `specs/capability-map.json`
   binding it to code globs. A change to a capability's code MUST land in the same
   PR as its spec update. *(scale)* The coupling guard blocks any PR that breaks
@@ -143,7 +145,7 @@ binds every repo, a solo one included.
   measured and asked: `docs/adoption-intake.md`, a required manifest entry
   filled before any greenfield, brownfield or stack work proceeds and never
   deferred to a later wave - the same standing this standard already gives
-  `PRODUCT.md` and `docs/personas.md` (standard ADR-042). An agent that skipped the
+  `PRODUCT.md` and `docs/roles.md` (standard ADR-042). An agent that skipped the
   question round and one that ran it in full produce the same tree without
   this file; the record is what makes intake checkable rather than merely
   claimed.

@@ -1042,7 +1042,7 @@ if (!skeleton) {
   // a manifest there is nothing to derive from - the skeleton fallback - and dropping to the
   // derived set alone would have quietly stopped scanning SECURITY.md, PRODUCT, ARCHITECTURE
   // and the roster on exactly the repos least likely to have filled them in.
-  const FLOOR = ["AGENTS.md", "README.md", "SECURITY.md", "docs/PRINCIPLES.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md", "docs/personas.md", "docs/backlog.md"];
+  const FLOOR = ["AGENTS.md", "README.md", "SECURITY.md", "docs/PRINCIPLES.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md", "docs/roles.md", "docs/backlog.md"];
   const fillPaths = [...new Set([...fillFiles, ...FLOOR].filter((p) => exists(p) && !isDir(p)))];
 
   // A stub the adopter wrote themselves carries no template placeholder, so the check above

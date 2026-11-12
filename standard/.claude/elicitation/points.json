@@ -191,7 +191,7 @@
       "skill": "align-to-standards",
       "scope": "repository",
       "file": "onboard.md",
-      "asks": "Who are the users of this product? Define them yourself, have them suggested from the code for you to correct, or skip personas for now?",
+      "asks": "Who uses this product, and with what permissions? Define the roles yourself, have them suggested from the code for you to correct, or skip the roster for now?",
       "recommended": "define them",
       "required": true,
       "allowed_provenance": [
@@ -199,10 +199,11 @@
         "provisional",
         "absent"
       ],
-      "gates": "docs/personas.md",
-      "why": "Personas are a claim about people outside the repository. Nothing in the code can settle them.",
+      "gates": "docs/roles.md",
+      "why": "Roles and their modes are a claim about people outside the repository. The code can suggest the actors and their permissions; nothing in it can settle who actually uses the product or how.",
       "evidence": "stayget 2026-08-19: five personas invented, roster declared closed, no inferred marker despite onboard.md requiring one.",
       "gate_globs": [
+        "docs/roles.md",
         "docs/personas.md"
       ]
     },

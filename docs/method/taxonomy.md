@@ -36,13 +36,13 @@ already started rotting.
 | a bug or something broken, mentioned in passing while you are doing something else | **backlog item** | `add-to-backlog` files one row (source, owner, done-when) without derailing the current work; actively fixing it right now is just the change, not a backlog item |
 | how the system is built | **structure** | `ARCHITECTURE.md` |
 | what the product is and where it is going | **vision** | `PRODUCT.md` |
-| who we build for (and validate against) | **personas** | `docs/personas.md` - a gate above specs + backlog (ADR-006) |
+| who uses the product, with what permissions (and validate against) | **roles** (optional **modes**) | `docs/roles.md` - a gate above specs + backlog (ADR-064; why: [roles-not-personas](roles-not-personas.md)) |
 | a speculative idea that may never ship | **idea** | `docs/ideas/<slug>.md` - status-driven, no records until approved (ADR-010) |
 | materials from active discovery - a meeting extract, a mail, a finding whose *source* matters | **discovery entry** | `docs/discovery/<topic>/` - a dossier per topic, provenance-stamped; never normative, the spec always wins (ADR-024, [discovery.md](discovery.md)) |
 | what we tell the market (statement, pillars, one-liner) | **positioning** | `docs/positioning.md` - every surface quotes it, never re-phrases (PDLC-1) |
 | a product event the code emits | **tracking-plan entry** | `docs/analytics.md` - listed before it ships; same-PR coupled to the code (PDLC-3) |
 | what a study taught us | **research insight** | `docs/research/<study>.md` - anonymized; must name what it changes (PDLC-4) |
-| how a persona travels the product | **journey** | `docs/journeys/<persona>.md` - stages -> capabilities, coupled to specs (PDLC-5) |
+| how a role travels one key end-to-end flow | **journey** | `docs/journeys/<flow>.md` - pinned to one role, stages -> capabilities, coupled to specs (PDLC-5) |
 | how to run, diagnose, or undo a service in production | **runbook** | `docs/runbooks/<service>.md` |
 | what an incident taught us | **postmortem** | `docs/runbooks/postmortems/<date>-<slug>.md` - blameless; every action item becomes a backlog item |
 | how much we test, and where each tier runs | **decision** | the testing-strategy fork in the [decision checklist](checklist.md) - one of the eight R7 forces you to record; the mechanics belong to the stack layer, not here |
@@ -131,7 +131,7 @@ The rule that keeps the decision log honest:
 ## Living documents - updated in place
 
 Everything in the map above is **living**. A spec, `ARCHITECTURE.md`, `PRODUCT.md`, the
-personas, the rules - they change as the product changes, by **editing the same file in
+roles, the rules - they change as the product changes, by **editing the same file in
 place**. The current version is the truth; git is the history. Do not append incremental
 versions, `-v2` files, or "amendment" sections when an update will do. Two qualifications
 keep this honest:

@@ -15,7 +15,7 @@ opinionated, and badly served by being flattened into a stack-agnostic Layer 1.
 Candidates the owner named on 2026-08-10:
 
 - **UX and product design** - where the split already happened without being decided.
-  Layer 1 took the half of the practice that produces documents: `docs/personas.md`,
+  Layer 1 took the half of the practice that produces documents: `docs/roles.md`,
   a journey template with stages and pains, and a research template whose own method
   row lists usability tests. It left out the half that has tooling and gates - a
   design system as a source of truth, the Figma-to-code handoff, an accessibility

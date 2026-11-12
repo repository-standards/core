@@ -9,7 +9,7 @@ The intake (step 0 in `SKILL.md`) has already run: intent, technology + Layer 2
 consent, appetite, and plan-only vs execute are known, and its repo scan seeds Gate 0's
 description draft. Each step below names the gate it fills in the
 [adoption checkmap](../../docs/method/adoption.md); brownfield walks the gates
-**0 -> 2 -> 1 -> 3 -> 4 -> 5 -> 6** - the assessment first, the personas reconstructed
+**0 -> 2 -> 1 -> 3 -> 4 -> 5 -> 6** - the assessment first, the roles reconstructed
 from its evidence.
 
 Order: **assess first** (analysis only - the passes below), then the **stack offer**
@@ -126,14 +126,21 @@ guards are green - not when every file has a paragraph.
 
 ## Steps
 
-1. **Reconstruct the personas -> Gate 1.** Right after the assessment, before any spec is
-   seeded.
+1. **Reconstruct the roles -> Gate 1.** Right after the assessment, before any spec is
+   seeded. The `roles-write` skill owns the roster's shape; this step feeds it.
 
-   **The code gives you roles, not personas.** Auth roles, UI surfaces and API consumers
-   tell you there is an `admin`, a `member` and something calling the public API. They
-   cannot tell you who that person is, what they are trying to get done, what they are
-   afraid of losing, or which of them wins when two of them want opposite things - and
-   that last one is what every later spec argument turns on.
+   **The code gives you candidate roles and their permissions, not their jobs.** The auth
+   model, permission tiers, UI surfaces and API consumers tell you there is an `admin`, a
+   `member` and something calling the public API, and what each may do. They cannot tell you
+   what that actor is trying to get done, what they distrust before acting, which situations
+   change what the product must do for them (the modes), or which role wins when two want
+   opposite things - and that last one is what every later spec argument turns on.
+
+   **An existing `docs/personas.md` is migrated, not discarded.** Follow the `roles-write`
+   skill's "Migrating an old docs/personas.md" section: `git mv` it to `docs/roles.md`, turn
+   each row into an actor with its permissions, fold entries that differ only by situation
+   into modes of one role, and keep the distrust & friction content. Then interview for what
+   is still missing, as below.
 
    So use the code for the **candidate list** and then **interview the user**, the same
    way the greenfield phase does - this phase is not exempt just because a codebase
@@ -141,33 +148,35 @@ guards are green - not when every file has a paragraph.
    - Play back what the code shows: "I can see three kinds of caller - the back-office
      login, a public booking surface, and an API key used by one integration. Is that the
      real shape, or is something missing because it never got built?"
-   - Then ask what the code cannot answer, one persona at a time: who is this actually, in
-     a sentence? What are they trying to get done? What goes wrong for them today? What
-     must they never lose? What do they explicitly *not* need - so nobody gold-plates for
-     them?
+   - Then ask what the code cannot answer, one role at a time: what may this role do, and
+     what not? What situations do they come to the product in (their jobs)? What do they
+     distrust or need to see before they act? What must they not lose? Is there a situation
+     that changes what the product must do for them (a mode - at most three)? What do they
+     explicitly *not* need - so nobody gold-plates for them?
    - **Show one filled example so they know what a good answer looks like** - the worked
-     example in `docs/personas.md` is there for this - and say plainly that it is from a
+     example in `docs/roles.md` is there for this - and say plainly that it is from a
      different product. Almost nobody's roster maps onto someone else's, and offering the
      example as a menu produces a roster that reads well and describes nobody. The example
      is calibration: this much detail, this concrete, in the user's own words. If they
      start agreeing with the example rather than describing their own users, stop and
-     re-ask - a borrowed persona passes the gate and then quietly decides specs for years.
-   - Ask which one **wins ties**, and say why it matters: that is the persona a spec cites
+     re-ask - a borrowed role passes the gate and then quietly decides specs for years.
+   - Ask which one **wins ties**, and say why it matters: that is the role a spec cites
      when two demands conflict, so it is a product decision, not a formality.
    - Roles the code shows but nobody uses, and users the business has but the code never
      modelled, both surface here. Both are findings worth reporting.
 
    **A roster of one is a legitimate answer, not a skipped step.** A single-purpose
    library, a CLI, or a component with one real consumer (the developer importing it) does
-   not need a multi-persona interview manufactured for it - same principle as the decision
-   catalog's "does not apply" (`docs/method/checklist.md`): write the one real persona
-   (e.g. "solo consumer-developer, primary by default"), say in one line why there is only
+   not need a multi-role interview manufactured for it - same principle as the decision
+   catalog's "does not apply" (`docs/method/checklist.md`): write the one real role
+   (e.g. "consumer developer, primary by default"), say in one line why there is only
    one, and move on. What is not acceptable is silently skipping the gate because the
-   interview felt disproportionate - that is how ADR-006 gets quietly bypassed.
+   interview felt disproportionate - that is how the role gate (ADR-064) gets quietly
+   bypassed.
 
-   Write `docs/personas.md` with the **primary** marked, and record the target-personas
-   **BDR**. **No spec is written before this exists** (ADR-006): every spec seeded below
-   names the persona(s) it serves.
+   Write `docs/roles.md` with the **primary** marked, and record the target-roles **BDR**.
+   **No spec is written before this exists** (ADR-064): every spec seeded below names the
+   role it serves.
 
    If the user cannot answer yet - the person who knows is on holiday, the business has
    never written it down - that is `[adopt.personas]`'s `suggest` or `stub` answer: seed
@@ -302,7 +311,9 @@ guards are green - not when every file has a paragraph.
    effort (writing the contracts is exactly what surfaces the bugs, and peripheral
    capabilities benefit most; ADR-003). Never invent behavior the code does not show; a
    spec<->code discrepancy or an unclear branch goes in the spec's **Open questions**
-   (and becomes a tracked issue), not a guess. A capability you are **not** specing this
+   (and becomes a tracked issue), not a guess. Write its `## Job stories` from the served
+   role's jobs in `docs/roles.md` - 1-3, each with a GIVEN/WHEN/THEN scenario naming the
+   acceptance criterion that proves it. A capability you are **not** specing this
    pass is a backlog item - not a behavioral placeholder written to look done.
 
    Nobody asked a dedicated question before this write - a synthesized spec is agent
@@ -325,7 +336,7 @@ guards are green - not when every file has a paragraph.
 7. **Build the backlog -> Gate 5.** Everything from the assessment and steps 3-6 that
    you did not finish now becomes ordered work items in `docs/backlog.md` (see that
    file for the format). Group into epics ("Spec the domain", "Record foundational
-   decisions", "Wire the guards"). Each item: what, why, which capability, the persona
+   decisions", "Wire the guards"). Each item: what, why, which capability, the role
    it serves, the **owner role** that must act (product / architect / dev / agent - the
    backlog format), and a definition of done. Close with the **count** ("N tasks to
    full alignment"). This backlog is the deliverable that makes onboarding
@@ -374,8 +385,8 @@ guards are green - not when every file has a paragraph.
 ## Output of one run
 
 - The assessment's health report (findings grouped by owner role) and seeded backlog.
-- `docs/personas.md` reconstructed and confirmed (primary marked) + the
-  target-personas BDR.
+- `docs/roles.md` reconstructed and confirmed (primary marked) + the
+  target-roles BDR.
 - `specs/capability-map.json` seeded from the code.
 - The top risk-ranked capabilities specced buildable (behavioral only with a recorded
   one-line justification).
@@ -430,17 +441,17 @@ Records to `docs/adoption-provenance.md`: the `adopt.records` row takes the stat
 
 ### `[adopt.personas]` Who the product is for
 
-Fires **before writing personas**.
+Fires **before writing the roster** (`docs/roles.md`).
 
-Call `AskUserQuestion` for point `[adopt.personas]` - header **Personas**, `metadata.source` `adopt.personas` - and the question:
+Call `AskUserQuestion` for point `[adopt.personas]` - header **Roles**, `metadata.source` `adopt.personas` - and the question:
 
-> Who are the users of this product? Define them yourself, have them suggested from the code for you to correct, or skip personas for now?
+> Who uses this product, and with what permissions? Define the roles yourself, have them suggested from the code for you to correct, or skip the roster for now?
 
 Options, in order: **define them** / **suggest it, I will check later** (`provisional`, plus a backlog row naming this point) / **leave a stub, do not guess** (`absent`)
 
-Personas are a claim about people outside the repository, and nothing in the code can settle them. A suggested roster is never closed.
+Roles and their modes are a claim about people outside the repository. The code can suggest the actors and their permissions; nothing in it can settle who actually uses the product or how. A suggested roster is never closed.
 
-Records to `docs/adoption-provenance.md`: the `adopt.personas` row takes the state, who answered, the date, and `docs/personas.md` as where the answer landed.
+Records to `docs/adoption-provenance.md`: the `adopt.personas` row takes the state, who answered, the date, and `docs/roles.md` as where the answer landed.
 
 ### `[adopt.tracker]` Where tracked work lives
 

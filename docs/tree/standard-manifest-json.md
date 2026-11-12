@@ -23,8 +23,8 @@ Five arrays, each answering a different kind of question.
   "version": "1.0.0",
   "files": [
     {
-      "path": "docs/personas.md",
-      "purpose": "the persona roster the R10 gate checks specs against",
+      "path": "docs/roles.md",
+      "purpose": "the role roster the R10 gate checks specs against",
       "adapt": "fill-from-repo",
       "required": true,
       "profile": "core",

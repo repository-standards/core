@@ -23,6 +23,7 @@ change it deliberately - do not tidy it.
 | [repo-assessment.md](repo-assessment.md) | the read-only eight-pass assessment an agent runs on first contact |
 | [taxonomy.md](taxonomy.md) | where each kind of knowledge lands - ends the "ADR or rule?" question |
 | [checklist.md](checklist.md) | the decision checklist - the forks every repo consciously decides, with the paved road |
+| [roles-not-personas.md](roles-not-personas.md) | roles, modes, job stories and journeys - what each solves, when a mode is justified, why not classic personas, with sources |
 | [ways-of-working.md](ways-of-working.md) | the PO -> Dev -> AI loop - roles, statuses, the clarify gate |
 | [working-with-ai/](working-with-ai/README.md) | driving the agent itself - the practices that hold up, each checked against evidence rather than vibes |
 | [working-with-specs.md](working-with-specs.md) | real situations -> the exact prompt -> what the standard does; specs day to day |

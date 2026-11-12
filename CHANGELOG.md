@@ -17,6 +17,45 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### Roles, modes and job stories replace personas; the gate stays (2026-11-12)
+
+ADR-064 supersedes ADR-006. The roster is now `docs/roles.md`: one row per actor - who uses
+the product and with what permissions - with no name or biography, and an optional 2-3
+behavioural modes per role, added only where the product has to behave differently. The
+distrust-first content (what a role fears, distrusts and must see before acting) is a field
+of the role and of each mode. The spec `**Serves:**` field names a role, optionally with a
+mode. Every capability spec carries a `## Job stories` section: 1-3 `**JS-n.**` stories in
+the form "When <situation>, I want <motivation>, so I can <outcome>", each with a
+GIVEN/WHEN/THEN scenario ending `(AC: <name>)` that names the acceptance criterion proving
+it. Journeys (`docs/journeys/`) are one per key end-to-end flow, pinned to a role.
+
+`spec-structure.mjs` reads `docs/roles.md`, and still reads a legacy `docs/personas.md` with a
+note on how to move it. Its new check holds the job-story shape on every spec a change
+touches and on any spec that already has the section; a full-tree run warns about a spec that
+predates the section rather than failing it; a change that only renames the role in
+`**Serves:**` is not held to it, and a named sub-spec only once it has the section. The skill `personas-write` is renamed
+`roles-write` and carries the migration procedure. The manifest lists `docs/personas.md` and
+`.claude/skills/personas-write` in `removedPaths`, so `update-to-latest` performs the move
+and `self-verify` reports a repo that has not made it. The adoption question that gates the
+roster keeps its id, `adopt.personas`, and now gates both paths. The repo's own roster and
+specs are migrated the same way. `tools/clarify-gate-test.mjs` covers the job-story shape in
+both modes, the legacy roster, and a retired spec.
+
+The dashboard reads a backlog row's `role` column (falling back to `persona`), shows each
+spec's job stories with the criteria that prove them, and counts specs that have none
+(`tools/dashboard-roles-test.mjs`). `docs/method/roles-not-personas.md` explains the model -
+what roles, modes, job stories and journeys each solve, when a mode is justified, and the
+sources it rests on - so a reader does not need the ADR to follow it.
+
+**Migrating an adopting repo:** `git mv docs/personas.md docs/roles.md`; keep `## The
+roster`; rewrite each row as an actor with a `Permissions` column and no biography; fold
+personas that differ only by situation into modes of one role; rename the role in every
+`**Serves:**` field, backlog row and journey; add job stories to each spec as it is next
+changed. The `roles-write` skill's "Migrating an old docs/personas.md" section is the full
+procedure.
+
 ## 1.0.20 - 2026-11-11
 
 ### spec-guard reads a deleted file as deleted under a bracketed folder (2026-11-11)

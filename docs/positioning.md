@@ -44,7 +44,7 @@ makes it different - the field does brownfield now. What differs is where the wa
    that pays back latest: a year on, the records are what stops a settled argument
    restarting. (Proof: ADRs and BDRs in-repo, `adr-write` / `bdr-write`, the altitude
    ladder that says which wins.)
-4. **One repo, everything coherent.** Code, specs, decisions, product, personas - kept
+4. **One repo, everything coherent.** Code, specs, decisions, product, roles - kept
    together, updated in the same PR, readable by humans and loadable by agents. Proximity
    is the mechanism; coherence is the outcome. (Proof: living docs, same-PR coupling, the
    taxonomy.)
@@ -55,15 +55,15 @@ makes it different - the field does brownfield now. What differs is where the wa
 
 ## Target scenarios (who hears which pillar first)
 
-- **Standard-bearer Staszek** (architect, many repos) - pillar 2: drift as a number
+- **Adopting lead** (architect, many repos) - pillar 2: drift as a number
   across a fleet.
-- **Spec-first PO Paula** - pillar 1: she writes behaviour in her own words, in the same
-  repository, without learning a tool; then pillar 5, the loop that walks her from story
+- **Product owner** - pillar 1: they write behaviour in their own words, in the same
+  repository, without learning a tool; then pillar 5, the loop that walks them from story
   to ready-to-develop without code.
-- **Owner Olek** - pillar 2 phrased as assurance: public and checkable, verifiable quality
-  he can point at.
-- **Buildable-truth Dev Darek** - pillar 4: contracts instead of archaeology.
-- **Anyone who has watched a decision get re-argued** - pillar 3, and it needs no persona:
+- **Owner** - pillar 2 phrased as assurance: public and checkable, verifiable quality
+  they can point at.
+- **Developer** - pillar 4: contracts instead of archaeology.
+- **Anyone who has watched a decision get re-argued** - pillar 3, and it needs no role on the roster:
   every engineer has lost that afternoon.
 
 ## Usage rule

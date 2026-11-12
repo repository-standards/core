@@ -3,12 +3,12 @@ still be read years later, by someone who was not there.
 
 This folder is the anti-silo. Interviews and usability studies normally live in a research
 tool that the people writing specs do not open, so the insight and the thing it should have
-changed sit in different systems and never meet. Here the study lives next to the personas
+changed sit in different systems and never meet. Here the study lives next to the roles
 it corrects and the specs it should move.
 
 ## What it is for
 
-**So a persona claim can be traced to evidence.** When someone says in review "hosts check
+**So a claim about a role can be traced to evidence.** When someone says in review "hosts check
 their payouts daily", there are only two possible answers: here is the study, or that is an
 assumption wearing a fact's clothes. Both are fine. Not knowing which is not.
 
@@ -21,7 +21,7 @@ person, never the company, and never a quote whose details identify either. If a
 cannot be written without identifying someone, **it does not get written**. Research earns
 its place here by being reusable years later, and a study nobody can share is not.
 
-Every study says what it **moves**: which persona claim it confirms or breaks, which idea it
+Every study says what it **moves**: which claim about a role or mode it confirms or breaks, which idea it
 spawns or parks, which spec it touches. A study with an empty links section is not
 finished; it is a note about a conversation.
 
@@ -33,7 +33,7 @@ anonymized insight and its links.
 **Anything identifying.** Not the person, not the employer, not the quote that gives them
 away, not the screenshot with the name still in it.
 
-**Findings with nowhere to go.** If a study changes nothing - no persona, no idea, no spec -
+**Findings with nowhere to go.** If a study changes nothing - no role, no idea, no spec -
 say so explicitly in the file. That is a real result. Silence is not.
 
 ## How you actually use it

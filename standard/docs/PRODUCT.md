@@ -33,7 +33,7 @@ trust for "what exists now".
 - **In progress:** ...
 - **Not started / planned:** ...
 
-## Users / personas
+## Users / roles
 
 Who uses it and what they need from it.
 

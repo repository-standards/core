@@ -1,7 +1,7 @@
 # Work sprints
 
 **Spec tier:** buildable
-**Serves:** `Standard-bearer Staszek` - he runs more than one repo and is the one asked "when will this land"; `Spec-first PO Paula` reads the timeline the sprints feed; `Coding agent` gets a mechanical rule instead of a convention to remember.
+**Serves:** `Adopting lead` - runs more than one repo and is the one asked "when will this land"; `Product owner` reads the timeline the sprints feed; `Coding agent` gets a mechanical rule instead of a convention to remember.
 **Status:** in-development
 **Success metric:** Guidance quality - a repo can answer "when will this land" from its own contents, and the answer improves with evidence rather than with confidence.
 
@@ -19,6 +19,12 @@ reassignment - that happen between opening and closing.
 ## Out of scope
 
 Per-item execution state, assignment and work history remain the tracker's (ADR-010).
+
+## Job stories
+
+- **JS-1.** When I am asked when something will land, I want the repo to answer from its own history, so the answer improves with evidence rather than with confidence.
+  - GIVEN too few closed sprints to estimate from WHEN the forecast runs THEN it gives no date and says why. (AC: Too little history gives no date)
+  - GIVEN closed sprints whose throughput spreads widely WHEN the forecast runs THEN it gives a range, not a single figure. (AC: A wide spread gives a range, not a figure)
 
 ## Core concepts
 

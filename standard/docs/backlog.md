@@ -135,10 +135,9 @@ under epics; keep the ordering honest (if it is not really next, it is not at th
 
 ## Format
 
-One item per row. `cap` links the capability, `persona` names who it serves (from
-`personas.md`; see below), `owner` names the **role that must act** - `product` (business:
-`PRODUCT.md`, BDRs, personas confirmation), `architect` (ADRs, boundaries), `dev` (specs,
-code, guards) or `agent` (mechanical work the agent does alone), `why` is one line, `source`
+One item per row. `cap` links the capability, `role` names the role it serves (from
+`roles.md`; see below), `owner` names **who must act** - `product` (business: `PRODUCT.md`,
+BDRs, roster confirmation), `architect` (ADRs, boundaries), `dev` (specs, code, guards) or `agent` (mechanical work the agent does alone), `why` is one line, `source`
 is where the item came from (the five categories above), `DoD` is the observable finish line.
 
 ### The id
@@ -172,7 +171,7 @@ is **split, not re-sized**.
 
 ### Epic: <name>
 
-| id | title | cap | persona | owner | assignee | size | why | source | DoD | status |
+| id | title | cap | role | owner | assignee | size | why | source | DoD | status |
 |----|-------|-----|---------|-------|----------|------|-----|--------|-----|--------|
 | | | | | | | | | | | |
 
@@ -256,30 +255,30 @@ the first closure is exactly when the archive is supposed to appear.
 
 ## Who an internal item serves
 
-An item that serves no persona is parked, not queued (standard ADR-006) - and the roster in
-`personas.md` holds end users, while a large share of this pool is documentation, spec and
-decision debt that no end user will ever notice. Both are true, so name it rather than
-stretching a customer persona over infrastructure work:
+An item that serves no role is parked, not queued (standard ADR-064) - and the roster in
+`roles.md` holds the product's users, while a large share of this pool is documentation, spec
+and decision debt that no user will ever notice. Both are true, so name it rather than
+stretching a customer role over infrastructure work:
 
-**Write the internal persona: `Maintainer (internal)`.** Anyone who has to work in this repo
+**Write the internal role: `Maintainer (internal)`.** Anyone who has to work in this repo
 afterwards - a person or an agent. It is a real answer to "for whom", and it is what makes
-the persona gate a gate: an item that cannot name even that one is a wish.
+the role gate a gate: an item that cannot name even that one is a wish.
 
-Nothing checks backlog personas mechanically, which is exactly why it is written here rather
+Nothing checks the backlog's served role mechanically, which is exactly why it is written here rather
 than left as something a careful author would work out: a rule with no guard behind it is
 carried by the page that states it, and an answer nobody can find is an answer nobody uses.
 
 ## Definition of Ready (before an item is pulled)
 
-An item is **ready** when it is **INVEST**-shaped and has: a named `persona` (the internal one
-counts), a linked `cap` (or `-`), an `owner` role, a one-line `why`, a `source`, and an
-observable **DoD**. INVEST = Independent, Negotiable, Valuable (to that persona), Estimable,
+An item is **ready** when it is **INVEST**-shaped and has: a named `role` (the internal
+one counts), a linked `cap` (or `-`), an `owner` role, a one-line `why`, a `source`, and an
+observable **DoD**. INVEST = Independent, Negotiable, Valuable (to that role), Estimable,
 Small (fits one flow), Testable. An item that fails this is refined or split first - the PO
 stage does not start on a vague item.
 
 ## Not this
 
-- Not a dumping ground for vague wishes - every item has a `source`, a persona, and a DoD,
+- Not a dumping ground for vague wishes - every item has a `source`, a role, and a DoD,
   and the first of those is a column so the claim is checkable by reading one.
 - Not a second issue tracker to keep in sync by hand - this is the in-repo, agent-first
   view; mirror to an external tracker only if the team already lives there.

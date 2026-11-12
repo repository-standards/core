@@ -41,9 +41,11 @@ A large capability may split, but it stays one domain:
 specs/bookings/{overview,lifecycle,modifications,cancellation}.md
 ```
 
-Every spec names the **persona** it serves, from `docs/personas.md`, and says in one line
-how it advances that person's job. A spec that serves nobody is a candidate for deletion,
-not for merge. Where a rule helps one persona and hurts another, the resolution is a
+Every spec names the **role** it serves, from `docs/roles.md` (optionally qualified by a
+mode), and carries 1-3 **job stories** under `## Job stories` - "When <situation>, I want
+<motivation>, so I can <outcome>" - each with a GIVEN/WHEN/THEN scenario naming the acceptance
+criterion that proves it. A spec that serves nobody is a candidate for deletion, not for
+merge. Where a rule helps one role and hurts another, the resolution is a
 recorded BDR that the spec cites.
 
 ### Buildable is the default, and it means something specific
@@ -126,8 +128,8 @@ section is decoration.
   construction: they describe a change, so six months later nothing describes the system.
   Per-page specs were the other candidate and they duplicate one concept across every
   surface it appears on.
-- **[ADR-006](../decision-records/ADR-006-personas-are-a-validation-gate.md) - a spec names
-  its persona.** Without it, "the user" wants everything and no trade-off can be resolved
+- **[ADR-064](../decision-records/ADR-064-roles-modes-and-job-stories-replace-personas.md) - a
+  spec names its role and carries job stories.** Without it, "the user" wants everything and no trade-off can be resolved
   in writing.
 - **Git is the change mechanism.** A separate change-folder model was built and removed:
   the branch spec is the target truth, `main` is the current truth, and the diff is the

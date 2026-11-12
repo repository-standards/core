@@ -100,7 +100,7 @@ picks and rationale live in its DECISIONS).
 | Domain / module boundaries | Bad seams make every later change cross-cutting | Slice by **capability/domain**, not by layer or page (mirrors [specs by capability](../tree/specs.md)) | ADR |
 | Two authored descriptions of one structure | A repo often describes the same structure twice because two consumers need it in different forms - a Bazel `BUILD` graph beside a `CMakeLists.txt` for embedded cross-compiles, one schema hand-written in a second SQL dialect for an embedded target. Neither copy is the source, so they drift apart silently, and the drift surfaces on whichever platform nobody builds daily | One side is generated from the other. Where nothing can generate it, declare the pair and put a check behind the declaration, so disagreement fails instead of waiting - the standard does exactly that for the duplication it cannot remove (a declared restatement under R4, the DDL/typed-twin pair under R24), and a build graph needs the repo's own equivalent. Keeping two hand-edited copies with no declared edge is the one answer that is not available | ADR |
 | Language & type strictness | Strictness caught early is cheap; retrofitted late is not | Strict typing on from day one; no gradual-any escape hatch as default | ADR |
-| Working (natural) language | An AI reads any language, so this is a config, not a constraint; undecided means inconsistent artifacts | Default English; declare per-artifact in `AGENTS.md` (a non-English team is first-class); user-facing copy follows the persona | convention (AGENTS.md) |
+| Working (natural) language | An AI reads any language, so this is a config, not a constraint; undecided means inconsistent artifacts | Default English; declare per-artifact in `AGENTS.md` (a non-English team is first-class); user-facing copy follows the role it addresses | convention (AGENTS.md) |
 | Dependency & supply-chain policy | Every dep is attack surface and maintenance debt | A real bar to add a dependency (ADR for non-trivial ones); a supply-chain **cooldown** before adopting fresh releases `-> stack layer` | ADR |
 
 ## Runtime & data
@@ -130,7 +130,7 @@ picks and rationale live in its DECISIONS).
 | Observability | You cannot fix what you cannot see | Structured logging + the metrics/traces that matter, decided as a baseline, not bolted on after an incident | ADR |
 | Security baseline | The floor below which nothing ships | Secret scanning, dependency audit, least-privilege CI, no plaintext secrets - a stated minimum; the full axis list the record must answer ships as `docs/security-baseline.md`, including the ones answered "not applicable"; reference OWASP ASVS + SLSA `-> stack layer`; capabilities touching money, auth, or personal data get a trust-boundaries pass in their spec (see the capability template) | ADR |
 | Accessibility baseline | "We'll do a11y later" means never; retrofitting it is dear | **WCAG 2.2 AA** as the floor for any user-facing surface; enforce what tooling can (e.g. Biome a11y rules) `-> stack layer` | ADR |
-| UX review lens & research cadence | UI ships on vibes unless a named lens gates it | **NN/g 10 usability heuristics** as the review lens for user-facing change; lightweight usability tests (~5 users) before a meaningful surface change ships; personas carry **JTBD** so specs state the job, not just the actor | ADR |
+| UX review lens & research cadence | UI ships on vibes unless a named lens gates it | **NN/g 10 usability heuristics** as the review lens for user-facing change; lightweight usability tests (~5 users) before a meaningful surface change ships; roles carry **jobs**, and each spec turns them into job stories with scenarios, so specs state the job, not just the actor | ADR |
 | Design tokens & design-system handoff | Hardcoded values fork the visual language across surfaces | **W3C DTCG tokens (v2025.10)**, three tiers (primitive -> semantic -> component), one token source drives design tools and code `-> stack layer` | ADR |
 | Performance & scaling budget | Un-budgeted perf becomes an emergency | A stated budget only where it matters (hot paths, SLAs); do not pre-optimize the rest | ADR |
 
@@ -152,7 +152,7 @@ technical log.
 
 | Decision | Why it matters | Record |
 |---|---|---|
-| Target personas | Who the product is for - the gate every spec, idea, and backlog item validates against (personas are a validation gate; the standard's ADR-006); the primary persona wins ties | BDR (in `personas.md`) |
+| Target roles | Who uses the product and with what permissions - the gate every spec, idea, and backlog item validates against (roles are a validation gate; the standard's ADR-064); the primary role wins ties | BDR (in `roles.md`) |
 | Pricing / monetization model | Shapes the whole product and much of the data model | BDR |
 | Data retention & compliance (GDPR, etc.) | Legal exposure; drives deletion and audit design | BDR |
 | SLAs & support commitments | What you promise sets the engineering bar | BDR |

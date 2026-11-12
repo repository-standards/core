@@ -194,7 +194,7 @@ Before any phase runs, one intake pass:
      often than the question implies** - the greenfield phase is explicitly *not* stack-first,
      so a technology named to get past this question is a decision made for the wrong reason.
      Take it: say that Layer 1 is unaffected and complete without it, that everything through
-     personas, product and the first specs proceeds unchanged (none of it is technology-
+     roles, product and the first specs proceeds unchanged (none of it is technology-
      specific), and that the stack step is simply deferred - it is the last step of the
      phase anyway. Then name the two ways it closes: pick a registered stack when the
      decision is made and run the stack step then, or record the decision as an ADR the

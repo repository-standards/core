@@ -24,6 +24,6 @@ next person reading it sees the shape rather than somebody's half-migrated regis
 ## Decisions behind it
 
 - **Example files ship beside the real ones, never as commented blocks inside them.** The
-  same reasoning applies to `capability-map.example.json` and to the worked persona roster:
+  same reasoning applies to `capability-map.example.json` and to the worked roles roster:
   an example living inside a file a guard reads is an example that can be enforced by
   accident.

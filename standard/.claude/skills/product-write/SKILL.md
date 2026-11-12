@@ -28,9 +28,9 @@ asking next. Draft as you go and play it back in the user's own words.
 1. **What is it, in one sentence a stranger would understand?** If the answer needs a second
    sentence, the product is not one product yet - and that is worth naming now rather than
    discovering it three capabilities in.
-2. **Who is it for?** Names, roles, or segments. If `docs/personas.md` exists, read it first
-   and ask whether it is still right; if it does not, this is where it starts, and
-   `personas-write` takes over once names appear.
+2. **Who is it for?** Roles or segments. If `docs/roles.md` exists, read it first and ask
+   whether it is still right; if it does not, this is where it starts, and `roles-write`
+   takes over once actors appear.
 3. **What do they do today instead?** The status quo, including "nothing" and "a
    spreadsheet". A product with no alternative being displaced usually means the problem has
    not been found yet.
@@ -43,7 +43,7 @@ asking next. Draft as you go and play it back in the user's own words.
    "the second visit happens without support contact".
 
 The answers map onto the template's sections - `What it is`, `What people do today instead`,
-`Vision` (which is where the bet goes), `Users / personas`, `Non-goals`, `Success metrics`.
+`Vision` (which is where the bet goes), `Users / roles`, `Non-goals`, `Success metrics`.
 Ask in the order above, which is the order that makes sense to a person; write in the
 template's order, which is the order that makes sense to a reader.
 
@@ -61,8 +61,8 @@ Say at the end how many markers are left and that the file is usable with them i
 ## Then
 
 - Write `docs/PRODUCT.md` (`docs/product/` in a repo that has one).
-- If the interview produced named users, offer `personas-write` next - the two files reference
-  each other and a persona invented later rarely matches the frame.
+- If the interview produced named actors, offer `roles-write` next - the two files reference
+  each other and a role invented later rarely matches the frame.
 - If it produced decisions already made ("we're not doing self-hosting"), offer `bdr-write`
   for each. Decisions embedded in a product frame are invisible; as records they are citable.
 - If it produced distinct areas of behaviour, name them as candidate capabilities and offer

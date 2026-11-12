@@ -52,7 +52,7 @@ half the repo reads as a clean bill of health.
 
 **Who must act.** The health report groups its findings by the **owner role** that must
 act - the same split the backlog items carry: **product/business** (the vision in
-`PRODUCT.md`, BDRs, confirming personas), **architect** (ADRs, boundaries), **dev**
+`PRODUCT.md`, BDRs, confirming the roster), **architect** (ADRs, boundaries), **dev**
 (specs, code, guards), **agent** (mechanical work it can run alone). Maintainers then
 see which gaps are *theirs* - "the business must write the vision; the architects must
 record the datastore decision" - not one undifferentiated pile.

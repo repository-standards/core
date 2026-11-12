@@ -6,8 +6,9 @@
 //      e.g. a leaked GitHub Spec Kit `specs/001-core/` folder. Capability specs live at
 //      `specs/<capability>/spec.md` (or named sub-specs `specs/<capability>/<name>.md`) -
 //      domain names, never numbers.
-//   2. Every capability spec names a **persona from the roster** it serves (standard ADR-006, R10),
-//      when the repo has a `docs/personas.md` - a spec that serves no one is incomplete,
+//   2. Every capability spec names a **role from the roster** it serves (standard ADR-064, R10),
+//      when the repo has a `docs/roles.md` (or a legacy `docs/personas.md`, read with a
+//      migration notice) - a spec that serves no one is incomplete,
 //      and so is one that serves someone who does not exist. The roster table is the
 //      constraint: a `**Serves:**` value naming nobody on it fails, and a roster the guard
 //      cannot read is reported rather than treated as a roster that forbids nothing.
@@ -22,6 +23,10 @@
 //      buildable (R9). The template marked them REQUIRED and nothing read the template,
 //      so a buildable spec shipped without its contracts and the sections were
 //      retrofitted later, by hand, when somebody noticed.
+//   6. A capability spec carries 1-3 job stories, each with a GIVEN/WHEN/THEN scenario that
+//      names the acceptance criterion proving it (standard ADR-064). Held on every spec a
+//      change touches and on any spec that already has the section; a spec predating the
+//      section is warned about in a full-tree run, never failed for history.
 //
 // This is the "structure lint" half of specs/enforcement.md, made mechanical - the
 // complement to the coupling guard (spec-guard.mjs).
@@ -97,20 +102,20 @@ for (const f of files) {
   if (segment) numbered.push({ file: f, segment });
 }
 
-// --- check 2: every capability spec serves a persona on the roster (standard ADR-006, R10) -----
+// --- check 2: every capability spec serves a role on the roster (standard ADR-064, R10) --------
 // A capability spec is specs/<capability>/<file>.md (depth >= 3), not a template or README.
 // Files under specs/ that the engine writes and that are not themselves capability specs -
-// so the persona gate below has no opinion about them. All six of them: `/spec-plan` is
+// so the role gate below has no opinion about them. All six of them: `/spec-plan` is
 // documented to produce research.md in Phase 0 and data-model.md, quickstart.md and
 // contracts/ in Phase 1, and only plan.md and tasks.md were listed here - so
-// `--base <ref> --block`, the form CI runs, failed the persona gate on the other four in
+// `--base <ref> --block`, the form CI runs, failed the role gate on the other four in
 // every PR opened between /spec-plan and /spec-reconcile, a mid-workflow state the comment
 // beside the full-tree check already calls legitimate.
 //
 // The directory forms are anchored at `specs/<capability>/` on purpose: `contracts` and
 // `checklists` are ordinary words, and an unanchored `/contracts/` would read a capability
 // genuinely called that - `specs/contracts/spec.md` in a repo whose domain is contracts -
-// as scaffolding and exempt its whole directory from the persona gate.
+// as scaffolding and exempt its whole directory from the role gate.
 //
 // What is removable when the work closes is a narrower set and lives at
 // REMOVABLE_SCAFFOLDING below: not every file the engine writes is one the close deletes.
@@ -118,27 +123,31 @@ const NOT_A_CAP_SPEC = /\/(plan|tasks|research|data-model|quickstart)\.md$|^spec
 const isCapSpec = (f) =>
   f.split("/").length >= 3 && f.endsWith(".md") && !f.includes(".template.") && !/\/readme\.md$/i.test(f) && !NOT_A_CAP_SPEC.test(f);
 
-// An unfilled marker is not a persona, in either shape the shipped templates use. Only the
+// An unfilled marker is not a role, in either shape the shipped templates use. Only the
 // angle form was recognised, and the two readers below each tested for it separately - so
-// when personas.md moved its roster marker to the mustache form, an untouched template both
+// when the roster file moved its marker to the mustache form, an untouched template both
 // supplied a live roster entry named after the placeholder and satisfied a spec's `Serves`
 // field with the same string. One answer, both readers.
 const isPlaceholder = (s) => s.includes("<") || s.includes("{{");
 
-const personaless = []; // names nobody at all
+const roleless = []; // names nobody at all
 const offRoster = []; // names somebody the roster has never heard of
 let rosterMissing = false; // capability specs exist but no roster - the R10 gate has nothing to hold
 let rosterHeadingMissing = false; // a roster file the guard cannot find the roster in
-let rosterUnreadable = null; // a roster section no persona parses out of - an empty set forbids nothing
+let rosterUnreadable = null; // a roster section no role parses out of - an empty set forbids nothing
 let rosterNames = [];
-const personasPath = ["docs/personas.md", "personas.md"].find((p) => existsSync(p));
-if (!personasPath && files.some(isCapSpec)) rosterMissing = true;
-if (personasPath) {
+// `docs/roles.md` is the roster (standard ADR-064). A repo that has not migrated yet still has
+// `docs/personas.md`; reading it keeps the gate on through the move instead of switching it
+// off for a release, and the notice at the end says how to finish the move.
+const rosterPath = ["docs/roles.md", "docs/personas.md", "personas.md"].find((p) => existsSync(p));
+const legacyRoster = Boolean(rosterPath) && rosterPath !== "docs/roles.md";
+if (!rosterPath && files.some(isCapSpec)) rosterMissing = true;
+if (rosterPath) {
   const roster = new Set();
   let rosterLines = 0; // table lines under the heading, however they are written
-  const personaLines = readFileSync(personasPath, "utf8").split("\n");
+  const rosterFileLines = readFileSync(rosterPath, "utf8").split("\n");
   // Only the roster section counts. The shipped file also carries a filled worked example,
-  // and scanning the whole file reads those names as live personas - which would let a spec
+  // and scanning the whole file reads those names as live roles - which would let a spec
   // "serve" someone from the example's domain and pass the gate.
   //
   // Scoping to the heading is also how the check switched itself off: the earlier version
@@ -148,10 +157,10 @@ if (personasPath) {
   // passed with a translated one. A required heading that is absent is a failure, not a
   // reason to check something else instead. The heading is syntax: it stays in English even
   // when the roster it introduces is written in another language.
-  const hasRosterHeading = personaLines.some((l) => /^##\s+the roster\b/i.test(l));
+  const hasRosterHeading = rosterFileLines.some((l) => /^##\s+the roster\b/i.test(l));
   if (!hasRosterHeading) rosterHeadingMissing = true;
   let inRoster = false;
-  for (const line of hasRosterHeading ? personaLines : []) {
+  for (const line of hasRosterHeading ? rosterFileLines : []) {
     if (/^##\s/.test(line)) {
       inRoster = /^##\s+the roster\b/i.test(line);
       continue;
@@ -172,15 +181,15 @@ if (personasPath) {
   const capSpecs = files.filter(isCapSpec);
   if (hasRosterHeading && roster.size === 0 && capSpecs.length) rosterUnreadable = { lines: rosterLines };
 
-  const onRoster = (text) => {
-    const low = text.toLowerCase();
-    return rosterNames.some((n) => low.includes(n.toLowerCase()));
-  };
+  // Bounded by non-letters on both sides: a role is a short word (`Host`, `Admin`), and a bare
+  // substring test let `Ghost writer` serve `Host`.
+  const onRoster = (text) =>
+    rosterNames.some((n) => new RegExp(`(?<![\\p{L}\\p{N}])${escapeRe(n)}(?![\\p{L}\\p{N}])`, "iu").test(text));
   for (const f of hasRosterHeading && !rosterUnreadable ? capSpecs : []) {
     let body;
     try { body = readFileSync(f, "utf8"); } catch { continue; }
     // The whole `**Serves:**` value: all of its names, and all of its lines. A spec routinely
-    // serves two or three personas and says how it serves each, so reading only the first
+    // serves two or three roles and says how it serves each, so reading only the first
     // backticked name would make the rest invisible - and a value long enough to say that is
     // a value long enough to wrap, so it is read on to the lines that continue it. Stopping
     // at the blank line, next `**Field:**`, heading, list or table keeps the rest of the spec
@@ -196,21 +205,21 @@ if (personasPath) {
       }
       claim = claim.replace(/<!--[\s\S]*?(-->|$)/g, "").replace(/`/g, "").trim();
     }
-    // `<persona from docs/personas.md>` is the shipped template's placeholder - the question,
+    // `<role from docs/roles.md>` is the shipped template's placeholder - the question,
     // not an answer. A value that is nothing but placeholders counts as no field at all, so a
     // spec copied from the template and never filled in is reported as serving nobody rather
-    // than as serving a persona named "<persona from docs/personas.md>". Both marker shapes
-    // the templates use are stripped: when personas.md moved its roster marker to the
+    // than as serving a role named "<role from docs/roles.md>". Both marker shapes
+    // the templates use are stripped: when the roster file moved its marker to the
     // mustache form, an angle-only test read the untouched placeholder as a filled claim.
     const filled = /[\p{L}\p{N}]/u.test(claim.replace(/<[^>]*>/g, "").replace(/\{\{[^}]*\}\}/g, ""));
-    // A spec with no `Serves` field can still name its persona in prose - the roster is what
+    // A spec with no `Serves` field can still name its role in prose - the roster is what
     // must recognise the name, not the field. What no longer counts: a name the roster has
     // never heard of, and prose that merely asks the question ("for whom") without answering
     // it, both of which used to satisfy this check on their own.
     if (filled) {
       if (!onRoster(claim)) offRoster.push({ file: f, claim });
     } else if (!onRoster(body)) {
-      personaless.push(f);
+      roleless.push(f);
     }
   }
 }
@@ -229,8 +238,10 @@ const statusOf = (body) => {
   if (!m) return null;
   const value = m[1].replace(/<!--[\s\S]*$/, "").trim();
   if (value.includes("|")) return null; // the template's unfilled list of options
-  return value.replace(/[`*.]/g, "").trim();
+  return value.replace(/[`*._]/g, "").trim();
 };
+// The lifecycle word alone, for comparisons: `Retired - superseded by billing` is retired.
+const lifecycleOf = (body) => (statusOf(body) ?? "").split(/[\s(]/)[0].toLowerCase();
 
 const unearned = [];
 let gateMissing = false;
@@ -332,15 +343,28 @@ const tierOf = (body) => {
 // so a section whose body opens with a `###` sub-heading still counts as filled. HTML
 // comments are stripped first: the shipped template's sections are comment-only, and a
 // section carrying nothing but the template's instructions is an empty section.
-const sectionIsFilled = (body, heading) => {
-  const re = new RegExp(`^##\\s+${escapeRe(heading)}\\b.*$`, "im");
-  const at = body.search(re);
-  if (at < 0) return false;
-  const after = body.slice(at).replace(/^.*\n?/, "");
-  const end = after.search(/^#{1,2}\s/m);
-  const inner = (end < 0 ? after : after.slice(0, end)).replace(/<!--[\s\S]*?-->/g, "");
-  return inner.trim().length > 0;
+// A heading inside a fenced block is the block's content, not the document's structure: a
+// `# comment` in a shell example must not end the section it sits in, and a template quoted in
+// a fence must not be read as the real section.
+const sectionBody = (body, heading) => {
+  const lines = body.replace(/\r\n?/g, "\n").split("\n");
+  const want = new RegExp(`^##\\s+${escapeRe(heading)}\\b`, "i");
+  let inFence = false;
+  let start = -1;
+  const out = [];
+  for (const line of lines) {
+    const fence = /^\s*(```|~~~)/.test(line);
+    if (!inFence && !fence && /^#{1,2}\s/.test(line)) {
+      if (start >= 0) break;
+      if (want.test(line)) start = 0;
+      continue;
+    }
+    if (fence) inFence = !inFence;
+    if (start >= 0) out.push(line);
+  }
+  return start < 0 ? null : out.join("\n").replace(/<!--[\s\S]*?-->/g, "");
 };
+const sectionIsFilled = (body, heading) => (sectionBody(body, heading) ?? "").trim().length > 0;
 
 const thin = [];
 const untiered = [];
@@ -359,7 +383,123 @@ for (const f of files.filter(isCapSpec)) {
   if (missing.length) thin.push({ file: f, missing });
 }
 
-// --- check 6 (warn only): committed engine scaffolding - ephemeral by rule -------
+// --- check 6: job stories, each proven by an acceptance criterion (standard ADR-064) ----
+// `**Serves:**` says who; nothing in the spec said what they need from it in a form a test
+// could hold. A job story says it - `When <situation>, I want <motivation>, so I can
+// <outcome>` - and the scenario under it ties it to a named acceptance criterion, so the need
+// and its proof cannot drift apart without a reader seeing a dangling name.
+//
+// The prose is not read: a spec may be written in the repo's own language. What is read is
+// the syntax the template ships - the `**JS-n.**` label, a scenario line carrying GIVEN, WHEN
+// and THEN, and `(AC: <name>)` matching a bold criterion name under `## Acceptance criteria`.
+//
+// Where it binds: on every spec a change touches (`--staged`, `--base`), and in a full-tree
+// run on any spec that already carries the section. A full-tree run over a spec that predates
+// the section warns instead of failing - adopting the rule must not fail a repo for specs
+// nobody has opened since, and the next change to each one brings it up to shape. A retired
+// spec is frozen and exempt; a named sub-spec is held to it once it has the section; a change
+// that only renames the role in `**Serves:**` (the migration itself) is treated as no change.
+const MAX_JOB_STORIES = 3;
+// Emphasis, code marks and a closing full stop are presentation, not part of a name.
+const bareName = (n) => n.replace(/[`*_]/g, "").trim().replace(/\.$/, "").trim().toLowerCase();
+const criterionNames = (body) => {
+  const ac = sectionBody(body, "Acceptance criteria") ?? "";
+  return new Set([...ac.matchAll(/^\s*[-*+]\s+\*\*(.+?)\*\*/gm)].map((m) => bareName(m[1])));
+};
+// `(AC: name)`, where the name may itself carry one level of parentheses.
+const AC_LINK = /\(AC:\s*((?:[^()]|\([^()]*\))+)\)/gi;
+// Only a whole `<word ...>` or `{{...}}` is a placeholder here: `settled in < 2s` is prose.
+const isStoryPlaceholder = (s) => /<[^<>\s][^<>]*>|\{\{/.test(s);
+const SCENARIO = /\bGIVEN\b[\s\S]*\bWHEN\b[\s\S]*\bTHEN\b/i;
+const JS_LINE = /^\s*(?:[-*+]\s+)?\*\*(JS-\d+)\.?\*\*\s*(.*)$/;
+// Stories and their scenarios. A nested bullet opens a scenario; a line that is not a bullet
+// continues whatever is open, so a scenario wrapped across lines, or written Gherkin-style with
+// WHEN and THEN on lines of their own, is read as one. Fenced lines are quoted, not content.
+const readJobStories = (section) => {
+  const stories = [];
+  let open = null; // the text currently being continued
+  let inFence = false;
+  for (const line of section.split("\n")) {
+    if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; continue; }
+    if (inFence || !line.trim()) continue;
+    const js = line.match(JS_LINE);
+    if (js) {
+      stories.push({ id: js[1], text: js[2], blocks: [] });
+      open = { target: "text" };
+    } else if (!stories.length) {
+      continue;
+    } else if (/^\s*[-*+]\s/.test(line)) {
+      stories.at(-1).blocks.push(line.trim());
+      open = { target: "block" };
+    } else if (open?.target === "block") {
+      const b = stories.at(-1).blocks;
+      b[b.length - 1] += ` ${line.trim()}`;
+    } else {
+      stories.at(-1).text += ` ${line.trim()}`;
+    }
+  }
+  for (const st of stories) {
+    st.scenarios = st.blocks.filter((b) => SCENARIO.test(b));
+    // A scenario written on the story's own line, after the story.
+    if (SCENARIO.test(st.text)) st.scenarios.unshift(st.text.slice(st.text.search(/\bGIVEN\b/i)));
+  }
+  return stories;
+};
+const jobStoryProblems = (body) => {
+  const section = sectionBody(body, "Job stories");
+  if (section === null) return null; // no section at all - the caller decides warn or fail
+  const problems = [];
+  const stories = readJobStories(section);
+  if (stories.length === 0) return ["no `**JS-n.**` job story in `## Job stories`"];
+  if (stories.length > MAX_JOB_STORIES) problems.push(`${stories.length} job stories (at most ${MAX_JOB_STORIES} - more usually means two capabilities)`);
+  const criteria = criterionNames(body);
+  for (const { id, text, scenarios } of stories) {
+    if (!text.trim() || isStoryPlaceholder(text)) problems.push(`${id} is not filled in`);
+    if (scenarios.length === 0) {
+      problems.push(`${id} has no GIVEN/WHEN/THEN scenario`);
+      continue;
+    }
+    for (const sc of scenarios) {
+      const links = [...sc.matchAll(AC_LINK)].map((m) => m[1].trim());
+      if (isStoryPlaceholder(sc)) problems.push(`${id} has an unfilled scenario`);
+      else if (!links.length) problems.push(`${id} has a scenario naming no acceptance criterion - add \`(AC: <name>)\``);
+      for (const l of isStoryPlaceholder(sc) ? [] : links)
+        if (!criteria.has(bareName(l))) problems.push(`${id} names \`AC: ${l}\`, which is not a bold criterion name under \`## Acceptance criteria\``);
+    }
+  }
+  return problems;
+};
+
+// A change that touches a spec only to rename the role in `**Serves:**` - the migration
+// standard ADR-064 asks every adopting repo for - is not a change to what the spec says, so it is not
+// the change that has to bring the spec up to the section. The before-side comes from the same
+// ref the diff was taken against.
+const blobAt = (rev, f) => {
+  try { return execSync(`${GIT} cat-file blob ${JSON.stringify(`${rev}:${f}`)}`, { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] }); } catch { return null; }
+};
+const withoutServes = (t) => t.replace(/\r\n?/g, "\n").replace(/^\*\*Serves:\*\*.*$/m, "");
+const onlyServesChanged = (f, body) => {
+  const before = staged ? blobAt("HEAD", f) : base ? blobAt(sh(`${GIT} merge-base ${base} HEAD`), f) : null;
+  return before !== null && withoutServes(before) === withoutServes(body);
+};
+
+const storyless = []; // a spec this change touches, with no job stories at all
+const storyLegacy = []; // full-tree: a spec that predates the section (warn)
+const storyBroken = []; // a section that exists and is malformed
+for (const f of files.filter(isCapSpec)) {
+  let body;
+  try { body = readFileSync(f, "utf8"); } catch { continue; }
+  if (lifecycleOf(body) === "retired") continue;
+  // A named sub-spec extends its capability's spec.md, which carries the job stories; it is held
+  // to the section only once it has one of its own - the same boundary check 5 draws for tiers.
+  const sub = !/\/spec\.md$/.test(f);
+  const problems = jobStoryProblems(body);
+  if (problems === null && sub) continue;
+  if (problems === null) (staged || base) && !onlyServesChanged(f, body) ? storyless.push(f) : storyLegacy.push(f);
+  else if (problems.length) storyBroken.push({ file: f, problems });
+}
+
+// --- check 7 (warn only): committed engine scaffolding - ephemeral by rule -------
 // plan.md/tasks.md are working scaffolds the engine writes and the close removes.
 // Full-tree mode only (mid-work diffs legitimately carry them); never a violation.
 //
@@ -385,6 +525,26 @@ if (untiered.length) {
   console.error("Declare `buildable` (and carry its required sections) or `behavioral` (and justify it).");
   console.error("");
 }
+if (storyLegacy.length) {
+  console.error("\nspec-structure: WARN - capability specs with no `## Job stories` section yet (standard ADR-064):");
+  for (const f of storyLegacy) console.error(`  - ${f}`);
+  console.error("Add 1-3 job stories, each with a GIVEN/WHEN/THEN scenario naming its acceptance criterion,");
+  console.error("the next time each spec is changed - a change that touches the spec is held to it.");
+  console.error("");
+}
+if (rosterPath === "docs/roles.md" && existsSync("docs/personas.md")) {
+  console.error("\nspec-structure: note - docs/roles.md and docs/personas.md both exist. Only docs/roles.md is");
+  console.error("read; if the real roster is still in docs/personas.md, move its rows over (the roles-write");
+  console.error("skill's migration section) and delete the old file.");
+  console.error("");
+}
+if (legacyRoster) {
+  console.error(`\nspec-structure: note - the roster was read from ${rosterPath}, the name it had before roles`);
+  console.error("replaced personas (standard ADR-064). Move it: `git mv` it to docs/roles.md, keep `## The roster`,");
+  console.error("make each row an actor with its permissions and no biography, and fold any persona that differs");
+  console.error("from another only by situation into a mode of that role. `update-to-latest` walks the move.");
+  console.error("");
+}
 if (gateMissing) {
   console.error(`\nspec-structure: note - the clarify gate is not installed at ${gatePath},`);
   console.error("so a spec claiming `ready-to-develop` or `live` cannot be checked against it. Ship");
@@ -392,16 +552,18 @@ if (gateMissing) {
 }
 if (
   numbered.length === 0 &&
-  personaless.length === 0 &&
+  roleless.length === 0 &&
   offRoster.length === 0 &&
   unearned.length === 0 &&
   duplicated.length === 0 &&
   thin.length === 0 &&
+  storyless.length === 0 &&
+  storyBroken.length === 0 &&
   !rosterMissing &&
   !rosterHeadingMissing &&
   !rosterUnreadable
 ) {
-  const note = personasPath ? "" : " (persona check skipped - no personas.md)";
+  const note = rosterPath ? "" : " (role check skipped - no docs/roles.md)";
   console.log(`spec-structure: OK (${files.length} spec paths)${note}`);
   process.exit(0);
 }
@@ -418,18 +580,18 @@ if (numbered.length) {
 
 const rosterList = () => (rosterNames.length > 8 ? `${rosterNames.slice(0, 8).join(", ")}, ...` : rosterNames.join(", "));
 
-if (personaless.length) {
-  console.error("\nspec-structure: capability specs with no persona named (standard ADR-006 - a spec serves someone):");
-  for (const f of personaless) console.error(`  - ${f}`);
-  console.error('\nAdd a `**Serves:** `<persona>`` field (from docs/personas.md) - or name the persona in the spec.');
+if (roleless.length) {
+  console.error("\nspec-structure: capability specs with no role named (standard ADR-064 - a spec serves someone):");
+  for (const f of roleless) console.error(`  - ${f}`);
+  console.error(`\nAdd a \`**Serves:** \`<role>\`\` field (from ${rosterPath}) - or name the role in the spec.`);
   console.error(`The roster reads: ${rosterList()}.`);
 }
 
 if (offRoster.length) {
-  console.error("\nspec-structure: capability specs serving a persona who is not on the roster (R10):");
+  console.error("\nspec-structure: capability specs serving a role that is not on the roster (R10):");
   for (const { file, claim } of offRoster) console.error(`  - ${file}   serves "${claim}"`);
-  console.error(`\nThe roster in ${personasPath} is the constraint, and it reads: ${rosterList()}.`);
-  console.error("A persona described anywhere else - in the spec, in the worked example, in somebody's");
+  console.error(`\nThe roster in ${rosterPath} is the constraint, and it reads: ${rosterList()}.`);
+  console.error("A role described anywhere else - in the spec, in the worked example, in somebody's");
   console.error("head - does not exist as far as R10 is concerned. Either serve one who is on the roster,");
   console.error("or add this one to the roster table first, which is the decision the gate is asking for.");
 }
@@ -445,6 +607,26 @@ if (thin.length) {
   console.error("the same way `## Open questions` says \"None known.\" - a dropped heading and an empty one");
   console.error("read identically to everyone downstream. If the capability really cannot be specified to");
   console.error("that depth, declare `**Spec tier:** behavioral` and justify it in the spec (R9).");
+}
+
+if (storyless.length) {
+  console.error("\nspec-structure: capability specs changed without job stories (standard ADR-064):");
+  for (const f of storyless) console.error(`  - ${f}`);
+  console.error("\nA spec says what its role needs from it as 1-3 job stories under `## Job stories`:");
+  console.error("  - **JS-1.** When <situation>, I want <motivation>, so I can <outcome>.");
+  console.error("    - GIVEN <state> WHEN <event> THEN <outcome>. (AC: <criterion name>)");
+  console.error("The template carries the section. A spec this change touches is brought up to it now.");
+}
+
+if (storyBroken.length) {
+  console.error("\nspec-structure: job stories that are not in shape (standard ADR-064):");
+  for (const { file, problems } of storyBroken) {
+    console.error(`  - ${file}`);
+    for (const p of problems) console.error(`      ${p}`);
+  }
+  console.error("\nEach job story is `**JS-n.**` followed by at least one GIVEN/WHEN/THEN scenario that names");
+  console.error("the acceptance criterion proving it, `(AC: <name>)`, by the bold name it has under");
+  console.error("`## Acceptance criteria`. The labels and keywords are syntax; the prose is the spec's own.");
 }
 
 if (unearned.length) {
@@ -470,26 +652,26 @@ if (duplicated.length) {
 }
 
 if (rosterHeadingMissing) {
-  console.error(`\nspec-structure: ${personasPath} has no '## The roster' section, so the guard cannot tell`);
-  console.error("a live persona from a name in the worked example, and the persona gate (standard ADR-006) has");
+  console.error(`\nspec-structure: ${rosterPath} has no '## The roster' section, so the guard cannot tell`);
+  console.error("a live role from a name in the worked example, and the role gate (standard ADR-064) has");
   console.error("nothing to check against. Add the heading above the roster table. It is syntax - it stays");
-  console.error("'## The roster' even when the personas themselves are written in another language, because");
+  console.error("'## The roster' even when the roles themselves are written in another language, because");
   console.error("a translated heading does not make the check speak that language, it makes it read the");
   console.error("whole file and pass a spec that serves an example.");
 }
 
 if (rosterUnreadable) {
-  console.error(`\nspec-structure: no persona could be read from the roster in ${personasPath}`);
+  console.error(`\nspec-structure: no role could be read from the roster in ${rosterPath}`);
   console.error(`(${rosterUnreadable.lines} table line(s) seen under '## The roster'). A roster row is`);
-  console.error("`| `Name + role` | ... |` - the name in backticks, and a `<placeholder>` name is not filled in.");
-  console.error("This is a failure rather than a skip on purpose: the persona gate is a membership test,");
+  console.error("`| `Role` | ... |` - the name in backticks, and a `<placeholder>` name is not filled in.");
+  console.error("This is a failure rather than a skip on purpose: the role gate is a membership test,");
   console.error("so a roster that parses to nothing passes every spec by having nothing left to contradict.");
   console.error("An unreadable roster and an obeyed one looked identical here for a release.");
 }
 
 if (rosterMissing) {
-  console.error("\nspec-structure: capability specs exist but there is no docs/personas.md roster -");
-  console.error("the persona gate (standard ADR-006) has nothing to check against. Write the roster first;");
+  console.error("\nspec-structure: capability specs exist but there is no docs/roles.md roster -");
+  console.error("the role gate (standard ADR-064) has nothing to check against. Write the roster first;");
   console.error("a spec that serves nobody is incomplete, and without the roster none can prove otherwise.");
 }
 console.error("");

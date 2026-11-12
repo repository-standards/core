@@ -12,7 +12,7 @@ answer.
 |---|---|
 | `self-verify.mjs` | the repo claims to follow the standard while missing what the standard requires |
 | `spec-guard.mjs` | a capability's code moves without its spec |
-| `spec-structure.mjs` | a spec exists that serves nobody on the persona roster, or claims a depth it does not carry |
+| `spec-structure.mjs` | a spec exists that serves nobody on the roles roster, lacks well-formed job stories, or claims a depth it does not carry |
 | `facts-check.mjs` | a fact restated in prose quietly stops agreeing with its source |
 | `schema-pair.mjs` | the executable schema and its typed twin drift apart |
 | `sprint-guard.mjs` | an intent sits in the pool and a sprint at the same time |
@@ -53,7 +53,7 @@ red build that does not say why gets bypassed, then permanently disabled.
 Worth being blunt, because the number is the product's headline claim. `self-verify` checks
 the **mechanical** tier: does the file exist, does the heading exist, does the guard pass.
 It cannot check whether your decision records actually record your decisions, or whether a
-spec that names a persona genuinely serves them. That is the judgment tier and it stays at
+spec that names a role genuinely serves it. That is the judgment tier and it stays at
 review.
 
 Drift 0 with empty shells is a hollow win. The placeholder scan warns about it and

@@ -22,7 +22,7 @@ official exactly when the core lists it - wherever else lookalikes live.
 Everything starts from the core - one entry point, always:
 
 - **Greenfield with a stack.** "greenfield with node" -> the router runs the
-  greenfield interview (product, personas, first records), degits the stack's
+  greenfield interview (product, roles, first records), degits the stack's
   `starter/`, copies `stack.manifest.json` in. Born aligned to both layers.
 - **Brownfield.** The router detects the technology from the repo's own
   evidence (`package.json`, `pyproject.toml`, ...), offers the registered

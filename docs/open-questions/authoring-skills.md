@@ -1,7 +1,7 @@
 # How many skills co-author a document, and whether they are worth the ceiling
 
 **Decided (2026-08-02):** **one skill per document type** - `adr-write`, `bdr-write`,
-`product-write`, `personas-write`. Four descriptions, each naming one situation, taking the
+`product-write`, `roles-write`. Four descriptions, each naming one situation, taking the
 shipped family from 15 to 19. All four shipped the same day; the measured context cost came in
 at 1,580 tokens for nineteen, against a prediction of about 1,490.
 
@@ -32,7 +32,7 @@ deliberate difference.
 ## Why anything is needed here at all
 
 The spec loop has six skills to produce one artifact. Decisions, the product frame and the
-persona roster have templates and nothing that writes them *with* anyone. So the flow asks
+roles roster have templates and nothing that writes them *with* anyone. So the flow asks
 a product person to fill an ADR the way a developer would, and the result is what always
 happens when a form replaces a conversation: the sections get filled and the thinking does
 not.
@@ -46,7 +46,7 @@ The elicitations are genuinely different, which is the whole argument:
   deliberately not doing, and how we would know we were wrong.
 - **A product frame** wants the one sentence, the problem, the observable three-month
   outcome, and the non-goals - the last being the question nobody answers unprompted.
-- **A persona roster** wants jobs to be done, pains, anti-goals, and which one wins ties.
+- **A roles roster** wants permissions, jobs, distrust & friction, anti-goals, and which one wins ties.
 
 Hand all four the same eight prompts and you get a BDR that reads like an ADR with the
 wrong nouns.
@@ -54,7 +54,7 @@ wrong nouns.
 ## Options weighed
 
 - **A - One skill per document type** (`adr-write`, `bdr-write`, `product-write`,
-  `personas-write`). Cleanest triggering: each description names one situation, so the model
+  `roles-write`). Cleanest triggering: each description names one situation, so the model
   matches it precisely - which matters more than it looks, since a description is the only
   text a request is matched against. Cost: 19 shipped skills - about 300 tokens more context,
   measured, not feared - and four files that can drift apart. **Chosen**, once the ceiling

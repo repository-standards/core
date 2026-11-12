@@ -15,7 +15,7 @@
      hold the past. -->
 
 **Spec tier:** buildable | behavioral   <!-- declare one; the structure guard warns while this line is unfilled, because R9 makes buildable the default and an undeclared spec is claiming it by silence -->
-**Serves:** `<persona from docs/personas.md>`   <!-- who this capability is for; required (standard ADR-006) -->
+**Serves:** `<role from docs/roles.md>`   <!-- who this capability is for; required (standard ADR-064). A role, optionally qualified by a mode: `Guest` (spontaneous weekend) -->
 **Status:** in-refinement | ready-to-develop | in-development | live | retired   <!-- in-refinement is the draft state; `/spec-reconcile` sets this field, and the structure guard re-runs the clarify gate on any spec claiming ready-to-develop or live - so typing one early buys a failed PR, not a head start -->
 <!-- Retiring a capability (the product bet is gone, a vendor replaces it, etc.): do not
      delete this file - it stays as the record of what was built and why (R4). Flip Status
@@ -65,6 +65,20 @@ What belongs to this capability.
 ## Out of scope
 
 What explicitly belongs to another capability (name it).
+
+## Job stories
+
+<!-- REQUIRED, 1-3 (standard ADR-064). The need this capability exists for, written from
+     the situation the role is in - not from who they are. Each job story is followed by at
+     least one GIVEN/WHEN/THEN scenario, and each scenario names the acceptance criterion
+     below that proves it: `(AC: <criterion name>)`. The structure guard reads this section
+     on every spec a change touches. The `**JS-n.**` label, the GIVEN/WHEN/THEN keywords and
+     `(AC: ...)` are SYNTAX and stay as written in a spec in another language; the story and
+     the scenario text are prose in the spec's own language. More than three job stories is
+     a sign the capability is two capabilities. -->
+
+- **JS-1.** When <situation>, I want <motivation>, so I can <outcome>.
+  - GIVEN <state> WHEN <event> THEN <outcome>. (AC: <criterion name>)
 
 ## Core concepts
 
@@ -165,7 +179,7 @@ The dependency or effect (link its spec).
 
 <!-- buildable: REQUIRED. The verification layer - concrete enough to become tests. -->
 Given / When / Then, covering the happy path, each error path, each edge case, and
-each state transition.
+each state transition. Every job story scenario above names one of these by its bold name.
 
 - **<name>.** GIVEN <state> WHEN <event> THEN <expected outcome: status, side
   effects, response>.

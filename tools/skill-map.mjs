@@ -41,7 +41,7 @@ const GROUPS = [
     title: "Deciding what to build",
     lead:
       "Before anything is specified. These turn scattered material - a meeting, a hunch, an argument about who the product serves - into something the rest of the loop can read.",
-    skills: ["product-write", "personas-write", "idea-write", "discovery-digest", "adr-write", "bdr-write"],
+    skills: ["product-write", "roles-write", "idea-write", "discovery-digest", "adr-write", "bdr-write"],
   },
   {
     title: "Specifying a capability",

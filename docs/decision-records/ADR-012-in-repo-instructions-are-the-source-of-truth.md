@@ -65,4 +65,4 @@ repo, at which point it *is* an in-repo instruction and the distinction dissolve
 
 - The CONS-1..3 epic in [`backlog.md`](../../backlog.md); ADR-004 (decisions by
   reference); the coding-agent persona's pains in
-  [`docs/personas.md`](../personas.md).
+  [`docs/roles.md`](../roles.md) (then `docs/personas.md`).

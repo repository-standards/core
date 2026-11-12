@@ -13,7 +13,7 @@
 <!-- Tick one. Accepted records are binding - do not silently contradict one.
      Read BOTH streams. An ADR says how the thing is built; a BDR says what the
      business has ruled out - a licence boundary, a vendor or customer contract, a
-     regulatory limit, a persona call - and that lives in a BDR's `What this rules
+     regulatory limit, a call between roles - and that lives in a BDR's `What this rules
      out`, the only section stating a capability's non-goals. Reading the ADRs alone
      answers a different question, and answers it "none". -->
 

@@ -34,7 +34,7 @@ deviations survive it:
 
 ## What you get back
 
-A tree in your repository: specs by capability, decision records, a persona roster, a
+A tree in your repository: specs by capability, decision records, a roles roster, a
 backlog that feeds itself, and `scripts/` - so from then on the claim is checkable by
 anyone, including your CI:
 

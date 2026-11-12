@@ -47,9 +47,11 @@ specs/bookings/{overview,lifecycle,modifications,cancellation}.md
 - **An existing directory means the same capability.** Update it in place; do not mint a
   sibling because the new work feels different from what is there.
 
-Every spec names the **persona(s)** it serves, from `docs/personas.md`, and states in one
-line how it advances that person's job. A spec that serves nobody is a candidate for
-deletion, not for merge.
+Every spec names the **role** it serves (optionally qualified by a mode), from
+`docs/roles.md`, and carries 1-3 **job stories** under `## Job stories` - "When <situation>,
+I want <motivation>, so I can <outcome>" - each with a GIVEN/WHEN/THEN scenario naming the
+acceptance criterion that proves it. A spec that serves nobody is a candidate for deletion,
+not for merge.
 
 ## Spec depth
 

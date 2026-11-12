@@ -2,10 +2,14 @@
 
 | | |
 | --- | --- |
-| **Status** | Accepted |
+| **Status** | Superseded by ADR-064 (2026-11-12) |
 | **Date** | 2026-07-08 |
 | **Author** | Łukasz Bodurka |
 | **Tags** | methodology, product, specs, personas |
+
+> Superseded by [ADR-064](ADR-064-roles-modes-and-job-stories-replace-personas.md): the
+> validation gate below is kept, but the roster is now roles (with optional modes) in
+> `docs/roles.md`, and every capability spec carries job stories.
 
 ## Context
 

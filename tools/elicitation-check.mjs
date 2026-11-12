@@ -2,7 +2,7 @@
 // elicitation-check - did a human actually answer, or did the agent write both sides?
 //
 // Every other record of the adoption is authored by the agent being checked: the intake, the
-// assessment, the personas, the backlog. A gate that reads them can tell a well-shaped document
+// assessment, the roles, the backlog. A gate that reads them can tell a well-shaped document
 // from a malformed one, and cannot tell eight passes that ran from eight rows that were typed.
 // The session transcript is the one record the agent does not author, so it is the only place
 // this question can be answered at all.
@@ -33,7 +33,7 @@ import { readFileSync } from "node:fs";
 const MIN_QUOTE_WORDS = 5;
 
 // Records whose prose speaks for the human, so their quotes must be provable.
-const RECORD = /(adoption-intake|adoption-assessment|personas|PRODUCT|backlog)\.md$/;
+const RECORD = /(adoption-intake|adoption-assessment|roles|personas|PRODUCT|backlog)\.md$/;
 
 // Straight, curly and Polish quotation marks. A fabricated quote is still a quote.
 const QUOTED = /[""„]([^""„"]{12,600})["""]/g;

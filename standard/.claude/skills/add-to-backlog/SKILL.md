@@ -46,14 +46,15 @@ de-duplicating against existing items first.
    convention lives in `docs/backlog.md`; do not restate it, and do not invent a second one.
 
 4. **Write the row** with every column the backlog declares: `id`, `title`, `cap` (the
-   capability it touches, or `-`), `persona` (from `docs/personas.md` - an item that serves
-   no persona is parked, not queued; internal work names `Maintainer (internal)`, which the
-   ledger declares for exactly this, rather than borrowing an end-user persona), `owner`
-   (the **role** that must act: `product`, `architect`, `dev` or `agent`), `why` (one line),
+   capability it touches, or `-`), `role` (from `docs/roles.md`, the role whose job the
+   item moves - an item that serves no role is parked, not queued; internal work names
+   `Maintainer (internal)`, which the ledger declares for exactly this, rather than
+   borrowing an end-user role), `owner` (who must act: `product`, `architect`, `dev` or
+   `agent`), `why` (one line),
    `source` (the category from step 1, plus where it came from if there is anywhere to
    point: `drift: spec-reconcile 2026-08-04`, `asked: #212`), `DoD` (the observable finish
    line - "spec is buildable", "ADR Accepted", "drift resolved"), `status: todo`. A row
-   missing `cap`, `persona`, `owner` or `source` fails the backlog's own Definition of
+   missing `cap`, `role`, `owner` or `source` fails the backlog's own Definition of
    Ready, so it cannot be pulled - writing it short only moves the work to whoever pulls it.
    Slot it by **risk x leverage** (money / security / external contracts / data integrity
    first; then churn), not at the bottom by default.

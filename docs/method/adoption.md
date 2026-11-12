@@ -55,10 +55,10 @@ deviations.
 | # | Gate | Greenfield (interview) | Brownfield (read code) | Output | Exit criterion |
 |---|------|------------------------|------------------------|--------|----------------|
 | 0 | **Intake & description** | Ask: what is this, in one sentence? Problem, why now? Plus the intake round: **intent** (new / align / assessment-only / check-up on an already-aligned repo / update the pin - a sixth, "stay as it is", applies to a repo with no plan to develop further), **technology + Layer 2 consent** (asked outright), **appetite** (one PR vs waves), **plan-only vs execute** | Scan the repo - including its own README/CONTRIBUTING for a lifecycle signal (deprecated, archived, frozen) and any machine-readable governance config (`.jcheck/conf`, `.gitreview`, `CODEOWNERS`) for the role, reviewer-count, tracker and review-host answers it already declares, before asking anything the repo already answered; write what it *appears* to be and do. Same intake round - technology **detected** from the repo's evidence, then confirmed, with the Layer 2 consent gathered here | `PRODUCT.md` draft (a description the agent can reason from) + the intake answers | The agent can state what the product is and what the user wants done |
-| 1 | **Personas - who** | Name 3-6 user types with the user | Infer users from the code, auth roles, UI; confirm | `personas.md` (primary marked) + target-personas BDR | Every later gate has a persona to point at |
+| 1 | **Roles - who** | Name the actors and their permissions with the user; modes only where they change behaviour | Infer candidate roles from the auth model, permission tiers, UI, API consumers; confirm | `roles.md` (primary marked) + target-roles BDR | Every later gate has a role to point at |
 | 2 | **Vision / Assessment** | Goals, non-goals, success in 3 months | Run the 8-pass `repo-assessment`: what exists, what's missing, where code and intent drift | `PRODUCT.md` goals **or** `docs/adoption-assessment.md` (R27) | The gap between now and aligned is written down - and the user has said go or no-go on it |
 | 3 | **Decisions** | Pick topology/stack/boundaries from the catalog | Detect what the code **already chose**; record it retroactively | Foundational **ADRs/BDRs**; the rest queued | No load-bearing fork is silently undecided |
-| 4 | **Capabilities & specs** | Slice into capabilities (by domain, not page); write the first specs | Map existing capabilities; extract verbatim contracts (`file:line`), then synthesize specs | `specs/<capability>/` - persona-anchored, buildable where it counts | Money/security/data paths are buildable + specced |
+| 4 | **Capabilities & specs** | Slice into capabilities (by domain, not page); write the first specs | Map existing capabilities; extract verbatim contracts (`file:line`), then synthesize specs | `specs/<capability>/` - role-anchored with job stories, buildable where it counts | Money/security/data paths are buildable + specced |
 | 5 | **Backlog - count the work** | Turn unspecced capabilities + known work into items | Turn every missing spec, unrecorded decision, and known drift into items | `backlog.md` with a **task count** ("N to full alignment"), every item naming its **owner role** | The scope is a number, honestly stated - and each task says whose it is |
 | 6 | **Verify** | - | - | `.standards-version` + manifest carried; `self-verify` green | `drift 0`; PRs opened |
 
@@ -68,12 +68,13 @@ brownfield phase (`repo-assessment` passes, then align, then derive from code) f
 existing one. The checkmap is the spine; the phases are how each gate gets filled.
 
 The spine is shared and so is the walk: both directions close the gates
-**0 -> 2 -> 1 -> 3 -> 4 -> 5 -> 6** - Gate 2 first because personas need evidence to
-point at, Gate 1 right after because personas gate everything downstream. What differs
+**0 -> 2 -> 1 -> 3 -> 4 -> 5 -> 6** - Gate 2 first because roles need evidence to
+point at, Gate 1 right after because roles gate everything downstream. What differs
 is Gate 2's evidence: greenfield **interviews** (the vision questions ride the Gate 0
-conversation), brownfield **assesses** - and the personas are then named from that
-evidence (greenfield: with the user; brownfield: **reconstructed** from auth roles, UI
-surfaces, API consumers, then confirmed with the user). The order is the
+conversation), brownfield **assesses** - and the roles are then named from that
+evidence (greenfield: with the user; brownfield: **reconstructed** from the auth model,
+permission tiers, UI surfaces, API consumers, then confirmed with the user; an existing
+`docs/personas.md` is migrated per the `roles-write` skill). The order is the
 order gates *close*; work inside a pass may interleave. **Assessment-only is a legal
 stop:** when the intake's intent is "tell me where I stand and give me the plan", the
 run ends after Gate 2 plus the counted plan - the health report and the number, no
@@ -93,7 +94,7 @@ in the align skill's intake ([step 0](../../skills/align-to-standards/SKILL.md))
 
 - **Rigid (the framework enforces):** the per-direction gate order, that each gate
   produces its artifact, and the exit criteria. Plainly: **no specs before confirmed
-  personas** (Gate 4 waits on Gate 1 - in both directions), **no recorded decisions
+  roles** (Gate 4 waits on Gate 1 - in both directions), **no recorded decisions
   before intake + assessment** (Gate 3 waits on Gates 0 and 2), and **every gate
   produces its artifact**.
 
@@ -128,7 +129,7 @@ That number is the go/no-go signal and the roadmap. The repo can adopt a **slice
 money paths first) and leave the rest queued - the count makes that trade explicit.
 
 Every item in the count also names its **owner role** - the role that must act:
-**product/business** (`PRODUCT.md`, BDRs, personas confirmation), **architect** (ADRs,
+**product/business** (`PRODUCT.md`, BDRs, roster confirmation), **architect** (ADRs,
 boundaries), **dev** (specs, code, guards), **agent** (mechanical work it can do
 alone) - see the [backlog format](../../standard/docs/backlog.md). The count then says not just how much
 work, but **whose**.
@@ -235,7 +236,7 @@ it had backwards:
   solo one included. Only `spec-guard`'s blocking mode is marked *(scale)*, and the
   full-tree coupling audit blocks everywhere. A core repo that skips CI is at drift, not
   exempt.
-- **Personas and architecture are core.** `docs/personas.md` (R10) and
+- **Roles and architecture are core.** `docs/roles.md` (R10) and
   `docs/ARCHITECTURE.md` are required at both profiles. A fuller roster and C4 depth are how
   much you write in a file you carry either way - a judgment, not a flag, and nothing
   measures it.
@@ -280,7 +281,7 @@ The flip either way is a manifest flag plus the measured delta, not a re-adoptio
 - **Not a big-bang.** Spec the first slice deeply; queue the rest with a count.
 - **Not silent skips.** A skipped gate/decision is recorded (a backlog item or a one-line
   reason), never dropped.
-- **Not persona-free or decision-free.** Gates 1 and 3 are load-bearing; downstream work
+- **Not role-free or decision-free.** Gates 1 and 3 are load-bearing; downstream work
   validates against them.
 
 ## Adopting without a repository-standards checkout
@@ -288,7 +289,7 @@ The flip either way is a manifest flag plus the measured delta, not a re-adoptio
 A degit of the tree alone is enough - the align skill is convenience, not a
 requirement. The manual path: write `.standards-version` with the manifest's own
 version, verbatim (`jq -r .version standard.manifest.json > .standards-version`);
-fill the shells (`AGENTS.md`, `docs/PRODUCT.md`, `docs/personas.md`, the backlog);
+fill the shells (`AGENTS.md`, `docs/PRODUCT.md`, `docs/roles.md`, the backlog);
 write your first capability spec from `specs/capability-spec.template.md` and bind
 it in `specs/capability-map.json`; run `node scripts/self-verify.mjs` until drift
 is 0. Filled shells, not copied ones, are the point - self-verify warns on

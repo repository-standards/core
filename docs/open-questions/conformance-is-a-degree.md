@@ -22,7 +22,7 @@ what ships says what counts. What remains open is whether the spec's MUST langua
 follow, or whether a threshold and a percentage are both worth having.
 
 **A number without a bar does not act on anyone.** "You are at 62%" is a dashboard. "This
-capability spec names no persona and the guard fails" is a change somebody makes. Part of
+capability spec names no role and the guard fails" is a change somebody makes. Part of
 what makes drift useful today is that individual items are binary even though the total is
 a count.
 

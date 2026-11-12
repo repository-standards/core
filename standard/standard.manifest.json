@@ -47,7 +47,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R2",
-      "sha256": "10ea71176bd9294ee32a02b1eb52b08964a7f30fcb07536406833cc789d10a54"
+      "sha256": "b28e0d7939da42a40e3cad91ed64a2ec087495a64f8d7d39195701d27ba41823"
     },
     {
       "path": "CLAUDE.md",
@@ -150,7 +150,7 @@
       "profile": "core",
       "since": "0.4.0",
       "rule": "R16",
-      "sha256": "7be8d5bd0edcbfa68495166ef492c9743a16333100a77af10299537183451dd0"
+      "sha256": "05d3378971ca8ee8cd753ae280a1588f1e2bccf9250f83405af3ca59589fce42"
     },
     {
       "path": "scripts/spec-structure.mjs",
@@ -160,7 +160,7 @@
       "profile": "core",
       "since": "0.3.0",
       "rule": "R16",
-      "sha256": "6043bcc010b99ccdfbbdf470a435561d95bac53e114a31408043c118cc69c30e"
+      "sha256": "e499d55b29575d866c15b234c82e1ff66fedc65426418b38a7599ef59662600f"
     },
     {
       "path": "scripts/facts-check.mjs",
@@ -233,30 +233,30 @@
       ],
       "rule": "R22",
       "sha256": {
-        "add-to-backlog/SKILL.md": "594de2bda3f94cf1b1d43a04589ef0c64e8f266bebf43b1788ddab08649b40c6",
-        "adr-write/SKILL.md": "1211db6c93fad3b2b3ba1af6ffbae22e7f427ec2130132bfd5c239a7a2a479ac",
-        "bdr-write/SKILL.md": "56395b525b71516f878f888b51bd7ea2f02d76c7cd3f5dfe48faacda4a0e459e",
+        "add-to-backlog/SKILL.md": "7ab8f71de7a7589989080ed555937086ca8da63ef5f0f7ac69aaad7faef8d375",
+        "adr-write/SKILL.md": "927f710d7fc157f80a2c2242258b961d9e8802117f605b5e278d4093b59bcdfa",
+        "bdr-write/SKILL.md": "228a3238e6aa360fadb53e12f84af04839578268b3cdfaefbaedee52551da88a",
         "discovery-digest/SKILL.md": "775a44a5177ec17461bc4759a159bf5b377c5f1086a6b6b527f4dfd1960403aa",
-        "idea-write/SKILL.md": "71344d506c77eef27422fb9f725628719821e0e2e46e9cf709a9b9198b44fcaf",
-        "personas-write/SKILL.md": "3fd5eeb4b5ac8571d361b876c4077d1e24f58d49e785913687e83fca0cdac6a3",
+        "idea-write/SKILL.md": "d91731a22b43b2f6e742ba4ece739c6838d77aea408e31b83d41f12b49ebf61d",
         "pre-pr-review/SKILL.md": "aa43d020310c9c684720c58ec9e0efbeca4abf78fcce23b7dc2ec78544a0ce4f",
-        "product-write/SKILL.md": "f99093c02371ef8e5411702dbad3bd1dc6481855bcee1f2b1b328e3937062123",
+        "product-write/SKILL.md": "221180c78a05056e2faf4a0105e51fb06f452632c945c022a7cd26c65d2fee1b",
+        "roles-write/SKILL.md": "f4194ee7c5a3d9e0a9d7ddf10322aeff580853478e134c185ffeba95991067c1",
         "show-backlog/SKILL.md": "73123f319e99c837259e500c25462e3395a93df2f7b5130a0a53c3515408eb04",
-        "spec-clarify/SKILL.md": "b278518a739daa9338a1d4ca2c55d08f5c82f9daa5f0b74749291ae9f979a4f0",
+        "spec-clarify/SKILL.md": "2a32f44c069a3d9f73b1300507741d6c01909422cfd2ea213b14dedaf4db038c",
         "spec-clarify/completion.md": "15fae768dfd990cd01b2a584229037a8239a9dfca4190bed3713121d1112baad",
         "spec-clarify/questions.md": "b50a28d3b01391b15f53f686bd77cb52da1712e4cc3ec275d55fa12abada12a6",
-        "spec-impact/SKILL.md": "2a529923278dafd8f8716cb2b28a206f726b67429470a866bf68bece4d150c9f",
+        "spec-impact/SKILL.md": "21041d015bfb87a99987d421d9c2f8be3b9d2b7ae04372f71d03da44a1b8df4f",
         "spec-implement/SKILL.md": "c5a1e2fe35d97d13a48f906e02d0283aaea877ab601bb63a880aba330c3f4a80",
         "spec-plan/SKILL.md": "82bc13479ae92c226511fc65c61c182648104ba6f6c490ab0a8ee7d4f125573c",
         "spec-reconcile/SKILL.md": "fa3fcdfd77b6315b2572422f6962c01beb1a2d5b8c8b6fcd5e4724e2bcf8506b",
-        "spec-specify/SKILL.md": "744a1a05f7ff5361ae62f2610984691609f3e90b49a689cc4a6b161010b4fc40",
+        "spec-specify/SKILL.md": "8015d1fefbd8aca9584d016b42b439e466097a1d9922ee6633b8f367539b5479",
         "spec-specify/questions.md": "daba256c67dbbcf0b47c1b26305a97116b59eb3f43ed75fcf9ffe1135671001c",
         "spec-tasks/SKILL.md": "59cdabc8e4e8f3656d245c1aa20213f0d89cd5e7fc9915e05d3e7fa1af98b9f1",
         "spec-update/SKILL.md": "5589165ad712dd6e1ce7254ea4ed347e0248f7644831d309812cfc4696be304e",
         "sprint-close/SKILL.md": "363af24e8422cdc1b8799832490e0e7d3ff6dc220ee8465713c80288490eb57f",
         "sprint-open/SKILL.md": "364619786f9a874f5cab6870c4417e677f4dcbeb4db5ed3f563c5b84f3a1692a",
         "timeline-update/SKILL.md": "957581f830b71f11ec710569a87b13cf16d6603954749a3addf20843e8967086",
-        "update-to-latest/SKILL.md": "adbcfef060cd83f33c36f2f658de55cd4a8659d58cbcc805da0aa0b01e6f2d63"
+        "update-to-latest/SKILL.md": "78c8f8a4b1659c5a32d2e822fd72332a10482b1ec3412ecea9f54e37d00a3909"
       }
     },
     {
@@ -353,7 +353,7 @@
       "since": "0.8.0",
       "rule": "R19",
       "sha256": {
-        "elicitation-guard.mjs": "3ad5f4797f18f6eba2931d5f71e5d433d658aedf9df5880e92ce83e2dc04a395",
+        "elicitation-guard.mjs": "1f150d283482de4e13a26cf748347278c212c4541e5af117f2f143596f7a7590",
         "guards.sh": "e2cb07f370a7875f10f3f5eef5529fe6be1ab85b7ccf52027dffac564d9b188e",
         "lib.sh": "4af2b468edbc7394f6ef3008bf9d13da09ab016b17f42a434fe0f41a435bef16",
         "no-ci-secret-writes.sh": "7170c2b57a1876c3a189e5be8fab115f47397c2589f5d68d4d5aae0113430467",
@@ -369,7 +369,7 @@
       "profile": "core",
       "since": "0.8.0",
       "rule": "R19",
-      "sha256": "77092883a0da6eabc884868328689eb3916d0a2c33d19c54cd83183405959f67"
+      "sha256": "ca20d9fc2d6c93d02896ab07e18abdd23325ea7204d0ab56d52b7201a56ff07d"
     },
     {
       "path": "docs/PRINCIPLES.md",
@@ -404,12 +404,12 @@
       ]
     },
     {
-      "path": "docs/personas.md",
-      "purpose": "the persona roster the R10 gate checks specs against - without it the gate has nothing to hold",
+      "path": "docs/roles.md",
+      "purpose": "the role roster (actors and their permissions, optional behavioural modes) the R10 gate checks specs against - without it the gate has nothing to hold (standard ADR-064)",
       "adapt": "fill-from-repo",
       "required": true,
       "profile": "core",
-      "since": "0.8.0",
+      "since": "1.0.21",
       "rule": "R10"
     },
     {
@@ -523,7 +523,7 @@
     },
     {
       "path": "docs/journeys",
-      "purpose": "per-persona journey maps coupled to capabilities",
+      "purpose": "one journey per key end-to-end flow, pinned to a role, each stage naming the capability specs serving it",
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "scale",
@@ -532,7 +532,7 @@
     },
     {
       "path": "docs/research",
-      "purpose": "anonymized research studies feeding personas, ideas and specs",
+      "purpose": "anonymized research studies feeding roles, ideas and specs",
       "adapt": "fill-from-repo",
       "required": false,
       "profile": "scale",
@@ -586,11 +586,11 @@
       "since": "0.9.0",
       "rule": "R15",
       "sha256": {
-        "index.mjs": "becd9be48da93209507cfd8fc61bfa85e277de6bc0e128d8e2dcda1e4ad94deb",
+        "index.mjs": "bb42b942771b8cce10ecf57203f3b33fa8cb838c37b73bdf740f94ff2a0948e8",
         "src/gate.css": "63a0b56a4491c5e3686835e15886d1440be4cc497a306a9caaa2a4678d15f07c",
         "src/gate.js": "741e6d0e9115aff4e44930021875f632044857b9bc3b5fb7522fa79f9b07105e",
         "src/page.css": "18fd58adbb4fec1f059b934fe9aa52ccfc2c2a304858dc3fde87553f5b0ead0b",
-        "src/page.js": "c7f6facfb20063fe6ee5ed85c7de89cd0bb5c5701f735088fd06704c07d8a6b6"
+        "src/page.js": "e5b1004b5c50a63a4e034ae45522c40afc5a0f124f3f2c32c826c9761e0935a2"
       }
     },
     {
@@ -614,8 +614,8 @@
       "since": "0.9.23",
       "rule": "R28",
       "sha256": {
-        "README.md": "97342f11e18a75311912ca230b37b371d378eb5246ca3b45bcbf4fbe19440993",
-        "points.json": "80fd0e7ca194eea1009622fc9e7e1dac546a9aa0167aafbc0aadc1d9af2a1167"
+        "README.md": "126d48a52b3c3a818252aa6baaf1aaa2a4b51e07ebe30e30d556ad9e2cac638d",
+        "points.json": "b3841f7d75aa0c2854c7129968d272b8a971df0f3c64c1268faefec947aa8162"
       }
     },
     {
@@ -626,7 +626,7 @@
       "profile": "core",
       "since": "0.9.23",
       "rule": "R28",
-      "sha256": "3ad5f4797f18f6eba2931d5f71e5d433d658aedf9df5880e92ce83e2dc04a395"
+      "sha256": "1f150d283482de4e13a26cf748347278c212c4541e5af117f2f143596f7a7590"
     },
     {
       "path": "docs/adoption-provenance.md",
@@ -649,6 +649,13 @@
     }
   ],
   "references": [
+    {
+      "id": "roles-not-personas",
+      "path": "docs/method/roles-not-personas.md",
+      "purpose": "why roles, modes, job stories and journeys instead of classic personas - what each solves, when a mode is justified, the sources (standard ADR-064)",
+      "since": "1.0.21",
+      "rule": "R10"
+    },
     {
       "id": "taxonomy",
       "path": "docs/method/taxonomy.md",
@@ -1032,6 +1039,16 @@
       "path": ".claude/skills/record-run",
       "since": "1.0.8",
       "note": "moved to skills/record-run/ in the standards repo - a transition skill run from a checkout, never shipped into the client tree (standard ADR-045's correction, ADOPT-DEFAULTS-1); nothing in the adopted repo replaces it, delete the directory on update"
+    },
+    {
+      "path": "docs/personas.md",
+      "since": "1.0.21",
+      "note": "replaced by docs/roles.md (standard ADR-064). Not a delete - a migration: git mv it to docs/roles.md, keep '## The roster', rewrite each row as an actor with a Permissions column and no biography, fold personas that differ only by situation into modes of one role (at most 3 per role), keep the distrust & friction content on the role or mode, rename the role in every spec Serves field, backlog row and journey. The roles-write skill's 'Migrating an old docs/personas.md' section is the procedure; spec-structure.mjs keeps reading the old file, with a notice, until it is moved"
+    },
+    {
+      "path": ".claude/skills/personas-write",
+      "since": "1.0.21",
+      "note": "renamed to .claude/skills/roles-write (standard ADR-064); the replacement ships in the same release, delete the old directory on update"
     }
   ],
   "exceptions": []

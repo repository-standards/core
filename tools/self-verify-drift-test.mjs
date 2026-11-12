@@ -529,9 +529,9 @@ check(
 check(
   "an exception with no reason is not a recorded deviation",
   (dir) => {
-    unlinkSync(join(dir, "docs/personas.md"));
+    unlinkSync(join(dir, "docs/roles.md"));
     patchManifest(dir, (m) => {
-      m.exceptions = [{ kind: "file", match: "docs/personas.md" }];
+      m.exceptions = [{ kind: "file", match: "docs/roles.md" }];
     });
   },
   (r, expect) => {
@@ -563,7 +563,7 @@ check(
     // "OK - drift 0 - 100% adopted (32/32), compliant with the standard" with no AGENTS.md,
     // no personas, no capability map and every guard script deleted, the percentage rising
     // because each exception left the denominator.
-    const gone = ["AGENTS.md", "docs/personas.md", "docs/PRINCIPLES.md"];
+    const gone = ["AGENTS.md", "docs/roles.md", "docs/PRINCIPLES.md"];
     for (const p of gone) unlinkSync(join(dir, p));
     const guards = ["spec-structure", "facts-check", "schema-pair", "spec-guard", "sprint-guard"];
     for (const g of guards) unlinkSync(join(dir, `scripts/${g}.mjs`));
@@ -998,7 +998,7 @@ check(
   (dir) => {
     asRepo(dir);
     writeFileSync(join(dir, ".gitignore"), "/docs/\n");
-    git(dir, "add", "-f", "docs/personas.md");
+    git(dir, "add", "-f", "docs/roles.md");
   },
   (r, expect) => {
     expect(r.drift === base.drift, `tracking the file did not clear the drift: drift ${r.drift}, baseline ${base.drift}`);
@@ -1060,7 +1060,7 @@ check(
     // A spec that satisfies the rest of the gate too, so the run is a real drift 0 and not
     // the caveat trading places with a structure failure: personas.md is fill-from-repo, and
     // R10 holds every capability spec to a persona from its roster.
-    const personas = join(dir, "docs/personas.md");
+    const personas = join(dir, "docs/roles.md");
     // Whichever shape the shipped roster's placeholder currently takes: the marker moved from
     // the angle form to the mustache form, and a hard-coded copy of it quietly stopped
     // matching - leaving the roster unfilled and this case failing on the persona gate

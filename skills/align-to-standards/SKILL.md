@@ -92,7 +92,7 @@ process the user **re-enters until the repo is compliant**, and every entry is g
   delta, pick the few items with the biggest win first - typically: `docs/adoption-intake.md`
   itself (R26 - nothing else in this ordering is trustworthy if the intake it was read
   from was never recorded), then the agent entry point + taxonomy, then the intake
-  gates' material (PRODUCT/personas - nothing downstream lands before them), then
+  gates' material (PRODUCT/roles - nothing downstream lands before them), then
   missing foundational decisions (ADRs), then folder structure, then guards. Say
   *why this wave, why now*, sized to land in one PR.
 - **The delta is measured, not curated.** Ordering a wave is judgment; **what is in the
