@@ -88,7 +88,7 @@ with one marker, directly under the title:
 What follows the marker is always the same two things: what it was drafted from (or, for
 a stub, what belongs in the file once someone writes it) and the backlog row that tracks
 it. Who acts on it is not named in the line - the record's own kind already says that (an
-ADR reads as technical, a BDR and `docs/personas.md` as product), and naming it a second
+ADR reads as technical, a BDR and `docs/roles.md` as product), and naming it a second
 time in every marker would duplicate what the artifact already is. A drafted decision
 record stays `Proposed`, never `Accepted` - "recorded retroactively" says where the
 content came from, not whether a person decided it.

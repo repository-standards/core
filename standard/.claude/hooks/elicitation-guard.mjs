@@ -259,7 +259,7 @@ process.stdin.on("end", () => {
   // A repository-scoped question is asked once and the answer belongs to the repository, so a
   // committed answered row is what satisfies it from then on. Without this the guard is
   // unlivable rather than strict: every point gating `docs/decision-records/**` or
-  // `docs/personas.md` was answered during the adoption, and demanding transcript evidence
+  // `docs/roles.md` was answered during the adoption, and demanding transcript evidence
   // again would refuse an ordinary `adr-write` months later until it re-asked how the
   // repository wants its records handled. A guard nobody can work under gets removed, and a
   // removed guard catches nothing.

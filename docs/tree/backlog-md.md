@@ -23,7 +23,7 @@ One row per intent, each carrying who it is for, where it came from and what don
 | INV-4 | Export retries on timeout | Ops lead Ola | asked: #212 | a timed-out export resumes without a manual replay |
 ```
 
-An intent names its persona, because work that serves nobody is how a backlog becomes a
+An intent names the role it serves, because work that serves nobody is how a backlog becomes a
 graveyard - and internal work names the internal one rather than borrowing a customer. It
 names its **source**, one of five declared categories, because "every item has a source" is
 only a rule while it is a column somebody has to fill. And it names **what done looks like**,
@@ -69,7 +69,7 @@ means.
 - **The backlog lives in the repo.** A tracker was the alternative and it fails one
   specific way: the debt that brownfield onboarding surfaces is about *the code*, and it
   needs to be readable by the agent working in the code, at the moment it is working there.
-- **Every intent names a persona and a done condition.** Both were optional once. Optional
+- **Every intent names a role and a done condition.** Both were optional once. Optional
   meant absent, and absent meant a list that only grows.
 - **[ADR-028](../decision-records/ADR-028-work-cycles-live-in-the-repo-and-bind-only-at-scale.md) -
   the pool and the sprints are one system.** Letting an intent sit in both was the state

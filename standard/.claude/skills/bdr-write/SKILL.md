@@ -30,8 +30,8 @@ An ADR asks about forces and options. A business decision has those too, but the
 decide whether it was a good one are different, and asking an ADR's questions produces a BDR
 that reads like an ADR with the wrong nouns.
 
-- **Who it serves - by name from `docs/personas.md`.** Which persona is better off, and which
-  one is not. A decision that serves everyone equally is usually one nobody made. Ask: *who
+- **Who it serves - by name from `docs/roles.md`.** Which role (or mode) is better off, and
+  which one is not. A decision that serves everyone equally is usually one nobody made. Ask: *who
   is this for, and who loses?*
 - **What changes for them.** Concretely, in their words: what they can now do, what it costs
   them, what they will notice. Not "improved flexibility".
@@ -78,7 +78,7 @@ nobody finishes reading fails at the only job it has.
 
 ## Draft first, ask second
 
-Read `docs/PRODUCT.md` for the frame this sits in, `docs/personas.md` for who is affected,
+Read `docs/PRODUCT.md` for the frame this sits in, `docs/roles.md` for who is affected,
 and `docs/discovery/` for the conversation where it was argued. Most BDRs are the written
 form of something already half-recorded. Draft from that and say where each part came from.
 
@@ -98,11 +98,11 @@ a real collision this project has hit. Copy `docs/decision-records/bdr/_template
 row to `bdr/README.md`, `Status: Accepted` on confirmation. An accepted record is superseded,
 never edited into a different decision.
 
-**Fill the `Author` row with a person**, not a role and not a persona - whoever is
+**Fill the `Author` row with a person**, not a role from the roster - whoever is
 accountable for this decision and can be asked about it later. The template ships it as
 `{{AUTHOR}}`; left unsubstituted it is an unfilled shell, and the shipped `self-verify`
 warns about it the same way it warns about any other placeholder that survived. A business
-record is the likeliest place to write a persona name here, and a persona is nobody.
+record is the likeliest place to write a role name here, and a role cannot be asked.
 
 ## Not this
 
@@ -114,5 +114,5 @@ record is the likeliest place to write a persona name here, and a persona is nob
   trade was worth it, and a BDR whose costs are all upside teaches them the records lie.
 - **Do not record a decision the user is still thinking about.** That is an idea until
   approved, and **`idea-write`** is the skill that catches it - named here because it, not
-  the `docs/ideas/` folder, carries the template, the persona check and the graduation
+  the `docs/ideas/` folder, carries the template, the role check and the graduation
   contract. Writing the file by hand skips all three.

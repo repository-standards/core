@@ -572,7 +572,7 @@ else
       verdict "${out}"
     }
     assert "a gated artifact with nothing asked is refused" DENY \
-      "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/personas.md"}}')"
+      "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/roles.md"}}')"
     assert "a declared stub is allowed through" allow \
       "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/personas.md","content":"adopt.personas: absent"}}')"
     assert "a path no point gates is left alone" allow \
@@ -605,7 +605,7 @@ else
     cp "${FIX}/.claude/elicitation/points.json" "${FIX}/points.json.good"
     printf '{ not json\n' > "${FIX}/.claude/elicitation/points.json"
     assert "a points file that does not parse refuses the gated write" DENY \
-      "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/personas.md"}}')"
+      "$(elicit '{"tool_name":"Write","tool_input":{"file_path":"docs/roles.md"}}')"
     mv "${FIX}/points.json.good" "${FIX}/.claude/elicitation/points.json"
     # Two of the three above expect `allow`, and a guard that never ran also produces no output.
     # So the scorer is shown catching a dead one, on the same payload that legitimately passes.

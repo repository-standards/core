@@ -15,8 +15,8 @@ What problem or opportunity this is - one paragraph, plain language.
 
 ## For whom
 
-Which persona(s) from `docs/personas.md` this would serve, and the job it advances.
-An idea that serves no persona is parked, not explored (standard ADR-006).
+Which role(s) from `docs/roles.md` this would serve (and the mode, where it matters), and
+the job it advances. An idea that serves no role is parked, not explored (standard ADR-064).
 
 ## Provisional shape
 

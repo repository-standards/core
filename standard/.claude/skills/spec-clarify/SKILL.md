@@ -54,7 +54,8 @@ Execution steps:
    Functional Scope & Behavior:
    - Core user goals & success criteria
    - Explicit out-of-scope declarations
-   - User roles / personas differentiation
+   - User roles / modes differentiation (Serves names a role from `docs/roles.md`)
+   - Job stories: missing, or a scenario whose `(AC: ...)` names no existing criterion
 
    Domain & Data Model:
    - Entities, attributes, relationships

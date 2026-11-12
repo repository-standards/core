@@ -1,7 +1,7 @@
 # Elicitation
 
 **Spec tier:** buildable
-**Serves:** `Spec-first PO Paula` - the questions are hers to answer and the record has to show she answered them; `Standard-bearer Staszek` adopts repos he does not own and must not have their conventions guessed at; `Coding agent` is the party this capability constrains.
+**Serves:** `Product owner` - the questions are theirs to answer and the record has to show they answered them; `Adopting lead` (brownfield) adopts repos whose conventions must not be guessed at; `Coding agent` is the role this capability constrains.
 **Status:** live
 **Success metric:** Truthfulness - the share of adoption artifacts whose stated provenance survives being checked against the session transcript.
 
@@ -148,6 +148,13 @@ and the repo-own tools that measure them:
 The wording of any individual question - that belongs to the skill that asks it. Whether an
 answer, once given, was implemented faithfully: no layer here sees that, and ADR-054 records
 it as the known gap rather than claiming coverage.
+
+## Job stories
+
+- **JS-1.** When an agent adopts my repository, I want it to ask me the questions only I can answer before it writes the artifacts that depend on them, so I can trust that what it wrote is mine and not its guess.
+  - GIVEN a session in which the roster question never fired WHEN the agent writes the roster THEN the guard refuses and names the question. (AC: Unasked write refused)
+- **JS-2.** When I deliberately skip a question for now, I want the skip recorded as a skip, so I can come back to it without the gap passing as an answer.
+  - GIVEN the written content declares the point `absent` WHEN the agent writes it THEN the write is allowed. (AC: Declared stub allowed)
 
 ## Core concepts
 
@@ -299,10 +306,11 @@ it as the known gap rather than claiming coverage.
 
 ## Acceptance criteria
 
-- GIVEN a session in which `[adopt.personas]` never fired WHEN the agent writes
-  `docs/personas.md` THEN the guard refuses, naming the point and its three answers.
-- GIVEN the same session WHEN the written content declares `adopt.personas: absent` THEN the
-  write is allowed.
+- **Unasked write refused.** GIVEN a session in which `[adopt.personas]` never fired WHEN the
+  agent writes `docs/roles.md` (or the legacy `docs/personas.md`) THEN the guard refuses, naming
+  the point and its three answers.
+- **Declared stub allowed.** GIVEN the same session WHEN the written content declares
+  `adopt.personas: absent` THEN the write is allowed.
 - GIVEN a session whose only mention of a question is prose - including a compaction summary
   replayed as a user turn - WHEN the agent writes the gated artifact THEN the guard refuses.
 - GIVEN a session that fired each point's question before its write THEN no write is refused.

@@ -23,7 +23,7 @@ agent, the most literal reader you will ever hire, walks in and finds nothing it
 
 ## The vision
 
-> Not a persona, not a roadmap - the idea this whole repository serves. If a change ever
+> Not a role, not a roadmap - the idea this whole repository serves. If a change ever
 > contradicts this section, the change is wrong or this section must be consciously
 > rewritten first.
 
@@ -53,7 +53,7 @@ work from.
 ## How it works, in one paragraph
 
 **Everything lives in the repository, and everything hangs together.** One place where code,
-specifications, decisions, product vision and personas are versioned together and updated in
+specifications, decisions, product vision and roles are versioned together and updated in
 the same breath - the same pull request that changes behaviour changes its documentation,
 because a guard makes anything else fail. Proximity is the mechanism; coherence is the
 outcome. Documentation is not *about* the system, written after and elsewhere; it is *part
@@ -66,7 +66,7 @@ repository under this standard can answer, at any moment, the only question that
 
 ## The solution - what you actually get
 
-- **A shipped tree.** Specs by capability, decision records, personas, a backlog that feeds
+- **A shipped tree.** Specs by capability, decision records, roles, a backlog that feeds
   itself, runbooks - each with a home and a reason to exist.
 - **Guards that run.** Dependency-free Node scripts your CI asserts: compliance with the
   standard, spec-to-code coupling, declared facts still agreeing with their source.

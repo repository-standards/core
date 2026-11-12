@@ -1,7 +1,7 @@
 # Web surface
 
 **Spec tier:** buildable
-**Serves:** `Standard-bearer Staszek` - evaluates the standard from the landing and docs before pointing an agent at it; `Owner Olek` - a public, readable surface is half his trust story.
+**Serves:** `Adopting lead` - evaluates the standard from the landing and docs before pointing an agent at it; `Owner` - a public, readable surface is half their trust story.
 **Status:** live
 **Success metric:** Reach - the human surfaces are how the standard gets found and judged.
 
@@ -70,6 +70,12 @@ The landing's hero is an animated agent-session window (the ask typed, the align
 ## Out of scope
 
 The prose of the rendered pages (owned by their source files); markdown link integrity repo-wide ([tree-guard](../tree-guard/spec.md)).
+
+## Job stories
+
+- **JS-1.** When I evaluate the standard before pointing an agent at it, I want the landing and docs to be complete and internally consistent, so I can judge it without cloning the repo.
+  - GIVEN a docs page links to a page that does not exist WHEN the site is checked THEN the check fails naming the link. (AC: Broken internal link)
+  - GIVEN a page states the command to start with WHEN that command differs from the one the standard documents THEN the check fails. (AC: A landing that teaches the wrong command)
 
 ## Core concepts
 

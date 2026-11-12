@@ -33,9 +33,9 @@ still just a maybe?"
 2. **Copy `docs/ideas/_template.md`** to `docs/ideas/<slug>.md`. Fill it from what the user
    said:
    - **The itch** - the problem or opportunity, one paragraph, plain language.
-   - **For whom** - name the persona(s) from `docs/personas.md` this would serve. An idea
-     that serves no persona is parked, not explored (standard ADR-006) - say so rather than filing it
-     anyway.
+   - **For whom** - name the role(s) from `docs/roles.md` this would serve, and the mode
+     where it matters. An idea that serves no role is parked, not explored (standard ADR-064)
+     - say so rather than filing it anyway.
    - **Provisional shape** - whatever the idea needs: business model, UX sketch, technical
      approach, pricing. Speculation is welcome here and nowhere else in the repo; nothing in
      this section is a decision.
@@ -90,7 +90,7 @@ considered and what happened to it - that is the value, not the idea itself.
 ## Done When
 
 - [ ] `docs/ideas/<slug>.md` exists, filled from what the user actually said
-- [ ] `For whom` names a real persona, or the idea is marked `parked` instead
+- [ ] `For whom` names a real role, or the idea is marked `parked` instead
 - [ ] `Status` reflects where it actually is, dated
 - [ ] On approval: backlog intent + the spec change (the existing capability's spec where
       one owns the behaviour, a new capability only where none does) + any records exist,

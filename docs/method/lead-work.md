@@ -48,7 +48,7 @@ The sequence that works:
 1. **Assess only.** No changes. Everyone sees the number.
 2. **The entry file and the guards.** `AGENTS.md`, the scripts, the workflows. This is small,
    and from here the claim is measurable.
-3. **The personas and the product doc.** Before any spec, because a spec that cannot name who
+3. **The roles and the product doc.** Before any spec, because a spec that cannot name who
    it serves is the failure mode you are trying to prevent.
 4. **Specs for the capabilities you are already changing.** Never all of them. The ones with
    work in flight get written by the people doing that work.

@@ -25,7 +25,7 @@ docs, the case studies, `open-questions/`, `decision-records/` - is genuinely zo
 its compliance is proved by `tools/tree-check.mjs` running `self-verify --skeleton` against
 the pristine tree, not by this repo scoring itself against a recorded state it does not carry. Where
 `PRODUCT.md` says the standard follows its own rules, read it as: its own decisions, specs,
-backlog, personas and guards - not the adopter-side alignment record.
+backlog, roles and guards - not the adopter-side alignment record.
 
 There is no third zone: the tree IS the shipped form - `npx degit
 repository-standards/core/standard` hands a client exactly what you see.
@@ -36,7 +36,7 @@ clients get them by reference (ADR-004), never as copies.
 
 | Class | Skills | In the consuming repo |
 |---|---|---|
-| **Lifecycle** - ships and stays (the standard in daily use) | the 21 under `standard/.claude/skills/`: `spec-specify`, `spec-clarify`, `spec-plan`, `spec-tasks`, `spec-implement` (the engine, extracted from Spec Kit - ADR-015), `discovery-digest`, `spec-impact`, `spec-update`, `spec-reconcile`, `add-to-backlog`, `pre-pr-review`, `update-to-latest`, `sprint-open`, `sprint-close`, `timeline-update`, `adr-write`, `bdr-write`, `product-write`, `personas-write`, `idea-write`, `show-backlog` | ship with the tree and stay - they ARE the ways of working |
+| **Lifecycle** - ships and stays (the standard in daily use) | the 21 under `standard/.claude/skills/`: `spec-specify`, `spec-clarify`, `spec-plan`, `spec-tasks`, `spec-implement` (the engine, extracted from Spec Kit - ADR-015), `discovery-digest`, `spec-impact`, `spec-update`, `spec-reconcile`, `add-to-backlog`, `pre-pr-review`, `update-to-latest`, `sprint-open`, `sprint-close`, `timeline-update`, `adr-write`, `bdr-write`, `product-write`, `roles-write`, `idea-write`, `show-backlog` | ship with the tree and stay - they ARE the ways of working |
 | **Transition** - getting TO the standard | `skills/align-to-standards/` (one router: greenfield / brownfield / update phases); `skills/record-run/` (offers the closing session as human-prompting-corpus evidence - runs from this checkout, never the client's, since a re-adopted repo re-running it would offer to record the same session twice) | NEVER shipped - run from a checkout of this repo |
 
 **The format is not ours, and that is the point.** Both classes are

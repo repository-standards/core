@@ -34,5 +34,5 @@ product actually emits.
 - **Scale profile.** A repository without analytics has nothing to name. The file is
   optional and arrives when the practice does.
 - **It ships as a page rather than a template with example events.** Example event names in
-  a live taxonomy get shipped by accident, exactly as example personas do in a roster a
+  a live taxonomy get shipped by accident, exactly as example roles do in a roster a
   guard reads.

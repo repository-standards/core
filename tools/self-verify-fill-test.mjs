@@ -142,7 +142,7 @@ check("HTML markup in a filled README does not warn", {
 });
 
 // Too loose in a third direction, and this one the standard aimed at itself: the shipped
-// docs/PRODUCT.md and docs/personas.md put their drafting guidance in an HTML comment that
+// docs/PRODUCT.md and docs/roles.md put their drafting guidance in an HTML comment that
 // writes `<date>` and `<ID>` to show the shape of the marker wanted. Read as prose, those are
 // two unfilled placeholders in a document its owner has written and confirmed, and the only
 // way to clear the warning was to delete the standard's own note - which is what the first
@@ -349,11 +349,11 @@ check("a README with the banner deleted does not warn", {
 // The shipped tree itself, unfilled: these are the three files the check listed and never
 // fired on. Read against the tree rather than a hand-written copy of it, so a template that
 // drops its marker fails here instead of passing quietly.
-check("the shipped SECURITY.md, personas.md and PRINCIPLES.md warn while unfilled", {
+check("the shipped SECURITY.md, roles.md and PRINCIPLES.md warn while unfilled", {
   files: {},
   warnsAbout: [
     ["SECURITY.md", true],
-    ["docs/personas.md", true],
+    ["docs/roles.md", true],
     ["docs/PRINCIPLES.md", true],
   ],
 });
@@ -361,14 +361,14 @@ check("the shipped SECURITY.md, personas.md and PRINCIPLES.md warn while unfille
 check("filled versions of all three clear the warning", {
   files: {
     "SECURITY.md": "# Security\n\nEmail `security@acme.example` - do not open a public issue. We reply within 3 business days.\n",
-    "docs/personas.md":
+    "docs/roles.md":
       "# Personas\n\n## The roster\n\n| Persona | Primary? | One-line |\n|---|---|---|\n" +
       "| `Owner-operator Olga` | yes | runs four rentals herself |\n",
     "docs/PRINCIPLES.md": "# Engineering principles\n\n- **Boring, proven tech.** Prefer the dull option.\n",
   },
   warnsAbout: [
     ["SECURITY.md", false],
-    ["docs/personas.md", false],
+    ["docs/roles.md", false],
     ["docs/PRINCIPLES.md", false],
   ],
 });
@@ -641,7 +641,7 @@ checkNeedsReview("an unmarked file is not counted", {
 checkNeedsReview("two marked files are both counted, plural wording", {
   files: {
     "SECURITY.md": `# Security\n\n${MARK("SEC-1")}Email security@acme.example about anything.\n`,
-    "docs/personas.md":
+    "docs/roles.md":
       `# Personas\n\n${MARK("PERSONAS-1")}## Roster\n\n| Persona | Primary? | One-line |\n|---|---|---|\n| Bogdan | yes | runs four rentals |\n`,
   },
   wantCount: 2,

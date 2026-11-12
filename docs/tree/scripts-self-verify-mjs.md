@@ -34,7 +34,7 @@ number would make the number negotiable.
 
 The **mechanical** tier only: is the file there, is its content the standard's where the
 standard owns it, is the heading there, does the guard pass. Whether your decision records
-record real decisions, or a spec that names a persona actually serves them, is judgment and
+record real decisions, or a spec that names a role actually serves it, is judgment and
 stays at review. A `fill-from-repo` file is your content by definition, so nothing here can
 say whether you filled it well - only whether it is there and whether it still carries
 template markers.

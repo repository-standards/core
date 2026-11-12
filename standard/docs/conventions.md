@@ -18,7 +18,7 @@ English commits is a first-class setup, not a workaround.
 | Code comments | repo's choice | |
 | Docs, specs, decision records | repo's choice | one language per artifact type |
 | Commit messages, PR text | English | recommended |
-| User-facing copy | the persona's language | driven by the audience, not the team |
+| User-facing copy | the language of the role it addresses | driven by the audience, not the team |
 | Strings a guard greps for | never translated | see below - they are syntax, not prose |
 
 **What a script reads is syntax, and syntax stays as written** in a spec in any language:

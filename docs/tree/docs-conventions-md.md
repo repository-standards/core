@@ -27,7 +27,7 @@ Two that are worth calling out because they are easy to read past.
 
 **The working language is a configuration, not a constraint.** An agent reads whatever you
 choose, so decide per artefact and write it down: code and commits in English, docs in the
-team's language, user-facing copy in the persona's. What breaks a repo is not the choice, it
+team's language, user-facing copy in the language of the role it addresses. What breaks a repo is not the choice, it
 is leaving it unstated so that every file guesses.
 
 **A fact has one home (R4).** A count, a version, a path, a command lives in one file and

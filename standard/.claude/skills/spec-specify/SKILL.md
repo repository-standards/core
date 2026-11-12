@@ -169,8 +169,8 @@ Given that feature description, do this:
        - Prioritize clarifications by impact: scope > security/privacy > user experience > technical details
     <!-- PATCHED(repository-standards): the sections are the standard's template, not the
          engine's. Upstream fills User Scenarios / Functional Requirements / Success
-         Criteria / Key Entities; none of those exist in capability-spec.template.md, and
-         a spec written to them cannot be reconciled against the shape the guards check. -->
+         Criteria / Key Entities; none of those exist in capability-spec.template.md, so
+         a spec written to them fails the guards. -->
     4. Ask `[spec.scope]`, then fill Purpose, Scope and Out of scope from the answer - the
        boundary is asked, never derived. Undeterminable with nobody to ask: ERROR "Cannot
        determine the capability's boundary"
@@ -190,10 +190,12 @@ Given that feature description, do this:
     7. Ask `[spec.acceptance]`, then write Acceptance criteria as Given/When/Then covering
        the happy path, every error path, every edge case and every state transition. Every
        Invariant must be covered by at least one of them
-    8. Set the front-matter fields the template declares: Spec tier, Serves (a persona
-       from `docs/personas.md` - a spec that serves nobody fails the structure guard),
+    8. Set the front-matter fields the template declares: Spec tier, Serves (a role
+       from `docs/roles.md` - a spec that serves nobody fails the structure guard),
        Status, Success metric
-    9. Return: SUCCESS (spec ready for the clarify loop)
+    9. Write Job stories per the template, from the role's Jobs in `docs/roles.md`;
+       each scenario's `(AC: ...)` names a step-7 criterion
+    10. Return: SUCCESS (spec ready for the clarify loop)
 
 6. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
 
@@ -209,15 +211,14 @@ Given that feature description, do this:
       **Feature**: [Link to spec.md]
 
       <!-- PATCHED(repository-standards): upstream gates on "no implementation details",
-           which is the opposite of what a buildable spec is. R9 makes buildable the
-           default and the standard requires contracts quoted verbatim - real field
-           names, enums, endpoints. The checklist now gates on the tier the spec declares. -->
+           the opposite of a buildable spec (R9: verbatim contracts). The
+           checklist now gates on the tier the spec declares. -->
       ## Content Quality
 
       - [ ] Spec tier is declared, and the spec meets it: buildable means an agent could
             rebuild and verify this capability from the spec alone; behavioral says why not
       - [ ] Contracts quote real identifiers verbatim, never paraphrase (buildable tier)
-      - [ ] Serves names a persona from `docs/personas.md`
+      - [ ] Serves names a role from `docs/roles.md`; job-story scenarios cite `(AC: ...)`
       - [ ] Nothing here contradicts an Accepted decision record, and what a record
             settles is written as settled, citing it
       - [ ] Success metric names the KPI this capability moves, or says why "n/a"

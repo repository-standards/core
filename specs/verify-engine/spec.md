@@ -1,7 +1,7 @@
 # Verify engine
 
 **Spec tier:** buildable
-**Serves:** `Standard-bearer Staszek` - drift as a number, per repo; `Owner Olek` - a green run is the assurance he buys; `Coding agent` obeys it as a mechanical gate.
+**Serves:** `Adopting lead` - drift as a number, per repo; `Owner` - a green run is the assurance they buy; `Coding agent` obeys it as a mechanical gate.
 **Status:** live
 **Success metric:** Retention - repos that update and return to drift 0 within a release sprint.
 
@@ -53,6 +53,13 @@ The shipped verifier: manifest loading, version pin, file/content/key/section/gu
 Guarding this repo's own shipped tree ([tree-guard](../tree-guard/spec.md)); authoring the manifest's content.
 
 The manifest's `provenanceCommit` ([ADR-052](../../docs/decision-records/ADR-052-alignment-tracks-a-provenance-commit-not-a-version-string.md)) is written and read by `update-to-latest` to compute a delta; this engine never reads it. Deciding compliance from a commit SHA would need the standards repo's history, and the check is offline by design.
+
+## Job stories
+
+- **JS-1.** When I come back to a repo after months, I want one command to tell me how far it has drifted from the standard as a number, so upkeep is a command and not an audit.
+  - GIVEN a repo aligned to the current manifest WHEN self-verify runs THEN it reports drift 0. (AC: Green repo)
+- **JS-2.** When the standard removes or renames a path, I want the repo that still carries it to be told, so an update cannot leave dead files behind silently.
+  - GIVEN a repo still carrying a path the manifest lists as removed WHEN self-verify runs THEN it reports drift naming the path. (AC: A removed path is still there)
 
 ## Core concepts
 

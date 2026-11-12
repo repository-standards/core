@@ -107,6 +107,7 @@ export const PAGES = CONFIG.pages || [
   { src: "docs/method/dev-work.md", out: "dev-work.html", nav: "Developer", role: "dev", group: "Working with it" },
   { src: "docs/method/lead-work.md", out: "lead-work.html", nav: "Consultant", role: "lead", group: "Working with it" },
   { src: "docs/method/working-with-specs.md", out: "working-with-specs.html", nav: "Anyone", role: "any", group: "Working with it" },
+  { src: "docs/method/roles-not-personas.md", out: "roles-not-personas.html", nav: "Roles, not personas", group: "Working with it" },
   { src: "docs/method/agent-work.md", out: "agent-work.html", nav: "What the agent does by itself", group: "Working with it" },
   { src: "docs/skill-map.md", out: "skill-map.html", nav: "What each skill is for", group: "Working with it" },
   { src: "docs/method/discovery.md", out: "discovery.html", nav: "Turning meetings into specs", group: "Working with it" },
@@ -114,7 +115,7 @@ export const PAGES = CONFIG.pages || [
 
   { src: "docs/method/adoption.md", also: ["docs/method/self-verify.md"], out: "adopt.html", nav: "Adopting", group: "Working with it" },
 
-  { src: "docs/personas.md", out: "personas.html", nav: "Our personas", group: "About this project" },
+  { src: "docs/roles.md", out: "roles.html", nav: "Our roles", group: "About this project" },
   { src: "docs/how-this-repo-works.md", out: "how-this-repo-works.html", nav: "How this repo runs itself", group: "About this project", sub: "How it works" },
   { src: "docs/method/taxonomy.md", out: "taxonomy.html", nav: "Where knowledge lands", group: "About this project", sub: "How it works" },
   { src: "docs/ecosystem.md", out: "ecosystem.html", nav: "How it fits together", group: "About this project", sub: "How it works" },

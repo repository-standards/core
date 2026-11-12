@@ -11,7 +11,7 @@ manual. The client-authored templates and tool manuals live in the shipped tree 
 | [method/](method/README.md) | the standard's method manual - adoption, assessment, taxonomy, decision checklist, ways of working (including [working with AI](method/working-with-ai/README.md)), changelog process; clients adopt it by reference from the living standard - always latest (ADR-023) |
 | [ecosystem.md](ecosystem.md) | how the repos fit together - the engine, the map packs, and how a stack plugs in |
 | [positioning.md](positioning.md) | the one statement and pillars every surface quotes verbatim |
-| [personas.md](personas.md) | who this product serves - the roster the specs and backlog cite |
+| [roles.md](roles.md) | who uses this product and with what permissions - the roster the specs and backlog cite |
 | [faq.md](faq.md) | short canonical answers to recurring adopter questions |
 | [decision-records/](decision-records/README.md) | this repo's own ADRs - the decisions that shaped the standard, gist table in the index |
 | [open-questions/](open-questions/README.md) | the owner's provisional calls, openly seeking challengers - one file per topic, deliberations kept |

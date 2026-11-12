@@ -5,7 +5,7 @@ Phase file of `align-to-standards`. Runs inside it, never as a separate skill.
 This step **consumes the intake's technology answer** (step 0) - detection and
 consent already happened there; do not re-detect, do not re-ask. **When it runs
 is phase-defined:** brownfield - **right after the assessment** (its pass 7
-confirms the detection), not at the end; greenfield - after personas and product
+confirms the detection), not at the end; greenfield - after roles and product
 (for whom -> what -> how holds); a pinned repo adding a stack - immediately (the
 fourth route).
 

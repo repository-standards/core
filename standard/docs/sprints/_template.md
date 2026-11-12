@@ -29,7 +29,7 @@ guard's `blocked:<id>` shape is the model, and this is the same shape for the sa
 remainder it names must be a row that exists and is not this one, or the split is work that
 vanished at the close.
 
-| id | title | cap | persona | owner | assignee | size | why | source | DoD | status |
+| id | title | cap | role | owner | assignee | size | why | source | DoD | status |
 |----|-------|-----|---------|-------|----------|------|-----|--------|-----|--------|
 | | | | | | | | | | | |
 

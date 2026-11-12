@@ -27,7 +27,7 @@ specs it wrote years earlier, and its own history says nothing about who was ask
 belong to the repository - who it is for, how its records are kept, which profile it runs at -
 and are asked once. Once such a row says a person answered and the row is **committed**, the
 elicitation guard stops demanding the question again: a later session writing
-`docs/decision-records/` or `docs/personas.md` is working under an answer this repository
+`docs/decision-records/` or `docs/roles.md` is working under an answer this repository
 already gave. The rest belong to a piece of work rather than to the repository - the scope of a
 specification, the materials behind one discovery digest, the participants in one run - and no
 committed row settles those. They are asked every time, and their row records the most recent

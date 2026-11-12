@@ -35,7 +35,7 @@ operational constraint. Why this is a decision worth recording.
 
 ## Who it serves
 
-Which personas from `docs/personas.md` are better off, and **which one is worse off**. Name
+Which roles (or modes) from `docs/roles.md` are better off, and **which one is worse off**. Name
 them. A decision that serves everyone equally is usually one nobody made, and the persona
 that loses is the thing a future reader most needs to know was considered.
 

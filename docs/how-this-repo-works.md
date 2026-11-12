@@ -70,7 +70,7 @@ Everything below is this project eating its own cooking, and each is readable he
   settled and what it rejected
 - **[Our open questions](open-questions/README.md)** - calls made on judgment and held open on
   purpose, which is the part most projects keep private
-- **[Our personas](personas.md)** - who this is built for, named, with the primary one
+- **[Our roles](roles.md)** - who uses this and with what permissions, with the primary one
   marked
 - **[Our case studies](case-studies/README.md)** - times the loop caught something, and times it
   did not

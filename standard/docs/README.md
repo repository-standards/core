@@ -9,7 +9,7 @@ Hub for this repo's docs. Start where you need:
 | [ARCHITECTURE.md](ARCHITECTURE.md) | how it is built - structure and boundaries |
 | [PRINCIPLES.md](PRINCIPLES.md) | engineering principles (top of the hierarchy) |
 | [decision-records/](decision-records/) | ADR / BDR - the *why* (decisions) |
-| [personas.md](personas.md) | who the product is for - the roster every capability spec names |
+| [roles.md](roles.md) | who uses the product and with what permissions - the roster every capability spec names |
 | [backlog.md](backlog.md) | the ordered work the repo still owes itself, each item with a definition of done |
 | [self-verify.md](https://github.com/repository-standards/core/blob/main/docs/method/self-verify.md) | how compliance is checked, what the drift number covers and what it does not |
 | [prerequisites.md](https://github.com/repository-standards/core/blob/main/docs/method/prerequisites.md) | what must be installed before the shipped guards protect anything |
@@ -17,8 +17,8 @@ Hub for this repo's docs. Start where you need:
 | [conventions.md](conventions.md) | day-to-day conventions (merged into `AGENTS.md` at adoption) |
 | [discovery/](discovery/) | discovery dossiers - meeting/mail extracts per topic, with provenance (standard ADR-024) |
 | [ideas/](ideas/) | speculative ideas under a status, before they earn a spec or a record |
-| [journeys/](journeys/) | per-persona journey maps coupled to capabilities *(scale)* |
-| [research/](research/) | anonymized research studies feeding personas, ideas and specs *(scale)* |
+| [journeys/](journeys/) | one journey per key end-to-end flow, pinned to one role and coupled to capabilities *(scale)* |
+| [research/](research/) | anonymized research studies feeding roles, ideas and specs *(scale)* |
 | [runbooks/](runbooks/) | operational runbooks and postmortems - followable at 3 a.m. |
 | [sprints/](sprints/) | what a team committed to and by when; an intent is in the pool or in exactly one sprint *(scale)* |
 | [analytics.md](analytics.md) | the event taxonomy / tracking plan *(scale)* |

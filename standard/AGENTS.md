@@ -47,8 +47,8 @@ change - do the list first, or delete the workflow files until you are ready for
 1. Write `.standards-version` with the version this tree came from.
 2. Fill this file: the repo map, Commands, the working language, and the hard bans
    at the bottom. They ship as empty slots on purpose - nobody else can fill them.
-3. Fill [`docs/personas.md`](docs/personas.md). The persona gate has nothing to hold
-   without it, and every capability spec must name someone from that roster.
+3. Fill [`docs/roles.md`](docs/roles.md). The role gate has nothing to hold without it,
+   and every capability spec must name a role from that roster.
 4. Author `specs/capability-map.json` from
    [`specs/capability-map.example.json`](specs/capability-map.example.json). Absent, the
    coupling guard exits zero and quietly checks nothing.
@@ -97,7 +97,7 @@ Before any of it, the toolchain the shipped guards need must be present -
   matters across a work session belongs in the plan or the spec, not in the source.
 - **Working language:** <declare per artifact - default English>. E.g. code and
   commits in English, docs and specs in <team language>, user-facing copy in the
-  persona's language. Honor this everywhere; it is a config, not a constraint.
+  language of the role it addresses. Honor this everywhere; it is a config, not a constraint.
   <!-- Deliberately not in backticks: the fill check strips code spans, because generic
        notation lives there. A marker someone must replace belongs in prose. -->
 
@@ -224,7 +224,7 @@ sentence will each lose that sentence half the time: sharpen both, or merge them
   (product) *while it is still fresh*. Who would overrule it decides which: an architect
   means ADR, a product owner means BDR. A decision that stays in the thread is the failure
   mode this whole standard exists to stop - do not wait to be asked.
-- **The repo cannot say who it is for, or what it is building** -> `personas-write` and
+- **The repo cannot say who it is for, or what it is building** -> `roles-write` and
   `product-write`. A spec written against "the user" settles nothing, because "the user"
   wants everything.
 - **A team is picking work up, or putting it down** *(scale)* -> `sprint-open` moves the
@@ -239,7 +239,7 @@ sentence will each lose that sentence half the time: sharpen both, or merge them
   the delta between the pin and the target and applies only that; it is a dependency bump, not
   a re-scaffold, and it ends at drift 0 or it is not finished.
 - **On request, explain simply**: any ADR/BDR/spec, in plain language with examples
-  anchored to `docs/personas.md` - the PO must never have to gate what they cannot read.
+  anchored to `docs/roles.md` - the PO must never have to gate what they cannot read.
 
 None of these skills waits to be invoked by name. A user who has to know the slash command
 has been handed a manual, which is the opposite of the point.

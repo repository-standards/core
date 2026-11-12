@@ -1,7 +1,7 @@
 # Spec engine
 
 **Spec tier:** buildable
-**Serves:** `Spec-first PO Paula` - the clarify loop asks her exactly the questions that make a spec buildable and records her deferrals; `Coding agent` - mechanical gates it can obey; `Buildable-truth Dev Darek` picks up only ready-to-develop specs.
+**Serves:** `Product owner` - the clarify loop asks exactly the questions that make a spec buildable and records the deferrals; `Coding agent` - mechanical gates it can obey; `Developer` picks up only ready-to-develop specs.
 **Status:** live
 **Success metric:** Guidance quality - clarify-gate pass rate without developer rescue.
 
@@ -58,6 +58,14 @@ The loop, its state file, the clarify gate, the setup scripts, the templates, an
 ## Out of scope
 
 The spec model itself - capability specs, tiers, personas (documented at [`docs/tree/specs.md`](../../docs/tree/specs.md), read at the standard rather than copied into an adopting repo); coupling enforcement (`spec-guard.mjs`, `spec-structure.mjs`).
+
+## Job stories
+
+- **JS-1.** When I write a story, I want to be asked exactly the questions that make it buildable and to defer the technical ones explicitly, so refinement happens once instead of in review ping-pong.
+  - GIVEN a spec with an open marker of the NEEDS family WHEN the clarify gate runs THEN it fails and names the marker. (AC: Gate fail: markers)
+  - GIVEN a spec with a clarifications section and no open marker WHEN the gate runs THEN it passes. (AC: Gate pass)
+- **JS-2.** When I pick up a spec to build, I want it to be ready only if the gate said so, so I never start from a spec that is still being argued.
+  - GIVEN a plan already exists for a spec whose gate now fails WHEN planning re-runs THEN the gate runs again and stops it. (AC: The gate re-runs even when the plan already exists)
 
 ## Core concepts
 

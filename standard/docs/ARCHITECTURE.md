@@ -13,7 +13,7 @@ The system in one diagram plus a paragraph (Mermaid welcome).
 
 Diagram with **C4** (Simon Brown): work top-down, only as deep as the reader needs.
 
-- **Context** (level 1) - the system as a box, its users (the [personas](personas.md)), and
+- **Context** (level 1) - the system as a box, its users (the [roles](roles.md)), and
   the external systems it talks to. Almost always worth drawing.
 - **Container** (level 2) - the deployable/runnable units (web app, API, service, DB, queue)
   and how they communicate. The default working level for most repos.

@@ -17,7 +17,7 @@ no.
 | make a decision out loud | writes the record while it is fresh |
 | mention something out of scope | files it in the backlog with its source and what done means |
 | finish a branch | reviews its own diff before you push it |
-| say the repo has no personas, or no product doc | offers to build them from what is already there |
+| say the repo has no roles roster, or no product doc | offers to build them from what is already there |
 
 You should never have to say "remember to use the process". If you do, the tool's
 description of itself is wrong, and fixing that is the bug - not reminding you to carry it.

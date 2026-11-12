@@ -52,7 +52,7 @@ copied into your repository as folder READMEs that then age in place.
 | `docs/facts.json` | the facts this repo restates: one home each, every restatement declared | optional, core | `fill-from-repo` | [R4](../standard/SPEC.md) |
 | `docs/facts.example.json` | the shape of a declared fact, reference only - do not rename or copy its placeholder content into docs/facts.json; write docs/facts.json from scratch, in this shape, once this repo has its first fact worth declaring (R4) | optional, core | `copy` | [R4](../standard/SPEC.md) |
 | `docs/PRINCIPLES.md` | the altitude apex R1 names - optional but expected | optional, core | `fill-from-repo` | [R1](../standard/SPEC.md) |
-| `docs/personas.md` | the persona roster the R10 gate checks specs against - without it the gate has nothing to hold | **required**, core | `fill-from-repo` | [R10](../standard/SPEC.md) |
+| `docs/roles.md` | the role roster (actors and their permissions, optional behavioural modes) the R10 gate checks specs against - without it the gate has nothing to hold (standard ADR-064) | **required**, core | `fill-from-repo` | [R10](../standard/SPEC.md) |
 | `docs/adoption-intake.md` | what Step 0 measured and asked before any align work proceeded - the record that makes intake checkable, not just performed (standard ADR-042) | **required**, core | `fill-from-repo` | [R26](../standard/SPEC.md) |
 | `docs/adoption-assessment.md` | what Gate 2's eight-pass assessment found - maturity per pass, top risks, findings grouped by the owner role that must act; the evidence Gate 5's count is derived from (standard ADR-048) | **required**, core | `fill-from-repo` | [R27](../standard/SPEC.md) |
 | `docs/README.md` | the docs hub table | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
@@ -60,8 +60,8 @@ copied into your repository as folder READMEs that then age in place.
 | `docs/PRODUCT.md` | what it is and where it is going (filled from this repo) | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `docs/conventions.md` | canonical conventions block - merged into AGENTS.md at adoption | optional, core | `merge` | [R1](../standard/SPEC.md) |
 | `docs/analytics.md` | event-taxonomy tracking plan template | optional, scale | `fill-from-repo` | [R3](../standard/SPEC.md) |
-| `docs/journeys` | per-persona journey maps coupled to capabilities | optional, scale | `fill-from-repo` | [R3](../standard/SPEC.md) |
-| `docs/research` | anonymized research studies feeding personas, ideas and specs | optional, scale | `fill-from-repo` | [R3](../standard/SPEC.md) |
+| `docs/journeys` | one journey per key end-to-end flow, pinned to a role, each stage naming the capability specs serving it | optional, scale | `fill-from-repo` | [R3](../standard/SPEC.md) |
+| `docs/research` | anonymized research studies feeding roles, ideas and specs | optional, scale | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `docs/runbooks` | operational runbooks + postmortems - agent-followable at 3 a.m. | optional, core | `fill-from-repo` | [R3](../standard/SPEC.md) |
 | `docs/sprints` | work sprints - what a team committed to and by when; an intent is in the pool or in exactly one sprint (standard ADR-028) | optional, scale | `fill-from-repo` | [R15](../standard/SPEC.md) |
 | `docs/adoption-provenance.md` | what became of every answer: state, who, when, where it landed, and the backlog row carrying a deferred one | **required**, core | `fill-from-repo` | [R28](../standard/SPEC.md) |
@@ -119,6 +119,7 @@ them rather than checking files.
 
 | Document | What it covers |
 |---|---|
+| [`docs/method/roles-not-personas.md`](#) | why roles, modes, job stories and journeys instead of classic personas - what each solves, when a mode is justified, the sources (standard ADR-064) |
 | [`docs/method/taxonomy.md`](#) | where each kind of knowledge lands (ends 'ADR or rule?') |
 | [`docs/method/checklist.md`](#) | the forks every repo consciously decides, with paved-road defaults |
 | [`docs/method/adoption.md`](#) | the gated path from unaligned to aligned + the modernize pass |

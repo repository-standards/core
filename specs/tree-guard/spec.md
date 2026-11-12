@@ -1,7 +1,7 @@
 # Tree guard
 
 **Spec tier:** buildable
-**Serves:** `Standard-bearer Staszek` - the tree he adopts from must be complete and free of this repo's internals; `Coding agent` runs both tools as gates.
+**Serves:** `Adopting lead` - the tree they adopt from must be complete and free of this repo's internals; `Coding agent` runs both tools as gates.
 **Status:** live
 **Success metric:** Retention - a client updating to a new version gets a tree that is complete and verifies green.
 
@@ -27,6 +27,12 @@ work on this capability goes through the loop.
 ## Out of scope
 
 Verifying an adopted repo ([verify-engine](../verify-engine/spec.md)); checking the rendered web surfaces ([web-surface](../web-surface/spec.md)).
+
+## Job stories
+
+- **JS-1.** When I adopt or update from the standard, I want the tree I copy to be complete and to carry none of the standard repo's own internals, so I can trust a green verify instead of reading every file.
+  - GIVEN a file of the standard repo's own lands in the shipped tree WHEN tree-check runs THEN it fails naming the file. (AC: Leak)
+  - GIVEN a shipped file changed without its manifest hash WHEN tree-check runs THEN it fails. (AC: Stale hash)
 
 ## Core concepts
 

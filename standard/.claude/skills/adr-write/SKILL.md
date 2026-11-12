@@ -92,7 +92,7 @@ has hit, and rebasing late narrows the window but does not close it. Copy
 `docs/decision-records/adr/_template.md`, add the row to `adr/README.md`, set
 `Status: Accepted` when the user confirms.
 
-**Fill the `Author` row with a person**, not a role and not a persona - whoever is
+**Fill the `Author` row with a person**, not a role from the roster - whoever is
 accountable for this decision and can be asked about it later. The template ships it as
 `{{AUTHOR}}`; left unsubstituted it is an unfilled shell, and the shipped `self-verify`
 warns about it the same way it warns about any other placeholder that survived.
@@ -105,7 +105,7 @@ record keeps its text, flips to `Superseded`, and names this one in its `Superse
 - **Do not write a record for a decision nobody made.** If the user is thinking out loud, it
   is an idea until they approve it - `Proposed` is for a decision awaiting ratification, not
   for a maybe. Hand it to **`idea-write`**, by name: that skill owns the idea template, the
-  "an idea that serves no persona is parked" check and the graduation contract, and writing
+  "an idea that serves no role is parked" check and the graduation contract, and writing
   a file into `docs/ideas/` yourself is how all three get skipped.
 - **Do not invent the options.** Reconstructing what was on the table is the user's memory or
   the discovery dossier's, and an invented rejected option is worse than none: it will be

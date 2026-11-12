@@ -14,6 +14,6 @@
 
 ## What it changes (required - the point of the study)
 
-- Persona: `<name>` - <field updated / "confirms as-is">
+- Role: `<name>` (and mode, if any) - <field updated / "confirms as-is">
 - Ideas: `<docs/ideas/<slug> spawned | parked | dropped>` or "none"
 - Specs / backlog: `<capability or item>` or "none"

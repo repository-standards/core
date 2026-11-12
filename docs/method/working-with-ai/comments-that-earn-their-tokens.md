@@ -82,7 +82,7 @@ The two positions are arguing about different lifetimes.
 |---|---|---|
 | "phase 2 will replace this shim", "next run: wire the retry here" | days - it dies at merge | the **plan / tasks** file for that run |
 | "this endpoint is polled, not pushed, because the upstream drops websockets over their proxy" | until the upstream changes | a **why-comment in the code** |
-| "this capability exists to do X for persona Y, these are the rules" | as long as the product does | the **capability spec** |
+| "this capability exists to do X for role Y, these are the rules" | as long as the product does | the **capability spec** |
 
 Comment spam is what happens when expiring context is written into a permanent medium. It is
 paid for by every future reader and every future file read, forever, to solve a problem that

@@ -23,7 +23,7 @@ neither being noticed.
 that makes the rest honest: if the current workaround is genuinely fine, that is the most
 useful thing you can know early.
 
-**Who it serves**, pointing at the persona roster rather than restating it.
+**Who it serves**, pointing at the roles roster rather than restating it.
 
 **Where it is going.** Direction, not a roadmap with dates. Dates belong to sprints, which
 measure themselves.
@@ -59,5 +59,5 @@ be worked out:
   regardless of whether the problem exists.
 - **Direction, not dates.** Dates in a document that is not measured always drift, and a
   drifted date is worse than no date because somebody plans against it.
-- **Personas are linked, not restated.** A copy of the roster here would be a second roster,
+- **Roles are linked, not restated.** A copy of the roster here would be a second roster,
   and the guard reads the other one.

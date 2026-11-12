@@ -42,7 +42,7 @@ then find the ripple. This is analysis - do not edit code yet.
      superseding record, or contradict an Accepted one? Read **both streams**:
      what a change is *forbidden* to do is usually a business constraint - a
      licence boundary, a vendor or customer contract, a regulatory limit, a
-     persona call - and it is written in a BDR's `What this rules out`, the only
+     call between roles - and it is written in a BDR's `What this rules out`, the only
      section that states a capability's non-goals. Reading the ADRs alone answers
      a different question, and answers it "none". If the change contradicts an
      Accepted record, stop: the record comes first, and it is superseded by a new
@@ -54,8 +54,8 @@ then find the ripple. This is analysis - do not edit code yet.
      wrong at 3 a.m. whatever the spec says, and a specs-records-code sweep never looks
      there. Take each of these that exists and say which sentence this change falsifies,
      or that it is untouched: `docs/runbooks/` (a procedure that walks an operator
-     through the behaviour being changed), `docs/personas.md` (a persona whose stated
-     job, or whose "must never lose", this removes), `docs/PRODUCT.md` (a scope or KPI
+     through the behaviour being changed), `docs/roles.md` (a role or mode whose stated
+     job, permission or "must not lose" this removes), `docs/PRODUCT.md` (a scope or KPI
      claim it contradicts), `docs/analytics.md` (an event it renames, drops or re-times)
      and the backlog (a row whose definition of done this change now meets, or makes
      impossible to meet). Grep the capability's own terms across `docs/` rather than
@@ -76,7 +76,7 @@ then find the ripple. This is analysis - do not edit code yet.
 - Affected capabilities, with their spec paths.
 - Decision-record impact, ADR **and** BDR: none / new / supersede / contradicts (link).
 - Code areas to change.
-- Other artifacts contradicted (runbooks, personas, PRODUCT, analytics, backlog rows) -
+- Other artifacts contradicted (runbooks, roles, PRODUCT, analytics, backlog rows) -
   each one named with the line, or "none".
 - Unreconciled discovery entries for the topic (newer than the stamp, or still `new`/`open`), or "none".
 - Anything filed to the backlog because this change will not address it now.

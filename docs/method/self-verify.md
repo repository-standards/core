@@ -142,7 +142,7 @@ path is checked once per declaration, and the run says which two files claimed i
 **Which rules the number covers.** The drift number is exactly the manifest: file
 presence, the recorded content of `copy` entries, the declared keys of `merge` entries,
 required sections, static guards, plus the structure guard's checks (spec
-layout, personas named, no committed scaffolding warned). Rules about *conduct* - the
+layout, roles named, job stories shaped on changed specs, no committed scaffolding warned). Rules about *conduct* - the
 same-PR spec coupling outside CI, plan/tasks removal at close, buildable substance,
 supersede-not-edit, cooldown discipline - are review-verified: honestly outside the
 number, listed in the judgment tier below. A repo can be drift 0 and still sloppy at
@@ -150,7 +150,7 @@ review; the number is the floor, not the ceiling.
 
 **What the adopted percentage does not measure (ADR-038).** It is a *structural* reading. A
 `copy` entry is compared against its recorded hash and a `merge` entry against its declared
-keys, but a **`fill-from-repo`** entry - `AGENTS.md`, `docs/personas.md`, `docs/PRODUCT.md`,
+keys, but a **`fill-from-repo`** entry - `AGENTS.md`, `docs/roles.md`, `docs/PRODUCT.md`,
 `docs/ARCHITECTURE.md`, `SECURITY.md`, `CONTRIBUTING.md` and the rest the adopter authors -
 carries neither, and cannot: the content is yours, so there is nothing to compare it against.
 Those entries score on presence. Measured on a sparse repo, six files reading `# Title` and
@@ -212,7 +212,7 @@ which is the only thing that turns a required miss into a compliant one:
   cannot be excepted by `kind: "file"`. A guard whose script is absent is *skipped* - optional
   guards legitimately are not installed - so excepting the script is exactly how a blocking
   check disappears while the run still says drift 0. Thirteen `file` exceptions once took a
-  tree with no `AGENTS.md`, no personas, no capability map and every guard script deleted to
+  tree with no `AGENTS.md`, no roster, no capability map and every guard script deleted to
   `100% adopted (32/32)`. Recording that you **changed** a guard is fine and uses
   `kind: "content"`: the guard still has to run and pass.
 - **An exception can never raise the adoption percentage.** An excepted entry stays in the

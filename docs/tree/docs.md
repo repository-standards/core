@@ -12,7 +12,7 @@ writing something down is never a question of taste and finding it is never a se
 | `PRODUCT.md` | what this is and where it is going | why does this exist |
 | `PRINCIPLES.md` | the engineering principles | what do we refuse to trade away |
 | `ARCHITECTURE.md` | structure and boundaries | how is it put together |
-| `personas.md` | the roster | who is it for |
+| `roles.md` | the roster | who uses it, with what permissions |
 | `decision-records/` | ADR and BDR | why is it like this |
 | `conventions.md` | the day-to-day rules | how do we work here |
 | `backlog.md` | intents with a definition of done | what do we still owe |

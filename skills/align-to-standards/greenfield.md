@@ -2,17 +2,17 @@
 
 The `align-to-standards` phase for an **empty or brand-new** target repo. Stand it up
 on the standard - not just scaffolding files, but **guiding what to build**. You
-interview, decide, and record as you go, so the repo starts with a vision, personas,
+interview, decide, and record as you go, so the repo starts with a vision, roles,
 decisions, and buildable specs instead of an empty skeleton. Ask before you assume; a
 greenfield start is a conversation, not a generator.
 
 The intake (step 0 in `SKILL.md`) has already asked the frame - intent, technology +
 Layer 2 consent, appetite, plan-only vs execute. This phase turns those answers into
 artifacts, and the order is deliberate: a one-breath product frame first (you cannot
-name *who* without one sentence of *what*), then **personas - and they gate everything
-downstream (ADR-006)**: no capability, spec or backlog item lands before they are
+name *who* without one sentence of *what*), then **roles - and they gate everything
+downstream (ADR-064)**: no capability, spec or backlog item lands before they are
 confirmed. The stack, though already named at intake, is recorded and scaffolded only
-after personas and product.
+after roles and product.
 
 ## Before step 1: confirm the guard landed
 
@@ -93,26 +93,29 @@ it says.
    mark the gap, and move on - a thin `PRODUCT.md` that says what is unknown beats a
    polished one that guesses.
 
-3. **Personas first - who we build for.** Do not ask this cold. You already have the
-   product sentence from step 2, so **draft a candidate roster and put it up for
-   correction**: "from what you told me I would guess three kinds of user - <A>, <B>, <C>.
-   Which of those are real, which is missing, and who wins when two of them want opposite
-   things?" People correct a wrong list far better than they generate a right one.
+3. **Roles first - who uses it, and with what permissions.** Do not ask this cold. You
+   already have the product sentence from step 2, so **draft a candidate roster and put it
+   up for correction**: "from what you told me I would guess three kinds of actor - <A>,
+   <B>, <C>. Which of those are real, which is missing, what may each of them do, and who
+   wins when two of them want opposite things?" People correct a wrong list far better than
+   they generate a right one. The `roles-write` skill owns the roster's shape.
 
-   Then fill `docs/personas.md` per persona: JTBD (the progress they are trying to make),
-   goals, pains, success signals, anti-goals - the things they explicitly do *not* need, so
-   nobody gold-plates for them. Mark the **primary** persona: the one that wins ties. Say
-   why that matters rather than asking it as a formality - it is the persona a spec cites
-   when two demands conflict, so it is a product decision with years of consequences.
+   Then fill `docs/roles.md` per role: permissions, distrust & friction (what they must see
+   before they act), jobs ("when ___, I want ___, so I can ___"), success signals,
+   anti-goals - the things they explicitly do *not* need, so nobody gold-plates for them -
+   and modes (at most three) only where a situation changes what the product must do. Mark
+   the **primary** role: the one that wins ties. Say why that matters rather than asking it
+   as a formality - it is the role a spec cites when two demands conflict, so it is a
+   product decision with years of consequences.
 
-   Record "target personas" as a **BDR** - a business decision record, the product-side
+   Record "target roles" as a **BDR** - a business decision record, the product-side
    twin of an ADR: it captures *who we chose to build for*, which someone will reasonably
    want to revisit later.
 
    **If they do not know yet, that is an answer.** A founder pre-first-customer genuinely
-   may not. Take one provisional primary persona, mark it `provisional`, add a backlog item
+   may not. Take one provisional primary role, mark it `provisional`, add a backlog item
    to revisit it after the first real users, and continue. Nothing downstream is written
-   without a persona to point at - but a provisional persona is a recorded gap, not a
+   without a role to point at - but a provisional role is a recorded gap, not a
    blocker, and blocking the whole adoption on certainty nobody has yet is the worse
    failure.
 
@@ -155,19 +158,20 @@ it says.
    boundaries, datastore, API style, auth).
 
 5. **Break into modules/capabilities (with the user).** Two lightweight techniques close the
-   loop with the personas:
+   loop with the roles:
    Both are named techniques, and the user does not need to know the names - run them as
    questions and only say what you are doing if they ask:
-   - **Impact Mapping** - goal -> persona -> impact (the behaviour change we want in them)
+   - **Impact Mapping** - goal -> role -> impact (the behaviour change we want in them)
      -> deliverable (the capability). In practice: "what has to become true for this to
      have worked? who has to do something differently for that? what would let them?"
-     This keeps every capability traceable to a goal *and* a persona, and kills features
+     This keeps every capability traceable to a goal *and* a role, and kills features
      that map to neither.
-   - **Story Mapping** - lay the primary persona's journey left-to-right; slice the first
+   - **Story Mapping** - lay the primary role's journey left-to-right; slice the first
      release as the thinnest vertical that still gets them through it. In practice: "walk
-     me through what this person does, start to finish, the first time it works - then
-     what is the least we can build so they get all the way through?"
-   Slice by domain, not by page (mirrors the spec rule); note the persona(s) each capability
+     me through what this role does, start to finish, the first time it works - then
+     what is the least we can build so they get all the way through?" A key end-to-end
+     flow becomes a journey in `docs/journeys/`, pinned to one role.
+   Slice by domain, not by page (mirrors the spec rule); note the role each capability
    serves. This map becomes the `specs/` layout and the first epics.
 
 6. **Write the first specs + business requirements.** For the initial capabilities, write
@@ -186,12 +190,14 @@ it says.
    to behavioral on a money, security or contract path to save an afternoon. Do not let a
    non-technical author read that prohibition as being about them - it is the difference
    between a wizard and a gate.
-   Each spec **names its persona(s)** and how it serves them, and states
-   the business rules and acceptance criteria. Where a decision is forced, write the
+   Each spec **names the role it serves** (and the mode, where it matters), carries 1-3
+   **job stories** drawn from that role's jobs, each with a GIVEN/WHEN/THEN scenario naming
+   the acceptance criterion that proves it, and states the business rules and acceptance
+   criteria. Where a decision is forced, write the
    **ADR/BDR** first.
 
 7. **Seed the backlog.** Turn the unspecced capabilities and known work into
-   `backlog.md` items - each naming its `cap` and `persona`.
+   `backlog.md` items - each naming its `cap` and `role`.
 
 8. **Prove it.** `node scripts/self-verify.mjs` is green (drift 0), **and the shape-only
    caveat from step 1 is gone** - if it still says no capability spec exists, step 6 did not
@@ -203,16 +209,16 @@ it says.
 ## Not this
 
 - **Not generate-then-ask.** Do not emit twenty files and hope; interview, decide, record.
-- **Not persona-free.** A capability or backlog item with no persona is parked, not built.
+- **Not role-free.** A capability or backlog item with no role is parked, not built.
 - **Not stack-first.** Intake asks the technology up front (one question round), but the
-  stack is recorded and scaffolded only after personas and product - the stack serves the
+  stack is recorded and scaffolded only after roles and product - the stack serves the
   product, not the reverse (though the paved road is the sensible default).
 - **Not big-bang.** Spec the first slice deeply; queue the rest. The repo grows spec-first.
 
 ## Related
 
-Pairs with the [brownfield phase](onboard.md) (reconstruct personas + specs from existing
-code). Uses `personas.md` (ADR-006), the decision checklist, the spec model, and the
+Pairs with the [brownfield phase](onboard.md) (reconstruct roles + specs from existing
+code). Uses `roles.md` (ADR-064), the decision checklist, the spec model, and the
 Layer 2 stack from the registry (`stacks.json`).
 
 

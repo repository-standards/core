@@ -24,8 +24,8 @@ are not yet answered here and are concretely useful:
 
 ## For whom
 
-**Standard-bearer Staszek** - the recurring-work-to-skill question (`STACK-LIFE-1`) is his:
-he is the one who would otherwise have to notice a pattern by hand and decide whether it is
+**Adopting lead** - the recurring-work-to-skill question (`STACK-LIFE-1`) is theirs:
+they are the one who would otherwise have to notice a pattern by hand and decide whether it is
 worth a skill. **Coding agent** advances too: this is a shape for the agent's own housekeeping,
 not a product feature end users see.
 

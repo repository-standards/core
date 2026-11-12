@@ -289,13 +289,13 @@ const STRUCTURE = join(process.cwd(), "standard/scripts/spec-structure.mjs");
 
 const ROSTER = "# Personas\n\n## The roster\n\n| Persona | Cares about |\n|---|---|\n| `Owner-operator Olga` | money arriving |\n";
 
-const structure = (specBody, personas = ROSTER, { noPersonas = false, extraFiles = {} } = {}) => {
+const structure = (specBody, personas = ROSTER, { noPersonas = false, extraFiles = {}, rosterFile = "roles.md" } = {}) => {
   const dir = mkdtempSync(join(tmpdir(), "spec-status-test-"));
   mkdirSync(join(dir, "specs", "payments"), { recursive: true });
   mkdirSync(join(dir, "docs"), { recursive: true });
   // A roster, so the persona check has something to hold and these cases are only about
   // the status. The spec below names one.
-  if (!noPersonas) writeFileSync(join(dir, "docs", "personas.md"), personas);
+  if (!noPersonas) writeFileSync(join(dir, "docs", rosterFile), personas);
   if (specBody !== null) writeFileSync(join(dir, "specs", "payments", "spec.md"), specBody);
   for (const [rel, body] of Object.entries(extraFiles)) {
     mkdirSync(dirname(join(dir, rel)), { recursive: true });
@@ -351,7 +351,7 @@ const STRUCTURE_CASES = [
     // nothing left to contradict.
     name: "an unfilled roster marker is not a persona a spec can serve",
     fails: true,
-    says: "no persona could be read from the roster",
+    says: "no role could be read from the roster",
     personas: "# Personas\n\n## The roster\n\n| Persona | Primary? |\n|---|---|\n| `{{PERSONA_NAME_AND_ROLE}}` | yes |\n",
     body: "# Payments\n\n**Serves:** `{{PERSONA_NAME_AND_ROLE}}`\n**Status:** in-refinement\n\n## Requirements\n\n- The system MUST capture.\n",
   },
@@ -631,14 +631,14 @@ const PERSONA_CASES = [
   {
     name: "a roster whose rows lost their backticks fails instead of emptying the check",
     fails: true,
-    says: "no persona could be read from the roster",
+    says: "no role could be read from the roster",
     personas: NO_BACKTICKS,
     body: withServes("**Serves:** `Owner-operator Olga`\n"),
   },
   {
     name: "a roster still carrying only the shipped placeholder fails the same way",
     fails: true,
-    says: "no persona could be read from the roster",
+    says: "no role could be read from the roster",
     personas: PLACEHOLDER_ROSTER,
     body: withServes("**Serves:** `Owner-operator Olga`\n"),
   },
@@ -647,13 +647,13 @@ const PERSONA_CASES = [
   {
     name: "the phrase 'for whom' no longer stands in for naming a persona",
     fails: true,
-    says: "no persona named",
+    says: "no role named",
     body: withServes("", `This section explains for whom the capability exists.\n\n${REQUIREMENTS}`),
   },
   {
     name: "an unfilled Serves placeholder is a spec that serves nobody",
     fails: true,
-    says: "no persona named",
+    says: "no role named",
     body: withServes("**Serves:** `<persona from docs/personas.md>`   <!-- required (ADR-006) -->\n"),
   },
   {
@@ -662,7 +662,7 @@ const PERSONA_CASES = [
     // filled test is `\p{L}`-based, so both halves stay honest in another language.
     name: "a roster and a Serves written in another language are checked, not waved through",
     fails: true,
-    says: "no persona named",
+    says: "no role named",
     personas: "# Persony\n\n## The roster\n\n| Persona | Zalezy jej na |\n|---|---|\n| `Wlascicielka Ola` | pieniadze |\n",
     body: withServes("**Serves:** `<角色名>`\n"),
   },
@@ -678,14 +678,14 @@ const PERSONA_CASES = [
   {
     name: "a repo with no personas.md and no capability specs is not a violation",
     fails: false,
-    says: "persona check skipped",
+    says: "role check skipped",
     noPersonas: true,
     body: null,
   },
   {
     name: "a capability spec with no roster anywhere to check it against still fails",
     fails: true,
-    says: "no docs/personas.md roster",
+    says: "no docs/roles.md roster",
     noPersonas: true,
     body: withServes("**Serves:** `Owner-operator Olga`\n"),
   },
@@ -714,7 +714,7 @@ const planStage = (files) => {
     });
   mkdirSync(join(dir, "specs", "payments"), { recursive: true });
   mkdirSync(join(dir, "docs"), { recursive: true });
-  writeFileSync(join(dir, "docs", "personas.md"), ROSTER);
+  writeFileSync(join(dir, "docs", "roles.md"), ROSTER);
   writeFileSync(join(dir, "specs", "payments", "spec.md"), withStatus("in-refinement", "## Requirements\n\n- The system MUST capture.\n"));
   git("init", "-q", "-b", "main");
   git("add", "-A");
@@ -771,6 +771,80 @@ for (const c of [...PERSONA_CASES.map((s) => ({ ...s, kind: "tree" })), ...PLAN_
   } else if (!out.includes(c.says)) {
     failures++;
     console.log(`  FAIL  ${c.name} - exit ${code} is right but the output never says "${c.says}"\n${out.replace(/^/gm, "        ")}`);
+  } else {
+    console.log(`  ok    ${c.name}`);
+  }
+}
+
+// --- job stories, each proven by a named acceptance criterion (ADR-064) ------------------
+// A spec named who it served and never said what they needed from it in a form a test could
+// hold. The section is read for its syntax only - the label, GIVEN/WHEN/THEN, `(AC: name)` -
+// so a spec in another language passes on the same terms. A full-tree run warns about a spec
+// that predates the section; a change that touches the spec is held to it.
+const AC = "## Acceptance criteria\n\n- **Capture succeeds.** GIVEN an authorised payment WHEN it is captured THEN it is settled.\n";
+const story = (lines) => `## Job stories\n\n${lines}\n\n`;
+const GOOD_STORY = "- **JS-1.** When money lands, I want it reconciled, so I can stop chasing payments.\n  - GIVEN an authorised payment WHEN it is captured THEN it shows as settled. (AC: Capture succeeds)";
+const JOB_STORY_CASES = [
+  { name: "a spec predating the section is warned about, not failed, in a full-tree run", fails: false, says: "no `## Job stories` section yet", body: withStatus("in-refinement", AC) },
+  { name: "a job story with a scenario naming a real criterion passes", fails: false, says: "OK", body: withStatus("in-refinement", story(GOOD_STORY) + AC) },
+  { name: "the criterion name is matched case-insensitively and without its full stop", fails: false, says: "OK", body: withStatus("in-refinement", story(GOOD_STORY.replace("(AC: Capture succeeds)", "(AC: capture succeeds.)")) + AC) },
+  { name: "a job story with no scenario fails", fails: true, says: "has no GIVEN/WHEN/THEN scenario", body: withStatus("in-refinement", story("- **JS-1.** When money lands, I want it reconciled, so I can stop chasing payments.") + AC) },
+  { name: "a scenario naming no criterion fails", fails: true, says: "naming no acceptance criterion", body: withStatus("in-refinement", story(GOOD_STORY.replace(" (AC: Capture succeeds)", "")) + AC) },
+  { name: "a scenario naming a criterion that does not exist fails", fails: true, says: "not a bold criterion name", body: withStatus("in-refinement", story(GOOD_STORY.replace("Capture succeeds", "Refund succeeds")) + AC) },
+  { name: "four job stories fail the cap of three", fails: true, says: "at most 3", body: withStatus("in-refinement", story([1, 2, 3, 4].map((n) => GOOD_STORY.replace("JS-1", `JS-${n}`)).join("\n")) + AC) },
+  { name: "the template's job story copied unfilled is not a job story", fails: true, says: "JS-1 is not filled in", body: withStatus("in-refinement", story("- **JS-1.** When <situation>, I want <motivation>, so I can <outcome>.\n  - GIVEN <state> WHEN <event> THEN <outcome>. (AC: <criterion name>)") + AC) },
+  { name: "a section with no labelled job story fails", fails: true, says: "no `**JS-n.**` job story", body: withStatus("in-refinement", story("When money lands, I want it reconciled.") + AC) },
+  { name: "a scenario wrapped across lines is read as one", fails: false, says: "OK", body: withStatus("in-refinement", story("- **JS-1.** When money lands, I want it reconciled,\n  so I can stop chasing payments.\n  - GIVEN an authorised payment WHEN it is captured THEN it shows\n    as settled. (AC: Capture succeeds)") + AC) },
+  { name: "a Gherkin-style scenario on several lines is read as one", fails: false, says: "OK", body: withStatus("in-refinement", story("- **JS-1.** When money lands, I want it reconciled, so I can stop chasing payments.\n  - GIVEN an authorised payment\n    WHEN it is captured\n    THEN it shows as settled. (AC: Capture succeeds)") + AC) },
+  { name: "a spec saved with CRLF line endings is read the same", fails: false, says: "OK", body: withStatus("in-refinement", story(GOOD_STORY) + AC).replace(/\n/g, "\r\n") },
+  { name: "a shell comment in a fenced block does not end the criteria section", fails: false, says: "OK", body: withStatus("in-refinement", story(GOOD_STORY) + "## Acceptance criteria\n\n```bash\n# run it\n```\n\n- **Capture succeeds.** GIVEN x WHEN y THEN z.\n") },
+  { name: "a less-than sign in prose is not a placeholder", fails: false, says: "OK", body: withStatus("in-refinement", story(GOOD_STORY.replace("it shows as settled", "it settles in < 2s")) + AC) },
+  { name: "a criterion name with parentheses and emphasis is linked", fails: false, says: "OK", body: withStatus("in-refinement", story(GOOD_STORY.replace("(AC: Capture succeeds)", "(AC: `Capture (partial) is idempotent`)")) + "## Acceptance criteria\n\n- **Capture (partial) is *idempotent*.** GIVEN x WHEN y THEN z.\n") },
+  { name: "every criterion a scenario names is checked, not only the first", fails: true, says: "AC: Nonexistent", body: withStatus("in-refinement", story(GOOD_STORY.replace("(AC: Capture succeeds)", "(AC: Capture succeeds) (AC: Nonexistent)")) + AC) },
+  { name: "a retired spec with a reason after the word is exempt", fails: false, says: "OK", body: withStatus("Retired - superseded by billing", story("- **JS-1.** placeholder <x>") + AC) },
+  { name: "a role name is matched as a word, not a substring", fails: true, says: "not on the roster", body: withStatus("in-refinement", story(GOOD_STORY) + AC).replace("`Owner-operator Olga`", "`Ghost writer`"), personas: "# Roles\n\n## The roster\n\n| Role | Primary? |\n|---|---|\n| `Host` | yes |\n" },
+  { name: "a sub-spec without its own section is not held to it", fails: false, says: "OK", body: withStatus("in-refinement", story(GOOD_STORY) + AC), extraFiles: { "specs/payments/refunds.md": "# Refunds\n\n**Serves:** `Owner-operator Olga`\n\nWhat a refund does.\n" }, quiet: "refunds.md" },
+  { name: "a legacy docs/personas.md roster is still read, with a note on how to move it", fails: false, says: "the name it had before roles", body: withStatus("in-refinement", story(GOOD_STORY) + AC), rosterFile: "personas.md" },
+];
+
+// The diff form: the spec this change touches is held to the section.
+const changeSpec = (before, after) => {
+  const dir = mkdtempSync(join(tmpdir(), "spec-job-story-test-"));
+  const git = (...a) =>
+    spawnSync("git", ["-C", dir, "-c", "user.name=t", "-c", "user.email=t@example.com", "-c", "commit.gpgsign=false", ...a], { encoding: "utf8" });
+  mkdirSync(join(dir, "specs", "payments"), { recursive: true });
+  mkdirSync(join(dir, "docs"), { recursive: true });
+  writeFileSync(join(dir, "docs", "roles.md"), ROSTER);
+  writeFileSync(join(dir, "specs", "payments", "spec.md"), before);
+  git("init", "-q", "-b", "main");
+  git("add", "-A");
+  git("commit", "-qm", "seed");
+  git("checkout", "-qb", "change");
+  writeFileSync(join(dir, "specs", "payments", "spec.md"), after);
+  git("commit", "-qam", "change");
+  const r = spawnSync("node", [STRUCTURE, "--base", "main", "--block"], { cwd: dir, encoding: "utf8" });
+  rmSync(dir, { recursive: true, force: true });
+  return { code: r.status ?? 1, out: `${r.stdout ?? ""}${r.stderr ?? ""}` };
+};
+const JOB_STORY_DIFF_CASES = [
+  { name: "a spec a change touches without job stories fails", fails: true, says: "changed without job stories", before: withStatus("in-refinement", AC), after: withStatus("in-refinement", `${AC}- **Capture fails.** GIVEN a declined card WHEN it is captured THEN nothing settles.\n`) },
+  { name: "a spec a change brings up to the section passes", fails: false, says: "OK", before: withStatus("in-refinement", AC), after: withStatus("in-refinement", story(GOOD_STORY) + AC) },
+  { name: "a change that only renames the role in Serves is not held to the section", fails: false, says: "no `## Job stories` section yet", before: withStatus("in-refinement", AC), after: withStatus("in-refinement", AC).replace("`Owner-operator Olga`", "`Owner-operator Olga` (renamed)") },
+  { name: "a retired spec a change touches is frozen, not held to the section", fails: false, says: "OK", before: withStatus("retired", AC), after: withStatus("retired", `${AC}\nSuperseded by the new billing capability.\n`) },
+];
+
+for (const c of [...JOB_STORY_CASES.map((x) => ({ ...x, kind: "tree" })), ...JOB_STORY_DIFF_CASES.map((x) => ({ ...x, kind: "diff" }))]) {
+  const { code, out } = c.kind === "diff" ? changeSpec(c.before, c.after) : structure(c.body, c.personas ?? ROSTER, c);
+  const want = c.fails ? 1 : 0;
+  if (code !== want) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - expected exit ${want}, got ${code}\n${out.replace(/^/gm, "        ")}`);
+  } else if (!out.includes(c.says)) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - exit ${code} is right but the output never says "${c.says}"\n${out.replace(/^/gm, "        ")}`);
+  } else if (c.quiet && out.includes(c.quiet)) {
+    failures++;
+    console.log(`  FAIL  ${c.name} - the output names ${c.quiet}\n${out.replace(/^/gm, "        ")}`);
   } else {
     console.log(`  ok    ${c.name}`);
   }
@@ -899,11 +973,13 @@ const total =
   TIER_CASES.length +
   PERSONA_CASES.length +
   PLAN_STAGE_CASES.length +
+  JOB_STORY_CASES.length +
+  JOB_STORY_DIFF_CASES.length +
   BRIDGE_CASES.length;
 if (failures) {
   console.log(`\nclarify-gate-test: FAIL - ${failures} of ${total} cases`);
   process.exit(1);
 }
 console.log(
-  `\nclarify-gate-test: OK - ${total} cases, a spec that is not settled cannot reach plan or tasks, claim it did, or claim a depth it does not carry, and one that serves nobody on the roster cannot pass`,
+  `\nclarify-gate-test: OK - ${total} cases, a spec that is not settled cannot reach plan or tasks, claim it did, or claim a depth it does not carry, and one that serves nobody on the roster or says nothing testable about what they need cannot pass`,
 );
