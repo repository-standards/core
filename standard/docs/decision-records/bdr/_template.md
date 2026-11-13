@@ -70,7 +70,8 @@ the whole risk.
 Required once Accepted: `scripts/decision-records-check.mjs` fails on an Accepted record that
 leaves this section out, empty, still carrying this prompt, or holding a placeholder (`TBD`, `-`,
 `n/a`). "Review only" and "nothing confirms this yet" are answers. Proposed, superseded and
-rejected records are exempt.
+rejected records are exempt. A log written in another language keeps its own heading and marks it
+here, once: `## Potwierdzenie <!-- standard: Confirmation -->`.
 
 ## What this rules out
 
@@ -92,7 +93,8 @@ policy change.
 Required: `scripts/decision-records-check.mjs` fails on any record still standing that leaves
 this section out, empty, or still carrying this prompt. Where the decision genuinely has no such
 signal, write that rather than inventing a threshold. Superseded and rejected records are
-exempt.
+exempt. In a log written in another language, mark the translated heading here:
+`## Kiedy zrewidować <!-- standard: Revisit when -->`.
 
 ## Related
 

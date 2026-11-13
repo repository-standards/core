@@ -113,6 +113,17 @@ not one of the four forms - a translated family name, an invented type - fails t
 name, non-ASCII ones included. A check that cannot find what it was written to read has to
 fail, not pass.
 
+One pair of headings is declared instead of kept in English, and on purpose. A decision log is
+the artifact most often written whole in the owner's language, and `decision-records-check`
+requires two of its sections, `## Revisit when` and `## Confirmation`. Translate one of those
+and the check does not go quiet - it fails, on every record, for a section that is right
+there. So a log in your language keeps its own heading and **declares** it, once, on that
+heading in the stream's `_template.md`: `## Kiedy zrewidować <!-- standard: Revisit when -->`.
+The check then reads the declared heading in every record of that folder, held to the same
+shape as the English one
+([ADR-065](../decision-records/ADR-065-a-decision-log-in-another-language-declares-its-required-headings.md)).
+An undeclared translation is still a missing section.
+
 ## What this buys the reader
 
 Because the split is declared and the agent can translate on demand, nobody is locked out

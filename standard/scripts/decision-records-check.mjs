@@ -30,6 +30,13 @@
 // "nothing confirms this yet" passes. What fails is a missing or empty section, the template's
 // prompt left in place, or a placeholder that defers the answer (`TBD`, `-`, `n/a`, `TODO`).
 //
+// (4) and (5) read a heading, and a log written in another language writes that heading in its
+// own language (standard ADR-065). It declares that once, in the stream's own template, on the
+// heading line: `## Kiedy zrewidować <!-- standard: Revisit when -->`. Every record in that
+// folder is then read under the declared heading as well as the English one, and the template's
+// own text under it counts as the prompt left in place. An undeclared translation is still a
+// missing section: the check fails, it never passes for not finding what it reads.
+//
 // Layout-agnostic on purpose: it works against the shipped `adr/` + `bdr/` split (each with
 // its own README, standard ADR-005) and against a flat `docs/decision-records/` with one README
 // covering both prefixes (this repo's own layout - R5 requires the two streams, never a
@@ -181,9 +188,12 @@ const BINDING_STATUS = /^\s*accepted\b/i;
 const PLACEHOLDER =
   /^(?:tbd|tbc|tba|todo|tk|n\/?a|-+|\.{3}|…|\?+|to be (?:decided|determined|defined|confirmed|added)|later|pending)$/i;
 
-// A `##` section, or a `###` one where MADR nests it (`### Confirmation` under the outcome).
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// A `##` section, or a `###` one where MADR nests it (`### Confirmation` under the outcome). A
+// comment on the heading line is not part of the title: a record copied from a template that
+// declares its heading carries the declaration along.
 const sectionBody = (text, title, levels = "##") => {
-  const heading = new RegExp(`^(${levels})\\s+${title}\\s*$`, "m").exec(text);
+  const heading = new RegExp(`^(${levels})\\s+${escapeRe(title)}\\s*(?:<!--.*?-->\\s*)?$`, "m").exec(text);
   if (!heading) return null;
   // Body runs to the next heading of the same or a higher level. HTML comments are guidance,
   // not content.
@@ -191,7 +201,34 @@ const sectionBody = (text, title, levels = "##") => {
   const next = new RegExp(`^#{1,${heading[1].length}}\\s`, "m").exec(rest);
   return (next ? rest.slice(0, next.index) : rest).replace(/<!--[\s\S]*?-->/g, "").trim();
 };
+const firstSection = (text, titles, levels) => {
+  for (const title of titles) {
+    const body = sectionBody(text, title, levels);
+    if (body !== null) return body;
+  }
+  return null;
+};
 const unemphasised = (s) => s.replace(/[*_`]/g, "").trim();
+
+// The headings a stream's templates declare for the two required sections, and the first line
+// of each template's text under them - that stream's prompt. A template is `_template.md`, or
+// `_template-<stream>.md` in a flat log carrying both streams.
+const DECLARED = /^#{2,3}\s+(.+?)\s*<!--\s*standard:\s*(revisit when|confirmation)\s*-->\s*$/gim;
+const localHeadings = (dir) => {
+  const found = { revisit: [], confirmation: [], revisitPrompts: [], confirmationPrompts: [] };
+  for (const name of readdirSync(dir).filter((e) => /^_template(?:-[\w-]+)?\.md$/i.test(e))) {
+    const text = readFileSync(join(dir, name), "utf8");
+    for (const [, title, section] of text.matchAll(DECLARED)) {
+      const key = section.toLowerCase() === "revisit when" ? "revisit" : "confirmation";
+      found[key].push(title);
+      // Only a line of several words is distinctive enough to be read as a prompt.
+      const first = (sectionBody(text, title, "###?") ?? "").split("\n").map((l) => l.trim()).find(Boolean);
+      if (first && first.split(/\s+/).length >= 3) found[`${key}Prompts`].push(first);
+    }
+  }
+  return found;
+};
+const named = (titles) => titles.map((t) => `\`## ${t}\``).join(" or ");
 
 for (const { dir, prefixes } of streams) {
   const readme = join(dir, "README.md");
@@ -244,6 +281,11 @@ for (const { dir, prefixes } of streams) {
     for (const row of rs) rowNoFile.push({ dir, key, row });
   }
 
+  const local = localHeadings(dir);
+  const revisitTitles = ["Revisit when", ...local.revisit];
+  const confirmationTitles = ["Confirmation", "Compliance", ...local.confirmation];
+  const revisitPrompts = [...TEMPLATE_PROMPTS, ...local.revisitPrompts];
+  const confirmationPrompts = [...CONFIRMATION_PROMPTS, ...local.confirmationPrompts];
   for (const names of byKey.values()) {
     for (const name of names) {
       const text = readFileSync(join(dir, name), "utf8");
@@ -253,20 +295,20 @@ for (const { dir, prefixes } of streams) {
         /^status:\s*["']?(.+?)["']?\s*$/m.exec(/^---\r?\n([\s\S]*?)\r?\n---/.exec(text)?.[1] ?? "")?.[1] ??
         "";
       if (EXEMPT_STATUS.test(status)) continue;
-      const signal = sectionBody(text, "Revisit when");
-      if (signal === null) noSignal.push({ dir, name, why: "has no `## Revisit when` section" });
+      const signal = firstSection(text, revisitTitles, "##");
+      if (signal === null) noSignal.push({ dir, name, why: `has no ${named(revisitTitles)} section` });
       else if (!signal) noSignal.push({ dir, name, why: "has an empty `## Revisit when` section" });
-      else if (TEMPLATE_PROMPTS.some((prompt) => signal.includes(prompt)))
+      else if (revisitPrompts.some((prompt) => signal.includes(prompt)))
         noSignal.push({ dir, name, why: "still carries the template's prompt text under `## Revisit when`" });
 
       if (!BINDING_STATUS.test(unemphasised(status))) continue;
       // `Compliance` is the same section under the name some MADR-derived logs use.
-      const confirmation =
-        sectionBody(text, "Confirmation", "###?") ?? sectionBody(text, "Compliance", "###?");
+      const confirmation = firstSection(text, confirmationTitles, "###?");
       const answer = unemphasised(confirmation ?? "");
-      if (confirmation === null) noConfirmation.push({ dir, name, why: "has no `## Confirmation` section" });
+      if (confirmation === null)
+        noConfirmation.push({ dir, name, why: `has no ${named(["Confirmation", ...local.confirmation])} section` });
       else if (!answer) noConfirmation.push({ dir, name, why: "has an empty `## Confirmation` section" });
-      else if (CONFIRMATION_PROMPTS.some((prompt) => confirmation.includes(prompt)))
+      else if (confirmationPrompts.some((prompt) => confirmation.includes(prompt)))
         noConfirmation.push({ dir, name, why: "still carries the template's prompt text under `## Confirmation`" });
       else if (PLACEHOLDER.test(answer) || PLACEHOLDER.test(answer.replace(/[.!:]+$/, "")))
         noConfirmation.push({ dir, name, why: `answers \`## Confirmation\` with the placeholder "${answer}"` });
@@ -304,8 +346,12 @@ if (noSignal.length) {
     "     Where a decision is structural and genuinely has no such signal, say that in the section: an honest 'nothing",
   );
   console.error(
-    "     reopens this except X' is a real answer, an invented threshold is not. Superseded and rejected records are exempt.)",
+    "     reopens this except X' is a real answer, an invented threshold is not. Superseded and rejected records are exempt.",
   );
+  console.error(
+    "     A log that writes the section under a heading in its own language declares it once, on that heading in the folder's",
+  );
+  console.error("     _template.md: `## <your heading> <!-- standard: Revisit when -->`.)");
 }
 
 if (noConfirmation.length) {
@@ -317,7 +363,8 @@ if (noConfirmation.length) {
   console.error(
     "     does yet, say so plainly: 'review only' or 'nothing confirms this yet' is a real answer, a placeholder is not.",
   );
-  console.error("     Only Accepted records are checked.)");
+  console.error("     Only Accepted records are checked. A heading in the log's own language is declared on that heading in the");
+  console.error("     folder's _template.md: `## <your heading> <!-- standard: Confirmation -->`.)");
 }
 
 problems += dupFiles.length + dupRows.length + fileNoRow.length + rowNoFile.length + noSignal.length + noConfirmation.length;

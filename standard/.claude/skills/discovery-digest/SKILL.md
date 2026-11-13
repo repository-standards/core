@@ -118,7 +118,9 @@ puts it in front of them.
    field: those cannot be tripped by this step at all, and are worth a line in the
    report rather than silence. Pull each record's
    `Revisit when` line across `docs/decision-records/` (or wherever this repo's
-   records live) and check the new entry's text against it - a textual match ("10k
+   records live) - in a log written in another language, also the heading its
+   `_template.md` marks `<!-- standard: Revisit when -->` (standard ADR-065) - and
+   check the new entry's text against it - a textual match ("10k
    customers", "self-hosting", a named competitor) is a hit; this is a grep, not a
    semantic read of every record. On a hit, add a row under a `## Revisit signals
    hit` section (create it if this dossier has never needed one) naming the record

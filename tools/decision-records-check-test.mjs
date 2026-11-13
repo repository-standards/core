@@ -447,6 +447,77 @@ check("a front-matter `status: Proposed` record is exempt", {
   code: 0,
 });
 
+// A log written in another language (standard ADR-065). Found adopting into a repo whose 38
+// records are Polish throughout: 29 of 48 findings were sections present under `## Kiedy
+// zrewidować` and `## Potwierdzenie`. The stream's template declares the heading on its own
+// heading line; an undeclared translation stays a missing section.
+const plTemplate =
+  "# ADR-NNN: <tytuł>\n\n## Potwierdzenie <!-- standard: Confirmation -->\n\nJak w praktyce sprawdzamy, że decyzja jest przestrzegana: test albo guard.\n\n" +
+  "## Kiedy zrewidować <!-- standard: Revisit when -->\n\nKonkretne sygnały, które unieważniłyby tę decyzję (liczby, skala, zdarzenia).\n";
+const plRec = ({ status = "Accepted", revisit = "Gdy ruch przekroczy 10 tys. wizyt dziennie.", confirmation = "Test `tenant-scope.test.ts` w CI." } = {}) =>
+  `# ADR-001\n\n| | |\n| --- | --- |\n| **Status** | ${status} |\n\n` +
+  (confirmation === null ? "" : `## Potwierdzenie\n\n${confirmation}\n\n`) +
+  (revisit === null ? "" : `## Kiedy zrewidować\n\n${revisit}\n`);
+const plCase = (name, { template = plTemplate, record, code, expect, stream = "adr" }) =>
+  check(name, {
+    files: {
+      [`docs/decision-records/${stream}/README.md`]: adrReadme(row("001", `${stream.toUpperCase()}-001-first.md`)),
+      [`docs/decision-records/${stream}/${stream.toUpperCase()}-001-first.md`]: record,
+      ...(template === null ? {} : { [`docs/decision-records/${stream}/_template.md`]: template }),
+    },
+    code,
+    expect,
+  });
+
+plCase("a localized heading the stream's template declares is the section", { record: plRec(), code: 0, expect: ["OK"] });
+plCase("the same localized headings undeclared are still missing sections, with the way to declare them", {
+  template: null,
+  record: plRec(),
+  code: 1,
+  expect: ["has no `## Revisit when` section", "has no `## Confirmation` section", "<!-- standard: Revisit when -->"],
+});
+plCase("a declared heading the record does not have is still missing, and both names are given", {
+  record: plRec({ revisit: null }),
+  code: 1,
+  expect: ["has no `## Revisit when` or `## Kiedy zrewidować` section"],
+});
+plCase("a declared heading with nothing under it is empty", { record: plRec({ confirmation: "<!-- uzupełnij -->" }), code: 1, expect: ["empty `## Confirmation` section"] });
+plCase("a declared heading still holding a placeholder is not an answer", { record: plRec({ confirmation: "TBD" }), code: 1, expect: ["with the placeholder"] });
+plCase("the localized template's own prompt left in place is not an answer", {
+  record: plRec({ revisit: "Konkretne sygnały, które unieważniłyby tę decyzję (liczby, skala, zdarzenia)." }),
+  code: 1,
+  expect: ["still carries the template's prompt text under `## Revisit when`"],
+});
+plCase("a record copied from the template keeps the declaration on its heading and is read", {
+  record: plRec().replace("## Kiedy zrewidować", "## Kiedy zrewidować <!-- standard: Revisit when -->"),
+  code: 0,
+});
+plCase("a declared heading is matched literally, not as a pattern", {
+  template: "# BDR\n\n## Potwierdzenie <!-- standard: Confirmation -->\n\nx\n\n## Skąd (i kiedy) wiedzieć, że to był błąd? <!-- standard: Revisit when -->\n\ny\n",
+  record: plRec({ revisit: null }) + "## Skąd (i kiedy) wiedzieć, że to był błąd?\n\nGdy mniej niż 5% odbiorców kupi drugi raz.\n",
+  stream: "bdr",
+  code: 0,
+});
+check("a declaration in one stream's template does not reach the other stream", {
+  files: {
+    "docs/decision-records/adr/README.md": adrReadme(row("001", "ADR-001-first.md")),
+    "docs/decision-records/adr/ADR-001-first.md": plRec(),
+    "docs/decision-records/adr/_template.md": plTemplate,
+    "docs/decision-records/bdr/README.md": bdrReadme(row("001", "BDR-001-first.md")),
+    "docs/decision-records/bdr/BDR-001-first.md": plRec().replace("# ADR-001", "# BDR-001"),
+  },
+  code: 1,
+  expect: ["bdr/BDR-001-first.md has no `## Revisit when` section"],
+});
+check("a flat log declares through `_template-<stream>.md`", {
+  files: {
+    "docs/decision-records/README.md": adrReadme(row("001", "ADR-001-first.md")),
+    "docs/decision-records/ADR-001-first.md": plRec(),
+    "docs/decision-records/_template-adr.md": plTemplate,
+  },
+  code: 0,
+});
+
 // The shipped skeleton itself, verbatim - a fresh degit must not trip its own guard.
 {
   const dir = fixture({});

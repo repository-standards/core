@@ -209,7 +209,7 @@
       "profile": "core",
       "since": "0.9.0",
       "rule": "R5",
-      "sha256": "425adfc3ee376c0e7f7f17701c175cd0be6a8d73370181c9800191df3e4973c7"
+      "sha256": "d8acb052c720ff14dfeb32cc475e30e7993a7c3b91e324e9cbeed4ea07a3a0a6"
     },
     {
       "path": "scripts/adoption-gates.mjs",
@@ -236,7 +236,7 @@
         "add-to-backlog/SKILL.md": "7ab8f71de7a7589989080ed555937086ca8da63ef5f0f7ac69aaad7faef8d375",
         "adr-write/SKILL.md": "927f710d7fc157f80a2c2242258b961d9e8802117f605b5e278d4093b59bcdfa",
         "bdr-write/SKILL.md": "228a3238e6aa360fadb53e12f84af04839578268b3cdfaefbaedee52551da88a",
-        "discovery-digest/SKILL.md": "775a44a5177ec17461bc4759a159bf5b377c5f1086a6b6b527f4dfd1960403aa",
+        "discovery-digest/SKILL.md": "004f67831439bae9c2fa33bc77161e32fac7818d1d3dd3b99787b240f95c73dc",
         "idea-write/SKILL.md": "d91731a22b43b2f6e742ba4ece739c6838d77aea408e31b83d41f12b49ebf61d",
         "pre-pr-review/SKILL.md": "aa43d020310c9c684720c58ec9e0efbeca4abf78fcce23b7dc2ec78544a0ce4f",
         "product-write/SKILL.md": "221180c78a05056e2faf4a0105e51fb06f452632c945c022a7cd26c65d2fee1b",

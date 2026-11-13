@@ -30,6 +30,13 @@ the open-marker family (`[NEEDS CLARIFICATION: ...]`, `[NEEDS DECISION: ...]`,
 make a check speak your language, it makes the check find nothing and report PASS - which
 is why the clarify gate fails on a marker-shaped token it does not recognise.
 
+One pair of headings is **declared, never silently translated**: the two sections
+`decision-records-check` requires of a decision record, `## Revisit when` and
+`## Confirmation`. A log written in another language keeps its own heading and marks it once,
+on that heading in the stream's `_template.md` - `## Kiedy zrewidować <!-- standard: Revisit when -->`
+(standard ADR-065). Undeclared, a translated heading there fails as a missing section; it
+never passes.
+
 Pick once, record it in `AGENTS.md`, and keep it consistent within an artifact type.
 The reasoning behind the default, the cases where your own language wins, and how to draw
 the boundary when a repo carries more than one: the standard's
