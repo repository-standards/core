@@ -17,7 +17,7 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
-## Unreleased
+## 1.0.24 - 2026-11-13
 
 ### A rename confined to a multi-line `**Serves:**` value is still only a rename (2026-11-13)
 
