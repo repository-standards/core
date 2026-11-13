@@ -48,6 +48,24 @@ prose it is a word. A path that resolves from neither place still fails. Every a
 still read on every run, `--base` included: a change that renames an old row's target is the
 one that rots the archive. Fourteen new cases in `tools/backlog-archive-check-test.mjs`.
 
+### A decision log in another language declares the two headings the check reads (2026-11-13)
+
+`decision-records-check` found `## Revisit when` and `## Confirmation` by their English names
+only. In a repo whose records are Polish throughout, 29 of 48 findings were sections the
+records have, under `## Kiedy zrewidować` and `## Potwierdzenie`; the 19 records that really
+lack a section were buried among them.
+
+A stream's own template now declares its heading once, on the heading line -
+`## Kiedy zrewidować <!-- standard: Revisit when -->`, `## Potwierdzenie <!-- standard: Confirmation -->`
+(`_template.md`, or `_template-<stream>.md` in a flat log). Every record in that folder is read
+under the declared heading as well as the English one, held to the same shape (missing, empty,
+placeholder), and the template's own first line under it counts as the prompt left in place.
+An undeclared translation is still a missing section, and the failure now says how to declare
+it. ADR-065 records the call and why it covers only these two sections: there a translated
+heading fails instead of passing, while the spec syntax the conventions list stays as written.
+Both templates, the conventions, the working-language guide and `discovery-digest` say so; ten
+new cases in `tools/decision-records-check-test.mjs`.
+
 ## 1.0.23 - 2026-11-12
 
 ### A Gate artifact that reached history before the guard can be cleared by a signed review (2026-11-12)
