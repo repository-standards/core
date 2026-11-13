@@ -17,6 +17,19 @@ changes, MINOR = new standards/modules, PATCH = fixes/clarifications.
 > reasoning behind them are
 > [`docs/open-questions/genesis-history.md`](docs/open-questions/genesis-history.md).
 
+## Unreleased
+
+### A rename confined to a multi-line `**Serves:**` value is still only a rename (2026-11-13)
+
+`spec-structure --base` does not hold a spec to the job-story section when the change only
+renames the role in `**Serves:**` - the migration ADR-064 asks of every adopting repo. The
+exemption set aside only the field's first line, while the roster check reads the value to its
+end, so a value naming two roles over two lines, both renamed, counted as a change to the
+spec: adopting 1.0.23 into a repo migrated that way demanded job stories from seven specs. The
+field is now one span, read by one helper for both checks. Two cases in
+`tools/clarify-gate-test.mjs`: the multi-line rename passes, and the same rename plus a change
+below the field is still held to the section.
+
 ## 1.0.23 - 2026-11-12
 
 ### A Gate artifact that reached history before the guard can be cleared by a signed review (2026-11-12)
