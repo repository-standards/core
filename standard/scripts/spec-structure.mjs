@@ -130,6 +130,20 @@ const isCapSpec = (f) =>
 // field with the same string. One answer, both readers.
 const isPlaceholder = (s) => s.includes("<") || s.includes("{{");
 
+// The whole `**Serves:**` field as the lines [at, end): its own line and every line that
+// continues it. A spec routinely serves two or three roles and says how it serves each, and a
+// value long enough to say that wraps. The continuation stops at a blank line, the next
+// `**Field:**`, a heading, a list or a table, which keeps the rest of the spec out of the
+// value. One reader for the roster check and for the rename exemption in check 6, so the two
+// cannot disagree about where the field ends.
+const servesSpan = (lines) => {
+  const at = lines.findIndex((l) => /\*\*Serves:\*\*/i.test(l));
+  if (at < 0) return null;
+  let end = at + 1;
+  while (end < lines.length && lines[end].trim() && !/^\s*(\*\*|#{1,6}\s|\||[-*+]\s|\d+[.)]\s)/.test(lines[end])) end++;
+  return { at, end };
+};
+
 const roleless = []; // names nobody at all
 const offRoster = []; // names somebody the roster has never heard of
 let rosterMissing = false; // capability specs exist but no roster - the R10 gate has nothing to hold
@@ -188,21 +202,14 @@ if (rosterPath) {
   for (const f of hasRosterHeading && !rosterUnreadable ? capSpecs : []) {
     let body;
     try { body = readFileSync(f, "utf8"); } catch { continue; }
-    // The whole `**Serves:**` value: all of its names, and all of its lines. A spec routinely
-    // serves two or three roles and says how it serves each, so reading only the first
-    // backticked name would make the rest invisible - and a value long enough to say that is
-    // a value long enough to wrap, so it is read on to the lines that continue it. Stopping
-    // at the blank line, next `**Field:**`, heading, list or table keeps the rest of the spec
-    // out of the value: the point of scoping to the field is that the field is the claim.
+    // The whole `**Serves:**` value: all of its names, and all of its lines (servesSpan). Reading
+    // only the first backticked name would make the rest invisible; the point of scoping to
+    // the field is that the field is the claim.
     const lines = body.split("\n");
-    const at = lines.findIndex((l) => /\*\*Serves:\*\*/i.test(l));
+    const span = servesSpan(lines);
     let claim = "";
-    if (at >= 0) {
-      claim = lines[at].replace(/^[\s\S]*?\*\*Serves:\*\*/i, "");
-      for (const l of lines.slice(at + 1)) {
-        if (!l.trim() || /^\s*(\*\*|#{1,6}\s|\||[-*+]\s|\d+[.)]\s)/.test(l)) break;
-        claim += ` ${l}`;
-      }
+    if (span) {
+      claim = [lines[span.at].replace(/^[\s\S]*?\*\*Serves:\*\*/i, ""), ...lines.slice(span.at + 1, span.end)].join(" ");
       claim = claim.replace(/<!--[\s\S]*?(-->|$)/g, "").replace(/`/g, "").trim();
     }
     // `<role from docs/roles.md>` is the shipped template's placeholder - the question,
@@ -473,11 +480,16 @@ const jobStoryProblems = (body) => {
 // A change that touches a spec only to rename the role in `**Serves:**` - the migration
 // standard ADR-064 asks every adopting repo for - is not a change to what the spec says, so it is not
 // the change that has to bring the spec up to the section. The before-side comes from the same
-// ref the diff was taken against.
+// ref the diff was taken against. The whole field is set aside on both sides, every line of it,
+// so a multi-line value whose roles were renamed is still only a rename.
 const blobAt = (rev, f) => {
   try { return execSync(`${GIT} cat-file blob ${JSON.stringify(`${rev}:${f}`)}`, { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] }); } catch { return null; }
 };
-const withoutServes = (t) => t.replace(/\r\n?/g, "\n").replace(/^\*\*Serves:\*\*.*$/m, "");
+const withoutServes = (t) => {
+  const lines = t.replace(/\r\n?/g, "\n").split("\n");
+  const span = servesSpan(lines);
+  return span ? [...lines.slice(0, span.at), ...lines.slice(span.end)].join("\n") : lines.join("\n");
+};
 const onlyServesChanged = (f, body) => {
   const before = staged ? blobAt("HEAD", f) : base ? blobAt(sh(`${GIT} merge-base ${base} HEAD`), f) : null;
   return before !== null && withoutServes(before) === withoutServes(body);
