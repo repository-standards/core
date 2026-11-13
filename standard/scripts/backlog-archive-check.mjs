@@ -14,6 +14,13 @@
 //   2. empty `where`         - "a row that cannot be relocated was not done", made mechanical.
 //   3. `where` points nowhere - a path named in the cell that is not in the repository. Same
 //      class of failure decision-records-check reports for an index row citing a missing file.
+//      The cell is markdown and is resolved the way its reader resolves it: a link target, or
+//      any path, from the archive's own directory, and a path written from the repository root
+//      as well. Only a token shaped like a path this repository could hold is a pointer - a
+//      link target, a path ending in a file name or a `/`, or one starting at a directory that
+//      exists - so a module specifier (`next/image`, `@scope/pkg`) or a pair of ids
+//      (`ADR-008/ADR-016`) is prose. A bare file name in a code span says what a file is called,
+//      not where it is, so it passes when a file of that name exists anywhere in the repository.
 //   4. in both files         - the one-place invariant sprint-guard asserts between the pool
 //      and a sprint, extended to the pool and the archive.
 //
@@ -27,6 +34,11 @@
 // to appear; skipping there would exempt every repo that has never archived, which is every
 // repo the rule is written for. It skips where no base ref is given (nothing to diff) or where
 // the pool itself is absent.
+//
+// Checks 2-4 read every archived row on every run, `--base` or not, including rows archived
+// before this guard existed. A pointer that stops resolving because a later change renamed its
+// target is the rot check 3 exists to catch, and that change is the one to fail; judging only
+// the rows a diff touches would let it through.
 //
 // What this does NOT check: whether the destination actually captures the finding. That is
 // substance, and standard ADR-038 settled that this project measures structure and leaves substance to
@@ -42,6 +54,8 @@
 
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { dirname, isAbsolute, join, normalize } from "node:path";
+import { globToRegExp } from "./lib/glob.mjs";
 
 const args = process.argv.slice(2);
 const block = args.includes("--block");
@@ -156,6 +170,107 @@ const walk = (dir, acc = []) => {
   return acc;
 };
 
+/* ---------- what a `where` cell points at (check 3) ---------- */
+
+// Every path in the repository, directories included, read once and only when a bare name or a
+// glob needs it. git's list honours the ignore rules; a tree with no git is walked instead.
+let repoPaths = null;
+const allPaths = () => {
+  if (repoPaths) return repoPaths;
+  let files;
+  try {
+    files = execSync("git -c core.quotePath=false ls-files -z --cached --others --exclude-standard", {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+      maxBuffer: 1 << 28,
+    }).split("\0").filter(Boolean);
+  } catch {
+    const each = (dir, acc = []) => {
+      for (const e of readdirSync(dir)) {
+        if (e === ".git" || e === "node_modules") continue;
+        const p = dir === "." ? e : `${dir}/${e}`;
+        if (isDir(p)) each(p, acc);
+        else acc.push(p);
+      }
+      return acc;
+    };
+    files = each(".");
+  }
+  repoPaths = new Set();
+  for (const f of files) {
+    const parts = f.split("/");
+    for (let i = 1; i <= parts.length; i++) repoPaths.add(parts.slice(0, i).join("/"));
+  }
+  return repoPaths;
+};
+let baseNames = null;
+const nameExists = (name) => {
+  baseNames ??= new Set([...allPaths()].map((p) => p.slice(p.lastIndexOf("/") + 1)));
+  return baseNames.has(name);
+};
+
+// Ends in an extension that starts with a letter, so `1.0.23` is a version and not a file.
+const FILE_SHAPED = /\.\p{L}[\p{L}\p{N}_-]*$/u;
+const isDir = (p) => existsSync(p) && statSync(p).isDirectory();
+
+// The archive's own directory first, as a markdown link resolves; the repository root second.
+// Anything that normalises to outside the repository is not in it.
+const candidates = (archiveDir, p) =>
+  [join(archiveDir, p), p.replace(/^\/+/, "")]
+    .map((c) => normalize(c))
+    .filter((c) => !isAbsolute(c) && c !== ".." && !c.startsWith("../"));
+const resolves = (archiveDir, p) =>
+  candidates(archiveDir, p).some((c) => {
+    if (!c.includes("*")) return existsSync(c);
+    const re = globToRegExp(c.replace(/\/$/, ""));
+    return [...allPaths()].some((x) => re.test(x));
+  });
+
+// The pointers a cell makes, each { path, bare }. Link targets are pointers whatever their
+// shape. In the rest of the cell, a token is a pointer when it is shaped like a path; a bare
+// file name counts only inside a code span, where it is plainly a file and not a word.
+const pointersIn = (archiveDir, where) => {
+  const out = [];
+  let text = where.replace(/\b[a-z][a-z0-9+.-]*:\/\/\S+/gi, " ");
+  text = text.replace(/\]\(\s*([^)\s]+)(?:\s+"[^"]*")?\s*\)/g, (_, target) => {
+    if (!/^[a-z][a-z0-9+.-]*:/i.test(target)) {
+      let path = target.replace(/[#?].*$/, "");
+      try { path = decodeURIComponent(path); } catch { /* keep it as written */ }
+      if (path) out.push({ path, bare: false });
+    }
+    return "]";
+  });
+  const spans = [];
+  text = text.replace(/(`+)([^`]+?)\1/g, (_, _ticks, code) => {
+    spans.push(code);
+    return " ";
+  });
+  for (const [chunk, inCode] of [[text, false], ...spans.map((s) => [s, true])]) {
+    for (const raw of chunk.match(/[\p{L}\p{N}_.@*/-]+/gu) ?? []) {
+      // Emphasis around a token is markup; an unpaired `*` is a glob and stays.
+      const lead = /^[*_]*/.exec(raw)[0].length;
+      const trail = /[*_]*$/.exec(raw)[0].length;
+      const cut = Math.min(lead, trail);
+      const token = raw.slice(cut, raw.length - cut).replace(/[.,;:]+$/, "");
+      if (!token || token.includes("@")) continue; // a scoped package, a pinned version, an address
+      const segs = token.split("/").filter(Boolean);
+      if (!segs.length) continue;
+      if (segs.length === 1) {
+        if (inCode && (FILE_SHAPED.test(segs[0]) || token.endsWith("/"))) out.push({ path: segs[0], bare: true });
+        continue;
+      }
+      const shaped =
+        token.endsWith("/") ||
+        FILE_SHAPED.test(segs.at(-1)) ||
+        segs[0] === "." ||
+        segs[0] === ".." ||
+        candidates(archiveDir, segs[0]).some(isDir);
+      if (shaped) out.push({ path: token, bare: false });
+    }
+  }
+  return out;
+};
+
 const problems = [];
 const pool = firstThatExists(POOLS);
 const archivePath = firstThatExists(ARCHIVES);
@@ -185,14 +300,16 @@ if (archivePath) {
     // A URL is dropped whole before tokenizing, not filtered afterwards: `https://host/a/b`
     // tokenizes into a perfectly convincing relative path once the scheme is off the front,
     // and the guard then demands a directory named after somebody's git host.
-    const local = where.replace(/\b[a-z][a-z0-9+.-]*:\/\/\S+/gi, " ");
-    for (const token of local.match(/[\w.@-]+\/[\w./@-]+|[\w-]+\.[a-z]{2,4}\b/gi) ?? []) {
-      const path = token.replace(/[.,;:]+$/, "");
-      if (!existsSync(path)) {
-        problems.push(
-          `${archivePath}: ${id} points its \`where\` at ${path}, which is not in this repository. A pointer that does not resolve is the archive rotting quietly, which is worse than no archive.`,
-        );
-      }
+    // Read from the cell as written: `unwrap` takes the backticks off its ends, and those are
+    // what tell a code span from prose.
+    const archiveDir = dirname(archivePath);
+    for (const { path, bare } of pointersIn(archiveDir, row.where)) {
+      if (resolves(archiveDir, path) || (bare && nameExists(path))) continue;
+      problems.push(
+        bare
+          ? `${archivePath}: ${id} names ${path} in its \`where\`, and no file or directory of that name is in this repository. A pointer that does not resolve is the archive rotting quietly, which is worse than no archive.`
+          : `${archivePath}: ${id} points its \`where\` at ${path}, which is not in this repository (read from ${archiveDir === "." ? "the repository root" : `${archiveDir}/, where the archive is, and from the repository root`}). A pointer that does not resolve is the archive rotting quietly, which is worse than no archive.`,
+      );
     }
   }
 

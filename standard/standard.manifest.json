@@ -575,7 +575,7 @@
       "profile": "core",
       "since": "0.9.8",
       "rule": "R15",
-      "sha256": "e9b0e2a3c5d09eb807e1fb889f6be0ba9a56bd38582f60a9cc00df23a0c41405"
+      "sha256": "891caf5004808962039441c07118478f23de97ffb64ab9d74e1d87e46c8b9692"
     },
     {
       "path": "scripts/generate-dashboard",
