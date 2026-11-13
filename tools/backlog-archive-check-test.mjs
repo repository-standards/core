@@ -30,9 +30,14 @@ const archive = (rows) =>
     .map((r) => `| ${r.id} | ${r.title ?? "Do the thing"} | done | ${r.where ?? ""} |`)
     .join("\n")}\n`;
 
+// A `null` body deletes the file, so a change can remove what the base commit had.
 const write = (dir, files) => {
   for (const [rel, body] of Object.entries(files)) {
     const abs = join(dir, rel);
+    if (body === null) {
+      rmSync(abs, { force: true });
+      continue;
+    }
     mkdirSync(join(abs, ".."), { recursive: true });
     writeFileSync(abs, body);
   }
@@ -184,6 +189,66 @@ const expect = (name, { code, out }, wantCode, wantText) => {
   });
   dirs.push(dir);
   expect("a row in both files fails", run(dir), 1, "is in both");
+}
+
+/* ---------- 3: what a `where` cell points at ---------- */
+
+// The archive lives at docs/backlog-archive.md, so a markdown link in it resolves from docs/ -
+// the way the rendered link does. Every pointer below was a failure when the cell was read
+// from the repository root and tokenized as if every slash were a path.
+const pointerRepo = (where, extra = {}) =>
+  fixture({
+    "backlog.md": pool([{ id: "PAY-1" }]),
+    "specs/cms/spec.md": "# CMS\n",
+    "docs/dashboard.md": "# Dashboard\n",
+    "docs/facts.json": "{}\n",
+    "docs/decision-records/adr/ADR-022-real.md": "# ADR-022\n",
+    "apps/console/tests/e2e/auth.setup.ts": "\n",
+    ".claude/skills/spec-plan/SKILL.md": "# plan\n",
+    "docs/backlog-archive.md": archive([{ id: "INV-3", where }]),
+    ...extra,
+  });
+
+for (const [name, where] of [
+  ["a link relative to the archive's directory resolves", "[`specs/cms/spec.md`](../specs/cms/spec.md) - the bucket"],
+  ["a link to a sibling of the archive resolves", "[`docs/dashboard.md`](dashboard.md) and the [`facts.json`](facts.json) fact"],
+  ["a link into a folder beside the archive resolves", "[ADR-022](decision-records/adr/ADR-022-real.md) - the scope"],
+  ["a link target's anchor is not part of its path", "[open questions](../specs/cms/spec.md#open-questions)"],
+  ["a module specifier is not a path", "moved the `<img>` tags to `next/image` and ran `pnpm --filter @my-brand/db reconcile`"],
+  ["a pair of ids is not a path", "the decision and what it overrides in ADR-008/ADR-016, and/or later"],
+  ["a glob resolves when something matches it", "`.claude/skills/spec-*` for the engine"],
+  ["a bare file name in a code span names a file somewhere in the repository", "`auth.setup.ts` signs in"],
+  ["a bare file name in prose is a word, not a pointer", "the Next.js optimizer, wired in next.config.ts"],
+]) {
+  const dir = pointerRepo(where);
+  dirs.push(dir);
+  expect(name, run(dir), 0, "OK");
+}
+
+for (const [name, where, text] of [
+  ["a link to a file that is not there still fails", "[gone](../specs/gone/spec.md)", "at ../specs/gone/spec.md"],
+  ["a path that resolves from neither the archive nor the root fails", "`tools/blog.ts` beside the server", "at tools/blog.ts"],
+  ["a glob nothing matches fails", "`.claude/skills/nothing-*`", "at .claude/skills/nothing-*"],
+  ["a bare file name no file in the repository carries fails", "`session.test.ts` pins it", "names session.test.ts"],
+]) {
+  const dir = pointerRepo(where);
+  dirs.push(dir);
+  expect(name, run(dir), 1, text);
+}
+
+// Rows archived before the guard existed are read like any other row, in `--base` mode too: a
+// change that renames a file an old row points at is the change that rots the archive.
+{
+  const dir = history(
+    {
+      "backlog.md": pool([{ id: "PAY-1" }]),
+      "specs/cms/spec.md": "# CMS\n",
+      "docs/backlog-archive.md": archive([{ id: "INV-3", where: "[spec](../specs/cms/spec.md)" }]),
+    },
+    { "specs/cms/spec.md": null },
+  );
+  dirs.push(dir);
+  expect("a change that removes an old row's target fails under --base", run(dir, "--base", "base-ref"), 1, "at ../specs/cms/spec.md");
 }
 
 /* ---------- what must not fire ---------- */

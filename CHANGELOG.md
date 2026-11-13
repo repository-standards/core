@@ -30,6 +30,24 @@ field is now one span, read by one helper for both checks. Two cases in
 `tools/clarify-gate-test.mjs`: the multi-line rename passes, and the same rename plus a change
 below the field is still held to the section.
 
+### An archive pointer resolves where its markdown link does, and prose is not a path (2026-11-13)
+
+`backlog-archive-check` resolved every `where` pointer from the repository root and read
+anything with a slash or a short extension as a path. The archive lives at
+`docs/backlog-archive.md`, so a link in it - `../specs/cms/spec.md`, `dashboard.md`,
+`decision-records/adr/ADR-022-....md` - failed although it renders and resolves; and
+`next/image`, `@scope/pkg`, `ADR-008/ADR-016`, the tail of `auth.setup.ts` and the `spec-` of
+`.claude/skills/spec-*` were each reported as a missing file. One adopting repo got 26
+findings, two of them real.
+
+A pointer now resolves from the archive's own directory, as a link does, and from the
+repository root. A token is a pointer when it is a link target, ends in a file name or a `/`,
+or starts at a directory that exists; a glob passes when something matches it; a bare file
+name in a code span passes when a file of that name exists anywhere in the repository, and in
+prose it is a word. A path that resolves from neither place still fails. Every archived row is
+still read on every run, `--base` included: a change that renames an old row's target is the
+one that rots the archive. Fourteen new cases in `tools/backlog-archive-check-test.mjs`.
+
 ## 1.0.23 - 2026-11-12
 
 ### A Gate artifact that reached history before the guard can be cleared by a signed review (2026-11-12)
